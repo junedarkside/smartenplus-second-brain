@@ -6,19 +6,20 @@
 
 **Updated:** 2026-05-19
 **Achieved this session:**
-- Blog detail sidebar padding fix `edc0689`: `BlogPostSidebar.js` — sidebar flush-right on iPad mini (768px) and iPad Pro (1024px) fixed
-- iPad mini: `px-3 md:px-4` added to aside — was full-width stacked with no horizontal padding
-- iPad Pro: `lg:px-4` replaces old `lg:pl-4` (left-only) — now 16px both sides at desktop breakpoint
+- Blog SEO + perf commit `0f38cf8`: canonical domain fix (baseURL→getSiteUrl), Article→BlogPosting schema, inLanguage/wordCount/articleSection added, og:locale, robots meta, deduplicate org schema
+- Blog perf: `useMemo([posts])` on seoConfig, `priority={true}` on featured BlogCard (LCP fix), `aspect-video` CLS fix on featured card, `revalidate: 60→300`, `/_next/static/` Cache-Control immutable header
+- Team review via blog-perf-review team: rejected `/blog(.*)` s-maxage header (ISR conflict), skipped CircularProgress removal (low ROI)
+- seoHelper.js: `getSiteUrl()` env-only, `BLOG_TWITTER_HANDLE`, `getSeoImageType()` added
 
-**In-progress / not committed:** Admin dashboard HeroBanner UI untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
-**Next session resume:** Implement remaining blog design audit gaps (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA). Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export).
+**In-progress / not committed:** Admin dashboard HeroBanner UI still untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
+**Next session resume:** Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export). Blog design audit gaps still open (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA).
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260519-update/product-feature` | `37c9177` feat(pages_info): add HeroBanner CMS model and CRUD endpoint |
-| `smartenplus-frontend` | `260519-update/product-feature` | `edc0689` fix: add sidebar padding for iPad mini and iPad Pro screen sizes |
+| `smartenplus-frontend` | `260519-update/product-feature` | `0f38cf8` update: blog SEO fixes and performance optimizations |
 | `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
 
 ### Uncommitted (frontend)
@@ -57,6 +58,8 @@ M  store/index.js
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Blog SEO: wrong canonical domain, Article→BlogPosting, missing fields | `0f38cf8` getSiteUrl(), schema fixes, og:locale, robots meta | 2026-05-19 |
+| Blog perf: LCP (featured card lazy), CLS (no aspect ratio), useMemo, ISR | `0f38cf8` priority prop, aspect-video, useMemo([posts]), revalidate 300 | 2026-05-19 |
 | Breadcrumb + CategoryMenu tech debt fixed | `b27cbfb` alignment, icon, label, spacing consistency | 2026-05-19 |
 | UI consistency across 41 files committed | `911df1d` blog, breadcrumbs, AccountLayout, listing pages | 2026-05-19 |
 | Hero Banner CMS backend committed | `37c9177` feat(pages_info): FileField+AVIF fix, /hero-banners/ CRUD | 2026-05-19 |

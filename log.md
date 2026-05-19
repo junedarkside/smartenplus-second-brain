@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-19] session-end | blog SEO fixes + perf optimizations committed (0f38cf8); admin HeroBanner UI still uncommitted
+
 ## [2026-05-19] ingest | DAYTRIP_DOCUMENTATION_SUMMARY.md — deleted from vault root, replaced with tour-system-status.md
 
 - Source was a 2026-03-03 meta-index pointing to 36 repo docs. Low vault value — repo already has `docs/tour-system/INDEX.md`.
