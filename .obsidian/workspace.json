@@ -1,0 +1,221 @@
+{
+  "main": {
+    "id": "58a1532c2be21021",
+    "type": "split",
+    "children": [
+      {
+        "id": "7826f737fb5bd0a7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1b5f88b418dfb0f1",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0fc3f8089ac60549",
+    "type": "split",
+    "children": [
+      {
+        "id": "95e58281bf2eb549",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "49a44aa11aa014f9",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "8acba6ab0b122e1e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "7aeeedc139042671",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "6f05ac8c72b3d96c",
+    "type": "split",
+    "children": [
+      {
+        "id": "0a46ef354188a4ef",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c6115ce84ac97cbf",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "01-projects/smartenplus/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for README"
+            }
+          },
+          {
+            "id": "87fa4423e1e5443a",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "a3d5da91807732ca",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "02dfe37e02bf3487",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "5ff6cbf1fdf9c116",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "1b5f88b418dfb0f1",
+  "lastOpenFiles": [
+    "DAYTRIP_DOCUMENTATION_SUMMARY.md",
+    "index.md",
+    "01-projects/smartenplus/stations.md",
+    "01-projects/smartenplus/README.md",
+    "products-routes.md",
+    "related-page-2.md",
+    "01-projects/smartenplus/orders.md",
+    "related-page-1.md",
+    "adr-xxx.md",
+    "03-knowledge/admin-dashboard-image-pipeline.md",
+    "03-knowledge/admin-dashboard-component-patterns.md",
+    "03-knowledge/admin-dashboard-contracts.md",
+    "01-projects/admin-dashboard.md",
+    "01-projects/smartenplus/tickets.md",
+    "03-knowledge/journeys.md",
+    "01-projects/smartenplus/recommendation-system.md",
+    "01-projects/smartenplus/dialogue.md",
+    "01-projects/smartenplus/policies.md",
+    "01-projects/smartenplus/payments-enums.md",
+    "orders.md",
+    "log.md",
+    "01-projects/smartenplus/coupons.md",
+    "01-projects/smartenplus/payments-deep-dive.md",
+    "03-knowledge/refund-flow.md",
+    "01-projects/smartenplus/docker-production.md",
+    "01-projects/smartenplus/api-endpoints.md",
+    "08-archive",
+    "07-logs",
+    "06-systems",
+    "05-templates",
+    "04-decisions",
+    "03-knowledge",
+    "02-areas",
+    "01-projects/smartenplus",
+    "01-projects",
+    "00-inbox",
+    "Untitled.canvas",
+    "Untitled 1.canvas"
+  ]
+}
