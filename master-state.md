@@ -6,12 +6,9 @@
 
 **Updated:** 2026-05-19
 **Achieved this session:**
-- UI consistency commit `911df1d`: 41 files — blog pages, breadcrumbs consolidated (BlogBreadcrumbs deleted), AccountLayout simplified, ~20 listing pages updated
-- Breadcrumb + CategoryMenu audit: tech debt identified and fixed (icon, label, alignment, spacing)
-- Breadcrumb alignment fix `b27cbfb`: Typography display inline, blog padding standardized `px-2 md:px-4`, CategoryMenu AppsIcon + unified label
-- CategoryMenu UX: PlaylistAddIcon → AppsIcon, "Cats" mobile label → single "Categories"
-- StandardBreadcrumb cleanup: removed redundant inline styles, padding moved to py-2 only
-- BlogPageWrapper: padding moved to container for breadcrumb + CategoryMenu alignment
+- Blog detail sidebar padding fix `edc0689`: `BlogPostSidebar.js` — sidebar flush-right on iPad mini (768px) and iPad Pro (1024px) fixed
+- iPad mini: `px-3 md:px-4` added to aside — was full-width stacked with no horizontal padding
+- iPad Pro: `lg:px-4` replaces old `lg:pl-4` (left-only) — now 16px both sides at desktop breakpoint
 
 **In-progress / not committed:** Admin dashboard HeroBanner UI untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
 **Next session resume:** Implement remaining blog design audit gaps (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA). Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export).
@@ -21,7 +18,7 @@
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260519-update/product-feature` | `37c9177` feat(pages_info): add HeroBanner CMS model and CRUD endpoint |
-| `smartenplus-frontend` | `260519-update/product-feature` | `b27cbfb` fix: breadcrumb alignment, CategoryMenu UX, and blog spacing consistency |
+| `smartenplus-frontend` | `260519-update/product-feature` | `edc0689` fix: add sidebar padding for iPad mini and iPad Pro screen sizes |
 | `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
 
 ### Uncommitted (frontend)

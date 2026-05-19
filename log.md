@@ -33,6 +33,8 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 - Key gotcha: `display_order` empty string → DRF rejects as non-integer. Fixed in FormData submit handler.
 - See [[hero-banner-cms]]
 
+## [2026-05-19] session-end | blog detail sidebar padding — iPad mini + iPad Pro flush-right fixed
+
 ## [2026-05-19] fix | Contract_TranspotComposit admin crash — frontend sentinel id=-1
 
 - Root cause: frontend sends `id: -1` for new unsaved rows. Backend passed it as PK into `get_or_create(id=-1)` → UniqueViolation on every save attempt.
