@@ -38,6 +38,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
 - [[nav-header-redesign|Nav/Header Redesign 2026-05-19]] — minimal white desktop, brand blue mobile, a11y baseline, MUI+Tailwind coordination patterns
 - [[hero-banner-cms|Hero Banner CMS 2026-05-19]] — backend-controlled homepage hero, FileField+AVIF fix, admin dashboard CRUD, 5s slideshow
+- [[blog-seo-performance-2026-05-20|Blog SEO & Performance 2026-05-20]] — parallel fetches, image optimization, HMR fixes, patterns to reuse
 
 ## Knowledge Domains
 

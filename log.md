@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | blog perf/SEO round 2 (6b655d6) — parallel fetches, image fixes, HMR infinite loop fixed; admin HeroBanner UI still uncommitted
+
 ## [2026-05-19] session-end | blog SEO fixes + perf optimizations committed (0f38cf8); admin HeroBanner UI still uncommitted
 
 ## [2026-05-19] ingest | DAYTRIP_DOCUMENTATION_SUMMARY.md — deleted from vault root, replaced with tour-system-status.md

@@ -4,12 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-19
+**Updated:** 2026-05-20
 **Achieved this session:**
-- Blog SEO + perf commit `0f38cf8`: canonical domain fix (baseURL→getSiteUrl), Article→BlogPosting schema, inLanguage/wordCount/articleSection added, og:locale, robots meta, deduplicate org schema
-- Blog perf: `useMemo([posts])` on seoConfig, `priority={true}` on featured BlogCard (LCP fix), `aspect-video` CLS fix on featured card, `revalidate: 60→300`, `/_next/static/` Cache-Control immutable header
-- Team review via blog-perf-review team: rejected `/blog(.*)` s-maxage header (ISR conflict), skipped CircularProgress removal (low ROI)
-- seoHelper.js: `getSiteUrl()` env-only, `BLOG_TWITTER_HANDLE`, `getSeoImageType()` added
+- Blog perf/SEO/HMR commit `6b655d6`: relatedPosts+relatedRoutes parallelized, mediaDetails in POST_BY_SLUG, twitter:creator, sizes on BlogCard images, gravatar.com whitelisted, getBlogTargetURL stable ref, StandardBreadcrumb ssr:true
+- HMR infinite loop fixed: module-level conditional require() in BlogPostContent → getDOMPurify() fn; useEffect([blogPost]) → [blogPost?.databaseId] in BlogPostDisplay + useBlogAnalytics
+- Author avatar MUI Avatar → next/image (BlogPostDisplay)
+- 3-agent specialist team used to verify audit report — caught 2 fabricated findings before they were acted on
 
 **In-progress / not committed:** Admin dashboard HeroBanner UI still untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
 **Next session resume:** Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export). Blog design audit gaps still open (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA).
@@ -19,7 +19,7 @@
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260519-update/product-feature` | `37c9177` feat(pages_info): add HeroBanner CMS model and CRUD endpoint |
-| `smartenplus-frontend` | `260519-update/product-feature` | `0f38cf8` update: blog SEO fixes and performance optimizations |
+| `smartenplus-frontend` | `260519-update/product-feature` | `6b655d6` update: blog performance, SEO, and HMR fixes |
 | `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
 
 ### Uncommitted (frontend)
@@ -58,6 +58,8 @@ M  store/index.js
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Blog perf/SEO round 2: parallel fetches, mediaDetails, twitter:creator, sizes, gravatar, stable fn ref, ssr:true breadcrumb | `6b655d6` | 2026-05-20 |
+| Blog HMR infinite loop: module-level require() + useEffect([blogPost]) object ref deps | `6b655d6` getDOMPurify() fn + [blogPost?.databaseId] dep | 2026-05-20 |
 | Blog SEO: wrong canonical domain, Article→BlogPosting, missing fields | `0f38cf8` getSiteUrl(), schema fixes, og:locale, robots meta | 2026-05-19 |
 | Blog perf: LCP (featured card lazy), CLS (no aspect ratio), useMemo, ISR | `0f38cf8` priority prop, aspect-video, useMemo([posts]), revalidate 300 | 2026-05-19 |
 | Breadcrumb + CategoryMenu tech debt fixed | `b27cbfb` alignment, icon, label, spacing consistency | 2026-05-19 |
