@@ -20,6 +20,8 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 - Section 3 (monthly): cross-repo API contract, auth rules, data shape gotchas, payment constants.
 - Section 4 (rarely): architecture guardrails — lock order, payment rules, Celery patterns, heal commands.
 - Updated `index.md` (41 pages) and vault `CLAUDE.md` Special Files table.
+
+## [2026-05-19] session-end | blog/index.js style fixes (5 gaps) + design audit (9 gaps identified, not yet fixed)
 - Solves baton-pass problem: AI reads this at session start instead of re-deriving state from git log.
 
 ## [2026-05-19] feature | Hero Banner CMS — backend-controlled homepage hero

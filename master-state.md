@@ -5,28 +5,44 @@
 ## Section 1 — Session Handoff
 
 **Updated:** 2026-05-19
-**Achieved this session:** Built vault SB session system — `master-state.md` (4-section mission control), Session Init Protocol + Wrap-Up Protocol in `CLAUDE.md`, auto-trigger phrases, optimized both files (~30% smaller each).
-**In-progress / not committed:** Hero Banner CMS backend (`pages_info/`) — all files modified, migrations untracked. Was pre-existing work, not touched this session.
-**Next session resume:** Nothing blocking. Next task = commit Hero Banner CMS backend changes on `260519-update/product-feature` then merge.
+**Achieved this session:**
+- `pages/blog/index.js`: 5 style consistency fixes (Container, TYPOGRAPHY_SCALE, button padding/radius, grid gap, empty state)
+- Blog index design audit: 9 gaps identified across layout/typography/UX (not yet implemented)
+
+**In-progress / not committed:** 10 frontend blog files modified (M). Admin dashboard HeroBanner UI untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
+**Next session resume:** Implement 9 blog design audit gaps. Priority order: L1 hero→content `mt-8 md:mt-12`, L2 featured post weight, U1 Load More filled CTA, U5 breadcrumb mobile wrap. Then commit all blog changes + admin HeroBanner UI.
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-backend` | `260519-update/product-feature` | `dd03be0` fix(operators): handle sentinel id on Contract_TranspotComposit |
-| `smartenplus-frontend` | `260519-update/product-feature` | `3eb827d` update for payment issue |
+| `smartenplus-backend` | `260519-update/product-feature` | `37c9177` feat(pages_info): add HeroBanner CMS model and CRUD endpoint |
+| `smartenplus-frontend` | `260519-update/product-feature` | `6e93b4c` fix: homepage UX/UI consistency |
 | `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
 
-### Uncommitted (backend)
+### Uncommitted (frontend)
 
 ```
-M pages_info/admin.py
-M pages_info/models.py
-M pages_info/serializers.py
-M pages_info/urls.py
-M pages_info/views.py
-?? pages_info/migrations/0008_herobanner.py
-?? pages_info/migrations/0009_alter_herobanner_image.py
+M .claude/settings.local.json
+M components/blog/AuthorBio.js
+M components/blog/BlogPageWrapper.js
+M components/blog/RelatedPostsWidget.js
+M components/blog/TagsWidget.js
+M components/blog/TransportList.js
+M pages/blog/categories/index.js
+M pages/blog/index.js
+M pages/blog/search/[...slug].js
+M pages/blog/tags/index.js
+```
+
+### Uncommitted (admin-dashboard)
+
+```
+M  components/sidemenu/menuData.js
+M  store/index.js
+?? components/heroBanners/
+?? pages/routemanagement/hero-banners/
+?? store/api/heroBannersApi.js
 ```
 
 ---
@@ -41,6 +57,7 @@ M pages_info/views.py
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
+| 5 | Blog index: 9 design audit gaps (layout, typography, UX) | Ready to implement | `pages/blog/index.js` + `components/blog/BlogCard.js` |
 
 ### Recently Closed
 
