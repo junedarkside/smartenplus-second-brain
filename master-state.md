@@ -6,10 +6,10 @@
 
 **Updated:** 2026-05-20
 **Achieved this session:**
-- Blog perf/SEO/HMR commit `6b655d6`: relatedPosts+relatedRoutes parallelized, mediaDetails in POST_BY_SLUG, twitter:creator, sizes on BlogCard images, gravatar.com whitelisted, getBlogTargetURL stable ref, StandardBreadcrumb ssr:true
-- HMR infinite loop fixed: module-level conditional require() in BlogPostContent → getDOMPurify() fn; useEffect([blogPost]) → [blogPost?.databaseId] in BlogPostDisplay + useBlogAnalytics
-- Author avatar MUI Avatar → next/image (BlogPostDisplay)
-- 3-agent specialist team used to verify audit report — caught 2 fabricated findings before they were acted on
+- Forex 429 fix: backend `throttle_classes = []` on `OmiseForexViewSet` (`c859f3b`) + frontend CurrencyProvider deduplicated mount + dead import removed (`ff1f378`)
+- Specialist team (backend-reviewer, frontend-reviewer) verified root causes: double-mount from `isClient` ternary, anon throttle 500/hr, no auth token
+- Custom TTL cache rejected — project uses RTK Query for API caching, not hand-rolled TTL
+- Both repos committed + pushed to `260519-update/product-feature`
 
 **In-progress / not committed:** Admin dashboard HeroBanner UI still untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
 **Next session resume:** Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export). Blog design audit gaps still open (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA).
@@ -18,8 +18,8 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-backend` | `260519-update/product-feature` | `37c9177` feat(pages_info): add HeroBanner CMS model and CRUD endpoint |
-| `smartenplus-frontend` | `260519-update/product-feature` | `6b655d6` update: blog performance, SEO, and HMR fixes |
+| `smartenplus-backend` | `260519-update/product-feature` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
+| `smartenplus-frontend` | `260519-update/product-feature` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
 | `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
 
 ### Uncommitted (frontend)
@@ -53,11 +53,13 @@ M  store/index.js
 | 5 | Blog index: remaining design audit gaps (hero spacing, featured post weight, Load More CTA) | Ready to implement | `pages/blog/index.js` + `components/blog/BlogCard.js` |
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
 | 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
+| 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 
 ### Recently Closed
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Forex 429 Too Many Requests: double CurrencyProvider mount + anon throttle | Backend `throttle_classes = []` (`c859f3b`), frontend lifted CurrencyProvider outside ternary (`ff1f378`) | 2026-05-20 |
 | Blog perf/SEO round 2: parallel fetches, mediaDetails, twitter:creator, sizes, gravatar, stable fn ref, ssr:true breadcrumb | `6b655d6` | 2026-05-20 |
 | Blog HMR infinite loop: module-level require() + useEffect([blogPost]) object ref deps | `6b655d6` getDOMPurify() fn + [blogPost?.databaseId] dep | 2026-05-20 |
 | Blog SEO: wrong canonical domain, Article→BlogPosting, missing fields | `0f38cf8` getSiteUrl(), schema fixes, og:locale, robots meta | 2026-05-19 |
@@ -88,6 +90,8 @@ M  store/index.js
 
 **CMS:** `GET /hero-banners/` (injected into `/front-page/`) | `POST/PATCH/DELETE /hero-banners/{id}/`
 
+**Forex:** `GET /admin-dashboard-charge/forex/` (public, throttle_classes=[], 11 rows) | `GET /admin-dashboard-charge/forex/fetch-rates/` (admin/staff only)
+
 ### Auth
 
 - Frontend: NextAuth session. Email = `session.user.email` NOT `session.email` (common bug)
@@ -105,6 +109,7 @@ M  store/index.js
 | ISR revalidate | `revalidate: 300` on trip detail pages |
 | `display_order` | Empty string → DRF rejects. Must be integer in FormData |
 | HeroBanner field | `FileField` not `ImageField` — Pillow 9.3.0 rejects AVIF |
+| Forex throttle | Exempt `throttle_classes = []` — public read-only, 11 rows |
 
 ### Payment Constants
 
