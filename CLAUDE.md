@@ -138,6 +138,12 @@ At the start of every session when working on SmartEnPlus vault:
 3. **Update `master-state.md` Section 2** — close resolved items, add new bugs/edge cases
 4. **Leave Sections 3 and 4 unchanged** unless API contract or guardrail permanently changed
 5. **Append to `log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
+6. **Commit + push vault** — stage all changes and push to GitHub:
+   ```bash
+   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" add -A
+   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" commit -m "session-end: <one-line summary>"
+   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" push
+   ```
 
 ## Projects in This Vault
 
