@@ -6,33 +6,28 @@
 
 **Updated:** 2026-05-19
 **Achieved this session:**
-- `pages/blog/index.js`: 5 style consistency fixes (Container, TYPOGRAPHY_SCALE, button padding/radius, grid gap, empty state)
-- Blog index design audit: 9 gaps identified across layout/typography/UX (not yet implemented)
+- UI consistency commit `911df1d`: 41 files — blog pages, breadcrumbs consolidated (BlogBreadcrumbs deleted), AccountLayout simplified, ~20 listing pages updated
+- Breadcrumb + CategoryMenu audit: tech debt identified and fixed (icon, label, alignment, spacing)
+- Breadcrumb alignment fix `b27cbfb`: Typography display inline, blog padding standardized `px-2 md:px-4`, CategoryMenu AppsIcon + unified label
+- CategoryMenu UX: PlaylistAddIcon → AppsIcon, "Cats" mobile label → single "Categories"
+- StandardBreadcrumb cleanup: removed redundant inline styles, padding moved to py-2 only
+- BlogPageWrapper: padding moved to container for breadcrumb + CategoryMenu alignment
 
-**In-progress / not committed:** 10 frontend blog files modified (M). Admin dashboard HeroBanner UI untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
-**Next session resume:** Implement 9 blog design audit gaps. Priority order: L1 hero→content `mt-8 md:mt-12`, L2 featured post weight, U1 Load More filled CTA, U5 breadcrumb mobile wrap. Then commit all blog changes + admin HeroBanner UI.
+**In-progress / not committed:** Admin dashboard HeroBanner UI untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
+**Next session resume:** Implement remaining blog design audit gaps (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA). Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export).
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260519-update/product-feature` | `37c9177` feat(pages_info): add HeroBanner CMS model and CRUD endpoint |
-| `smartenplus-frontend` | `260519-update/product-feature` | `6e93b4c` fix: homepage UX/UI consistency |
+| `smartenplus-frontend` | `260519-update/product-feature` | `b27cbfb` fix: breadcrumb alignment, CategoryMenu UX, and blog spacing consistency |
 | `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
 
 ### Uncommitted (frontend)
 
 ```
 M .claude/settings.local.json
-M components/blog/AuthorBio.js
-M components/blog/BlogPageWrapper.js
-M components/blog/RelatedPostsWidget.js
-M components/blog/TagsWidget.js
-M components/blog/TransportList.js
-M pages/blog/categories/index.js
-M pages/blog/index.js
-M pages/blog/search/[...slug].js
-M pages/blog/tags/index.js
 ```
 
 ### Uncommitted (admin-dashboard)
@@ -57,12 +52,16 @@ M  store/index.js
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
-| 5 | Blog index: 9 design audit gaps (layout, typography, UX) | Ready to implement | `pages/blog/index.js` + `components/blog/BlogCard.js` |
+| 5 | Blog index: remaining design audit gaps (hero spacing, featured post weight, Load More CTA) | Ready to implement | `pages/blog/index.js` + `components/blog/BlogCard.js` |
+| 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
+| 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
 
 ### Recently Closed
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Breadcrumb + CategoryMenu tech debt fixed | `b27cbfb` alignment, icon, label, spacing consistency | 2026-05-19 |
+| UI consistency across 41 files committed | `911df1d` blog, breadcrumbs, AccountLayout, listing pages | 2026-05-19 |
 | Hero Banner CMS backend committed | `37c9177` feat(pages_info): FileField+AVIF fix, /hero-banners/ CRUD | 2026-05-19 |
 | Contract_TranspotComposit crash (sentinel id=-1) | `id <= 0` → `create()`, positive → `get_or_create()` | 2026-05-19 |
 | Expiry notification not sent | `_send_payment_failed_notifications` added to 3 expiry paths | 2026-05-18 |

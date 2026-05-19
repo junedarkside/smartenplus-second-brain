@@ -224,3 +224,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 - Created [[backend-architecture]]: Django app structure, key models, API endpoints, Celery tasks, dev commands
 - Updated [[payment-system]]: added 11 backend sections (finalize_payment, locked_amount, ExpirePendingChargeView, IdempotencyKey, WebhookEvent audit, JPY handling, polling fallback, notification dedup, status machines, charge creation order, ManualAdjustment)
 - Updated [[payment-integration]]: added idempotency sentinel pattern, amount locking pattern, webhook audit pattern
+## [2026-05-19] fix | Breadcrumb + CategoryMenu Tech Debt + Blog Spacing Consistency
