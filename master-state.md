@@ -6,6 +6,7 @@
 
 **Updated:** 2026-05-20
 **Achieved this session:**
+- Popular Routes admin page committed (`beaf1a7`) — read-only DataGrid with query count, price, operators
 - Hydration error + infinite page refresh diagnosed and fixed (4 files)
 - `PopularRoutesStructuredData.js` — `Date.now()` in render → module-level `PRICE_VALID_UNTIL` constant
 - `GridComponent.js` — `renderTripItem` wrapped in `useCallback([locationImg])` → fixes `memo()` bypass
@@ -14,7 +15,7 @@
 - 3-agent investigation team deployed: SSR specialist + provider specialist + router specialist. Leader filtered ~40% false positives before accepting findings.
 
 **In-progress / not committed:**
-- Frontend: 9 modified/deleted files uncommitted on `260520-update/recommend-route`
+- Frontend: 8 modified + 1 deleted uncommitted on `260520-update/recommend-route`
 - Backend: 4 modified files + 1 new migration uncommitted on same branch
 
 **Next session resume:**
@@ -29,7 +30,7 @@
 |------|--------|-------------|
 | `smartenplus-backend` | `260520-update/recommend-route` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
 | `smartenplus-frontend` | `260520-update/recommend-route` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
-| `admin-dashboard` | `260520-update/recommend-route` | `d3194d8` feat: Hero Banner CMS admin dashboard |
+| `admin-dashboard` | `260520-update/recommend-route` | `beaf1a7` feat: Popular Routes summary page |
 
 ### Uncommitted
 
@@ -67,7 +68,7 @@
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
 | 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 10 | Recommend-route: all changes uncommitted | Test `npm run dev` first, then commit | Frontend 9 files + Backend 4 files + migration |
+| 10 | Recommend-route: backend + frontend uncommitted | Admin dashboard committed (`beaf1a7`). Backend 4 files + frontend 9 files still pending. Test `npm run dev` first | Frontend 9 files + Backend 4 files + migration |
 | 11 | Recommend-route review: P2-P3 items not started | After commit + PR | See review report |
 
 ### Recently Closed
@@ -101,6 +102,8 @@
 **CMS:** `GET /hero-banners/` (injected into `/front-page/`) | `POST/PATCH/DELETE /hero-banners/{id}/`
 
 **Forex:** `GET /admin-dashboard-charge/forex/` (public, throttle_classes=[], 11 rows) | `GET /admin-dashboard-charge/forex/fetch-rates/` (admin/staff only)
+
+**Route Analytics:** `GET /admin-dashboard-routes/home/` (paginated, returns slug, query_count, lowest_price, operator_count)
 
 ### Auth
 

@@ -73,6 +73,24 @@ TTL: 24h (pre-computed), 15min (on-demand).
 
 ---
 
+## Popular Routes Admin Dashboard
+
+Read-only analytics page showing route popularity by query count. Consumes `GET /admin-dashboard-routes/home/`.
+
+### Backend
+
+- **View:** `HomeViewSet` in `products/views.py` — annotates `lowest_price` (min active contract price) + `operator_count` (distinct operators with active contracts). Filters contracts by `is_active=True`.
+- **Serializer:** `HomeSerializer` in `products/serializers.py` — fields: `slug`, `query_count`, `lowest_price`, `operator_count`.
+- **Beat:** weekly `update-route-query-counts` in `celery.py` — aggregates `QueryLog` (last 7 days) → `Route.query_count`.
+- **Migration:** `0008_add_query_count_index.py` — `db_index=True` on `Route.query_count` for sort performance.
+
+### Admin Dashboard
+
+- **Page:** `pages/routemanagement/popular-routes/index.js` — DataGrid, server-side pagination, sorted by `query_count` desc. Columns: rank, route (departure → arrival), query count, lowest price, operator count. Mobile-responsive column reduction.
+- **API:** `getPopularRoutes` endpoint in `store/api/routesApi.js` — `GET /admin-dashboard-routes/home/` with `page` + `page_size` params.
+- **Nav:** Route Management → Popular Routes (`TimelineOutlined` icon), between Routes and Trips.
+
 ## Related
 - [[operators]] (Contract model)
 - [[celery-tasks]] (celery task patterns)
+- [[admin-dashboard]] (admin dashboard overview)
