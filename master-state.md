@@ -10,22 +10,41 @@
 - Specialist team (backend-reviewer, frontend-reviewer) verified root causes: double-mount from `isClient` ternary, anon throttle 500/hr, no auth token
 - Custom TTL cache rejected — project uses RTK Query for API caching, not hand-rolled TTL
 - Admin HeroBanner UI committed + pushed (`d3194d8`) — CRUD page, form, RTK Query API
-- All 4 repos clean, all pushed to `260519-update/product-feature`
+- Recommend-route review: 3-agent team audited backend, frontend, validation gaps. 20 items found across P0-P3.
+- Backend changes (uncommitted): HomeSerializer extended (slug, query_count, lowest_price, operator_count), HomeViewSet active contract filter, Celery beat schedule for query_count (weekly), db_index migration
+- Frontend changes (uncommitted): GridComponent price/operator display, BaseGridComponent Tailwind fix + callback passthrough, PopularRoutesSection fixes, deleted dead OptimizedPopularRoutesGrid, deduplicated route constants, structured data fix, routeUtils dead code fix
 
-**In-progress / not committed:** None.
-**Next session resume:** Fix pre-existing build errors (calculateAge import, getStaticProps re-export). Blog design audit gaps still open (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA). Forex endpoint naming debt (`/admin-dashboard-charge/forex/` for public data).
+**In-progress / not committed:**
+- Backend: 4 modified files + 1 new migration (all uncommitted on `260520-update/recommend-route`)
+- Frontend: 7 modified/deleted files (all uncommitted on `260520-update/recommend-route`)
+
+**Next session resume:** Frontend hydration error still occurring on `npm run dev` after popular routes changes. Causes infinite page refresh. Root cause likely in BaseGridComponent or GridComponent changes. Files: `BaseGridComponent.js`, `GridComponent.js`, `PopularRoutesSection.js`. Backend changes verified working — API returns new fields correctly.
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-backend` | `260519-update/product-feature` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
-| `smartenplus-frontend` | `260519-update/product-feature` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
-| `admin-dashboard` | `260519-update/product-feature` | `d3194d8` feat: Hero Banner CMS admin dashboard |
+| `smartenplus-backend` | `260520-update/recommend-route` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
+| `smartenplus-frontend` | `260520-update/recommend-route` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
+| `admin-dashboard` | `260520-update/recommend-route` | `d3194d8` feat: Hero Banner CMS admin dashboard |
 
 ### Uncommitted
 
-All repos clean.
+**Backend** (4 modified + 1 new migration):
+- `Smartenplus/celery.py` — added weekly `update-route-query-counts` beat schedule
+- `products/serializers.py` — HomeSerializer: slug, query_count, lowest_price, operator_count
+- `products/views.py` — HomeViewSet: price/operator annotations + active contract filter
+- `products/models.py` — `db_index=True` on Route.query_count
+- `products/migrations/0008_add_query_count_index.py` — new migration
+
+**Frontend** (6 modified + 1 deleted):
+- `components/UI/BaseGridComponent.js` — Tailwind static COL_MAP + callback passthrough via renderItem
+- `components/UI/GridComponent.js` — price/operator display + article click/hover handlers
+- `lib/homepage/components/PopularRoutesSection.js` — reverted require() fix, locationImg=false, callbacks
+- `lib/homepage/components/PopularRoutesStructuredData.js` — Place type + price in offers
+- `helpers/routeUtils.js` — fixed dead Bangkok check
+- `pages/trips/[...slug].js` — imports PROVEN_POPULAR_ROUTES from routeConstants
+- `lib/homepage/components/OptimizedPopularRoutesGrid.js` — DELETED (dead code)
 
 ---
 
@@ -43,6 +62,9 @@ All repos clean.
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
 | 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
+| 9 | Frontend hydration error + infinite refresh after popular routes changes | Blocks recommend-route feature | `BaseGridComponent.js`, `GridComponent.js`, `PopularRoutesSection.js` |
+| 10 | Recommend-route backend changes uncommitted | Needs frontend fix first | `products/views.py`, `products/serializers.py`, `Smartenplus/celery.py` |
+| 11 | Recommend-route review: P2-P3 items not started | After hydration fix | See review report |
 
 ### Recently Closed
 

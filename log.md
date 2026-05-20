@@ -233,3 +233,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 - Updated [[payment-system]]: added 11 backend sections (finalize_payment, locked_amount, ExpirePendingChargeView, IdempotencyKey, WebhookEvent audit, JPY handling, polling fallback, notification dedup, status machines, charge creation order, ManualAdjustment)
 - Updated [[payment-integration]]: added idempotency sentinel pattern, amount locking pattern, webhook audit pattern
 ## [2026-05-19] fix | Breadcrumb + CategoryMenu Tech Debt + Blog Spacing Consistency
+## [2026-05-20] session-end | Recommend-route review + partial implementation — hydration issue blocking
