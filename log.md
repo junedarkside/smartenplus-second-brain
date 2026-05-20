@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | dashboard Main.js RTK Query migration (c06af90) — 3-agent review team, 12 useState→0, raw axios→RTK Query, shadowed import+memory leak+mock trends fixed, new dashboardApi.js slice, 334→170 lines; updated admin-dashboard-component-patterns.md, master-state.md
+
 ## [2026-05-20] session-end | Popular Routes admin page committed (beaf1a7) — read-only DataGrid consuming GET /admin-dashboard-routes/home/; backend+frontend recommend-route changes still uncommitted; updated recommendation-system.md, master-state.md, index.md
 
 ## [2026-05-20] session-end | hydration infinite refresh fixed — 4 files (_app.js dual-tree, PopularRoutesStructuredData Date.now, GridComponent useCallback, CurrencyContext useMemo); agent ~55% accuracy; backend+frontend still uncommitted on 260520-update/recommend-route

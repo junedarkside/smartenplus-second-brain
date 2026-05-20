@@ -14,6 +14,21 @@ Formik+Yup, RTK Query, MUI patterns, and critical gotchas.
 - All list endpoints: `transformResponse: (r) => r?.results ?? r` — handles paginated `{count, results:[]}` + legacy flat `[]`
 - Lazy hooks must be explicitly destructured from exports: `useLazyValidateImageDeletionQuery`
 - `keepUnusedDataFor: 60`, `refetchOnMountOrArgChange`, tag cache invalidation
+- Every page uses RTK Query hooks — raw `axios` + `fetchDataFromApi` are deprecated. `fetchDataFromApi` only remains in `components/data/utils/fetchData.js` as legacy artifact.
+- Dashboard (`pages/dashboard/Main/Main.js`) migrated 2026-05-20: was last page using manual fetching. Pattern: 3 RTK Query hooks replace 12 useState + useEffect + axios calls. Hooks run in parallel automatically.
+- New slice pattern: `store/api/dashboardApi.js` for dashboard-only endpoints (`getDashboardStats`, `getDashboardBookings`)
+
+### Dashboard Data Sources
+
+| Hook | Endpoint | Slice |
+|------|----------|-------|
+| `useGetDashboardStatsQuery()` | `/api/user/list-users/` | `dashboardApi` |
+| `useGetTripsQuery({ page, pageSize })` | `/admin-dashboard-routes/trips/` | `tripsApi` |
+| `useGetDashboardBookingsQuery()` | `/admin-dashboard/booking-summary/` | `dashboardApi` |
+
+### Store Registration Checklist
+
+When adding new RTK Query slice: import → reducerPath → blacklist → middleware concat. See `store/index.js`.
 
 ## MUI Gotchas
 

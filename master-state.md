@@ -13,10 +13,12 @@
 - `pages/_app.js` — removed `isClient` dual JSX tree → single `PersistGate loading={null}` tree (eliminates all-page hydration mismatch)
 - `components/contexts/CurrencyContext.js` — `value` wrapped in `useMemo` → stops unnecessary consumer re-renders
 - 3-agent investigation team deployed: SSR specialist + provider specialist + router specialist. Leader filtered ~40% false positives before accepting findings.
+- Dashboard Main.js refactored (`c06af90`) — RTK Query migration, 49% line reduction, bug fixes (shadowed import, memory leak, mock trends). Created `store/api/dashboardApi.js`. All pages now use RTK Query.
 
 **In-progress / not committed:**
 - Frontend: 8 modified + 1 deleted uncommitted on `260520-update/recommend-route`
 - Backend: 4 modified files + 1 new migration uncommitted on same branch
+- Admin dashboard: `main_js_pattern_review.md` untracked (reviewer artifact, can delete)
 
 **Next session resume:**
 1. `npm run dev` → verify infinite refresh gone on all pages
@@ -30,7 +32,7 @@
 |------|--------|-------------|
 | `smartenplus-backend` | `260520-update/recommend-route` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
 | `smartenplus-frontend` | `260520-update/recommend-route` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
-| `admin-dashboard` | `260520-update/recommend-route` | `beaf1a7` feat: Popular Routes summary page |
+| `admin-dashboard` | `260520-update/recommend-route` | `c06af90` refactor: dashboard Main.js RTK Query migration |
 
 ### Uncommitted
 
