@@ -2,7 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
-## [2026-05-20] session-end | forex 429 fix — backend throttle exemption (c859f3b), frontend CurrencyProvider deduplicated mount + dead import removed (ff1f378); 2-agent specialist team verified root causes; admin HeroBanner UI still uncommitted
+## [2026-05-20] session-end | forex 429 fix (backend c859f3b + frontend ff1f378) + admin HeroBanner UI committed (d3194d8); all 4 repos clean + pushed
 
 ## [2026-05-20] session-end | blog perf/SEO round 2 (6b655d6) — parallel fetches, image fixes, HMR infinite loop fixed; admin HeroBanner UI still uncommitted
 

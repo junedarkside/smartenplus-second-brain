@@ -9,10 +9,11 @@
 - Forex 429 fix: backend `throttle_classes = []` on `OmiseForexViewSet` (`c859f3b`) + frontend CurrencyProvider deduplicated mount + dead import removed (`ff1f378`)
 - Specialist team (backend-reviewer, frontend-reviewer) verified root causes: double-mount from `isClient` ternary, anon throttle 500/hr, no auth token
 - Custom TTL cache rejected — project uses RTK Query for API caching, not hand-rolled TTL
-- Both repos committed + pushed to `260519-update/product-feature`
+- Admin HeroBanner UI committed + pushed (`d3194d8`) — CRUD page, form, RTK Query API
+- All 4 repos clean, all pushed to `260519-update/product-feature`
 
-**In-progress / not committed:** Admin dashboard HeroBanner UI still untracked (components/heroBanners/, pages/routemanagement/hero-banners/, store/api/heroBannersApi.js).
-**Next session resume:** Commit admin HeroBanner UI. Fix pre-existing build errors (calculateAge import, getStaticProps re-export). Blog design audit gaps still open (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA).
+**In-progress / not committed:** None.
+**Next session resume:** Fix pre-existing build errors (calculateAge import, getStaticProps re-export). Blog design audit gaps still open (L1 hero→content spacing, L2 featured post weight, U1 Load More CTA). Forex endpoint naming debt (`/admin-dashboard-charge/forex/` for public data).
 
 ### Active Branches
 
@@ -20,23 +21,11 @@
 |------|--------|-------------|
 | `smartenplus-backend` | `260519-update/product-feature` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
 | `smartenplus-frontend` | `260519-update/product-feature` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
-| `admin-dashboard` | `260519-update/product-feature` | `b4825d7` update |
+| `admin-dashboard` | `260519-update/product-feature` | `d3194d8` feat: Hero Banner CMS admin dashboard |
 
-### Uncommitted (frontend)
+### Uncommitted
 
-```
-M .claude/settings.local.json
-```
-
-### Uncommitted (admin-dashboard)
-
-```
-M  components/sidemenu/menuData.js
-M  store/index.js
-?? components/heroBanners/
-?? pages/routemanagement/hero-banners/
-?? store/api/heroBannersApi.js
-```
+All repos clean.
 
 ---
 
