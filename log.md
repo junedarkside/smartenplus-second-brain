@@ -2,6 +2,12 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | trip detail 16 fixes + recommend-route all committed; PRs pending — 3-agent review (24 issues) + 4-agent adversarial deep review (8 hidden); 10 quick-wins (3f35d8c) + 6 deferred fixes (0bf038d); recommend-route frontend (2434124) + backend (3e49644) committed; PRs not opened yet
+
+## [2026-05-20] ingest | trip-detail-deep-review-2026-05-20.md — 4-agent adversarial pass; 3 original findings overturned (P2 isClient, S1 307→301, C4 typo); 8 hidden issues; top 3 risks: ratecard wipe crash, fetch timeout 500 loop, invalid ISO8601 TouristTrip schema
+
+## [2026-05-20] ingest | trip-detail-page-review-2026-05-20.md — 3-agent review of pages/trips/detail/[...slug].js; 24 issues (8 perf, 8 SEO, 8 code quality); verified against actual code, false positives removed
+
 ## [2026-05-20] session-end | dashboard Main.js RTK Query migration (c06af90) — 3-agent review team, 12 useState→0, raw axios→RTK Query, shadowed import+memory leak+mock trends fixed, new dashboardApi.js slice, 334→170 lines; updated admin-dashboard-component-patterns.md, master-state.md
 
 ## [2026-05-20] session-end | Popular Routes admin page committed (beaf1a7) — read-only DataGrid consuming GET /admin-dashboard-routes/home/; backend+frontend recommend-route changes still uncommitted; updated recommendation-system.md, master-state.md, index.md

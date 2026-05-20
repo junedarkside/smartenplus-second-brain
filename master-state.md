@@ -6,53 +6,32 @@
 
 **Updated:** 2026-05-20
 **Achieved this session:**
-- Popular Routes admin page committed (`beaf1a7`) — read-only DataGrid with query count, price, operators
-- Hydration error + infinite page refresh diagnosed and fixed (4 files)
-- `PopularRoutesStructuredData.js` — `Date.now()` in render → module-level `PRICE_VALID_UNTIL` constant
-- `GridComponent.js` — `renderTripItem` wrapped in `useCallback([locationImg])` → fixes `memo()` bypass
-- `pages/_app.js` — removed `isClient` dual JSX tree → single `PersistGate loading={null}` tree (eliminates all-page hydration mismatch)
-- `components/contexts/CurrencyContext.js` — `value` wrapped in `useMemo` → stops unnecessary consumer re-renders
-- 3-agent investigation team deployed: SSR specialist + provider specialist + router specialist. Leader filtered ~40% false positives before accepting findings.
-- Dashboard Main.js refactored (`c06af90`) — RTK Query migration, 49% line reduction, bug fixes (shadowed import, memory leak, mock trends). Created `store/api/dashboardApi.js`. All pages now use RTK Query.
+- Trip detail 3-agent review (24 issues: 8 perf, 8 SEO, 8 code quality) + 4-agent adversarial deep review (3 findings overturned, 8 hidden issues, 4 prod failure scenarios)
+- 10 safe quick-win fixes committed (`3f35d8c`): dead imports, GTM fix, useMemo cleanup, require() fix, refetchOnFocus, emoji title, AbortController, aria-labelledby, TRANSPORTATION_CATEGORIES hoisted
+- 6 deferred deep fixes committed (`0bf038d`): C4 forword typo, H1 ratecard empty-array guard, H2 invalid ISO8601 schema removed, P6 domainURL from slug, S3+S4 title/desc rewrite, S7 noindex on pricing error
+- Recommend-route frontend committed (`2434124`): BaseGridComponent COL_MAP, GridComponent price/operator, CurrencyContext useMemo, PopularRoutesSection, PopularRoutesStructuredData PRICE_VALID_UNTIL, routeUtils fix, _app.js single PersistGate tree, trips/[...slug].js, deleted OptimizedPopularRoutesGrid
+- Recommend-route backend committed (`3e49644`): models db_index, serializers HomeSerializer, views HomeViewSet annotations, celery weekly beat, migration 0008
 
-**In-progress / not committed:**
-- Frontend: 8 modified + 1 deleted uncommitted on `260520-update/recommend-route`
-- Backend: 4 modified files + 1 new migration uncommitted on same branch
-- Admin dashboard: `main_js_pattern_review.md` untracked (reviewer artifact, can delete)
+**In-progress / not done:**
+- PR not opened yet for any repo on `260520-update/recommend-route`
+- Admin dashboard: `main_js_pattern_review.md` untracked (reviewer artifact — delete)
 
 **Next session resume:**
-1. `npm run dev` → verify infinite refresh gone on all pages
-2. If clean → commit frontend (all 9 files) + backend (4 files + migration) together
-3. Open PR for `260520-update/recommend-route` → main
-4. Then tackle loose end #7 (pre-existing build errors blocking clean build)
+1. Delete `main_js_pattern_review.md` from admin-dashboard
+2. Open PRs for all 3 repos: `260520-update/recommend-route` → `main`
+3. Fix build error #7: `pages/trips/detail/index.js` re-exports `getStaticProps` from `pages/trips/index.js` where it is commented out → remove that re-export line
+4. Tackle loose end #5 (blog index design gaps) or #13 (verify ReviewListByProduct for ssr:false removal)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-backend` | `260520-update/recommend-route` | `c859f3b` fix: exempt OmiseForexViewSet from throttle |
-| `smartenplus-frontend` | `260520-update/recommend-route` | `ff1f378` fix: forex 429 — deduplicate CurrencyProvider mount |
+| `smartenplus-backend` | `260520-update/recommend-route` | `3e49644` feat: recommend-route backend |
+| `smartenplus-frontend` | `260520-update/recommend-route` | `2434124` feat: recommend-route frontend |
 | `admin-dashboard` | `260520-update/recommend-route` | `c06af90` refactor: dashboard Main.js RTK Query migration |
 
 ### Uncommitted
-
-**Backend** (4 modified + 1 new migration):
-- `Smartenplus/celery.py` — added weekly `update-route-query-counts` beat schedule
-- `products/serializers.py` — HomeSerializer: slug, query_count, lowest_price, operator_count
-- `products/views.py` — HomeViewSet: price/operator annotations + active contract filter
-- `products/models.py` — `db_index=True` on Route.query_count
-- `products/migrations/0008_add_query_count_index.py` — new migration
-
-**Frontend** (8 modified + 1 deleted):
-- `components/UI/BaseGridComponent.js` — Tailwind static COL_MAP + callback passthrough via renderItem
-- `components/UI/GridComponent.js` — price/operator display + useCallback on renderTripItem
-- `components/contexts/CurrencyContext.js` — useMemo on value object
-- `lib/homepage/components/PopularRoutesSection.js` — locationImg=false, callbacks
-- `lib/homepage/components/PopularRoutesStructuredData.js` — PRICE_VALID_UNTIL constant, Place type + price in offers
-- `helpers/routeUtils.js` — fixed dead Bangkok check
-- `pages/_app.js` — removed isClient dual-tree, single PersistGate tree
-- `pages/trips/[...slug].js` — imports PROVEN_POPULAR_ROUTES from routeConstants
-- `lib/homepage/components/OptimizedPopularRoutesGrid.js` — DELETED (dead code)
+All repos clean. Admin dashboard has 1 untracked file: `main_js_pattern_review.md` (delete next session).
 
 ---
 
@@ -70,13 +49,16 @@
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
 | 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 10 | Recommend-route: backend + frontend uncommitted | Admin dashboard committed (`beaf1a7`). Backend 4 files + frontend 9 files still pending. Test `npm run dev` first | Frontend 9 files + Backend 4 files + migration |
-| 11 | Recommend-route review: P2-P3 items not started | After commit + PR | See review report |
+| 11 | Recommend-route review: P2-P3 items not started | After PR merged | See review report |
+| 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` | Ready to open | frontend + backend + admin-dashboard |
+| 13 | Trip detail S5: `DynamicReviewListByProduct` ssr:false — verify no browser-only APIs in `ReviewListByProduct` before removing | After PR merged | `pages/trips/detail/[...slug].js` |
 
 ### Recently Closed
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Recommend-route uncommitted (#10) | frontend `2434124` + backend `3e49644` committed; PRs not yet opened | 2026-05-20 |
+| Trip detail 16 fixes: quick-wins + deferred deep issues | `3f35d8c` (10 safe fixes) + `0bf038d` (6 deferred) — dead imports, GTM, useMemo, ISO8601 schema, domainURL, title/desc, noindex | 2026-05-20 |
 | Hydration error + infinite page refresh (all pages) | 4-file fix: `Date.now()` constant, `useCallback` on renderTripItem, `_app.js` single PersistGate tree, `useMemo` on CurrencyProvider value | 2026-05-20 |
 | Forex 429 Too Many Requests: double CurrencyProvider mount + anon throttle | Backend `throttle_classes = []` (`c859f3b`), frontend lifted CurrencyProvider outside ternary (`ff1f378`) | 2026-05-20 |
 | Blog perf/SEO round 2: parallel fetches, mediaDetails, twitter:creator, sizes, gravatar, stable fn ref, ssr:true breadcrumb | `6b655d6` | 2026-05-20 |
