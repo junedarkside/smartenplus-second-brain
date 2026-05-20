@@ -6,32 +6,28 @@
 
 **Updated:** 2026-05-20
 **Achieved this session:**
-- Trip detail 3-agent review (24 issues: 8 perf, 8 SEO, 8 code quality) + 4-agent adversarial deep review (3 findings overturned, 8 hidden issues, 4 prod failure scenarios)
-- 10 safe quick-win fixes committed (`3f35d8c`): dead imports, GTM fix, useMemo cleanup, require() fix, refetchOnFocus, emoji title, AbortController, aria-labelledby, TRANSPORTATION_CATEGORIES hoisted
-- 6 deferred deep fixes committed (`0bf038d`): C4 forword typo, H1 ratecard empty-array guard, H2 invalid ISO8601 schema removed, P6 domainURL from slug, S3+S4 title/desc rewrite, S7 noindex on pricing error
-- Recommend-route frontend committed (`2434124`): BaseGridComponent COL_MAP, GridComponent price/operator, CurrencyContext useMemo, PopularRoutesSection, PopularRoutesStructuredData PRICE_VALID_UNTIL, routeUtils fix, _app.js single PersistGate tree, trips/[...slug].js, deleted OptimizedPopularRoutesGrid
-- Recommend-route backend committed (`3e49644`): models db_index, serializers HomeSerializer, views HomeViewSet annotations, celery weekly beat, migration 0008
+- Deleted `main_js_pattern_review.md` from admin-dashboard (untracked reviewer artifact)
+- Fixed build error #7 (`96c9c10`): exported `calculateAge` in `helpers/dateHelper.js`, replaced `pages/trips/detail/index.js` dead re-export with single `export { default }`
+- Removed unnecessary `ssr: false` from `DynamicReviewListByProduct` (`3f948bf`): reviews now SSR'd + crawlable
+- Build confirmed clean after `.next` cache cleared
 
 **In-progress / not done:**
-- PR not opened yet for any repo on `260520-update/recommend-route`
-- Admin dashboard: `main_js_pattern_review.md` untracked (reviewer artifact — delete)
+- PRs not opened yet for all 3 repos on `260520-update/recommend-route` (user skipped — do via GitHub web)
 
 **Next session resume:**
-1. Delete `main_js_pattern_review.md` from admin-dashboard
-2. Open PRs for all 3 repos: `260520-update/recommend-route` → `main`
-3. Fix build error #7: `pages/trips/detail/index.js` re-exports `getStaticProps` from `pages/trips/index.js` where it is commented out → remove that re-export line
-4. Tackle loose end #5 (blog index design gaps) or #13 (verify ReviewListByProduct for ssr:false removal)
+1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI — frontend, backend, admin-dashboard)
+2. Tackle loose end #5 (blog index design gaps) or #6 (breadcrumb deduplication)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260520-update/recommend-route` | `3e49644` feat: recommend-route backend |
-| `smartenplus-frontend` | `260520-update/recommend-route` | `2434124` feat: recommend-route frontend |
+| `smartenplus-frontend` | `260520-update/recommend-route` | `3f948bf` fix: remove ssr:false from DynamicReviewListByProduct |
 | `admin-dashboard` | `260520-update/recommend-route` | `c06af90` refactor: dashboard Main.js RTK Query migration |
 
 ### Uncommitted
-All repos clean. Admin dashboard has 1 untracked file: `main_js_pattern_review.md` (delete next session).
+All repos clean.
 
 ---
 
@@ -47,16 +43,16 @@ All repos clean. Admin dashboard has 1 untracked file: `main_js_pattern_review.m
 | 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
 | 5 | Blog index: remaining design audit gaps (hero spacing, featured post weight, Load More CTA) | Ready to implement | `pages/blog/index.js` + `components/blog/BlogCard.js` |
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
-| 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 | 11 | Recommend-route review: P2-P3 items not started | After PR merged | See review report |
-| 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` | Ready to open | frontend + backend + admin-dashboard |
-| 13 | Trip detail S5: `DynamicReviewListByProduct` ssr:false — verify no browser-only APIs in `ReviewListByProduct` before removing | After PR merged | `pages/trips/detail/[...slug].js` |
+| 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Open via GitHub web UI | frontend + backend + admin-dashboard |
 
 ### Recently Closed
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Build errors #7 + ssr:false #13 | `96c9c10` export calculateAge + simplify detail/index.js; `3f948bf` remove ssr:false ReviewListByProduct | 2026-05-20 |
+| main_js_pattern_review.md deleted | rm untracked reviewer artifact from admin-dashboard | 2026-05-20 |
 | Recommend-route uncommitted (#10) | frontend `2434124` + backend `3e49644` committed; PRs not yet opened | 2026-05-20 |
 | Trip detail 16 fixes: quick-wins + deferred deep issues | `3f35d8c` (10 safe fixes) + `0bf038d` (6 deferred) — dead imports, GTM, useMemo, ISO8601 schema, domainURL, title/desc, noindex | 2026-05-20 |
 | Hydration error + infinite page refresh (all pages) | 4-file fix: `Date.now()` constant, `useCallback` on renderTripItem, `_app.js` single PersistGate tree, `useMemo` on CurrencyProvider value | 2026-05-20 |

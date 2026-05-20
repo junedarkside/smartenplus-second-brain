@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | build errors fixed + ssr:false removed + reviewer artifact deleted — calculateAge exported (96c9c10), dead getStaticProps re-export removed, DynamicReviewListByProduct ssr:false dropped (3f948bf), build clean; PRs still pending
+
 ## [2026-05-20] session-end | trip detail 16 fixes + recommend-route all committed; PRs pending — 3-agent review (24 issues) + 4-agent adversarial deep review (8 hidden); 10 quick-wins (3f35d8c) + 6 deferred fixes (0bf038d); recommend-route frontend (2434124) + backend (3e49644) committed; PRs not opened yet
 
 ## [2026-05-20] ingest | trip-detail-deep-review-2026-05-20.md — 4-agent adversarial pass; 3 original findings overturned (P2 isClient, S1 307→301, C4 typo); 8 hidden issues; top 3 risks: ratecard wipe crash, fetch timeout 500 loop, invalid ISO8601 TouristTrip schema
