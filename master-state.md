@@ -14,6 +14,7 @@
 - MUI+Tailwind CSS specificity fix (`fc307b1`): hero back/share buttons use `sx={{ color: 'white' }}` instead of Tailwind `text-white`; help icon wrapped for mobile hide
 - Trip detail 4 remaining fixes (`ec850be`): breadcrumb SSR (removed ssr:false), day-tour redirect 308, scroll requestAnimationFrame, reviews double-fetch removed (-26 lines)
 - Help icon mobile fix (`a0e7aea`): MUI `Box` with `sx={{ display: { xs: 'none', md: 'block' } }}` — Tailwind hidden/md:block unreliable
+- Help icon mobile fix round 2: reverted MUI Box sx → Tailwind `hidden md:block` div wrapper. MUI sx responsive breakpoints fail without Emotion cache provider in `_app.js`
 - Breadcrumb dedup merged to develop (`61c5aeb`): 3 commits, 16 files, -22 lines. Rebased onto develop with forum fix
 - MUI+Tailwind knowledge doc: `03-knowledge/mui-tailwind-css-specificity.md`
 - Forum table width fix (`713468e`): table + ranking aside constrained to `max-w-[1200px]`
@@ -31,12 +32,12 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `713468e` fix: forum table width |
+| `smartenplus-frontend` | `develop` | `713468e` + uncommitted help icon revert |
 | `smartenplus-backend` | `develop` | merged recommend-route |
 | `admin-dashboard` | `develop` | merged recommend-route |
 
 ### Uncommitted
-All repos clean.
+- `smartenplus-frontend`: `components/layout/main-header.js` modified (reverted MUI Box sx → Tailwind div wrapper for help icon mobile hide)
 
 ---
 

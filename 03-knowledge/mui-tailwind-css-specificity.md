@@ -31,6 +31,16 @@ MUI v5 uses Emotion (`@emotion/react`) to generate scoped CSS classes (`css-[has
 
 This is **inherent** to MUI + Tailwind coexistence, not a configuration bug.
 
+## Responsive Breakpoints (sx prop)
+
+MUI `sx` responsive values (`display: { xs: 'none', md: 'block' }`) generate `@media` CSS rules via Emotion at runtime. **These fail when no Emotion cache provider wraps the app.**
+
+`_app.js` has `ThemeProvider` but no `CacheProvider` or `StyledEngineProvider`. Static responsive values in `sx` may not inject correctly — especially `display` breakpoints. Tailwind's compiled `@media` rules always work.
+
+**Rule: responsive display → always use Tailwind `className` on plain div wrapper. Never MUI `sx` responsive breakpoints for display.**
+
+Affected: `components/layout/main-header.js` help icon (commit a0e7aea attempted MUI Box sx, reverted to Tailwind div).
+
 ## Decision
 
 **Rule: MUI components use `sx` prop. Plain HTML uses Tailwind `className`.**

@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | help icon mobile fix round 2 (revert MUI sx → Tailwind div), vault updated with Emotion cache provider lesson
+## [2026-05-20] fix | Help icon mobile — reverted MUI Box sx responsive breakpoints (need Emotion cache), use Tailwind div wrapper per existing pattern
 ## [2026-05-20] session-end | all repos merged to develop, breadcrumb dedup merged, forum table width fixed, MUI+Tailwind knowledge doc — 12 commits on frontend, vault updated
 
 ## [2026-05-20] session-end | MUI+Tailwind CSS fixes, trip detail 4 fixes, breadcrumb dedup branch — hero button sx color, help icon MUI Box breakpoint, breadcrumb SSR, redirect 308, scroll rAF, reviews fetch removed; pushed to origin
