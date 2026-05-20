@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | all repos merged to develop, breadcrumb dedup merged, forum table width fixed, MUI+Tailwind knowledge doc — 12 commits on frontend, vault updated
+
 ## [2026-05-20] session-end | MUI+Tailwind CSS fixes, trip detail 4 fixes, breadcrumb dedup branch — hero button sx color, help icon MUI Box breakpoint, breadcrumb SSR, redirect 308, scroll rAF, reviews fetch removed; pushed to origin
 
 ## [2026-05-20] ingest | mui-tailwind-css-specificity.md — MUI Emotion CSS overrides Tailwind className on MUI components; root cause + fix patterns (sx prop, div wrapper) + property-by-property guide; affects IconButton, Button, SvgIcon

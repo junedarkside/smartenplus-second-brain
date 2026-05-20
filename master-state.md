@@ -14,27 +14,26 @@
 - MUI+Tailwind CSS specificity fix (`fc307b1`): hero back/share buttons use `sx={{ color: 'white' }}` instead of Tailwind `text-white`; help icon wrapped for mobile hide
 - Trip detail 4 remaining fixes (`ec850be`): breadcrumb SSR (removed ssr:false), day-tour redirect 308, scroll requestAnimationFrame, reviews double-fetch removed (-26 lines)
 - Help icon mobile fix (`a0e7aea`): MUI `Box` with `sx={{ display: { xs: 'none', md: 'block' } }}` — Tailwind hidden/md:block unreliable
-- Breadcrumb dedup branch created (`260520-refactor/breadcrumb-dedup`): 3 commits for 16 files. Needs rebase onto develop after recommend-route merges + stash fix for forum/index.js
+- Breadcrumb dedup merged to develop (`61c5aeb`): 3 commits, 16 files, -22 lines. Rebased onto develop with forum fix
 - MUI+Tailwind knowledge doc: `03-knowledge/mui-tailwind-css-specificity.md`
-- Frontend pushed to origin, no PR opened
+- Forum table width fix (`713468e`): table + ranking aside constrained to `max-w-[1200px]`
+- All 3 repos merged to develop, frontend pushed to origin
 
 **In-progress / not done:**
-- Breadcrumb dedup branch needs: rebase onto develop → stash pop forum fix → build verify
 - PRs not opened for all 3 repos on `260520-update/recommend-route` (user skipped — do via GitHub web)
 
 **Next session resume:**
-1. Merge `260520-update/recommend-route` → `develop` on all 3 repos
-2. Breadcrumb dedup: rebase `260520-refactor/breadcrumb-dedup` onto develop, apply stash, build, merge
-3. Loose end #11: recommend-route review P2-P3 items
+1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI) — if needed
+2. Loose end #11: recommend-route review P2-P3 items
+3. Push `develop` to deploy
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-backend` | `260520-update/recommend-route` | `3e49644` feat: recommend-route backend |
-| `smartenplus-frontend` | `260520-update/recommend-route` | `a0e7aea` fix: help icon mobile MUI Box |
-| `smartenplus-frontend` | `260520-refactor/breadcrumb-dedup` | `6a47f7b` refactor: fix section/py-0 patterns (has build error — needs stash fix) |
-| `admin-dashboard` | `260520-update/recommend-route` | `c06af90` refactor: dashboard Main.js RTK Query migration |
+| `smartenplus-frontend` | `develop` | `713468e` fix: forum table width |
+| `smartenplus-backend` | `develop` | merged recommend-route |
+| `admin-dashboard` | `develop` | merged recommend-route |
 
 ### Uncommitted
 All repos clean.
@@ -52,12 +51,17 @@ All repos clean.
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
-| 6 | Breadcrumb container duplication across 29 pages | Branch `260520-refactor/breadcrumb-dedup` — needs rebase + stash fix after develop merge | All pages using StandardBreadcrumb |
+| 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 | 11 | Recommend-route review: P2-P3 items not started | After PR merged | See review report |
-| 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Open via GitHub web UI | frontend + backend + admin-dashboard |
+| 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
 
 ### Recently Closed
+
+| Issue | Fix | Date |
+|-------|-----|------|
+| Forum table overflow — no max-width constraint | `713468e` added max-w-[1200px] to table section + ranking aside | 2026-05-20 |
+| Breadcrumb dedup — 7 different wrapper patterns across 29 pages | `61c5aeb` merged 3 commits, 16 files standardized, -22 lines | 2026-05-20 |
 
 | Issue | Fix | Date |
 |-------|-----|------|
