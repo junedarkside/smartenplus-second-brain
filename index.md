@@ -55,6 +55,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-contracts]] — Category registry, form flow, payload rules, helpers
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
+- [[mui-tailwind-css-specificity]] — MUI Emotion overrides Tailwind className on MUI components; use sx prop or div wrapper
 
 ## Areas
 
@@ -80,4 +81,4 @@ Global navigation catalog. Updated on every ingest.
 
 - Created: 2026-05-16
 - Pages: 43
-- Last updated: 2026-05-20 (hydration-infinite-refresh-fix-2026-05-20.md — all-page HMR loop fixed, agent hallucination patterns)
+- Last updated: 2026-05-20 (mui-tailwind-css-specificity.md — MUI+Tailwind CSS specificity conflict documented)

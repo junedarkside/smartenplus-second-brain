@@ -11,20 +11,29 @@
 - Removed unnecessary `ssr: false` from `DynamicReviewListByProduct` (`3f948bf`): reviews now SSR'd + crawlable
 - Blog index #5 partial (`1e34601`): H1 visible on mobile + Load More filled button (featured post style skipped by user)
 - HMR hot-update 404 fix (`b56d62a`): `next.config.js` Cache-Control narrowed from `/_next/static/(.*)` to `/_next/static/(chunks|css)/(.*)` — webpack hot-update files no longer cached as immutable
+- MUI+Tailwind CSS specificity fix (`fc307b1`): hero back/share buttons use `sx={{ color: 'white' }}` instead of Tailwind `text-white`; help icon wrapped for mobile hide
+- Trip detail 4 remaining fixes (`ec850be`): breadcrumb SSR (removed ssr:false), day-tour redirect 308, scroll requestAnimationFrame, reviews double-fetch removed (-26 lines)
+- Help icon mobile fix (`a0e7aea`): MUI `Box` with `sx={{ display: { xs: 'none', md: 'block' } }}` — Tailwind hidden/md:block unreliable
+- Breadcrumb dedup branch created (`260520-refactor/breadcrumb-dedup`): 3 commits for 16 files. Needs rebase onto develop after recommend-route merges + stash fix for forum/index.js
+- MUI+Tailwind knowledge doc: `03-knowledge/mui-tailwind-css-specificity.md`
+- Frontend pushed to origin, no PR opened
 
 **In-progress / not done:**
-- PRs not opened yet for all 3 repos on `260520-update/recommend-route` (user skipped — do via GitHub web)
+- Breadcrumb dedup branch needs: rebase onto develop → stash pop forum fix → build verify
+- PRs not opened for all 3 repos on `260520-update/recommend-route` (user skipped — do via GitHub web)
 
 **Next session resume:**
-1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI)
-2. Loose end #6: breadcrumb dedup — plan ready in `03-knowledge/breadcrumb-dedup-plan-2026-05-20.md`. New branch `260520-refactor/breadcrumb-dedup`. GROUP B first (10 files), then C (4), then D (2). 3 commits.
+1. Merge `260520-update/recommend-route` → `develop` on all 3 repos
+2. Breadcrumb dedup: rebase `260520-refactor/breadcrumb-dedup` onto develop, apply stash, build, merge
+3. Loose end #11: recommend-route review P2-P3 items
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260520-update/recommend-route` | `3e49644` feat: recommend-route backend |
-| `smartenplus-frontend` | `260520-update/recommend-route` | `b56d62a` fix: HMR Cache-Control + blog index fixes |
+| `smartenplus-frontend` | `260520-update/recommend-route` | `a0e7aea` fix: help icon mobile MUI Box |
+| `smartenplus-frontend` | `260520-refactor/breadcrumb-dedup` | `6a47f7b` refactor: fix section/py-0 patterns (has build error — needs stash fix) |
 | `admin-dashboard` | `260520-update/recommend-route` | `c06af90` refactor: dashboard Main.js RTK Query migration |
 
 ### Uncommitted
@@ -43,7 +52,7 @@ All repos clean.
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
-| 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
+| 6 | Breadcrumb container duplication across 29 pages | Branch `260520-refactor/breadcrumb-dedup` — needs rebase + stash fix after develop merge | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 | 11 | Recommend-route review: P2-P3 items not started | After PR merged | See review report |
 | 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Open via GitHub web UI | frontend + backend + admin-dashboard |
@@ -52,6 +61,8 @@ All repos clean.
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| MUI+Tailwind CSS specificity: hero buttons white, help icon mobile | `fc307b1` sx prop + `a0e7aea` MUI Box display breakpoint | 2026-05-20 |
+| Trip detail 4 fixes: breadcrumb SSR, redirect 308, scroll rAF, reviews fetch | `ec850be` — removed ssr:false, permanent:true, requestAnimationFrame, removed reviews useEffect (-26 lines) | 2026-05-20 |
 | Build errors #7 + ssr:false #13 | `96c9c10` export calculateAge + simplify detail/index.js; `3f948bf` remove ssr:false ReviewListByProduct | 2026-05-20 |
 | main_js_pattern_review.md deleted | rm untracked reviewer artifact from admin-dashboard | 2026-05-20 |
 | Recommend-route uncommitted (#10) | frontend `2434124` + backend `3e49644` committed; PRs not yet opened | 2026-05-20 |
