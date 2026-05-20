@@ -9,21 +9,22 @@
 - Deleted `main_js_pattern_review.md` from admin-dashboard (untracked reviewer artifact)
 - Fixed build error #7 (`96c9c10`): exported `calculateAge` in `helpers/dateHelper.js`, replaced `pages/trips/detail/index.js` dead re-export with single `export { default }`
 - Removed unnecessary `ssr: false` from `DynamicReviewListByProduct` (`3f948bf`): reviews now SSR'd + crawlable
-- Build confirmed clean after `.next` cache cleared
+- Blog index #5 partial (`1e34601`): H1 visible on mobile + Load More filled button (featured post style skipped by user)
+- HMR hot-update 404 fix (`b56d62a`): `next.config.js` Cache-Control narrowed from `/_next/static/(.*)` to `/_next/static/(chunks|css)/(.*)` — webpack hot-update files no longer cached as immutable
 
 **In-progress / not done:**
 - PRs not opened yet for all 3 repos on `260520-update/recommend-route` (user skipped — do via GitHub web)
 
 **Next session resume:**
-1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI — frontend, backend, admin-dashboard)
-2. Tackle loose end #5 (blog index design gaps) or #6 (breadcrumb deduplication)
+1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI)
+2. Loose end #6: breadcrumb deduplication (35 files, 10 patterns → standardise to Pattern 2)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-backend` | `260520-update/recommend-route` | `3e49644` feat: recommend-route backend |
-| `smartenplus-frontend` | `260520-update/recommend-route` | `3f948bf` fix: remove ssr:false from DynamicReviewListByProduct |
+| `smartenplus-frontend` | `260520-update/recommend-route` | `b56d62a` fix: HMR Cache-Control + blog index fixes |
 | `admin-dashboard` | `260520-update/recommend-route` | `c06af90` refactor: dashboard Main.js RTK Query migration |
 
 ### Uncommitted
@@ -41,7 +42,7 @@ All repos clean.
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
-| 5 | Blog index: remaining design audit gaps (hero spacing, featured post weight, Load More CTA) | Ready to implement | `pages/blog/index.js` + `components/blog/BlogCard.js` |
+| 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 | 11 | Recommend-route review: P2-P3 items not started | After PR merged | See review report |

@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | blog index 2 fixes (1e34601) + HMR hot-update 404 fix (b56d62a) — H1 visible on mobile, Load More filled button, next.config.js Cache-Control narrowed to chunks/css only; PRs still pending
+
 ## [2026-05-20] session-end | build errors fixed + ssr:false removed + reviewer artifact deleted — calculateAge exported (96c9c10), dead getStaticProps re-export removed, DynamicReviewListByProduct ssr:false dropped (3f948bf), build clean; PRs still pending
 
 ## [2026-05-20] session-end | trip detail 16 fixes + recommend-route all committed; PRs pending — 3-agent review (24 issues) + 4-agent adversarial deep review (8 hidden); 10 quick-wins (3f35d8c) + 6 deferred fixes (0bf038d); recommend-route frontend (2434124) + backend (3e49644) committed; PRs not opened yet
