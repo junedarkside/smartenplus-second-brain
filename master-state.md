@@ -17,7 +17,7 @@
 
 **Next session resume:**
 1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI)
-2. Loose end #6: breadcrumb deduplication (35 files, 10 patterns → standardise to Pattern 2)
+2. Loose end #6: breadcrumb dedup — plan ready in `03-knowledge/breadcrumb-dedup-plan-2026-05-20.md`. New branch `260520-refactor/breadcrumb-dedup`. GROUP B first (10 files), then C (4), then D (2). 3 commits.
 
 ### Active Branches
 

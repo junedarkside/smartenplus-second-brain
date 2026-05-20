@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] ingest | breadcrumb-dedup-plan-2026-05-20.md — 16 files across 3 groups; GROUP B (10 section/div), GROUP C (4 padding-only), GROUP D (2 section/py-0); 8 already correct; 5 skipped (context-dependent)
+
 ## [2026-05-20] session-end | blog index 2 fixes (1e34601) + HMR hot-update 404 fix (b56d62a) — H1 visible on mobile, Load More filled button, next.config.js Cache-Control narrowed to chunks/css only; PRs still pending
 
 ## [2026-05-20] session-end | build errors fixed + ssr:false removed + reviewer artifact deleted — calculateAge exported (96c9c10), dead getStaticProps re-export removed, DynamicReviewListByProduct ssr:false dropped (3f948bf), build clean; PRs still pending
