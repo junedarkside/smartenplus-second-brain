@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-20] session-end | hydration infinite refresh fixed — 4 files (_app.js dual-tree, PopularRoutesStructuredData Date.now, GridComponent useCallback, CurrencyContext useMemo); agent ~55% accuracy; backend+frontend still uncommitted on 260520-update/recommend-route
+
 ## [2026-05-20] session-end | forex 429 fix (backend c859f3b + frontend ff1f378) + admin HeroBanner UI committed (d3194d8); all 4 repos clean + pushed
 
 ## [2026-05-20] session-end | blog perf/SEO round 2 (6b655d6) — parallel fetches, image fixes, HMR infinite loop fixed; admin HeroBanner UI still uncommitted

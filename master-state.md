@@ -6,19 +6,22 @@
 
 **Updated:** 2026-05-20
 **Achieved this session:**
-- Forex 429 fix: backend `throttle_classes = []` on `OmiseForexViewSet` (`c859f3b`) + frontend CurrencyProvider deduplicated mount + dead import removed (`ff1f378`)
-- Specialist team (backend-reviewer, frontend-reviewer) verified root causes: double-mount from `isClient` ternary, anon throttle 500/hr, no auth token
-- Custom TTL cache rejected — project uses RTK Query for API caching, not hand-rolled TTL
-- Admin HeroBanner UI committed + pushed (`d3194d8`) — CRUD page, form, RTK Query API
-- Recommend-route review: 3-agent team audited backend, frontend, validation gaps. 20 items found across P0-P3.
-- Backend changes (uncommitted): HomeSerializer extended (slug, query_count, lowest_price, operator_count), HomeViewSet active contract filter, Celery beat schedule for query_count (weekly), db_index migration
-- Frontend changes (uncommitted): GridComponent price/operator display, BaseGridComponent Tailwind fix + callback passthrough, PopularRoutesSection fixes, deleted dead OptimizedPopularRoutesGrid, deduplicated route constants, structured data fix, routeUtils dead code fix
+- Hydration error + infinite page refresh diagnosed and fixed (4 files)
+- `PopularRoutesStructuredData.js` — `Date.now()` in render → module-level `PRICE_VALID_UNTIL` constant
+- `GridComponent.js` — `renderTripItem` wrapped in `useCallback([locationImg])` → fixes `memo()` bypass
+- `pages/_app.js` — removed `isClient` dual JSX tree → single `PersistGate loading={null}` tree (eliminates all-page hydration mismatch)
+- `components/contexts/CurrencyContext.js` — `value` wrapped in `useMemo` → stops unnecessary consumer re-renders
+- 3-agent investigation team deployed: SSR specialist + provider specialist + router specialist. Leader filtered ~40% false positives before accepting findings.
 
 **In-progress / not committed:**
-- Backend: 4 modified files + 1 new migration (all uncommitted on `260520-update/recommend-route`)
-- Frontend: 7 modified/deleted files (all uncommitted on `260520-update/recommend-route`)
+- Frontend: 9 modified/deleted files uncommitted on `260520-update/recommend-route`
+- Backend: 4 modified files + 1 new migration uncommitted on same branch
 
-**Next session resume:** Frontend hydration error still occurring on `npm run dev` after popular routes changes. Causes infinite page refresh. Root cause likely in BaseGridComponent or GridComponent changes. Files: `BaseGridComponent.js`, `GridComponent.js`, `PopularRoutesSection.js`. Backend changes verified working — API returns new fields correctly.
+**Next session resume:**
+1. `npm run dev` → verify infinite refresh gone on all pages
+2. If clean → commit frontend (all 9 files) + backend (4 files + migration) together
+3. Open PR for `260520-update/recommend-route` → main
+4. Then tackle loose end #7 (pre-existing build errors blocking clean build)
 
 ### Active Branches
 
@@ -37,12 +40,14 @@
 - `products/models.py` — `db_index=True` on Route.query_count
 - `products/migrations/0008_add_query_count_index.py` — new migration
 
-**Frontend** (6 modified + 1 deleted):
+**Frontend** (8 modified + 1 deleted):
 - `components/UI/BaseGridComponent.js` — Tailwind static COL_MAP + callback passthrough via renderItem
-- `components/UI/GridComponent.js` — price/operator display + article click/hover handlers
-- `lib/homepage/components/PopularRoutesSection.js` — reverted require() fix, locationImg=false, callbacks
-- `lib/homepage/components/PopularRoutesStructuredData.js` — Place type + price in offers
+- `components/UI/GridComponent.js` — price/operator display + useCallback on renderTripItem
+- `components/contexts/CurrencyContext.js` — useMemo on value object
+- `lib/homepage/components/PopularRoutesSection.js` — locationImg=false, callbacks
+- `lib/homepage/components/PopularRoutesStructuredData.js` — PRICE_VALID_UNTIL constant, Place type + price in offers
 - `helpers/routeUtils.js` — fixed dead Bangkok check
+- `pages/_app.js` — removed isClient dual-tree, single PersistGate tree
 - `pages/trips/[...slug].js` — imports PROVEN_POPULAR_ROUTES from routeConstants
 - `lib/homepage/components/OptimizedPopularRoutesGrid.js` — DELETED (dead code)
 
@@ -62,26 +67,20 @@
 | 6 | Breadcrumb container duplication across 29 pages | Tech debt — 7 different wrapper patterns | All pages using StandardBreadcrumb |
 | 7 | Pre-existing build errors: `calculateAge` import + `getStaticProps` re-export | Blocks clean build | `helpers/checkout/passengerValidationHelper.js`, `pages/trips/detail/index.js` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 9 | Frontend hydration error + infinite refresh after popular routes changes | Blocks recommend-route feature | `BaseGridComponent.js`, `GridComponent.js`, `PopularRoutesSection.js` |
-| 10 | Recommend-route backend changes uncommitted | Needs frontend fix first | `products/views.py`, `products/serializers.py`, `Smartenplus/celery.py` |
-| 11 | Recommend-route review: P2-P3 items not started | After hydration fix | See review report |
+| 10 | Recommend-route: all changes uncommitted | Test `npm run dev` first, then commit | Frontend 9 files + Backend 4 files + migration |
+| 11 | Recommend-route review: P2-P3 items not started | After commit + PR | See review report |
 
 ### Recently Closed
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Hydration error + infinite page refresh (all pages) | 4-file fix: `Date.now()` constant, `useCallback` on renderTripItem, `_app.js` single PersistGate tree, `useMemo` on CurrencyProvider value | 2026-05-20 |
 | Forex 429 Too Many Requests: double CurrencyProvider mount + anon throttle | Backend `throttle_classes = []` (`c859f3b`), frontend lifted CurrencyProvider outside ternary (`ff1f378`) | 2026-05-20 |
 | Blog perf/SEO round 2: parallel fetches, mediaDetails, twitter:creator, sizes, gravatar, stable fn ref, ssr:true breadcrumb | `6b655d6` | 2026-05-20 |
 | Blog HMR infinite loop: module-level require() + useEffect([blogPost]) object ref deps | `6b655d6` getDOMPurify() fn + [blogPost?.databaseId] dep | 2026-05-20 |
-| Blog SEO: wrong canonical domain, Article→BlogPosting, missing fields | `0f38cf8` getSiteUrl(), schema fixes, og:locale, robots meta | 2026-05-19 |
-| Blog perf: LCP (featured card lazy), CLS (no aspect ratio), useMemo, ISR | `0f38cf8` priority prop, aspect-video, useMemo([posts]), revalidate 300 | 2026-05-19 |
-| Breadcrumb + CategoryMenu tech debt fixed | `b27cbfb` alignment, icon, label, spacing consistency | 2026-05-19 |
-| UI consistency across 41 files committed | `911df1d` blog, breadcrumbs, AccountLayout, listing pages | 2026-05-19 |
-| Hero Banner CMS backend committed | `37c9177` feat(pages_info): FileField+AVIF fix, /hero-banners/ CRUD | 2026-05-19 |
-| Contract_TranspotComposit crash (sentinel id=-1) | `id <= 0` → `create()`, positive → `get_or_create()` | 2026-05-19 |
-| Expiry notification not sent | `_send_payment_failed_notifications` added to 3 expiry paths | 2026-05-18 |
-| PromptPay expire → 503/409 loop | Trust `.expire()` result, no re-fetch. `ExpirePendingChargeView` | 2026-05-16 |
-| Method-switch → 409 (C3 before C3b) | C3b runs first, resets `locked_amount` | 2026-05-16 |
+| Blog SEO: wrong canonical domain, Article→BlogPosting, missing fields | `0f38cf8` | 2026-05-19 |
+| Breadcrumb + CategoryMenu tech debt fixed | `b27cbfb` | 2026-05-19 |
+| Hero Banner CMS backend committed | `37c9177` | 2026-05-19 |
 
 ---
 
