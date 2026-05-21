@@ -6,17 +6,19 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Vault: atomic notes system + `/lint-vault` first run — 6 atoms extracted (`78d26fc`)
-- Frontend: `useTripSEO.js:321` USD `/30` hardcode → THB (`49e6f17`) — branch `260521-fix/trip-seo-usd-hardcode` pushed, PR open
-- Frontend: carousel PR merged to main (`edccb75`)
+- Homepage full UX/UI review: 3-agent team, 11 sections, 4 critical + 34 major + 15 minor issues documented
+- `/scrutinize` pass on review doc: 3 corrections applied (IATA claim wrong, DOMPurify SSR risk, help link relative URL also broken at line 46)
+- Vault: `homepage-ux-review-2026-05-21.md` created in `01-projects/`, index + log updated (52 pages)
 
 **In-progress / not done:**
-- PR `260521-fix/trip-seo-usd-hardcode` → needs merge to main
-- Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
+- PR `260521-fix/trip-seo-usd-hardcode` → still needs merge to main
+- Homepage fixes not yet implemented — review doc is the backlog
 
 **Next session resume:**
 1. Merge `260521-fix/trip-seo-usd-hardcode` PR → main
-2. Issue #1: Reviews section bg color design decision
+2. P0: XSS fix in `ReviewFirstPage.js:185` — use `isomorphic-dompurify` or sanitize on backend
+3. P1: Move Reviews to position 5 in `homepagev2.js` (reorder ~10 min)
+4. P1: Add inline search validation errors to `ProductSearchForm2.js` / `homepagev2.js`
 
 ### Active Branches
 

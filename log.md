@@ -2,6 +2,9 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] session-end | homepage UX/UI review (3-agent, 11 sections) + scrutinize corrections applied — vault 52 pages, frontend on 260521-fix/trip-seo-usd-hardcode PR open
+## [2026-05-21] scrutinize | homepage-ux-review — 3 corrections: IATA claim wrong (capitalizeWords preserves uppercase), DOMPurify SSR risk (use isomorphic-dompurify), help links also missing leading slash (line 46, not just forum line 83)
+## [2026-05-21] ingest | homepage-ux-review — 3-agent UX/UI review, 11 sections, 4 critical (XSS, hero VP, search validation, location title) + 34 major + 15 minor; section reorder recommended
 ## [2026-05-21] session-end | useTripSEO USD /30 hardcode fixed (49e6f17) — PR open on 260521-fix/trip-seo-usd-hardcode
 ## [2026-05-21] session-end | /lint-vault first run — 6 atoms extracted; vault 51 pages, all 3 repos clean on main
 ## [2026-05-21] lint | /lint-vault run — 6 atoms extracted: payment-sentinel-idempotency, nextauth-session-shape, cart-reprovision-after-reset, promptpay-no-webhook-on-expiry, nextjs-isr-ratecard-empty-array-guard, nextjs-307-vs-301-product-reclassify
