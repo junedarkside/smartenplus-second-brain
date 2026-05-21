@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] session-end | useTripSEO USD /30 hardcode fixed (49e6f17) — PR open on 260521-fix/trip-seo-usd-hardcode
 ## [2026-05-21] session-end | /lint-vault first run — 6 atoms extracted; vault 51 pages, all 3 repos clean on main
 ## [2026-05-21] lint | /lint-vault run — 6 atoms extracted: payment-sentinel-idempotency, nextauth-session-shape, cart-reprovision-after-reset, promptpay-no-webhook-on-expiry, nextjs-isr-ratecard-empty-array-guard, nextjs-307-vs-301-product-reclassify
 ## [2026-05-21] session-end | atomic notes system shipped — auto-atomize in wrap-up + /lint-vault command; vault bd2fc03 pushed

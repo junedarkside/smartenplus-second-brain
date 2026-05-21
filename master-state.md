@@ -6,29 +6,23 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Vault: atomic notes system (`bd2fc03`) — auto-atomize step in wrap-up + `/lint-vault` command
-- Vault: `/lint-vault` first run (`5cdc54b`) — 6 atoms extracted:
-  - `payment-sentinel-idempotency` — timestamp sentinel pattern
-  - `nextauth-session-shape` — session.user.email gotcha
-  - `cart-reprovision-after-reset` — resetCart + createCart pattern
-  - `promptpay-no-webhook-on-expiry` — PP/MB expiry blind spot
-  - `nextjs-isr-ratecard-empty-array-guard` — `??` vs `[]` revenue risk
-  - `nextjs-307-vs-301-product-reclassify` — intentional 307 rationale
-- Frontend: carousel PR merged to main (`edccb75`) — develop + main in sync
+- Vault: atomic notes system + `/lint-vault` first run — 6 atoms extracted (`78d26fc`)
+- Frontend: `useTripSEO.js:321` USD `/30` hardcode → THB (`49e6f17`) — branch `260521-fix/trip-seo-usd-hardcode` pushed, PR open
+- Frontend: carousel PR merged to main (`edccb75`)
 
 **In-progress / not done:**
+- PR `260521-fix/trip-seo-usd-hardcode` → needs merge to main
 - Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
-- Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` — cosmetic SEO accuracy
 
 **Next session resume:**
-1. Issue #1: Reviews section bg color design decision
-2. Residual H2: fix `/30` hardcode in `hooks/useTripSEO.js:321`
+1. Merge `260521-fix/trip-seo-usd-hardcode` PR → main
+2. Issue #1: Reviews section bg color design decision
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `edccb75` Popular Routes image carousel |
+| `smartenplus-frontend` | `260521-fix/trip-seo-usd-hardcode` | `49e6f17` FAQ schema THB fix — PR open |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
@@ -51,7 +45,7 @@
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
 | 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | Cosmetic SEO — low priority | hooks/useTripSEO.js |
+| 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | DONE `49e6f17` — PR open, pending merge | hooks/useTripSEO.js |
 | 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
 
 ### Recently Closed (this session addition)
