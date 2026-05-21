@@ -6,22 +6,21 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Header/footer container alignment with hero section (`e67379f`)
-  - Both aligned to `max-w-[1200px]` matching hero
-  - Responsive padding: `px-2 md:px-3 xl:px-0` (padding only on small screens)
-  - MUI Toolbar padding override with `!important`
-  - Removed `edge="start"` from hamburger (negative margin was pulling icon past padding)
-- Header icon size normalization
-  - HelpOutline: wrapped in IconButton (was raw icon in Link)
-  - ProfileButton: normalized to 24px + IconButton (was 40px in 32px div)
-  - CartButton: removed oversized 50x50 container
+- Popular Routes section — replaced text pill cards with responsive image carousel (`edccb75`)
+  - Extracted `CardCarouselContainer` (reusable Embla + static grid, now used by BlogCardContainer too)
+  - New `PopularRouteImageCard` matching BlogCard pattern: h-220px, gradient overlay, fill image
+  - Refactored `BlogCardContainer` as thin wrapper over `CardCarouselContainer` (no duplication)
+  - `PopularRoutesCarousel`: gridCols=4, carouselBreakpoint=lg (tablet stays carousel)
+  - 4 routes shown: mobile min-w-220px (~1.7 peek), tablet min-w-300px (~2.5 peek), desktop 4-col grid
+  - Branch: `260521-feat/popular-routes-image-carousel` — pushed, PR open
 
 **In-progress / not done:**
+- PR `260521-feat/popular-routes-image-carousel` → needs merge to develop → main
 - Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
 - Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` — cosmetic SEO accuracy
 
 **Next session resume:**
-1. Merge `260521-fix/footer-container-width` → develop → main
+1. Merge `260521-feat/popular-routes-image-carousel` PR → develop → main
 2. Issue #1: Reviews section bg color design decision
 3. Residual H2: fix `/30` hardcode
 
@@ -29,12 +28,13 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `e67379f` header/footer alignment + icon normalization — clean |
+| `smartenplus-frontend` | `260521-feat/popular-routes-image-carousel` | `edccb75` Popular Routes image carousel — pushed, PR open |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
 ### Uncommitted
-- All 3 repos: clean
+- frontend: `.agents/` + `.claude/skills/` deletions + `CLAUDE.md` (tooling churn, not feature work — leave unstaged)
+- backend + admin-dashboard: clean
 
 ---
 
