@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] ingest | atomic-notes system — auto-atomize on wrap-up (Step 5) + /lint-vault command; atomic-note template + atomic-notes rules doc created
 ## [2026-05-21] session-end | Popular Routes image carousel (edccb75) — CardCarouselContainer extracted, BlogCardContainer refactored, 4-card responsive layout pushed to PR
 ## [2026-05-21] session-end | header/footer alignment + icon normalization merged to develop→main (e67379f). All 3 repos clean on main.
 ## [2026-05-21] session-end | trip detail H3 fix — fetchData 8s timeout for blocking fallback SSR (c39f83c) + H1/H2 verified already fixed — merged to develop + main

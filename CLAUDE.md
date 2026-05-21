@@ -125,6 +125,25 @@ At the start of every session when working on SmartEnPlus vault:
 
 5. **Acknowledge and wait** — do not proceed until user gives instructions
 
+## /lint-vault Command
+
+**Trigger:** user types `/lint-vault`
+
+**Steps:**
+1. Read all notes in `01-projects/` and `03-knowledge/` over 150 lines
+2. Identify extractable atomic concepts per [[atomic-notes]] rules
+3. **Propose list to user BEFORE writing any files:**
+   ```
+   payment-system.md → locked-amount-reset-rules.md, payment-finalized-at-guard.md
+   nextjs-patterns.md → nextjs-ssr-disabled-checkout.md
+   ```
+4. User confirms or excludes items
+5. Extract confirmed atoms, update source notes, update `index.md`
+6. Append to `log.md`: `## [YYYY-MM-DD] lint | atomized N concepts from M notes`
+7. Commit + push vault
+
+---
+
 ## Session Wrap-Up Protocol
 
 **Auto-triggers** (execute immediately, no confirmation needed):
@@ -137,8 +156,13 @@ At the start of every session when working on SmartEnPlus vault:
 2. **Rewrite `master-state.md` Section 1** — achieved / broken / in-progress / exact resume point (file + function + step)
 3. **Update `master-state.md` Section 2** — close resolved items, add new bugs/edge cases
 4. **Leave Sections 3 and 4 unchanged** unless API contract or guardrail permanently changed
-5. **Append to `log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
-6. **Commit + push vault** — stage all changes and push to GitHub:
+5. **Atomize new knowledge** — for each note written or heavily modified this session:
+   a. Scan for concepts that are standalone, linkable, and reusable (see [[atomic-notes]])
+   b. Qualifies → extract to `03-knowledge/{domain}-{concept}.md` using `[[atomic-note]]` template, replace source content with 2-line summary + `[[wikilink]]`, add to `index.md`
+   c. Already atomic or doesn't qualify → skip
+   d. Max 5 atoms per session (prevents over-extraction noise)
+6. **Append to `log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
+7. **Commit + push vault** — stage all changes and push to GitHub:
    ```bash
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" add -A
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" commit -m "session-end: <one-line summary>"

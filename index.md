@@ -65,10 +65,12 @@ Global navigation catalog. Updated on every ingest.
 ## Decisions
 
 - [[adr-template]] — Architecture Decision Record template
+- [[atomic-note]] — Single-concept note template for extracted atoms
 
 ## Systems
 
 - [[ingestion-workflow]] — How to ingest sources into the vault
+- [[atomic-notes]] — Rules for extracting single-concept notes; used by wrap-up atomize step + /lint-vault
 
 ## Templates
 
@@ -80,5 +82,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 43
-- Last updated: 2026-05-20 (mui-tailwind-css-specificity.md — MUI+Tailwind CSS specificity conflict documented)
+- Pages: 45
+- Last updated: 2026-05-21 (atomic-notes.md + atomic-note template — auto-atomize on wrap-up + /lint-vault command)
