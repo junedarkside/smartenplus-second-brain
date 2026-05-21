@@ -6,26 +6,28 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Created branch `260520-update/frontpage` on frontend
-- Section card style consistency: `rounded sm:rounded-lg mx-2 md:mx-3 xl:mx-0 overflow-hidden` applied to all homepage sections via `ContentCard`, `ThailandTravel`, `SectionContainer`, `ReviewsSection`, `CustomerServiceSection` (`9cc4e69`)
-- Footer: `bg-fb-blue` full-width, white/light text throughout, badges inverted (white bg + blue text), Naver icon `brightness(0) invert(1)` filter, `mt-2` gap, single bg color (`5bcadfc`)
-- Branch pushed to origin, PR link available on GitHub
+- Footer inner container typo fix: `items-centerw-full` → `items-center w-full` (`06ccca1`)
+- Homepage full consistency audit — 11 sections scanned top→bottom
+- Check Your Booking section: heading, icon color, form button all aligned to brand (`0bd8762`)
+- Homepage issues 2/3/4 fixed: Reviews error button color, Guides double-nav `<a>`→`<Link>`, hero stray `b` class (`8048923`)
+- Design system sync: `BUTTON_CONFIG.primary.hover`, `INPUT_CONFIG.focus`, added `HOMEPAGE_SECTION` export, fixed wrong hex values in all 3 design docs (`532b7bb`)
+- Branch `260520-update/frontpage` merged → develop → main. All clean.
 
 **In-progress / not done:**
-- `260520-update/frontpage` not merged to main yet — PR open on GitHub
 - Loose end #11: recommend-route review P2-P3 items (not started)
+- Issue #1 deferred: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
 
 **Next session resume:**
-1. Merge `260520-update/frontpage` PR → main
-2. Loose end #11: recommend-route P2-P3 items (if user wants)
+1. Loose end #11: recommend-route P2-P3 items (if user wants)
+2. Issue #1: Reviews section bg color — check design decision
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260520-update/frontpage` | `5bcadfc` — clean |
-| `smartenplus-backend` | `main` | `3e49644` recommend-route backend |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
+| `smartenplus-frontend` | `main` | `0ae6159` merge 260520-update/frontpage → develop — clean |
+| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
 ### Uncommitted
 - All 3 repos: clean
@@ -52,6 +54,12 @@
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Footer inner container `w-full` never applied (typo) | `06ccca1` space fix | 2026-05-21 |
+| Check Your Booking: off-brand heading/icon/button colors | `0bd8762` aligned to design system | 2026-05-21 |
+| Reviews error button `text-blue-600` (wrong blue) | `8048923` → `text-fb-blue` | 2026-05-21 |
+| Guides "and more" link double-navigation (`<a>` + `router.push`) | `8048923` → `<Link>` | 2026-05-21 |
+| Hero header stray `b` class (dead typo) | `8048923` removed | 2026-05-21 |
+| Design system wrong hex values + stale button/input configs | `532b7bb` synced to reality | 2026-05-21 |
 | Forum table overflow — no max-width constraint | `713468e` added max-w-[1200px] to table section + ranking aside | 2026-05-20 |
 | Breadcrumb dedup — 7 different wrapper patterns across 29 pages | `61c5aeb` merged 3 commits, 16 files standardized, -22 lines | 2026-05-20 |
 
