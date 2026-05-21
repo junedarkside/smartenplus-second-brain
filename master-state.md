@@ -6,27 +6,26 @@
 
 **Updated:** 2026-05-21 (session end)
 **Achieved this session:**
-- Homepage P1 fixes: hero subheadline + 500px mobile height, fake rating fallback → '—', Locations title fix → merged `260521-fix/homepage-p1-remaining`
-- Homepage P2 accessibility: duplicate `<main>` x2, ThailandTravel ARIA + tablet visibility, CarouselArrowButtons aria-label, CustomerService heading/URLs/article landmarks → merged `260521-fix/homepage-p2-accessibility`
-- Homepage P3 UX: route card permanent underline, airport "View routes" + IATA uppercase, LocationsSection error message, AirportTransfer error guard, BookingRetrievalForm helper text + dynamic id, BookingEmptyState correct ID format (ABC1234567) → merged `260521-fix/homepage-p3-ux`
-- Caught and corrected wrong booking ID copy ("BK" prefix) — real format confirmed from backend utils.py: 3 letters + 7 digits
+- Confirmed homepage UX/UI review doc fully cleared through P3 (all P0/P1/P2/P3 done in prior sessions)
+- Reviewed open master-state items with user — #1 (trip-seo-usd-hardcode → main) user handling manually
 
 **In-progress / not done:**
-- PR `260521-fix/trip-seo-usd-hardcode` → still needs merge to main
+- #1 `260521-fix/trip-seo-usd-hardcode` → user merging to main manually
 - P4 design system tokens deferred (low ROI)
 - P3 deferred: #12 readOnly inputs (functional), #14 carousel dots
 
 **Next session resume:**
-1. Merge `260521-fix/trip-seo-usd-hardcode` PR → main
-2. P4 design system if needed, otherwise move to other work
+1. Confirm #1 merged to main
+2. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` in `orders/models.py`
+3. Backend #2 — `AdminBookingSummaryViewSet` auth decision + frontend sign-off
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `4a72487` merge homepage-p3-ux — clean (.agents/.claude churn unstaged) |
-| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean (.claude churn unstaged) |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean (.claude churn unstaged) |
+| `smartenplus-frontend` | `develop` | `4a72487` merge homepage-p3-ux — .agents/.claude churn unstaged |
+| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — .claude churn unstaged |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — .claude churn unstaged |
 
 ### Uncommitted
 - All 3 repos: `.agents/` + `.claude/` tooling churn — leave unstaged

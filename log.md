@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] session-end | homepage UX/UI review doc fully cleared P0-P3; #1 trip-seo→main user handling; next: backend #4 locked_amount constraint
 ## [2026-05-21] session-end | homepage P1+P2+P3 fixes complete — 3 branches merged to develop, booking ID format corrected (ABC1234567 not BK prefix), P4 deferred
 ## [2026-05-21] session-end | homepage UX/UI review (3-agent, 11 sections) + scrutinize corrections applied — vault 52 pages, frontend on 260521-fix/trip-seo-usd-hardcode PR open
 ## [2026-05-21] scrutinize | homepage-ux-review — 3 corrections: IATA claim wrong (capitalizeWords preserves uppercase), DOMPurify SSR risk (use isomorphic-dompurify), help links also missing leading slash (line 46, not just forum line 83)
