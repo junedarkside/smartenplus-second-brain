@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] session-end | trip detail quick-wins — 9/10 already done, 2 applied (console.log→warn, dead __dataSource branch) — b866f6c on 260521-fix/trip-detail-quickwins, not yet merged
 ## [2026-05-21] session-end | homepage full consistency audit + design system sync — 6 fixes (footer typo, booking section brand colors, Guides double-nav, Reviews error color, hero stray class, design system hex/config) — 260520-update/frontpage merged to develop + main
 ## [2026-05-21] session-end | frontpage style consistency — section card rounded+margin+overflow-hidden, footer bg-fb-blue full-width, 2 commits pushed on 260520-update/frontpage
 ## [2026-05-20] session-end | help icon mobile fix round 2 (revert MUI sx → Tailwind div), vault updated with Emotion cache provider lesson
