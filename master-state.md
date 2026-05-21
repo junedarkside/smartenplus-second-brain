@@ -6,32 +6,35 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Trip detail H1/H2/H3 deep fix verification — team of 3 agents
-  - H1 ratecard guard: already fixed
-  - H2 ISO8601 schema: already fixed (residual: USD `/30` hardcode in FAQ schema — cosmetic only)
-  - H3 fetch timeout: REAL BUG — fixed (`c39f83c`)
-    - `fetchData.js` — added optional `timeout` param (default 0, backward compat)
-    - `getStaticProps` trip detail — passes 8000ms timeout, fires notFound gracefully
-- Branch `260521-fix/trip-detail-quickwins` merged → develop → main. All clean.
+- Header/footer container alignment with hero section (`e67379f`)
+  - Both aligned to `max-w-[1200px]` matching hero
+  - Responsive padding: `px-2 md:px-3 xl:px-0` (padding only on small screens)
+  - MUI Toolbar padding override with `!important`
+  - Removed `edge="start"` from hamburger (negative margin was pulling icon past padding)
+- Header icon size normalization
+  - HelpOutline: wrapped in IconButton (was raw icon in Link)
+  - ProfileButton: normalized to 24px + IconButton (was 40px in 32px div)
+  - CartButton: removed oversized 50x50 container
 
 **In-progress / not done:**
 - Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
 - Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` — cosmetic SEO accuracy
 
 **Next session resume:**
-1. Issue #1: Reviews section bg color design decision
-2. Residual H2: fix `/30` hardcode — integrate real forex or remove USD from FAQ schema
+1. Merge `260521-fix/footer-container-width` → develop → main
+2. Issue #1: Reviews section bg color design decision
+3. Residual H2: fix `/30` hardcode
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | merged 260521-fix/trip-detail-quickwins — clean |
+| `smartenplus-frontend` | `260521-fix/footer-container-width` | `e67379f` header/footer alignment + icon normalization |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
 ### Uncommitted
-- All 3 repos: clean
+- All 3 repos: clean (untracked .claude/skills/ only)
 
 ---
 
@@ -55,6 +58,7 @@
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| Header/footer container mismatch with hero section + icon inconsistency | `e67379f` max-w-[1200px] alignment, responsive padding, icon normalization | 2026-05-21 |
 | H3 fetchData zero timeout — blocking fallback 500 loop | `c39f83c` 8s timeout param + getStaticProps call | 2026-05-21 |
 | Trip detail `console.log` + dead `__dataSource` ternary | `b866f6c` | 2026-05-21 |
 | Footer inner container `w-full` never applied (typo) | `06ccca1` space fix | 2026-05-21 |

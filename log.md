@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] session-end | header/footer container alignment with hero (max-w-[1200px], responsive padding) + icon size normalization (HelpOutline→IconButton, ProfileButton 24px, CartButton remove 50px) — e67379f on 260521-fix/footer-container-width
 ## [2026-05-21] session-end | trip detail H3 fix — fetchData 8s timeout for blocking fallback SSR (c39f83c) + H1/H2 verified already fixed — merged to develop + main
 ## [2026-05-21] session-end | trip detail quick-wins — 9/10 already done, 2 applied (console.log→warn, dead __dataSource branch) — b866f6c merged to develop + main
 ## [2026-05-21] session-end | homepage full consistency audit + design system sync — 6 fixes (footer typo, booking section brand colors, Guides double-nav, Reviews error color, hero stray class, design system hex/config) — 260520-update/frontpage merged to develop + main
