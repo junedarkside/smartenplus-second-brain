@@ -6,29 +6,34 @@
 
 **Updated:** 2026-05-21 (session end)
 **Achieved this session:**
-- Confirmed homepage UX/UI review doc fully cleared through P3 (all P0/P1/P2/P3 done in prior sessions)
-- Reviewed open master-state items with user — #1 (trip-seo-usd-hardcode → main) user handling manually
+- Confirmed homepage UX/UI review doc fully cleared through P3
+- Created SEO homepage specialist team: agent `seo-homepage-auditor.md` + vault knowledge doc `seo-homepage-specialist-team.md`
+- Agent has 3-specialist sequential workflow (Structured Data → Technical SEO → Page Performance → Leader synthesis)
+- 10 pre-identified SEO gaps baked into checklists (fake phone/address in TravelAgency, stale dates, server-sitemap 404, missing og:locale, CLS from ssr:false form, etc.)
+- Vault index + log updated, pushed to GitHub
 
 **In-progress / not done:**
 - #1 `260521-fix/trip-seo-usd-hardcode` → user merging to main manually
+- SEO team review NOT yet run — agent created but not executed (dev server was not running)
 - P4 design system tokens deferred (low ROI)
-- P3 deferred: #12 readOnly inputs (functional), #14 carousel dots
 
 **Next session resume:**
 1. Confirm #1 merged to main
-2. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` in `orders/models.py`
-3. Backend #2 — `AdminBookingSummaryViewSet` auth decision + frontend sign-off
+2. Run SEO specialist team: `npm run dev` → "run seo team review on homepage"
+3. After report generated: execute P0 fixes (fake phone/address, server-sitemap handler, stale dates)
+4. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `4a72487` merge homepage-p3-ux — .agents/.claude churn unstaged |
+| `smartenplus-frontend` | `develop` | `4a72487` merge homepage-p3-ux — new agent file unstaged (.claude/agents/seo-homepage-auditor.md) |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — .claude churn unstaged |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — .claude churn unstaged |
 
 ### Uncommitted
-- All 3 repos: `.agents/` + `.claude/` tooling churn — leave unstaged
+- frontend: `.agents/` + `.claude/` tooling churn + new `seo-homepage-auditor.md` — leave unstaged (tooling file, not product code)
+- backend + admin: `.claude/` churn — leave unstaged
 
 ---
 
