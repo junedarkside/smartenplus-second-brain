@@ -6,26 +6,27 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Trip detail quick-win audit: 9/10 already done, 2 real fixes applied (`b866f6c`)
-  - `console.log` → `console.warn` (line 450, getStaticProps redirect log)
-  - Dead `'isr'` branch removed from `__dataSource` ternary (line 97, unreachable)
-- Branch `260521-fix/trip-detail-quickwins` — committed, NOT yet merged
+- Trip detail H1/H2/H3 deep fix verification — team of 3 agents
+  - H1 ratecard guard: already fixed
+  - H2 ISO8601 schema: already fixed (residual: USD `/30` hardcode in FAQ schema — cosmetic only)
+  - H3 fetch timeout: REAL BUG — fixed (`c39f83c`)
+    - `fetchData.js` — added optional `timeout` param (default 0, backward compat)
+    - `getStaticProps` trip detail — passes 8000ms timeout, fires notFound gracefully
+- Branch `260521-fix/trip-detail-quickwins` merged → develop → main. All clean.
 
 **In-progress / not done:**
-- `260521-fix/trip-detail-quickwins` not pushed/merged yet
-- Issue #1 deferred: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
-- Loose end #11 CLOSED — all safe quick-wins verified done or applied
+- Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
+- Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` — cosmetic SEO accuracy
 
 **Next session resume:**
-1. Push + merge `260521-fix/trip-detail-quickwins` → develop → main
-2. Issue #1: Reviews section bg color — check design decision
-3. Deep fixes (H1 ratecard guard, H2 ISO8601, H3 fetch timeout) — if user wants
+1. Issue #1: Reviews section bg color design decision
+2. Residual H2: fix `/30` hardcode — integrate real forex or remove USD from FAQ schema
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260521-fix/trip-detail-quickwins` | `b866f6c` trip detail fixes — clean |
+| `smartenplus-frontend` | `main` | merged 260521-fix/trip-detail-quickwins — clean |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
@@ -47,14 +48,15 @@
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
 | 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 11 | Trip detail deep fixes: H1 ratecard guard, H2 ISO8601, H3 fetch timeout | Require testing/verification | trip-detail-deep-review-2026-05-20.md |
+| 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | Cosmetic SEO — low priority | hooks/useTripSEO.js |
 | 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
 
 ### Recently Closed
 
 | Issue | Fix | Date |
 |-------|-----|------|
-| Trip detail `console.log` + dead `__dataSource` ternary | `b866f6c` on 260521-fix/trip-detail-quickwins | 2026-05-21 |
+| H3 fetchData zero timeout — blocking fallback 500 loop | `c39f83c` 8s timeout param + getStaticProps call | 2026-05-21 |
+| Trip detail `console.log` + dead `__dataSource` ternary | `b866f6c` | 2026-05-21 |
 | Footer inner container `w-full` never applied (typo) | `06ccca1` space fix | 2026-05-21 |
 | Check Your Booking: off-brand heading/icon/button colors | `0bd8762` aligned to design system | 2026-05-21 |
 | Reviews error button `text-blue-600` (wrong blue) | `8048923` → `text-fb-blue` | 2026-05-21 |
