@@ -6,13 +6,11 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Popular Routes section — replaced text pill cards with responsive image carousel (`edccb75`)
-  - Extracted `CardCarouselContainer` (reusable Embla + static grid, now used by BlogCardContainer too)
-  - New `PopularRouteImageCard` matching BlogCard pattern: h-220px, gradient overlay, fill image
-  - Refactored `BlogCardContainer` as thin wrapper over `CardCarouselContainer` (no duplication)
-  - `PopularRoutesCarousel`: gridCols=4, carouselBreakpoint=lg (tablet stays carousel)
-  - 4 routes shown: mobile min-w-220px (~1.7 peek), tablet min-w-300px (~2.5 peek), desktop 4-col grid
-  - Branch: `260521-feat/popular-routes-image-carousel` — pushed, PR open
+- Vault: atomic notes system (`bd2fc03`) — auto-atomize step in wrap-up protocol + `/lint-vault` command
+  - `05-templates/atomic-note.md` — single-concept note template
+  - `06-systems/atomic-notes.md` — 3-criteria extraction rules + naming convention
+  - `CLAUDE.md` — Step 5 atomize in wrap-up, `/lint-vault` section added
+  - `index.md` — 2 new entries, stats updated
 
 **In-progress / not done:**
 - PR `260521-feat/popular-routes-image-carousel` → needs merge to develop → main
@@ -22,19 +20,19 @@
 **Next session resume:**
 1. Merge `260521-feat/popular-routes-image-carousel` PR → develop → main
 2. Issue #1: Reviews section bg color design decision
-3. Residual H2: fix `/30` hardcode
+3. Residual H2: fix `/30` hardcode in `hooks/useTripSEO.js:321`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260521-feat/popular-routes-image-carousel` | `edccb75` Popular Routes image carousel — pushed, PR open |
+| `smartenplus-frontend` | `main` | `edccb75` Popular Routes image carousel |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
 ### Uncommitted
 - frontend: `.agents/` + `.claude/skills/` deletions + `CLAUDE.md` (tooling churn, not feature work — leave unstaged)
-- backend + admin-dashboard: clean
+- backend + admin-dashboard: `.claude/agents/` + `CLAUDE.md` churn — leave unstaged
 
 ---
 
