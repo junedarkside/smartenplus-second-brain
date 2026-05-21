@@ -1,9 +1,7 @@
 # Recommendation System
 
 ## Summary
-Product recommendation pre-computation via Celery. Contracts pre-compute 4 recommendation types × 3 limits, cached in Redis with 24h TTL. Signal-based warmup on contract creation. Hourly + nightly batch recomputation.
-
----
+Pre-computation via Celery. 4 recommendation types × 3 limits, cached in Redis (24h TTL). Signal warmup + hourly/nightly batch.
 
 ## Recommendation Types
 
@@ -16,81 +14,41 @@ Product recommendation pre-computation via Celery. Contracts pre-compute 4 recom
 
 **Cache limits:** 8, 12, 20 results per type.
 
----
-
 ## Tasks
 
-### Signal-Based: `precompute_contract_on_create(contract_id)`
-Triggered on `Contract` creation (via signals). Warms cache for new contracts immediately.
-
-Cache keys warmed: `hybrid:8`, `hybrid:12`, `similar:8`. Standard 15-min TTL.
-
----
+### Signal: `precompute_contract_on_create(contract_id)`
+On Contract creation. Warms `hybrid:8`, `hybrid:12`, `similar:8`. 15-min TTL.
 
 ### Hourly: `precompute_popular_contracts()`
-Processes top 100 contracts where `booked_count ≥ 50` OR `daily_counter ≥ 10`.
-
-Queues individual `precompute_contract_recommendations(contract_id)` tasks.
-
----
+Top 100 contracts (`booked_count ≥ 50` OR `daily_counter ≥ 10`). Queues individual tasks.
 
 ### Nightly 2am: `precompute_all_active_contracts()`
-Batch processes all active contracts in batches of 50. Ensures cache is warm for all contracts by morning.
-
----
+All active contracts in batches of 50.
 
 ### Weekly: `update_route_query_counts()`
-Aggregates `QueryLog` (last 1 week) → `Route.query_count`. Updates popularity tracking for all routes.
-
-After run: calls `clear_old_query_logs()` asynchronously.
-
----
+Aggregates `QueryLog` (last 7 days) → `Route.query_count`.
 
 ### Daily 3am: `cleanup_expired_recommendation_cache()`
-Maintenance placeholder. Redis handles TTL automatically. Placeholder for custom cleanup if needed.
-
----
+Placeholder. Redis handles TTL automatically.
 
 ### Maintenance: `clear_old_query_logs()`
-Deletes `QueryLog` records older than 1 week.
-
----
+Deletes `QueryLog` records >1 week.
 
 ### Monitoring: `get_cache_statistics()`
-Samples up to 100 active contracts, checks `recommendations:{id}:hybrid:8` cache key presence. Returns `{total_contracts, cached_contracts, cache_hit_rate, sample_size}`.
-
----
+Samples 100 active contracts, checks cache key presence. Returns `{total_contracts, cached_contracts, cache_hit_rate, sample_size}`.
 
 ## Cache Key Format
-
-```
-recommendations:{contract_id}:{rec_type}:{limit}
-```
-
-Example: `recommendations:42:hybrid:12`
-
-TTL: 24h (pre-computed), 15min (on-demand).
-
----
+`recommendations:{contract_id}:{rec_type}:{limit}`. TTL: 24h (pre-computed), 15min (on-demand).
 
 ## Popular Routes Admin Dashboard
 
-Read-only analytics page showing route popularity by query count. Consumes `GET /admin-dashboard-routes/home/`.
+Read-only analytics page. Route popularity by query count.
 
-### Backend
-
-- **View:** `HomeViewSet` in `products/views.py` — annotates `lowest_price` (min active contract price) + `operator_count` (distinct operators with active contracts). Filters contracts by `is_active=True`.
-- **Serializer:** `HomeSerializer` in `products/serializers.py` — fields: `slug`, `query_count`, `lowest_price`, `operator_count`.
-- **Beat:** weekly `update-route-query-counts` in `celery.py` — aggregates `QueryLog` (last 7 days) → `Route.query_count`.
-- **Migration:** `0008_add_query_count_index.py` — `db_index=True` on `Route.query_count` for sort performance.
-
-### Admin Dashboard
-
-- **Page:** `pages/routemanagement/popular-routes/index.js` — DataGrid, server-side pagination, sorted by `query_count` desc. Columns: rank, route (departure → arrival), query count, lowest price, operator count. Mobile-responsive column reduction.
-- **API:** `getPopularRoutes` endpoint in `store/api/routesApi.js` — `GET /admin-dashboard-routes/home/` with `page` + `page_size` params.
-- **Nav:** Route Management → Popular Routes (`TimelineOutlined` icon), between Routes and Trips.
+**Backend:** `HomeViewSet` in `products/views.py` — annotates `lowest_price` + `operator_count`. `HomeSerializer`: `slug`, `query_count`, `lowest_price`, `operator_count`.
+**Admin:** `pages/routemanagement/popular-routes/index.js` — DataGrid, server-side pagination, sorted `query_count` desc.
+**API:** `getPopularRoutes` in `store/api/routesApi.js` — `GET /admin-dashboard-routes/home/`.
 
 ## Related
-- [[operators]] (Contract model)
-- [[celery-tasks]] (celery task patterns)
-- [[admin-dashboard]] (admin dashboard overview)
+- [[operators]]
+- [[celery-tasks]]
+- [[admin-dashboard]]

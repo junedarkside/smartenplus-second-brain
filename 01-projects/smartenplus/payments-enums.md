@@ -1,13 +1,9 @@
 # Payments — Enums & Constants
 
 ## Summary
-`payments/enums.py` defines payment system constants. `PaymentStatus` drives GatewayCharge state machine. `OmiseMethod` maps all supported Thai payment methods. `REDIRECT_METHODS` frozenset is critical for duplicate charge prevention. `METHOD_EXPIRY` defines charge TTL for QR/redirect methods.
-
----
+`payments/enums.py`. `PaymentStatus` drives GatewayCharge state machine. `OmiseMethod` maps Thai payment methods. `REDIRECT_METHODS` for duplicate charge prevention. `METHOD_EXPIRY` defines charge TTL.
 
 ## PaymentStatus
-Domain statuses for `GatewayCharge`.
-
 ```
 pending → processing → paid
 pending → failed
@@ -16,10 +12,7 @@ paid → refunded
 paid → partial_refunded
 ```
 
----
-
 ## OmiseMethod
-All supported payment methods:
 
 | Constant | Value | Category |
 |---------|-------|----------|
@@ -39,21 +32,12 @@ All supported payment methods:
 | `MB_BBL` | `mobile_banking_bbl` | Mobile banking |
 | `MB_BAY` | `mobile_banking_bay` | Mobile banking |
 
----
-
 ## REDIRECT_METHODS
-Frozenset of all `OmiseMethod` values **except** `PROMPTPAY`.
+Frozenset of all OmiseMethod values **except** `PROMPTPAY`. Redirect methods need user to complete on external page — duplicate pending charge = money lost. PP excluded: inline QR, safe to regenerate.
 
-**Why:** Redirect methods (mobile banking, e-wallets) require user to complete payment on external page. If user retries before completing, duplicate pending charge is created → money lost.
-
-**PromptPay excluded:** inline QR code, safe to regenerate multiple times.
-
-**In `initiate_order_charge`:** Step C3 — block if another PENDING redirect charge exists for same order → 409 `pending_charge_exists`.
-
----
+In `initiate_order_charge`: Step C3 — block if another PENDING redirect charge → 409 `pending_charge_exists`.
 
 ## METHOD_EXPIRY
-Charge TTL (time-to-live) for source-based payments:
 
 ```python
 METHOD_EXPIRY = {
@@ -66,30 +50,19 @@ METHOD_EXPIRY = {
 }
 ```
 
-All others (card, e-wallets) have no expiry — charge completes synchronously or waits for webhook.
+Cards/e-wallets: no expiry (synchronous or webhook). E-wallet stale reconciliation: methods not in `METHOD_EXPIRY` reconciled after 30 min in `sync_pending_charges`. CC/debit excluded (never stale).
 
-**E-wallet stale reconciliation (2026-05-18):** Methods not in `METHOD_EXPIRY` (truemoney, line_pay, alipay, alipay_cn, alipay_hk, kakao_pay, wechat_pay) are reconciled after 30 min in `sync_pending_charges` Celery task. Credit/debit cards excluded (synchronous, never stale).
-
-**In `create_charge()`:** `expires_at` computed as `now() + METHOD_EXPIRY[method]` for methods in dict.
-
----
+In `create_charge()`: `expires_at = now() + METHOD_EXPIRY[method]`.
 
 ## CURRENCY_MIN_AMOUNT
-Minimum chargeable amount per currency:
 
 ```python
 CURRENCY_MIN_AMOUNT = {
-    'THB': Decimal('20.00'),
-    'JPY': Decimal('100'),
-    'SGD': Decimal('1.00'),
-    'MYR': Decimal('1.00'),
+    'THB': Decimal('20.00'), 'JPY': Decimal('100'),
+    'SGD': Decimal('1.00'),  'MYR': Decimal('1.00'),
 }
 ```
 
-Omise rejects charges below minimum. Backend should validate before creating charge.
-
----
-
 ## Related
-- [[payment-system]] (charge creation flow, ExpirePendingChargeView)
-- [[payments-deep-dive]] (create_charge, _to_minor_units)
+- [[payment-system]]
+- [[payments-deep-dive]]

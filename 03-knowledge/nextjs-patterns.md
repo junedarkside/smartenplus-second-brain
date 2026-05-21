@@ -1,84 +1,71 @@
 # Next.js Patterns
 
 ## Summary
-Patterns learned from SmartEnPlus Next.js 14 app. Pages Router, Redux Toolkit, RTK Query, ISR, dynamic imports.
+SmartEnPlus Next.js 14 patterns. Pages Router, Redux Toolkit, RTK Query, ISR, dynamic imports.
 
 ## ISR Cache
-Trip detail pages use `revalidate: 300` (5 min). Cache cleared on deploy via Docker volume cleanup (`smartenplus_next_cache`). Without volume cleanup, ISR persists stale content across deploys.
+Trip detail: `revalidate: 300` (5 min). Deploy clears `smartenplus_next_cache` Docker volume. Without volume cleanup, ISR persists stale across deploys.
 
 ## Dynamic SSR Disable
-`dynamic(() => Promise.resolve(Index), { ssr: false })` for pages that depend on client-side state (cart, auth). Never add `getServerSideProps` to these pages.
+`dynamic(() => Promise.resolve(Index), { ssr: false })` for pages depending on client state (cart, auth). Never add `getServerSideProps` to these.
 
 ## RTK Query
-- `refetchOnMountOrArgChange: false` — prevents 429 on frequently-visited pages
+- `refetchOnMountOrArgChange: false` — prevents 429 on frequent pages
 - `skip` for conditional queries — don't fetch until params ready
-- Transform data in RTK endpoint, not in components
+- Transform data in RTK endpoint, not components
 - `next/image` always, never raw `<img>`
 
-## DatePicker Handling
-Store Date objects in Formik. Format to string ONLY at API boundary. Storing strings in Formik causes comparison bugs and timezone issues.
+## DatePicker
+Store Date objects in Formik. Format to string ONLY at API boundary. Strings in Formik → comparison bugs + timezone issues.
 
-## State Management Rule
-- `useState` — UI-only state (modals, tabs, form inputs)
-- Redux — cross-component state (cart, auth, checkout)
+## State Management
+- `useState` — UI-only (modals, tabs, inputs)
+- Redux — cross-component (cart, auth, checkout)
 - `useMemo` — derived values inline
-- Max 3 prop levels before moving to Redux
+- Max 3 prop levels → move to Redux
 
 ## Component Patterns
 - Named exports only
 - Fetch in parent, pass as props
-- Hook when logic >20 lines or reused across components
+- Hook when logic >20 lines or reused
 - `next/dynamic` + `ssr: false` for heavy components
-- No inline objects/arrays in render (causes re-renders)
+- No inline objects/arrays in render
 
 ## Error Handling
 Helpers return `null` + `console.warn`. Never throw from utilities. Guard clauses at function tops.
 
-## Redux Fallback Props Pattern
-
-Components that read Redux state can show stale/empty data on fresh page load (cold Redux). Pattern: accept URL-derived values as props, use `reduxValue || propValue`. Implemented in `StickySearchBar` (reads `state.location.from_location/to_location`; fallback to `fromSearch`/`toSearch` props from `FilterTripsPage`). `SearchCover` uses same pattern (`fromLocationRedux || initialFromLocation`). Rule: Redux wins when populated; URL/prop is fallback. Never dispatch to Redux just to fix display — pass as prop instead.
+## Redux Fallback Props
+Fresh page load = cold Redux = stale/empty data. Pattern: accept URL-derived props, use `reduxValue || propValue`. `StickySearchBar`: `fromLocationRedux || fromSearch`. `SearchCover`: `fromLocationRedux || initialFromLocation`. Redux wins when populated; URL/prop is fallback.
 
 ## Hydration Error Prevention
 
-Hydration mismatch in a module imported by `_app.js` causes Next.js HMR to reload ALL pages, not just the affected page. Appears as "infinite page refresh across whole project."
+Hydration mismatch in `_app.js` module → Next.js HMR reloads ALL pages ("infinite refresh").
 
 **Rule 1 — No dynamic values in render:**
-`Date.now()`, `new Date()`, `Math.random()` during render = server value ≠ client value = mismatch.
-Fix: move to module-level constant (computed once at module load — same value server + client).
+`Date.now()`, `new Date()`, `Math.random()` during render = server ≠ client = mismatch. Fix: module-level constant.
 ```js
-// BAD — inside component or inline in JSX
-"priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+// BAD — inside component
+"priceValidUntil": new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0]
 // GOOD — module level
-const PRICE_VALID_UNTIL = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+const PRICE_VALID_UNTIL = new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0];
 ```
 
 **Rule 2 — No dual JSX trees via isClient:**
-`isClient ? <TreeA> : <TreeB>` = two different DOM structures = hydration mismatch on every page.
-Fix: use `PersistGate loading={null}` directly — it renders `null` during SSR, then children after rehydration. No mismatch.
-```js
-// BAD
-const [isClient, setIsClient] = useState(false);
-useEffect(() => setIsClient(true), []);
-return isClient ? <PersistGate>...</PersistGate> : <...without PersistGate...>
-// GOOD
-return <PersistGate persistor={persistor} loading={null}>...</PersistGate>
-```
+`isClient ? <TreeA> : <TreeB>` = mismatch. Fix: `<PersistGate persistor={persistor} loading={null}>` directly.
 
 **Rule 3 — Memoize context value objects:**
-`const value = { a, b, c }` inside provider = new object ref every render = all consumers re-render.
-Fix: `useMemo(() => ({ a, b, c }), [a, b, c])`.
+`{ a, b, c }` inside provider = new ref every render. Fix: `useMemo(() => ({ a, b, c }), [a, b, c])`.
 
 **Rule 4 — Memoize render-prop functions:**
-Passing inline function as `renderItem` prop = new ref every render = `memo()` on child is bypassed.
-Fix: wrap in `useCallback` with correct deps.
+Inline `renderItem` prop = new ref = bypasses `memo()`. Fix: `useCallback` with correct deps.
 
 **Rule 5 — useRouter() IS stable:**
-`router` from `useRouter()` returns a stable ref — NOT a new object each render. Safe in useCallback deps. (Common agent hallucination — verify against Next.js docs before removing.)
+Stable ref, NOT new object each render. Safe in useCallback deps.
 
-**Rule 6 — RTK Query refetchOnMountOrArgChange unit:**
-`refetchOnMountOrArgChange: 300` = 300 **seconds** (5 min), NOT milliseconds. Not a re-render loop trigger.
+**Rule 6 — refetchOnMountOrArgChange unit:**
+`300` = 300 **seconds**, NOT milliseconds.
 
-See [[hydration-infinite-refresh-fix-2026-05-20]] for full investigation report.
+See [[hydration-infinite-refresh-fix-2026-05-20]].
 
 ## Related
 - [[architecture]]

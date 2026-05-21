@@ -4,40 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-20
+**Updated:** 2026-05-21
 **Achieved this session:**
-- Deleted `main_js_pattern_review.md` from admin-dashboard (untracked reviewer artifact)
-- Fixed build error #7 (`96c9c10`): exported `calculateAge` in `helpers/dateHelper.js`, replaced `pages/trips/detail/index.js` dead re-export with single `export { default }`
-- Removed unnecessary `ssr: false` from `DynamicReviewListByProduct` (`3f948bf`): reviews now SSR'd + crawlable
-- Blog index #5 partial (`1e34601`): H1 visible on mobile + Load More filled button (featured post style skipped by user)
-- HMR hot-update 404 fix (`b56d62a`): `next.config.js` Cache-Control narrowed from `/_next/static/(.*)` to `/_next/static/(chunks|css)/(.*)` — webpack hot-update files no longer cached as immutable
-- MUI+Tailwind CSS specificity fix (`fc307b1`): hero back/share buttons use `sx={{ color: 'white' }}` instead of Tailwind `text-white`; help icon wrapped for mobile hide
-- Trip detail 4 remaining fixes (`ec850be`): breadcrumb SSR (removed ssr:false), day-tour redirect 308, scroll requestAnimationFrame, reviews double-fetch removed (-26 lines)
-- Help icon mobile fix (`a0e7aea`): MUI `Box` with `sx={{ display: { xs: 'none', md: 'block' } }}` — Tailwind hidden/md:block unreliable
-- Help icon mobile fix round 2: reverted MUI Box sx → Tailwind `hidden md:block` div wrapper. MUI sx responsive breakpoints fail without Emotion cache provider in `_app.js`
-- Breadcrumb dedup merged to develop (`61c5aeb`): 3 commits, 16 files, -22 lines. Rebased onto develop with forum fix
-- MUI+Tailwind knowledge doc: `03-knowledge/mui-tailwind-css-specificity.md`
-- Forum table width fix (`713468e`): table + ranking aside constrained to `max-w-[1200px]`
-- All 3 repos merged to develop, frontend pushed to origin
+- Created branch `260520-update/frontpage` on frontend
+- Section card style consistency: `rounded sm:rounded-lg mx-2 md:mx-3 xl:mx-0 overflow-hidden` applied to all homepage sections via `ContentCard`, `ThailandTravel`, `SectionContainer`, `ReviewsSection`, `CustomerServiceSection` (`9cc4e69`)
+- Footer: `bg-fb-blue` full-width, white/light text throughout, badges inverted (white bg + blue text), Naver icon `brightness(0) invert(1)` filter, `mt-2` gap, single bg color (`5bcadfc`)
+- Branch pushed to origin, PR link available on GitHub
 
 **In-progress / not done:**
-- PRs not opened for all 3 repos on `260520-update/recommend-route` (user skipped — do via GitHub web)
+- `260520-update/frontpage` not merged to main yet — PR open on GitHub
+- Loose end #11: recommend-route review P2-P3 items (not started)
 
 **Next session resume:**
-1. Open PRs: `260520-update/recommend-route` → `develop` on all 3 repos (GitHub web UI) — if needed
-2. Loose end #11: recommend-route review P2-P3 items
-3. Push `develop` to deploy
+1. Merge `260520-update/frontpage` PR → main
+2. Loose end #11: recommend-route P2-P3 items (if user wants)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `713468e` + uncommitted help icon revert |
-| `smartenplus-backend` | `develop` | merged recommend-route |
-| `admin-dashboard` | `develop` | merged recommend-route |
+| `smartenplus-frontend` | `260520-update/frontpage` | `5bcadfc` — clean |
+| `smartenplus-backend` | `main` | `3e49644` recommend-route backend |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
-- `smartenplus-frontend`: `components/layout/main-header.js` modified (reverted MUI Box sx → Tailwind div wrapper for help icon mobile hide)
+- All 3 repos: clean
 
 ---
 

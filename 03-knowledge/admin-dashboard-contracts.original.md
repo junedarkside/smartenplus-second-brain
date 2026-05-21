@@ -1,6 +1,6 @@
 # Admin Dashboard — Contracts
 
-Contract category management, form flow, payload transformation.
+Contract category management, form flow, and payload transformation.
 
 ## Category Registry
 
@@ -37,7 +37,7 @@ Never hardcode category strings — use helpers:
 - `baggage` — baggage categories (nullable)
 - `toNullableNumber()` — always for Django IntegerFields (empty string = 500)
 - `imageSelection` — passes through transform as-is. Backend reads directly. Do NOT rename to `image_gallery`.
-- **Sentinel ID:** Frontend sends `id: -1` for new unsaved rows. Backend branches on `id > 0` before `get_or_create()`. New → `create()`. Existing → `get_or_create(id=...)`.
+- **Sentinel ID rule:** Frontend sends `id: -1` for new unsaved rows in array fields (`transportComposit`, ratecards, etc.). Backend must branch on `id > 0` before any `get_or_create()` — never pass sentinel as PK. New rows → `create()`. Existing rows → `get_or_create(id=..., ...)`. See [[operators]] Contract_TranspotComposit fix.
 
 ## Image Flow
 
@@ -46,8 +46,9 @@ Formik imageSelection [{id, image}]
   → ImageSelection (container)
     → ProductImages (selected grid — drag reorder, delete, preview)
     → OperatorImages (gallery — add to selection, preview)
-  → transformContractFormValues: imageSelection unchanged
-  → Backend: reads imageSelection → creates/updates ImageGallery records
+  → transformContractFormValues: imageSelection passes through unchanged
+  → Backend update: reads imageSelection from request data
+    → creates/updates ImageGallery records per {id, image, order}
   → Response: image_gallery (read-only, from imagegallery_set)
   → useContractFormData: data?.image_gallery → Formik imageSelection
 ```
@@ -63,5 +64,6 @@ Formik imageSelection [{id, image}]
 - `SettingsInputGroup.js` — Contract type, active toggle
 
 ## Related
+
 - [[operators]] — Operator model, TimeSlot, ContractAddon
 - [[admin-dashboard-image-pipeline]] — Image error reset, dedup helpers

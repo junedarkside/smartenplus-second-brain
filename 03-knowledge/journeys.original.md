@@ -1,7 +1,9 @@
 # Journeys — Analytics Event Tracking
 
 ## Summary
-`UserJourneyEvent` model for analytics + monitoring. Flexible `event_type` + `status` + `metadata`. Reference IDs (cart, order, booking) all indexed. Dedup guard for email via `@log_email_event`.
+`UserJourneyEvent` model tracks user journey events for analytics and monitoring. Flexible event_type + status + metadata. Reference IDs (cart, order, booking) all indexed. Used as dedup guard for email sending via `@log_email_event` decorator.
+
+---
 
 ## Model: UserJourneyEvent
 
@@ -18,18 +20,23 @@
 
 **Fields:**
 - `event_type` (indexed), `status` (indexed)
-- `user` FK (nullable — cart abandonment may have no user)
+- `user` FK (nullable — cart abandonment may have no user, indexed)
 - `metadata` JSONField — flexible event context
 - `cart_id`, `order_id`, `booking_slug` (all indexed)
 - `timestamp` (indexed)
 
-**Indexes:** 6 composite indexes. Ordered by `-timestamp`.
-**Helper:** `metadata_summary` property — extracts key fields from metadata.
+**Indexes:** 6 composite indexes for common query patterns. Ordered by `-timestamp`.
+
+**Helper:** `metadata_summary` property — extracts important keys (to_email, template_name, subject, duration_ms, error, payment_method, amount, etc.) from metadata.
+
+---
 
 ## Usage: Dedup Guard
 
-`@log_email_event(email_type)` decorator checks for existing `UserJourneyEvent` with matching `email_*_sent` event_type. Prevents duplicate sends on task retry.
+`@log_email_event(email_type)` decorator on email tasks checks for existing `UserJourneyEvent` with matching `email_*_sent` event_type. Prevents duplicate email sends on task retry.
+
+---
 
 ## Related
-- [[celery-tasks]]
-- [[orders]]
+- [[celery-tasks]] (dedup guard pattern)
+- [[orders]] (order_id reference)

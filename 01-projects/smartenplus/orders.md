@@ -1,9 +1,7 @@
 # Orders — Order Management
 
 ## Summary
-Orders app manages order lifecycle. Central model: `Order`. Payment model tracks payment records. `WebhookEvent` is audit trail (outside atomic). `ManualAdjustment` replaces legacy admin charge flow. `Coupon` for discounts.
-
----
+Orders app. Central model: `Order`. `Payment` tracks records. `WebhookEvent` audit trail (outside atomic). `ManualAdjustment` replaces legacy admin charge. `Coupon` for discounts.
 
 ## Models
 
@@ -20,99 +18,58 @@ Central order entity. Auto-generates `order_id` via `pre_save_order_field`.
 - `payment_failed → {ordering, canceled}`
 - `canceled → {ordering}` (allows retry)
 
-`clean()` fires on admin saves only. Direct `.save()` bypasses all guards — runtime status changes go through service functions.
+`clean()` fires on admin saves only. Direct `.save()` bypasses guards — runtime changes via service functions.
 
 **Key fields:**
 - `order_id` — auto-generated unique ID
 - `cart` FK — unique constraint: one active `ordering` order per cart
-- `user` FK — nullable for guest checkout
+- `user` FK — nullable for guest
 - `billing_profile` FK — links to billing
-- `status` — current order status
-- `payment_finalized_at` — idempotency guard for `finalize_payment()`. If set, subsequent calls skip.
-- `locked_amount` — freezes charge amount after first QR generated. Enforced at charge creation (Fix 3): if set and ≠ new amount → 409 `amount_locked`.
-- `payment_notification_sent_at` — dedup sentinel for notifications. Atomic `UPDATE WHERE NULL`.
-- `total_decimal` — order total
-- `discount_decimal` — discount amount
-- `coupon` FK — nullable. `times_used` incremented via `F()+1` in `finalize_payment()`.
-- `retry_count` — payment retry counter
+- `payment_finalized_at` — idempotency guard for `finalize_payment()`. If set → skip.
+- `locked_amount` — freezes charge after first QR. Set && ≠ new amount → 409 `amount_locked`.
+- `payment_notification_sent_at` — dedup sentinel. Atomic `UPDATE WHERE NULL`.
+- `total_decimal`, `discount_decimal`, `coupon` FK (nullable, `times_used` via `F()+1`)
+- `retry_count`
 
-**Unique constraints:**
-- `unique_active_ordering_order_per_cart` — one active `ordering` order per cart
-- `order_locked_amount_set_when_payment_pending` — `locked_amount` must be set when status is `payment_pending`
-
----
+**Constraints:** `unique_active_ordering_order_per_cart`, `order_locked_amount_set_when_payment_pending`
 
 ### Payment
-Payment record linked to Order. Legacy model (pre-GatewayCharge).
+Legacy payment record linked to Order.
 
-**Status values:** `created`, `pending`, `authorized`, `captured`, `voided`, `refunded`, `failed`.
+**Status:** `created → pending → authorized → captured → refunded`. `voided/refunded` = terminal. `failed → {pending, voided}`.
 
-**VALID_PAYMENT_TRANSITIONS** (in `clean()`):
-- `created → {pending, failed}`
-- `pending → {authorized, failed, voided}`
-- `authorized → {captured, voided}`
-- `captured → {refunded}`
-- `voided/refunded` — terminal
-- `failed → {pending, voided}`
-
-**Fields:**
-- `payment_id` — auto-generated via `pre_save_payment_field`
-- `payment_method` — e.g., `CC`, `PP`, `MB_SCB`
-- `amount_decimal` — precise decimal amount (preferred)
-- `amount_paid` — legacy string field
-- `currency` (default THB), `currency_rate`
-- `status`
-
-`amount` property: returns `amount_decimal` if set, else converts `amount_paid` string. `set_amount()` sets both fields atomically.
-
----
+`amount` property: `amount_decimal` if set, else converts `amount_paid` string. `set_amount()` sets both atomically.
 
 ### Coupon
-Discount coupons. Full doc at [[coupons]].
-
-Key: `times_used` incremented via `F('times_used') + 1` in `finalize_payment()` — atomic, no race condition.
-
----
+`times_used` incremented via `F('times_used') + 1` in `finalize_payment()` — atomic, no race. Full doc at [[coupons]].
 
 ### PassengerDetail
-Per-order passenger info. Fields: `first_name`, `last_name`, `email`, `phone`, `nationality`, `age_category`.
-
----
+Per-order passenger info. `first_name`, `last_name`, `email`, `phone`, `nationality`, `age_category`.
 
 ### WebhookEvent
-Audit trail for external events (Omise webhooks). Saved **outside `transaction.atomic()`** — survives rollback even if business logic fails.
-
-Fields: `source`, `event_type`, `event_id`, `payload` (JSON). Indexes on `event_id` + `created`.
-
----
+Audit trail for Omise webhooks. Saved OUTSIDE `transaction.atomic()` — survives rollback. Fields: `source`, `event_type`, `event_id`, `payload` (JSON).
 
 ### ManualAdjustment
-Admin-recorded manual charges. Replaces `ExtraItemAction`. Payload: `{ order_id_str, amount, reason, note, extra_item_slug }`. Permission: `IsAdminOrIsStaff`.
-
----
+Admin manual charges. Replaces `ExtraItemAction`. Payload: `{ order_id_str, amount, reason, note, extra_item_slug }`. `IsAdminOrIsStaff`.
 
 ## Lock Order Canonical
 
 **Coupon → Order → BookingItem → TimeSlot**
 
-Write-order guarantee: TimeSlot capacity cannot be oversold because Order must obtain lock before BookingItem confirms.
-
----
+Write-order guarantee: Order must obtain lock before BookingItem confirms → TimeSlot can't oversell.
 
 ## Order Lifecycle
 
-1. `Order` created with `status=ordering` (via `OrderManager.get_or_new()`)
-2. `POST /payments/order-charge/` — `initiate_order_charge()` creates `GatewayCharge`
-3. Payment pending → `status=payment_pending`, `locked_amount` set
-4. Payment confirmed → `finalize_payment(order)` → `order.status='paid'`
-5. Payment failed → `finalize_payment_failed()` → `status=payment_failed` (retryable)
-6. Cancellation → `status=canceled` → can retry (canceled → ordering)
-
----
+1. `Order` created `status=ordering` (via `OrderManager.get_or_new()`)
+2. `POST /payments/order-charge/` → `initiate_order_charge()` creates GatewayCharge
+3. Pending → `status=payment_pending`, `locked_amount` set
+4. Confirmed → `finalize_payment(order)` → `status='paid'`
+5. Failed → `finalize_payment_failed()` → `status=payment_failed` (retryable)
+6. Cancel → `status=canceled` → can retry (`canceled → ordering`)
 
 ## Related
-- [[payment-system]] (finalize_payment, locked_amount, payment_notification_sent_at)
-- [[bookings]] (Order → BookingItem conversion)
-- [[cart]] (Cart → Order conversion)
-- [[coupons]] (Coupon model)
+- [[payment-system]]
+- [[bookings]]
+- [[cart]]
+- [[coupons]]
 - [[backend-architecture]]

@@ -1,7 +1,7 @@
 # Design Systems
 
 ## Summary
-Token-based design system approach. SmartEnPlus uses `helpers/designSystem.js` with `COLORS`, `SPACING`, `BORDER_RADIUS`, `TYPOGRAPHY_SCALE`. Tokens consumed by MUI + Tailwind.
+Token-based design system. `helpers/designSystem.js`: `COLORS`, `SPACING`, `BORDER_RADIUS`, `TYPOGRAPHY_SCALE`. Consumed by MUI + Tailwind.
 
 ## Token Categories
 
@@ -9,34 +9,34 @@ Token-based design system approach. SmartEnPlus uses `helpers/designSystem.js` w
 Semantic naming: primary, secondary, success, warning, error, neutral shades. No raw hex in components.
 
 ### Spacing
-Consistent scale (4px base). `SPACING.xs` through `SPACING.xl`. Prevents arbitrary margin/padding values.
+4px base scale. `SPACING.xs` through `SPACING.xl`. Prevents arbitrary margin/padding.
 
 ### Border Radius
-`BORDER_RADIUS.sm`, `.md`, `.lg`. Consistent rounding across all components.
+`BORDER_RADIUS.sm`, `.md`, `.lg`. Consistent rounding.
 
 ### Typography Scale
-Named sizes: `TYPOGRAPHY_SCALE.body`, `.heading`, `.caption`. Ensures visual hierarchy.
+`TYPOGRAPHY_SCALE.body`, `.heading`, `.caption`. Visual hierarchy.
 
 ## Why Tokens
 - Single source of truth — change token, update everywhere
-- AI-readable — LLM can suggest correct values from token names
-- Prevents design drift — no arbitrary values in components
-- Audit-able — grep for raw hex or magic numbers to find violations
+- AI-readable — LLM suggests correct values from token names
+- Prevents design drift — no arbitrary values
+- Audit-able — grep for raw hex or magic numbers
 
 ## Lessons
-- Start with tokens early, retrofit is expensive
-- Keep token file flat and simple — no computed values
-- MUI theme overrides + Tailwind config should reference tokens, not duplicate values
+- Start with tokens early, retrofit expensive
+- Keep token file flat + simple — no computed values
+- MUI theme overrides + Tailwind config reference tokens, don't duplicate
 
 ## MUI + Tailwind Coordination
 
-MUI components manage their own background/color via theme. Tailwind classes on inner elements only work if MUI doesn't override.
+MUI components manage own bg/color via theme. Tailwind on inner elements only works if MUI doesn't override.
 
-**AppBar:** Always set `color="inherit"` when using Tailwind bg classes. Without it, MUI injects `bgcolor: primary.main` which overrides Tailwind bg.
+**AppBar:** Always `color="inherit"` with Tailwind bg classes. Without it, MUI injects `bgcolor: primary.main`.
 
-**Icon colors in dual-background header:** Use `text-white md:text-gray-600` pattern for icons/text in a header that switches background (brand blue mobile → white desktop). CartButton, ProfileButton, hamburger, logo all use this pattern.
+**Dual-background header:** `text-white md:text-gray-600` pattern for icons in header switching bg (brand blue mobile → white desktop). CartButton, ProfileButton, hamburger, logo use this.
 
-**overflow:hidden ancestors:** MUI AppBar has internal `overflow:hidden`. Any child using negative position offsets (badges, chevrons) must be contained within their parent Box — size the Box to include the overflow, don't rely on the parent being `overflow:visible`.
+**overflow:hidden ancestors:** MUI AppBar has `overflow:hidden`. Children with negative offsets (badges, chevrons) must be in sized Box — don't rely on parent `overflow:visible`.
 
 ## Related
 - [[architecture]]

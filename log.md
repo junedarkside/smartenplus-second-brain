@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-21] session-end | frontpage style consistency — section card rounded+margin+overflow-hidden, footer bg-fb-blue full-width, 2 commits pushed on 260520-update/frontpage
 ## [2026-05-20] session-end | help icon mobile fix round 2 (revert MUI sx → Tailwind div), vault updated with Emotion cache provider lesson
 ## [2026-05-20] fix | Help icon mobile — reverted MUI Box sx responsive breakpoints (need Emotion cache), use Tailwind div wrapper per existing pattern
 ## [2026-05-20] session-end | all repos merged to develop, breadcrumb dedup merged, forum table width fixed, MUI+Tailwind knowledge doc — 12 commits on frontend, vault updated

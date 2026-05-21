@@ -1,7 +1,7 @@
 # Payment Integration — Thai Payment Methods
 
 ## Summary
-Patterns for integrating Thai payment methods via Omise. Covers PromptPay, credit/debit cards, mobile banking, e-wallets. Key lesson: payment systems need canonical charge tracking and recoverable failure states.
+Thai payment methods via Omise. PromptPay, CC/debit, mobile banking, e-wallets. Canonical charge tracking + recoverable failure states.
 
 ## Thai Payment Methods
 
@@ -15,46 +15,44 @@ Patterns for integrating Thai payment methods via Omise. Covers PromptPay, credi
 | Rabbit LinePay | EWALLET | Redirect |
 
 ## Omise Source Types
-`OMISE_SOURCE_TYPES` maps backend `payment_type` to Omise source types. Frontend stores raw `payment_type` from backend — no normalization.
+`OMISE_SOURCE_TYPES` maps backend `payment_type` → Omise source types. Frontend stores raw `payment_type` — no normalization.
 
 ## QR Polling Pattern (PromptPay)
-1. Create charge → get QR code + `expires_at`
-2. Poll status while `expires_at` in future
-3. Check BOTH `status === 'successful' || status === 'paid'` (domain status vocab differs)
-4. On success: redirect to order page (auth) or guest order page (guest)
-5. Never redirect to `authorizeUri` for QR (empty for PromptPay)
+1. Create charge → get QR + `expires_at`
+2. Poll while `expires_at` in future
+3. Check BOTH `status === 'successful' || status === 'paid'` (domain vocab differs)
+4. Success: redirect to order page (auth) or guest order page (guest)
+5. Never redirect to `authorizeUri` for QR (empty for PP)
 
 ## Canonical Charge Rule
-Always use LATEST charge per order. Historical charges must NOT trigger finalization or display. Rationale: user may retry with different method — old failed charges are not the current state.
+LATEST charge per order only. Historical charges must NOT trigger finalization or display. User may retry with different method — old failed charges ≠ current state.
 
 ## Recoverable Failure
-`payment_failed` is NOT terminal. User can retry. `finalize_payment_failed()` does NOT set `payment_finalized_at` — only success sets that sentinel. Analytics should not count as lost revenue until order cancelled/expired.
+`payment_failed` NOT terminal. `finalize_payment_failed()` does NOT set `payment_finalized_at` — only success sets sentinel. Don't count as lost revenue until cancelled/expired.
 
 ## Double-Click Protection
-Disable pay button + show "Processing..." for 10s after click. Use `setPaymentTriggerEffect(true)`, not toggle. Prevents duplicate charge creation.
+Disable pay button + "Processing..." for 10s after click. `setPaymentTriggerEffect(true)`, not toggle. Prevents duplicate charges.
 
 ## Idempotency via Sentinel Fields
-Use timestamp field (`payment_finalized_at`, `payment_notification_sent_at`) as sentinel. Check `WHERE field IS NULL` before acting. Set inside same atomic transaction. If already set, skip. Why timestamp over boolean: audit visibility (when did this happen?) at zero extra cost. Reusable: any system needing exactly-once side effects in concurrent environment.
+Timestamp fields (`payment_finalized_at`, `payment_notification_sent_at`) as sentinel. `WHERE field IS NULL` before acting. Set inside atomic transaction. Already set → skip. Timestamp > boolean: audit visibility at zero cost. Reusable: any exactly-once side effect system.
 
 ## Amount Locking for Deferred Payments
-QR/redirect payment methods have gap between charge creation and user completion. During this window, prevent amount-changing operations (retry with different amount, cart modification). Implementation: `locked_amount` field set on first QR creation, reset on expire/cancel. Enforcement at charge creation time. Without it, user could generate QR for 1000 THB, then another for 500 THB, and both could complete.
+QR/redirect methods have gap between charge creation + user completion. `locked_amount` field set on first QR creation, reset on expire/cancel. Without it: user generates QR for 1000 THB, then 500 THB, both could complete.
 
 ## Webhook Audit Outside Transaction
-Save audit/log records outside `transaction.atomic()` so they survive rollbacks. If business logic transaction fails (race condition, constraint violation), raw event still available for debugging and manual reconciliation.
+Save audit/log records outside `transaction.atomic()` → survive rollbacks. Business logic fails (race, constraint) → raw event still available for debugging + manual reconciliation.
 
-## Checkout Architecture Review
+## Checkout Architecture — 5 Core Principles
 
-Five core principles governing the MVP payment lifecycle. All implemented as of 2026-05-16.
+**1. Webhook = source of truth.** Frontend redirect MUST NOT finalize. Only webhook marks paid, creates booking items, finalizes settlement.
 
-**1. Webhook is source of truth.** Frontend redirect MUST NOT finalize payment — only webhook may mark order paid, create booking items, finalize settlement. Frontend can be closed, refreshed, or manipulated; webhook is authoritative.
+**2. One active payment attempt.** One order → one pending intent → one amount snapshot. Prevents duplicate charges, conflicting QR codes.
 
-**2. One active payment attempt at a time.** One order → one pending payment intent → one active amount snapshot. Prevents duplicate charges, conflicting QR codes, reconciliation confusion.
+**3. Immutable payment snapshot.** Charge created → amount, items, discounts, method frozen. `CheckoutSnapshot` created after charge.
 
-**3. Immutable payment snapshot.** Once charge created: amount, items, discounts, payment method all frozen. Payment amount must always match order items and gateway charge amount. Backend creates `CheckoutSnapshot` after charge creation.
+**4. Cart locked during `payment_pending`.** ALL cart mutations blocked (PATCH/DELETE, add, coupon). Backend `409 PAYMENT_PENDING`. Frontend amber warning.
 
-**4. Cart locked during `payment_pending`.** ALL cart mutations blocked (PATCH/DELETE items, add item, coupon changes). Backend returns `409 PAYMENT_PENDING`. Enforced in backend, not frontend only. Frontend shows amber warning: "Payment in progress. Cancel payment to edit cart."
-
-**5. Explicit cancel-and-recreate to change payment method.** Expire charge → unlock checkout → user selects new method → create new intent. Never mutate active payment intent.
+**5. Explicit cancel-and-recreate.** Expire charge → unlock → user selects new method → new intent. Never mutate active payment.
 
 **State machine:**
 ```
@@ -64,123 +62,97 @@ editable → payment_pending → expired/cancelled → editable
 
 **Implemented patterns (frontend):**
 - `getBillingAndOrder.js`: 409 maps `payment_pending` → `PAYMENT_PENDING`, `amount_locked` → `AMOUNT_LOCKED`
-- `usePaymentInitialization.js`: idempotency key scoped to `cartId:total` snapshot
-- `PaymentComponent.js`: `handleCancelPendingPayment()` → expire + refetch flow
+- `usePaymentInitialization.js`: idempotency key `cartId:total`
+- `PaymentComponent.js`: `handleCancelPendingPayment()` → expire + refetch
 - `expirePendingCharge()` + `getReconcileOrder()` in `getBillingAndOrder.js`
 - Cross-tab sync: `cart_version` storage key + listener in `store/index.js`
 - formData sessionStorage: persists form state, validates freshness (30min) + cartId match
 
-Full 28-use-case reference: `docs/features/payment/PAYMENT_CHECKOUT_ARCHITECTURE_REVIEW.md` in smartenplus-frontend.
+28-use-case ref: `docs/features/payment/PAYMENT_CHECKOUT_ARCHITECTURE_REVIEW.md`
 
-## QR Expiry — Parent/Child State Propagation
+## QR Expiry — Parent/Child State
 
-**Omise webhook gap (2026-05-18):** Omise sends `charge.complete` for successful charges only. `charge.expire` fires for Barcode Alipay only. PromptPay and mobile banking expiry has NO webhook — relies entirely on Celery `sync_pending_charges` task (every 10 min). E-wallets/international methods (not in `METHOD_EXPIRY`) reconciled after 30 min stale threshold.
+**Omise webhook gap:** `charge.complete` for success only. `charge.expire` = Barcode Alipay only. PP + MB expiry has NO webhook — relies on Celery `sync_pending_charges` (every 10 min). E-wallets reconciled after 30 min stale threshold.
 
-**Three expiry paths, all send notification:**
-1. `sync_pending_charges` (Celery every 10 min) — PP marked expired + `finalize_payment_failed`; MB + e-wallets reconciled via Omise
-2. `ExpirePendingChargeView` (user manual cancel) — calls `_send_payment_failed_notifications` before resetting order to `ordering`
-3. `expire_stale_payments` management command — same notification pattern as view
+**Three expiry paths (all send notification):**
+1. `sync_pending_charges` (Celery 10 min) — PP expired + `finalize_payment_failed`; MB + e-wallets reconciled
+2. `ExpirePendingChargeView` (user cancel) — `_send_payment_failed_notifications` → reset to `ordering`
+3. `expire_stale_payments` mgmt command — same pattern
 
-**Lesson:** When integrating a payment gateway, verify which events trigger webhooks for each payment method. Omise docs confirm `charge.complete` = successful completion, `charge.expire` = Barcode Alipay only. Never assume all terminal states produce webhooks.
+`qrExpired` lives in `QRPaymentForm` via `useQRPolling`. Parent never learns about expiry unless told via callback — `qrState.authorizeUri` stays set, navigation guards armed.
 
-`qrExpired` state lives inside `QRPaymentForm` via `useQRPolling`. Parent (`PaymentComponent`) never learns about expiry unless told via callback — parent's `qrState.authorizeUri` stays set, keeping navigation guards armed.
+**Pattern:** Child components with terminal states must emit upward via callbacks. Parent clears its own state in response.
 
-**Pattern:** Child components with terminal states (expired, failed, paid) must emit upward via callbacks. Parent clears its own state in response.
-
-Implementation: `onExpired` prop on `QRPaymentForm`. When `qrExpired=true && !isRetrying`, calls `onExpired?.()`. Parent clears `qrState` + calls `onQRPaymentStateChange(false)` → navigation guards deactivate, PAY NOW button restores.
+Implementation: `onExpired` prop. `qrExpired=true && !isRetrying` → calls `onExpired?.()`. Parent clears `qrState` + `onQRPaymentStateChange(false)`.
 
 ## QR → Redirect Method Switch (C3b)
 
-Backend `initiate_order_charge()` (`payments/services.py`) has `C3b` logic: proactively expires pending PromptPay charge when a redirect-method (mobile banking, e-wallet) charge is created. Frontend does NOT need to expire before switching payment method. Only user-initiated "cancel" flows need explicit expire call.
+Backend `initiate_order_charge()` has `C3b`: proactively expires pending PP when redirect-method charge created. Frontend does NOT need to expire before switching. Only user "cancel" flows need explicit expire.
 
-**Implication:** Switching radio from PP to MB bank and clicking PAY NOW just works — backend handles the stale PP charge.
+Switching PP → MB + PAY NOW just works — backend handles stale PP charge.
 
 ## Auth-Conditional Query Params
 
-`expirePendingCharge()` must NOT send `?email=` when user is authenticated. Backend routes by param presence — authenticated endpoint uses Bearer token only. Sending `?email=` on an authenticated call causes URL signature mismatch and can trigger guest routing path.
+`expirePendingCharge()` must NOT send `?email=` when authenticated. Backend routes by param presence — auth uses Bearer token only. `?email=` on auth call → URL signature mismatch → guest routing.
 
-**Rule:** Always condition query param on `!token` (not `!!email`). Token presence determines auth context.
+**Rule:** Condition query param on `!token` (not `!!email`). Token presence = auth context.
 
-## Dual Cancel Surface — Mutual Exclusion Required
+## Dual Cancel Surface — Mutual Exclusion
 
-When two UI elements can both cancel the same charge (e.g., PAYMENT_PENDING amber alert + PendingChargeNotice), they must be mutually exclusive. Both elements firing expire on the same chargeId: first succeeds (200), second gets 400.
+Two UI elements canceling same charge (PAYMENT_PENDING alert + PendingChargeNotice) → must be mutually exclusive. Both firing: first 200, second 400.
 
-**Guard pattern:** Render `PendingChargeNotice` only when `paymentError?.type !== 'PAYMENT_PENDING'`. When PAYMENT_PENDING alert is active, it owns the cancel action exclusively.
+**Guard:** Render `PendingChargeNotice` only when `paymentError?.type !== 'PAYMENT_PENDING'`.
 
 ## Centralized Payment Error Detection
 
-4 components handle 409 `payment_pending` from cart mutations: `EditableCartItem.js` (PATCH), `InlinePassengerSelector.js` (inline update), `BookButton.js` (add to cart), `EnhancedTripCard.js` (DELETE). Same detection logic was duplicated inline in all 4.
+4 components handle 409 `payment_pending` from cart mutations: `EditableCartItem.js` (PATCH), `InlinePassengerSelector.js` (inline), `BookButton.js` (add), `EnhancedTripCard.js` (DELETE).
 
-**Extracted:** `helpers/handleCartMutationError.js` — `isPaymentPendingError(error)`. Pure function checking `error?.status === 409 && error?.data?.error === 'payment_pending'`. Each component handles its own UI (setError, toast, CancelPaymentDialog).
+**Extracted:** `helpers/handleCartMutationError.js` — `isPaymentPendingError(error)`. Checks `error?.status === 409 && error?.data?.error === 'payment_pending'`. Each component handles own UI.
 
-**Latent bug caught:** `BookButton.js` had bare `error?.status === 409` — matched ALL 409 variants (amount_locked, ORDER_ALREADY_PAID), not just payment_pending. Showed cancel dialog for non-payment-pending errors. Fixed by using `isPaymentPendingError()`.
-
-**Lesson:** When same error check duplicated 3+ times, extract — even if each consumer handles UI differently. Prevents subtle bugs (bare 409 vs specific payment_pending) and keeps error vocabulary consistent.
+**Latent bug:** `BookButton.js` bare `error?.status === 409` matched ALL 409 variants. Fixed by `isPaymentPendingError()`.
 
 ## Cross-Boundary Alert State Threading
 
-Alert state in `index.js` is not accessible to `PaymentComponent.js` (3 levels deep). When `PaymentComponent` needs to clear it (e.g., after cancel), thread `setAlert` prop down: `index.js → PaymentStep → PaymentComponent`. Call `setAlert?.({ show: false })` in cancel success handler.
+Alert state in `index.js` not accessible to `PaymentComponent.js` (3 levels deep). Thread `setAlert` prop: `index.js → PaymentStep → PaymentComponent`. Call `setAlert?.({ show: false })` in cancel success handler.
 
-**Lesson:** Don't patch symptoms (disable PAY NOW via `alert.type === 'warning'` guard in FormCard). Thread state to where the action originates.
+**Rule:** Don't patch symptoms. Thread state to where action originates.
 
 ## sessionStorage Restore Timing
 
-`useState` initializers run synchronously at module init — Redux-persist `cartId` is `null` at that point (rehydration is async). Restore logic that checks `cartId` match will see `null`, fail the match, and delete valid saved data.
+`useState` initializers run at module init — Redux-persist `cartId` is `null` (rehydration async). Restore logic checking `cartId` sees `null`, fails match, deletes valid data.
 
-**Pattern:** Any restore logic depending on Redux-persist state must be in a `useEffect` gated on `isCheckoutRehydrated && cartId` — not in `useState` initializer.
+**Pattern:** Restore logic depending on Redux-persist state → `useEffect` gated on `isCheckoutRehydrated && cartId`, NOT `useState` initializer.
 
 ## Idempotency Key Scope
 
-Scope idempotency key to `cartId:total` snapshot, not session. Regenerate when total changes (coupon applied, item removed). Backend deduplicates same key → returns existing order. Without total-scoped regeneration, user could apply coupon, get same key, and backend returns old order at old amount.
+Scope to `cartId:total` snapshot. Regenerate when total changes. Without total-scoped regeneration: user applies coupon, same key, backend returns old order at old amount.
 
 ## Positional Language in Alerts
 
-Never use "above" / "below" in alert messages unless DOM position is guaranteed. Alert from `index.js` (`AlertMessage` in FormCard) renders BELOW PaymentComponent's amber alert. If amber alert says "cancel below" but AlertMessage says "use button above" — both are wrong from opposite perspectives.
+Never "above"/"below" — DOM position not guaranteed. Use element names: "Use the 'Cancel This Payment' button."
 
-**Rule:** Use element names, not positions: "Use the 'Cancel This Payment' button to cancel it."
+## Cart Reprovisioning After Reset
 
-## Cart Reprovisioning After Payment Reset
+`resetCart()` sets `state.cart.cartId = null` — correct. `withCartValidation` HOC only mechanism creating new cart. Trip detail + search pages NOT wrapped → BookButton reads `null`, fails.
 
-After successful payment, `resetCart()` intentionally sets `state.cart.cartId = null` — old cart is paid and must be abandoned. This is correct behavior.
-
-**Problem:** `withCartValidation` HOC is the only mechanism that creates a new cart. Trip detail and search pages are NOT wrapped with it — they worked before because an existing cart was present. After reset, BookButton reads `null` from Redux and fails:
-```
-[BookButton] Invalid cartId: null
-```
-
-**Fix:** Both order detail pages call `createCart()` immediately after `resetCart()` — fire-and-forget. By the time user navigates away, Redux (and persisted localStorage) has a fresh valid `cartId`.
-
+**Fix:** Order detail pages call `createCart()` after `resetCart()` — fire-and-forget:
 ```js
 dispatch(cartActions.resetCart({ items: [], total: 0 }));
 createCart({ email }).unwrap()
   .then(res => { if (res?.id) dispatch(cartActions.setCartId(res.id)); })
-  .catch(() => {}); // HOC recovers on next booking page if this fails
+  .catch(() => {}); // HOC recovers on next booking page
 ```
 
-**Auth flow:** `email = session?.user?.email ?? null`. NextAuth places email at `session.user.email` only — `session.email` is always undefined.
-
-**Guest flow:** `email = router.query.email ? decodeURIComponent(router.query.email) : null`.
-
+**Auth email:** `session?.user?.email` (NOT `session?.email`)
+**Guest email:** `router.query.email ? decodeURIComponent(router.query.email) : null`
 **Files:** `pages/orders/[orderid].js`, `pages/guest-order/[orderId].js`
 
-**Lesson:** Any page that nulls shared Redux state (cartId, auth, etc.) is responsible for reprovisioning it before the user navigates away — don't rely on destination pages to recover.
+## NextAuth Session Shape
 
-## NextAuth Session Email — Root Level vs Nested
+`{ id, accessToken, user: { email, name, image } }`. Custom fields at root (`id`, `accessToken`, `phoneNumber`). Email ONLY at `session.user.email` — `session?.email` always `undefined`.
 
-NextAuth session shape: `{ id, accessToken, user: { email, name, image }, ... }`. The session callback in `[...nextauth].js` sets custom fields (`id`, `accessToken`, `phoneNumber`, etc.) at root level — but NEVER `email`. Email flows through NextAuth's default provider pipeline into `session.user.email`.
-
-**Correct access:** `session?.user?.email`
-**Wrong access:** `session?.email` — always `undefined`
-
-**Auth check:** `session?.id` (root level, correctly set by callback).
-
-**Why this matters:** A wrong CLAUDE.md rule (`"Email: session?.email"`) directly caused a regression commit (`8b3151f`) that made checkout inaccessible for all auth users. The doc fix is as important as the code fix — future agents reading stale docs will re-introduce the same bug.
-
-**Guest email sources** (never from session):
-- Checkout form: `formData?.email`
-- Order pages: `router.query.email` → `decodeURIComponent(email)`
-
-**Files where this matters:** `pages/checkout/index.js`, `pages/checkout/PaymentComponent.js`, `pages/orders/[orderid].js`
+**Auth check:** `session?.id`. **Email:** `session?.user?.email`.
+**Guest email:** `formData?.email` (checkout) or `router.query.email` (order pages).
 
 ## Related
 - [[payment-system]]
