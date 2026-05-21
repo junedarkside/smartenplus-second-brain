@@ -13,14 +13,12 @@
   - `index.md` — 2 new entries, stats updated
 
 **In-progress / not done:**
-- PR `260521-feat/popular-routes-image-carousel` → needs merge to develop → main
 - Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
 - Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` — cosmetic SEO accuracy
 
 **Next session resume:**
-1. Merge `260521-feat/popular-routes-image-carousel` PR → develop → main
-2. Issue #1: Reviews section bg color design decision
-3. Residual H2: fix `/30` hardcode in `hooks/useTripSEO.js:321`
+1. Issue #1: Reviews section bg color design decision
+2. Residual H2: fix `/30` hardcode in `hooks/useTripSEO.js:321`
 
 ### Active Branches
 
@@ -51,6 +49,11 @@
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 | 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | Cosmetic SEO — low priority | hooks/useTripSEO.js |
 | 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
+
+### Recently Closed (this session addition)
+| Issue | Fix | Date |
+|-------|-----|------|
+| Popular Routes image carousel PR | merged to main `edccb75` — develop + main in sync | 2026-05-21 |
 
 ### Recently Closed
 
