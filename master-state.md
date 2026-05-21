@@ -4,33 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-21
+**Updated:** 2026-05-21 (session end)
 **Achieved this session:**
-- Homepage full UX/UI review: 3-agent team, 11 sections, 4 critical + 34 major + 15 minor issues documented
-- `/scrutinize` pass on review doc: 3 corrections applied (IATA claim wrong, DOMPurify SSR risk, help link relative URL also broken at line 46)
-- Vault: `homepage-ux-review-2026-05-21.md` created in `01-projects/`, index + log updated (52 pages)
+- Homepage P1 fixes: hero subheadline + 500px mobile height, fake rating fallback → '—', Locations title fix → merged `260521-fix/homepage-p1-remaining`
+- Homepage P2 accessibility: duplicate `<main>` x2, ThailandTravel ARIA + tablet visibility, CarouselArrowButtons aria-label, CustomerService heading/URLs/article landmarks → merged `260521-fix/homepage-p2-accessibility`
+- Homepage P3 UX: route card permanent underline, airport "View routes" + IATA uppercase, LocationsSection error message, AirportTransfer error guard, BookingRetrievalForm helper text + dynamic id, BookingEmptyState correct ID format (ABC1234567) → merged `260521-fix/homepage-p3-ux`
+- Caught and corrected wrong booking ID copy ("BK" prefix) — real format confirmed from backend utils.py: 3 letters + 7 digits
 
 **In-progress / not done:**
 - PR `260521-fix/trip-seo-usd-hardcode` → still needs merge to main
-- Homepage fixes not yet implemented — review doc is the backlog
+- P4 design system tokens deferred (low ROI)
+- P3 deferred: #12 readOnly inputs (functional), #14 carousel dots
 
 **Next session resume:**
 1. Merge `260521-fix/trip-seo-usd-hardcode` PR → main
-2. P0: XSS fix in `ReviewFirstPage.js:185` — use `isomorphic-dompurify` or sanitize on backend
-3. P1: Move Reviews to position 5 in `homepagev2.js` (reorder ~10 min)
-4. P1: Add inline search validation errors to `ProductSearchForm2.js` / `homepagev2.js`
+2. P4 design system if needed, otherwise move to other work
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260521-fix/trip-seo-usd-hardcode` | `49e6f17` FAQ schema THB fix — PR open |
-| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
+| `smartenplus-frontend` | `develop` | `4a72487` merge homepage-p3-ux — clean (.agents/.claude churn unstaged) |
+| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean (.claude churn unstaged) |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean (.claude churn unstaged) |
 
 ### Uncommitted
-- frontend: `.agents/` + `.claude/skills/` deletions + `CLAUDE.md` (tooling churn, not feature work — leave unstaged)
-- backend + admin-dashboard: `.claude/agents/` + `CLAUDE.md` churn — leave unstaged
+- All 3 repos: `.agents/` + `.claude/` tooling churn — leave unstaged
 
 ---
 
@@ -47,13 +46,17 @@
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
 | 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | DONE `49e6f17` — PR open, pending merge | hooks/useTripSEO.js |
+| 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | DONE `49e6f17` — merged to develop `1b993b4` 2026-05-21 | hooks/useTripSEO.js |
 | 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
 
 ### Recently Closed (this session addition)
 | Issue | Fix | Date |
 |-------|-----|------|
 | Popular Routes image carousel PR | merged to main `edccb75` — develop + main in sync | 2026-05-21 |
+| Homepage P1: hero subheadline, fake rating, Locations title | `260521-fix/homepage-p1-remaining` → develop | 2026-05-21 |
+| Homepage P2: duplicate `<main>` x2, ARIA carousel, CustomerService bugs | `260521-fix/homepage-p2-accessibility` → develop | 2026-05-21 |
+| Homepage P3: route CTA, airport cards, error states, booking ID format | `260521-fix/homepage-p3-ux` → develop | 2026-05-21 |
+| Wrong booking ID copy ("BK1234") in BookingEmptyState + BookingRetrievalForm | Corrected to ABC1234567 — confirmed from backend utils.py | 2026-05-21 |
 
 ### Recently Closed
 
