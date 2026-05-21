@@ -34,11 +34,7 @@ Server renders neutral placeholder. Client switches to real Redux value post-hyd
 ---
 
 ### ❌ OVERTURNED — S1: "Change 307 → 301 redirect"
-**Permanent redirect creates browser/CDN cache pollution.**
-
-Products can be reclassified. If slug moves DAY_TOUR → TRANSPORTATION after a 301, users and CDNs are permanently stuck on `/daytrips/detail/` — ISR revalidation cannot undo a cached 301 in user's browser.
-
-**Correct action:** Keep `permanent: false`. Add a comment documenting this is intentional.
+Keep `permanent: false`. Products can be reclassified — 301 causes permanent browser/CDN cache pollution. See [[nextjs-307-vs-301-product-reclassify]].
 
 ---
 
@@ -66,17 +62,7 @@ Line 221 comment: *"Addresses static generation build regression where reviews a
 ## SECTION 1 — NEW HIDDEN ISSUES
 
 ### 🔴 H1 — liveProductData merge wipes valid ISR ratecard with empty array (line 89–102)
-```js
-ratecard: freshContract.ratecard ?? productData?.ratecard,
-```
-`??` only catches `null`/`undefined`. If API returns `{ ratecard: [] }` (empty, not null), the empty array passes `??` → `lowestRate` becomes `null` → page shows "Pricing Information Unavailable" even though ISR had valid rates.
-
-**Severity:** HIGH — active revenue risk. User sees ISR price in hero, then page crashes to error on CSR refresh.
-
-**Fix:**
-```js
-ratecard: (freshContract.ratecard?.length > 0) ? freshContract.ratecard : productData?.ratecard,
-```
+`??` doesn't catch `[]` — empty ratecard from CSR wipes valid ISR data → "Pricing Unavailable" crash. Active revenue risk. See [[nextjs-isr-ratecard-empty-array-guard]].
 
 ---
 

@@ -34,10 +34,10 @@ LATEST charge per order only. Historical charges must NOT trigger finalization o
 Disable pay button + "Processing..." for 10s after click. `setPaymentTriggerEffect(true)`, not toggle. Prevents duplicate charges.
 
 ## Idempotency via Sentinel Fields
-Timestamp fields (`payment_finalized_at`, `payment_notification_sent_at`) as sentinel. `WHERE field IS NULL` before acting. Set inside atomic transaction. Already set → skip. Timestamp > boolean: audit visibility at zero cost. Reusable: any exactly-once side effect system.
+Timestamp sentinels as exactly-once guards. Reusable beyond payments — any high-risk side effect (email, booking confirm). See [[payment-sentinel-idempotency]].
 
 ## Amount Locking for Deferred Payments
-QR/redirect methods have gap between charge creation + user completion. `locked_amount` field set on first QR creation, reset on expire/cancel. Without it: user generates QR for 1000 THB, then 500 THB, both could complete.
+`locked_amount` set on first QR, reset on expire/cancel. Prevents duplicate amounts completing.
 
 ## Webhook Audit Outside Transaction
 Save audit/log records outside `transaction.atomic()` → survive rollbacks. Business logic fails (race, constraint) → raw event still available for debugging + manual reconciliation.
@@ -72,18 +72,9 @@ editable → payment_pending → expired/cancelled → editable
 
 ## QR Expiry — Parent/Child State
 
-**Omise webhook gap:** `charge.complete` for success only. `charge.expire` = Barcode Alipay only. PP + MB expiry has NO webhook — relies on Celery `sync_pending_charges` (every 10 min). E-wallets reconciled after 30 min stale threshold.
+PP + MB expiry has NO Omise webhook. See [[promptpay-no-webhook-on-expiry]] for all 3 expiry paths.
 
-**Three expiry paths (all send notification):**
-1. `sync_pending_charges` (Celery 10 min) — PP expired + `finalize_payment_failed`; MB + e-wallets reconciled
-2. `ExpirePendingChargeView` (user cancel) — `_send_payment_failed_notifications` → reset to `ordering`
-3. `expire_stale_payments` mgmt command — same pattern
-
-`qrExpired` lives in `QRPaymentForm` via `useQRPolling`. Parent never learns about expiry unless told via callback — `qrState.authorizeUri` stays set, navigation guards armed.
-
-**Pattern:** Child components with terminal states must emit upward via callbacks. Parent clears its own state in response.
-
-Implementation: `onExpired` prop. `qrExpired=true && !isRetrying` → calls `onExpired?.()`. Parent clears `qrState` + `onQRPaymentStateChange(false)`.
+`qrExpired` lives in `QRPaymentForm` via `useQRPolling`. Parent never learns unless told via callback. Pattern: child components with terminal states must emit upward via `onExpired` prop. Parent clears `qrState` + `onQRPaymentStateChange(false)`.
 
 ## QR → Redirect Method Switch (C3b)
 
@@ -133,26 +124,11 @@ Never "above"/"below" — DOM position not guaranteed. Use element names: "Use t
 
 ## Cart Reprovisioning After Reset
 
-`resetCart()` sets `state.cart.cartId = null` — correct. `withCartValidation` HOC only mechanism creating new cart. Trip detail + search pages NOT wrapped → BookButton reads `null`, fails.
-
-**Fix:** Order detail pages call `createCart()` after `resetCart()` — fire-and-forget:
-```js
-dispatch(cartActions.resetCart({ items: [], total: 0 }));
-createCart({ email }).unwrap()
-  .then(res => { if (res?.id) dispatch(cartActions.setCartId(res.id)); })
-  .catch(() => {}); // HOC recovers on next booking page
-```
-
-**Auth email:** `session?.user?.email` (NOT `session?.email`)
-**Guest email:** `router.query.email ? decodeURIComponent(router.query.email) : null`
-**Files:** `pages/orders/[orderid].js`, `pages/guest-order/[orderId].js`
+`resetCart()` nulls `cartId`. Order pages must fire `createCart()` immediately after. See [[cart-reprovision-after-reset]] for full pattern + email sources.
 
 ## NextAuth Session Shape
 
-`{ id, accessToken, user: { email, name, image } }`. Custom fields at root (`id`, `accessToken`, `phoneNumber`). Email ONLY at `session.user.email` — `session?.email` always `undefined`.
-
-**Auth check:** `session?.id`. **Email:** `session?.user?.email`.
-**Guest email:** `formData?.email` (checkout) or `router.query.email` (order pages).
+`session?.email` always undefined. See [[nextauth-session-shape]] for full shape + guest email sources.
 
 ## Related
 - [[payment-system]]
