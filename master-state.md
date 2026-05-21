@@ -6,11 +6,15 @@
 
 **Updated:** 2026-05-21
 **Achieved this session:**
-- Vault: atomic notes system (`bd2fc03`) — auto-atomize step in wrap-up protocol + `/lint-vault` command
-  - `05-templates/atomic-note.md` — single-concept note template
-  - `06-systems/atomic-notes.md` — 3-criteria extraction rules + naming convention
-  - `CLAUDE.md` — Step 5 atomize in wrap-up, `/lint-vault` section added
-  - `index.md` — 2 new entries, stats updated
+- Vault: atomic notes system (`bd2fc03`) — auto-atomize step in wrap-up + `/lint-vault` command
+- Vault: `/lint-vault` first run (`5cdc54b`) — 6 atoms extracted:
+  - `payment-sentinel-idempotency` — timestamp sentinel pattern
+  - `nextauth-session-shape` — session.user.email gotcha
+  - `cart-reprovision-after-reset` — resetCart + createCart pattern
+  - `promptpay-no-webhook-on-expiry` — PP/MB expiry blind spot
+  - `nextjs-isr-ratecard-empty-array-guard` — `??` vs `[]` revenue risk
+  - `nextjs-307-vs-301-product-reclassify` — intentional 307 rationale
+- Frontend: carousel PR merged to main (`edccb75`) — develop + main in sync
 
 **In-progress / not done:**
 - Issue #1: Reviews section `bg-fb-blue` vs all others `bg-white` — needs design team decision
