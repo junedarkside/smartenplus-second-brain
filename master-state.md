@@ -29,12 +29,12 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260521-fix/footer-container-width` | `e67379f` header/footer alignment + icon normalization |
+| `smartenplus-frontend` | `main` | `e67379f` header/footer alignment + icon normalization — clean |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — clean |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — clean |
 
 ### Uncommitted
-- All 3 repos: clean (untracked .claude/skills/ only)
+- All 3 repos: clean
 
 ---
 
