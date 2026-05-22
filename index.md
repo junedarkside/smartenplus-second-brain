@@ -10,6 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[trip-detail-uxui-audit-2026-05-22|Trip Detail UX/UI Audit 2026-05-22]] — 3-specialist audit: 32 issues, ContentCard abstraction absent, full-bleed mobile cards, typography violations, CLS fallbacks; all P0/P1 implemented in branch 260522-fix/trip-detail-ux
 - [[README|SmartEnPlus]] — Thailand transport booking platform (Next.js 14, Redux, Omise)
 - [[architecture|SmartEnPlus Architecture]] — Redux slices, RTK Query, component structure
 - [[payment-system|SmartEnPlus Payments]] — Omise integration, GatewayCharge, QR polling, payment internals
