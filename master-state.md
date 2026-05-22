@@ -4,14 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session wrap #4)
+**Updated:** 2026-05-22 (session wrap #5)
 **Achieved this session:**
-- **Gap consistency — `/trips/hatyai/koh-lipe`** — added `gap-3` between sidebar and results section (TripsPageLayout); increased card list from `gap-1` → `gap-3` (FilteredTripList)
-- **Rounded consistency — trips filter page** — full audit across all page components; 3 inconsistencies fixed: TransportationOptionsFilter wrapper `rounded-md md:rounded-lg` → `rounded-lg`; mobile sort dropdown missing radius on mobile → `rounded-lg`; rate table tbody `rounded-t-md` → `rounded-t-lg` to match card outer
-- **Commit `4da9175`** pushed to main — all 5 layout files in one commit
+- **Trip detail width consistency audit** — agent visual review at 1440px; all sections confirmed at `max-w-[1200px]`; only breadcrumb misaligned
+- **Breadcrumb fix** — `[...slug].js` breadcrumb wrapper: confirmed correct padding `px-2 md:px-3` (no `xl:px-0`) matching FilterTripsPage
+- **RelatedTripsSection** — `my-0` → `my-2` all 3 states (loading/error/success); `rounded-lg`/`sm:rounded-lg` → `rounded-md` all 3 states; matches `ContentCard` design system standard
+- **Branch `260522-fix/trip-detail-width-consistency2`** — cut from main, 3 commits (`2ca9992`, `52fa1b3`); merged → develop `a8305ae`; user merged develop → main + pushed to production
 
 **Commits landed this session:**
-- `4da9175` fix(trips): unify gap + rounded consistency on filter page — 5 files, pushed to origin/main
+- `2ca9992` fix(trip-detail): unify width, gap, and rounded consistency
+- `52fa1b3` fix(trip-detail): restore breadcrumb px-2 md:px-3 — remove xl:px-0
+- `a8305ae` merge: 260522-fix/trip-detail-width-consistency2 → develop
 
 **In-progress / not done:**
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
@@ -26,12 +29,12 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `4da9175` fix(trips): unify gap + rounded — pushed to origin/main |
+| `smartenplus-frontend` | `main` | `a8305ae` merged to main + pushed to production |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
-- frontend: `.claude/settings.local.json` modified + `CLAUDE.original.md` untracked — leave unstaged
+- frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 
