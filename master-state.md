@@ -4,37 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session end)
+**Updated:** 2026-05-22 (session continuation)
 **Achieved this session:**
-- Ran full 3-specialist SEO + performance audit on homepage (30 findings: 3 critical, 11 major, 14 minor)
-- Vault report written: `01-projects/homepage-seo-performance-deep-review-2026-05-21.md`
-- Executed P0 SEO fixes on branch `260522-fix/homepage-seo-p0` (`d1fa488`):
-  - SD1: fake phone replaced with `COMPANY_PHONE_NUMBER`
-  - SD2: fake address removed; `taxID: "0105554078213"` added (no verified street address on record)
-  - TS6: `server-sitemap.xml` removed from `next-sitemap.config.js` additionalSitemaps + duplicate User-agent policies merged
+- All 30 homepage SEO + performance audit findings addressed (4 commits on `260522-fix/homepage-seo-p0`)
+- Merged `260522-fix/homepage-seo-p0` → `develop` (fast-forward, `27f486b` HEAD)
+- User will deploy to production manually
+- SD9 (Trip departureTime/arrivalTime) deferred — HomeSerializer only has Route-level data, no schedule
+
+**Commits landed on develop:**
+- `d1fa488` P0: fake phone/address, sitemap 404
+- `628ad6a` P1: aggregateRating live, sameAs, lastReviewed, WebSite schema, DefaultSeo, og/twitter meta
+- `b7e720b` P1 remaining: logo, malformed geo block, preconnect hints, desktop CLS fix
+- `27f486b` PP2 hero crossfade, PP3 generateBlurDataURL → generateColorPlaceholder
 
 **In-progress / not done:**
-- `260522-fix/homepage-seo-p0` — NOT yet merged to main (P0 done, P1 pending on same branch)
-- P1 SEO fixes pending on same branch (8 items — see fix queue in vault report)
 - Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` still open
-- `pages/server-sitemap.xml.js` — TS6 hotfix done (removed reference), proper file not yet created
+- `pages/server-sitemap.xml.js` — removed 404 reference (TS6), proper dynamic sitemap file not yet created
+- SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change to expose schedule data)
 
 **Next session resume:**
-1. Continue P1 on `260522-fix/homepage-seo-p0`:
-   - SD3: wire `aggregateRating` to `lastTopReviewData` props — `homepagev2.js:303-307`
-   - SD4: add `sameAs: [FACEBOOK_URL, INSTAGRAM_URL, X_URL]` — `homepagev2.js` TravelAgency block
-   - SD6: replace hardcoded `lastReviewed` date — `homepagev2.js:278`
-   - SD7: add WebSite + SearchAction schema block
-   - TS1: add `<DefaultSeo>` to `pages/_app.js`
-   - TS3/TS4/TS5: `og:site_name`, `og:locale`, `twitter:site` in `components/FrontPage/Seo.js`
-2. Merge `260522-fix/homepage-seo-p0` → main when P0+P1 done
-3. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039`
+1. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` on `orders/models.py`
+2. Or: create `pages/server-sitemap.xml.js` dynamic sitemap for trip routes
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260522-fix/homepage-seo-p0` | `d1fa488` P0 SEO fixes — NOT yet merged |
+| `smartenplus-frontend` | `develop` | `27f486b` hero crossfade + placeholder rename |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — tooling churn unstaged |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — CLAUDE.md modified unstaged |
 
