@@ -8,31 +8,38 @@
 **Achieved this session:**
 - Ran full 3-specialist SEO + performance audit on homepage (30 findings: 3 critical, 11 major, 14 minor)
 - Vault report written: `01-projects/homepage-seo-performance-deep-review-2026-05-21.md`
-- Vault committed + pushed to GitHub (`7e6c409`)
+- Executed P0 SEO fixes on branch `260522-fix/homepage-seo-p0` (`d1fa488`):
+  - SD1: fake phone replaced with `COMPANY_PHONE_NUMBER`
+  - SD2: fake address removed; `taxID: "0105554078213"` added (no verified street address on record)
+  - TS6: `server-sitemap.xml` removed from `next-sitemap.config.js` additionalSitemaps + duplicate User-agent policies merged
 
 **In-progress / not done:**
-- P0 SEO fixes NOT yet done — audit complete, fixes pending next session
+- `260522-fix/homepage-seo-p0` — NOT yet merged to main (P0 done, P1 pending on same branch)
+- P1 SEO fixes pending on same branch (8 items — see fix queue in vault report)
 - Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` still open
-- P4 design system tokens deferred (low ROI)
+- `pages/server-sitemap.xml.js` — TS6 hotfix done (removed reference), proper file not yet created
 
 **Next session resume:**
-1. Execute P0 fixes from `homepage-seo-performance-deep-review-2026-05-21.md`:
-   - SD1: `homepagev2.js:295` — replace fake phone with `COMPANY_PHONE_NUMBER`
-   - SD2: `homepagev2.js:297-302` — add `COMPANY_ADDRESS` to constants + replace fake address
-   - TS6: remove `server-sitemap.xml` from `next-sitemap.config.js:12` + `robots.txt:17`, then create `pages/server-sitemap.xml.js`
-2. Execute P1 fixes (aggregateRating, sameAs, lastReviewed, WebSite schema, DefaultSeo, Seo.js og fields)
+1. Continue P1 on `260522-fix/homepage-seo-p0`:
+   - SD3: wire `aggregateRating` to `lastTopReviewData` props — `homepagev2.js:303-307`
+   - SD4: add `sameAs: [FACEBOOK_URL, INSTAGRAM_URL, X_URL]` — `homepagev2.js` TravelAgency block
+   - SD6: replace hardcoded `lastReviewed` date — `homepagev2.js:278`
+   - SD7: add WebSite + SearchAction schema block
+   - TS1: add `<DefaultSeo>` to `pages/_app.js`
+   - TS3/TS4/TS5: `og:site_name`, `og:locale`, `twitter:site` in `components/FrontPage/Seo.js`
+2. Merge `260522-fix/homepage-seo-p0` → main when P0+P1 done
 3. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `4a72487` merge homepage-p3-ux — tooling churn unstaged |
+| `smartenplus-frontend` | `260522-fix/homepage-seo-p0` | `d1fa488` P0 SEO fixes — NOT yet merged |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — tooling churn unstaged |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — CLAUDE.md modified unstaged |
 
 ### Uncommitted
-- frontend: `.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `CLAUDE.original.md` — all tooling churn, leave unstaged
+- frontend: tooling churn (`.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `CLAUDE.original.md`) — leave unstaged
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 
