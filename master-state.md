@@ -4,37 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-21 (session start)
+**Updated:** 2026-05-22 (session end)
 **Achieved this session:**
-- Confirmed homepage UX/UI review doc fully cleared through P3
-- Created SEO homepage specialist team: agent `seo-homepage-auditor.md` + vault knowledge doc `seo-homepage-specialist-team.md`
-- Agent has 3-specialist sequential workflow (Structured Data → Technical SEO → Page Performance → Leader synthesis)
-- 10 pre-identified SEO gaps baked into checklists (fake phone/address in TravelAgency, stale dates, server-sitemap 404, missing og:locale, CLS from ssr:false form, etc.)
-- Vault index + log updated, pushed to GitHub
+- Ran full 3-specialist SEO + performance audit on homepage (30 findings: 3 critical, 11 major, 14 minor)
+- Vault report written: `01-projects/homepage-seo-performance-deep-review-2026-05-21.md`
+- Vault committed + pushed to GitHub (`7e6c409`)
 
 **In-progress / not done:**
-- #1 `260521-fix/trip-seo-usd-hardcode` → user merging to main manually
-- SEO team review NOT yet run — agent created but not executed (dev server was not running)
+- P0 SEO fixes NOT yet done — audit complete, fixes pending next session
+- Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` still open
 - P4 design system tokens deferred (low ROI)
 
 **Next session resume:**
-1. Confirm #1 merged to main
-2. Run SEO specialist team: `npm run dev` → "run seo team review on homepage"
-3. After report generated: execute P0 fixes (fake phone/address, server-sitemap handler, stale dates)
-4. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039`
+1. Execute P0 fixes from `homepage-seo-performance-deep-review-2026-05-21.md`:
+   - SD1: `homepagev2.js:295` — replace fake phone with `COMPANY_PHONE_NUMBER`
+   - SD2: `homepagev2.js:297-302` — add `COMPANY_ADDRESS` to constants + replace fake address
+   - TS6: remove `server-sitemap.xml` from `next-sitemap.config.js:12` + `robots.txt:17`, then create `pages/server-sitemap.xml.js`
+2. Execute P1 fixes (aggregateRating, sameAs, lastReviewed, WebSite schema, DefaultSeo, Seo.js og fields)
+3. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `4a72487` merge homepage-p3-ux — large tooling churn unstaged (`.agents/` + `.claude/` deletes) |
-| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — `.claude/` agent files deleted unstaged |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — no unstaged changes |
+| `smartenplus-frontend` | `main` | `4a72487` merge homepage-p3-ux — tooling churn unstaged |
+| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — tooling churn unstaged |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — CLAUDE.md modified unstaged |
 
 ### Uncommitted
-- frontend: many `.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified — tooling churn, leave unstaged
+- frontend: `.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `CLAUDE.original.md` — all tooling churn, leave unstaged
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
-- frontend new untracked: `.claude/agents/seo-homepage-auditor.md`, `CLAUDE.original.md`
+- admin: `CLAUDE.md` modified — leave unstaged
 
 ---
 
@@ -57,6 +57,7 @@
 ### Recently Closed (this session addition)
 | Issue | Fix | Date |
 |-------|-----|------|
+| SEO + performance deep review | 3-specialist audit complete — 30 findings, vault report at `homepage-seo-performance-deep-review-2026-05-21.md` — P0 fixes pending | 2026-05-22 |
 | Popular Routes image carousel PR | merged to main `edccb75` — develop + main in sync | 2026-05-21 |
 | Homepage P1: hero subheadline, fake rating, Locations title | `260521-fix/homepage-p1-remaining` → develop | 2026-05-21 |
 | Homepage P2: duplicate `<main>` x2, ARIA carousel, CustomerService bugs | `260521-fix/homepage-p2-accessibility` → develop | 2026-05-21 |

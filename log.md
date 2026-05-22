@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-22] session-end | SEO audit complete — 30 findings, vault report written; next: P0 fixes (fake contact, server-sitemap) + backend #4 locked_amount
 ## [2026-05-22] ingest | homepage-seo-performance-deep-review — 3-specialist audit, 30 issues (3 critical, 11 major), P0: server-sitemap.xml 404 + fake phone/address in TravelAgency schema
 ## [2026-05-21] session-end | SEO specialist team built — agent + vault doc created; team NOT yet run; next: run review then P0 fixes + backend #4 locked_amount
 ## [2026-05-21] ingest | seo-homepage-specialist-team — agent created (seo-homepage-auditor.md), vault knowledge doc added, 10 pre-identified SEO gaps documented
