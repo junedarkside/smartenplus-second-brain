@@ -6,34 +6,30 @@
 
 **Updated:** 2026-05-22 (session-end)
 **Achieved this session:**
-- All 30 homepage SEO + performance audit findings addressed + merged to develop
-- AI misclassification analysis (3-agent team) — 6 root causes found + all fixed
-- Merged `260522-fix/ai-classification` → `develop` (fast-forward, `ade7bb1` HEAD)
+- Backend #4 closed: `locked_amount db_index=True` + migration `0042` → merged to `develop`
+- Scrutinize audit: confirmed `CheckConstraint` already done in `0039` (master-state was stale) — only index was missing
+- master-state item #4 corrected to reflect reality
 
-**Commits landed on develop (this session):**
-- `d1fa488` P0: fake phone/address, sitemap 404
-- `628ad6a` P1: aggregateRating live, sameAs, lastReviewed, WebSite schema, DefaultSeo, og/twitter meta
-- `b7e720b` P1 remaining: logo, malformed geo block, preconnect hints, desktop CLS fix
-- `27f486b` PP2 hero crossfade, PP3 generateBlurDataURL → generateColorPlaceholder
-- `ade7bb1` AI classification: /bookings unblocked, BusTrip @type, Service schema, llms.txt, hasOfferCatalog
+**Commits landed on backend develop (this session):**
+- `ad854a6` fix(orders): add db_index to locked_amount field
+- `4140cbd` merge: locked_amount db_index — fix/locked-amount-index → develop
 
 **In-progress / not done:**
-- Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` still open
 - `pages/server-sitemap.xml.js` — removed 404 reference (TS6), proper dynamic sitemap file not yet created
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
 - Trip detail page @type audit — `useTripSEO.js` still uses `TouristTrip` + `LocalBusiness` (separate ticket)
 
 **Next session resume:**
-1. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` on `orders/models.py`
-2. Trip detail page schema audit — `useTripSEO.js` TouristTrip → Product/Service + fix LocalBusiness description
+1. Trip detail page schema audit — `useTripSEO.js` TouristTrip → Product/Service + fix LocalBusiness description
+2. Dynamic sitemap — `pages/server-sitemap.xml.js` proper implementation
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `ade7bb1` AI classification fixes |
-| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — tooling churn unstaged |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — CLAUDE.md modified unstaged |
+| `smartenplus-frontend` | `main` | `ade7bb1` AI classification fixes |
+| `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
 - frontend: tooling churn (`.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `CLAUDE.original.md`) — leave unstaged
@@ -51,7 +47,7 @@
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
-| 4 | `locked_amount` missing `CheckConstraint` + index | Tech debt — migration `0039` not created | `orders/models.py` |
+| 4 | `locked_amount` db_index | DONE — `0042` merged to backend develop `4140cbd` | `orders/models.py:219` |
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
 | 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
@@ -61,6 +57,7 @@
 ### Recently Closed (this session addition)
 | Issue | Fix | Date |
 |-------|-----|------|
+| `locked_amount` db_index + migration `0042` | `ad854a6` → merged `4140cbd` to backend develop | 2026-05-22 |
 | SEO + performance deep review | 3-specialist audit complete — 30 findings, vault report at `homepage-seo-performance-deep-review-2026-05-21.md` — P0 fixes pending | 2026-05-22 |
 | Popular Routes image carousel PR | merged to main `edccb75` — develop + main in sync | 2026-05-21 |
 | Homepage P1: hero subheadline, fake rating, Locations title | `260521-fix/homepage-p1-remaining` → develop | 2026-05-21 |

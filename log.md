@@ -284,3 +284,5 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 - Updated [[payment-integration]]: added idempotency sentinel pattern, amount locking pattern, webhook audit pattern
 ## [2026-05-19] fix | Breadcrumb + CategoryMenu Tech Debt + Blog Spacing Consistency
 ## [2026-05-20] session-end | Recommend-route review + partial implementation — hydration issue blocking
+
+## [2026-05-22] session-end | locked_amount db_index fix (backend #4 closed) + master-state stale item corrected
