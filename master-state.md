@@ -4,7 +4,7 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-21 (session end)
+**Updated:** 2026-05-21 (session start)
 **Achieved this session:**
 - Confirmed homepage UX/UI review doc fully cleared through P3
 - Created SEO homepage specialist team: agent `seo-homepage-auditor.md` + vault knowledge doc `seo-homepage-specialist-team.md`
@@ -27,13 +27,14 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `4a72487` merge homepage-p3-ux — new agent file unstaged (.claude/agents/seo-homepage-auditor.md) |
-| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — .claude churn unstaged |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — .claude churn unstaged |
+| `smartenplus-frontend` | `main` | `4a72487` merge homepage-p3-ux — large tooling churn unstaged (`.agents/` + `.claude/` deletes) |
+| `smartenplus-backend` | `main` | `3e49644` recommend-route backend — `.claude/` agent files deleted unstaged |
+| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — no unstaged changes |
 
 ### Uncommitted
-- frontend: `.agents/` + `.claude/` tooling churn + new `seo-homepage-auditor.md` — leave unstaged (tooling file, not product code)
-- backend + admin: `.claude/` churn — leave unstaged
+- frontend: many `.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified — tooling churn, leave unstaged
+- backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
+- frontend new untracked: `.claude/agents/seo-homepage-auditor.md`, `CLAUDE.original.md`
 
 ---
 

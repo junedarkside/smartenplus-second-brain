@@ -91,5 +91,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 52
-- Last updated: 2026-05-21 (homepage-ux-review — 3-agent review ingested)
+- Pages: 53
+- Last updated: 2026-05-22 (homepage-seo-performance-deep-review — 3-specialist audit, 30 findings)
