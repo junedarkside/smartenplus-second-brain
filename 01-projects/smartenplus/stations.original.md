@@ -1,33 +1,33 @@
 # Stations — Spatial Data Layer
 
 ## Summary
-Stations app: locations, stations, places, route timelines. Spatial data for search, booking, route viz. Key: `Station` (physical stops), `Location` (city/province/country), `Place` (hotels/ports/pickup points), `Timeline` (route itinerary + icons).
+Stations app manages locations, stations, places, and route timelines. Provides spatial data for search, booking, and route visualization. Key: `Station` (physical stops), `Location` (city/province/country), `Place` (hotels/ports/pickup points), `Timeline` (route itinerary with icons).
 
 ---
 
 ## Models
 
 ### Location
-City/province/country hierarchy. Route departure/arrival.
+City/province/country hierarchy. Used for route departure/arrival.
 
 Fields: `location_name`, `city`, `province`, `country` (FK to `Country`), `normalized_location_name` (indexed, auto-lowercased via signal), `image`.
 
 ### Station
-Physical transport stop. `Route.departure_station` / `arrival_station` FK.
+Physical transport stop. Linked from `Route.departure_station` / `arrival_station`.
 
 **Key fields:**
 - `station_name`, `slug` (auto-slugified)
-- `iata_code` — 3-letter IATA, unique. **Validation:** only `station_type='airport'` can have IATA.
+- `iata_code` — 3-letter IATA code, unique. **Validation:** only `station_type='airport'` can have IATA code.
 - `station_type` — 33 choices (airport, train_station, metro, bus_station, bus_stop, port, pier, ferry_terminal, hotel, hostel, resort, motel, guesthouse, bnb, beach, park, campground, helipad, parking_lot, rest_area, service_station, other)
 - `location_name` FK to `Location`
 - `required_extra_info` — bool
 - `desciption` (RichText), `google_maps_link`
 - `normalized_station_name` (indexed, auto-lowercased)
 
-**`clean()` validation:** IATA only for airport. `save()` calls `full_clean()`.
+**`clean()` validation:** IATA code only allowed for airport type. `save()` calls `full_clean()`.
 
 ### Image
-Generic image model. `PlaceImage` M2M through table.
+Generic image model. Used by `PlaceImage` M2M through table.
 
 ### Place
 Pickup/dropoff/meeting points. `Contract.meeting_point_place` FK.

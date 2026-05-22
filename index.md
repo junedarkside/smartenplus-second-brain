@@ -48,6 +48,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Knowledge Domains
 
+- [[smartenplus-synopsis]] — Project-wide orientation: stack, repos, payment, auth, current state, open work
 - [[ai-workflows]] — LLM Wiki pattern, ingestion/query/lint operations
 - [[nextjs-patterns]] — ISR, dynamic SSR disable, RTK Query, date handling
 - [[payment-integration]] — Thai payment methods, Omise source types, webhook flows, checkout architecture principles (28 use cases), centralized payment error detection
@@ -92,5 +93,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 53
-- Last updated: 2026-05-22 (homepage-seo-performance-deep-review — 3-specialist audit, 30 findings)
+- Pages: 54
+- Last updated: 2026-05-22 (smartenplus-synopsis atom note + .original.md cleanup)

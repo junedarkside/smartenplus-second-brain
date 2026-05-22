@@ -1,9 +1,7 @@
-No file path — text provided directly. Compressing inline.
-
 # Policies — Contract Policy System
 
 ## Summary
-Two cancellation systems: legacy single-tier (`CancellationPolicy`) + new multi-tier (`CancellationPolicies` + `CancellationDetail`). Contract FKs to both; new tier wins when both set.
+Contract policy models. Two cancellation systems coexist: legacy single-tier (`CancellationPolicy`) and new multi-tier (`CancellationPolicies` + `CancellationDetail`). Contract has FKs to both; new tier takes precedence when both set.
 
 ---
 
@@ -15,19 +13,19 @@ Per-operator cancellation policy.
 **Fields:**
 - `operator` FK
 - `free_refund` — yes/no
-- `refund_hours` — Duration. Free refund window (hours before departure).
-- `charge_type` — `100%` (full), `50%` (half), `fixed_amount` (specific amount)
+- `refund_hours` — Duration. Free refund valid until this many hours before departure.
+- `charge_type` — `100%` (full charge), `50%` (half), `fixed_amount` (specific amount)
 - `charge_amount` — required if `charge_type=fixed_amount`
 - `is_actived`
 
-**`clean()` validation:** `free_refund=yes` → `refund_hours` required. `charge_type=fixed_amount` → `charge_amount` required.
+**`clean()` validation:** `free_refund=yes` requires `refund_hours` set. `charge_type=fixed_amount` requires `charge_amount`.
 
-**String repr:** dynamic refund policy description.
+**String repr:** dynamically describes refund policy.
 
 ---
 
 ### CancellationPolicies (new multi-tier)
-Named policy with multiple `CancellationDetail` rows.
+Named policy containing multiple `CancellationDetail` rows.
 
 **Fields:** `name`, `description`.
 
@@ -37,18 +35,18 @@ Per-tier cancellation condition.
 **Fields:**
 - `policy` FK → `CancellationPolicies`
 - `condition_hours` — hours before departure
-- `refund_percentage` — nullable (100 = full, 50 = half)
+- `refund_percentage` — nullable (e.g., 100 = full refund, 50 = half)
 - `fixed_amount` — nullable (specific amount)
 - `priority` — ordering
 
-**Helper:** `get_refund_description()` — "Refund: $X" | "Refund: X%" | "No Refund".
+**Helper:** `get_refund_description()` — returns "Refund: $X" or "Refund: X%" or "No Refund".
 
 **Example:** 74h+ → 100%, 48h+ → 50%, 24h+ → 0%.
 
 ---
 
 ### BaggagePolicy
-Baggage allowances + fees.
+Baggage allowances and fees.
 
 **Fields:**
 - `carry_on_limit`, `carry_on_overweight_size_limit`, `carry_on_oversized_size_limit`
@@ -62,17 +60,17 @@ General info text for contracts.
 
 **Fields:** `name`, `description` (RichText), `is_default`, `operator` FK.
 
-`is_default=True` → applies all operators unless overridden.
+`is_default=True` → applies to all operators unless overridden.
 
 ---
 
 ## Dual Cancellation System
 
-`Contract` FKs:
+`Contract` has FKs to both:
 - `Contract.cancellation_policy` → `CancellationPolicy` (old)
 - `Contract.cancellation_policies` → `CancellationPolicies` (new)
 
-Both coexist. Prefer new multi-tier when both set.
+Both can coexist. Frontend/display logic should prefer the new multi-tier when both are set.
 
 ---
 

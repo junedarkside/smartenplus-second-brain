@@ -2,6 +2,9 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] session-end | vault optimization — synopsis atom note created, 26 files caveman compressed (139KB→128KB, 7% reduction), 12 old backups + 3 empty stubs cleaned; all 3 repos unchanged
+## [2026-05-23] optimize | caveman:compress — 26 files compressed (139KB→128KB, 7% byte reduction); 3 empty stubs deleted; 37 .original.md backups retained for rollback
+## [2026-05-22] ingest | smartenplus-synopsis — project-wide synopsis atom note created; 12 .original.md backups cleaned
 ## [2026-05-22] session-end | trip detail width/gap/rounded consistency — RelatedTripsSection my-0→my-2 + rounded-md, breadcrumb padding confirmed px-2 md:px-3; merged → develop → main → production
 ## [2026-05-22] session-end | trips filter page gap+rounded consistency — gap-3 sidebar↔results + cards, rounded-lg unified across filter bar/sort/table; 4da9175 pushed to main
 ## [2026-05-22] session-end | section width unification on /trips filter+detail pages — mx-2 md:mx-3 xl:mx-0 pattern applied to calendar, filter bar, sidebar, cards, overview, summary, blog post; SlideCalendar2 className prop added; e7345ea on main (not pushed)

@@ -1,25 +1,25 @@
 # Billings — Payment Methods
 
 ## Summary
-Checkout billing profiles. `BillingProfile.get_or_new()` handles authenticated + guest checkout. `PaymentMethod` encodes Thai payment types with fees and polling intervals.
+Billing profiles for checkout. `BillingProfile.get_or_new()` pattern supports both authenticated users and guest checkout. `PaymentMethod` encodes all supported Thai payment types with fees and polling intervals.
 
 ---
 
 ## Models
 
 ### BillingProfile
-Checkout billing profile. Links `Account` (nullable for guest). `slug` = unique ID (email or generated). `customer_id` = Omise customer ID, auto-created on first save via `pre_save_customer_id_field`.
+Checkout billing profile. Links to `Account` (nullable for guest). `slug` is unique identifier (email or generated). `customer_id` is Omise customer ID — auto-created on first save via `pre_save_customer_id_field`.
 
 **`get_or_new(request, email=None)` manager method:**
-- Authenticated → look up `(user, active=True)`
-- Guest → look up `(user__isnull=True, slug=email)`
-- Not found → deactivate old profiles for same user/email, create new
+- Authenticated user → look up by `(user, active=True)`
+- Guest → look up by `(user__isnull=True, slug=email)`
+- If not found: deactivate old profiles for same user/email, create new one
 - Returns `(billing_profile, created)` tuple
 
-Guest checkout: `user=None`, `slug=email`, `guest_email=email`. No Account needed.
+Guest checkout: `user=None`, `slug=email`, `guest_email=email`. No Account required.
 
 ### PaymentMethod
-Payment type config. Drives frontend payment selector via `/gateway-fee/` API.
+Payment type configuration. Used by `/gateway-fee/` API to drive frontend payment selector.
 
 **Payment types:**
 | Type | Category | Notes |

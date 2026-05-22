@@ -4,12 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #6)
+**Updated:** 2026-05-22 (session wrap #5)
 **Achieved this session:**
-- **Synopsis atom note** — `03-knowledge/smartenplus-synopsis.md` created; project-wide orientation: stack, repos, payment, auth, state, open work
-- **Vault caveman compression** — 26 files compressed via `caveman:compress` (139KB→128KB, 7% byte reduction); biggest wins: homepage-seo (-22%), trip-detail-uxui-audit (-21%)
-- **Vault cleanup** — 12 old `.original.md` backups deleted from `03-knowledge/`, 3 empty stubs deleted (related-page-1, related-page-2, products-routes)
-- **No code changes** — all 3 repos unchanged
+- **Trip detail width consistency audit** — agent visual review at 1440px; all sections confirmed at `max-w-[1200px]`; only breadcrumb misaligned
+- **Breadcrumb fix** — `[...slug].js` breadcrumb wrapper: confirmed correct padding `px-2 md:px-3` (no `xl:px-0`) matching FilterTripsPage
+- **RelatedTripsSection** — `my-0` → `my-2` all 3 states (loading/error/success); `rounded-lg`/`sm:rounded-lg` → `rounded-md` all 3 states; matches `ContentCard` design system standard
+- **Branch `260522-fix/trip-detail-width-consistency2`** — cut from main, 3 commits (`2ca9992`, `52fa1b3`); merged → develop `a8305ae`; user merged develop → main + pushed to production
+
+**Commits landed this session:**
+- `2ca9992` fix(trip-detail): unify width, gap, and rounded consistency
+- `52fa1b3` fix(trip-detail): restore breadcrumb px-2 md:px-3 — remove xl:px-0
+- `a8305ae` merge: 260522-fix/trip-detail-width-consistency2 → develop
 
 **In-progress / not done:**
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)

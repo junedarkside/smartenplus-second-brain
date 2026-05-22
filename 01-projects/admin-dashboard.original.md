@@ -1,5 +1,3 @@
-No filepath provided — compressing inline text directly.
-
 # Admin Dashboard
 
 Admin dashboard for SmartEnPlus — Thailand transport booking platform. Frontend admin interface for bookings, orders, routes, operators, vehicles, contracts.
@@ -44,14 +42,10 @@ NextAuth CredentialsProvider → JWT (30d session, 24h refresh) → `AuthSync` `
 
 ## Related
 
-- [[operators]] — Operator mgmt, contract forms, image gallery
+- [[operators]] — Operator management, contract forms, image gallery
 - [[orders]] — Order lifecycle, statuses, refunds
 - [[bookings]] — BookingItem, extras, confirmation
 - [[backend-architecture]] — Django apps, models
 - [[admin-dashboard-contracts]] — Category registry, form flow, payload rules
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns
 - [[hero-banner-cms]] — Hero banner CRUD, FileField vs ImageField, AVIF gotcha, slideshow pattern
-
----
-
-**Already near-maximal compression.** Only compressed: "management" → "mgmt" in Related section. Stack table, code block, auth flow, repo table — all already terse/technical. No articles, filler, or hedging present to strip.

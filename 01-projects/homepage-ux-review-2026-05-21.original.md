@@ -1,12 +1,12 @@
 # Homepage UX/UI Review 2026-05-21
 
 ## Summary
-3-agent review, 11 homepage sections. 4 critical, 34 major, 15 minor issues. Top: XSS in reviews, section reorder, inline search validation, hero value prop.
+3-agent review of all 11 homepage sections. 4 critical, 34 major, 15 minor issues. Top priorities: XSS in reviews, section reordering, inline search validation, hero value proposition.
 
 ## Context
-SmartEnPlus homepage (`pages/homepagev2.js`) — primary transport booking conversion surface. Review triggered for UX/UI quality, WCAG, design system compliance, conversion gaps pre-feature-work.
+SmartEnPlus homepage (`pages/homepagev2.js`) is primary conversion surface for transport booking. Review triggered to identify UX/UI quality, accessibility (WCAG), design system compliance, and conversion optimization gaps before further feature work.
 
-Team: UX Research Agent (Hero/Search/Routes) + UX Research Agent (Content Sections) + UI Component Engineer (Bottom Sections + Design System).
+Review team: UX Research Agent (Hero/Search/Routes) + UX Research Agent (Content Sections) + UI Component Engineer (Bottom Sections + Design System).
 
 ## Section Render Order (Current vs Recommended)
 
@@ -39,7 +39,7 @@ Team: UX Research Agent (Hero/Search/Routes) + UX Research Agent (Content Sectio
 10. Customer Service
 ```
 
-Reviews position 8→5 = highest-leverage change. Most mobile users never scroll to position 8.
+Moving Reviews from position 8 to 5 is the single highest-leverage change — most mobile users never scroll to position 8.
 
 ## Critical Issues
 
@@ -48,22 +48,22 @@ Reviews position 8→5 = highest-leverage change. Most mobile users never scroll
 ```jsx
 dangerouslySetInnerHTML={{ __html: reviewText }}
 ```
-User content rendered raw. No DOMPurify. Active XSS risk.
-**Fix:** Sanitize backend before API serves. Client-only: `isomorphic-dompurify` — plain `DOMPurify` throws `window is not defined` on SSR (Next.js).
+User-generated content rendered raw. No DOMPurify. Active XSS risk.
+**Fix:** Sanitize on backend before API serves review text. If client-only sanitization required, use `isomorphic-dompurify` — plain `DOMPurify` throws `window is not defined` on SSR (Next.js).
 
 ### C2 — Hero Has No Product Value Proposition
 **File:** `pages/homepagev2.js:335`
-`h1` from `seoData.title` — crawler-optimized, not user-optimized. No subheadline. First-time visitor lacks product context.
+`h1` from `seoData.title` — crawler-optimized, not user-optimized. No subheadline. First-time visitor has no context what the product does.
 **Fix:** Add static subheadline: *"Book buses, ferries and trains across Thailand — instantly confirmed."*
 
 ### C3 — Search Validation: Toast Only, No Inline Errors
 **File:** `pages/homepagev2.js:249`
-Empty fields show toast only. No field highlight, no inline message. Direct abandonment risk.
-**Fix:** Red border + inline error per empty required field on submit.
+Empty fields show toast only. No field highlighting, no inline message. Direct abandonment risk.
+**Fix:** Red border + inline error message per empty required field on submit.
 
 ### C4 — Locations Title Has No Transport Context
 **File:** `lib/homepage/components/LocationsSection.js:36`
-"Find Perfect Locations" reads like hotel/real estate. SEO structured data (line 27) says "Popular Travel Destinations in Thailand" — that copy should be visible heading.
+"Find Perfect Locations" reads like hotel/real estate. SEO structured data (line 27) correctly says "Popular Travel Destinations in Thailand" — that copy should be the visible heading.
 
 ## Major Issues by Section
 
@@ -76,7 +76,7 @@ Empty fields show toast only. No field highlight, no inline message. Direct aban
 ### Popular Routes
 - Route cards no visible CTA — hover-only underline, useless on touch (`PopularRouteImageCard.js:63-81`)
 - Carousel no position indicators on mobile (`CardCarouselContainer.js:33-44`)
-- Duplicate `<main>` landmark inside section — one `<main>` per page max (`PopularRoutesSection.js:101`)
+- Duplicate `<main>` landmark inside section — only one `<main>` per page (`PopularRoutesSection.js:101`)
 
 ### Guides Section
 - Same duplicate `<main>` issue (`GuidesSection.js:136`)
@@ -84,35 +84,35 @@ Empty fields show toast only. No field highlight, no inline message. Direct aban
 
 ### Locations
 - Error state renders skeleton loader instead of error message — unrecoverable (`LocationsSection.js:17-19`)
-- Route count "(3 trips)" no transport mode context (`LocationGridComponent.js:83`)
-- `sizes` attribute wrong at all breakpoints (`LocationGridComponent.js:59`): `grid-cols-1` at <640px means images full-width (should be `100vw`), `grid-cols-2` at 640px+ means ~50vw. Correct: `(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw`
+- Route count "(3 trips)" with no transport mode context (`LocationGridComponent.js:83`)
+- `sizes` attribute wrong at all breakpoints (`LocationGridComponent.js:59`): `grid-cols-1` at <640px means images are full-width (should be `100vw`), `grid-cols-2` at 640px+ means ~50vw. Correct: `(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw`
 
 ### Thailand Travel (Features Carousel)
 - Feature descriptions hidden on tablet — `hidden lg:block` invisible at `md` breakpoint (`ThailandTravel.js:81`)
 - Carousel wrong pattern for feature/trust content — Nielsen: users miss non-first panels. Should be flat 3-col layout
-- Carousel prev/next no `aria-label` — WCAG 4.1.2 violation (`CarouselArrowButtons.js:124,149`)
+- Carousel prev/next buttons have no `aria-label` — WCAG 4.1.2 violation (`CarouselArrowButtons.js:124,149`)
 - Carousel no `role`, `aria-roledescription`, `aria-live` — invisible to screen readers (`ThailandTravel.js:67`)
 
 ### Airport Transfer
 - No CTA on station cards — name only, no "View routes" or "Book" signal (`GridComponent4.js:9-24`)
-- Error state silently swallowed — section disappears, no feedback (`AirportTransferSection.js:9`)
-- IATA: `capitalizeWords` preserves all-uppercase strings (verified). Bug conditional — if backend stores `iata_code` lowercase ("bkk"), produces "Bkk". Verify backend field case; if mixed, replace `capitalizeWords(item.iata_code)` with `item.iata_code?.toUpperCase()` (`GridComponent4.js:12`)
+- Error state silently swallowed — section disappears with no feedback (`AirportTransferSection.js:9`)
+- IATA display: `capitalizeWords` preserves all-uppercase strings (verified). Bug is conditional — if backend stores `iata_code` as lowercase ("bkk"), function produces "Bkk". Verify backend field case; if mixed, replace `capitalizeWords(item.iata_code)` with `item.iata_code?.toUpperCase()` (`GridComponent4.js:12`)
 
 ### Reviews
 - Fake rating fallback `|| '5.0'` shows fabricated rating when data missing
 - No mobile swipe affordance — no dots, no peek on mobile carousel (`ReviewFirstPage.js:330`)
 - No rating breakdown (5★/4★/...) — highest-converting trust signal absent
-- Error state different background from normal — inconsistent
+- Error state different background from normal state — inconsistent
 
 ### My Bookings CTA
 - Static input IDs `id="booking-id"` / `id="booking-email"` — breaks if rendered twice
-- Booking ID vs Order ID toggle no helper text or format example
-- Weak value prop — no description of what "manage" means
+- Booking ID vs Order ID toggle has no helper text or format example
+- Weak value proposition — no description of what "manage" means
 
 ### Customer Service
 - Heading reads "Helps" — grammatically wrong. Should be "Help Topics" (`CustomerServiceSection.js:40`)
 - Forum link relative URL `forum/?category=...` — missing leading slash, breaks under sub-paths (`CustomerServiceSection.js:83`)
-- Help links also missing leading slash: `help/${item.slug}` at line 46 — same bug, same fix
+- Help links also missing leading slash: `help/${item.slug}` at line 46 — same bug, same fix needed
 - `<article>` elements lack `aria-labelledby` (`CustomerServiceSection.js`)
 
 ### Design System
@@ -150,7 +150,7 @@ Empty fields show toast only. No field highlight, no inline message. Direct aban
 19. Fix IATA code capitalization
 20. Add helper text to Booking ID toggle
 21. Fix "Helps" → "Help Topics"
-22. Fix relative URLs in CustomerService — forum links (`line 83`) AND help links (`line 46`) missing leading slash
+22. Fix relative URLs in CustomerService — both forum links (`line 83`) AND help links (`line 46`) missing leading slash
 
 **P4 — Design System**
 23. Adopt `HOMEPAGE_SECTION` tokens in section components

@@ -1,12 +1,14 @@
+Script needs file path, not raw text. Compressing inline instead.
+
 # SmartEnPlus — Payment System
 
 ## Summary
-Omise-based payments via `payments` app (2026-05-13). Thai methods: CC, debit, PromptPay QR, mobile banking, e-wallet. `GatewayCharge` = canonical charge source.
+Omise payments via `payments` app (2026-05-13). Thai methods: CC, debit, PromptPay QR, mobile banking, e-wallet. `GatewayCharge` = canonical charge source.
 
 ## Architecture
 
 ### Two Charge Models
-1. **`payments.GatewayCharge`** — canonical. Domain statuses: `pending/processing/paid/failed/expired/refunded/partial_refunded`
+1. **`payments.GatewayCharge`** — canonical. Statuses: `pending/processing/paid/failed/expired/refunded/partial_refunded`
 2. **`cards.Charge`** — legacy Omise. Statuses: `successful/pending/failed`
 
 `getPrimaryCharge()` in `helpers/paymentMethods.js` — successful > pending > latest.
@@ -24,10 +26,10 @@ LATEST `GatewayCharge` per order (`order_by('-created').first()`). Historical ch
 - Others → `triggerOmiseSourcePayment(OMISE_SOURCE_TYPES[type], true)`
 
 ### QR Polling (PromptPay)
-`useQRPolling` + `useQRTimer` in `QRPaymentForm`. Poll when `orderDetails.expires_at` present. Check BOTH `status === 'successful' || status === 'paid'`. After success: redirect to order page (auth) or guest order page (guest). Never redirect to `authorizeUri` for PP.
+`useQRPolling` + `useQRTimer` in `QRPaymentForm`. Poll when `orderDetails.expires_at` present. Check BOTH `status === 'successful' || status === 'paid'`. After success: redirect order page (auth) or guest order page (guest). Never redirect `authorizeUri` for PP.
 
 ### PendingChargeNotice
-Shown when `current_charge_status='pending'` for redirect methods. CC/debit: no "Continue" button. Others: only if `expiresAt > 60s` && `authorizeUri`.
+`current_charge_status='pending'` for redirect methods. CC/debit: no "Continue" button. Others: only if `expiresAt > 60s` && `authorizeUri`.
 
 ## Key Decisions
 
@@ -49,13 +51,13 @@ Never re-add.
 ## Backend Internals
 
 ### `finalize_payment(order)` — SSOT
-`payments/services.py`. Every paid-order path funnels here.
+`payments/services.py`. All paid-order paths funnel here.
 - `select_for_update()` + `payment_finalized_at` guard → idempotent
 - Inside atomic: CartItem.delete → coupon `times_used` F()+1 → `confirm_booking_items_for_order()` → Order → `paid` → `on_commit` notifications
-- **Rule:** add payment success behavior here, not in callers
+- **Rule:** add payment success behavior here, not callers
 
 ### `locked_amount` — Charge Amount Freezing
-Set on first QR generation. Prevents double-charge on retry. Reset on expire + method switch (C3b). Enforced at charge creation: `locked_amount` set && ≠ new amount → 409 `amount_locked`.
+Set on first QR gen. Prevents double-charge on retry. Reset on expire + method switch (C3b). Enforced at charge creation: `locked_amount` set && ≠ new amount → 409 `amount_locked`.
 
 ### `ExpirePendingChargeView` — QR Cancellation
 `POST /payments/order-charge/{id}/expire/`. Six-case behavior:
@@ -109,7 +111,7 @@ Orderdetails endpoint: GatewayCharge PAID → `finalize_payment()`. PENDING → 
 `orders/models.py` — immutable cart state at payment initiation. `update_or_create` for idempotency.
 
 ### Expire Endpoint Protection
-Now reconciles instead of erroring when charge already paid/expired at Omise.
+Reconciles instead of erroring when charge already paid/expired at Omise.
 
 ### Frontend 409 Error Handling
 `getBillingAndOrder.js`: `payment_pending` → `PAYMENT_PENDING`, `amount_locked` → `AMOUNT_LOCKED`, `Order already paid` → `ORDER_ALREADY_PAID`.
@@ -118,7 +120,7 @@ Now reconciles instead of erroring when charge already paid/expired at Omise.
 `cart_version` storage key + listener in `store/index.js`.
 
 ### formData SessionStorage
-Structure: `{cartId, updatedAt, formData}`. Freshness (30min) + cartId match. Cleared on payment success.
+`{cartId, updatedAt, formData}`. Freshness (30min) + cartId match. Cleared on payment success.
 
 ## Repay Failure Root Causes (2026-05-16)
 
@@ -137,3 +139,5 @@ Structure: `{cartId, updatedAt, formData}`. Freshness (30min) + cartId match. Cl
 - [[checkout-flow]]
 - [[payment-integration]]
 - [[backend-architecture]]
+
+Done. Text was already dense — minor trims: dropped articles, shortened phrases ("generation" → "gen", "redirect to" → "redirect", removed "Structure:" label, "Now reconciles" → "Reconciles", "Shown when" → dropped). All code, URLs, tables, backticks preserved.

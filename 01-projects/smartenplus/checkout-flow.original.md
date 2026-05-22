@@ -1,10 +1,10 @@
 # SmartEnPlus — Checkout Flow
 
 ## Summary
-Multi-step checkout, SSR off. Sort by travel date. Guest + auth users. Redux state, RTK Query APIs.
+Multi-step checkout with SSR disabled. Chronological sorting by travel date. Supports guest and authenticated users. Redux-managed state with RTK Query for API calls.
 
 ## Checkout SSR Disabled
-`pages/checkout/index.js` exported via `dynamic(() => Promise.resolve(Index), { ssr: false })`. Never add `getServerSideProps` or re-enable SSR. Cart data in Redux (client-side), no server session.
+`pages/checkout/index.js` exported via `dynamic(() => Promise.resolve(Index), { ssr: false })`. Never add `getServerSideProps` or re-enable SSR. Reason: cart data lives in Redux (client-side), no server session.
 
 ## Cart
 - Item keys: `item.id` (stable_id removed 2026-02-13)
@@ -12,12 +12,12 @@ Multi-step checkout, SSR off. Sort by travel date. Guest + auth users. Redux sta
 - `cartActions.resetCart()` only on order confirmation pages, NOT in payment hooks
 
 ## Chronological Sorting
-All checkout steps sort by `traveling_date` (earliest first). Applied across passenger assignment, confirmation, payment steps. Never sort by other field.
+All checkout steps sort by `traveling_date` (earliest first). Applied consistently across passenger assignment, confirmation, and payment steps. Never sort by any other field.
 
 ## Passenger Assignment
 - `item.id` as key
 - Generate default assignments for same passenger counts
-- Assignment data in `passenger` Redux slice
+- Assignment data stored in `passenger` Redux slice
 
 ## Guest Mode
 - `isGuestMode` in `checkout-slice` Redux state

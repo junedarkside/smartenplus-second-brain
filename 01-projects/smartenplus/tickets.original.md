@@ -1,7 +1,7 @@
 # Tickets — Support Tickets
 
 ## Summary
-`Ticket` = support ticket model. GenericForeignKey attaches to any model (BookingItem, Order, Contract, etc.). HistoricalRecords for audit trail.
+`Ticket` model is support ticket system. GenericForeignKey attaches to any model (BookingItem, Order, Contract, etc.). HistoricalRecords for audit trail.
 
 ---
 

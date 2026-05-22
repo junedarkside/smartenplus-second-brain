@@ -1,3 +1,7 @@
+No filepath given — compressing inline. Here's the compressed result:
+
+---
+
 ---
 name: trip-detail-deep-review-2026-05-20
 description: 4-agent adversarial deep review of trip detail page — overturned findings, hidden issues, production failure scenarios
@@ -8,17 +12,17 @@ metadata:
 # Trip Detail Deep Review — 2026-05-20
 
 ## Summary
-4-specialist second-pass team (Adversarial · Blast-Radius · Hidden Issues · Production Risk) reviewed the original 24-finding report. 3 original findings overturned, 2 downgraded to conditional. 8 new hidden issues found. 4 production failure scenarios identified.
+4-specialist second-pass team (Adversarial · Blast-Radius · Hidden Issues · Production Risk) reviewed original 24-finding report. 3 overturned, 2 downgraded to conditional. 8 new hidden issues. 4 production failure scenarios.
 
 ## Context
-Follows [[trip-detail-page-review-2026-05-20]]. Same branch: `260520-update/recommend-route`.
+Follows [[trip-detail-page-review-2026-05-20]]. Branch: `260520-update/recommend-route`.
 
 ---
 
 ## SECTION 0 — ORIGINAL REPORT CORRECTIONS
 
 ### ❌ OVERTURNED — P2: "Remove `isClient` entirely"
-**`isClient` is a hydration safety guard — removing it breaks the app.**
+**`isClient` is a hydration safety guard — removing breaks app.**
 
 `TripDetailHero.js:79–82` uses `isClient` to prevent hydration mismatch:
 ```js
@@ -27,42 +31,42 @@ Follows [[trip-detail-page-review-2026-05-20]]. Same branch: `260520-update/reco
   : ' Passengers'
 }
 ```
-Server renders neutral placeholder. Client switches to real Redux value post-hydration. Without this: server renders `0 passengers`, client renders `2 passengers` → React hydration mismatch error every page load.
+Server renders neutral placeholder. Client switches to Redux value post-hydration. Without it: server `0 passengers`, client `2 passengers` → hydration mismatch every page load.
 
-**Correct action:** Keep `isClient`. Optimize by combining its useEffect with the calendar useEffect (one mount effect instead of two).
+**Fix:** Keep `isClient`. Combine its useEffect with calendar useEffect (one mount effect instead of two).
 
 ---
 
 ### ❌ OVERTURNED — S1: "Change 307 → 301 redirect"
-Keep `permanent: false`. Products can be reclassified — 301 causes permanent browser/CDN cache pollution. See [[nextjs-307-vs-301-product-reclassify]].
+Keep `permanent: false`. Products reclassifiable — 301 causes permanent browser/CDN cache pollution. See [[nextjs-307-vs-301-product-reclassify]].
 
 ---
 
 ### ⚠️ DOWNGRADED — C4: "'forword' typo, just fix it"
-`'forword'` appears in multiple files: `homepagev1.js`, `useTripDetailData.js`, and main detail page. Zero occurrences of `'forward'` anywhere in codebase. Backend may have been built accepting `'forword'`. Changing blindly could silently break all direction-based filtering with no visible error.
+`'forword'` in `homepagev1.js`, `useTripDetailData.js`, main detail page. Zero `'forward'` occurrences in codebase. Backend may accept `'forword'`. Changing blindly could silently break all direction filtering.
 
-**Correct action:** Check backend API `direction` enum first. If backend validates `'forword'`, fix both ends simultaneously.
+**Fix:** Check backend API `direction` enum first. If backend validates `'forword'`, fix both ends simultaneously.
 
 ---
 
 ### ⚠️ CONDITIONAL — P4: "Remove `ssr:false` from breadcrumb"
-`NextBreadcrumbs.js:31–32` reads `router.asPath` during render. During SSR, `router.asPath` is undefined → empty breadcrumbs server-side → hydration mismatch. The `ssr:false` was likely intentional for this reason.
+`NextBreadcrumbs.js:31–32` reads `router.asPath` during render. SSR: `router.asPath` undefined → empty breadcrumbs server-side → hydration mismatch. `ssr:false` likely intentional.
 
-**Correct action:** Remove `ssr:false` only after adding `router.isReady` guard inside `NextBreadcrumbs`, or pass path as static prop (already computed as `customBreadcrumbPath` in parent).
+**Fix:** Remove `ssr:false` only after adding `router.isReady` guard in `NextBreadcrumbs`, or pass path as static prop (`customBreadcrumbPath` already computed in parent).
 
 ---
 
 ### ⚠️ CONDITIONAL — P1: "Remove reviews useEffect"
-Line 221 comment: *"Addresses static generation build regression where reviews aren't included in productData."* ISR has a known build regression where `productData.reviews` is empty. Removing the fetch leaves reviews permanently empty on affected pages.
+Line 221 comment: *"Addresses static generation build regression where reviews aren't included in productData."* ISR has known build regression where `productData.reviews` empty. Removing fetch leaves reviews permanently empty.
 
-**Correct action:** First verify `getStaticProps` reliably populates `productData.reviews`. Only then remove the client fetch.
+**Fix:** Verify `getStaticProps` reliably populates `productData.reviews` first. Then remove client fetch.
 
 ---
 
 ## SECTION 1 — NEW HIDDEN ISSUES
 
 ### 🔴 H1 — liveProductData merge wipes valid ISR ratecard with empty array (line 89–102)
-`??` doesn't catch `[]` — empty ratecard from CSR wipes valid ISR data → "Pricing Unavailable" crash. Active revenue risk. See [[nextjs-isr-ratecard-empty-array-guard]].
+`??` doesn't catch `[]` — empty CSR ratecard wipes valid ISR data → "Pricing Unavailable" crash. Active revenue risk. See [[nextjs-isr-ratecard-empty-array-guard]].
 
 ---
 
@@ -72,23 +76,23 @@ departureTime: `T${productData.trip_departure_time}+07:00`
 // Output: "T08:00:00+07:00" ← INVALID
 // Required: "2026-05-20T08:00:00+07:00"
 ```
-Missing date prefix. Google Search Console rejects this → TouristTrip rich results disabled silently.
+Missing date prefix. Google Search Console rejects → TouristTrip rich results disabled silently.
 
-**Fix:** Combine with `start_date` field or omit `departureTime`/`arrivalTime` entirely if no travel date available.
+**Fix:** Combine with `start_date` or omit `departureTime`/`arrivalTime` if no travel date.
 
 ---
 
 ### 🔴 H3 — No fetch timeout in `getStaticProps` — blocking fallback SSR can 500 forever (line 450)
-`fetchData()` wraps axios with zero timeout. For `fallback: 'blocking'` new slugs: first visitor blocks waiting for API. If API hangs → Vercel Lambda timeout (10–30s) → 500 error → page never caches → every subsequent visitor gets same 500.
+`fetchData()` wraps axios with zero timeout. `fallback: 'blocking'` new slugs: first visitor blocks on API. API hangs → Vercel Lambda timeout (10–30s) → 500 → page never caches → every visitor gets same 500.
 
-**Fix:** Add 8s timeout to `fetchData` for SSG context. Existing `notFound: true` catch handles gracefully once timeout fires.
+**Fix:** Add 8s timeout to `fetchData` for SSG context. Existing `notFound: true` catch handles gracefully.
 
 ---
 
 ### 🟡 H4 — Memory leak: async reviews fetch has no AbortController (line 222–241)
-No cleanup function. If user navigates away while fetch is pending, `setReviews()` fires on unmounted component → React warning + state corruption on rapid navigation.
+No cleanup. User navigates away during fetch → `setReviews()` fires on unmounted component → React warning + state corruption.
 
-Also: `productData?.reviews` in dependency array (line 241) causes re-fetch whenever ISR reviews change — circular.
+`productData?.reviews` in dependency array (line 241) causes re-fetch on ISR review changes — circular.
 
 **Fix:**
 ```js
@@ -111,28 +115,28 @@ const dateTrip = calendarStateDate
   ? format(getStringDate(calendarStateDate), 'dd-MMM-yyyy')
   : format(new Date(), 'dd-MMM-yyyy');
 ```
-`calendarStateDate` is a serialized Redux persist object `{ serifyKey, type, value }`. If stale/malformed persist state exists, `getStringDate()` can throw — crashes date calculation before any early-return guards run. No try/catch.
+`calendarStateDate` is serialized Redux persist object `{ serifyKey, type, value }`. Stale/malformed state → `getStringDate()` throws → crashes before early-return guards. No try/catch.
 
 **Fix:** Wrap in try/catch, fallback to `new Date()`.
 
 ---
 
 ### 🟡 H6 — `router.events` hash scroll fires on ALL route changes while mounted (line 261–269)
-`handleRouteChange` registered on `routeChangeComplete` fires on every route change app-wide while this component is mounted. If user navigates to different page during the 100ms setTimeout window, `scrollIntoView` operates on a stale ref. Cleanup at unmount is correct but the 100ms gap creates a race window.
+`handleRouteChange` on `routeChangeComplete` fires on every route change app-wide while mounted. User navigates away during 100ms `setTimeout` → `scrollIntoView` on stale ref. Cleanup at unmount correct, but 100ms gap = race window.
 
 ---
 
 ### 🟡 H7 — FAQ schema converts THB → USD with hardcoded `/ 30` (`useTripSEO.js` ~line 321)
-Exchange rate hardcoded. Current rate ~33–36 THB/USD. If Google indexes this, it displays incorrect USD pricing in rich snippets for international users.
+Exchange rate hardcoded. Current ~33–36 THB/USD. Google indexes → incorrect USD pricing in rich snippets for international users.
 
-**Fix:** Remove USD conversion from FAQ schema, or integrate real forex data (already available via the `/forex/` endpoint in this project).
+**Fix:** Remove USD conversion from FAQ schema, or integrate real forex data (`/forex/` endpoint already in project).
 
 ---
 
 ### 🟡 H8 — `TRANSPORTATION_CATEGORIES` divergence is a correctness trap, not just maintenance debt
-Original review flagged C8 as "maintainability." The real risk: if `getStaticPaths` constant is updated (e.g., add `'SHUTTLE'`) but `getStaticProps` constant is not, shuttle pages get pre-built but then redirected at runtime. Silent routing failure — no build error, no 404, just wrong redirect behavior.
+Original flagged C8 as "maintainability." Real risk: `getStaticPaths` constant updated (e.g., add `'SHUTTLE'`) but `getStaticProps` constant not → shuttle pages pre-built then redirected at runtime. Silent routing failure — no build error, no 404, wrong redirect.
 
-**Fix:** Module-level constant is mandatory, not optional cleanup.
+**Fix:** Module-level constant mandatory, not optional.
 
 ---
 
@@ -140,36 +144,36 @@ Original review flagged C8 as "maintainability." The real risk: if `getStaticPat
 
 ### 🔴 PROD-1 — Silent stale pricing (P1)
 **Trigger:** `useCheckContractQuery` fails (5xx, timeout, network).
-**Result:** `freshContract` stays `undefined` → `liveProductData` falls back to ISR cache → user books with weeks-old rates. No error indicator, page looks normal.
-**Gap:** Zero error state UI for contract fetch failure. Add error toast when RTK Query enters error state.
+**Result:** `freshContract` stays `undefined` → `liveProductData` falls back to ISR cache → user books with weeks-old rates. No error indicator.
+**Gap:** Zero error UI for contract fetch failure. Add error toast when RTK Query enters error state.
 
 ---
 
 ### 🔴 PROD-2 — Price flash → "Pricing Unavailable" crash (P1)
-**Trigger:** ISR cached page has rates → operator deactivates ratecard → CSR contract refresh returns empty ratecard.
-**Result:** Page loads with ISR price in hero → CSR refresh returns `{ ratecard: [] }` → H1 bug triggers → `lowestRate` = null → entire page unmounts to error screen.
-**User sees:** Price "450 THB" → blank error. Booking abandonment.
-**Fix needed:** H1 fix (ratecard guard) eliminates this. Also: don't recompute display price from `liveProductData` — use ISR price for display, CSR data for availability only.
+**Trigger:** ISR cached page has rates → operator deactivates ratecard → CSR refresh returns empty ratecard.
+**Result:** ISR price in hero → CSR returns `{ ratecard: [] }` → H1 triggers → `lowestRate` = null → page unmounts to error screen.
+**User sees:** "450 THB" → blank error. Booking abandonment.
+**Fix:** H1 fix (ratecard guard) eliminates this. Don't recompute display price from `liveProductData` — use ISR price for display, CSR for availability.
 
 ---
 
 ### 🟡 PROD-3 — New slug: first visitor gets 500 if API slow (P1)
-**Trigger:** Unbuilt slug, `fallback: 'blocking'`, API takes >Vercel Lambda limit.
-**Result:** 500 → page never caches → all subsequent visitors also 500.
-**Fix:** H3 fix (add 8s timeout to `fetchData`).
+**Trigger:** Unbuilt slug, `fallback: 'blocking'`, API > Vercel Lambda limit.
+**Result:** 500 → page never caches → all visitors 500.
+**Fix:** H3 fix (8s timeout on `fetchData`).
 
 ---
 
 ### 🟡 PROD-4 — ISR revalidation failure serves stale data indefinitely (P2)
-**Trigger:** API down during ISR revalidation window.
-**Result:** Old HTML served silently, no metric fires, no user-visible error.
-**Mitigation:** Monitor via Vercel analytics or Datadog on `getStaticProps` errors. No code fix in Next.js ISR — expected behavior.
+**Trigger:** API down during ISR revalidation.
+**Result:** Old HTML served silently, no metric, no user-visible error.
+**Mitigation:** Monitor via Vercel analytics or Datadog on `getStaticProps` errors. No code fix — expected Next.js ISR behavior.
 
 ---
 
 ## REVISED QUICK-WIN ORDER
 
-**Safe to execute now (no investigation needed):**
+**Safe now (no investigation):**
 
 | # | Fix | Effort |
 |---|-----|--------|
@@ -199,8 +203,8 @@ Original review flagged C8 as "maintainability." The real risk: if `getStaticPat
 
 ## TOP 3 HIDDEN RISKS
 
-1. **PROD-2 + H1** — Empty ratecard from CSR overwrites valid ISR price → page crashes on booking. Active revenue risk.
-2. **H3** — No fetch timeout → new slugs can 500 indefinitely. Silent, no alert.
+1. **PROD-2 + H1** — Empty CSR ratecard overwrites valid ISR price → page crashes on booking. Active revenue risk.
+2. **H3** — No fetch timeout → new slugs 500 indefinitely. Silent, no alert.
 3. **H2** — Invalid ISO8601 in TouristTrip schema → all rich results rejected by Google Search Console. Silent.
 
 ## Related

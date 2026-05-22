@@ -1,6 +1,6 @@
 ---
 name: blog-seo-performance-2026-05-20
-description: Blog index + detail page SEO, performance, HMR fixes — done vs skipped + why
+description: Blog index + detail page SEO, performance, and HMR fixes — what was done, what was skipped, and why
 metadata:
   type: project
 ---
@@ -8,7 +8,7 @@ metadata:
 # Blog SEO & Performance Optimization
 
 ## Summary
-Two-session audit + optimize blog index (`pages/blog/index.js`) + detail (`pages/blog/[slug].js`) for Core Web Vitals, SEO, HMR stability.
+Two-session effort to audit and optimize blog index (`pages/blog/index.js`) and blog detail (`pages/blog/[slug].js`) pages for Core Web Vitals, SEO signals, and HMR stability.
 
 ## What Was Done
 
@@ -17,7 +17,7 @@ Two-session audit + optimize blog index (`pages/blog/index.js`) + detail (`pages
 - `Article` → `BlogPosting` JSON-LD schema type
 - Added `inLanguage`, `wordCount`, `articleSection` to schema
 - `og:locale: en_US`, `robots` meta, deduplicated org schema
-- `useMemo([posts])` on seoConfig — prevent recalc every render
+- `useMemo([posts])` on seoConfig to prevent recalc on every render
 - `priority={true}` on featured BlogCard image (LCP fix)
 - `aspect-video` class on featured card container (CLS fix)
 - `revalidate: 60 → 300` on blog index ISR
@@ -26,14 +26,14 @@ Two-session audit + optimize blog index (`pages/blog/index.js`) + detail (`pages
 ### Session 2 — `6b655d6` (2026-05-20)
 
 **Performance**
-- `relatedPosts` + `relatedRoutes` fetched parallel via `Promise.allSettled` — saves one sequential round-trip per page gen (`[slug].js:212`)
-- `getBlogTargetURL` moved to module-level stable const — prevents BlogCard re-renders every index render (`index.js`)
-- `StandardBreadcrumb` changed `ssr:false` → `ssr:true` — breadcrumb now in SSR HTML for SEO crawlers
+- `relatedPosts` + `relatedRoutes` now fetched in parallel via `Promise.allSettled` — saves one full sequential network round-trip per page generation (`[slug].js:212`)
+- `getBlogTargetURL` moved to module-level stable const — prevents BlogCard child re-renders on every index render (`index.js`)
+- `StandardBreadcrumb` changed from `ssr:false` → `ssr:true` — breadcrumb now in SSR HTML for SEO crawlers
 
 **Images**
 - Author avatar in BlogPostDisplay: MUI `<Avatar src>` → `next/image` with `fill` + `sizes="34px"` (`BlogPostDisplay.js:152`)
 - `secure.gravatar.com` added to `next.config.js` remotePatterns (was throwing unconfigured-host error)
-- BlogCard both variants: added `sizes` — featured `40vw`, grid `33vw` — browser downloads correct size per viewport
+- BlogCard both variants: added `sizes` attribute — featured `40vw`, grid `33vw` — browser downloads correctly-sized image per viewport
 
 **GraphQL**
 - `mediaDetails { width height }` added to `POST_BY_SLUG` query — OG image dimensions now real values, not hardcoded 1200×630 defaults (`api.js:233`)

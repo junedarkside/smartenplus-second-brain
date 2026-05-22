@@ -1,13 +1,13 @@
 # Tour System — Phase 2 Status & Open Gaps
 
 ## Summary
-Day trip/tour booking. Core system prod-ready since 2026-01. Phase 2 UI (time slots, add-ons) incomplete on frontend. Trust signal fields empty.
+Day trip / tour booking feature. Core system production-ready since 2026-01. Phase 2 UI features (time slot selection, add-ons) remain incomplete on frontend. Trust signal fields empty.
 
 ## Context
-Backend in `operators` app (Contract, TimeSlot, ContractAddon, ContractTranslation). Full model docs in [[operators]]. 46+ commits to operators/ and products/ since original doc (2026-03-03) — counts below may be stale.
+Backend tour system lives in `operators` app (Contract, TimeSlot, ContractAddon, ContractTranslation). Full model docs in [[operators]]. 46+ commits to operators/ and products/ since the original doc was written (2026-03-03) — test/contract counts below may be stale.
 
 ## Authoritative Docs
-Docs in repo, not vault:
+All detail docs live in the repo, not the vault:
 - `smartenplus-backend/docs/tour-system/INDEX.md` — backend doc hub (14 files)
 - `smartenplus-backend/docs/tour-system/api/backend-api.md` — 30+ endpoints
 - `smartenplus-backend/docs/tour-system/pricing/guide.md` — JOIN/PRIVATE/CHARTER pricing logic

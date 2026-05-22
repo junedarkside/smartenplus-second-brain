@@ -11,7 +11,7 @@ metadata:
 3-specialist virtual team for deep SEO + performance audit of the SmartEnPlus homepage. Roles run sequentially inside one agent session. Leader synthesizes findings, debates conflicts, writes vault report.
 
 ## Context
-Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO infrastructure solid but has structured data errors and technical gaps not covered by UX review.
+Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO infrastructure is solid but has structural data errors and technical gaps that were not covered by the UX review.
 
 ## Team Composition
 
@@ -33,7 +33,7 @@ Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO inf
 **Agent file:** `smartenplus-frontend/.claude/agents/seo-homepage-auditor.md`
 
 ## Pre-conditions
-- Dev server running on port 3000 (agent self-checks, fails clearly if not)
+- Dev server running on port 3000 (agent self-checks and fails clearly if not)
 - No other conditions — agent reads source files directly
 
 ## Known Issues Found on First Run (2026-05-21)
@@ -42,7 +42,7 @@ See [[homepage-seo-performance-deep-review-2026-05-21]] for full findings.
 **Pre-identified gaps before audit:**
 - TravelAgency `telephone` hardcoded fake number (`+66-2-123-4567`) — real number in `constants.js`
 - TravelAgency `address` hardcoded `123 Sukhumvit` — not from any constant
-- TravelAgency `aggregateRating` hardcoded `4.5/128` — live data already in component props
+- TravelAgency `aggregateRating` hardcoded `4.5/128` — live data already available in component props
 - TravelAgency `sameAs` missing — social URLs already exported from `constants.js`
 - `WebPageJsonLd` `lastReviewed` hardcoded stale date (`2024-05-26`)
 - No `WebSite` + `SearchAction` schema despite having a search form
