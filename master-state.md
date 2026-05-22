@@ -4,33 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session continuation)
+**Updated:** 2026-05-22 (session continuation 2)
 **Achieved this session:**
-- All 30 homepage SEO + performance audit findings addressed (4 commits on `260522-fix/homepage-seo-p0`)
-- Merged `260522-fix/homepage-seo-p0` → `develop` (fast-forward, `27f486b` HEAD)
-- User will deploy to production manually
-- SD9 (Trip departureTime/arrivalTime) deferred — HomeSerializer only has Route-level data, no schedule
+- All 30 homepage SEO + performance audit findings addressed + merged to develop
+- AI misclassification analysis (3-agent team) — 6 root causes found + all fixed
+- Merged `260522-fix/ai-classification` → `develop` (fast-forward, `ade7bb1` HEAD)
 
-**Commits landed on develop:**
+**Commits landed on develop (this session):**
 - `d1fa488` P0: fake phone/address, sitemap 404
 - `628ad6a` P1: aggregateRating live, sameAs, lastReviewed, WebSite schema, DefaultSeo, og/twitter meta
 - `b7e720b` P1 remaining: logo, malformed geo block, preconnect hints, desktop CLS fix
 - `27f486b` PP2 hero crossfade, PP3 generateBlurDataURL → generateColorPlaceholder
+- `ade7bb1` AI classification: /bookings unblocked, BusTrip @type, Service schema, llms.txt, hasOfferCatalog
 
 **In-progress / not done:**
 - Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` still open
 - `pages/server-sitemap.xml.js` — removed 404 reference (TS6), proper dynamic sitemap file not yet created
-- SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change to expose schedule data)
+- SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
+- Trip detail page @type audit — `useTripSEO.js` still uses `TouristTrip` + `LocalBusiness` (separate ticket)
 
 **Next session resume:**
 1. Backend #4 — `locked_amount` `CheckConstraint` + `db_index=True` + migration `0039` on `orders/models.py`
-2. Or: create `pages/server-sitemap.xml.js` dynamic sitemap for trip routes
+2. Trip detail page schema audit — `useTripSEO.js` TouristTrip → Product/Service + fix LocalBusiness description
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `27f486b` hero crossfade + placeholder rename |
+| `smartenplus-frontend` | `develop` | `ade7bb1` AI classification fixes |
 | `smartenplus-backend` | `main` | `3e49644` recommend-route backend — tooling churn unstaged |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js — CLAUDE.md modified unstaged |
 
