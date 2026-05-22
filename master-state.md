@@ -4,23 +4,18 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session wrap #2)
+**Updated:** 2026-05-22 (session wrap #3)
 **Achieved this session:**
-- **Blog hero→breadcrumb gap unification** — all blog pages restructured to `flex flex-col gap-2` via `BlogPageWrapper` rewrite; hero is now first flex child (was outside flex wrapper)
-- **CategoryMenu moved into hero** — out of breadcrumb row, now `actionButton` prop on `FeaturedImageHeader`, positioned `absolute bottom-3 right-3` inside the `max-w-[1200px]` image container (not `<header>` — avoids viewport-edge overflow on wide screens)
-- **CategoryMenu style matched to back/share buttons** — `bg-black/25 hover:bg-black/40`, white text/icon, `size="small"`, `padding: 4px 8px`; removed blue colors, border, `rounded-full`
-- **BlogPostDisplay regression fixed** — reverting outer flex wrapper, restoring `mt-2` on breadcrumb div (adding wrapper changed FeaturedImageHeader containing block, broke gradient/color)
-- **All other pages standardized** — destinations, forum, airport-transfer, trip detail: all use `gap-2` for hero→breadcrumb rhythm
-- Branch `260522-fix/trip-detail-ux` merged to `develop`, pushed
+- **Section width unification — `/trips/hatyai/koh-lipe`** — all sections now use `mx-2 md:mx-3 xl:mx-0` matching homepage ContentCard pattern: calendar, transport filter, sidebar+cards, trip overview, available trips summary, blog post
+- **SlideCalendar2 className prop** — added optional `className` prop (default `mx-2 md:mx-3 xl:mx-0`); trip detail passes empty override, all other callers use default
+- **TripsPageLayout** — root flex div gets `mx-2 md:mx-3 xl:mx-0`; removed rogue `sm:ml-3` from sidebar aside; FilteredTripList `<ul>` margin delegated to root
+- **TransportationOptionsFilter** — `mx-0` → `mx-2 xl:mx-0` + `rounded-md` added so mobile gap is visually apparent
+- **TripOverview / TripSummary** — `md:mx-3` → `mx-2 md:mx-3 xl:mx-0` + `rounded-md` added
+- **BlogPost** — `mx-4` (hardcoded 16px) → `mx-2 md:mx-3 xl:mx-0`
+- **⚠️ Branch mistake** — `e7345ea` committed directly on `main` (not pushed to origin). User accepted — left as-is.
 
 **Commits landed this session:**
-- `ebc8920` fix(spacing): unify hero-breadcrumb gap across all pages
-- `9ff02fb` fix(spacing): standardize hero-breadcrumb gap on destinations + trip detail
-- `442effa` fix(blog): add mt-2 gap between hero and breadcrumb on all blog pages
-- `6eca2ae` fix(blog): move CategoryMenu into hero bottom-right, slim breadcrumb row
-- `3601d2d` fix(blog): fix CategoryMenu position + revert BlogPostDisplay flex wrapper
-- `88e4034` fix(blog): match CategoryMenu button style to back/share hero buttons
-- `530c8f5` merge: 260522-fix/trip-detail-ux → develop
+- `e7345ea` fix(layout): unify section widths on trips filter + detail pages — 10 files (on main, not pushed)
 
 **In-progress / not done:**
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
@@ -28,20 +23,20 @@
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Tackle open items #1 (AdminBookingSummaryViewSet auth)
-2. Or: deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
-3. Backend: items #2 (delete RefundViewSet) or #3 (remove Stripe stub) when prod logs clear
+1. Optionally cherry-pick `e7345ea` to develop + reset main to origin/main (user accepted as-is)
+2. Open item #1 (AdminBookingSummaryViewSet auth)
+3. Deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `530c8f5` merge 260522-fix/trip-detail-ux |
+| `smartenplus-frontend` | `main` | `e7345ea` fix(layout): unify section widths — ⚠️ direct main commit, not pushed |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
-- frontend: `.claude/settings.local.json` modified + `CLAUDE.original.md` untracked — leave unstaged (not for version control)
+- frontend: `.claude/settings.local.json` modified + `CLAUDE.original.md` untracked — leave unstaged
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 
