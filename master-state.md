@@ -4,18 +4,14 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session wrap #3)
+**Updated:** 2026-05-22 (session wrap #4)
 **Achieved this session:**
-- **Section width unification — `/trips/hatyai/koh-lipe`** — all sections now use `mx-2 md:mx-3 xl:mx-0` matching homepage ContentCard pattern: calendar, transport filter, sidebar+cards, trip overview, available trips summary, blog post
-- **SlideCalendar2 className prop** — added optional `className` prop (default `mx-2 md:mx-3 xl:mx-0`); trip detail passes empty override, all other callers use default
-- **TripsPageLayout** — root flex div gets `mx-2 md:mx-3 xl:mx-0`; removed rogue `sm:ml-3` from sidebar aside; FilteredTripList `<ul>` margin delegated to root
-- **TransportationOptionsFilter** — `mx-0` → `mx-2 xl:mx-0` + `rounded-md` added so mobile gap is visually apparent
-- **TripOverview / TripSummary** — `md:mx-3` → `mx-2 md:mx-3 xl:mx-0` + `rounded-md` added
-- **BlogPost** — `mx-4` (hardcoded 16px) → `mx-2 md:mx-3 xl:mx-0`
-- **⚠️ Branch mistake** — `e7345ea` committed directly on `main` and pushed to origin/main. Should have gone to develop. User accepted.
+- **Gap consistency — `/trips/hatyai/koh-lipe`** — added `gap-3` between sidebar and results section (TripsPageLayout); increased card list from `gap-1` → `gap-3` (FilteredTripList)
+- **Rounded consistency — trips filter page** — full audit across all page components; 3 inconsistencies fixed: TransportationOptionsFilter wrapper `rounded-md md:rounded-lg` → `rounded-lg`; mobile sort dropdown missing radius on mobile → `rounded-lg`; rate table tbody `rounded-t-md` → `rounded-t-lg` to match card outer
+- **Commit `4da9175`** pushed to main — all 5 layout files in one commit
 
 **Commits landed this session:**
-- `e7345ea` fix(layout): unify section widths on trips filter + detail pages — 10 files (on main, not pushed)
+- `4da9175` fix(trips): unify gap + rounded consistency on filter page — 5 files, pushed to origin/main
 
 **In-progress / not done:**
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
@@ -23,15 +19,14 @@
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Cherry-pick `e7345ea` to develop (it's on main/pushed but not on develop yet)
-2. Open item #1 (AdminBookingSummaryViewSet auth)
-3. Deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
+1. Open item #1 (AdminBookingSummaryViewSet auth)
+2. Deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `e7345ea` fix(layout): unify section widths — pushed to origin/main |
+| `smartenplus-frontend` | `main` | `4da9175` fix(trips): unify gap + rounded — pushed to origin/main |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 

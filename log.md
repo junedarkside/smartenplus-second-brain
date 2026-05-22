@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-22] session-end | trips filter page gap+rounded consistency — gap-3 sidebar↔results + cards, rounded-lg unified across filter bar/sort/table; 4da9175 pushed to main
 ## [2026-05-22] session-end | section width unification on /trips filter+detail pages — mx-2 md:mx-3 xl:mx-0 pattern applied to calendar, filter bar, sidebar, cards, overview, summary, blog post; SlideCalendar2 className prop added; e7345ea on main (not pushed)
 ## [2026-05-22] session-end | blog hero-breadcrumb gap unified via BlogPageWrapper flex restructure; CategoryMenu moved to hero actionButton + styled to match back/share buttons (bg-black/25 white); all pages gap-2; 260522-fix/trip-detail-ux merged → develop
 ## [2026-05-22] session-end | site-wide style consistency + breadcrumb gap standardization — 8px rhythm across all pages; removed mb-6/py-2 from 35 files; ContentCard rounded-md, typography gray-900, gap-1→gap-2 filters; branch 260522-fix/trip-detail-ux uncommitted
