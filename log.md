@@ -286,3 +286,5 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-05-20] session-end | Recommend-route review + partial implementation — hydration issue blocking
 
 ## [2026-05-22] session-end | locked_amount db_index fix (backend #4 closed) + master-state stale item corrected
+
+## [2026-05-22] session-end | trip SEO schema fake data fixed + dynamic sitemap phantom closed

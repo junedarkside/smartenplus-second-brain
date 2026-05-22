@@ -6,28 +6,28 @@
 
 **Updated:** 2026-05-22 (session-end)
 **Achieved this session:**
-- Backend #4 closed: `locked_amount db_index=True` + migration `0042` → merged to `develop`
-- Scrutinize audit: confirmed `CheckConstraint` already done in `0039` (master-state was stale) — only index was missing
-- master-state item #4 corrected to reflect reality
+- Backend #4 closed: `locked_amount db_index=True` + migration `0042` → merged + pushed to backend `develop`
+- Frontend: trip detail structured schema fake data removed (`useTripSEO.js`) — LocalBusiness fake phone/geo, FAQ/offers fake payment methods, `Date.now()` hydration risk — merged + pushed to frontend `develop` (also on `main`, see note)
+- Dynamic sitemap task closed as phantom — `pages/server-sitemap.xml/index.js` already fully implemented
+- Branch workflow rule established: always merge → `develop`, never `main` directly
 
-**Commits landed on backend develop (this session):**
-- `ad854a6` fix(orders): add db_index to locked_amount field
-- `4140cbd` merge: locked_amount db_index — fix/locked-amount-index → develop
+**Note:** Trip SEO fix was accidentally merged to `main` first, then `develop` synced to match. Both branches identical at `1b0beee`.
+
+**Commits landed this session:**
+- backend `ad854a6` + `4140cbd` — locked_amount index
+- frontend `24820e6` + `1b0beee` — trip SEO schema fixes
 
 **In-progress / not done:**
-- `pages/server-sitemap.xml.js` — removed 404 reference (TS6), proper dynamic sitemap file not yet created
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
-- Trip detail page @type audit — `useTripSEO.js` still uses `TouristTrip` + `LocalBusiness` (separate ticket)
 
 **Next session resume:**
-1. Trip detail page schema audit — `useTripSEO.js` TouristTrip → Product/Service + fix LocalBusiness description
-2. Dynamic sitemap — `pages/server-sitemap.xml.js` proper implementation
+1. Check open items in Section 2 — items 1, 2, 3, 8 still open
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `ade7bb1` AI classification fixes |
+| `smartenplus-frontend` | `develop` | `1b0beee` trip SEO schema fake data fixes |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
@@ -47,7 +47,7 @@
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
-| 4 | `locked_amount` db_index | DONE — `0042` merged to backend develop `4140cbd` | `orders/models.py:219` |
+| 4 | `locked_amount` db_index | DONE — `0042` merged + pushed to backend develop `4140cbd` 2026-05-22 | `orders/models.py:219` |
 | 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
 | 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
@@ -57,6 +57,8 @@
 ### Recently Closed (this session addition)
 | Issue | Fix | Date |
 |-------|-----|------|
+| Trip detail structured schema fake data | `24820e6` frontend develop — LocalBusiness fake phone/geo removed, FAQ/offers payment methods corrected, `Date.now()` hydration risk fixed | 2026-05-22 |
+| Dynamic sitemap phantom task | Already implemented at `pages/server-sitemap.xml/index.js` — no work needed | 2026-05-22 |
 | `locked_amount` db_index + migration `0042` | `ad854a6` → merged `4140cbd` to backend develop | 2026-05-22 |
 | SEO + performance deep review | 3-specialist audit complete — 30 findings, vault report at `homepage-seo-performance-deep-review-2026-05-21.md` — P0 fixes pending | 2026-05-22 |
 | Popular Routes image carousel PR | merged to main `edccb75` — develop + main in sync | 2026-05-21 |
