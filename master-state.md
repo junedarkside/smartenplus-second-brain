@@ -4,18 +4,19 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (in-session)
+**Updated:** 2026-05-22 (session wrap)
 **Achieved this session:**
 - 3-specialist UX/UI audit of trip detail page: 32 issues found, vault report at `01-projects/trip-detail-uxui-audit-2026-05-22.md`
 - All P0/P1 issues implemented in `260522-fix/trip-detail-ux` (3 commits: `04b17f4` `a31f12f` `ac55eb3`)
-  - ContentCard wrappers for 4 trip detail cards (TripDetailsAttribute, TripDetailsImageAndMap, Timeline, TripDetailContent)
-  - SlideCalendar2 mobile margins + rounding
-  - h1 text-sm→text-base, z-5→z-10, text-md→text-base×3, text-slate-600→gray-600
-  - pb-16 page root (reviews hidden behind fixed bar)
-  - CLS fallbacks: calendar min-h-[80px], TripDetail2 min-h-[600px]
-  - BookButton bgcolor secondary→primary, aria-describedby a11y
-  - contractAvaliable=false fallback message, ExpandMoreIcon chevron
-  - Escape link in lowestRate=null error state
+- **Style consistency pass** — 11 issues found via agent team review, 5 passes across 8 files:
+  - ContentCard `rounded`→`rounded-md`, removed duplicate bg/border/hover from inner components
+  - Typography: all section headings → `text-gray-900 font-semibold`
+  - Z-index cleanup, BookButton `min-w-[114.33px]`→`min-w-[120px]`
+  - Hero h1: added `sm:text-xl` intermediate breakpoint
+- **Site-wide breadcrumb gap standardization** — 8px rhythm matching homepage:
+  - Removed `mb-6` (24px) from breadcrumb wrappers on 21 pages → all use parent `gap-2` now
+  - Removed `py-2` from StandardBreadcrumb component + all page wrappers (was double-padding)
+  - FilterTripsPage/TripSearchFilters: `gap-1`→`gap-2` for section spacing
 - Build clean: 133 static pages compiled successfully
 
 **Commits landed this session:**
@@ -24,15 +25,16 @@
 - `ac55eb3` fix(trip-detail): conversion and a11y fixes
 
 **In-progress / not done:**
-- Branch `260522-fix/trip-detail-ux` NOT yet merged to develop — PR pending
+- Branch `260522-fix/trip-detail-ux` NOT yet merged — UNCOMMITTED style fixes on top (150 files: 35 code files changed + tooling deletes)
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
 - Deferred from audit: CF1 (price lazy-load gap), CF9 (price above fold), VD2/VD3 (typography tokens), VD9 (RelatedTrips over-padding)
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Open PR: `260522-fix/trip-detail-ux` → `develop`
-2. Merge PR
-3. Tackle open items #1 (AdminBookingSummaryViewSet auth) or deferred audit items
+1. Commit style consistency + breadcrumb gap fixes to `260522-fix/trip-detail-ux`
+2. Open PR: `260522-fix/trip-detail-ux` → `develop`
+3. Merge PR
+4. Tackle open items #1 (AdminBookingSummaryViewSet auth) or deferred audit items
 
 ### Active Branches
 
@@ -43,7 +45,7 @@
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
-- frontend: tooling churn (`.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `trip-detail-uxui-auditor.md` + `CLAUDE.original.md`) — leave unstaged
+- frontend: 150 files changed — 35 code files (style consistency + breadcrumb gap fixes) + tooling deletes (`.agents/skills/` + `.claude/skills/` + `.claude/agents/`) + `CLAUDE.md` + `.claude/settings.local.json` + untracked `seo-homepage-auditor.md` + `trip-detail-uxui-auditor.md` + `CLAUDE.original.md` — needs commit
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 
