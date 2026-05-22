@@ -2,6 +2,9 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-22] session-end | homepage SEO audit all 30 findings done + AI misclassification 6 fixes; both merged to develop; next: backend #4 locked_amount + useTripSEO TouristTrip audit
+## [2026-05-22] fix | ai-classification — /bookings unblocked robots.txt, BusTrip @type, Service schema, llms.txt, hasOfferCatalog on TravelAgency
+## [2026-05-22] fix | homepage-seo-p1 — aggregateRating live, sameAs, lastReviewed, WebSite schema, DefaultSeo, og/twitter, logo, geo fix, preconnect, CLS, hero crossfade
 ## [2026-05-22] session-end | P0 SEO fixes done on branch 260522-fix/homepage-seo-p0; next: P1 fixes (aggregateRating, sameAs, DefaultSeo, Seo.js og) then merge + backend #4
 ## [2026-05-22] fix | homepage-seo-p0 — fake phone replaced, fake address removed (taxID added), server-sitemap.xml 404 hotfix, robots.txt policy merged
 ## [2026-05-22] ingest | homepage-seo-performance-deep-review — 3-specialist audit, 30 issues (3 critical, 11 major), P0: server-sitemap.xml 404 + fake phone/address in TravelAgency schema
