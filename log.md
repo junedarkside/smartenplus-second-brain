@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-22] session-end | trip detail UX/UI audit + all P1 fixes done; branch 260522-fix/trip-detail-ux ready for PR to develop
 ## [2026-05-22] fix | trip-detail-uxui — 32 issues found+implemented: ContentCard wrappers, h1 text-sm, z-5→z-10, text-md phantom, pb-16, CLS fallbacks, booking bar a11y; branch 260522-fix/trip-detail-ux (3 commits)
 ## [2026-05-22] session-end | created trip-detail-uxui-auditor agent — 3-specialist team, 32-item checklist; deep width/margin audit confirmed Section/ContentCard absent from entire trip detail tree; calendar fix = wrap at page level; fixes pending
 ## [2026-05-22] session-end | homepage SEO audit all 30 findings done + AI misclassification 6 fixes; both merged to develop; next: backend #4 locked_amount + useTripSEO TouristTrip audit
