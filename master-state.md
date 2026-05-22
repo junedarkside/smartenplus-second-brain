@@ -4,31 +4,41 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session-end)
+**Updated:** 2026-05-22 (in-session)
 **Achieved this session:**
-- Created `trip-detail-uxui-auditor` agent — 3-specialist + leader, 32-item checklist, pre-seeded debates, vault output. File: `.claude/agents/trip-detail-uxui-auditor.md`
-- Deep visual audit of trip detail page: confirmed Section/ContentCard abstraction absent from entire tree — root cause of all width/margin inconsistencies
-- Mapped all 7 full-bleed sections (calendar, 3 content cards, related trips, reviews, breadcrumb)
-- Calendar fix strategy: wrap at page level `<Section><ContentCard>`, keep SlideCalendar2 UX unchanged
-- Vault plan file at `/Users/charuwatnaranong/.claude/plans/create-uxui-agent-team-encapsulated-flame.md`
+- 3-specialist UX/UI audit of trip detail page: 32 issues found, vault report at `01-projects/trip-detail-uxui-audit-2026-05-22.md`
+- All P0/P1 issues implemented in `260522-fix/trip-detail-ux` (3 commits: `04b17f4` `a31f12f` `ac55eb3`)
+  - ContentCard wrappers for 4 trip detail cards (TripDetailsAttribute, TripDetailsImageAndMap, Timeline, TripDetailContent)
+  - SlideCalendar2 mobile margins + rounding
+  - h1 text-sm→text-base, z-5→z-10, text-md→text-base×3, text-slate-600→gray-600
+  - pb-16 page root (reviews hidden behind fixed bar)
+  - CLS fallbacks: calendar min-h-[80px], TripDetail2 min-h-[600px]
+  - BookButton bgcolor secondary→primary, aria-describedby a11y
+  - contractAvaliable=false fallback message, ExpandMoreIcon chevron
+  - Escape link in lowestRate=null error state
+- Build clean: 133 static pages compiled successfully
 
 **Commits landed this session:**
-- none (agent file only — no code changes)
+- `04b17f4` fix(trip-detail): quick-win UX fixes
+- `a31f12f` fix(trip-detail): ContentCard wrapper pass
+- `ac55eb3` fix(trip-detail): conversion and a11y fixes
 
 **In-progress / not done:**
-- Trip detail UX fixes NOT yet implemented — agent created for audit, actual fixes pending
+- Branch `260522-fix/trip-detail-ux` NOT yet merged to develop — PR pending
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
+- Deferred from audit: CF1 (price lazy-load gap), CF9 (price above fold), VD2/VD3 (typography tokens), VD9 (RelatedTrips over-padding)
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Run `audit trip page` with dev server running — agent produces vault report
-2. Then implement P0+P1 fixes from audit output
+1. Open PR: `260522-fix/trip-detail-ux` → `develop`
+2. Merge PR
+3. Tackle open items #1 (AdminBookingSummaryViewSet auth) or deferred audit items
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `1b0beee` trip SEO schema fake data fixes |
+| `smartenplus-frontend` | `260522-fix/trip-detail-ux` | `ac55eb3` conversion and a11y fixes |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
@@ -56,6 +66,11 @@
 | 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
 
 ### Recently Closed (this session addition)
+| Issue | Fix | Date |
+|-------|-----|------|
+| Trip detail UX/UI — 32-issue audit: full-bleed cards, h1 text-sm, z-5, text-md phantom, pb-16, CLS, a11y | `04b17f4`+`a31f12f`+`ac55eb3` branch `260522-fix/trip-detail-ux` — PR to develop pending | 2026-05-22 |
+
+### Previously Closed
 | Issue | Fix | Date |
 |-------|-----|------|
 | Trip detail structured schema fake data | `24820e6` frontend develop — LocalBusiness fake phone/geo removed, FAQ/offers payment methods corrected, `Date.now()` hydration risk fixed | 2026-05-22 |
