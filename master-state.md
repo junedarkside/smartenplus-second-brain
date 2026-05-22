@@ -6,22 +6,23 @@
 
 **Updated:** 2026-05-22 (session-end)
 **Achieved this session:**
-- Backend #4 closed: `locked_amount db_index=True` + migration `0042` → merged + pushed to backend `develop`
-- Frontend: trip detail structured schema fake data removed (`useTripSEO.js`) — LocalBusiness fake phone/geo, FAQ/offers fake payment methods, `Date.now()` hydration risk — merged + pushed to frontend `develop` (also on `main`, see note)
-- Dynamic sitemap task closed as phantom — `pages/server-sitemap.xml/index.js` already fully implemented
-- Branch workflow rule established: always merge → `develop`, never `main` directly
-
-**Note:** Trip SEO fix was accidentally merged to `main` first, then `develop` synced to match. Both branches identical at `1b0beee`.
+- Created `trip-detail-uxui-auditor` agent — 3-specialist + leader, 32-item checklist, pre-seeded debates, vault output. File: `.claude/agents/trip-detail-uxui-auditor.md`
+- Deep visual audit of trip detail page: confirmed Section/ContentCard abstraction absent from entire tree — root cause of all width/margin inconsistencies
+- Mapped all 7 full-bleed sections (calendar, 3 content cards, related trips, reviews, breadcrumb)
+- Calendar fix strategy: wrap at page level `<Section><ContentCard>`, keep SlideCalendar2 UX unchanged
+- Vault plan file at `/Users/charuwatnaranong/.claude/plans/create-uxui-agent-team-encapsulated-flame.md`
 
 **Commits landed this session:**
-- backend `ad854a6` + `4140cbd` — locked_amount index
-- frontend `24820e6` + `1b0beee` — trip SEO schema fixes
+- none (agent file only — no code changes)
 
 **In-progress / not done:**
+- Trip detail UX fixes NOT yet implemented — agent created for audit, actual fixes pending
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
+- Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Check open items in Section 2 — items 1, 2, 3, 8 still open
+1. Run `audit trip page` with dev server running — agent produces vault report
+2. Then implement P0+P1 fixes from audit output
 
 ### Active Branches
 
@@ -32,7 +33,7 @@
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
-- frontend: tooling churn (`.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `CLAUDE.original.md`) — leave unstaged
+- frontend: tooling churn (`.agents/skills/` + `.claude/skills/` + `.claude/agents/` deletes + `.claude/settings.local.json` modified + untracked `seo-homepage-auditor.md` + `trip-detail-uxui-auditor.md` + `CLAUDE.original.md`) — leave unstaged
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 

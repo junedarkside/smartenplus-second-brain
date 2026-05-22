@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-22] session-end | created trip-detail-uxui-auditor agent — 3-specialist team, 32-item checklist; deep width/margin audit confirmed Section/ContentCard absent from entire trip detail tree; calendar fix = wrap at page level; fixes pending
 ## [2026-05-22] session-end | homepage SEO audit all 30 findings done + AI misclassification 6 fixes; both merged to develop; next: backend #4 locked_amount + useTripSEO TouristTrip audit
 ## [2026-05-22] fix | ai-classification — /bookings unblocked robots.txt, BusTrip @type, Service schema, llms.txt, hasOfferCatalog on TravelAgency
 ## [2026-05-22] fix | homepage-seo-p1 — aggregateRating live, sameAs, lastReviewed, WebSite schema, DefaultSeo, og/twitter, logo, geo fix, preconnect, CLS, hero crossfade
