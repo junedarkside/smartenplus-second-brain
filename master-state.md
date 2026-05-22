@@ -4,48 +4,44 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-22 (session wrap)
+**Updated:** 2026-05-22 (session wrap #2)
 **Achieved this session:**
-- 3-specialist UX/UI audit of trip detail page: 32 issues found, vault report at `01-projects/trip-detail-uxui-audit-2026-05-22.md`
-- All P0/P1 issues implemented in `260522-fix/trip-detail-ux` (3 commits: `04b17f4` `a31f12f` `ac55eb3`)
-- **Style consistency pass** — 11 issues found via agent team review, 5 passes across 8 files:
-  - ContentCard `rounded`→`rounded-md`, removed duplicate bg/border/hover from inner components
-  - Typography: all section headings → `text-gray-900 font-semibold`
-  - Z-index cleanup, BookButton `min-w-[114.33px]`→`min-w-[120px]`
-  - Hero h1: added `sm:text-xl` intermediate breakpoint
-- **Site-wide breadcrumb gap standardization** — 8px rhythm matching homepage:
-  - Removed `mb-6` (24px) from breadcrumb wrappers on 21 pages → all use parent `gap-2` now
-  - Removed `py-2` from StandardBreadcrumb component + all page wrappers (was double-padding)
-  - FilterTripsPage/TripSearchFilters: `gap-1`→`gap-2` for section spacing
-- Build clean: 133 static pages compiled successfully
+- **Blog hero→breadcrumb gap unification** — all blog pages restructured to `flex flex-col gap-2` via `BlogPageWrapper` rewrite; hero is now first flex child (was outside flex wrapper)
+- **CategoryMenu moved into hero** — out of breadcrumb row, now `actionButton` prop on `FeaturedImageHeader`, positioned `absolute bottom-3 right-3` inside the `max-w-[1200px]` image container (not `<header>` — avoids viewport-edge overflow on wide screens)
+- **CategoryMenu style matched to back/share buttons** — `bg-black/25 hover:bg-black/40`, white text/icon, `size="small"`, `padding: 4px 8px`; removed blue colors, border, `rounded-full`
+- **BlogPostDisplay regression fixed** — reverting outer flex wrapper, restoring `mt-2` on breadcrumb div (adding wrapper changed FeaturedImageHeader containing block, broke gradient/color)
+- **All other pages standardized** — destinations, forum, airport-transfer, trip detail: all use `gap-2` for hero→breadcrumb rhythm
+- Branch `260522-fix/trip-detail-ux` merged to `develop`, pushed
 
 **Commits landed this session:**
-- `04b17f4` fix(trip-detail): quick-win UX fixes
-- `a31f12f` fix(trip-detail): ContentCard wrapper pass
-- `ac55eb3` fix(trip-detail): conversion and a11y fixes
+- `ebc8920` fix(spacing): unify hero-breadcrumb gap across all pages
+- `9ff02fb` fix(spacing): standardize hero-breadcrumb gap on destinations + trip detail
+- `442effa` fix(blog): add mt-2 gap between hero and breadcrumb on all blog pages
+- `6eca2ae` fix(blog): move CategoryMenu into hero bottom-right, slim breadcrumb row
+- `3601d2d` fix(blog): fix CategoryMenu position + revert BlogPostDisplay flex wrapper
+- `88e4034` fix(blog): match CategoryMenu button style to back/share hero buttons
+- `530c8f5` merge: 260522-fix/trip-detail-ux → develop
 
 **In-progress / not done:**
-- Branch `260522-fix/trip-detail-ux` NOT yet merged — UNCOMMITTED style fixes on top (150 files: 35 code files changed + tooling deletes)
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
 - Deferred from audit: CF1 (price lazy-load gap), CF9 (price above fold), VD2/VD3 (typography tokens), VD9 (RelatedTrips over-padding)
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Commit style consistency + breadcrumb gap fixes to `260522-fix/trip-detail-ux`
-2. Open PR: `260522-fix/trip-detail-ux` → `develop`
-3. Merge PR
-4. Tackle open items #1 (AdminBookingSummaryViewSet auth) or deferred audit items
+1. Tackle open items #1 (AdminBookingSummaryViewSet auth)
+2. Or: deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
+3. Backend: items #2 (delete RefundViewSet) or #3 (remove Stripe stub) when prod logs clear
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260522-fix/trip-detail-ux` | `ac55eb3` conversion and a11y fixes |
+| `smartenplus-frontend` | `develop` | `530c8f5` merge 260522-fix/trip-detail-ux |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
 ### Uncommitted
-- frontend: 150 files changed — 35 code files (style consistency + breadcrumb gap fixes) + tooling deletes (`.agents/skills/` + `.claude/skills/` + `.claude/agents/`) + `CLAUDE.md` + `.claude/settings.local.json` + untracked `seo-homepage-auditor.md` + `trip-detail-uxui-auditor.md` + `CLAUDE.original.md` — needs commit
+- frontend: `.claude/settings.local.json` modified + `CLAUDE.original.md` untracked — leave unstaged (not for version control)
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 

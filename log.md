@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-22] session-end | blog hero-breadcrumb gap unified via BlogPageWrapper flex restructure; CategoryMenu moved to hero actionButton + styled to match back/share buttons (bg-black/25 white); all pages gap-2; 260522-fix/trip-detail-ux merged → develop
 ## [2026-05-22] session-end | site-wide style consistency + breadcrumb gap standardization — 8px rhythm across all pages; removed mb-6/py-2 from 35 files; ContentCard rounded-md, typography gray-900, gap-1→gap-2 filters; branch 260522-fix/trip-detail-ux uncommitted
 ## [2026-05-22] session-end | trip detail UX/UI audit + all P1 fixes done; branch 260522-fix/trip-detail-ux ready for PR to develop
 ## [2026-05-22] fix | trip-detail-uxui — 32 issues found+implemented: ContentCard wrappers, h1 text-sm, z-5→z-10, text-md phantom, pb-16, CLS fallbacks, booking bar a11y; branch 260522-fix/trip-detail-ux (3 commits)
