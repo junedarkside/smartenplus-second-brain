@@ -6,6 +6,10 @@ SmartEnPlus Next.js 14 patterns. Pages Router, Redux Toolkit, RTK Query, ISR, dy
 ## ISR Cache
 Trip detail: `revalidate: 300` (5 min). Deploy clears `smartenplus_next_cache` Docker volume. Without volume cleanup, ISR persists stale across deploys.
 
+**`revalidate` is ignored in `next dev`:** `getStaticProps` runs on every request in dev mode regardless of `revalidate` value. ISR only activates in production (`next build` + `next start`). Changing `revalidate` to fix local dev 429s is ineffective. Fix 429s in dev at the backend layer (response cache, throttle rate). See [[isr-429-cold-start-fix-2026-05-23]].
+
+**`getStaticPaths` is build-time only:** Never runs during ISR revalidation at runtime. Only `getStaticProps` runs on ISR revalidation. A dynamic route's `getStaticPaths` hitting an API endpoint is a build concern, not a runtime 429 concern.
+
 ## Dynamic SSR Disable
 `dynamic(() => Promise.resolve(Index), { ssr: false })` for pages depending on client state (cart, auth). Never add `getServerSideProps` to these.
 
@@ -62,8 +66,8 @@ Inline `renderItem` prop = new ref = bypasses `memo()`. Fix: `useCallback` with 
 **Rule 5 — useRouter() IS stable:**
 Stable ref, NOT new object each render. Safe in useCallback deps.
 
-**Rule 6 — refetchOnMountOrArgChange unit:**
-`300` = 300 **seconds**, NOT milliseconds.
+**Rule 6 — refetchOnMountOrArgChange semantics:**
+`300` (number) = "refetch if cached data older than 300 seconds" — triggers immediately on cold mount with no cache. Use `true` to mean "refetch when args change". Use `false` to prevent refetch entirely. Never pass a number unless you explicitly want time-based stale cache refetch behavior.
 
 See [[hydration-infinite-refresh-fix-2026-05-20]].
 
@@ -71,3 +75,4 @@ See [[hydration-infinite-refresh-fix-2026-05-20]].
 - [[architecture]]
 - [[payment-integration]]
 - [[hydration-infinite-refresh-fix-2026-05-20]]
+- [[isr-429-cold-start-fix-2026-05-23]]

@@ -4,28 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #7)
+**Updated:** 2026-05-23 (session wrap #8)
+
 **Achieved this session:**
-- **Daytrips → Activities rename** — full 3-specialist team review (SEO + UX + Code), unanimous `activities`. Deep analysis: 51 files mapped, 9 critical risks documented, all hardcoded URLs located, cart/booking/checkout/payment flows confirmed safe. Vault doc created `01-projects/daytrips-to-activities-rename-2026-05-23.md`. Implementation plan written.
-- **Branch created** — `260523-feat/rename-daytrips-to-activities` on frontend (no code written yet — planning only)
-- **No code changes** — all 3 repos unchanged (rename not started)
+- **Daytrips → Activities rename** — COMPLETED. 7 phases + 5 scrutiny fixes implemented. Merged → develop `d424d4e`. Branch `260523-feat/rename-daytrips-to-activities` fully merged. Post-deploy: clear `smartenplus_next_cache` Docker volume + resubmit GSC sitemap `/sitemap.xml`.
+- **429 Too Many Requests investigation** — `/front-page/` cold-start 429 diagnosed and documented. Initial diagnosis wrong (2 false claims overturned by scrutiny). Correct root cause identified: DRF anon 500/hour throttle window persists across `runserver` restarts. Fix required: backend response cache on `FrontPageViewSet.list`. Vault doc: `01-projects/isr-429-cold-start-fix-2026-05-23.md`. **Fixes NOT yet implemented.**
 
 **In-progress / not done:**
-- Daytrips rename — branch exists, Phase 0 (Redux persist migration v6→v7) is next step, BLOCKING all other phases
-- SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
-- Deferred from UX audit: CF1 (price lazy-load gap), CF9 (price above fold), VD2/VD3 (typography tokens), VD9 (RelatedTrips over-padding)
+- **429 fix — not implemented.** Backend needs response cache on `FrontPageViewSet.list` (`pages_info/views.py:327`). See vault doc for exact implementation.
+- Two frontend bugs identified (not implemented): `refetchOnMountOrArgChange: true` in `hooks/useTripData.js:16,24` + `props.setInterval` in `components/auth/refreshTokenHandler.js:25`
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. **PRIORITY: Daytrips rename** — start Phase 0: Redux persist migration in `/store/index.js` (version 6→7, migration `dayTrip→activities`, whitelist update). See full plan: `01-projects/daytrips-to-activities-rename-2026-05-23.md`
-2. After rename phases 0–7 complete: open item #1 (AdminBookingSummaryViewSet auth)
-3. Deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
+1. **PRIORITY: 429 fix** — add response cache to `FrontPageViewSet.list` in `pages_info/views.py:327`. Cache key `frontpage_list_response`, TTL 300s. Bust cache in existing station signal handler + any route/location save signals. See `01-projects/isr-429-cold-start-fix-2026-05-23.md` Fix A.
+2. Apply frontend fixes: `useTripData.js` + `refreshTokenHandler.js` (minor, 3 lines total)
+3. Then: open item #1 (AdminBookingSummaryViewSet auth)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260523-feat/rename-daytrips-to-activities` | `a8305ae` — branch just created, no new commits |
+| `smartenplus-frontend` | `260523-feat/rename-daytrips-to-activities` | `0a8081d` fix(activities): SEO title/desc — **merged to develop, no pending work** |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
@@ -42,7 +41,10 @@
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| 13 | Daytrips → Activities rename — 51 files, 7 phases | Phase 0 (Redux persist migration) blocking | frontend `260523-feat/rename-daytrips-to-activities` — see vault doc |
+| 14 | 429 Too Many Requests on `/front-page/` (local dev cold start) | Backend response cache not implemented | `pages_info/views.py:327` — see `01-projects/isr-429-cold-start-fix-2026-05-23.md` Fix A |
+| 14b | `refetchOnMountOrArgChange: 300` wrong semantics in useTripData | Not implemented | `hooks/useTripData.js:16,24` → change to `true` |
+| 14c | `props` object in RefreshTokenHandler deps | Not implemented | `components/auth/refreshTokenHandler.js:25` → `props.setInterval` |
+| 13 | Daytrips → Activities rename — 51 files, 7 phases | DONE — merged develop `d424d4e` 2026-05-23 | CLOSED |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |

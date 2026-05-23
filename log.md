@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] rework | isr-429-cold-start-fix — scrutiny overturned 2 false claims: REVALIDATE_SECONDS irrelevant in dev, getStaticPaths build-time only; actual cause: DRF anon 500/hour window persists across runserver restarts; fix = backend response cache on FrontPageViewSet.list; nextjs-patterns.md corrected
+## [2026-05-23] ingest | isr-429-cold-start-fix — cold start 429 on /front-page/ diagnosed: REVALIDATE_SECONDS=60 + refetchOnMountOrArgChange:300 + props-in-deps; 3 fixes identified; nextjs-patterns.md ISR+RTK rules updated
 ## [2026-05-23] feat | rename /daytrips → /activities complete — 7 phases, 5 scrutiny fixes (v4/v5 migration gap, duplicate [slug].js route, git rename detection, SEO title, test pathname), merged → develop d424d4e; post-deploy: clear smartenplus_next_cache + resubmit GSC sitemap
 ## [2026-05-23] ingest | daytrips-to-activities-rename — 3-specialist team review, unanimous `activities`, 51 files mapped, 9 critical risks documented, cart/payment flows confirmed safe; branch 260523-feat/rename-daytrips-to-activities created
 ## [2026-05-23] session-end | vault optimization — synopsis atom note created, 26 files caveman compressed (139KB→128KB, 7% reduction), 12 old backups + 3 empty stubs cleaned; all 3 repos unchanged

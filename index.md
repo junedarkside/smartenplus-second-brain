@@ -10,6 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[isr-429-cold-start-fix-2026-05-23|ISR 429 Cold-Start Fix 2026-05-23]] — cold `npm run dev` bursts `/front-page/` → 429; root: REVALIDATE_SECONDS=60 + refetchOnMountOrArgChange:300; fixes identified, not yet applied
 - [[daytrips-to-activities-rename-2026-05-23|Daytrips → Activities Rename 2026-05-23]] — COMPLETED 2026-05-23 — /daytrips → /activities rename, 7 phases + 5 scrutiny fixes, merged → develop d424d4e; deploy: clear ISR cache + resubmit GSC sitemap
 - [[trip-detail-uxui-audit-2026-05-22|Trip Detail UX/UI Audit 2026-05-22]] — 3-specialist audit: 32 issues, ContentCard abstraction absent, full-bleed mobile cards, typography violations, CLS fallbacks; all P0/P1 implemented in branch 260522-fix/trip-detail-ux
 - [[README|SmartEnPlus]] — Thailand transport booking platform (Next.js 14, Redux, Omise)
