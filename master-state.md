@@ -22,8 +22,8 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `da3c2b1` merge: refresh-token-deps → develop |
-| `smartenplus-backend` | `develop` | `67cdf66` merge: frontpage-response-cache → develop |
+| `smartenplus-frontend` | `main` | `da3c2b1` merge: refresh-token-deps — **pushed to main 2026-05-23** |
+| `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — **pushed to main 2026-05-23** |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 
 _Live-verified 2026-05-23_
