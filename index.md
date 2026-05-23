@@ -52,7 +52,7 @@ Global navigation catalog. Updated on every ingest.
 - [[homepage-seo-performance-deep-review-2026-05-21|Homepage SEO & Performance Deep Review 2026-05-21]] — 3-specialist audit: structured data errors (fake phone/address, stale dates), Technical SEO gaps (server-sitemap 404, og:locale, DefaultSeo), CWV risks (CLS, preconnect); priority fix queue
 - [[og-image-inferred-audit-2026-05-23|OG Image "Inferred" Audit 2026-05-23]] — Homepage + blog og:image broken. RC1: NEXT_PUBLIC_DOMAIN undefined → Seo crash (fix: inline 3-tier fallback, NOT getSiteUrl() import). RC2: missing secureUrl on blog pages (fix: update generateBlogSEO() helper + patch search page). Scrutiny corrections applied 2026-05-23.
 - [[og-image-ssr-fix-2026-05-23|OG Image SSR Fix 2026-05-23]] — PersistGate SSR blocker fixed. All meta tags blank site-wide. 4 root causes: PersistGate, seoHelper relative URLs, trips relative ogImagePath, NEXT_PUBLIC_SITE_URL tech debt. 4 commits, merged → main, live 2026-05-23.
-- [[seo-wave2-audit-2026-05-23|SEO Wave 2 Audit 2026-05-23]] — OPEN. Post-SSR-fix 3-agent audit: 3 Critical, 7 Major, 5 Minor remaining. airport-transfer relative image, blog/categories hydration risk + NEXT_PUBLIC_SITE_URL, DefaultSeo missing images[], privacy description copy-paste. Fix branch not yet created.
+- [[seo-wave2-audit-2026-05-23|SEO Wave 2 Audit 2026-05-23]] — CONFIRMED. 3-agent team traced all findings against live main. C1-C3, M1-M2-M3-M4-M7: real bugs, fix ready. M5-M6: already fixed (no-op). 3 P2 items promoted to P1 (privacy desc copy-paste, bookings noindex, checkout noindex). Branch `260523-fix/seo-wave2-og-and-hydration` ready to implement.
 
 ## Knowledge Domains
 
@@ -102,4 +102,4 @@ Global navigation catalog. Updated on every ingest.
 
 - Created: 2026-05-16
 - Pages: 55
-- Last updated: 2026-05-23 (ISR stale data audit added)
+- Last updated: 2026-05-23 (seo-wave2 audit team results logged)

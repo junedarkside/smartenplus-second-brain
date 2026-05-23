@@ -7,7 +7,36 @@ Post-PersistGate-fix audit by 3-agent team (SEO + SSR + Frontend Quality). Found
 Previous session fixed the root SSR blocker (`_app.js` PersistGate) and OG image relative URLs in `seoHelper.js` + `trips/index.js`. This audit ran immediately after — branch `260523-fix/trips-og-image-and-site-url-env` live in production. Audit covers all 49 pages in `pages/` (excluding `/api/`).
 
 ## Status
-OPEN — fix branch not yet created. Ready to implement next session.
+OPEN — confirmed bugs logged. Implementation pending. Branch: `260523-fix/seo-wave2-og-and-hydration`
+
+---
+
+## Audit Team Results (2026-05-23)
+
+3-agent team traced all P0/P1/P2 findings against live `main` HEAD. Key updates:
+
+### M5, M6 — ALREADY FIXED
+- `forum/index.js:93` — `secureUrl: ogImagePath` already present. No change needed.
+- `locations/[slug].js:165` — `secureUrl: ogImagePath` already present. No change needed.
+- Audit was against older version. Current code clean.
+
+### P2 → P1 Promotions (3 items)
+| Item | File | Issue | Why promoted |
+|------|------|-------|-------------|
+| P2-1 | `privacy/index.js` | description says "Terms and Conditions" | Active SEO mislead — crawlers get wrong page description |
+| P2-5 | `bookings/index.js` | zero SEO meta, no noindex | Auth-gated — crawl budget leak, should be noindex |
+| P2-6 | `checkout/index.js` | only bare `<title>`, no noindex | Same — auth-gated, zero public SEO value |
+
+### P2-4 Refuted
+`forum/[...slug].js:82-95` hardcoded URL is in help sub-section. Forum's own canonical at :56 correctly uses `NEXT_PUBLIC_DOMAIN`. Issue real but confined to help widget — P2 appropriate.
+
+### Tech Debt Counts — VERIFIED
+- "21 pages mix Head+NextSeo" — plausible, not inflated
+- "15+ missing canonicals" — understated, actual ~20-25
+
+---
+
+## Confirmed Ship List
 
 ---
 
@@ -70,13 +99,15 @@ OPEN — fix branch not yet created. Ready to implement next session.
 - **File:** `pages/forum/createtopic.js:61–66`
 - **Fix:** Add `secureUrl: <same value as url>` to `openGraph.images[0]`
 
-### M5 — forum/index.js missing secureUrl
-- **File:** `pages/forum/index.js:90–97`
-- **Fix:** Add `secureUrl: <same value as url>` to `openGraph.images[0]`
+### M5 — forum/index.js secureUrl
+- **File:** `pages/forum/index.js:90-97`
+- **Status:** ALREADY FIXED — `secureUrl: ogImagePath` at :93. No change needed.
+- **Audit note:** Fix was applied after report written. Current code clean.
 
-### M6 — locations/[slug].js missing secureUrl
-- **File:** `pages/locations/[slug].js:159–167`
-- **Fix:** Add `secureUrl: <same value as url>` to `openGraph.images[0]`
+### M6 — locations/[slug].js secureUrl
+- **File:** `pages/locations/[slug].js:159-167`
+- **Status:** ALREADY FIXED — `secureUrl: ogImagePath` at :165. No change needed.
+- **Audit note:** Fix was applied after report written. Current code clean.
 
 ### M7 — help/index.js relative image
 - **File:** `pages/help/index.js:45`
@@ -87,15 +118,15 @@ OPEN — fix branch not yet created. Ready to implement next session.
 
 ## P2 — Minor (separate branch, non-blocking)
 
-| File | Line | Issue | Fix |
-|------|------|-------|-----|
-| `pages/privacy/index.js` | 23 | Manual `<title>` bypasses `titleTemplate` | Replace `<Head><title>` with `<NextSeo title="Privacy Policy" ...>` |
-| `pages/terms/index.js` | 25 | Same — manual `<title>` | Same fix pattern |
-| `pages/about/index.js` | 44 | Same — manual `<title>` | Same fix pattern |
-| `pages/forum/[...slug].js` | 82–95 | Hardcoded `https://smartenplus.co.th` (no www, no env var) | Use `getSiteUrl()` |
-| `pages/bookings/index.js` | — | Auth page: zero SEO meta, no canonical, no robots directive | Add `<NextSeo noindex title="My Bookings">` |
-| `pages/checkout/index.js` | — | Same — only bare `<title>`, no noindex | Add `<NextSeo noindex title="Checkout">` |
-| `pages/help/[...slug].js` | 87–93 | OG `images[]` missing `width` + `height` | Add `width: 1200, height: 630` |
+| File | Line | Issue | Priority | Notes |
+|------|------|-------|----------|-------|
+| `pages/privacy/index.js` | 23 | Manual `<title>` bypasses `titleTemplate` | **→ P1** | description also says "Terms" (see M3) — dual bug |
+| `pages/terms/index.js` | 25 | Same — manual `<title>` | P2 | |
+| `pages/about/index.js` | 44 | Same — manual `<title>` | P2 | |
+| `pages/forum/[...slug].js` | 82–95 | Hardcoded `https://smartenplus.co.th` in help sub-section | P2 | Forum canonical at :56 correct. Issue confined to help widget. |
+| `pages/bookings/index.js` | — | Auth page: zero SEO meta, no noindex | **→ P1** | crawl budget leak — auth page has no public SEO value |
+| `pages/checkout/index.js` | — | Same — only bare `<title>`, no noindex | **→ P1** | same — auth-gated, no public content |
+| `pages/help/[...slug].js` | 87–93 | OG `images[]` missing `width` + `height` | P2 | |
 
 ---
 
@@ -124,12 +155,49 @@ OPEN — fix branch not yet created. Ready to implement next session.
 
 ---
 
-## Recommended Branch Strategy
+## Confirmed Ship List (from audit team)
 
+### Ship Now — `260523-fix/seo-wave2-og-and-hydration`
+| ID | File | Line | Bug | Fix |
+|----|------|------|-----|-----|
+| C1 | `airport-transfer/index.js` | 65-66 | bgDefault.src relative | siteUrl template |
+| C2 | `blog/categories/index.js` | 17 | hydration mismatch + stale env var | getSiteUrl() import |
+| C3 | `blog/categories/[slug].js` | 32,50,150 | same hydration + relative at :50,:150 | getSiteUrl() + siteUrl template |
+| M1 | `blog/search/[...slug].js` | 129,164 | NEXT_PUBLIC_SITE_URL stale + :164 relative fallback | getSiteUrl() + siteUrl template |
+| M2 | `_app.js` | 33-46 | DefaultSeo missing url + images[] | add openGraph url + images |
+| M3 | `privacy/index.js` | 24 | description says "Terms and Conditions" | correct privacy description |
+| M4 | `forum/createtopic.js` | 61-66 | secureUrl missing | add secureUrl: ogImagePath |
+| M7 | `help/index.js` | 45 | bgDefaultImage1.src relative | siteUrl template |
+
+M5, M6: already fixed — no-op.
+
+### P2-Promoted to Same Branch
+| ID | File | Issue |
+|----|------|-------|
+| P2-1 | `privacy/index.js` | description copy-paste (same as M3, but also :23 title bypass) |
+| P2-5 | `bookings/index.js` | add `<NextSeo noindex title="My Bookings">` |
+| P2-6 | `checkout/index.js` | add `<NextSeo noindex title="Checkout">` |
+
+### Separate Branch — P2 Minor
+| File | Line | Issue |
+|------|------|-------|
+| `terms/index.js` | 25 | Replace `<Head><title>` with `<NextSeo>` |
+| `about/index.js` | 44 | Same |
+| `forum/[...slug].js` | 82-95 | getSiteUrl() in help sub-section |
+| `help/[...slug].js` | 87-93 | Add width/height to OG images |
+
+### Future — Tech Debt Branch
+- 21 pages mix `<Head>` + `<NextSeo>` (canonical deduplication + duplicate meta cleanup)
+- ~20-25 pages missing canonical tags
+- Component size violations (homepagev2 584L, trips 716L, detail 469L, Passengers 1146L, SlideCalendar2 1035L)
+
+---
+
+## Recommended Branch Strategy
 ```
-260523-fix/seo-wave2-og-and-hydration   ← P0 + P1 (C1-C3, M1-M7)
-260523-fix/seo-wave2-minor              ← P2 items
-(future) tech-debt/seo-canonical-meta  ← tech debt (canonicals, duplicate Head, component size)
+260523-fix/seo-wave2-og-and-hydration   ← P0 + P1 confirmed + P2-promoted
+260523-fix/seo-wave2-p2-minor            ← P2 items (terms, about, forum help, help/[...slug])
+(future) tech-debt/seo-canonical-meta   ← tech debt
 ```
 
 ---

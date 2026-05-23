@@ -3,7 +3,7 @@
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
 ## [2026-05-23] deploy | PersistGate SSR fix merged → develop df81b19 → main → production live 2026-05-23
-## [2026-05-23] audit | seo-wave2 — 3-agent post-fix audit: 3 Critical (airport-transfer relative image, blog/categories hydration mismatch + NEXT_PUBLIC_SITE_URL), 7 Major (DefaultSeo missing images[], privacy description bug, forum/locations/help secureUrl), 5 Minor; handoff doc created; fix branch pending next session
+## [2026-05-23] audit | seo-wave2-team — 3-agent team (P0/P1/P2) confirmed all bugs vs live main. C1-C3, M1-M2-M3-M4-M7: ship. M5-M6: already fixed (no-op). 3 P2 items promoted to P1: privacy description, bookings noindex, checkout noindex. Branch 260523-fix/seo-wave2-og-and-hydration. Report filed to vault doc.
 ## [2026-05-23] session-end | PersistGate SSR blocker fixed — all OG meta tags restored site-wide; OG image relative paths fixed in seoHelper.js + trips/index.js; NEXT_PUBLIC_SITE_URL tech debt reverted; branch 260523-fix/trips-og-image-and-site-url-env (4 commits: 61134c9, f8d9907, 4644fac, ac6f8aa) — merged → main → production
 ## [2026-05-23] session-end | og:image:secure_url site-wide — 24 files, homepage domain fallback, generateBlogSEO() updated, merged → main 190e2a2; verified live
 ## [2026-05-23] scrutinize | og-image-inferred — fix plan corrected: homepage use inline 3-tier fallback (not getSiteUrl() cross-module import); blog use generateBlogSEO() helper (not N inline copies); search page has seo object already (not blank slate); vault doc updated
