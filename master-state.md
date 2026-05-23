@@ -25,8 +25,15 @@
 - Open items 1, 2, 3, 8, 15 from Section 2
 
 **Next session resume:**
-1. Verify production: `curl https://www.smartenplus.co.th/ | grep 'next-head-count'` should be `content="14"`, run Facebook Sharing Debugger on homepage + a blog post
-2. Tech debt backlog (separate branch): 21 pages mix `<Head>` + `DefaultSeo`, 18 hardcode `<title>`, 15+ missing canonical, `trips/detail/[...slug].js` noindex verify, `privacy/index.js` wrong description, `DefaultSeo` missing `images` + `url` field
+1. **SEO Wave 2 fixes** — full brief in [[seo-wave2-audit-2026-05-23]]. Branch: `260523-fix/seo-wave2-og-and-hydration`. P0 first:
+   - `pages/airport-transfer/index.js:65–66` — relative OG image
+   - `pages/blog/categories/index.js:17` — typeof window hydration + NEXT_PUBLIC_SITE_URL
+   - `pages/blog/categories/[slug].js:32,50,150` — same hydration + raw bgDefaultImage1.src
+   - `pages/blog/search/[...slug].js:129,164` — same
+   - `pages/_app.js:33–46` — DefaultSeo missing openGraph.url + images[]
+   - `pages/privacy/index.js:24` — description says "Terms and Conditions"
+   - forum/locations/help — missing secureUrl in openGraph.images[]
+2. **Verify production** (can do first): `curl https://www.smartenplus.co.th/ | grep 'next-head-count'` → expect `content="14"`. Facebook Sharing Debugger on homepage + blog post.
 3. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 
 ### Active Branches
