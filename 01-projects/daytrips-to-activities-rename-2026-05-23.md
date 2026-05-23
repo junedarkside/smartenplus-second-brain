@@ -104,20 +104,38 @@ All payment flows unaffected:
 - Update CMS blog post internal links from `/daytrips` → `/activities`
 - After 90 days: confirm `/daytrips` dropped from GSC Index
 
-## Status
-- [ ] Phase 0 — Redux migration
-- [ ] Phase 1 — next.config.js redirects
-- [ ] Phase 2 — Constants + helpers
-- [ ] Phase 3 — Hooks
-- [ ] Phase 4 — Pages
-- [ ] Phase 5 — Components
-- [ ] Phase 6 — Tests + debug
-- [ ] Phase 7 — Nav
-- [ ] Deploy + ISR cache clear
-- [ ] GSC sitemap submission
+## Status — COMPLETED 2026-05-23
+
+- [x] Phase 0 — Redux persist v6→v7 migration (dayTrip → activities key; v4/v5 branches patched)
+- [x] Phase 1 — next.config.js 301 redirects (/daytrips, /daytrips/detail/:slug*, /daytrips/:path*)
+- [x] Phase 2 — Constants + helpers (serviceCategoryHelper.js:385, dayTripSEOUtils.js:288,297)
+- [x] Phase 3 — Hooks (useDayTripSEO.js:111,120)
+- [x] Phase 4 — Pages (renamed pages/daytrips/ → pages/activities/, URL strings updated)
+- [x] Phase 5 — Components (renamed components/daytrips/ → components/activities/, URL strings updated)
+- [x] Phase 6 — Tests + debug (store key, component imports, persist key, route pathnames)
+- [x] Phase 7 — Nav (desktop navLinks + mobile menuLinks in layout.js)
+- [ ] Deploy + ISR cache clear (smartenplus_next_cache Docker volume)
+- [ ] GSC sitemap submission (resubmit https://www.smartenplus.co.th/sitemap.xml after deploy)
+
+## Scrutiny Fixes Applied (2026-05-23)
+- **BLOCKER fixed:** v4/v5 migration branches now also rename dayTrip → activities (custom migrate fn doesn't chain)
+- **MAJOR fixed:** Deleted duplicate pages/activities/detail/[slug].js — [slug].js shadowed [...slug].js, bypassing ISR pre-warming
+- **MAJOR fixed:** Used git add + git rm --cached to record as renames (R) not delete+add (D) — history preserved
+- **MEDIUM fixed:** SEO title "Day Trips in X" → "Activities in X" at /activities
+- **MEDIUM fixed:** Integration test pathname '/daytrips/detail/[slug]' → '/activities/detail/[...slug]'
+
+## Commits
+- `dab579e` feat: rename /daytrips → /activities across frontend
+- `0a8081d` fix(activities): update SEO page title and description to Activities branding
+- Merged → develop `d424d4e`
+
+## Sitemap Notes
+- `public/sitemap-0.xml` regenerates on `npm run build` — will emit /activities post-deploy
+- `pages/server-sitemap.xml/index.js` already updated — emits /activities at runtime
+- No changes needed to next-sitemap.config.js or robots.txt
 
 ## Branch
-`260523-feat/rename-daytrips-to-activities`
+`260523-feat/rename-daytrips-to-activities` (merged → develop)
 
 ## Related
 [[master-state]] [[architecture]] [[nextjs-patterns]] [[seo-homepage-specialist-team]]
