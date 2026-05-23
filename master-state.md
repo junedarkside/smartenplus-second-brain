@@ -4,29 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #12)
+**Updated:** 2026-05-23 (session wrap #13)
 
 **Achieved this session:**
-- **Infinite fetch diagnosis** — backend hammered with `/forex/` + `/front-page/` + `/carts/` OPTIONS investigated.
-- **Initial diagnosis overturned by scrutiny** — circular `useCallback`/`useEffect` claim wrong (fetchRate ref IS stable). Real cause: Fast Refresh full-reload loop from `hot-update.json 404` + unknown file writer in watched dir.
-- **CurrencyContext bugs confirmed** (separate from loop): no fetch cancellation on currency switch, `selectCurrency` missing from `useMemo` deps.
-- Vault doc written + scrutinized: `01-projects/currency-context-infinite-fetch-2026-05-23.md`
-- No code changes. No branches created.
+- **Fast Refresh infinite loop FIXED** — root cause: service worker registered in dev (`NEXT_PUBLIC_DEVELOPMENT=true` guard bypassed localhost check). SW cached page HTML with stale webpack compilation hash → hot-update.json 404 → full reload loop.
+- **7 wrong diagnoses overturned** through systematic investigation + scrutiny + debug instrumentation + git bisect:
+  - ~~watchOptions.ignored~~ → ~~SW cacheFirst intercept~~ → ~~rm -rf .next~~ → ~~output:standalone~~ → ~~debug auto-share~~ → ~~DevToolsProvider~~ → ~~RefreshTokenHandler state loop~~
+- **Debug instrumentation confirmed:** `interval: 0`, `sessionExpiry: undefined` on every render → NO application code involvement → pure browser cache issue.
+- **Incognito test confirmed:** no loop without SW/cache.
+- **CurrencyContext fix applied:** race condition (cancelled guard), stable `selectCurrency` ref, correct `useMemo` deps, stale comment fixed.
+- **Fix:** `isLocalhost` guard in `serviceWorkerRegistration.js` blocks SW registration in dev. Production unaffected.
+- Merged → develop (`8d8616c`) → main → production. Pushed.
+- Vault audit doc written + scrutinized + updated: `01-projects/fast-refresh-infinite-loop-audit-2026-05-23.md`
 
 **In-progress / not done:**
 - Open items 1, 2, 3, 8, 15 from Section 2
-- **NEW: infinite fetch fix** — two steps required (see Section 2 #16, #17)
 
 **Next session resume:**
-1. **NEW #16** — diagnose Fast Refresh reload loop: run `fswatch` in dev, identify file writer, fix `watchOptions.ignored`
-2. **NEW #17** — apply CurrencyContext fix B (race condition + deps cleanup) — `260523-fix/currency-context-infinite-fetch`
-3. Then: open item #1 — `AdminBookingSummaryViewSet` unauthenticated
+1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
+2. Open item #15 — `refetchOnMountOrArgChange: 300→true` in useTripData
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `da3c2b1` merge: refresh-token-deps — **pushed to main 2026-05-23** |
+| `smartenplus-frontend` | `develop` | `8d8616c` merge: currency-context-infinite-fetch — **pushed to develop + main + production 2026-05-23** |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — **pushed to main 2026-05-23** |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 
@@ -45,22 +47,21 @@ _Live-verified 2026-05-23_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| 14 | 429 Too Many Requests on `/front-page/` | DONE — `c73f6de` branch `260523-fix/frontpage-response-cache`, pending merge | `pages_info/views.py` — parameterized 300s cache |
+| 14 | 429 Too Many Requests on `/front-page/` | DONE — `c73f6de` merged + pushed to main | `pages_info/views.py` — parameterized 300s cache |
 | 14b | `refetchOnMountOrArgChange: 300` in useTripData | DEFERRED — orthogonal to 429, targets /api/v1/trips/ | `hooks/useTripData.js:16,24` — open as #15 |
-| 14c | `props` object in RefreshTokenHandler deps | DONE — `a797a59` branch `260523-fix/refresh-token-deps`, pending merge | `components/auth/refreshTokenHandler.js:25` |
+| 14c | `props` object in RefreshTokenHandler deps | DONE — `a797a59` merged + pushed to main | `components/auth/refreshTokenHandler.js:25` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed — increases anon request volume | `hooks/useTripData.js:16,24` |
-| 16 | Fast Refresh full-reload loop | Identify file writer in webpack watched dir; run `fswatch` in dev on `pages/` `components/` `public/`; prime suspect: `public/audit-screenshots/` from Playwright scripts; fix: add to `watchOptions.ignored` in `next.config.js` | `next.config.js` |
-| 17 | CurrencyContext race condition + unstable deps | No cancellation on currency switch; `selectCurrency` missing from `useMemo` deps; fix ready in vault doc | `components/contexts/CurrencyContext.js` — branch `260523-fix/currency-context-infinite-fetch` |
-| 13 | Daytrips → Activities rename — 51 files, 7 phases | DONE — merged develop `d424d4e` 2026-05-23 | CLOSED |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
-| 4 | `locked_amount` db_index | DONE — `0042` merged + pushed to backend develop `4140cbd` 2026-05-22 | `orders/models.py:219` |
-| 5 | Blog index: featured post visual weight (user chose as-is for now) | Deferred by user | `components/blog/BlogCard.js` variant="featured" |
-| 6 | Breadcrumb container duplication across 29 pages | DONE — merged to develop `61c5aeb` | All pages using StandardBreadcrumb |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| 11 | Residual H2: USD `/30` hardcode in `hooks/useTripSEO.js:321` FAQ schema | DONE `49e6f17` — merged to develop `1b993b4` 2026-05-21 | hooks/useTripSEO.js |
-| 12 | PRs not opened: all 3 repos on `260520-update/recommend-route` → `develop` | Already merged directly to develop (no PR) | frontend + backend + admin-dashboard |
+
+### Recently Closed (this session)
+| Issue | Fix | Date |
+|-------|-----|------|
+| Fast Refresh infinite loop — SW registered in dev cached stale webpack hash | `01d8bb3` isLocalhost guard in serviceWorkerRegistration.js — merged develop `8d8616c` → main → production | 2026-05-23 |
+| CurrencyContext race condition + unstable selectCurrency ref | `01d8bb3` cancelled guard + useCallback([]) + correct useMemo deps — same merge | 2026-05-23 |
+| DevToolsProvider auto-share extending HMR loop | Disabled via early return in debug/index.js — same merge | 2026-05-23 |
 
 ### Recently Closed (this session addition)
 | Issue | Fix | Date |

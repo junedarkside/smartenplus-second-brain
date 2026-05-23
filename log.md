@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] audit | fast-refresh-infinite-loop — 7 fix attempts failed; RefreshTokenHandler diagnosis OVERTURNED by scrutiny (lastExpiryRef guard blocks loop); actual cause likely Next.js 14.2.x HMR + on-demand compilation cascade (self-terminating); git bisect + debug instrumentation recommended; CurrencyContext fix applied
+## [2026-05-23] audit-draft | fast-refresh-infinite-loop — 7 fix attempts, RefreshTokenHandler Date.now() + state loop identified by 3 agents; CurrencyContext fix applied; vault audit doc written
 ## [2026-05-23] session-end | infinite fetch investigation — circular-dep theory overturned; Fast Refresh reload loop (hot-update 404) + CurrencyContext race condition identified; vault doc written; no code changes; items #16+#17 added to loose ends
 ## [2026-05-23] scrutinize | currency-context-infinite-fetch — initial circular-dep claim overturned; actual cause: Fast Refresh full-reload loop (hot-update 404) + CurrencyContext race condition; doc updated with correct trace + 2-step fix order
 ## [2026-05-23] deploy | frontend + backend pushed to main — 429 fix (67cdf66) + auth dep fix (da3c2b1) now in production
