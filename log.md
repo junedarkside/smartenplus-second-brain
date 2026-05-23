@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] session-end | infinite fetch investigation — circular-dep theory overturned; Fast Refresh reload loop (hot-update 404) + CurrencyContext race condition identified; vault doc written; no code changes; items #16+#17 added to loose ends
+## [2026-05-23] scrutinize | currency-context-infinite-fetch — initial circular-dep claim overturned; actual cause: Fast Refresh full-reload loop (hot-update 404) + CurrencyContext race condition; doc updated with correct trace + 2-step fix order
 ## [2026-05-23] deploy | frontend + backend pushed to main — 429 fix (67cdf66) + auth dep fix (da3c2b1) now in production
 ## [2026-05-23] session-end | migration audit — locked_amount chain 0038→0042 verified intact on develop; no changes made
 ## [2026-05-23] session-end | 429 fix + auth dep fix — 3-agent team review caught flat cache key bug; parameterized key + no DEBUG guard; Fix A merged backend 67cdf66, Fix D merged frontend da3c2b1, both pushed origin/develop

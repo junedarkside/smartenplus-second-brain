@@ -4,19 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #11)
+**Updated:** 2026-05-23 (session wrap #12)
 
 **Achieved this session:**
-- **429 fix + auth dep fix** — both merged develop → pushed main. Production live.
-- **Migration audit** — `locked_amount` chain `0038→0042` verified intact, no issues.
-- No new code this wrap session.
+- **Infinite fetch diagnosis** — backend hammered with `/forex/` + `/front-page/` + `/carts/` OPTIONS investigated.
+- **Initial diagnosis overturned by scrutiny** — circular `useCallback`/`useEffect` claim wrong (fetchRate ref IS stable). Real cause: Fast Refresh full-reload loop from `hot-update.json 404` + unknown file writer in watched dir.
+- **CurrencyContext bugs confirmed** (separate from loop): no fetch cancellation on currency switch, `selectCurrency` missing from `useMemo` deps.
+- Vault doc written + scrutinized: `01-projects/currency-context-infinite-fetch-2026-05-23.md`
+- No code changes. No branches created.
 
 **In-progress / not done:**
 - Open items 1, 2, 3, 8, 15 from Section 2
+- **NEW: infinite fetch fix** — two steps required (see Section 2 #16, #17)
 
 **Next session resume:**
-1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated (`orders/views.py`)
-2. Open item #15 — `useTripData refetchOnMountOrArgChange` (needs separate justification before changing)
+1. **NEW #16** — diagnose Fast Refresh reload loop: run `fswatch` in dev, identify file writer, fix `watchOptions.ignored`
+2. **NEW #17** — apply CurrencyContext fix B (race condition + deps cleanup) — `260523-fix/currency-context-infinite-fetch`
+3. Then: open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 
 ### Active Branches
 
@@ -45,6 +49,8 @@ _Live-verified 2026-05-23_
 | 14b | `refetchOnMountOrArgChange: 300` in useTripData | DEFERRED — orthogonal to 429, targets /api/v1/trips/ | `hooks/useTripData.js:16,24` — open as #15 |
 | 14c | `props` object in RefreshTokenHandler deps | DONE — `a797a59` branch `260523-fix/refresh-token-deps`, pending merge | `components/auth/refreshTokenHandler.js:25` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed — increases anon request volume | `hooks/useTripData.js:16,24` |
+| 16 | Fast Refresh full-reload loop | Identify file writer in webpack watched dir; run `fswatch` in dev on `pages/` `components/` `public/`; prime suspect: `public/audit-screenshots/` from Playwright scripts; fix: add to `watchOptions.ignored` in `next.config.js` | `next.config.js` |
+| 17 | CurrencyContext race condition + unstable deps | No cancellation on currency switch; `selectCurrency` missing from `useMemo` deps; fix ready in vault doc | `components/contexts/CurrencyContext.js` — branch `260523-fix/currency-context-infinite-fetch` |
 | 13 | Daytrips → Activities rename — 51 files, 7 phases | DONE — merged develop `d424d4e` 2026-05-23 | CLOSED |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
