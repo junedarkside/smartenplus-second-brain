@@ -4,35 +4,36 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-24 (session start)
+**Updated:** 2026-05-24 (session end)
 
 **Achieved this session:**
-- **SEO Wave 2 complete — all 11 bugs verified + fixed + merged to main.** 3-agent audit team (P0/P1/P2) confirmed all bugs present at HEAD. 3-agent debug mantra team reproduced all findings. Fix branch `260523-fix/seo-wave2-og-and-hydration` merged → develop → main (`ceb0eac`). Fixes: relative og:image → absolute, NEXT_PUBLIC_SITE_URL stale → getSiteUrl(), DefaultSeo got url+images[], privacy description fixed, forum secureUrl added, help image fixed, bookings/checkout NextSeo noindex applied (known limitation below).
-- **Build verified clean** — `npm run build` passes, sitemap generates, all 133 static pages + ISR pages build OK.
-- **NextSeo import fix** — default import (`import NextSeo from 'next-seo'`) → named import (`import { NextSeo } from 'next-seo'`) on privacy, bookings, checkout. Was causing "does not contain default export" error.
-- Vault updated: seo-wave2-audit doc with team results + debug ledger, log entry, index, master-state.
+- **Vault lint complete** — 6 atoms extracted from `isr-stale-data-audit` (344→36L) + `seo-wave2-audit` (282→32L). 449 insertions, 629 deletions. Pushed to GitHub `ad37ff0`.
+- **SEO Wave 2 complete** — all 11 bugs verified + fixed + merged to main. Build clean.
 
 **In-progress / not done:**
-- Auth pages noindex (bookings/checkout): NextSeo `robots={{index:false,follow:false}}` applied but `ProtectedComponent` returns `null` on SSR for unauthenticated users → NextSeo never renders → noindex not taking effect. Fix needed: either `_app.js` DefaultSeo conditional per route, or middleware-based robots header injection, or server-side auth check.
+- Auth pages noindex (bookings/checkout): NextSeo `robots={{index:false,follow:false}}` applied but `ProtectedComponent` returns `null` on SSR for unauthenticated users → NextSeo never renders → noindex not taking effect. Fix: `_app.js` DefaultSeo conditional per route, or middleware `X-Robots-Tag` header.
 
 **Next session resume:**
-1. **Auth pages noindex fix** — ProtectedComponent pattern blocks NextSeo SSR for unauthenticated. Options: (A) `_app.js` DefaultSeo with route-conditional noindex, (B) Next.js middleware injects `X-Robots-Tag` header, (C) `getServerSideProps` auth check before page render.
+1. **Auth pages noindex fix** — ProtectedComponent pattern blocks NextSeo SSR. Options: (A) `_app.js` DefaultSeo with route-conditional noindex, (B) Next.js middleware injects `X-Robots-Tag` header, (C) `getServerSideProps` auth check before page render.
 2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
+3. Open item #2 — Delete `RefundViewSet` (waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs)
+4. Open item #3 — Remove Stripe 410 stub `/payments/stripe-webhook/` (waiting on prod traffic)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `ceb0eac` merge: seo-wave2 fix — relative OG images, stale NEXT_PUBLIC_SITE_URL, DefaultSeo url+images[], privacy description, auth pages noindex |
-| `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — pushed to main 2026-05-23 |
-| `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
+| `smartenplus-frontend` | `main` | `ceb0eac` merge: seo-wave2 fix |
+| `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache |
+| `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
+| `vault` | `master` | `ad37ff0` lint: 6 atoms extracted |
 
 _Last verified 2026-05-24_
 
 ### Uncommitted
-- frontend: main merged, not pushed (user held push)
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
+- frontend: clean on main
 
 ---
 
