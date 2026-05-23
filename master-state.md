@@ -25,23 +25,7 @@
 - Open items 1, 2, 3, 8, 15 from Section 2
 
 **Next session resume:**
-1. **SEO Wave 2 fixes** — full confirmed ship list below. Branch: `260523-fix/seo-wave2-og-and-hydration`. All findings verified against live main by 3-agent team.
-
-**SEO Wave 2 Confirmed Ship List** (from audit team):
-- C1: `pages/airport-transfer/index.js:65-66` — bgDefault.src relative → siteUrl template
-- C2: `pages/blog/categories/index.js:17` — typeof window hydration + stale env var → getSiteUrl()
-- C3: `pages/blog/categories/[slug].js:32,50,150` — same hydration + relative at :50,:150 → getSiteUrl() + siteUrl template
-- M1: `pages/blog/search/[...slug].js:129,164` — NEXT_PUBLIC_SITE_URL stale + relative fallback → getSiteUrl() + siteUrl template
-- M2: `pages/_app.js:33-46` — DefaultSeo missing url + images[] → add openGraph url + images
-- M3: `pages/privacy/index.js:24` — description "Terms and Conditions" → correct privacy description
-- M4: `pages/forum/createtopic.js:61-66` — secureUrl missing → add secureUrl: ogImagePath
-- M7: `pages/help/index.js:45` — bgDefaultImage1.src relative → siteUrl template
-- P2-1 (→P1): `pages/privacy/index.js` — description copy-paste (same as M3, also :23 title bypass)
-- P2-5 (→P1): `pages/bookings/index.js` — add `<NextSeo noindex title="My Bookings">`
-- P2-6 (→P1): `pages/checkout/index.js` — add `<NextSeo noindex title="Checkout">`
-- M5, M6: ALREADY FIXED — no change needed
-
-Note: M5 (`forum/index.js:93`) and M6 (`locations/[slug].js:165`) already have secureUrl. Audit was against older version.
+1. **SEO Wave 2** — `73fc92a` on branch `260523-fix/seo-wave2-og-and-hydration`. All 11 bugs fixed + pushed. PR: https://github.com/junedarkside/smartenplus-frontend/pull/new/260523-fix/seo-wave2-og-and-hydration — merge to develop → verify on staging → merge to main
 2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 
 ### Active Branches
