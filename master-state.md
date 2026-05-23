@@ -4,7 +4,7 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #9)
+**Updated:** 2026-05-23 (session wrap #10)
 
 **Achieved this session:**
 - **429 fix — DONE + PUSHED.** 3-agent team review caught flat cache key bug in vault doc. Corrected: parameterized key encodes `limit`, `summary`, `destinations_page`, `location`, `has_trips`. DEBUG guard removed (fix must apply in dev). `c73f6de` → merged `67cdf66` → pushed `origin/develop`.

@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] session-end | migration audit — locked_amount chain 0038→0042 verified intact on develop; no changes made
 ## [2026-05-23] session-end | 429 fix + auth dep fix — 3-agent team review caught flat cache key bug; parameterized key + no DEBUG guard; Fix A merged backend 67cdf66, Fix D merged frontend da3c2b1, both pushed origin/develop
 ## [2026-05-23] rework | isr-429-cold-start-fix — scrutiny overturned 2 false claims: REVALIDATE_SECONDS irrelevant in dev, getStaticPaths build-time only; actual cause: DRF anon 500/hour window persists across runserver restarts; fix = backend response cache on FrontPageViewSet.list; nextjs-patterns.md corrected
 ## [2026-05-23] ingest | isr-429-cold-start-fix — cold start 429 on /front-page/ diagnosed: REVALIDATE_SECONDS=60 + refetchOnMountOrArgChange:300 + props-in-deps; 3 fixes identified; nextjs-patterns.md ISR+RTK rules updated
