@@ -4,18 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #13)
+**Updated:** 2026-05-23 (session wrap #14)
 
 **Achieved this session:**
-- **Fast Refresh infinite loop FIXED** — root cause: service worker registered in dev (`NEXT_PUBLIC_DEVELOPMENT=true` guard bypassed localhost check). SW cached page HTML with stale webpack compilation hash → hot-update.json 404 → full reload loop.
-- **7 wrong diagnoses overturned** through systematic investigation + scrutiny + debug instrumentation + git bisect:
-  - ~~watchOptions.ignored~~ → ~~SW cacheFirst intercept~~ → ~~rm -rf .next~~ → ~~output:standalone~~ → ~~debug auto-share~~ → ~~DevToolsProvider~~ → ~~RefreshTokenHandler state loop~~
-- **Debug instrumentation confirmed:** `interval: 0`, `sessionExpiry: undefined` on every render → NO application code involvement → pure browser cache issue.
-- **Incognito test confirmed:** no loop without SW/cache.
-- **CurrencyContext fix applied:** race condition (cancelled guard), stable `selectCurrency` ref, correct `useMemo` deps, stale comment fixed.
-- **Fix:** `isLocalhost` guard in `serviceWorkerRegistration.js` blocks SW registration in dev. Production unaffected.
-- Merged → develop (`8d8616c`) → main → production. Pushed.
-- Vault audit doc written + scrutinized + updated: `01-projects/fast-refresh-infinite-loop-audit-2026-05-23.md`
+- **Facebook og:image "inferred" warning FIXED** — `BlogPostHeader.js` was hardcoding `1200×630` dimensions (actual image: `626×416`) and missing `og:image:secure_url`. Fixed in `1dd9d01`: real dimensions from `mediaDetails`, `secureUrl: ogImage` added.
+- Root cause: commit `0f38cf8` replaced per-image dimension logic with hardcoded values; commit `6b655d6` added `mediaDetails` to GraphQL but `BlogPostHeader.js` never used it.
+- Pushed → main → production.
 
 **In-progress / not done:**
 - Open items 1, 2, 3, 8, 15 from Section 2
@@ -23,16 +17,22 @@
 **Next session resume:**
 1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 2. Open item #15 — `refetchOnMountOrArgChange: 300→true` in useTripData
+3. Verify Facebook Sharing Debugger after deploy — re-scrape URL to confirm warning gone
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `8d8616c` merge: currency-context-infinite-fetch — **pushed to develop + main + production 2026-05-23** |
-| `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — **pushed to main 2026-05-23** |
+| `smartenplus-frontend` | `main` | `1dd9d01` fix(seo): real og:image dimensions + og:image:secure_url — pushed to main 2026-05-23 |
+| `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — pushed to main 2026-05-23 |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 
 _Live-verified 2026-05-23_
+
+### Uncommitted
+- frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged
+- backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
+- admin: `CLAUDE.md` modified — leave unstaged
 
 ### Uncommitted
 - frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged

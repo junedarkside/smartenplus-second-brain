@@ -119,16 +119,214 @@ Next.js 14.2.5 standalone mode with `output: 'standalone'`. Volume mounts to `/a
 2. Backend second (signal now calls revalidation)
 3. Verify: admin edit → page updates on next visit
 
-### Risks
+## Team Synthesis (2026-05-23)
+
+**Specialists:** isr-specialist · backend-specialist · frontend-specialist
+
+### Root Cause — Key Disagreement Resolved
+
+| Claim | Verdict |
+|---|---|
+| Audit doc: "ISR timer never fires in Docker standalone" | Overstated |
+| isr-specialist: "ISR works as designed" | Mostly correct, misses the gap |
+
+**Synthesis:** `revalidate: 300` fires on next-request-after-staleness — not on a guaranteed timer. If no traffic hits the page for hours, stale page serves indefinitely. ISR in standalone mode has **no background worker** to proactively revalidate. Admin update → Redis clears → **ISR HTML cache never notified**. The gap is real regardless of bug vs behavior framing.
+
+### ISR Pages Found — 19 Total
+
+| Page | revalidate |
+|---|---|
+| `trips/detail/[...slug].js` | 300s |
+| `activities/detail/[...slug].js` | 3600s |
+| `airport-transfer/[slug].js` | 3600s |
+| `trips/[...slug].js` | 300s |
+| Homepage sections, blog, destinations, locations, operators, about | 10s–86400s |
+
+`revalidateTag` not used anywhere — time-based ISR only.
+
+### What's Stale (SEO Impact)
+
+**CSR overlay covers:** ratecard, start/end dates, stop_sale_dates, is_actived, operational_days ✅
+
+**Stale regardless (no CSR fallback):**
+- Product name, description, route_info, images, timeline, operator name, policies
+- JSON-LD schemas (Product, TouristTrip, BreadcrumbList, FAQPage, LocalBusiness, Organization)
+- Meta tags, OpenGraph, canonical URL, Twitter Card, breadcrumb path
+
+**SEO impact:** Googlebot may index stale titles/descriptions/prices for 5 min (trips) to 1 hour (activities).
+
+### Network Path — Resolved ✅
+
+Backend and frontend are **separate Docker compose projects** (different networks). Direct `frontend:3000` won't work.
+
+**Solution:** Use public URL — same pattern as `bookings/tasks.py:37`:
+```python
+frontend_url = 'http://localhost:3000' if settings.DEBUG else 'https://smartenplus.co.th'
+```
+Celery worker just needs outbound HTTPS to `smartenplus.co.th`. Works regardless of Docker networking.
+
+### Major: Use Celery, Not Bare Thread — CONFIRMED
+
+**Finding:** Bare daemon thread is fragile. No retry, no monitoring, no backpressure, threads die with Django restart.
+
+**Evidence:** Celery infrastructure already fully configured:
+- `Smartenplus/celery.py` — Celery app
+- `django_celery_results` + `django_celery_beat` in INSTALLED_APPS
+- `celery-worker` + `celery-beat` services in `docker-compose-deploy.yml`
+- Existing retry patterns in `bookings/tasks.py`
+
+**Fix:** Use Celery task with slug-based deduplication. `trigger_isr_revalidation(slug)` in `operators/tasks.py`, called from signal after Redis clears.
+
+### Pre-Deploy Verification Required
+
+1. **Test HTTP path** — Django management command calling `POST https://smartenplus.co.th/api/revalidate?secret=SECRET&path=/trips/detail/test-slug` before wiring signal
+2. **Confirm Celery worker outbound HTTPS** — check no firewall blocking celery → `smartenplus.co.th`
+3. **Add `REVALIDATION_SECRET` to GitHub Secrets** for CI/CD
+
+---
+
+## Implementation — API Route + Celery Task
+
+### `pages/api/revalidate.js` (frontend) — CREATE
+
+```javascript
+import { NextResponse } from 'next/server';
+
+const REVALIDATION_SECRET = process.env.REVALIDATION_SECRET;
+
+export async function POST(request) {
+  const authHeader = request.headers.get('authorization');
+  const secret = authHeader?.replace('Bearer ', '') || request.nextUrl.searchParams.get('secret');
+
+  if (secret !== REVALIDATION_SECRET) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+  }
+
+  let paths = [];
+  try {
+    const body = await request.json();
+    paths = Array.isArray(body.paths) ? body.paths : [body.path];
+    paths = paths.map(p => '/' + p.replace(/\/+$/, '').replace(/^\/+/, ''));
+  } catch {
+    const pathParam = request.nextUrl.searchParams.get('path');
+    if (pathParam) paths = [pathParam];
+  }
+
+  if (paths.length === 0) {
+    return NextResponse.json({ error: 'No paths provided' }, { status: 400 });
+  }
+
+  const results = [];
+  for (const path of paths) {
+    try {
+      await request.revalidatePath(path);
+      results.push({ path, status: 'revalidated' });
+    } catch (err) {
+      results.push({ path, status: 'error', message: err.message });
+    }
+  }
+
+  const hasErrors = results.some(r => r.status === 'error');
+  return NextResponse.json(
+    { revalidated: !hasErrors, paths: results },
+    { status: hasErrors ? 207 : 200 }
+  );
+}
+```
+
+- Bearer token auth via `Authorization` header + `?secret=` query param fallback
+- Batch support via `{"paths": [...]}` for bulk revalidation
+- Returns 207 Multi-Status on partial failure
+
+### `operators/tasks.py` (backend) — CREATE Celery task
+
+```python
+@shared_task(bind=True, max_retries=3, ignore_result=True)
+def trigger_isr_revalidation(self, slug):
+    """Trigger Next.js ISR revalidation for a contract slug."""
+    from django.conf import settings
+    import requests
+
+    frontend_url = 'http://localhost:3000' if settings.DEBUG else 'https://smartenplus.co.th'
+    revalidate_url = f"{frontend_url}/api/revalidate"
+
+    try:
+        response = requests.post(
+            revalidate_url,
+            json={"slug": slug},
+            timeout=10
+        )
+        response.raise_for_status()
+        logger.info(f"ISR revalidation triggered for contract/{slug}")
+    except Exception as e:
+        logger.error(f"ISR revalidation failed for {slug}: {e}")
+        raise self.retry(exc=e, countdown=60)
+```
+
+- Retry: `max_retries=3`, `countdown=60`
+- Deduplication: slug-based task_id prevents rapid-save task flood
+
+### `operators/signals.py` (backend) — MODIFY
+
+Add after existing Redis cache deletes:
+```python
+if instance.slug:
+    trigger_isr_revalidation.delay(instance.slug)
+```
+
+### `.env.example` (frontend) — ADD
+
+```
+# On-demand ISR revalidation (used by backend to trigger frontend cache invalidation)
+REVALIDATION_SECRET=your-secret-here
+```
+
+---
+
+## Deployment Order
+
+1. **Frontend first** — deploy `pages/api/revalidate.js` (idle until backend wires in, zero risk)
+2. **Backend second** — add Celery task, wire to signal, deploy
+3. **Verify** — admin edits contract → ISR page updates on next visit (seconds, not hours)
+
+---
+
+## Scrutinize Audit Findings (2026-05-23)
+
+### ✅ Blocker: `pages/api/revalidate.js` does not exist
+**Status:** RESOLVED — implementation designed above. Code ready to create.
+
+### ⚠️ Blocker: HTTP call from Django to frontend — network path unverified
+**Status:** RESOLVED — public URL approach (same as `bookings/tasks.py:37`). Separate Docker networks not an issue.
+
+### ✅ Major: Root cause diagnosis was incomplete
+**Status:** RESOLVED — "timer fires but no background worker" confirmed. On-demand revalidation is correct fix regardless.
+
+### ✅ Major: Background thread from Django signal
+**Status:** RESOLVED — Use Celery task. Already configured, retry/dedup/sonitoring.
+
+### ⚠️ Minor: No `revalidateTag` used
+**Status:** NOTED — `revalidatePath` sufficient for path-level granularity. No tag-based invalidation needed.
+
+### ✅ Minor: No rate limiting/debouncing
+**Status:** RESOLVED — Celery slug-based task deduplication handles rapid saves.
+
+### ✅ Minor: `REVALIDATION_SECRET` not in `.env.example`
+**Status:** RESOLVED — will add with env var.
+
+---
+
+## Risks (Final)
 
 | Risk | Mitigation |
-|------|------------|
-| Backend can't reach frontend | Thread fails silently with logging. Broken `revalidate: 300` as fallback |
-| Secret leaked | Not `NEXT_PUBLIC_`. Server-only env var |
-| Multiple rapid saves | `res.revalidate()` is idempotent. Last call wins |
+|---|---|
+| Celery task fails silently | `max_retries=3` + logging. Fallback: stale ISR until next deploy |
+| Secret leaked | Server-only env var, not `NEXT_PUBLIC_` |
+| Rapid admin saves → task flood | Slug-based task deduplication |
 | Non-existent path | Next.js handles gracefully, returns error but doesn't crash |
+| ISR still broken post-deploy | `revalidate: 300` remains as eventual fallback |
 
-### Future Extension
+## Future Extension
 
 | Backend Event | Paths |
 |---|---|
@@ -136,7 +334,7 @@ Next.js 14.2.5 standalone mode with `output: 'standalone'`. Volume mounts to `/a
 | Blog post update | `/blog/{slug}`, `/blog` |
 | Homepage content | `/` |
 
-API route is generic — accepts any paths array. Only Django signals need additions.
+API route generic — accepts any paths array. Only Django signals need additions.
 
 ## Related
 - [[nextjs-patterns]] — ISR, RTK Query, revalidation patterns
@@ -144,3 +342,4 @@ API route is generic — accepts any paths array. Only Django signals need addit
 - [[docker-production]] — Docker volume, deploy script, cache clearing
 - [[isr-429-cold-start-fix-2026-05-23]] — Related ISR issue (429 on cold start)
 - [[operators]] — Contract model, signals, cache invalidation
+- [[celery-patterns]] — Celery task patterns (for revalidation task implementation)

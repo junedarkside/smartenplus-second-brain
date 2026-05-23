@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] session-end | og:image Facebook "inferred" warning fixed — hardcoded 1200×630 + missing secure_url in BlogPostHeader.js; 1dd9d01 pushed to main
+## [2026-05-23] audit | isr-stale-data — ISR revalidate:300 broken in Docker standalone; Django signals clear Redis but never notify Next.js; on-demand revalidation API route proposed (Option A over B/C/D); **2 blockers + 3 major findings from team scrutinize — reword before implementing: (1) revalidate.js doesn't exist, (2) network path unverified, (3) daemon thread → use Celery instead, (4) consider revalidateTag, (5) root cause conflates 2 different issues**
 ## [2026-05-23] audit | fast-refresh-infinite-loop — 7 fix attempts failed; RefreshTokenHandler diagnosis OVERTURNED by scrutiny (lastExpiryRef guard blocks loop); actual cause likely Next.js 14.2.x HMR + on-demand compilation cascade (self-terminating); git bisect + debug instrumentation recommended; CurrencyContext fix applied
 ## [2026-05-23] audit-draft | fast-refresh-infinite-loop — 7 fix attempts, RefreshTokenHandler Date.now() + state loop identified by 3 agents; CurrencyContext fix applied; vault audit doc written
 ## [2026-05-23] session-end | infinite fetch investigation — circular-dep theory overturned; Fast Refresh reload loop (hot-update 404) + CurrencyContext race condition identified; vault doc written; no code changes; items #16+#17 added to loose ends
