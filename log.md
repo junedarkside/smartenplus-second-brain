@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] ingest | daytrips-to-activities-rename — 3-specialist team review, unanimous `activities`, 51 files mapped, 9 critical risks documented, cart/payment flows confirmed safe; branch 260523-feat/rename-daytrips-to-activities created
 ## [2026-05-23] session-end | vault optimization — synopsis atom note created, 26 files caveman compressed (139KB→128KB, 7% reduction), 12 old backups + 3 empty stubs cleaned; all 3 repos unchanged
 ## [2026-05-23] optimize | caveman:compress — 26 files compressed (139KB→128KB, 7% byte reduction); 3 empty stubs deleted; 37 .original.md backups retained for rollback
 ## [2026-05-22] ingest | smartenplus-synopsis — project-wide synopsis atom note created; 12 .original.md backups cleaned

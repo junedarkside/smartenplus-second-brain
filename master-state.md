@@ -4,27 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #6)
+**Updated:** 2026-05-23 (session wrap #7)
 **Achieved this session:**
-- **Synopsis atom note** — `03-knowledge/smartenplus-synopsis.md` created; project-wide orientation: stack, repos, payment, auth, state, open work
-- **Vault caveman compression** — 26 files compressed via `caveman:compress` (139KB→128KB, 7% byte reduction); biggest wins: homepage-seo (-22%), trip-detail-uxui-audit (-21%)
-- **Vault cleanup** — 12 old `.original.md` backups deleted from `03-knowledge/`, 3 empty stubs deleted (related-page-1, related-page-2, products-routes)
-- **No code changes** — all 3 repos unchanged
+- **Daytrips → Activities rename** — full 3-specialist team review (SEO + UX + Code), unanimous `activities`. Deep analysis: 51 files mapped, 9 critical risks documented, all hardcoded URLs located, cart/booking/checkout/payment flows confirmed safe. Vault doc created `01-projects/daytrips-to-activities-rename-2026-05-23.md`. Implementation plan written.
+- **Branch created** — `260523-feat/rename-daytrips-to-activities` on frontend (no code written yet — planning only)
+- **No code changes** — all 3 repos unchanged (rename not started)
 
 **In-progress / not done:**
+- Daytrips rename — branch exists, Phase 0 (Redux persist migration v6→v7) is next step, BLOCKING all other phases
 - SD9 — Trip departureTime/arrivalTime deferred (requires backend HomeSerializer change)
-- Deferred from audit: CF1 (price lazy-load gap), CF9 (price above fold), VD2/VD3 (typography tokens), VD9 (RelatedTrips over-padding)
+- Deferred from UX audit: CF1 (price lazy-load gap), CF9 (price above fold), VD2/VD3 (typography tokens), VD9 (RelatedTrips over-padding)
 - Open items 1, 2, 3, 8 from Section 2 still open
 
 **Next session resume:**
-1. Open item #1 (AdminBookingSummaryViewSet auth)
-2. Deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
+1. **PRIORITY: Daytrips rename** — start Phase 0: Redux persist migration in `/store/index.js` (version 6→7, migration `dayTrip→activities`, whitelist update). See full plan: `01-projects/daytrips-to-activities-rename-2026-05-23.md`
+2. After rename phases 0–7 complete: open item #1 (AdminBookingSummaryViewSet auth)
+3. Deferred trip detail audit items (CF1, CF9, VD2/VD3, VD9)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `a8305ae` merged to main + pushed to production |
+| `smartenplus-frontend` | `260523-feat/rename-daytrips-to-activities` | `a8305ae` — branch just created, no new commits |
 | `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
 | `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
 
@@ -41,6 +42,7 @@
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| 13 | Daytrips → Activities rename — 51 files, 7 phases | Phase 0 (Redux persist migration) blocking | frontend `260523-feat/rename-daytrips-to-activities` — see vault doc |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |

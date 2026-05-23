@@ -10,6 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[daytrips-to-activities-rename-2026-05-23|Daytrips → Activities Rename 2026-05-23]] — 51 files, 7 phases, Redux persist migration (v6→v7) blocking, 301 redirects, ISR cache clear; cart/payment flows safe
 - [[trip-detail-uxui-audit-2026-05-22|Trip Detail UX/UI Audit 2026-05-22]] — 3-specialist audit: 32 issues, ContentCard abstraction absent, full-bleed mobile cards, typography violations, CLS fallbacks; all P0/P1 implemented in branch 260522-fix/trip-detail-ux
 - [[README|SmartEnPlus]] — Thailand transport booking platform (Next.js 14, Redux, Omise)
 - [[architecture|SmartEnPlus Architecture]] — Redux slices, RTK Query, component structure
