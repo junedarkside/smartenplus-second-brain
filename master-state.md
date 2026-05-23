@@ -4,26 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #14)
+**Updated:** 2026-05-23 (session wrap #15)
 
 **Achieved this session:**
-- **Facebook og:image "inferred" warning FIXED** — `BlogPostHeader.js` was hardcoding `1200×630` dimensions (actual image: `626×416`) and missing `og:image:secure_url`. Fixed in `1dd9d01`: real dimensions from `mediaDetails`, `secureUrl: ogImage` added.
-- Root cause: commit `0f38cf8` replaced per-image dimension logic with hardcoded values; commit `6b655d6` added `mediaDetails` to GraphQL but `BlogPostHeader.js` never used it.
-- Pushed → main → production.
+- **og:image "inferred" warning FIXED site-wide** — 24 files patched. Two root causes:
+  - RC1: `homepagev2.js` `NEXT_PUBLIC_DOMAIN` undefined in prod → `new URL()` throws → `Seo` component renders nothing → Facebook infers og:title from domain. Fix: 3-tier env fallback (no getSiteUrl() import — wrong module boundary).
+  - RC2: All pages missing `secureUrl` in `openGraph.images[]` → Facebook marks og:image as "inferred". Fixed across all page types: homepage, all blog pages (via updated `generateBlogSEO()` helper), trips, activities, airport-transfer, locations, operators, destinations, forum, help.
+  - Scrutiny corrected the internal audit plan before implementation.
+  - Committed `074b51e` → branch `260523-fix/og-image-homepage-and-blog` → develop `10ca8df` → main `190e2a2` — live in production.
 
 **In-progress / not done:**
 - Open items 1, 2, 3, 8, 15 from Section 2
 
 **Next session resume:**
-1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
-2. Open item #15 — `refetchOnMountOrArgChange: 300→true` in useTripData
-3. Verify Facebook Sharing Debugger after deploy — re-scrape URL to confirm warning gone
+1. Verify Facebook Sharing Debugger — re-scrape homepage + blog/trip URL, confirm `og:image:secure_url` present, "inferred" warning gone
+2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
+3. Open item #15 — `refetchOnMountOrArgChange: 300→true` in useTripData
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `1dd9d01` fix(seo): real og:image dimensions + og:image:secure_url — pushed to main 2026-05-23 |
+| `smartenplus-frontend` | `main` | `190e2a2` merge develop → main — og:image:secure_url site-wide fix — live 2026-05-23 |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — pushed to main 2026-05-23 |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 

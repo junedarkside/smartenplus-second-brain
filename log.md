@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] session-end | og:image:secure_url site-wide — 24 files, homepage domain fallback, generateBlogSEO() updated, merged → main 190e2a2; verified live
+## [2026-05-23] scrutinize | og-image-inferred — fix plan corrected: homepage use inline 3-tier fallback (not getSiteUrl() cross-module import); blog use generateBlogSEO() helper (not N inline copies); search page has seo object already (not blank slate); vault doc updated
 ## [2026-05-23] audit | og-image-inferred — site-wide Facebook og:image warning; RC1: NEXT_PUBLIC_DOMAIN undefined in prod → homepage Seo crash; RC2: missing secureUrl on blog pages; vault doc written; fix pending
 ## [2026-05-23] session-end | og:image Facebook "inferred" warning fixed — hardcoded 1200×630 + missing secure_url in BlogPostHeader.js; 1dd9d01 pushed to main
 ## [2026-05-23] audit | isr-stale-data — ISR revalidate:300 broken in Docker standalone; Django signals clear Redis but never notify Next.js; on-demand revalidation API route proposed (Option A over B/C/D); **2 blockers + 3 major findings from team scrutinize — reword before implementing: (1) revalidate.js doesn't exist, (2) network path unverified, (3) daemon thread → use Celery instead, (4) consider revalidateTag, (5) root cause conflates 2 different issues**
