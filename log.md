@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-23] audit | og-image-inferred — site-wide Facebook og:image warning; RC1: NEXT_PUBLIC_DOMAIN undefined in prod → homepage Seo crash; RC2: missing secureUrl on blog pages; vault doc written; fix pending
 ## [2026-05-23] session-end | og:image Facebook "inferred" warning fixed — hardcoded 1200×630 + missing secure_url in BlogPostHeader.js; 1dd9d01 pushed to main
 ## [2026-05-23] audit | isr-stale-data — ISR revalidate:300 broken in Docker standalone; Django signals clear Redis but never notify Next.js; on-demand revalidation API route proposed (Option A over B/C/D); **2 blockers + 3 major findings from team scrutinize — reword before implementing: (1) revalidate.js doesn't exist, (2) network path unverified, (3) daemon thread → use Celery instead, (4) consider revalidateTag, (5) root cause conflates 2 different issues**
 ## [2026-05-23] audit | fast-refresh-infinite-loop — 7 fix attempts failed; RefreshTokenHandler diagnosis OVERTURNED by scrutiny (lastExpiryRef guard blocks loop); actual cause likely Next.js 14.2.x HMR + on-demand compilation cascade (self-terminating); git bisect + debug instrumentation recommended; CurrencyContext fix applied
