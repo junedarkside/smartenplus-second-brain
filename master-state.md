@@ -4,12 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #10)
+**Updated:** 2026-05-23 (session wrap #11)
 
 **Achieved this session:**
-- **429 fix — DONE + PUSHED.** 3-agent team review caught flat cache key bug in vault doc. Corrected: parameterized key encodes `limit`, `summary`, `destinations_page`, `location`, `has_trips`. DEBUG guard removed (fix must apply in dev). `c73f6de` → merged `67cdf66` → pushed `origin/develop`.
-- **Fix D — DONE + PUSHED.** `refreshTokenHandler.js:25` `props` → `props.setInterval` in useEffect deps. `a797a59` → merged `da3c2b1` → pushed `origin/develop`.
-- **Fix C deferred** — `refetchOnMountOrArgChange: 300→true` in `useTripData.js` targets `/api/v1/trips/` not `/front-page/`. Orthogonal. Open item #15.
+- **429 fix + auth dep fix** — both merged develop → pushed main. Production live.
+- **Migration audit** — `locked_amount` chain `0038→0042` verified intact, no issues.
+- No new code this wrap session.
 
 **In-progress / not done:**
 - Open items 1, 2, 3, 8, 15 from Section 2
