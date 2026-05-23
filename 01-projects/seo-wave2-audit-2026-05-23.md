@@ -143,15 +143,37 @@ OPEN — confirmed bugs logged. Implementation pending. Branch: `260523-fix/seo-
 
 ---
 
-## Confirmed OK — Do Not Re-Audit
+## Debug Mantra Verification (2026-05-23)
 
-- `utils/blog/seoHelper.js` — all 4 cases use absolute `defaultImageUrl`. secureUrl present on post case. PASS.
-- `pages/_app.js` PersistGate structure — DefaultSeo/Head/Component above gate. PASS.
-- `pages/trips/index.js` ogImagePath — absolute, 2-tier fallback. PASS.
-- `pages/homepagev2.js` aboutURL — 2-tier, no NEXT_PUBLIC_SITE_URL. PASS.
-- `pages/trips/detail/[...slug].js` noindex — conditional on `lowestRate === null`. Intentional. PASS.
-- Raw `<img>` tags in production — zero found. PASS.
-- Dev pages noindex (`pages/dev/*.js`) — correct. PASS.
+3-agent team applied debug mantra steps 1+2 (reproduce + fail path) against current main HEAD.
+
+**Method:** Read exact file lines, grep for stale env vars, trace webpack image `.src` resolution. All bugs verified present.
+
+### All 11 Bugs Confirmed Present at HEAD
+
+| ID | File | Line | Bug | Evidence |
+|----|------|------|-----|---------|
+| C1 | `airport-transfer/index.js` | 65-66 | bgDefault.src relative OG | `bgDefault.src` → `/_next/static/media/...` webpack path |
+| C2 | `blog/categories/index.js` | 17 | NEXT_PUBLIC_SITE_URL stale + typeof window | env var removed commit `4644fac`, still referenced |
+| C3 | `blog/categories/[slug].js` | 32 | same stale env var pattern | grep confirmed, same line pattern as C2 |
+| C3 | `blog/categories/[slug].js` | 50 | bgDefaultImage1.src relative OG | raw webpack import, no siteUrl prefix |
+| C3 | `blog/categories/[slug].js` | 150 | bgDefaultImage1.src relative JSON-LD | same as above, in image.url field |
+| M1 | `blog/search/[...slug].js` | 129 | NEXT_PUBLIC_SITE_URL stale | grep confirmed, same obsolete pattern |
+| M1 | `blog/search/[...slug].js` | 164 | relative fallback | `searchImageUrl = ... || bgDefaultImage1.src` bare relative |
+| M2 | `_app.js` | 33-46 | DefaultSeo missing url + images[] | openGraph has type/locale/siteName only |
+| M3 | `privacy/index.js` | 24 | description "Terms and Conditions" | exact text confirmed on Privacy Policy page |
+| M4 | `forum/createtopic.js` | 61-66 | secureUrl missing | url: ogImagePath present, secureUrl absent |
+| M7 | `help/index.js` | 45 | selectedGroupImage bare relative | `bgDefaultImage1.src` no siteUrl prefix |
+| P2-1 | `privacy/index.js` | 23 | manual Head bypass + wrong description | `<title>Privacy Policy|` + "Terms" description |
+| P2-5 | `bookings/index.js` | 592-594 | no noindex, no NextSeo | only `<Head><title>My Bookings...` |
+| P2-6 | `checkout/index.js` | 882-884 | no noindex, no NextSeo | only `<Head><title>Smart En Plus Check Out Page` |
+
+**Root cause cluster (debug ledger):**
+1. Webpack image `.src` used directly in OG meta → needs `NEXT_PUBLIC_DOMAIN` prefix
+2. `NEXT_PUBLIC_SITE_URL` still referenced after removal in `4644fac`
+3. Auth pages (bookings/checkout) missing noindex → crawl budget leak
+
+**Disproof note:** M5 (forum/index.js) and M6 (locations/[slug].js) already have secureUrl — audit was against older version. Confirmed clean at current HEAD.
 
 ---
 
