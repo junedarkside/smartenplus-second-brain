@@ -25,17 +25,15 @@
 - Open items 1, 2, 3, 8, 15 from Section 2
 
 **Next session resume:**
-1. Merge `260523-fix/trips-og-image-and-site-url-env` → develop → main → deploy
-2. Verify production: `curl https://www.smartenplus.co.th/ | grep 'next-head-count'` should be `content="14"`, run Facebook Sharing Debugger on homepage + a blog post
-3. Tech debt backlog (separate branch): 21 pages mix `<Head>` + `DefaultSeo`, 18 hardcode `<title>`, 15+ missing canonical, `trips/detail/[...slug].js` noindex verify, `privacy/index.js` wrong description, `DefaultSeo` missing `images` + `url` field
-4. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
+1. Verify production: `curl https://www.smartenplus.co.th/ | grep 'next-head-count'` should be `content="14"`, run Facebook Sharing Debugger on homepage + a blog post
+2. Tech debt backlog (separate branch): 21 pages mix `<Head>` + `DefaultSeo`, 18 hardcode `<title>`, 15+ missing canonical, `trips/detail/[...slug].js` noindex verify, `privacy/index.js` wrong description, `DefaultSeo` missing `images` + `url` field
+3. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260523-fix/trips-og-image-and-site-url-env` | `ac6f8aa` _app.js PersistGate SSR fix — NOT YET MERGED |
-| `smartenplus-frontend` | `main` | `190e2a2` merge develop → main — og:image:secure_url site-wide fix |
+| `smartenplus-frontend` | `main` | `df81b19` merge: PersistGate SSR fix + OG absolute URLs — live 2026-05-23 |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — pushed to main 2026-05-23 |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 
