@@ -4,29 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #8)
+**Updated:** 2026-05-23 (session wrap #9)
 
 **Achieved this session:**
-- **Daytrips → Activities rename** — COMPLETED. 7 phases + 5 scrutiny fixes implemented. Merged → develop `d424d4e`. Branch `260523-feat/rename-daytrips-to-activities` fully merged. Post-deploy: clear `smartenplus_next_cache` Docker volume + resubmit GSC sitemap `/sitemap.xml`.
-- **429 Too Many Requests investigation** — `/front-page/` cold-start 429 diagnosed and documented. Initial diagnosis wrong (2 false claims overturned by scrutiny). Correct root cause identified: DRF anon 500/hour throttle window persists across `runserver` restarts. Fix required: backend response cache on `FrontPageViewSet.list`. Vault doc: `01-projects/isr-429-cold-start-fix-2026-05-23.md`. **Fixes NOT yet implemented.**
+- **429 fix — DONE + PUSHED.** 3-agent team review caught flat cache key bug in vault doc. Corrected: parameterized key encodes `limit`, `summary`, `destinations_page`, `location`, `has_trips`. DEBUG guard removed (fix must apply in dev). `c73f6de` → merged `67cdf66` → pushed `origin/develop`.
+- **Fix D — DONE + PUSHED.** `refreshTokenHandler.js:25` `props` → `props.setInterval` in useEffect deps. `a797a59` → merged `da3c2b1` → pushed `origin/develop`.
+- **Fix C deferred** — `refetchOnMountOrArgChange: 300→true` in `useTripData.js` targets `/api/v1/trips/` not `/front-page/`. Orthogonal. Open item #15.
 
 **In-progress / not done:**
-- **429 fix — not implemented.** Backend needs response cache on `FrontPageViewSet.list` (`pages_info/views.py:327`). See vault doc for exact implementation.
-- Two frontend bugs identified (not implemented): `refetchOnMountOrArgChange: true` in `hooks/useTripData.js:16,24` + `props.setInterval` in `components/auth/refreshTokenHandler.js:25`
-- Open items 1, 2, 3, 8 from Section 2 still open
+- Open items 1, 2, 3, 8, 15 from Section 2
 
 **Next session resume:**
-1. **PRIORITY: 429 fix** — add response cache to `FrontPageViewSet.list` in `pages_info/views.py:327`. Cache key `frontpage_list_response`, TTL 300s. Bust cache in existing station signal handler + any route/location save signals. See `01-projects/isr-429-cold-start-fix-2026-05-23.md` Fix A.
-2. Apply frontend fixes: `useTripData.js` + `refreshTokenHandler.js` (minor, 3 lines total)
-3. Then: open item #1 (AdminBookingSummaryViewSet auth)
+1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated (`orders/views.py`)
+2. Open item #15 — `useTripData refetchOnMountOrArgChange` (needs separate justification before changing)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260523-feat/rename-daytrips-to-activities` | `0a8081d` fix(activities): SEO title/desc — **merged to develop, no pending work** |
-| `smartenplus-backend` | `develop` | `4140cbd` locked_amount db_index merge |
-| `admin-dashboard` | `main` | `c06af90` RTK Query migration Main.js |
+| `smartenplus-frontend` | `develop` | `da3c2b1` merge: refresh-token-deps → develop |
+| `smartenplus-backend` | `develop` | `67cdf66` merge: frontpage-response-cache → develop |
+| `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
+
+_Live-verified 2026-05-23_
 
 ### Uncommitted
 - frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged
@@ -41,9 +41,10 @@
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| 14 | 429 Too Many Requests on `/front-page/` (local dev cold start) | Backend response cache not implemented | `pages_info/views.py:327` — see `01-projects/isr-429-cold-start-fix-2026-05-23.md` Fix A |
-| 14b | `refetchOnMountOrArgChange: 300` wrong semantics in useTripData | Not implemented | `hooks/useTripData.js:16,24` → change to `true` |
-| 14c | `props` object in RefreshTokenHandler deps | Not implemented | `components/auth/refreshTokenHandler.js:25` → `props.setInterval` |
+| 14 | 429 Too Many Requests on `/front-page/` | DONE — `c73f6de` branch `260523-fix/frontpage-response-cache`, pending merge | `pages_info/views.py` — parameterized 300s cache |
+| 14b | `refetchOnMountOrArgChange: 300` in useTripData | DEFERRED — orthogonal to 429, targets /api/v1/trips/ | `hooks/useTripData.js:16,24` — open as #15 |
+| 14c | `props` object in RefreshTokenHandler deps | DONE — `a797a59` branch `260523-fix/refresh-token-deps`, pending merge | `components/auth/refreshTokenHandler.js:25` |
+| 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed — increases anon request volume | `hooks/useTripData.js:16,24` |
 | 13 | Daytrips → Activities rename — 51 files, 7 phases | DONE — merged develop `d424d4e` 2026-05-23 | CLOSED |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
