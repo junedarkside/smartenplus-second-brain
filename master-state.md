@@ -4,37 +4,42 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #15)
+**Updated:** 2026-05-23 (session wrap #16)
 
 **Achieved this session:**
-- **og:image "inferred" warning FIXED site-wide** — 24 files patched. Two root causes:
-  - RC1: `homepagev2.js` `NEXT_PUBLIC_DOMAIN` undefined in prod → `new URL()` throws → `Seo` component renders nothing → Facebook infers og:title from domain. Fix: 3-tier env fallback (no getSiteUrl() import — wrong module boundary).
-  - RC2: All pages missing `secureUrl` in `openGraph.images[]` → Facebook marks og:image as "inferred". Fixed across all page types: homepage, all blog pages (via updated `generateBlogSEO()` helper), trips, activities, airport-transfer, locations, operators, destinations, forum, help.
-  - Scrutiny corrected the internal audit plan before implementation.
-  - Committed `074b51e` → branch `260523-fix/og-image-homepage-and-blog` → develop `10ca8df` → main `190e2a2` — live in production.
+- **PersistGate SSR blocker FIXED — ALL OG meta tags restored site-wide.** Root cause: `PersistGate loading={null}` in `_app.js` wrapped `DefaultSeo`, `Head`, `Layout`, `<Component>` → rendered null SSR → `next-head-count="2"` → blank title/og:title/og:description/og:image on every page for crawlers/Facebook. Fix: hoisted `DefaultSeo`, `Head`, `Layout`, `<Component>` above `PersistGate`; PersistGate now wraps only `RefreshTokenHandler` + `DevToolsProvider`. Verified `next-head-count="14"` after fix.
+- **OG image relative paths fixed** — `generateBlogSEO()` fallback used `bgDefaultImage1.src` (relative `/_next/static/media/...`). Added `defaultImageUrl = \`${SITE_URL}${bgDefaultImage1.src}\`` — all fallback refs updated. `trips/index.js` `ogImagePath` similarly fixed.
+- **`NEXT_PUBLIC_SITE_URL` tech debt reverted** — was added to `deploy.yml` unnecessarily (same value as `NEXT_PUBLIC_DOMAIN` already in GitHub Secrets). Reverted. All code simplified to 2-tier: `NEXT_PUBLIC_DOMAIN || 'https://www.smartenplus.co.th'`.
+- **KB ingested** — `03-knowledge/nextjs-patterns.md` extended with "PersistGate SSR Blocker" + "OG Image — Absolute URLs Required" sections. `01-projects/og-image-ssr-fix-2026-05-23.md` created with all 4 root causes + commits + tech debt backlog.
+
+**Commits on branch `260523-fix/trips-og-image-and-site-url-env`:**
+| Commit | Fix |
+|--------|-----|
+| `61134c9` | trips/index.js absolute ogImagePath + domain fallback |
+| `f8d9907` | seoHelper.js absolute fallback image URLs |
+| `4644fac` | Remove redundant NEXT_PUBLIC_SITE_URL; homepagev2.js 2-tier fallback |
+| `ac6f8aa` | **_app.js PersistGate SSR fix — root cause** |
 
 **In-progress / not done:**
+- Branch `260523-fix/trips-og-image-and-site-url-env` NOT yet merged → develop → main
 - Open items 1, 2, 3, 8, 15 from Section 2
 
 **Next session resume:**
-1. Verify Facebook Sharing Debugger — re-scrape homepage + blog/trip URL, confirm `og:image:secure_url` present, "inferred" warning gone
-2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
-3. Open item #15 — `refetchOnMountOrArgChange: 300→true` in useTripData
+1. Merge `260523-fix/trips-og-image-and-site-url-env` → develop → main → deploy
+2. Verify production: `curl https://www.smartenplus.co.th/ | grep 'next-head-count'` should be `content="14"`, run Facebook Sharing Debugger on homepage + a blog post
+3. Tech debt backlog (separate branch): 21 pages mix `<Head>` + `DefaultSeo`, 18 hardcode `<title>`, 15+ missing canonical, `trips/detail/[...slug].js` noindex verify, `privacy/index.js` wrong description, `DefaultSeo` missing `images` + `url` field
+4. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `190e2a2` merge develop → main — og:image:secure_url site-wide fix — live 2026-05-23 |
+| `smartenplus-frontend` | `260523-fix/trips-og-image-and-site-url-env` | `ac6f8aa` _app.js PersistGate SSR fix — NOT YET MERGED |
+| `smartenplus-frontend` | `main` | `190e2a2` merge develop → main — og:image:secure_url site-wide fix |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — pushed to main 2026-05-23 |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 
-_Live-verified 2026-05-23_
-
-### Uncommitted
-- frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged
-- backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
-- admin: `CLAUDE.md` modified — leave unstaged
+_Last verified 2026-05-23_
 
 ### Uncommitted
 - frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged

@@ -71,8 +71,58 @@ Stable ref, NOT new object each render. Safe in useCallback deps.
 
 See [[hydration-infinite-refresh-fix-2026-05-20]].
 
+## PersistGate SSR Blocker
+
+`PersistGate loading={null}` renders **null on the server**. Any component inside it — `DefaultSeo`, `Head`, `<Component>` — is suppressed during SSR. Result: `next-head-count="2"`, empty `<title>`, no OG tags in view-source. Crawlers see blank shell.
+
+**Symptom:** opengraph.dev / view-source shows empty meta tags on ALL pages even though code looks correct.
+
+**Diagnosis:** `curl http://localhost:3000/ | grep 'next-head-count'` → `content="2"` = SSR blocked.
+
+**Fix:** hoist `DefaultSeo`, `Head`, `Layout`, and `<Component>` above `PersistGate`. Only wrap client-only utilities (RefreshTokenHandler, DevToolsProvider) inside PersistGate.
+
+```jsx
+// BAD — everything suppressed SSR
+<PersistGate persistor={persistor} loading={null}>
+  <DefaultSeo ... />
+  <Layout>
+    <Component {...pageProps} />
+  </Layout>
+</PersistGate>
+
+// GOOD — meta + page render SSR; persist wraps only client utilities
+<DefaultSeo ... />
+<Head>...</Head>
+<Layout>
+  <PersistGate persistor={persistor} loading={null}>
+    <RefreshTokenHandler ... />
+    <DevToolsProvider />
+  </PersistGate>
+  <Component {...pageProps} />
+</Layout>
+```
+
+Fixed in `_app.js` commit `ac6f8aa` — verified `next-head-count="14"` after fix. See [[og-image-ssr-fix-2026-05-23]].
+
+## OG Image — Absolute URLs Required
+
+Next.js static imports (`import img from './file.webp'`) produce relative paths like `/_next/static/media/file.hash.webp`. Using `.src` directly in `og:image` = relative URL = Facebook/crawlers can't fetch.
+
+**Fix:** always prepend site URL:
+```js
+// BAD
+const ogImagePath = bgDefaultImage1.src;  // "/_next/static/media/..."
+
+// GOOD
+const siteUrl = process.env.NEXT_PUBLIC_DOMAIN || 'https://www.smartenplus.co.th';
+const ogImagePath = `${siteUrl}${bgDefaultImage1.src}`;
+```
+
+Applies to: `generateBlogSEO()` fallback images, `trips/index.js`, any page using imported static assets as OG image. WP/CDN image URLs (`https://smartenplus-wp-s3...`) are already absolute — no change needed. Fixed in `f8d9907` + `61134c9`.
+
 ## Related
 - [[architecture]]
 - [[payment-integration]]
 - [[hydration-infinite-refresh-fix-2026-05-20]]
 - [[isr-429-cold-start-fix-2026-05-23]]
+- [[og-image-ssr-fix-2026-05-23]]
