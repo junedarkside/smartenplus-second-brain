@@ -3,7 +3,7 @@
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
 ## [2026-05-23] deploy | PersistGate SSR fix merged → develop df81b19 → main → production live 2026-05-23
-## [2026-05-23] implement | seo-wave2 — 11 bugs fixed: relative OG images, stale NEXT_PUBLIC_SITE_URL, DefaultSeo url+images[], privacy desc, forum secureUrl, help image, auth pages noindex. Branch 260523-fix/seo-wave2-og-and-hydration pushed, PR ready.
+## [2026-05-23] session-end | seo-wave2 — all 11 bugs fixed, merged to main. Auth pages noindex blocked by ProtectedComponent returning null SSR (fix deferred). Vault updated. Main merged, not pushed (user held).
 ## [2026-05-23] session-end | PersistGate SSR blocker fixed — all OG meta tags restored site-wide; OG image relative paths fixed in seoHelper.js + trips/index.js; NEXT_PUBLIC_SITE_URL tech debt reverted; branch 260523-fix/trips-og-image-and-site-url-env (4 commits: 61134c9, f8d9907, 4644fac, ac6f8aa) — merged → main → production
 ## [2026-05-23] session-end | og:image:secure_url site-wide — 24 files, homepage domain fallback, generateBlogSEO() updated, merged → main 190e2a2; verified live
 ## [2026-05-23] scrutinize | og-image-inferred — fix plan corrected: homepage use inline 3-tier fallback (not getSiteUrl() cross-module import); blog use generateBlogSEO() helper (not N inline copies); search page has seo object already (not blank slate); vault doc updated

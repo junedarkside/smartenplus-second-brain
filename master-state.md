@@ -4,42 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-23 (session wrap #16)
+**Updated:** 2026-05-23 (session wrap #17)
 
 **Achieved this session:**
-- **PersistGate SSR blocker FIXED — ALL OG meta tags restored site-wide.** Root cause: `PersistGate loading={null}` in `_app.js` wrapped `DefaultSeo`, `Head`, `Layout`, `<Component>` → rendered null SSR → `next-head-count="2"` → blank title/og:title/og:description/og:image on every page for crawlers/Facebook. Fix: hoisted `DefaultSeo`, `Head`, `Layout`, `<Component>` above `PersistGate`; PersistGate now wraps only `RefreshTokenHandler` + `DevToolsProvider`. Verified `next-head-count="14"` after fix.
-- **OG image relative paths fixed** — `generateBlogSEO()` fallback used `bgDefaultImage1.src` (relative `/_next/static/media/...`). Added `defaultImageUrl = \`${SITE_URL}${bgDefaultImage1.src}\`` — all fallback refs updated. `trips/index.js` `ogImagePath` similarly fixed.
-- **`NEXT_PUBLIC_SITE_URL` tech debt reverted** — was added to `deploy.yml` unnecessarily (same value as `NEXT_PUBLIC_DOMAIN` already in GitHub Secrets). Reverted. All code simplified to 2-tier: `NEXT_PUBLIC_DOMAIN || 'https://www.smartenplus.co.th'`.
-- **KB ingested** — `03-knowledge/nextjs-patterns.md` extended with "PersistGate SSR Blocker" + "OG Image — Absolute URLs Required" sections. `01-projects/og-image-ssr-fix-2026-05-23.md` created with all 4 root causes + commits + tech debt backlog.
-
-**Commits on branch `260523-fix/trips-og-image-and-site-url-env`:**
-| Commit | Fix |
-|--------|-----|
-| `61134c9` | trips/index.js absolute ogImagePath + domain fallback |
-| `f8d9907` | seoHelper.js absolute fallback image URLs |
-| `4644fac` | Remove redundant NEXT_PUBLIC_SITE_URL; homepagev2.js 2-tier fallback |
-| `ac6f8aa` | **_app.js PersistGate SSR fix — root cause** |
+- **SEO Wave 2 complete — all 11 bugs verified + fixed + merged to main.** 3-agent audit team (P0/P1/P2) confirmed all bugs present at HEAD. 3-agent debug mantra team reproduced all findings. Fix branch `260523-fix/seo-wave2-og-and-hydration` merged → develop → main (`ceb0eac`). Fixes: relative og:image → absolute, NEXT_PUBLIC_SITE_URL stale → getSiteUrl(), DefaultSeo got url+images[], privacy description fixed, forum secureUrl added, help image fixed, bookings/checkout NextSeo noindex applied (known limitation below).
+- **Build verified clean** — `npm run build` passes, sitemap generates, all 133 static pages + ISR pages build OK.
+- **NextSeo import fix** — default import (`import NextSeo from 'next-seo'`) → named import (`import { NextSeo } from 'next-seo'`) on privacy, bookings, checkout. Was causing "does not contain default export" error.
+- Vault updated: seo-wave2-audit doc with team results + debug ledger, log entry, index, master-state.
 
 **In-progress / not done:**
-- Branch `260523-fix/trips-og-image-and-site-url-env` NOT yet merged → develop → main
-- Open items 1, 2, 3, 8, 15 from Section 2
+- Auth pages noindex (bookings/checkout): NextSeo `robots={{index:false,follow:false}}` applied but `ProtectedComponent` returns `null` on SSR for unauthenticated users → NextSeo never renders → noindex not taking effect. Fix needed: either `_app.js` DefaultSeo conditional per route, or middleware-based robots header injection, or server-side auth check.
 
 **Next session resume:**
-1. **SEO Wave 2** — `73fc92a` on branch `260523-fix/seo-wave2-og-and-hydration`. All 11 bugs fixed + pushed. PR: https://github.com/junedarkside/smartenplus-frontend/pull/new/260523-fix/seo-wave2-og-and-hydration — merge to develop → verify on staging → merge to main
+1. **Auth pages noindex fix** — ProtectedComponent pattern blocks NextSeo SSR for unauthenticated. Options: (A) `_app.js` DefaultSeo with route-conditional noindex, (B) Next.js middleware injects `X-Robots-Tag` header, (C) `getServerSideProps` auth check before page render.
 2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `df81b19` merge: PersistGate SSR fix + OG absolute URLs — live 2026-05-23 |
+| `smartenplus-frontend` | `main` | `ceb0eac` merge: seo-wave2 fix — relative OG images, stale NEXT_PUBLIC_SITE_URL, DefaultSeo url+images[], privacy description, auth pages noindex |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache — pushed to main 2026-05-23 |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js — RTK Query migration |
 
 _Last verified 2026-05-23_
 
 ### Uncommitted
-- frontend: `CLAUDE.original.md` + `public/audit-screenshots/` + `scripts/width-audit*.js` untracked — leave unstaged
+- frontend: main merged, not pushed (user held push)
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 
