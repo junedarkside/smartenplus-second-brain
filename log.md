@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-24] ingest | strategic direction validated via grill — B2B/B2C split confirmed (90/10), EN customer confirmed (GA4+support), Malaysia Phase 2, vertical integration moat (minivan network+own tours), Stippl product vision, revenue model = markup not commission
 ## [2026-05-24] cleanup | deleted master-state.original.md (stale 2026-05-22 backup) + breadcrumb-dedup-plan-2026-05-20.md (work done, plan doc misleading): docker-standalone-isr-revalidate-gap, on-demand-revalidation-api-route, celery-task-over-bare-thread-django-signals, isr-csr-overlay-stale-fields, persistgate-ssr-suppresses-head-component, webpack-image-src-og-absolute-url-rule. isr-stale-data-audit (344→36L) + seo-wave2-audit (282→32L) trimmed. index.md updated. log.md appended.
 ## [2026-05-23] deploy | PersistGate SSR fix merged → develop df81b19 → main → production live 2026-05-23
 ## [2026-05-23] session-end | seo-wave2 — all 11 bugs fixed, merged to main. Auth pages noindex blocked by ProtectedComponent returning null SSR (fix deferred). Vault updated. Main merged, not pushed (user held).

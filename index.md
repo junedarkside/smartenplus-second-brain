@@ -86,7 +86,7 @@ Global navigation catalog. Updated on every ingest.
 ## Areas
 
 - [[engineering]] — Software engineering practices and standards
-- [[business]] — Business operations and strategy
+- [[business]] — Validated strategy: B2B supplier (12Go+Klook 90%) + B2C direct (10%). EN customer confirmed. Vertical integration moat. "Stippl for SEA with real booking" vision.
 
 ## Decisions
 
@@ -109,4 +109,4 @@ Global navigation catalog. Updated on every ingest.
 
 - Created: 2026-05-16
 - Pages: 55
-- Last updated: 2026-05-23 (seo-wave2 audit team results logged)
+- Last updated: 2026-05-24 (strategic direction validated via grill session)
