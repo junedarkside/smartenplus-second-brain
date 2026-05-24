@@ -7,14 +7,14 @@
 **Updated:** 2026-05-24 (session end)
 
 **Achieved this session:**
-- **Vault lint complete** — 6 atoms extracted from `isr-stale-data-audit` (344→36L) + `seo-wave2-audit` (282→32L). 449 insertions, 629 deletions. Pushed to GitHub `ad37ff0`.
-- **SEO Wave 2 complete** — all 11 bugs verified + fixed + merged to main. Build clean.
+- **Strategic direction validated** — full /grill session (13 questions). `southeast_asia_transport_platform_direction.md` rewritten with validated decisions. `02-areas/business.md` expanded. Vault pushed `6ba72e8`.
+- Key decisions locked: EN customer confirmed, B2B/B2C split 90/10, markup revenue model, Malaysia Phase 2, vertical integration moat (minivan network + own-brand tours), "Stippl for SEA with real booking" product vision.
 
 **In-progress / not done:**
-- Auth pages noindex (bookings/checkout): NextSeo `robots={{index:false,follow:false}}` applied but `ProtectedComponent` returns `null` on SSR for unauthenticated users → NextSeo never renders → noindex not taking effect. Fix: `_app.js` DefaultSeo conditional per route, or middleware `X-Robots-Tag` header.
+- Auth pages noindex (bookings/checkout): NextSeo `robots={{index:false,follow:false}}` applied but `ProtectedComponent` returns `null` on SSR → noindex never renders. Fix: `_app.js` DefaultSeo conditional per route, or middleware `X-Robots-Tag` header.
 
 **Next session resume:**
-1. **Auth pages noindex fix** — ProtectedComponent pattern blocks NextSeo SSR. Options: (A) `_app.js` DefaultSeo with route-conditional noindex, (B) Next.js middleware injects `X-Robots-Tag` header, (C) `getServerSideProps` auth check before page render.
+1. **Auth pages noindex fix** — Options: (A) `_app.js` DefaultSeo with route-conditional noindex, (B) Next.js middleware injects `X-Robots-Tag` header, (C) `getServerSideProps` auth check before page render.
 2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
 3. Open item #2 — Delete `RefundViewSet` (waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs)
 4. Open item #3 — Remove Stripe 410 stub `/payments/stripe-webhook/` (waiting on prod traffic)
@@ -26,14 +26,14 @@
 | `smartenplus-frontend` | `main` | `ceb0eac` merge: seo-wave2 fix |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
-| `vault` | `master` | `ad37ff0` lint: 6 atoms extracted |
+| `vault` | `master` | `6ba72e8` ingest: strategic direction validated |
 
 _Last verified 2026-05-24_
 
 ### Uncommitted
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
-- frontend: clean on main
+- frontend: `smartenplus_wireframe_architecture.md` untracked — leave unstaged
 
 ---
 
