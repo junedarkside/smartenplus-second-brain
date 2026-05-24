@@ -7,23 +7,22 @@
 **Updated:** 2026-05-24 (session end)
 
 **Achieved this session:**
-- **Strategic direction validated** — full /grill session (13 questions). `southeast_asia_transport_platform_direction.md` rewritten with validated decisions. `02-areas/business.md` expanded. Vault pushed `6ba72e8`.
-- Key decisions locked: EN customer confirmed, B2B/B2C split 90/10, markup revenue model, Malaysia Phase 2, vertical integration moat (minivan network + own-brand tours), "Stippl for SEA with real booking" product vision.
+- **Auth pages noindex FIXED** — `ProtectedComponent` returned `null` on SSR, blocking `NextSeo` from rendering. Fixed by moving `NextSeo robots={{index:false,follow:false}}` outside `ProtectedComponent` on `/bookings` and `/orders`. `pages/orders/index.js` also migrated from plain `<Head>` to `NextSeo`. Committed `4209def` → pushed to main → production.
 
 **In-progress / not done:**
-- Auth pages noindex (bookings/checkout): NextSeo `robots={{index:false,follow:false}}` applied but `ProtectedComponent` returns `null` on SSR → noindex never renders. Fix: `_app.js` DefaultSeo conditional per route, or middleware `X-Robots-Tag` header.
+- Nothing blocking. All SEO wave-2 issues resolved.
 
 **Next session resume:**
-1. **Auth pages noindex fix** — Options: (A) `_app.js` DefaultSeo with route-conditional noindex, (B) Next.js middleware injects `X-Robots-Tag` header, (C) `getServerSideProps` auth check before page render.
-2. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated
-3. Open item #2 — Delete `RefundViewSet` (waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs)
-4. Open item #3 — Remove Stripe 410 stub `/payments/stripe-webhook/` (waiting on prod traffic)
+1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated (`orders/views.py`)
+2. Open item #2 — Delete `RefundViewSet` (waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs)
+3. Open item #3 — Remove Stripe 410 stub `/payments/stripe-webhook/` (waiting on prod traffic)
+4. Open item #15 — `refetchOnMountOrArgChange: 300→true` in `hooks/useTripData.js:16,24` (needs separate justification)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `ceb0eac` merge: seo-wave2 fix |
+| `smartenplus-frontend` | `main` | `4209def` fix(seo): NextSeo outside ProtectedComponent |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
 | `vault` | `master` | `6ba72e8` ingest: strategic direction validated |
@@ -55,6 +54,7 @@ _Last verified 2026-05-24_
 ### Recently Closed (this session)
 | Issue | Fix | Date |
 |-------|-----|------|
+| Auth pages noindex blocked by ProtectedComponent SSR null — `/bookings` + `/orders` indexable | `4209def` NextSeo moved outside ProtectedComponent on both pages; `/orders` migrated from `<Head>` to NextSeo — pushed to main → production | 2026-05-24 |
 | Fast Refresh infinite loop — SW registered in dev cached stale webpack hash | `01d8bb3` isLocalhost guard in serviceWorkerRegistration.js — merged develop `8d8616c` → main → production | 2026-05-23 |
 | CurrencyContext race condition + unstable selectCurrency ref | `01d8bb3` cancelled guard + useCallback([]) + correct useMemo deps — same merge | 2026-05-23 |
 | DevToolsProvider auto-share extending HMR loop | Disabled via early return in debug/index.js — same merge | 2026-05-23 |
