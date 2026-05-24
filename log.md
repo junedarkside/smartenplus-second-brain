@@ -2,7 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
-## [2026-05-24] lint | 6 atoms extracted: docker-standalone-isr-revalidate-gap, on-demand-revalidation-api-route, celery-task-over-bare-thread-django-signals, isr-csr-overlay-stale-fields, persistgate-ssr-suppresses-head-component, webpack-image-src-og-absolute-url-rule. isr-stale-data-audit (344→36L) + seo-wave2-audit (282→32L) trimmed. index.md updated. log.md appended.
+## [2026-05-24] cleanup | deleted master-state.original.md (stale 2026-05-22 backup) + breadcrumb-dedup-plan-2026-05-20.md (work done, plan doc misleading): docker-standalone-isr-revalidate-gap, on-demand-revalidation-api-route, celery-task-over-bare-thread-django-signals, isr-csr-overlay-stale-fields, persistgate-ssr-suppresses-head-component, webpack-image-src-og-absolute-url-rule. isr-stale-data-audit (344→36L) + seo-wave2-audit (282→32L) trimmed. index.md updated. log.md appended.
 ## [2026-05-23] deploy | PersistGate SSR fix merged → develop df81b19 → main → production live 2026-05-23
 ## [2026-05-23] session-end | seo-wave2 — all 11 bugs fixed, merged to main. Auth pages noindex blocked by ProtectedComponent returning null SSR (fix deferred). Vault updated. Main merged, not pushed (user held).
 ## [2026-05-23] session-end | PersistGate SSR blocker fixed — all OG meta tags restored site-wide; OG image relative paths fixed in seoHelper.js + trips/index.js; NEXT_PUBLIC_SITE_URL tech debt reverted; branch 260523-fix/trips-og-image-and-site-url-env (4 commits: 61134c9, f8d9907, 4644fac, ac6f8aa) — merged → main → production

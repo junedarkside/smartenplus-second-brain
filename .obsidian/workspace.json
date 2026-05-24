@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "d175fda15eb00de5",
+        "id": "00099d737662a602",
         "type": "tabs",
         "children": [
           {
-            "id": "91a8f68cb68ac985",
+            "id": "219dc9b58039cc70",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -177,8 +177,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "91a8f68cb68ac985",
+  "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "master-state.original.md",
+    "03-knowledge/breadcrumb-dedup-plan-2026-05-20.md",
     "01-projects/smartenplus/payment-system.original.md",
     "01-projects/hydration-infinite-refresh-fix-2026-05-20.original.md",
     "03-knowledge/seo-homepage-specialist-team.original.md",
@@ -203,8 +205,6 @@
     "01-projects/admin-dashboard.md",
     "01-projects/smartenplus/tickets.md",
     "03-knowledge/journeys.md",
-    "01-projects/smartenplus/recommendation-system.md",
-    "01-projects/smartenplus/dialogue.md",
     "08-archive",
     "07-logs",
     "06-systems",
