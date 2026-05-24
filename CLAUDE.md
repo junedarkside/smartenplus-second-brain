@@ -108,7 +108,7 @@ Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplic
 At the start of every session when working on SmartEnPlus vault:
 
 1. **Read** `master-state.md` at vault root
-2. **Run live git commands** on all 3 repos:
+2. **Run live git commands** on all 4 repos:
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-backend branch --show-current`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-backend log --oneline -3`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-backend status --short`
@@ -116,6 +116,9 @@ At the start of every session when working on SmartEnPlus vault:
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-frontend log --oneline -3`
    - `git -C /Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard branch --show-current`
    - `git -C /Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard log --oneline -3`
+   - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content branch --show-current`
+   - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content log --oneline -3`
+   - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content status --short`
 3. **Update `master-state.md` Section 1** with live branch + commit data
 4. **Respond with 3-part brief** before writing any code or making changes:
 
@@ -152,7 +155,7 @@ At the start of every session when working on SmartEnPlus vault:
 - Thai: "พอแล้ว", "เลิกแล้ว", "พักก่อน", "โอเคพอ"
 
 **Steps:**
-1. **Run live git** on all 3 repos (`status --short` + `log --oneline -3`)
+1. **Run live git** on all 4 repos (`status --short` + `log --oneline -3`)
 2. **Rewrite `master-state.md` Section 1** — achieved / broken / in-progress / exact resume point (file + function + step)
 3. **Update `master-state.md` Section 2** — close resolved items, add new bugs/edge cases
 4. **Leave Sections 3 and 4 unchanged** unless API contract or guardrail permanently changed
@@ -162,8 +165,11 @@ At the start of every session when working on SmartEnPlus vault:
    c. Already atomic or doesn't qualify → skip
    d. Max 5 atoms per session (prevents over-extraction noise)
 6. **Append to `log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
-7. **Commit + push vault** — stage all changes and push to GitHub:
+7. **Commit + push vault and content repo** — stage all changes and push to GitHub:
    ```bash
+   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" add -A
+   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" commit -m "session-end: <one-line summary>"
+   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" push
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" add -A
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" commit -m "session-end: <one-line summary>"
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" push
@@ -171,9 +177,12 @@ At the start of every session when working on SmartEnPlus vault:
 
 ## Projects in This Vault
 
-- **SmartEnPlus** — Thailand transport booking platform. 3-repo ecosystem.
-  - `smartenplus-backend` | `smartenplus-frontend` | `admin-dashboard`
+- **SmartEnPlus** — Thailand transport booking platform. 4-repo ecosystem.
+  - `smartenplus-backend` | `smartenplus-frontend` | `admin-dashboard` | `smartenplus-content`
   - See [[README]], [[admin-dashboard]]
+- **SmartEnPlus Content** — Content marketing strategy, keyword research, blog drafts.
+  - `smartenplus-content` at `/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content/`
+  - See [[content-marketing-strategy-2026-05-24]]
 
 ## Active Knowledge Domains
 

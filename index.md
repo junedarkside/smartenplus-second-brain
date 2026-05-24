@@ -111,4 +111,4 @@ Global navigation catalog. Updated on every ingest.
 
 - Created: 2026-05-16
 - Pages: 56
-- Last updated: 2026-05-24 (content marketing playbook rewrite)
+- Last updated: 2026-05-24 (smartenplus-content repo created, vault tracking updated)

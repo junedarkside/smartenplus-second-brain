@@ -20,6 +20,7 @@
 4. Open item #15 — `refetchOnMountOrArgChange: 300→true` in `hooks/useTripData.js:16,24` (needs separate justification)
 5. Content: Add GA4 `purchase` event to checkout success flow (currently missing)
 6. Content: Add TikTok pixel to `/components/layout/layout.js`
+7. **Content repo: create GitHub remote + push** — `gh` CLI not available; create repo at github.com manually, then `git remote add origin <url> && git push -u origin master` in `smartenplus-content/`
 
 ### Active Branches
 
@@ -28,6 +29,7 @@
 | `smartenplus-frontend` | `main` | `4209def` fix(seo): NextSeo outside ProtectedComponent |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
+| `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 | `vault` | `master` | pending this wrap-up commit |
 
 _Last verified 2026-05-24_
@@ -36,6 +38,7 @@ _Last verified 2026-05-24_
 - backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
 - admin: `CLAUDE.md` modified — leave unstaged
 - frontend: `smartenplus_wireframe_architecture.md` untracked — leave unstaged
+- content: no remote yet — **TODO: create GitHub repo + `git remote add origin <url>` + push**
 
 ---
 

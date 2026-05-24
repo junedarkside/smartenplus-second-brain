@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-24] feat | smartenplus-content repo created — Content-Marketing moved, restructured (strategy/keyword-research/blog-drafts), git init fca8ee6, vault CLAUDE.md + master-state updated to track 4 repos
 ## [2026-05-24] session-end | content marketing playbook rewritten — 5-agent review, 6 contradictions fixed, keyword CSV analysis, tech stack + real URLs integrated. No code changes to dev repos.
 ## [2026-05-24] session-end | auth pages noindex fixed — NextSeo moved outside ProtectedComponent on /bookings + /orders. 4209def pushed to main → production. All SEO wave-2 issues resolved.
 ## [2026-05-24] session-end | strategic direction grill complete — no code changes. Vault updated + pushed 6ba72e8. Next: auth pages noindex fix.
