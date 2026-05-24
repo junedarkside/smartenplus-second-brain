@@ -4,19 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-24 (session end)
+**Updated:** 2026-05-24 (session end — content marketing)
 
 **Achieved this session:**
-- **Auth pages noindex FIXED** — `ProtectedComponent` returned `null` on SSR, blocking `NextSeo` from rendering. Fixed by moving `NextSeo robots={{index:false,follow:false}}` outside `ProtectedComponent` on `/bookings` and `/orders`. `pages/orders/index.js` also migrated from plain `<Head>` to `NextSeo`. Committed `4209def` → pushed to main → production.
-
-**In-progress / not done:**
-- Nothing blocking. All SEO wave-2 issues resolved.
+- **Content marketing playbook fully rewritten** — `Content-Marketing/thailand_travel_marketing_deep_research_markdown.md` rebuilt twice: (1) strategic fixes from 5-agent review, (2) real tech stack + URL integration
+- **5-agent parallel review completed** — content strategy, SEO audit (4 keyword CSVs), marketing ideas, product marketing, social media. Orchestrator synthesized 10 priority recommendations.
+- **6 internal contradictions resolved** — 40% inspiration cut to 20%, dual positioning unified, TikTok cadence tiered, Facebook Groups-first, pillar hierarchy restructured
+- **Tech stack integrated** — real URLs (smartenplus.co.th, blog.smartenplus.co.th), GA4 property G-04XT8ZYPTV, Next.js route patterns, WPGraphQL architecture, missing checkout purchase event flagged
+- **No code changes** to any of the 3 development repos this session
 
 **Next session resume:**
 1. Open item #1 — `AdminBookingSummaryViewSet` unauthenticated (`orders/views.py`)
 2. Open item #2 — Delete `RefundViewSet` (waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs)
 3. Open item #3 — Remove Stripe 410 stub `/payments/stripe-webhook/` (waiting on prod traffic)
 4. Open item #15 — `refetchOnMountOrArgChange: 300→true` in `hooks/useTripData.js:16,24` (needs separate justification)
+5. Content: Add GA4 `purchase` event to checkout success flow (currently missing)
+6. Content: Add TikTok pixel to `/components/layout/layout.js`
 
 ### Active Branches
 
@@ -25,7 +28,7 @@
 | `smartenplus-frontend` | `main` | `4209def` fix(seo): NextSeo outside ProtectedComponent |
 | `smartenplus-backend` | `main` | `67cdf66` merge: frontpage-response-cache |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
-| `vault` | `master` | `6ba72e8` ingest: strategic direction validated |
+| `vault` | `master` | pending this wrap-up commit |
 
 _Last verified 2026-05-24_
 

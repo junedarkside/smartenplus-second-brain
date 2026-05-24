@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-24] session-end | content marketing playbook rewritten — 5-agent review, 6 contradictions fixed, keyword CSV analysis, tech stack + real URLs integrated. No code changes to dev repos.
 ## [2026-05-24] session-end | auth pages noindex fixed — NextSeo moved outside ProtectedComponent on /bookings + /orders. 4209def pushed to main → production. All SEO wave-2 issues resolved.
 ## [2026-05-24] session-end | strategic direction grill complete — no code changes. Vault updated + pushed 6ba72e8. Next: auth pages noindex fix.
 ## [2026-05-24] ingest | strategic direction validated via grill — B2B/B2C split confirmed (90/10), EN customer confirmed (GA4+support), Malaysia Phase 2, vertical integration moat (minivan network+own tours), Stippl product vision, revenue model = markup not commission

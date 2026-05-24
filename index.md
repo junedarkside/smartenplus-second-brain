@@ -105,8 +105,10 @@ Global navigation catalog. Updated on every ingest.
 - [[bug-report]] — Bug documentation template
 - [[architecture-review]] — ADR-style architecture review template
 
+- [[content-marketing-strategy-2026-05-24|Content Marketing Strategy 2026-05-24]] — 5-agent review + full playbook rewrite. 6 contradictions fixed, keyword opportunities, tech stack integrated.
+
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 55
-- Last updated: 2026-05-24 (strategic direction validated via grill session)
+- Pages: 56
+- Last updated: 2026-05-24 (content marketing playbook rewrite)

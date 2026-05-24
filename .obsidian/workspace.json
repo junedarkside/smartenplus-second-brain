@@ -11,14 +11,10 @@
             "id": "219dc9b58039cc70",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "southeast_asia_transport_platform_direction.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "southeast_asia_transport_platform_direction"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -183,8 +179,8 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
-    "log.md.tmp.54837.2dc711e86d38",
     "southeast_asia_transport_platform_direction.md",
+    "log.md.tmp.54837.2dc711e86d38",
     "master-state.original.md",
     "03-knowledge/breadcrumb-dedup-plan-2026-05-20.md",
     "01-projects/smartenplus/payment-system.original.md",
@@ -218,7 +214,6 @@
     "02-areas",
     "01-projects/smartenplus",
     "01-projects",
-    "00-inbox",
     "Untitled.canvas",
     "Untitled 1.canvas"
   ]
