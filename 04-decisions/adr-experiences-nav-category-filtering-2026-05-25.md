@@ -1,5 +1,19 @@
 # ADR: Experiences Nav → Activities Category Filtering
 
+## ⚠️ SUPERSEDED 2026-05-25
+
+Original decision (Experiences submenu with `?category=` children) was reversed same session.
+
+**New decision:** No Experiences submenu. `navConfig.js` Experiences → `children: null`.
+
+**Reason:** `CategoryFilter` on `/activities` page already hardcodes from `SERVICE_CATEGORIES` in `dayTripConstants.js`. Nav submenu would be a second source of truth. Keeping submenu requires either (a) manual NavigationItem DB entries that drift from `SERVICE_CATEGORY_CHOICES`, or (b) new backend endpoint — neither justified when on-page chips solve the same UX need.
+
+**If submenu returns:** derive `navConfig.js` Experiences children dynamically from `SERVICE_CATEGORY_LABELS` in `dayTripConstants.js`. Do NOT hardcode separately.
+
+Architecture chain below remains accurate for how the `?category=` param works when used.
+
+---
+
 ## Summary
 
 Experiences submenu uses URL query params (`?category=X`) → server-side API filter on `/activities` page. Each submenu item routes to a distinct backend category, not a client-side UI filter.

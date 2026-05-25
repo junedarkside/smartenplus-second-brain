@@ -110,6 +110,29 @@ useEffect(() => {
 - Fallback fix: `transformResponse` returns `undefined` (not `[]`) on bad response so `navConfig` fires correctly
 - **Blocker remaining:** `NavigationSection` table empty — populate via Django admin
 
+### Phase 3 Nav Submenu Audit (2026-05-25)
+
+3-agent specialist team reviewed all submenu sources. Two submenus removed:
+
+**Experiences submenu — REMOVED**
+- Reason: `SERVICE_CATEGORIES` in `dayTripConstants.js` already drives `CategoryFilter` chips on `/activities`. Submenu = second source of truth with no unique value. User lands on page, clicks chip = same result.
+- Fix: `navConfig.js` Experiences → `children: null`
+- Future: if submenu returns, derive children dynamically from `SERVICE_CATEGORY_LABELS` in `dayTripConstants.js` — do NOT hardcode separately, do NOT use NavigationItem
+
+**Explore Thailand submenu — REMOVED**
+- Reason: `?filter=islands` was a TEXT SEARCH against location names, not a geographic category filter. `Location` model has no `location_type` field. Clicking "Beaches" returns 0 results unless a location is literally named "beaches".
+- Fix: `navConfig.js` Explore Thailand → `children: null`
+- Future path: add `location_type` CharField+choices to `Location` model (`stations/models.py`) → populate data → rebuild submenu via NavigationItem DB
+
+**Current navConfig state (2026-05-25):**
+
+All 5 nav items are plain links, no children:
+- Explore Thailand → /destinations (children: null)
+- Routes → /locations (children: null)
+- Journeys → /trips (children: null)
+- Experiences → /activities (children: null)
+- Guides → /blog (children: null)
+
 ### Phase 3 Bug Fixes (2026-05-25)
 
 | Bug | Fix | Commit |
@@ -137,6 +160,8 @@ See [[adr-experiences-nav-category-filtering-2026-05-25]] for full category filt
 | Mobile accordion | stopPropagation a11y trap, focus management complexity, product decision on extra items (Operators, Q&A, etc.) |
 | Full dropdown | URL params don't work yet, no real UX benefit in Phase 1 |
 | Backend nav API | Depends on Phase 2 URL param work being validated |
+| Experiences submenu | Removed — single source of truth violation. Re-add only by deriving from `dayTripConstants.js` |
+| Explore Thailand submenu | Removed — `?filter=` was text search not category. Needs `location_type` field on `Location` model first |
 
 ## Related
 

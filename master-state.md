@@ -4,13 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (nav 404 fix + frontend cleanup)
+**Updated:** 2026-05-25 (header help icon removed)
 
 **Achieved this session:**
-- **Nav 404 fixed** — Root cause: `NavigationViewSet` was in `pages_info/urls.py` (bare root) not under `/api/v1/`. Fix: explicit `path('api/v1/pages-info/navigation/', ...)` added to `apis/urls.py` BEFORE the `<slug:slug>` catch-all. URL resolves correctly. Committed `6f5286e`.
-- **Frontend dead code removed** — `navLinks` export deleted from `main-header.js` (post-Phase 3 unused). Committed `3feafaa`.
-- **Comments fixed** — `navigationApi.js` comment now accurately describes transform. `navConfig.js` comment reflects Phase 3 live + DAY_TOUR TODO.
-- **Team scrutiny audit** — 3-agent review confirmed diagnosis, caught that bulk mount would break `front-page/` + `hero-banners/` callers. Surgical fix applied.
+- **Header help icon removed** — `main-header.js` div + `HelpOutlineOutlinedIcon` import deleted. Footer Help link preserved. No navConfig change needed.
+- **Nav Phase 3 backend** — `NavigationViewSet` registered at `/api/v1/pages-info/navigation/`, `6f5286e`
+- **Nav Phase 3 frontend** — RTK Query with static fallback working
+- **Frontend dead code removed** — `navLinks` export deleted, comments fixed
 
 **Blocked / needs next session:**
 1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
@@ -22,12 +22,13 @@
 1. **Restart backend** — `pkill -f runserver && ./venv/bin/python manage.py runserver`
 2. **Populate nav data** — enter 5 sections + children via admin `/securelogin/pages_info/navigationsection/add/`. Use distinct hrefs for Experiences children.
 3. **Verify live** — `curl http://localhost:8000/api/v1/pages-info/navigation/` should return JSON array.
+4. **Remove header help icon** — already done in `main-header.js:92-98` — verify no other header instances.
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `3feafaa` chore(nav): remove dead navLinks + fix comments |
+| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `135be39` fix(nav): replace 4 duplicate DAY_TOUR hrefs with 7 distinct categories |
 | `smartenplus-backend` | `260525-feat/nav-api-endpoint` | `6f5286e` fix(nav): register NavigationViewSet at /api/v1/ |
 | `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
@@ -35,8 +36,8 @@
 _Last verified 2026-05-25_
 
 ### Uncommitted
-- frontend: `smartenplus_wireframe_architecture.md` untracked — leave unstaged
-- backend: `.claude/agents/` deletes + `CLAUDE.md` modified — leave unstaged
+- frontend: `components/layout/main-header.js` (help icon removed — uncommitted), `components/UI/CardCarouselContainer.js` modified, `constants/navConfig.js` modified, `smartenplus_wireframe_architecture.md` untracked — leave unstaged
+- backend: `.claude/agents/` deletes + `CLAUDE.md` modified + `settings.local.json` modified — leave unstaged
 
 ---
 
@@ -54,8 +55,8 @@ _Last verified 2026-05-25_
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| Nav | NavigationSection table empty | Restart backend + populate via admin `/securelogin/pages_info/navigationsection/add/` | `pages_info` |
-| Nav | NavigationSection table empty | Restart backend + populate via admin `/securelogin/pages_info/navigationsection/add/` with 7 distinct Experiences hrefs | `pages_info` |
+| Nav | NavigationSection table empty | Restart backend + populate via admin `/securelogin/pages_info/navigationsection/add/` — plain links only, no Experiences/Explore children | `pages_info` |
+| Explore Thailand submenu | Needs `location_type` CharField+choices on `Location` model before rebuilding | `stations/models.py` |
 
 ### Recently Closed (this session)
 | Issue | Fix | Date |
@@ -72,6 +73,7 @@ _Last verified 2026-05-25_
 | Bug fix — Missing ListModelMixin import | Added to pages_info/views.py, migration created + applied | 2026-05-25 |
 | Nav 404 fixed | Explicit `path('api/v1/pages-info/navigation/')` in `apis/urls.py` before slug catch-all. `6f5286e` | 2026-05-25 |
 | Frontend dead code removed | Deleted unused `navLinks` export, fixed misleading comments. `3feafaa` | 2026-05-25 |
+| Header help icon removed | Deleted `main-header.js:92-98` + `HelpOutlineOutlinedIcon` import. Footer Help link preserved. | 2026-05-25 |
 
 ---
 
