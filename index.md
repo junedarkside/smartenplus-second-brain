@@ -42,6 +42,8 @@ Global navigation catalog. Updated on every ingest.
 - [[recommendation-system|Recommendation System]] — precompute tasks, cache warming, beat schedule, Popular Routes admin analytics page
 - [[tickets|Tickets]] — Ticket model, GenericForeignKey attachable to any model, HistoricalRecords audit
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
+- [[nav-header-redesign-2026-05-24|Nav/Header Redesign 2026-05-24]] — Phases 0-3 done. 404 fixed, empty-array fallback bug fixed, 7 distinct Experiences categories. Blocker: populate NavigationSection via admin. Branches: frontend 260524-feat/nav-label-changes, backend 260525-feat/nav-api-endpoint.
+- [[adr-experiences-nav-category-filtering-2026-05-25|ADR: Experiences Nav Category Filtering]] — URL param → server-side API filter chain. Full category enum, navConfig values, contrast with client-side approach.
 - [[nav-header-redesign|Nav/Header Redesign 2026-05-19]] — minimal white desktop, brand blue mobile, a11y baseline, MUI+Tailwind coordination patterns
 - [[hero-banner-cms|Hero Banner CMS 2026-05-19]] — backend-controlled homepage hero, FileField+AVIF fix, admin dashboard CRUD, 5s slideshow
 - [[blog-seo-performance-2026-05-20|Blog SEO & Performance 2026-05-20]] — parallel fetches, image optimization, HMR fixes, patterns to reuse
