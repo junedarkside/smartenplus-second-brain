@@ -332,3 +332,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 
 ## [2026-05-25] feat | Experiences nav category filtering — ADR written, 7 distinct categories fixed, nav 404 + empty-array fallback bug resolved
 ## [2026-05-25] audit | n8n webhook resend operator doc v1.1 — scrutinize audit. Findings: duplicate send on retry (major), N8N_WEBHOOK_URL required in all envs (major), payload omitted InfoFields (nit). Doc updated, implementation ready on feat/n8n-resend-webhook.
+## [2026-05-25] session-end | n8n webhook deployed to production. send_booking_data moved to bookings/tasks.py, n8n webhook forwarding added, 4 commits (fa687cb+4285e70+8d88ba3+2bdf31b), 3 bugs caught pre-merge (import crash x2, orphaned try block, N8N_WEBHOOK_URL missing default). Branch→develop→main→production. Knowledge entry 04-knowledge/backend-n8n-resend-webhook.md created.

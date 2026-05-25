@@ -4,42 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (n8n webhook audit — scrutinize team, doc v1.1)
+**Updated:** 2026-05-25 (n8n webhook deployed to production)
 
 **Achieved this session:**
-- **Resend operator analysis** — team mapped full flow: ResendOp → /admin-dashboard/booking-send/ → SendBookingViewSet → send_booking_data Celery task → POSTs to AUTO_SMARTENPLUS_API_URL
-- **n8n webhook feature doc** — created `docs/n8n-webhook-resend-operator.md`
-- **Audit (scrutinize team):** doc updated to v1.1. Findings:
-  1. (Major) Duplicate send on retry — n8n failure retries all targets including primary (acceptable for n8n, external sink)
-  2. (Major) N8N_WEBHOOK_URL required — config() with no default must be set in ALL environments
-  3. (Nit) Doc payload omitted InfoFields keys
-- **Resend operator CSV export** (prior session) — committed to develop + main (user manual push)
+- **n8n webhook implemented** — `send_booking_data` moved to `bookings/tasks.py`. Added n8n webhook forwarding target. 4 commits: `fa687cb` (refactor), `4285e70` (hotfix import split), `8d88ba3` (hotfix orders/views.py), `2bdf31b` (fix N8N_WEBHOOK_URL default=None). Branch → develop → main → production pushed.
+- **3 bugs caught pre-merge:** import crash (send_booking_confirmation_email wrong source ×2), orphaned try block in carts/tasks.py
+- **Passenger CSV export** — committed to develop + main (user manual push)
+- **n8n webhook knowledge entry** — `04-knowledge/backend-n8n-resend-webhook.md` created + pushed
 
 **Blocked / needs next session:**
-1. **n8n webhook implementation** — doc v1.1 ready. Audit cleared. Implement on `feat/n8n-resend-webhook` branch after user confirms.
-2. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
-3. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
-4. **Content repo GitHub remote** — create manually at github.com.
-5. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
+1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
+2. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
+3. **Content repo GitHub remote** — create manually at github.com.
+4. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
 
 **Next session resume:**
-1. **Implement n8n webhook** — `Smartenplus/settings.py` + `carts/tasks.py` on `feat/n8n-resend-webhook`. Doc v1.1 approved.
-2. **Commit frontend cinematic hero changes** — 10 files on `260524-feat/nav-label-changes`
-3. **Restart backend + populate nav data** — Django admin at `/securelogin/pages_info/navigationsection/add/`
+1. **Commit frontend cinematic hero changes** — 10 files on `260524-feat/nav-label-changes`
+2. **Restart backend + populate nav data** — Django admin at `/securelogin/pages_info/navigationsection/add/`
+3. **Set N8N_WEBHOOK_URL** in production env when n8n workflow ready
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-frontend` | `260524-feat/nav-label-changes` | `135be39` fix(nav): replace 4 duplicate DAY_TOUR hrefs |
-| `smartenplus-backend` | `260525-feat/nav-api-endpoint` | `6f5286e` fix(nav): register NavigationViewSet |
+| `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
 _Last verified 2026-05-25_
 
 ### Uncommitted
-- **backend:** `docs/n8n-webhook-resend-operator.md` (feature doc v1.1, audit done), `pages_info/admin.py` (hero banner help text)
 - **frontend (10 files):** cinematic hero + icon color work on `260524-feat/nav-label-changes`. `smartenplus_wireframe_architecture.md` untracked.
 - **vault:** `master-state.md` (this session update)
 
