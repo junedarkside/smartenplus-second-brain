@@ -10,7 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
-- [[isr-stale-data-audit-2026-05-23|ISR Stale Data Audit 2026-05-23]] — Next.js ISR revalidate:300 broken in Docker standalone. Pages never regenerate. Fix: on-demand revalidation API route. **2 blockers + 3 major findings from team audit — reword before implementing**
+- [[backend-n8n-resend-webhook|backend-n8n-resend-webhook]] — Resend Operator n8n webhook forwarding. send_booking_data moved to bookings/tasks.py. 4 commits, merged to develop. 3 bugs caught by scrutinize audit (import crash ×2, orphaned try block) + 1 env var crash on startup (N8N_WEBHOOK_URL missing default=None)
 - [[fast-refresh-infinite-loop-audit-2026-05-23|Fast Refresh Infinite Loop Audit 2026-05-23]] — Root cause unconfirmed. RefreshTokenHandler diagnosis OVERTURNED (lastExpiryRef guard). Likely Next.js 14.2.x HMR + on-demand compilation cascade. 7 failed fixes documented. Next: debug instrumentation + git bisect
 - [[currency-context-infinite-fetch-2026-05-23|CurrencyContext Infinite Fetch 2026-05-23]] — race condition + unstable selectCurrency ref; fix applied on branch 260523-fix/currency-context-infinite-fetch
 - [[isr-429-cold-start-fix-2026-05-23|ISR 429 Cold-Start Fix 2026-05-23]] — cold `npm run dev` bursts `/front-page/` → 429; root: REVALIDATE_SECONDS=60 + refetchOnMountOrArgChange:300; fixes identified, not yet applied
