@@ -42,7 +42,7 @@ Global navigation catalog. Updated on every ingest.
 - [[recommendation-system|Recommendation System]] — precompute tasks, cache warming, beat schedule, Popular Routes admin analytics page
 - [[tickets|Tickets]] — Ticket model, GenericForeignKey attachable to any model, HistoricalRecords audit
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
-- [[nav-header-redesign-2026-05-24|Nav/Header Redesign 2026-05-24]] — Phases 0-3 done. 404 fixed, empty-array fallback bug fixed, 7 distinct Experiences categories. Blocker: populate NavigationSection via admin. Branches: frontend 260524-feat/nav-label-changes, backend 260525-feat/nav-api-endpoint.
+- [[smartenplus-glassmorphism-header|Premium Glassmorphism Header]] — dark gradient glass, sticky + blur on scroll, unified 2-row, white typography, hero integration. Supersedes header-ux-v1.
 - [[adr-experiences-nav-category-filtering-2026-05-25|ADR: Experiences Nav Category Filtering]] — URL param → server-side API filter chain. Full category enum, navConfig values, contrast with client-side approach.
 - [[nav-header-redesign|Nav/Header Redesign 2026-05-19]] — minimal white desktop, brand blue mobile, a11y baseline, MUI+Tailwind coordination patterns
 - [[hero-banner-cms|Hero Banner CMS 2026-05-19]] — backend-controlled homepage hero, FileField+AVIF fix, admin dashboard CRUD, 5s slideshow
@@ -77,6 +77,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
 - [[mui-tailwind-css-specificity]] — MUI Emotion overrides Tailwind className on MUI components; use sx prop or div wrapper; sx responsive breakpoints fail without Emotion cache provider
+- [[nextjs-fixed-header-per-route]] — `position: fixed` on homepage only via `router.pathname === '/'`; sticky elsewhere; `<main>` gets `pt-[88px]` on non-homepage to clear header
 - [[payment-sentinel-idempotency]] — Timestamp sentinels as exactly-once guards; reusable for any side effect (email, booking, settlement)
 - [[nextauth-session-shape]] — `session.user.email` not `session.email`; auth check via `session?.id`; guest email sources
 - [[cart-reprovision-after-reset]] — `resetCart()` + fire-and-forget `createCart()` pattern; required on 2 order pages not wrapped in `withCartValidation`
@@ -112,5 +113,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 56
-- Last updated: 2026-05-24 (smartenplus-content repo created, vault tracking updated)
+- Pages: 57
+- Last updated: 2026-05-25 (cinematic hero header implemented; nextjs-fixed-header-per-route atom added)

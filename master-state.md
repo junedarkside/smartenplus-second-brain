@@ -4,25 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (header help icon removed)
+**Updated:** 2026-05-25 (cinematic hero header implemented)
 
 **Achieved this session:**
-- **Header help icon removed** — `main-header.js` div + `HelpOutlineOutlinedIcon` import deleted. Footer Help link preserved. No navConfig change needed.
+- **Double-glass opacity bug fixed** — `AppBar` had `glass-header` class + inner div had `glass-bg` → double-stacking dark overlay. Removed glass class from `AppBar`, added `MuiAppBar-root { background-color: transparent !important }` in globals.css.
+- **Cinematic hero architecture** — `AppBar position="fixed"` on homepage, `sticky` on all other routes. Homepage hero `min-h-screen`. `isCinematic` prop on `FeaturedImageHeader` enables full-bleed image + suppresses back/share controls + applies `hero-top-gradient` CSS. `layout.js <main>` gets `pt-[88px]` on non-homepage routes.
+- **Icon color fix** — `CartButton` + `ProfileButton` icons changed from `md:text-gray-600` to `text-white/70 hover:text-white`, matching nav link inactive color.
+- **Hero image sizes fix** — `helpers/imageOptimization.js` `hero` sizes string changed from `(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px` to `100vw` — correct for full-viewport cinematic hero.
+- **Admin hero banner upload specs** — `pages_info/admin.py` `HeroBannerAdmin` now has fieldsets with upload guidance: min 1920×1080, ideal 2560×1440, WebP preferred. No migration.
 - **Nav Phase 3 backend** — `NavigationViewSet` registered at `/api/v1/pages-info/navigation/`, `6f5286e`
 - **Nav Phase 3 frontend** — RTK Query with static fallback working
-- **Frontend dead code removed** — `navLinks` export deleted, comments fixed
+- **Header help icon removed** — `main-header.js` + `HelpOutlineOutlinedIcon` import deleted.
 
 **Blocked / needs next session:**
 1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
-2. **DAY_TOUR duplicates in navConfig fallback** — 4 Experiences children share same href. Needs distinct hrefs when populating NavigationItem data in admin.
-3. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
-4. **Content repo GitHub remote** — create manually at github.com.
+2. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
+3. **Content repo GitHub remote** — create manually at github.com.
+4. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
 
 **Next session resume:**
-1. **Restart backend** — `pkill -f runserver && ./venv/bin/python manage.py runserver`
-2. **Populate nav data** — enter 5 sections + children via admin `/securelogin/pages_info/navigationsection/add/`. Use distinct hrefs for Experiences children.
+1. **Commit frontend cinematic hero changes** — 10 files modified on `260524-feat/nav-label-changes`. Commit message: `feat(hero): cinematic fixed header + full-bleed hero + icon color fixes`
+2. **Restart backend + populate nav data** — `pkill -f runserver && ./venv/bin/python manage.py runserver` → enter 5 sections via admin `/securelogin/pages_info/navigationsection/add/`
 3. **Verify live** — `curl http://localhost:8000/api/v1/pages-info/navigation/` should return JSON array.
-4. **Remove header help icon** — already done in `main-header.js:92-98` — verify no other header instances.
 
 ### Active Branches
 
@@ -36,8 +39,8 @@
 _Last verified 2026-05-25_
 
 ### Uncommitted
-- frontend: `components/layout/main-header.js` (help icon removed — uncommitted), `components/UI/CardCarouselContainer.js` modified, `constants/navConfig.js` modified, `smartenplus_wireframe_architecture.md` untracked — leave unstaged
-- backend: `.claude/agents/` deletes + `CLAUDE.md` modified + `settings.local.json` modified — leave unstaged
+- **frontend (10 files):** `FeaturedImageHeader.js`, `ProfileButton.js`, `CartButton.js`, `layout.js`, `main-header.js`, `navConfig.js`, `imageOptimization.js`, `homepagev2.js`, `globals.css`, `CardCarouselContainer.js` — all cinematic hero + icon color work. `smartenplus_wireframe_architecture.md` untracked — leave unstaged.
+- **backend:** `pages_info/admin.py` (hero banner help text) + `.claude/agents/` deletes + `CLAUDE.md` modified + `settings.local.json` modified — leave unstaged except admin.py
 
 ---
 
