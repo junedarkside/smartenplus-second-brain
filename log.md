@@ -331,3 +331,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-05-22] session-end | trip SEO schema fake data fixed + dynamic sitemap phantom closed
 
 ## [2026-05-25] feat | Experiences nav category filtering — ADR written, 7 distinct categories fixed, nav 404 + empty-array fallback bug resolved
+## [2026-05-25] audit | n8n webhook resend operator doc v1.1 — scrutinize audit. Findings: duplicate send on retry (major), N8N_WEBHOOK_URL required in all envs (major), payload omitted InfoFields (nit). Doc updated, implementation ready on feat/n8n-resend-webhook.

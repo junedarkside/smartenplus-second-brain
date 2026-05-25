@@ -4,22 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (resend operator team analysis + n8n webhook doc)
+**Updated:** 2026-05-25 (n8n webhook audit — scrutinize team, doc v1.1)
 
 **Achieved this session:**
-- **Resend operator analysis** — team mapped full flow: ResendOp → /admin-dashboard/booking-send/ → SendBookingViewSet → send_booking_data Celery task → POSTs to AUTO_SMARTENPLUS_API_URL. Already forwards full booking JSON.
-- **n8n webhook feature doc** — created `docs/n8n-webhook-resend-operator.md` for audit team. Proposed: add N8N_WEBHOOK_URL env var + extend send_booking_data task to iterate over targets. 2 files, low risk.
-- **Passenger CSV export** (prior session) — committed to develop + main (user manual push).
+- **Resend operator analysis** — team mapped full flow: ResendOp → /admin-dashboard/booking-send/ → SendBookingViewSet → send_booking_data Celery task → POSTs to AUTO_SMARTENPLUS_API_URL
+- **n8n webhook feature doc** — created `docs/n8n-webhook-resend-operator.md`
+- **Audit (scrutinize team):** doc updated to v1.1. Findings:
+  1. (Major) Duplicate send on retry — n8n failure retries all targets including primary (acceptable for n8n, external sink)
+  2. (Major) N8N_WEBHOOK_URL required — config() with no default must be set in ALL environments
+  3. (Nit) Doc payload omitted InfoFields keys
+- **Resend operator CSV export** (prior session) — committed to develop + main (user manual push)
 
 **Blocked / needs next session:**
-1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
-2. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
-3. **Content repo GitHub remote** — create manually at github.com.
-4. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
-5. **n8n webhook audit** — waiting on audit team review of `docs/n8n-webhook-resend-operator.md`. After approval: implement on branch `feat/n8n-resend-webhook`.
+1. **n8n webhook implementation** — doc v1.1 ready. Audit cleared. Implement on `feat/n8n-resend-webhook` branch after user confirms.
+2. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
+3. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
+4. **Content repo GitHub remote** — create manually at github.com.
+5. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
 
 **Next session resume:**
-1. **Implement n8n webhook** (after audit approval) — `Smartenplus/settings.py` + `carts/tasks.py`. Branch: `feat/n8n-resend-webhook`
+1. **Implement n8n webhook** — `Smartenplus/settings.py` + `carts/tasks.py` on `feat/n8n-resend-webhook`. Doc v1.1 approved.
 2. **Commit frontend cinematic hero changes** — 10 files on `260524-feat/nav-label-changes`
 3. **Restart backend + populate nav data** — Django admin at `/securelogin/pages_info/navigationsection/add/`
 
@@ -35,7 +39,7 @@
 _Last verified 2026-05-25_
 
 ### Uncommitted
-- **backend:** `docs/n8n-webhook-resend-operator.md` (new file — feature doc for audit), `pages_info/admin.py` (hero banner help text)
+- **backend:** `docs/n8n-webhook-resend-operator.md` (feature doc v1.1, audit done), `pages_info/admin.py` (hero banner help text)
 - **frontend (10 files):** cinematic hero + icon color work on `260524-feat/nav-label-changes`. `smartenplus_wireframe_architecture.md` untracked.
 - **vault:** `master-state.md` (this session update)
 
