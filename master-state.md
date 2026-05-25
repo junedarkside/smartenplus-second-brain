@@ -4,46 +4,40 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (passenger CSV export + hotfixes)
+**Updated:** 2026-05-25 (resend operator team analysis + n8n webhook doc)
 
 **Achieved this session:**
-- **Passenger CSV export** — added 6 new columns to bookings export: Passenger Names (semicolon), Passport IDs (semicolon), DOBs (semicolon), Adults Count, Children Count, Infants Count. `components/utils/csvExport.js`
-- **DOB field hotfix** — `datifbirth` → `datofbirth` typo fixed in `getAllPassengerDOBs()`
-- **Rate type field hotfix** — `rate_type` → `attribute` in `getPassengerCounts()` (booking_rate_cards uses `attribute` not `rate_type`)
-- **Branch flow** — `feat/passenger-csv-export` → `develop` (pushed) → `main` (not pushed, user prefers manual)
+- **Resend operator analysis** — team mapped full flow: ResendOp → /admin-dashboard/booking-send/ → SendBookingViewSet → send_booking_data Celery task → POSTs to AUTO_SMARTENPLUS_API_URL. Already forwards full booking JSON.
+- **n8n webhook feature doc** — created `docs/n8n-webhook-resend-operator.md` for audit team. Proposed: add N8N_WEBHOOK_URL env var + extend send_booking_data task to iterate over targets. 2 files, low risk.
+- **Passenger CSV export** (prior session) — committed to develop + main (user manual push).
 
 **Blocked / needs next session:**
 1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
 2. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
 3. **Content repo GitHub remote** — create manually at github.com.
 4. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
-
-**Blocked / needs next session:**
-1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
-2. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
-3. **Content repo GitHub remote** — create manually at github.com.
-4. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
+5. **n8n webhook audit** — waiting on audit team review of `docs/n8n-webhook-resend-operator.md`. After approval: implement on branch `feat/n8n-resend-webhook`.
 
 **Next session resume:**
-1. **Commit frontend cinematic hero changes** — 10 files modified on `260524-feat/nav-label-changes`. Commit message: `feat(hero): cinematic fixed header + full-bleed hero + icon color fixes`
-2. **Restart backend + populate nav data** — `pkill -f runserver && ./venv/bin/python manage.py runserver` → enter 5 sections via admin `/securelogin/pages_info/navigationsection/add/`
-3. **Verify live** — `curl http://localhost:8000/api/v1/pages-info/navigation/` should return JSON array.
+1. **Implement n8n webhook** (after audit approval) — `Smartenplus/settings.py` + `carts/tasks.py`. Branch: `feat/n8n-resend-webhook`
+2. **Commit frontend cinematic hero changes** — 10 files on `260524-feat/nav-label-changes`
+3. **Restart backend + populate nav data** — Django admin at `/securelogin/pages_info/navigationsection/add/`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `135be39` fix(nav): replace 4 duplicate DAY_TOUR hrefs with 7 distinct categories |
-| `smartenplus-backend` | `260525-feat/nav-api-endpoint` | `6f5286e` fix(nav): register NavigationViewSet at /api/v1/ |
-| `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export — DOB field typo + rate_type → attribute |
+| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `135be39` fix(nav): replace 4 duplicate DAY_TOUR hrefs |
+| `smartenplus-backend` | `260525-feat/nav-api-endpoint` | `6f5286e` fix(nav): register NavigationViewSet |
+| `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
 _Last verified 2026-05-25_
 
 ### Uncommitted
-- **frontend (10 files):** `FeaturedImageHeader.js`, `ProfileButton.js`, `CartButton.js`, `layout.js`, `main-header.js`, `navConfig.js`, `imageOptimization.js`, `homepagev2.js`, `globals.css`, `CardCarouselContainer.js` — all cinematic hero + icon color work. `smartenplus_wireframe_architecture.md` untracked.
-- **backend:** `pages_info/admin.py` (hero banner help text) + `.claude/agents/` deletes + `CLAUDE.md` modified + `settings.local.json` modified — leave unstaged except admin.py
-- **vault:** `master-state.md` (this session update, ready to commit)
+- **backend:** `docs/n8n-webhook-resend-operator.md` (new file — feature doc for audit), `pages_info/admin.py` (hero banner help text)
+- **frontend (10 files):** cinematic hero + icon color work on `260524-feat/nav-label-changes`. `smartenplus_wireframe_architecture.md` untracked.
+- **vault:** `master-state.md` (this session update)
 
 ---
 
