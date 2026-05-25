@@ -4,17 +4,19 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (cinematic hero header implemented)
+**Updated:** 2026-05-25 (passenger CSV export + hotfixes)
 
 **Achieved this session:**
-- **Double-glass opacity bug fixed** — `AppBar` had `glass-header` class + inner div had `glass-bg` → double-stacking dark overlay. Removed glass class from `AppBar`, added `MuiAppBar-root { background-color: transparent !important }` in globals.css.
-- **Cinematic hero architecture** — `AppBar position="fixed"` on homepage, `sticky` on all other routes. Homepage hero `min-h-screen`. `isCinematic` prop on `FeaturedImageHeader` enables full-bleed image + suppresses back/share controls + applies `hero-top-gradient` CSS. `layout.js <main>` gets `pt-[88px]` on non-homepage routes.
-- **Icon color fix** — `CartButton` + `ProfileButton` icons changed from `md:text-gray-600` to `text-white/70 hover:text-white`, matching nav link inactive color.
-- **Hero image sizes fix** — `helpers/imageOptimization.js` `hero` sizes string changed from `(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px` to `100vw` — correct for full-viewport cinematic hero.
-- **Admin hero banner upload specs** — `pages_info/admin.py` `HeroBannerAdmin` now has fieldsets with upload guidance: min 1920×1080, ideal 2560×1440, WebP preferred. No migration.
-- **Nav Phase 3 backend** — `NavigationViewSet` registered at `/api/v1/pages-info/navigation/`, `6f5286e`
-- **Nav Phase 3 frontend** — RTK Query with static fallback working
-- **Header help icon removed** — `main-header.js` + `HelpOutlineOutlinedIcon` import deleted.
+- **Passenger CSV export** — added 6 new columns to bookings export: Passenger Names (semicolon), Passport IDs (semicolon), DOBs (semicolon), Adults Count, Children Count, Infants Count. `components/utils/csvExport.js`
+- **DOB field hotfix** — `datifbirth` → `datofbirth` typo fixed in `getAllPassengerDOBs()`
+- **Rate type field hotfix** — `rate_type` → `attribute` in `getPassengerCounts()` (booking_rate_cards uses `attribute` not `rate_type`)
+- **Branch flow** — `feat/passenger-csv-export` → `develop` (pushed) → `main` (not pushed, user prefers manual)
+
+**Blocked / needs next session:**
+1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
+2. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
+3. **Content repo GitHub remote** — create manually at github.com.
+4. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
 
 **Blocked / needs next session:**
 1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
@@ -33,14 +35,15 @@
 |------|--------|-------------|
 | `smartenplus-frontend` | `260524-feat/nav-label-changes` | `135be39` fix(nav): replace 4 duplicate DAY_TOUR hrefs with 7 distinct categories |
 | `smartenplus-backend` | `260525-feat/nav-api-endpoint` | `6f5286e` fix(nav): register NavigationViewSet at /api/v1/ |
-| `admin-dashboard` | `main` | `c06af90` refactor: dashboard Main.js |
+| `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export — DOB field typo + rate_type → attribute |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
 _Last verified 2026-05-25_
 
 ### Uncommitted
-- **frontend (10 files):** `FeaturedImageHeader.js`, `ProfileButton.js`, `CartButton.js`, `layout.js`, `main-header.js`, `navConfig.js`, `imageOptimization.js`, `homepagev2.js`, `globals.css`, `CardCarouselContainer.js` — all cinematic hero + icon color work. `smartenplus_wireframe_architecture.md` untracked — leave unstaged.
+- **frontend (10 files):** `FeaturedImageHeader.js`, `ProfileButton.js`, `CartButton.js`, `layout.js`, `main-header.js`, `navConfig.js`, `imageOptimization.js`, `homepagev2.js`, `globals.css`, `CardCarouselContainer.js` — all cinematic hero + icon color work. `smartenplus_wireframe_architecture.md` untracked.
 - **backend:** `pages_info/admin.py` (hero banner help text) + `.claude/agents/` deletes + `CLAUDE.md` modified + `settings.local.json` modified — leave unstaged except admin.py
+- **vault:** `master-state.md` (this session update, ready to commit)
 
 ---
 
