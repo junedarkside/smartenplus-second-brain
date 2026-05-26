@@ -4,39 +4,42 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-25 (n8n webhook deployed to production)
+**Updated:** 2026-05-26 (session wrap-up)
 
 **Achieved this session:**
-- **n8n webhook implemented** — `send_booking_data` moved to `bookings/tasks.py`. Added n8n webhook forwarding target. 4 commits: `fa687cb` (refactor), `4285e70` (hotfix import split), `8d88ba3` (hotfix orders/views.py), `2bdf31b` (fix N8N_WEBHOOK_URL default=None). Branch → develop → main → production pushed.
-- **3 bugs caught pre-merge:** import crash (send_booking_confirmation_email wrong source ×2), orphaned try block in carts/tasks.py
-- **Passenger CSV export** — committed to develop + main (user manual push)
-- **n8n webhook knowledge entry** — `04-knowledge/backend-n8n-resend-webhook.md` created + pushed
+- **Hero-header gap fixed** — 3-agent team (CSS specialist, UX auditor, Next.js architect) diagnosed root cause. `md:-mt-[96px]` now default in `FeaturedImageHeader.js`. Applies to all 23 hero pages automatically. `layout.js` `md:pt-[96px]` preserved for non-hero pages. Committed `2e681cd`.
+- **All prior uncommitted frontend work committed** — CardCarouselContainer React key fix, ProfileButton Help Center menu item, CartButton icon color, glassmorphism CSS tokens, navConfig children → null, hero image sizes simplified. All in `2e681cd`.
+- **Master-state updated** — Section 1 refreshed with live data.
 
 **Blocked / needs next session:**
-1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart.
-2. **Frontend changes uncommitted** — cinematic hero work all uncommitted on `260524-feat/nav-label-changes`.
-3. **Content repo GitHub remote** — create manually at github.com.
-4. **Open items from 2026-05-24** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal.
+1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart at `/securelogin/pages_info/navigationsection/add/`
+2. **Frontend branch not merged** — `260524-feat/nav-label-changes` needs PR → develop → main
+3. **Backend uncommitted** — `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+4. **Content repo GitHub remote** — create manually at github.com
+5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
+6. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
 
 **Next session resume:**
-1. **Commit frontend cinematic hero changes** — 10 files on `260524-feat/nav-label-changes`
-2. **Restart backend + populate nav data** — Django admin at `/securelogin/pages_info/navigationsection/add/`
-3. **Set N8N_WEBHOOK_URL** in production env when n8n workflow ready
+1. **PR frontend branch** — `260524-feat/nav-label-changes` → develop
+2. **Restart backend + populate nav data**
+3. **Commit backend loose files** — stage selectively (skip `.claude/agents/` deletions if unintentional)
+4. **Set N8N_WEBHOOK_URL** in production env when n8n workflow ready
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `135be39` fix(nav): replace 4 duplicate DAY_TOUR hrefs |
+| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `2e681cd` fix(hero): remove header-gap |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-25_
+_Last verified 2026-05-26_
 
 ### Uncommitted
-- **frontend (10 files):** cinematic hero + icon color work on `260524-feat/nav-label-changes`. `smartenplus_wireframe_architecture.md` untracked.
-- **vault:** `master-state.md` (this session update)
+- **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+- **admin-dashboard:** `CLAUDE.md` modified
+- **frontend:** only `smartenplus_wireframe_architecture.md` untracked (all other work committed)
 
 ---
 
