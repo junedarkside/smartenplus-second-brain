@@ -4,37 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-26 (session wrap-up)
+**Updated:** 2026-05-27 (session wrap-up)
 
-**Achieved this session:**
-- **Hero-header gap fixed** — 3-agent team (CSS specialist, UX auditor, Next.js architect) diagnosed root cause. `md:-mt-[96px]` now default in `FeaturedImageHeader.js`. Applies to all 23 hero pages automatically. `layout.js` `md:pt-[96px]` preserved for non-hero pages. Committed `2e681cd`.
-- **All prior uncommitted frontend work committed** — CardCarouselContainer React key fix, ProfileButton Help Center menu item, CartButton icon color, glassmorphism CSS tokens, navConfig children → null, hero image sizes simplified. All in `2e681cd`.
-- **Master-state updated** — Section 1 refreshed with live data.
+**Achieved this session (2026-05-27):**
+- **Mobile sticky header stacked layout** — `HeaderSearchSummary` gets `stacked` prop, renders 2-line on mobile (line1: route, line2: date+tripMode+passengers+EditSearch). `main-header.js` passes `stacked={true}` and removes Menu/Cart/Profile icons when sticky active. Committed `fd07d24`.
+- **Redux location sync fix** — `location-slice` uses snake_case actions (`from_location`, `to_location`). `FilterTripsPage` syncs Redux to URL slug on every slug change. `ProductSearchForm2` syncs when dialog opens and Redux empty. Fixed wrong action name bug. Committed `362a177`.
+- **Edit Search no-op fix** — `StickySearchBar` and `HeaderSearchSummary` now pass `onSearch={handleFindTrips}` to `SearchDialog`. Previously SEARCH button in those dialogs was a no-op. Committed `9e469e0`.
+- **Branch ready for PR** — `260524-feat/nav-label-changes` now has 4 commits total (including prior `9461045`).
 
 **Blocked / needs next session:**
-1. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart at `/securelogin/pages_info/navigationsection/add/`
-2. **Frontend branch not merged** — `260524-feat/nav-label-changes` needs PR → develop → main
+1. **Frontend branch not merged** — `260524-feat/nav-label-changes` needs PR → develop → main
+2. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart at `/securelogin/pages_info/navigationsection/add/`
 3. **Backend uncommitted** — `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 4. **Content repo GitHub remote** — create manually at github.com
 5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
 6. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
 
 **Next session resume:**
-1. **PR frontend branch** — `260524-feat/nav-label-changes` → develop
+1. **PR frontend branch** — `260524-feat/nav-label-changes` → develop → main
 2. **Restart backend + populate nav data**
-3. **Commit backend loose files** — stage selectively (skip `.claude/agents/` deletions if unintentional)
-4. **Set N8N_WEBHOOK_URL** in production env when n8n workflow ready
+3. **Commit backend loose files** — stage selectively
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `2e681cd` fix(hero): remove header-gap |
+| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `9e469e0` fix(search): add onSearch handler to StickySearchBar and HeaderSearchSummary |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-26_
+_Last verified 2026-05-27_
 
 ### Uncommitted
 - **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
