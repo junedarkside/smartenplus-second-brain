@@ -11,19 +11,22 @@
 - **Redux location sync fix** — `location-slice` uses snake_case actions (`from_location`, `to_location`). `FilterTripsPage` syncs Redux to URL slug on every slug change. `ProductSearchForm2` syncs when dialog opens and Redux empty. Fixed wrong action name bug. Committed `362a177`.
 - **Edit Search no-op fix** — `StickySearchBar` and `HeaderSearchSummary` now pass `onSearch={handleFindTrips}` to `SearchDialog`. Previously SEARCH button in those dialogs was a no-op. Committed `9e469e0`.
 - **Branch ready for PR** — `260524-feat/nav-label-changes` now has 4 commits total (including prior `9461045`).
+- **Header scroll opacity fix** — investigated + fixed. Root cause: `.glass-bg` had transition but `.glass-bg-scrolled` had no transition → asymmetric smooth/jarring. Fix: added 200ms transition to `.glass-bg-scrolled`. Also removed scroll-based class toggle — desktop header now always `glass-bg-scrolled` (dark glass, no inconsistency). `globals.css` transition time 300ms→200ms.
 
 **Blocked / needs next session:**
-1. **Frontend branch not merged** — `260524-feat/nav-label-changes` needs PR → develop → main
-2. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart at `/securelogin/pages_info/navigationsection/add/`
-3. **Backend uncommitted** — `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-4. **Content repo GitHub remote** — create manually at github.com
-5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
-6. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
+1. **Frontend uncommitted** — `main-header.js` + `globals.css` modified (header always dark glass, CSS transition fix)
+2. **Frontend branch not merged** — `260524-feat/nav-label-changes` needs PR → develop → main
+3. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart at `/securelogin/pages_info/navigationsection/add/`
+4. **Backend uncommitted** — `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+5. **Content repo GitHub remote** — create manually at github.com
+6. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
+7. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
 
 **Next session resume:**
-1. **PR frontend branch** — `260524-feat/nav-label-changes` → develop → main
-2. **Restart backend + populate nav data**
-3. **Commit backend loose files** — stage selectively
+1. **Commit frontend header fix**
+2. **PR frontend branch** — `260524-feat/nav-label-changes` → develop → main
+3. **Restart backend + populate nav data**
+4. **Commit backend loose files** — stage selectively
 
 ### Active Branches
 
@@ -76,6 +79,7 @@ _Last verified 2026-05-27_
 | Nav 404 fixed | Explicit `path('api/v1/pages-info/navigation/')` in `apis/urls.py` before slug catch-all. `6f5286e` | 2026-05-25 |
 | Frontend dead code removed | Deleted unused `navLinks` export, fixed misleading comments. `3feafaa` | 2026-05-25 |
 | Header help icon removed | Deleted `main-header.js:92-98` + `HelpOutlineOutlinedIcon` import. Footer Help link preserved. | 2026-05-25 |
+| Header scroll opacity inconsistency | CSS transition asymmetry fixed — added 200ms to `.glass-bg-scrolled`. Desktop header now always dark glass (no scroll toggle). | 2026-05-27 |
 
 ---
 
