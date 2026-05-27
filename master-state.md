@@ -4,22 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-28 (session wrap-up #3)
+**Updated:** 2026-05-28 (session wrap-up #4)
 
 **Achieved this session (2026-05-28):**
-- **Revert merge commit** — `0ccf03c` (header-search-bugs branch) reverted via `git revert -m 1`. New commit `c6d7248`. `StickySearchBar.js` restored. `HeaderSearchContext.js` stash conflict resolved (kept revert version = simpler).
-- **2026 header redesign spec** — full design brief written. Covers desktop/mobile/tablet/sticky bar/drawer/colors/typography/scroll behavior. Two outputs: `HEADER_REDESIGN_2026.md` (project root) + vault doc `01-projects/header-redesign-2026-spec.md`.
-- **Implementation plan validated** — 5 files identified, plan at `.claude/plans/revert-logical-wilkinson.md`. NOT yet implemented (accidental early implementation reverted).
+- **Header redesign architecture locked** — 3-specialist audit (UX Architecture + Visual Design + Frontend Eng) reviewed full brief. Caught critical flaw in v1 spec ("single-row everywhere" wrong). Finalized Type A/B adaptive split.
+- **Key decisions locked:** /blog → Type B (2-row), keep all 5 nav items (Explore Thailand stays), dynamic layout offset 80px/96px, HeaderRowsContext pattern for StickySearchBar, 12-file scope.
+- **Vault updated:** `header-redesign-2026-spec.md` fully rewritten to FINAL. `header-redesign-2026-team-review.md` updated with locked decisions. `index.md` + `log.md` updated.
+- **Implementation plan at:** `.claude/plans/check-vault-and-01-projects-header-redes-flickering-gray.md`
 
 **Blocked / carry-forward:**
-1. **Header redesign NOT implemented** — spec ready, plan ready, implement next session
-2. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-3. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
-4. **Content repo GitHub remote** — create manually at github.com
-5. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+1. **Header redesign NOT yet implemented** — spec + plan FINAL, implement next session
+2. **Frontend uncommitted changes** — `HeaderSearchContext.js` (staged), `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, several page files M, `HEADER_REDESIGN_2026.md` untracked
+3. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+4. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
+5. **Content repo GitHub remote** — create manually at github.com
+6. **Nav table empty** — restart backend + populate NavigationSection via admin UI
 
-**Next session resume:**
-1. **Implement 2026 header redesign** — plan at `.claude/plans/revert-logical-wilkinson.md`. 5 files: `globals.css`, `main-header.js`, `StickySearchBar.js`, `layout.js`, `homepagev2.js`. Also update `HeaderSearchSummary.js`.
+**Next session resume point:**
+1. **Implement header redesign** — branch `260528-feat/header-redesign-2026`
+   - Plan: `.claude/plans/check-vault-and-01-projects-header-redes-flickering-gray.md`
+   - Spec: `01-projects/header-redesign-2026-spec.md` (FINAL)
+   - Day 1: CartButton.js, ProfileButton.js, SearchDialogTrigger.js, NavDropdown.js
+   - Day 2: globals.css, main-header.js, HeaderSearchSummary.js
+   - Day 3: layout.js (ONE_ROW_PATHS + HeaderRowsContext), StickySearchBar.js
+   - Day 4: QA regression matrix
 2. Commit backend loose files (stage selectively — skip deleted agents)
 3. Commit admin-dashboard CLAUDE.md
 
@@ -30,15 +38,15 @@
 | `smartenplus-frontend` | `main` | `c6d7248` Revert "Merge branch '260527-fix/header-search-bugs' into develop" |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
-| `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
+| `smartenplus-content` | `master` | (no new commits) |
 
 _Last verified 2026-05-28_
 
 ### Uncommitted
-- **frontend:** `.claude/settings.local.json`, several blog/search/page files M, `HEADER_REDESIGN_2026.md` untracked, `HeaderSearchContext.js` staged
+- **frontend:** `HeaderSearchContext.js` (staged), `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, `pages/airport-transfer`, `pages/destinations`, `pages/locations/*`, `pages/trips/index.js` (all M), `HEADER_REDESIGN_2026.md` (untracked)
 - **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 - **admin-dashboard:** `CLAUDE.md` modified
-- **vault:** `index.md` + `log.md` → updating now, `01-projects/header-redesign-2026-spec.md` new
+- **vault:** clean (updated this session)
 
 ---
 

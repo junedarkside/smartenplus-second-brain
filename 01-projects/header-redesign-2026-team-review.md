@@ -1,12 +1,39 @@
 # Header Redesign 2026 — Team Review Report
 
-**Date:** 2026-05-28
-**Specialists:** Design · UX · Frontend
+**Date:** 2026-05-28 (updated 2026-05-28 with final decisions)
+**Specialists:** Design · UX · Frontend + Second audit: UX Architecture · Visual Design · Frontend Engineering
 **Subject:** Deep audit of `header-redesign-2026-spec.md` before implementation
+
+> **See [[header-redesign-2026-spec]] for FINAL spec with all decisions locked.**
+> This doc preserves the audit trail and open questions that were resolved.
 
 ---
 
-## Verdict
+## Final Verdict (Updated)
+
+**Spec v1 had one critical architectural flaw: "single-row everywhere" was wrong.**
+Second audit caught it. Final design uses Type A/B adaptive split — see spec.
+All blockers below now have locked decisions.
+
+**Spec v1 identified 5 files. Actual count: 12 files.** Four critical components with hardcoded white colors were missed. All decisions now resolved.
+
+---
+
+## Decisions Locked
+
+| Decision | Resolution |
+|----------|------------|
+| B-1: rows prop / Type A vs Type B | **Type A/B split.** ONE_ROW_PATHS = transactional only. /blog removed from list → Type B. |
+| B-2: Mobile hide-on-scroll | **Keep Slide behavior.** 56px viewport gain. |
+| B-3 (new): 2-row nav on browse pages | **Type B keeps Row 2** on /, /destinations, /locations, /trips, /activities, /blog. All 5 nav items including Explore Thailand stay. |
+| M-4: Remove Explore Thailand | **REJECTED.** All 5 nav items stay. |
+| Layout offset | **Dynamic:** 80px (Type A) / 96px (Type B). |
+| StickySearchBar top | **Dynamic via HeaderRowsContext:** 80px or 96px. |
+| MUI AppBar sx | **Optional** — globals.css:736-740 already handles it. |
+
+---
+
+## Verdict (Original — Preserved)
 
 **Spec is directionally correct. NOT implementation-ready as written.**
 
@@ -137,15 +164,14 @@ Summary content: `Route → Date · TripMode · Passengers · Edit` — ~480px m
 
 ---
 
-### M-4: navConfig.js Has 5 Items, Spec Says 4
+### M-4: navConfig.js Has 5 Items, Spec v1 Said 4 ~~RESOLVED — KEEP ALL 5~~
 **Where:** `constants/navConfig.js`
 
-Spec drops "Explore Thailand". navConfig still has it. API may return it too (NavigationSection table in DB).
+~~Spec drops "Explore Thailand". navConfig still has it.~~
 
-**Changes needed:**
-- Update `constants/navConfig.js`: remove "Explore Thailand" entry
-- Populate backend NavigationSection without it (next time backend data is seeded)
-- No migration required — data change only
+**DECISION (2026-05-28):** Keep all 5 nav items. Explore Thailand stays. Do not remove. User requirement explicit — Type B discovery pages need all 5.
+- `constants/navConfig.js` — NO CHANGES
+- Backend NavigationSection — NO CHANGES
 
 ---
 
@@ -225,7 +251,7 @@ Once glass classes are removed (mobile trigger only drove glass toggle, Slide us
 | Trip Results `/trips/[from]/[to]` | 1440px, 768px, 375px | Sticky bar white + dark text, HeaderSearchSummary readable, nav hidden |
 | Checkout `/checkout` | 1440px | No nav, white header, cart/profile visible |
 | Login `/login` | 1440px, 375px | No nav, white header |
-| Blog `/blog` | 1440px | No nav (ONE_ROW_PATHS) |
+| Blog `/blog` | 1440px, 768px | **Type B — Row 2 nav visible** (removed from ONE_ROW_PATHS) |
 | Destinations `/destinations` | 1440px | Nav visible, no "Explore Thailand" item |
 | Keyboard tab | All | Focus rings visible (not invisible white-on-white) |
 | Scroll (mobile) | 375px | Header hides on scroll down (Slide behavior preserved) |
@@ -235,27 +261,31 @@ Once glass classes are removed (mobile trigger only drove glass toggle, Slide us
 ## Implementation Order
 
 ```
-Day 1 — Unblock (quick color fixes, no layout change)
-  1. SearchDialogTrigger.js — update colors
-  2. CartButton.js — icon color
-  3. ProfileButton.js — icon color
+Day 1 — Color unblocks (no structure change)
+  1. CartButton.js — icon color
+  2. ProfileButton.js — icon color
+  3. SearchDialogTrigger.js — button colors
   4. NavDropdown.js — active state + focus ring
-  5. constants/navConfig.js — remove Explore Thailand
+  (constants/navConfig.js — NO CHANGES, keep all 5 items)
 
-Day 2 — Core header
-  6. globals.css — add .solid-header + .solid-header-elevated
-  7. main-header.js — full refactor (single row, white, dark text, MUI fix)
-  8. layout.js — pt-[80px]
-  9. HeaderSearchSummary.js — color updates
+Day 2 — CSS + core header
+  5. globals.css — verify glass usages, remove glass classes, add solid-header
+  6. main-header.js — glass→solid, white→dark, mobile bg-fb-blue→white
+  7. HeaderSearchSummary.js — all text-white → dark
 
-Day 3 — Sticky + hero
-  10. StickySearchBar.js — white surface + top offset fix
-  11. homepagev2.js — hero bleed (verify + fix)
+Day 3 — Layout structure + sticky
+  8. layout.js — remove /blog from ONE_ROW_PATHS, dynamic padding (80/96px), export HeaderRowsContext
+  9. StickySearchBar.js — consume HeaderRowsContext, dynamic top, white surface
 
-Day 4 — QA
-  12. Regression matrix (test matrix above)
-  13. Keyboard/focus audit
-  14. Verify sticky bar offset at 80px desktop
+Day 4 — QA regression
+  10. Regression matrix (updated matrix above — includes /blog as Type B)
+  11. Keyboard/focus audit
+  12. grep verify: zero text-white remaining in header/search/cart/auth components
+
+Day 5+ (separate PRs)
+  - Homepage hero height 500px → 320–360px
+  - Custom font loading Inter/Satoshi (CLS testing required)
+  - designSystem.js SHADOWS + BORDERS tokens
 ```
 
 ---
