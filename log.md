@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-27] create | mobile-header-redesign-glassmorphism — design spec for premium glass mobile header (solid blue → cinematic glassmorphism, always-fixed, scroll-reactive opacity, currency pill mobile variant, hero bleed pattern)
 ## [2026-05-27] session-end | header scroll opacity fix — root cause: CSS transition asymmetry (.glass-bg had 300ms, .glass-bg-scrolled had none) → asymmetric smooth/jarring on scroll direction change. Fix: added 200ms transition to .glass-bg-scrolled + reduced 300ms→200ms. Also removed scroll-based class toggle — desktop header always dark glass-bg-scrolled. Investigation: 1 agent (debug-specialist), 3-layer deep trace. No code pushed.
 ## [2026-05-25] session-end | passenger CSV export — added 6 columns (Passenger Names, Passport IDs, DOBs, Adults/Children/Infants Count). Hotfix: datifbirth→datofbirth, rate_type→attribute. Committed to feat/passenger-csv-export→develop (pushed), merged to main (user pushes manually).
 ## [2026-05-25] plan | premium-glassmorphism-header — team analysis (glass-auditor + hero-reviewer + scroll-specialist). Decision: Option A unified glass (both rows identical dark gradient, no divider). Remove Slide, use sticky + threshold scroll + CSS transitions. FeaturedImageHeader overlay reduction needed. Report: 01-projects/smartenplus-glassmorphism-header.md. index.md updated.

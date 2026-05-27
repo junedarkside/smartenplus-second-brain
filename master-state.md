@@ -4,31 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-27 (session wrap-up)
+**Updated:** 2026-05-27 (session wrap-up #2)
 
 **Achieved this session (2026-05-27):**
-- **Header review + 4 bug fixes** — 3-agent team (UX/Design/Engineer) reviewed header search pattern. Fixed: NavDropdown WCAG contrast (text-white/70 tokens), useMemo on HeaderSearchContext value, removed effectiveDepartureDate from injection effect deps, deleted dead StickySearchBar.js (138 lines). Merged to develop, pushed. `0ccf03c`.
-- **theme.js** — comment-only cleanup committed. `0105669`.
-- **Wireframe doc** — moved `smartenplus_wireframe_architecture.md` to vault `01-projects/`. Committed vault.
+- **Session init** — vault + header state checked. Frontend `main` = develop head `0ccf03c`. Clean.
+- **Mobile header redesign spec** — vault doc `01-projects/mobile-header-redesign-glassmorphism.md` created. Full design spec: glass overlay, always-fixed, scroll-reactive opacity, currency pill on mobile, hero bleed pattern.
+- **Implementation plan written** — 4-file plan ready in `.claude/plans/`. Next session can implement directly.
 
-**Blocked / needs next session:**
+**Blocked / carry-forward:**
 1. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 2. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
 3. **Content repo GitHub remote** — create manually at github.com
-4. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
-5. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+4. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
 
 **Next session resume:**
-1. Commit backend loose files (stage selectively)
-2. Commit admin-dashboard CLAUDE.md
-3. Restart backend + populate nav data
-4. Next header generalization: destinations page (`hideNav: false` pattern)
+1. **Implement mobile header glassmorphism** — plan at `.claude/plans/check-vault-and-header-atomic-raccoon.md`. 4 files: `globals.css`, `main-header.js`, `CurrencySelector.js`, `homepagev2.js`
+2. Commit backend loose files (stage selectively — skip deleted agents)
+3. Commit admin-dashboard CLAUDE.md
+4. Restart backend + populate nav data
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `0ccf03c` Merge branch '260527-fix/header-search-bugs' into develop |
+| `smartenplus-frontend` | `main` | `0ccf03c` Merge branch '260527-fix/header-search-bugs' into develop |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
@@ -36,8 +36,10 @@
 _Last verified 2026-05-27_
 
 ### Uncommitted
+- **frontend:** clean
 - **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 - **admin-dashboard:** `CLAUDE.md` modified
+- **vault:** `index.md` + `log.md` modified, `01-projects/mobile-header-redesign-glassmorphism.md` new → committing now
 
 ---
 
