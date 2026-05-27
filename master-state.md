@@ -26,7 +26,7 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `9d44e8f` fix(cart): remove overflow from badge wrapper div |
+| `smartenplus-frontend` | `main` | `f7827ed` Merge branch '260524-feat/nav-label-changes' into develop |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
