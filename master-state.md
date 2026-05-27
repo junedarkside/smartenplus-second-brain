@@ -10,17 +10,17 @@
 - **Mobile sticky header stacked layout** — `HeaderSearchSummary` gets `stacked` prop, renders 2-line on mobile (line1: route, line2: date+tripMode+passengers+EditSearch). `main-header.js` passes `stacked={true}` and removes Menu/Cart/Profile icons when sticky active. Committed `fd07d24`.
 - **Redux location sync fix** — `location-slice` uses snake_case actions (`from_location`, `to_location`). `FilterTripsPage` syncs Redux to URL slug on every slug change. `ProductSearchForm2` syncs when dialog opens and Redux empty. Fixed wrong action name bug. Committed `362a177`.
 - **Edit Search no-op fix** — `StickySearchBar` and `HeaderSearchSummary` now pass `onSearch={handleFindTrips}` to `SearchDialog`. Previously SEARCH button in those dialogs was a no-op. Committed `9e469e0`.
-- **Branch ready for PR** — `260524-feat/nav-label-changes` now has 4 commits total (including prior `9461045`).
-- **Header scroll opacity fix** — investigated + fixed. Root cause: `.glass-bg` had transition but `.glass-bg-scrolled` had no transition → asymmetric smooth/jarring. Fix: added 200ms transition to `.glass-bg-scrolled`. Also removed scroll-based class toggle — desktop header now always `glass-bg-scrolled` (dark glass, no inconsistency). `globals.css` transition time 300ms→200ms.
+- **Header UX/UI audit (iPad Mini/Air)** — 7 issues found: HD-1 (CurrencySelector too small P1), HD-2 (dim icons P2), HD-3 (xl padding gap P2), HD-4 (text mismatch P2), HD-5 (route truncation P2), HD-6 (logo jump P1), HD-7 (passenger button wide P2).
+- **Logo icon-only at md-xl** — `main-header.js` logo text hidden when `searchBarContent` active at md-xl (icon only, saves ~170px). Committed `307b733`.
+- **Branch merged to develop** — `260524-feat/nav-label-changes` fast-forward merged to `develop` and pushed to origin. 18 commits total.
+- **Glass transition sync** — `.glass-bg-scrolled` now has 200ms transition matching `.glass-bg`. Committed `307b733`.
 
 **Blocked / needs next session:**
-1. **Frontend uncommitted** — `main-header.js` + `globals.css` modified (header always dark glass, CSS transition fix)
-2. **Frontend branch not merged** — `260524-feat/nav-label-changes` needs PR → develop → main
-3. **Navigation data not populated** — `NavigationSection` table empty. Populate via Django admin after server restart at `/securelogin/pages_info/navigationsection/add/`
-4. **Backend uncommitted** — `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-5. **Content repo GitHub remote** — create manually at github.com
-6. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
-7. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
+1. **StickySearchBar smart-wrapping** — team recommended `flex-col sm:flex-row` not hard 2-line. Still pending (low urgency — fits fine at 768-820px).
+2. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
+3. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+4. **Content repo GitHub remote** — create manually at github.com
+5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
 
 **Next session resume:**
 1. **Commit frontend header fix**
@@ -32,7 +32,7 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `9e469e0` fix(search): add onSearch handler to StickySearchBar and HeaderSearchSummary |
+| `smartenplus-frontend` | `260524-feat/nav-label-changes` (merged → develop) | `307b733` fix(header): icon-only logo at md-xl when search active; glass transition sync |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
@@ -62,6 +62,13 @@ _Last verified 2026-05-27_
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
 | Nav | NavigationSection table empty | Restart backend + populate via admin `/securelogin/pages_info/navigationsection/add/` — plain links only, no Experiences/Explore children | `pages_info` |
 | Explore Thailand submenu | Needs `location_type` CharField+choices on `Location` model before rebuilding | `stations/models.py` |
+| HD-1 | CurrencySelector button too small (text-xs, max-w-40px) at tablet | Low — confirmed icon-only logo helps, sizing is design debt | `CurrencySelector.js:55` |
+| HD-2 | CartButton/ProfileButton dim (70% opacity) | Low — acceptable design choice | `CartButton.js:116`, `ProfileButton.js:367` |
+| HD-3 | xl padding gap (px-0 vs px-3) | Low — edge case | `main-header.js:90` |
+| HD-4 | Edit search text size mismatch vs CurrencySelector | Low — design debt | `SearchDialogTrigger.js:46` |
+| HD-5 | Route text truncation at narrow tablets | Low — smart-wrapping resolves | `StickySearchBar.js:89` |
+| HD-6 | Logo size jump mobile→desktop (text-lg→text-2xl) | P2 — separate fix | `main-header.js:66,95` |
+| HD-7 | Passenger button wide at narrow tablets | Low — icon-only logo helps | `StickySearchBar.js:100` |
 
 ### Recently Closed (this session)
 | Issue | Fix | Date |
