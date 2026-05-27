@@ -11,6 +11,7 @@ Global navigation catalog. Updated on every ingest.
 ## Active Projects
 
 - [[header-redesign-2026-spec]] — 2026 header redesign: solid white `#FFFFFF` single-row nav replacing glassmorphism. Google Flights / Linear UX direction. 5-file implementation plan ready.
+- [[header-redesign-2026-team-review]] — 3-specialist team audit (Design+UX+Frontend). Verdict: spec is directionally correct but NOT implementation-ready. 10 files (not 5), 2 open UX decisions, 4 missing components with hardcoded white colors.
 - [[mobile-header-redesign-glassmorphism]] — Mobile header glassmorphism redesign spec (SUPERSEDED by header-redesign-2026-spec)
 - [[backend-n8n-resend-webhook|backend-n8n-resend-webhook]] — Resend Operator n8n webhook forwarding. send_booking_data moved to bookings/tasks.py. 4 commits, merged to develop. 3 bugs caught by scrutinize audit (import crash ×2, orphaned try block) + 1 env var crash on startup (N8N_WEBHOOK_URL missing default=None)
 - [[fast-refresh-infinite-loop-audit-2026-05-23|Fast Refresh Infinite Loop Audit 2026-05-23]] — Root cause unconfirmed. RefreshTokenHandler diagnosis OVERTURNED (lastExpiryRef guard). Likely Next.js 14.2.x HMR + on-demand compilation cascade. 7 failed fixes documented. Next: debug instrumentation + git bisect
