@@ -7,32 +7,26 @@
 **Updated:** 2026-05-27 (session wrap-up)
 
 **Achieved this session (2026-05-27):**
-- **Mobile sticky header stacked layout** — `HeaderSearchSummary` gets `stacked` prop, renders 2-line on mobile (line1: route, line2: date+tripMode+passengers+EditSearch). `main-header.js` passes `stacked={true}` and removes Menu/Cart/Profile icons when sticky active. Committed `fd07d24`.
-- **Redux location sync fix** — `location-slice` uses snake_case actions (`from_location`, `to_location`). `FilterTripsPage` syncs Redux to URL slug on every slug change. `ProductSearchForm2` syncs when dialog opens and Redux empty. Fixed wrong action name bug. Committed `362a177`.
-- **Edit Search no-op fix** — `StickySearchBar` and `HeaderSearchSummary` now pass `onSearch={handleFindTrips}` to `SearchDialog`. Previously SEARCH button in those dialogs was a no-op. Committed `9e469e0`.
-- **Header UX/UI audit (iPad Mini/Air)** — 7 issues found: HD-1 (CurrencySelector too small P1), HD-2 (dim icons P2), HD-3 (xl padding gap P2), HD-4 (text mismatch P2), HD-5 (route truncation P2), HD-6 (logo jump P1), HD-7 (passenger button wide P2).
-- **Logo icon-only at md-xl** — `main-header.js` logo text hidden when `searchBarContent` active at md-xl (icon only, saves ~170px). Committed `307b733`.
-- **Branch merged to develop** — `260524-feat/nav-label-changes` fast-forward merged to `develop` and pushed to origin. 18 commits total.
-- **Glass transition sync** — `.glass-bg-scrolled` now has 200ms transition matching `.glass-bg`. Committed `307b733`.
+- **Cart badge clip fix** — root cause: parent div `overflow: auto` clips badge (top:-5px, right:-5px anchor outside bounds). Removed `overflow-y-auto overflow-x-auto` from CartButton wrapper div. Committed `9d44e8f`.
 
 **Blocked / needs next session:**
-1. **StickySearchBar smart-wrapping** — team recommended `flex-col sm:flex-row` not hard 2-line. Still pending (low urgency — fits fine at 768-820px).
+1. **theme.js modified** — MuiBadge styleOverrides still in theme.js (not removed, no effect anyway). Uncommitted.
 2. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
 3. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 4. **Content repo GitHub remote** — create manually at github.com
 5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
 
 **Next session resume:**
-1. **Commit frontend header fix**
-2. **PR frontend branch** — `260524-feat/nav-label-changes` → develop → main
+1. **Commit frontend theme.js** — stage selectively or discard MuiBadge overrides
+2. **Commit backend loose files** — stage selectively
 3. **Restart backend + populate nav data**
-4. **Commit backend loose files** — stage selectively
+4. **Decide on smartenplus_wireframe_architecture.md** — commit or gitignore
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260524-feat/nav-label-changes` (merged → develop) | `307b733` fix(header): icon-only logo at md-xl when search active; glass transition sync |
+| `smartenplus-frontend` | `260524-feat/nav-label-changes` | `9d44e8f` fix(cart): remove overflow from badge wrapper div |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
@@ -40,9 +34,10 @@
 _Last verified 2026-05-27_
 
 ### Uncommitted
+- **frontend:** `theme.js` (MuiBadge overrides, no effect)
+- **frontend:** `smartenplus_wireframe_architecture.md` untracked
 - **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 - **admin-dashboard:** `CLAUDE.md` modified
-- **frontend:** only `smartenplus_wireframe_architecture.md` untracked (all other work committed)
 
 ---
 
