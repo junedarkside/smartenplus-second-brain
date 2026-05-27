@@ -4,42 +4,41 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-27 (session wrap-up #2)
+**Updated:** 2026-05-28 (session wrap-up #3)
 
-**Achieved this session (2026-05-27):**
-- **Session init** — vault + header state checked. Frontend `main` = develop head `0ccf03c`. Clean.
-- **Mobile header redesign spec** — vault doc `01-projects/mobile-header-redesign-glassmorphism.md` created. Full design spec: glass overlay, always-fixed, scroll-reactive opacity, currency pill on mobile, hero bleed pattern.
-- **Implementation plan written** — 4-file plan ready in `.claude/plans/`. Next session can implement directly.
+**Achieved this session (2026-05-28):**
+- **Revert merge commit** — `0ccf03c` (header-search-bugs branch) reverted via `git revert -m 1`. New commit `c6d7248`. `StickySearchBar.js` restored. `HeaderSearchContext.js` stash conflict resolved (kept revert version = simpler).
+- **2026 header redesign spec** — full design brief written. Covers desktop/mobile/tablet/sticky bar/drawer/colors/typography/scroll behavior. Two outputs: `HEADER_REDESIGN_2026.md` (project root) + vault doc `01-projects/header-redesign-2026-spec.md`.
+- **Implementation plan validated** — 5 files identified, plan at `.claude/plans/revert-logical-wilkinson.md`. NOT yet implemented (accidental early implementation reverted).
 
 **Blocked / carry-forward:**
-1. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-2. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
-3. **Content repo GitHub remote** — create manually at github.com
-4. **Nav table empty** — restart backend + populate NavigationSection via admin UI
-5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
+1. **Header redesign NOT implemented** — spec ready, plan ready, implement next session
+2. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+3. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
+4. **Content repo GitHub remote** — create manually at github.com
+5. **Nav table empty** — restart backend + populate NavigationSection via admin UI
 
 **Next session resume:**
-1. **Implement mobile header glassmorphism** — plan at `.claude/plans/check-vault-and-header-atomic-raccoon.md`. 4 files: `globals.css`, `main-header.js`, `CurrencySelector.js`, `homepagev2.js`
+1. **Implement 2026 header redesign** — plan at `.claude/plans/revert-logical-wilkinson.md`. 5 files: `globals.css`, `main-header.js`, `StickySearchBar.js`, `layout.js`, `homepagev2.js`. Also update `HeaderSearchSummary.js`.
 2. Commit backend loose files (stage selectively — skip deleted agents)
 3. Commit admin-dashboard CLAUDE.md
-4. Restart backend + populate nav data
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `0ccf03c` Merge branch '260527-fix/header-search-bugs' into develop |
+| `smartenplus-frontend` | `main` | `c6d7248` Revert "Merge branch '260527-fix/header-search-bugs' into develop" |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-27_
+_Last verified 2026-05-28_
 
 ### Uncommitted
-- **frontend:** clean
+- **frontend:** `.claude/settings.local.json`, several blog/search/page files M, `HEADER_REDESIGN_2026.md` untracked, `HeaderSearchContext.js` staged
 - **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 - **admin-dashboard:** `CLAUDE.md` modified
-- **vault:** `index.md` + `log.md` modified, `01-projects/mobile-header-redesign-glassmorphism.md` new → committing now
+- **vault:** `index.md` + `log.md` → updating now, `01-projects/header-redesign-2026-spec.md` new
 
 ---
 

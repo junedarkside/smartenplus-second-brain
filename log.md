@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-28] session-end | 2026 header redesign spec — revert merge c6d7248 (header-search-bugs), full solid-white header design brief written (HEADER_REDESIGN_2026.md + vault doc header-redesign-2026-spec.md). 5-file impl plan ready. Not yet implemented.
 ## [2026-05-27] create | mobile-header-redesign-glassmorphism — design spec for premium glass mobile header (solid blue → cinematic glassmorphism, always-fixed, scroll-reactive opacity, currency pill mobile variant, hero bleed pattern)
 ## [2026-05-27] session-end | header scroll opacity fix — root cause: CSS transition asymmetry (.glass-bg had 300ms, .glass-bg-scrolled had none) → asymmetric smooth/jarring on scroll direction change. Fix: added 200ms transition to .glass-bg-scrolled + reduced 300ms→200ms. Also removed scroll-based class toggle — desktop header always dark glass-bg-scrolled. Investigation: 1 agent (debug-specialist), 3-layer deep trace. No code pushed.
 ## [2026-05-25] session-end | passenger CSV export — added 6 columns (Passenger Names, Passport IDs, DOBs, Adults/Children/Infants Count). Hotfix: datifbirth→datofbirth, rate_type→attribute. Committed to feat/passenger-csv-export→develop (pushed), merged to main (user pushes manually).
