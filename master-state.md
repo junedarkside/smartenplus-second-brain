@@ -7,26 +7,28 @@
 **Updated:** 2026-05-27 (session wrap-up)
 
 **Achieved this session (2026-05-27):**
-- **Cart badge clip fix** — root cause: parent div `overflow: auto` clips badge (top:-5px, right:-5px anchor outside bounds). Removed `overflow-y-auto overflow-x-auto` from CartButton wrapper div. Committed `9d44e8f`.
+- **Header review + 4 bug fixes** — 3-agent team (UX/Design/Engineer) reviewed header search pattern. Fixed: NavDropdown WCAG contrast (text-white/70 tokens), useMemo on HeaderSearchContext value, removed effectiveDepartureDate from injection effect deps, deleted dead StickySearchBar.js (138 lines). Merged to develop, pushed. `0ccf03c`.
+- **theme.js** — comment-only cleanup committed. `0105669`.
+- **Wireframe doc** — moved `smartenplus_wireframe_architecture.md` to vault `01-projects/`. Committed vault.
 
 **Blocked / needs next session:**
-1. **theme.js modified** — MuiBadge styleOverrides still in theme.js (not removed, no effect anyway). Uncommitted.
-2. **Untracked file** — `smartenplus_wireframe_architecture.md` (decide: commit or gitignore)
-3. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-4. **Content repo GitHub remote** — create manually at github.com
-5. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
+1. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+2. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
+3. **Content repo GitHub remote** — create manually at github.com
+4. **Open items** — GA4 purchase event, TikTok pixel, AdminBookingSummaryViewSet, RefundViewSet deletion, Stripe stub removal
+5. **Nav table empty** — restart backend + populate NavigationSection via admin UI
 
 **Next session resume:**
-1. **Commit frontend theme.js** — stage selectively or discard MuiBadge overrides
-2. **Commit backend loose files** — stage selectively
-3. **Restart backend + populate nav data**
-4. **Decide on smartenplus_wireframe_architecture.md** — commit or gitignore
+1. Commit backend loose files (stage selectively)
+2. Commit admin-dashboard CLAUDE.md
+3. Restart backend + populate nav data
+4. Next header generalization: destinations page (`hideNav: false` pattern)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `f7827ed` Merge branch '260524-feat/nav-label-changes' into develop |
+| `smartenplus-frontend` | `develop` | `0ccf03c` Merge branch '260527-fix/header-search-bugs' into develop |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
@@ -34,8 +36,6 @@
 _Last verified 2026-05-27_
 
 ### Uncommitted
-- **frontend:** `theme.js` (MuiBadge overrides, no effect)
-- **frontend:** `smartenplus_wireframe_architecture.md` untracked
 - **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 - **admin-dashboard:** `CLAUDE.md` modified
 
@@ -63,7 +63,7 @@ _Last verified 2026-05-27_
 | HD-4 | Edit search text size mismatch vs CurrencySelector | Low — design debt | `SearchDialogTrigger.js:46` |
 | HD-5 | Route text truncation at narrow tablets | Low — smart-wrapping resolves | `StickySearchBar.js:89` |
 | HD-6 | Logo size jump mobile→desktop (text-lg→text-2xl) | P2 — separate fix | `main-header.js:66,95` |
-| HD-7 | Passenger button wide at narrow tablets | Low — icon-only logo helps | `StickySearchBar.js:100` |
+| HD-7 | Passenger button wide at narrow tablets | Low — StickySearchBar deleted; N/A if destinations pattern used | — |
 
 ### Recently Closed (this session)
 | Issue | Fix | Date |
@@ -82,6 +82,10 @@ _Last verified 2026-05-27_
 | Frontend dead code removed | Deleted unused `navLinks` export, fixed misleading comments. `3feafaa` | 2026-05-25 |
 | Header help icon removed | Deleted `main-header.js:92-98` + `HelpOutlineOutlinedIcon` import. Footer Help link preserved. | 2026-05-25 |
 | Header scroll opacity inconsistency | CSS transition asymmetry fixed — added 200ms to `.glass-bg-scrolled`. Desktop header now always dark glass (no scroll toggle). | 2026-05-27 |
+| NavDropdown WCAG contrast bug | `text-white/70` tokens, `py-4`, `ring-white/50` — fixes WCAG AA failure on dark glass header. `a405807` | 2026-05-27 |
+| HeaderSearchContext re-render | `useMemo` on context value — stops Layout state cascading into MainHeader. `a405807` | 2026-05-27 |
+| Injection effect over-firing | Removed `effectiveDepartureDate` dep — HSS reads date from Redux directly. `a405807` | 2026-05-27 |
+| StickySearchBar dead code | Deleted 138-line component — never rendered, competing surface, duplicated logic. `a405807` | 2026-05-27 |
 
 ---
 
