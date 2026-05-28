@@ -4,15 +4,14 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-28 (session wrap-up #9)
+**Updated:** 2026-05-28 (session wrap-up #10)
 
-**Achieved this session (2026-05-28 — evening):**
-- **Popular Routes — no white card bg** — removed `ContentCard` wrapper from happy-path render in `PopularRoutesSection.js`. Cards now sit directly on page bg (`#f0f2f5`). Error state still uses `ContentCard`.
-- **Homepage section gaps** — `main` in `homepagev2.js`: `gap-2` → `gap-8` (32px between sections)
-- **Card gaps** — `CardCarouselContainer.js`: `gap-2 p-2` → `gap-3` (12px between cards, no inner padding)
-- **Popular Routes section padding** — `Section` gets `py-6 px-4 xl:px-0` — breathing room top/bottom, responsive horizontal
-- **Carousel breakpoint** — `PopularRoutesCarousel.js` confirmed at `carouselBreakpoint="lg"` (reverted from earlier md attempt)
-- **Section bg** — `ContentCard` `bg-transparent` attempts failed (hardcoded before className); solved by removing wrapper entirely
+**Achieved this session (2026-05-28 — evening/night):**
+- **Popular Routes GYG split-card** — `PopularRouteImageCard.js` redesigned: image top 180px, white content panel below with location label (gray xs), route title (bold), operator count (gray xs), price bottom-right (bold). Matches GYG reference card.
+- **Popular Routes — no white card bg** — removed `ContentCard` wrapper from happy-path render in `PopularRoutesSection.js`. Section gets `py-6 px-4 xl:px-0`.
+- **Homepage section gaps** — `main` `gap-2` → `gap-8` (32px)
+- **Card gaps** — `CardCarouselContainer.js`: `gap-3 items-start`, removed `p-2`
+- **All committed** — 7 commits on `260528-feat/header-redesign-2026`. Branch clean.
 
 **Previously achieved (session #8 — afternoon):**
 - SearchDialogTrigger redesign — `variant="input"`, fb-blue Search button, h-10, "Plan your Thailand journey"
@@ -26,49 +25,29 @@
 - Playwright audit script — `scripts/header-audit.js`
 
 **Blocked / carry-forward:**
-1. **Uncommitted** — all changes on `260528-feat/header-redesign-2026`, none committed
-2. **Merge pending** — branch not merged to main
-3. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-4. **Nav table empty** — restart backend + populate NavigationSection via admin UI
-5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking
+1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main. Branch is clean + fully committed.
+2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+4. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking
 
 **Next session resume point:**
-1. **Commit frontend** — 5 logical commits:
-   - `feat(header): sticky search on homepage + adaptive layout padding` → `homepagev2.js` + `layout.js`
-   - `fix(header): empty state → input variant with "Plan your Thailand journey"` → `HeaderSearchSummary.js` + `SearchDialogTrigger.js`
-   - `feat(header): left-align sticky search bar + constrain width` → `main-header.js`
-   - `feat(homepage): popular routes — remove white card bg, fix section/card gaps` → `PopularRoutesSection.js` + `CardCarouselContainer.js` + `homepagev2.js`
-   - `chore: header audit docs + Playwright script` → `docs/audits/` + `scripts/`
-2. Merge `260528-feat/header-redesign-2026` → main after QA
-3. Commit backend loose files (skip deleted agents — intentional)
-4. **Next design task** — Popular Routes card style still uses original gradient overlay. User wants GYG-style (full-image). Data limitation: no rating/duration/category from API. Options: (a) improve text hierarchy on existing card, (b) request backend adds fields.
+1. Merge `260528-feat/header-redesign-2026` → main
+2. Commit backend loose files (skip deleted agents — intentional)
+3. QA Popular Routes card on mobile carousel
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `96bc6f9` + uncommitted session #7–9 changes |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `44ec0ba` chore: pre-existing page modifications (7 commits ahead of main) |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
 _Last verified 2026-05-28 (session wrap-up #9)_
 
-### Uncommitted — Frontend (`260528-feat/header-redesign-2026`)
-
-| File | Change |
-|------|--------|
-| `components/layout/layout.js` | P1 adaptive padding (`PageMain`) |
-| `components/layout/main-header.js` | `justify-start` + `max-w-2xl` |
-| `components/search/HeaderSearchSummary.js` | empty state guard + `variant="input"` |
-| `components/search/SearchDialogTrigger.js` | input variant redesign h-10 fb-blue |
-| `components/UI/CardCarouselContainer.js` | `gap-3`, removed `p-2` |
-| `lib/homepage/components/PopularRoutesSection.js` | removed ContentCard wrapper, added `py-6 px-4 xl:px-0` to Section |
-| `pages/homepagev2.js` | sticky search + `gap-8` on main |
-| `docs/audits/` | new: 2 design reports + screenshots |
-| `scripts/header-audit.js` | new: Playwright audit script |
-| `HEADER_REDESIGN_2026.md`, `HOMEPAGE_REDESIGN_2026.md`, `POPULAR_ROUTES_REDESIGN_2026.md` | untracked docs |
-| Pre-existing M | `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, `pages/airport-transfer`, `pages/destinations`, `pages/locations/*`, `pages/trips/index.js` |
+### Uncommitted — Frontend
+**None. Branch fully committed and clean.**
 
 **Backend:** 8 `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 
@@ -80,7 +59,7 @@ _Last verified 2026-05-28 (session wrap-up #9)_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| PR-1 | Popular Routes card GYG-style | No rating/duration data from API — design decision needed | `components/UI/PopularRouteImageCard.js` |
+| PR-2 | Popular Routes mobile carousel QA | Check card min-w, arrow buttons, scroll on real mobile | `components/UI/PopularRouteImageCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
@@ -97,13 +76,14 @@ _Last verified 2026-05-28 (session wrap-up #9)_
 | GAP-6 | threshold=0 abrupt snap | P3 — `useStickyVisibility(50)` one-liner | `hooks/useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden at md–xl when search active | P3 | `main-header.js:95` |
 
-### Recently Closed (session #9)
+### Recently Closed (sessions #9–10)
 
 | Issue | Fix | Date |
 |-------|-----|------|
-| Popular Routes white card bg | Removed ContentCard wrapper from PopularRoutesSection happy path | 2026-05-28 |
-| Section gap 8px | `main gap-2` → `gap-8` in homepagev2.js | 2026-05-28 |
-| Card gap 0px | `CardCarouselContainer gap-2 p-2` → `gap-3` | 2026-05-28 |
+| Popular Routes card GYG-style | Split-card: image 180px top, white panel below, location label + title + operators + price | 2026-05-28 |
+| Popular Routes white section bg | Removed ContentCard wrapper from PopularRoutesSection happy path | 2026-05-28 |
+| Section gap 8px | `main gap-2` → `gap-8` | 2026-05-28 |
+| Card gap 0px | `CardCarouselContainer gap-2 p-2` → `gap-3 items-start` | 2026-05-28 |
 | No section padding | `Section` gets `py-6 px-4 xl:px-0` | 2026-05-28 |
 
 ### Recently Closed (sessions #7–8)
