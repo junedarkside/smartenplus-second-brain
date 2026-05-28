@@ -4,47 +4,58 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-28 (session wrap-up #6)
+**Updated:** 2026-05-28 (session wrap-up #7)
 
 **Achieved this session (2026-05-28):**
-- **Homepage redesign 2026 IMPLEMENTED** — commit `96bc6f9` on `260528-feat/header-redesign-2026`
-  - PR1: color tokens `fb-blue` + `brand.*` → `#1E40AF` (AAA), `warm-surface: #FAFAF8` added, Inter font + preconnect in `_document.js`, MUI `primary.main` aligned
-  - PR2: rotating hero banner removed (`FeaturedImageHeader` + heroBanners state + setInterval), `DiscoverySection` created — h1 "Travel Thailand your way", subheadline, search card (`rounded-xl shadow-md`)
-  - PR3: `PopularRouteImageCard` — border added, underline removed, focus-visible ring, arrow a11y; slice 4→6
-  - `ProductSearchForm2` swap button aria-label fixed
-  - TrustRow and RouteChips removed per user decision
+- **Header search bar audit** — Playwright live metrics, 10 screenshots, 7 gaps found + documented (`docs/audits/header-searchbar-ux-audit.md`)
+- **P0 fix** — Homepage sticky search: `pages/homepagev2.js` injects `HeaderSearchSummary` into header when `DiscoverySection` scrolls out. Same pattern as trip page. Reused `useStickyVisibility` + `useHeaderSearch` + `HeaderSearchSummary` — zero new components.
+- **P1 fix** — Layout height gap: `components/layout/layout.js` — new `PageMain` component reads `searchBarContent` from context, toggles `md:pt-[48px]` vs `md:pt-[96px]` with `transition-[padding-top] duration-150`. No white gap when header collapses.
+- **Empty state fix** — `components/search/HeaderSearchSummary.js` — guard `if (!from || !to)` renders `SearchDialogTrigger` "Search trips" CTA. Prevents broken ` → ` output for fresh users. Design report at `docs/audits/header-searchbar-empty-state-design.md`.
+- **Playwright audit script** — `scripts/header-audit.js` — reusable, captures metrics + screenshots across homepage + trip page, desktop (1280px) + mobile (390px), 3 scroll states.
 
 **Blocked / carry-forward:**
-1. **QA pending** — dev server not run this session. Must verify homepage visually before merge.
-2. **Merge pending** — `260528-feat/header-redesign-2026` not yet merged to main
-3. **Frontend other uncommitted** — `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, `pages/airport-transfer`, `pages/destinations`, `pages/locations/*`, `pages/trips/index.js`, `HEADER_REDESIGN_2026.md`, `HOMEPAGE_REDESIGN_2026.md` (untracked)
-4. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-5. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
-6. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+1. **Uncommitted** — all session changes on `260528-feat/header-redesign-2026`, none committed yet
+2. **Merge pending** — branch not merged to main
+3. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+4. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
+5. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+6. **Deferred gaps** — GAP-3 (mobile position flip), GAP-5 (nav hidden), GAP-6 (threshold), GAP-7 (wordmark) — P2/P3, not blocking
 
 **Next session resume point:**
-1. `npm run dev` → open `localhost:3000` — verify homepage: no gap under header, search card visible, 6 route cards, correct blue (#1E40AF) on buttons
-2. QA regression: `/blog`, `/destinations`, `/airport-transfer` — `FeaturedImageHeader` still renders hero
-3. Merge `260528-feat/header-redesign-2026` → main after QA passes
-4. Commit backend loose files (skip deleted agents)
-5. Commit admin-dashboard CLAUDE.md
+1. Commit frontend in 3 logical commits:
+   - `feat(header): sticky search on homepage + adaptive layout padding` → `homepagev2.js` + `layout.js`
+   - `fix(header): empty state CTA in HeaderSearchSummary` → `HeaderSearchSummary.js`
+   - `chore: header audit docs + Playwright script` → `docs/audits/` + `scripts/`
+2. Run `node scripts/header-audit.js` (check active port first — was 3002 last session)
+3. Merge `260528-feat/header-redesign-2026` → main after QA
+4. Commit backend loose files (skip deleted agents — intentional)
+5. Commit admin-dashboard `CLAUDE.md`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `96bc6f9` feat(homepage): redesign 2026 — new color tokens, Inter font, discovery section |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `96bc6f9` feat(homepage): redesign 2026 (+ uncommitted changes this session) |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-28 (session wrap-up #6)_
+_Last verified 2026-05-28 (session wrap-up #7)_
 
 ### Uncommitted
-- **frontend:** `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, `pages/airport-transfer`, `pages/destinations`, `pages/locations/*`, `pages/trips/index.js` (all M), `HEADER_REDESIGN_2026.md`, `HOMEPAGE_REDESIGN_2026.md` (untracked)
-- **backend:** `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-- **admin-dashboard:** `CLAUDE.md` modified
-- **vault:** updated this session
+
+**frontend (`260528-feat/header-redesign-2026`):**
+- `components/layout/layout.js` — P1 adaptive padding (`PageMain`)
+- `components/search/HeaderSearchSummary.js` — empty state CTA guard
+- `pages/homepagev2.js` — P0 sticky search injection
+- `docs/audits/` — new: 2 design reports + 10 screenshots
+- `scripts/header-audit.js` — new: Playwright audit script
+- `HEADER_REDESIGN_2026.md`, `HOMEPAGE_REDESIGN_2026.md` — untracked docs
+- Pre-existing M: `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, `pages/airport-transfer`, `pages/destinations`, `pages/locations/*`, `pages/trips/index.js`
+
+**backend:** 8 `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+
+**admin-dashboard:** `CLAUDE.md` modified
 
 ---
 
@@ -54,45 +65,32 @@ _Last verified 2026-05-28 (session wrap-up #6)_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| 14 | 429 Too Many Requests on `/front-page/` | DONE — `c73f6de` merged + pushed to main | `pages_info/views.py` — parameterized 300s cache |
-| 14b | `refetchOnMountOrArgChange: 300` in useTripData | DEFERRED — orthogonal to 429, targets /api/v1/trips/ | `hooks/useTripData.js:16,24` — open as #15 |
-| 14c | `props` object in RefreshTokenHandler deps | DONE — `a797a59` merged + pushed to main | `components/auth/refreshTokenHandler.js:25` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed — increases anon request volume | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
 | 3 | Remove Stripe 410 stub `/payments/stripe-webhook/` | Waiting on zero prod traffic | `payments/urls.py` |
 | 8 | Forex endpoint on admin-dashboard-charge URL | Naming debt — public endpoint on admin path | `cards/urls.py` |
-| Nav | NavigationSection table empty | Restart backend + populate via admin `/securelogin/pages_info/navigationsection/add/` — plain links only, no Experiences/Explore children | `pages_info` |
-| Explore Thailand submenu | Needs `location_type` CharField+choices on `Location` model before rebuilding | `stations/models.py` |
-| HD-1 | CurrencySelector button too small (text-xs, max-w-40px) at tablet | Low — confirmed icon-only logo helps, sizing is design debt | `CurrencySelector.js:55` |
-| HD-2 | CartButton/ProfileButton dim (70% opacity) | Low — acceptable design choice | `CartButton.js:116`, `ProfileButton.js:367` |
-| HD-3 | xl padding gap (px-0 vs px-3) | Low — edge case | `main-header.js:90` |
-| HD-4 | Edit search text size mismatch vs CurrencySelector | Low — design debt | `SearchDialogTrigger.js:46` |
-| HD-5 | Route text truncation at narrow tablets | Low — smart-wrapping resolves | `StickySearchBar.js:89` |
-| HD-6 | Logo size jump mobile→desktop (text-lg→text-2xl) | P2 — separate fix | `main-header.js:66,95` |
-| HD-7 | Passenger button wide at narrow tablets | Low — StickySearchBar deleted; N/A if destinations pattern used | — |
+| Nav | NavigationSection table empty | Restart backend + populate via admin `/securelogin/pages_info/navigationsection/add/` | `pages_info` |
+| Explore Thailand submenu | Needs `location_type` CharField+choices on `Location` model | `stations/models.py` |
+| HD-1 | CurrencySelector button too small at tablet | Low | `CurrencySelector.js:55` |
+| HD-2 | CartButton/ProfileButton dim (70% opacity) | Low — acceptable | `CartButton.js:116`, `ProfileButton.js:367` |
+| HD-3 | xl padding gap (px-0 vs px-3) | Low | `main-header.js:90` |
+| HD-6 | Logo size jump mobile→desktop | P2 | `main-header.js:66,95` |
+| GAP-3 | Mobile position flip relative→fixed (scroll jump risk) | P2 — needs real-browser scroll test | `main-header.js:45–77` |
+| GAP-5 | Nav fully hidden while searching on trip page | P2 — accepted tradeoff, design debt | `main-header.js:112` |
+| GAP-6 | threshold=0 abrupt snap | P3 — `useStickyVisibility(50)` one-liner | `hooks/useStickyVisibility.js:12` |
+| GAP-7 | Wordmark hidden at md–xl when search active | P3 — confirm xl breakpoint value | `main-header.js:95` |
 
 ### Recently Closed (this session)
+
 | Issue | Fix | Date |
 |-------|-----|------|
-| Nav Phase 0 — label renames | 5 labels updated in `main-header.js` + `layout.js`, committed + pushed | 2026-05-24 |
-| Nav Phase 1 — Experiences dropdown | NavDropdown.js + navConfig.js created, committed + pushed | 2026-05-24 |
-| Nav Phase 2 — Explore Thailand dropdown + URL param | `destinations/index.js` reads router.query.filter, navConfig children updated, committed + pushed | 2026-05-24 |
-| Nav Phase 3 backend — NavigationSection model | Models + serializer + viewset + admin + migration applied, committed + pushed | 2026-05-25 |
-| Nav Phase 3 frontend — RTK Query | navigationApi.js created + main-header.js updated with fallback, committed + pushed | 2026-05-25 |
-| Bug fix — api-slice wrong import path | Corrected to `api-slice`, committed + pushed | 2026-05-25 |
-| Bug fix — /api/v1 prefix missing in navApi query | Added `/api/v1/` prefix, committed + pushed | 2026-05-25 |
-| Bug fix — React key in PopularRoutesCarousel | Moved key to React.Fragment wrapper, committed + pushed | 2026-05-25 |
-| Bug fix — React key in CardCarouselContainer | Added key to Fragment wrapper, committed + pushed | 2026-05-25 |
-| Bug fix — Missing ListModelMixin import | Added to pages_info/views.py, migration created + applied | 2026-05-25 |
-| Nav 404 fixed | Explicit `path('api/v1/pages-info/navigation/')` in `apis/urls.py` before slug catch-all. `6f5286e` | 2026-05-25 |
-| Frontend dead code removed | Deleted unused `navLinks` export, fixed misleading comments. `3feafaa` | 2026-05-25 |
-| Header help icon removed | Deleted `main-header.js:92-98` + `HelpOutlineOutlinedIcon` import. Footer Help link preserved. | 2026-05-25 |
-| Header scroll opacity inconsistency | CSS transition asymmetry fixed — added 200ms to `.glass-bg-scrolled`. Desktop header now always dark glass (no scroll toggle). | 2026-05-27 |
-| NavDropdown WCAG contrast bug | `text-white/70` tokens, `py-4`, `ring-white/50` — fixes WCAG AA failure on dark glass header. `a405807` | 2026-05-27 |
-| HeaderSearchContext re-render | `useMemo` on context value — stops Layout state cascading into MainHeader. `a405807` | 2026-05-27 |
-| Injection effect over-firing | Removed `effectiveDepartureDate` dep — HSS reads date from Redux directly. `a405807` | 2026-05-27 |
-| StickySearchBar dead code | Deleted 138-line component — never rendered, competing surface, duplicated logic. `a405807` | 2026-05-27 |
+| GAP-1 — Homepage search lost on scroll | P0: `useStickyVisibility` + `setSearchBarContent` in `homepagev2.js` | 2026-05-28 |
+| GAP-2 — Header height gap (54px) on search activate | P1: `PageMain` in `layout.js`, adaptive `md:pt` + transition | 2026-05-28 |
+| Empty state broken ` → ` in `HeaderSearchSummary` | Guard `if (!from \|\| !to)` → "Search trips" CTA | 2026-05-28 |
+| Homepage redesign 2026 | `96bc6f9` — color tokens, Inter, DiscoverySection | 2026-05-28 |
+| StickySearchBar dead code | Deleted 138-line component | 2026-05-27 |
+| Header glassmorphism → solid white | `a4158b0` | 2026-05-28 |
 
 ---
 
@@ -112,7 +110,7 @@ _Last verified 2026-05-28 (session wrap-up #6)_
 
 **CMS:** `GET /hero-banners/` | `POST/PATCH/DELETE /hero-banners/{id}/`
 
-**Navigation (NEW):** `GET /api/v1/pages-info/navigation/` — returns nav structure from NavigationSection/NavigationItem models
+**Navigation:** `GET /api/v1/pages-info/navigation/` — returns nav structure from NavigationSection/NavigationItem models
 
 **Forex:** `GET /admin-dashboard-charge/forex/` | `GET /admin-dashboard-charge/forex/fetch-rates/`
 
@@ -133,7 +131,7 @@ _Last verified 2026-05-28 (session wrap-up #6)_
 | Checkout SSR | Disabled: `dynamic(() => Promise.resolve(Index), { ssr: false })` |
 | ISR revalidate | `revalidate: 300` on trip detail pages |
 | `display_order` | Empty string → DRF rejects. Must be integer |
-| Navigation API | Returns empty list `[]` if no NavigationSection records in DB. Returns 404 only if server hasn't restarted with new code. |
+| Navigation API | Returns `[]` if no NavigationSection records. Returns 404 only if server not restarted with new code. |
 
 ---
 
@@ -159,8 +157,15 @@ _Last verified 2026-05-28 (session wrap-up #6)_
 - Memory: web 512MB | celery-worker 384MB | redis 64MB = ~960MB
 - `WebhookEvent.get_or_create` outside `atomic()`
 
-### Nav (NEW — 2026-05-25)
+### Header Search (NEW — 2026-05-28)
+- `HeaderSearchContext` — single source of truth for header search content
+- Only `FilterTripsPage.js` and `homepagev2.js` call `setSearchBarContent()`
+- `HeaderSearchSummary` — guards `!from || !to` → renders CTA, never broken ` → `
+- `PageMain` in `layout.js` — reads context, adaptive padding prevents layout gap
+- `useStickyVisibility` — IntersectionObserver, threshold=0 default, reused across both pages
+
+### Nav
 - `NavigationSection` + `NavigationItem` — two-level hierarchy (section → items)
 - API cached 1hr server-side via Django cache
-- Frontend fallback: static `constants/navConfig.js` used when API unavailable
+- Frontend fallback: static `constants/navConfig.js` when API unavailable
 - Migration 0010 applied locally — production needs `migrate`
