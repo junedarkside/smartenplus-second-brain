@@ -346,3 +346,5 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-05-27] session-end | Header search pattern review + 4 bug fixes. 3-agent team (UX/Design/Engineer) audited header. Fixed: NavDropdown WCAG contrast, HeaderSearchContext useMemo, injection effect over-firing, deleted dead StickySearchBar.js. Merged + pushed to develop (0ccf03c). Wireframe doc moved to vault.
 
 ## [2026-05-28] session-end | Header search input redesign — variant=input, white bg, fb-blue button, h-10, Plan your Thailand journey placeholder. Team debate h-9/h-11 → h-10 compromise. Search bar left-aligned in header. Header height research documented (no changes). master-state updated.
+
+## [2026-05-28] session-end | Popular Routes no-white-bg + section/card gap fixes
