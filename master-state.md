@@ -4,41 +4,43 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-28 (session wrap-up #4)
+**Updated:** 2026-05-28 (session wrap-up #5)
 
 **Achieved this session (2026-05-28):**
-- **Header redesign architecture locked** — 3-specialist audit (UX Architecture + Visual Design + Frontend Eng) reviewed full brief. Caught critical flaw in v1 spec ("single-row everywhere" wrong). Finalized Type A/B adaptive split.
-- **Key decisions locked:** /blog → Type B (2-row), keep all 5 nav items (Explore Thailand stays), dynamic layout offset 80px/96px, HeaderRowsContext pattern for StickySearchBar, 12-file scope.
-- **Vault updated:** `header-redesign-2026-spec.md` fully rewritten to FINAL. `header-redesign-2026-team-review.md` updated with locked decisions. `index.md` + `log.md` updated.
-- **Implementation plan at:** `.claude/plans/check-vault-and-01-projects-header-redes-flickering-gray.md`
+- **Header redesign Days 1–3 IMPLEMENTED** — branch `260528-feat/header-redesign-2026`, commit `a4158b0`
+- 10 files changed: CartButton, ProfileButton, SearchDialogTrigger, NavDropdown, globals.css, main-header, HeaderSearchSummary, layout.js (HeaderRowsContext), StickySearchBar
+- Glassmorphism fully removed. Solid white header live on branch.
+- `/blog` removed from ONE_ROW_PATHS → now Type B (2-row, 96px)
+- `HeaderRowsContext` exported from layout.js, consumed by StickySearchBar
+- **Handoff doc created:** `01-projects/header-redesign-2026-implementation.md`
+- **CLAUDE.md compressed** (caveman compress — no token savings, already lean)
 
 **Blocked / carry-forward:**
-1. **Header redesign NOT yet implemented** — spec + plan FINAL, implement next session
-2. **Frontend uncommitted changes** — `HeaderSearchContext.js` (staged), `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, several page files M, `HEADER_REDESIGN_2026.md` untracked
+1. **Day 4 QA pending** — regression matrix not yet run. Branch not merged to main.
+2. **Frontend other uncommitted** — `HeaderSearchContext.js` (staged), `BlogPageWrapper.js`, `BlogPostDisplay.js`, `SearchCover.js`, several page files M, `HEADER_REDESIGN_2026.md` untracked (on main, not on feature branch)
 3. **Backend uncommitted** — `.claude/agents/` 8 files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
 4. **admin-dashboard** — `CLAUDE.md` modified, uncommitted
 5. **Content repo GitHub remote** — create manually at github.com
 6. **Nav table empty** — restart backend + populate NavigationSection via admin UI
 
 **Next session resume point:**
-1. **Implement header redesign** — branch `260528-feat/header-redesign-2026`
-   - Plan: `.claude/plans/check-vault-and-01-projects-header-redes-flickering-gray.md`
-   - Spec: `01-projects/header-redesign-2026-spec.md` (FINAL)
-   - Day 1: CartButton.js, ProfileButton.js, SearchDialogTrigger.js, NavDropdown.js
-   - Day 2: globals.css, main-header.js, HeaderSearchSummary.js
-   - Day 3: layout.js (ONE_ROW_PATHS + HeaderRowsContext), StickySearchBar.js
-   - Day 4: QA regression matrix
-2. Commit backend loose files (stage selectively — skip deleted agents)
-3. Commit admin-dashboard CLAUDE.md
+1. **Day 4 QA** — run regression matrix from `header-redesign-2026-implementation.md`
+   - Pages: `/`, `/blog`, `/destinations`, `/trips/[from]/[to]`, `/checkout`, `/login`
+   - Breakpoints: 1440, 768, 375
+   - Final grep: `grep -rn "text-white" components/layout/ components/search/ components/cart/ components/auth/`
+2. **Merge** `260528-feat/header-redesign-2026` → main after QA passes
+3. Commit backend loose files (stage selectively — skip deleted agents)
+4. Commit admin-dashboard CLAUDE.md
+5. Separate PRs: homepage hero height + custom font loading
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `main` | `c6d7248` Revert "Merge branch '260527-fix/header-search-bugs' into develop" |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `a4158b0` feat(header): replace glassmorphism with solid white adaptive header |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
-| `smartenplus-content` | `master` | (no new commits) |
+| `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
 _Last verified 2026-05-28_
 

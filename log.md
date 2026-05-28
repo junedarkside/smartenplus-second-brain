@@ -2,6 +2,9 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-28] session-end | header redesign Days 1–3 complete. Branch 260528-feat/header-redesign-2026 a4158b0. Day 4 QA + merge next session. Context 48% at wrap-up.
+## [2026-05-28] session-end | header redesign Days 1–3 implemented — branch 260528-feat/header-redesign-2026 commit a4158b0. Glassmorphism removed. Solid white header. 10 files. HeaderRowsContext live. Day 4 QA + merge pending.
+## [2026-05-28] create | header-redesign-2026-implementation — handoff doc with full change log, architecture notes, QA checklist, remaining work
 ## [2026-05-28] update | header-redesign-2026 FINAL — Type A/B adaptive split locked. /blog → Type B. Keep all 5 nav items (Explore Thailand stays). Dynamic layout offset 80/96px. HeaderRowsContext for StickySearchBar. 12 files, 4-day impl + 2 separate PRs. Spec + team-review both updated.
 ## [2026-05-28] review | header-redesign-2026-team-review — 3-specialist audit (Design+UX+Frontend). 10 files not 5. 4 missing components (SearchDialogTrigger, CartButton, ProfileButton, NavDropdown). 2 open decisions (rows prop, mobile scroll hide). Full color map + regression matrix written.
 ## [2026-05-28] session-end | 2026 header redesign spec — revert merge c6d7248 (header-search-bugs), full solid-white header design brief written (HEADER_REDESIGN_2026.md + vault doc header-redesign-2026-spec.md). 5-file impl plan ready. Not yet implemented.
