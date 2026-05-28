@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-28] session-end | homepage redesign 2026 implemented — commit 96bc6f9. Color tokens #1E40AF, Inter font, hero removed, DiscoverySection live, PopularRoutes polished. TrustRow + RouteChips removed per user. QA + merge next session.
 ## [2026-05-28] session-end | header redesign Days 1–3 complete. Branch 260528-feat/header-redesign-2026 a4158b0. Day 4 QA + merge next session. Context 48% at wrap-up.
 ## [2026-05-28] session-end | header redesign Days 1–3 implemented — branch 260528-feat/header-redesign-2026 commit a4158b0. Glassmorphism removed. Solid white header. 10 files. HeaderRowsContext live. Day 4 QA + merge pending.
 ## [2026-05-28] create | header-redesign-2026-implementation — handoff doc with full change log, architecture notes, QA checklist, remaining work
