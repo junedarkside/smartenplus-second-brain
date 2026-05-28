@@ -4,14 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-28 (session wrap-up #7)
+**Updated:** 2026-05-28 (session wrap-up #8)
 
-**Achieved this session (2026-05-28):**
-- **Header search bar audit** — Playwright live metrics, 10 screenshots, 7 gaps found + documented (`docs/audits/header-searchbar-ux-audit.md`)
-- **P0 fix** — Homepage sticky search: `pages/homepagev2.js` injects `HeaderSearchSummary` into header when `DiscoverySection` scrolls out. Same pattern as trip page. Reused `useStickyVisibility` + `useHeaderSearch` + `HeaderSearchSummary` — zero new components.
-- **P1 fix** — Layout height gap: `components/layout/layout.js` — new `PageMain` component reads `searchBarContent` from context, toggles `md:pt-[48px]` vs `md:pt-[96px]` with `transition-[padding-top] duration-150`. No white gap when header collapses.
-- **Empty state fix** — `components/search/HeaderSearchSummary.js` — guard `if (!from || !to)` renders `SearchDialogTrigger` "Search trips" CTA. Prevents broken ` → ` output for fresh users. Design report at `docs/audits/header-searchbar-empty-state-design.md`.
-- **Playwright audit script** — `scripts/header-audit.js` — reusable, captures metrics + screenshots across homepage + trip page, desktop (1280px) + mobile (390px), 3 scroll states.
+**Achieved this session (2026-05-28 — afternoon):**
+- **SearchDialogTrigger redesign** — empty state now uses `variant="input"` with full search-bar UI: white bg, left search icon, transparent input field, `bg-fb-blue` "Search" button on right, placeholder "Plan your Thailand journey". Matches user reference screenshot. Applied via 3-file change.
+- **Left-align search bar** — `main-header.js`: `justify-center` → `justify-start` + `max-w-2xl` on wrapper. Search bar sits left of center, adjacent to logo.
+- **Header height debate** — team of 2 debaters + synthesizer convened. h-9 (36px) rejected (WCAG), h-11 rejected (contradicts user preference). h-10 (40px) applied — 4px grid, compact, closest to reference.
+- **Header height research** — benchmarked Booking.com, Expedia, Klook, 12Go, Google, Airbnb. Current Row1=48px, Row2=40px are acceptable. `pt-[96px]` discrepancy is intentional safety margin. Informational only — no changes applied.
+- **Scrutinize audit** — confirmed: button width (w-8 = 32px) is below WCAG regardless of height. Report recommendations (h-11) would contradict user reference. h-10 is the right call.
+
+**Previously achieved (session #7 — morning):**
+- **Header search bar audit** — Playwright live metrics, 10 screenshots, 7 gaps found + documented
+- **P0 fix** — Homepage sticky search: `pages/homepagev2.js` injects `HeaderSearchSummary` when `DiscoverySection` scrolls out
+- **P1 fix** — Layout height gap: `layout.js` new `PageMain` component, adaptive `md:pt` padding
+- **Empty state fix** — `HeaderSearchSummary.js` guard `if (!from || !to)` → CTA instead of broken ` → `
+- **Playwright audit script** — `scripts/header-audit.js`
 
 **Blocked / carry-forward:**
 1. **Uncommitted** — all session changes on `260528-feat/header-redesign-2026`, none committed yet
@@ -22,11 +29,12 @@
 6. **Deferred gaps** — GAP-3 (mobile position flip), GAP-5 (nav hidden), GAP-6 (threshold), GAP-7 (wordmark) — P2/P3, not blocking
 
 **Next session resume point:**
-1. Commit frontend in 3 logical commits:
+1. **Commit frontend** — 4 logical commits:
    - `feat(header): sticky search on homepage + adaptive layout padding` → `homepagev2.js` + `layout.js`
-   - `fix(header): empty state CTA in HeaderSearchSummary` → `HeaderSearchSummary.js`
+   - `fix(header): empty state → input variant with "Plan your Thailand journey"` → `HeaderSearchSummary.js` + `SearchDialogTrigger.js`
+   - `feat(header): left-align sticky search bar + constrain width` → `main-header.js`
    - `chore: header audit docs + Playwright script` → `docs/audits/` + `scripts/`
-2. Run `node scripts/header-audit.js` (check active port first — was 3002 last session)
+2. Run `node scripts/header-audit.js` — check active port first (was 3002)
 3. Merge `260528-feat/header-redesign-2026` → main after QA
 4. Commit backend loose files (skip deleted agents — intentional)
 5. Commit admin-dashboard `CLAUDE.md`
@@ -40,13 +48,15 @@
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-28 (session wrap-up #7)_
+_Last verified 2026-05-28 (session wrap-up #8)_
 
 ### Uncommitted
 
 **frontend (`260528-feat/header-redesign-2026`):**
 - `components/layout/layout.js` — P1 adaptive padding (`PageMain`)
-- `components/search/HeaderSearchSummary.js` — empty state CTA guard
+- `components/search/HeaderSearchSummary.js` — empty state CTA guard + `variant="input"` + "Plan your Thailand journey"
+- `components/search/SearchDialogTrigger.js` — input variant redesign: white bg, fb-blue "Search" button, h-10, left-aligned
+- `components/layout/main-header.js` — `justify-start` + `max-w-2xl` on search wrapper
 - `pages/homepagev2.js` — P0 sticky search injection
 - `docs/audits/` — new: 2 design reports + 10 screenshots
 - `scripts/header-audit.js` — new: Playwright audit script
@@ -81,7 +91,18 @@ _Last verified 2026-05-28 (session wrap-up #7)_
 | GAP-6 | threshold=0 abrupt snap | P3 — `useStickyVisibility(50)` one-liner | `hooks/useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden at md–xl when search active | P3 — confirm xl breakpoint value | `main-header.js:95` |
 
-### Recently Closed (this session)
+### Recently Closed (sessions #7–8)
+
+| Issue | Fix | Date |
+|-------|-----|------|
+| GAP-1 — Homepage search lost on scroll | P0: `useStickyVisibility` + `setSearchBarContent` in `homepagev2.js` | 2026-05-28 |
+| GAP-2 — Header height gap (54px) on search activate | P1: `PageMain` in `layout.js`, adaptive `md:pt` + transition | 2026-05-28 |
+| Empty state broken ` → ` in `HeaderSearchSummary` | Guard `if (!from || !to)` → CTA | 2026-05-28 |
+| Empty state button→input redesign | `variant="input"`, white bg, fb-blue button, "Plan your Thailand journey", h-10 | 2026-05-28 |
+| Search bar centered→left-aligned | `main-header.js`: `justify-start` + `max-w-2xl` | 2026-05-28 |
+| Homepage redesign 2026 | `96bc6f9` — color tokens, Inter, DiscoverySection | 2026-05-28 |
+| StickySearchBar dead code | Deleted 138-line component | 2026-05-27 |
+| Header glassmorphism → solid white | `a4158b0` | 2026-05-28 |
 
 | Issue | Fix | Date |
 |-------|-----|------|
@@ -157,12 +178,14 @@ _Last verified 2026-05-28 (session wrap-up #7)_
 - Memory: web 512MB | celery-worker 384MB | redis 64MB = ~960MB
 - `WebhookEvent.get_or_create` outside `atomic()`
 
-### Header Search (NEW — 2026-05-28)
+### Header Search (2026-05-28)
 - `HeaderSearchContext` — single source of truth for header search content
 - Only `FilterTripsPage.js` and `homepagev2.js` call `setSearchBarContent()`
-- `HeaderSearchSummary` — guards `!from || !to` → renders CTA, never broken ` → `
+- `HeaderSearchSummary` — guards `!from || !to` → renders `SearchDialogTrigger` CTA, never broken ` → `
+- `SearchDialogTrigger` `variant="input"` — empty state: white bg, search icon left, "Plan your Thailand journey", `bg-fb-blue` "Search" button right, `h-10` (40px)
 - `PageMain` in `layout.js` — reads context, adaptive padding prevents layout gap
 - `useStickyVisibility` — IntersectionObserver, threshold=0 default, reused across both pages
+- Search bar left-aligned: `main-header.js` uses `justify-start` + `max-w-2xl` wrapper
 
 ### Nav
 - `NavigationSection` + `NavigationItem` — two-level hierarchy (section → items)
