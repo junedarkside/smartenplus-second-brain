@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-29] session-end | added Ask Away + Explore More to ProfileMenu (auth+guest), removed CustomerServiceSection from homepage. 7650f3c pushed.
+
 ## [2026-05-29] session-end | ProfileButton redesign complete (dac7e66) + next/image hostname fixes (help/blog). Pill trigger single-line, guest path fixed, MUI-preserve, bottom sheet mobile.
 
 ## [2026-05-29] decision | profile-dropdown-redesign — 3-specialist team (UX+UI+Frontend). 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split, MUI-preserve. Vault doc created.

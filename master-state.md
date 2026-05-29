@@ -4,9 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-29 (session wrap-up #4)
+**Updated:** 2026-05-29 (session wrap-up #5)
 
-**Achieved this session (2026-05-29 #4):**
+**Achieved this session (2026-05-29 #5):**
+- **ProfileMenu forum links** — added "Ask Away" + "Explore More" rows (both → `/forum`) to auth + guest sections. `7650f3c` pushed.
+- **CustomerServiceSection removed from homepage** — `homepagev2.js` block removed. Component file kept. Same commit.
+
+**Achieved previous session (2026-05-29 #4):**
 - **ProfileButton full redesign** — 3-specialist team review (UX + UI/Visual + Frontend). 376L monolith → 3 files: `ProfileButton.js` (~120L), `ProfileMenu.js` (~120L), `ProfileBottomSheet.js` (~39L). Committed `dac7e66`.
   - Menu: 11 items → 6 auth / 4 guest. Traveler mental model: My Trips / Account / Support+Exit.
   - Guest path now includes "Find My Booking" → `/bookings?guest=true` (was dead-end).
@@ -36,12 +40,12 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `dac7e66` feat(auth): redesign ProfileButton — minimal travel dropdown + pill trigger |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `7650f3c` feat(profile): add Ask Away + Explore More to profile menu, remove homepage CustomerServiceSection |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-29 (session wrap-up #4)_
+_Last verified 2026-05-29 (session wrap-up #5)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
