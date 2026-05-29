@@ -10,6 +10,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[check-your-booking-redesign-2026-05-29]] — **DECIDED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
+
 - [[travel-thailand-better-section-redesign]] — **COMPLETED 2026-05-29.** `ce4d2d7` on `260528-feat/header-redesign-2026`. Replace 3 editorial sections with 1 unified "Travel Thailand Better" section. 1 featured + 2 secondary cards. AutoStoriesOutlined icon. Tailwind lib/ scan bug fixed.
 - [[header-redesign-2026-spec]] — **FINAL 2026-05-28.** Adaptive Type A/B header. Type A: single-row 80px (transactional). Type B: 2-row 96px (discovery/browse). All 5 nav items kept. /blog → Type B. Dynamic layout offset. 12-file implementation plan. 4-day rollout + 2 separate PRs.
 - [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. Day 4 QA pending. Handoff doc with full change log + QA checklist + remaining work.

@@ -2,6 +2,12 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-29] session-end | homepage visual consistency audit + Check Your Booking UX redesign (trust badges, header position, copy)
+
+## [2026-05-29] decision | check-your-booking v2 — reference image 2-column layout adopted. Judge: fb-blue not indigo, Order ID text link not tab, "Check" not "Manage", gap-4 not gap-6. v1 centered card rejected by user.
+
+## [2026-05-29] decision | check-your-booking v1 — OTA utility card adopted (superseded by v2). 3-agent debate (FOR/AGAINST/JUDGE). Illustration removed, 840px card, warm-surface bg, inputs upgraded, eyebrow removed per judge, trust row copy fixed.
+
 ## [2026-05-29] session-end | homepage visual refinement: Popular Routes cards stronger, guides section renamed, reviews CTA removed, destinations grid fix reverted to 5 cards, sitewide width deferred
 
 ## [2026-05-29] create | travel-thailand-better-section-redesign — 3 editorial sections → 1 unified section. 1 featured + 2 secondary card layout. Spec ready, implementation pending.

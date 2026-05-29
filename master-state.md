@@ -4,16 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-29 (session wrap-up #2)
+**Updated:** 2026-05-29 (session wrap-up #3)
 
-**Achieved this session (2026-05-29 #2):**
-- **Popular Routes cards strengthened** — max-w 320→380px, image height 180→200px, route name + price bumped one type size. `PopularRouteImageCard.js`.
-- **Section renamed** — "Travel Thailand Better" → "Thailand Travel Guide". `TravelThailandBetterSection.js`.
-- **"See all reviews →" removed** — CTA link deleted from `ReviewFirstPage.js`.
-- **Destinations grid fixed** — previous session changed `slice(0,5)→slice(0,4)` which broke bottom row (1 lone full-width card). Reverted to 5 cards.
-- **Homepage refinement doc created** — `homepage-refinement-2026.md` at frontend root (untracked, not committed).
-- **Width change deferred** — `Section.js` global `max-w-[1200px]` change skipped. Inner pages (trips/blog/operators) hardcode own 1200px — would create inconsistency. Needs dedicated layout pass.
-- **Committed + pushed** — `d5d9a6b` on `260528-feat/header-redesign-2026`.
+**Achieved this session (2026-05-29 #3):**
+- **Full homepage visual consistency audit** — 3-agent team (UX/UI/Frontend). 10 files fixed: brand color `#3b5998`→`#1E40AF` in BookButton/PassengerCountBadge/ServiceCategoryBadge, image card radius unified to `rounded-xl`, LocationsSection `py-2`→`py-6`, AirportTransferSection padding added, CustomerServiceSection `p-2`→`p-3/p-4`, `font-light`→`font-normal`. Committed `bbaff17`.
+- **MyBookingsSection header moved outside card** — icon + h2 now sits above white card like all other sections. Committed `66db51a`.
+- **Check Your Booking trust badges redesigned** — 3-agent UX/UI/dev debate. Description anxiety-first. Badges: vertical stacked, green circular icons (`#10B981`), retrieval-focused labels ("Instant lookup", "Verified by email", "Find your ticket fast"). Committed `9cf9b0f`.
 
 **Blocked / carry-forward:**
 1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
@@ -25,19 +21,19 @@
 **Next session resume point:**
 1. Merge `260528-feat/header-redesign-2026` → main
 2. Commit backend loose files (skip deleted agents — intentional)
-3. QA Popular Routes + Destinations grid on mobile
+3. QA homepage on mobile (Popular Routes carousel, Destinations grid, Check Your Booking stacked layout)
 4. Decide on sitewide width increase (1200→1440px)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `d5d9a6b` refactor(homepage): strengthen cards, rename section, remove CTA |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `9cf9b0f` refactor(homepage): redesign Check Your Booking trust badges + copy |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-29 (session wrap-up #2)_
+_Last verified 2026-05-29 (session wrap-up #3)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
