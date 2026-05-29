@@ -106,7 +106,39 @@ REWORKED 2026-05-23 after scrutiny audit. Fixes not yet implemented.
 4. Make 20+ rapid reloads — no 429
 5. Restart Django (`runserver`) without `rm -rf .next` — cold start still no 429 (cache persists in Redis/memcache between process restarts if configured)
 
+---
+
+## ISR Stale Data in Docker Standalone (2026-05-23)
+
+### Problem
+Next.js ISR `revalidate: 300` broken in Docker standalone. No background worker to fire timer. Admin update → Redis clears → ISR HTML never notified. Pages serve stale until next traffic.
+
+### Scope
+- **19 ISR pages site-wide** (10s–86400s revalidate)
+- **CSR overlay covers:** ratecard, start/end dates, stop_sale_dates, is_actived, operational_days
+- **Stale regardless:** name, description, route_info, images, timeline, JSON-LD schemas, meta tags
+
+### Decision
+Option A (on-demand revalidation) selected. 1 file frontend + 30 lines backend + Celery task.
+
+### Implementation
+See atomic notes:
+- [[docker-standalone-isr-revalidate-gap]]
+- [[on-demand-revalidation-api-route]]
+- [[celery-task-over-bare-thread-django-signals]]
+- [[isr-csr-overlay-stale-fields]]
+
+### Deployment Order
+1. Frontend first — `pages/api/revalidate.js` (idle until backend wires in, zero risk)
+2. Backend second — add Celery task, wire to signal, deploy
+3. Verify — admin edits contract → ISR page updates on next visit (seconds, not hours)
+
+---
+
 ## Related
 - [[nextjs-patterns]] — ISR only applies in production (`next start`), not dev
 - [[hydration-infinite-refresh-fix-2026-05-20]] — different cause (hydration mismatch)
 - [[backend-architecture]] — Django throttling, DRF defaults
+- [[docker-standalone-isr-revalidate-gap]] — ISR revalidation gap in Docker
+- [[on-demand-revalidation-api-route]] — API route fix
+- [[celery-task-over-bare-thread-django-signals]] — Celery task pattern

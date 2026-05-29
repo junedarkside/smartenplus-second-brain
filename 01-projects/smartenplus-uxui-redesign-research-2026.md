@@ -1,43 +1,9 @@
 # SmartEnPlus 2026 UX/UI Redesign Research
 Modern Transportation & Exploration Platform Strategy
 
-Based on current 2026 UX/UI trends, modern SaaS patterns, premium travel products, and emerging web-app behaviors, the redesign direction for SmartEnPlus should evolve significantly from the current cinematic-heavy approach.
+> Strategic direction extracted to [[smartenplus-2026-ux-direction]]: "Thailand Travel Operating System" — efficiency-first premium UX, compact 45-60vh hero, calm minimalism. This doc retains detailed trend analysis and section-by-section redesign strategy.
 
-## Executive Summary
-
-The biggest UX shift in 2026 is:
-
-"Efficiency-first premium UX."
-
-Modern products are moving away from:
-
-- oversized cinematic hero sections
-- heavy glassmorphism
-- decorative layouts
-- scroll-showcase websites
-
-And moving toward:
-
-- compact immersive interfaces
-- operational clarity
-- modular systems
-- low-friction navigation
-- content-first structure
-- calm premium minimalism
-
-This directly affects SmartEnPlus.
-
-## Critical Strategic Insight
-
-Your previous redesign direction was:
-
-**premium cinematic travel website**
-
-But 2026 direction should become:
-
-**premium operational transportation platform**
-
-That difference is MASSIVE.
+---
 
 ## 2026 UX/UI Trends Relevant to SmartEnPlus
 

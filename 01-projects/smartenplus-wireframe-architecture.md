@@ -1,69 +1,11 @@
 # SmartenPlus — Full Platform Wireframe Architecture
 ## Thailand Travel Infrastructure Platform
 
----
-
-# 1. Platform Vision
-
-## Core Product Concept
-
-SmartenPlus is not:
-- a generic OTA
-- a transport booking utility
-- a travel blog
-- an activity marketplace
-
-SmartenPlus is:
-
-> **Thailand Travel Infrastructure Platform**
-
-The platform helps travelers:
-- move around Thailand
-- discover destinations
-- explore experiences
-- understand routes
-- travel confidently
-
-Core emotional value:
-
-```txt
-Explore Thailand Easily
-```
+> Product positioning, DNA layers, information architecture, and emotional value extracted to [[smartenplus-product-positioning]]. This doc focuses on wireframes and page structures.
 
 ---
 
-# 2. Product Positioning
-
-## Product DNA
-
-| Layer | Purpose |
-|---|---|
-| Transportation | Core infrastructure |
-| Experiences | Expansion layer |
-| Route intelligence | Competitive moat |
-| Editorial discovery | Emotional layer |
-| Trip confidence | Trust system |
-
----
-
-# 3. Information Architecture
-
-## Core Platform Systems
-
-```txt
-1. Search & Transportation
-2. Destination Discovery
-3. Experiences & Activities
-4. Journey Planning
-5. Route Intelligence
-6. Booking Management
-7. Support & Trust
-8. Editorial & Guides
-```
-
----
-
-# 4. Homepage Wireframe
+# Homepage Wireframe
 
 ## Homepage Goal
 

@@ -4,52 +4,45 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-28 (session wrap-up #10)
+**Updated:** 2026-05-29 (session wrap-up #2)
 
-**Achieved this session (2026-05-28 — evening/night):**
-- **Popular Routes GYG split-card** — `PopularRouteImageCard.js` redesigned: image top 180px, white content panel below with location label (gray xs), route title (bold), operator count (gray xs), price bottom-right (bold). Matches GYG reference card.
-- **Popular Routes — no white card bg** — removed `ContentCard` wrapper from happy-path render in `PopularRoutesSection.js`. Section gets `py-6 px-4 xl:px-0`.
-- **Homepage section gaps** — `main` `gap-2` → `gap-8` (32px)
-- **Card gaps** — `CardCarouselContainer.js`: `gap-3 items-start`, removed `p-2`
-- **All committed** — 7 commits on `260528-feat/header-redesign-2026`. Branch clean.
-
-**Previously achieved (session #8 — afternoon):**
-- SearchDialogTrigger redesign — `variant="input"`, fb-blue Search button, h-10, "Plan your Thailand journey"
-- Search bar left-aligned — `main-header.js` `justify-start` + `max-w-2xl`
-- Header height h-10 (40px) applied
-
-**Previously achieved (session #7 — morning):**
-- P0: Homepage sticky search — `useStickyVisibility` + `setSearchBarContent` in `homepagev2.js`
-- P1: Layout height gap — `PageMain` in `layout.js`
-- Empty state fix — `HeaderSearchSummary.js` guard
-- Playwright audit script — `scripts/header-audit.js`
+**Achieved this session (2026-05-29 #2):**
+- **Popular Routes cards strengthened** — max-w 320→380px, image height 180→200px, route name + price bumped one type size. `PopularRouteImageCard.js`.
+- **Section renamed** — "Travel Thailand Better" → "Thailand Travel Guide". `TravelThailandBetterSection.js`.
+- **"See all reviews →" removed** — CTA link deleted from `ReviewFirstPage.js`.
+- **Destinations grid fixed** — previous session changed `slice(0,5)→slice(0,4)` which broke bottom row (1 lone full-width card). Reverted to 5 cards.
+- **Homepage refinement doc created** — `homepage-refinement-2026.md` at frontend root (untracked, not committed).
+- **Width change deferred** — `Section.js` global `max-w-[1200px]` change skipped. Inner pages (trips/blog/operators) hardcode own 1200px — would create inconsistency. Needs dedicated layout pass.
+- **Committed + pushed** — `d5d9a6b` on `260528-feat/header-redesign-2026`.
 
 **Blocked / carry-forward:**
-1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main. Branch is clean + fully committed.
-2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
-3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
-4. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking
+1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
+2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked.
+3. **Nav table empty** — restart backend + populate NavigationSection via admin UI.
+4. **Width increase deferred** — sitewide layout pass: update `Section.js` + all inline `max-w-[1200px]` in trips/blog/operators pages together.
+5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point:**
 1. Merge `260528-feat/header-redesign-2026` → main
 2. Commit backend loose files (skip deleted agents — intentional)
-3. QA Popular Routes card on mobile carousel
+3. QA Popular Routes + Destinations grid on mobile
+4. Decide on sitewide width increase (1200→1440px)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `44ec0ba` chore: pre-existing page modifications (7 commits ahead of main) |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `d5d9a6b` refactor(homepage): strengthen cards, rename section, remove CTA |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-28 (session wrap-up #9)_
+_Last verified 2026-05-29 (session wrap-up #2)_
 
 ### Uncommitted — Frontend
-**None. Branch fully committed and clean.**
+`?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
 
-**Backend:** 8 `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked
+**Backend:** 8 `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. Content repo: clean.
 
 ---
 

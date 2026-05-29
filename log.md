@@ -2,7 +2,15 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
-## [2026-05-28] session-end | header search bar audit + 3 fixes: P0 homepage sticky search, P1 adaptive layout padding, empty state CTA guard. Playwright audit script added. All uncommitted on 260528-feat/header-redesign-2026. Commit + merge next session.
+## [2026-05-29] session-end | homepage visual refinement: Popular Routes cards stronger, guides section renamed, reviews CTA removed, destinations grid fix reverted to 5 cards, sitewide width deferred
+
+## [2026-05-29] create | travel-thailand-better-section-redesign — 3 editorial sections → 1 unified section. 1 featured + 2 secondary card layout. Spec ready, implementation pending.
+
+## [2026-05-28] ingest | carousel design standard + popular routes fix: vw-based card widths, embla DOM structure, focus ring handling, items-per-screen table across 5 breakpoints
+
+## [2026-05-28] vault-lint | 16 orphan docs analyzed. 9 hero files merged → 1 comprehensive audit. nav-header-redesign merged into existing (richer content). isr-stale-data merged into isr-429 fix doc. 5 files indexed + cross-linked (mobile-header, wireframe-architecture, uxui-research, trip-detail-deep-review, trip-detail-page-review). 11 files deleted. Index: 57→61 pages.
+
+## [2026-05-28] vault-atomize | 5 atoms extracted from 3 source docs: hero-88px-gap-root-cause ← hero-audit, featured-image-header-usage-matrix ← hero-audit, smartenplus-product-positioning ← wireframe-architecture, smartenplus-2026-ux-direction ← uxui-research, mobile-header-scroll-behavior-change ← hero-audit. Index: 62→67 pages.
 
 ## [2026-05-28] session-end | homepage redesign 2026 implemented — commit 96bc6f9. Color tokens #1E40AF, Inter font, hero removed, DiscoverySection live, PopularRoutes polished. TrustRow + RouteChips removed per user. QA + merge next session.
 ## [2026-05-28] session-end | header redesign Days 1–3 complete. Branch 260528-feat/header-redesign-2026 a4158b0. Day 4 QA + merge next session. Context 48% at wrap-up.

@@ -41,3 +41,4 @@ MUI components manage own bg/color via theme. Tailwind on inner elements only wo
 ## Related
 - [[architecture]]
 - [[nav-header-redesign]]
+- [[carousel-design-standard]] — Embla carousel items-per-screen, breakpoints, gap, focus ring
