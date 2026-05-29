@@ -2,6 +2,10 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-29] session-end | ProfileButton redesign complete (dac7e66) + next/image hostname fixes (help/blog). Pill trigger single-line, guest path fixed, MUI-preserve, bottom sheet mobile.
+
+## [2026-05-29] decision | profile-dropdown-redesign — 3-specialist team (UX+UI+Frontend). 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split, MUI-preserve. Vault doc created.
+
 ## [2026-05-29] session-end | homepage visual consistency audit + Check Your Booking UX redesign (trust badges, header position, copy)
 
 ## [2026-05-29] decision | check-your-booking v2 — reference image 2-column layout adopted. Judge: fb-blue not indigo, Order ID text link not tab, "Check" not "Manage", gap-4 not gap-6. v1 centered card rejected by user.

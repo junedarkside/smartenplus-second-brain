@@ -10,6 +10,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[profile-dropdown-redesign-2026-05-29]] — **DECIDED 2026-05-29.** 3-specialist review. 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split. MUI-preserve strategy. Ready for implementation on `260528-feat/header-redesign-2026`.
+
 - [[check-your-booking-redesign-2026-05-29]] — **DECIDED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
 
 - [[travel-thailand-better-section-redesign]] — **COMPLETED 2026-05-29.** `ce4d2d7` on `260528-feat/header-redesign-2026`. Replace 3 editorial sections with 1 unified "Travel Thailand Better" section. 1 featured + 2 secondary cards. AutoStoriesOutlined icon. Tailwind lib/ scan bug fixed.

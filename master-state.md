@@ -4,36 +4,44 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-29 (session wrap-up #3)
+**Updated:** 2026-05-29 (session wrap-up #4)
 
-**Achieved this session (2026-05-29 #3):**
-- **Full homepage visual consistency audit** — 3-agent team (UX/UI/Frontend). 10 files fixed: brand color `#3b5998`→`#1E40AF` in BookButton/PassengerCountBadge/ServiceCategoryBadge, image card radius unified to `rounded-xl`, LocationsSection `py-2`→`py-6`, AirportTransferSection padding added, CustomerServiceSection `p-2`→`p-3/p-4`, `font-light`→`font-normal`. Committed `bbaff17`.
-- **MyBookingsSection header moved outside card** — icon + h2 now sits above white card like all other sections. Committed `66db51a`.
-- **Check Your Booking trust badges redesigned** — 3-agent UX/UI/dev debate. Description anxiety-first. Badges: vertical stacked, green circular icons (`#10B981`), retrieval-focused labels ("Instant lookup", "Verified by email", "Find your ticket fast"). Committed `9cf9b0f`.
+**Achieved this session (2026-05-29 #4):**
+- **ProfileButton full redesign** — 3-specialist team review (UX + UI/Visual + Frontend). 376L monolith → 3 files: `ProfileButton.js` (~120L), `ProfileMenu.js` (~120L), `ProfileBottomSheet.js` (~39L). Committed `dac7e66`.
+  - Menu: 11 items → 6 auth / 4 guest. Traveler mental model: My Trips / Account / Support+Exit.
+  - Guest path now includes "Find My Booking" → `/bookings?guest=true` (was dead-end).
+  - MUI Menu preserved (ARIA semantics + test contracts intact). Visual override via `sx`: 296px, `rounded-2xl`, soft shadow, `#E5E7EB` border.
+  - Mobile: MUI Drawer `anchor="bottom"`, drag handle, 80dvh, `rounded-t-2xl`.
+  - Logout 4-step flow: unchanged.
+- **ProfileImage pill trigger redesigned** — single-line label, no duplicate "My Account" subtitle. Label logic: `first_name → email.split('@')[0] → 'Account'`. Guest avatar: neutral gray + PersonOutlinedIcon. Auth avatar: `stringToHsl` brand-colored initials. 36px pill height, 24px avatar, rotating chevron.
+- **next/image hostname errors fixed** — `pages/help/index.js`: removed dead `getImageProps` call, use `bgDefaultImage1.src` (relative) for `FeaturedImageHeader`. `pages/blog/categories/[slug].js`: added `headerImageSrc` (relative) for header, `mainPageImage` (absolute) kept for SEO. `pages/blog/search/[...slug].js`: `searchImageUrl` now uses string URL or absolute fallback — static import object no longer used as SEO URL.
+- **Vault doc created** — `01-projects/profile-dropdown-redesign-2026-05-29.md` with full debate summary, spec, file structure.
 
 **Blocked / carry-forward:**
 1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
 2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked.
 3. **Nav table empty** — restart backend + populate NavigationSection via admin UI.
 4. **Width increase deferred** — sitewide layout pass: update `Section.js` + all inline `max-w-[1200px]` in trips/blog/operators pages together.
-5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
+5. **HD-2 stale** — `ProfileButton.js:367` reference in loose ends table is now invalid (file restructured). Close HD-2.
+6. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point:**
 1. Merge `260528-feat/header-redesign-2026` → main
 2. Commit backend loose files (skip deleted agents — intentional)
-3. QA homepage on mobile (Popular Routes carousel, Destinations grid, Check Your Booking stacked layout)
-4. Decide on sitewide width increase (1200→1440px)
+3. QA ProfileButton dropdown on desktop + mobile (bottom sheet, guest flow, auth flow, logout)
+4. QA homepage on mobile (Popular Routes carousel, Destinations grid, Check Your Booking)
+5. Decide on sitewide width increase (1200→1440px)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `9cf9b0f` refactor(homepage): redesign Check Your Booking trust badges + copy |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `dac7e66` feat(auth): redesign ProfileButton — minimal travel dropdown + pill trigger |
 | `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-29 (session wrap-up #3)_
+_Last verified 2026-05-29 (session wrap-up #4)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
@@ -57,7 +65,7 @@ _Last verified 2026-05-29 (session wrap-up #3)_
 | Nav | NavigationSection table empty | Restart backend + populate via admin | `pages_info` |
 | Explore Thailand submenu | Needs `location_type` CharField on `Location` model | `stations/models.py` |
 | HD-1 | CurrencySelector button too small at tablet | Low | `CurrencySelector.js:55` |
-| HD-2 | CartButton/ProfileButton dim (70% opacity) | Low — acceptable | `CartButton.js:116`, `ProfileButton.js:367` |
+| HD-2 | CartButton dim (70% opacity) | Low — acceptable | `CartButton.js:116` _(ProfileButton.js:367 ref stale — file restructured `dac7e66`)_ |
 | HD-3 | xl padding gap (px-0 vs px-3) | Low | `main-header.js:90` |
 | HD-6 | Logo size jump mobile→desktop | P2 | `main-header.js:66,95` |
 | GAP-3 | Mobile position flip relative→fixed | P2 | `main-header.js:45–77` |
