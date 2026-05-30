@@ -4,6 +4,8 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 
 ## [2026-05-30] session-end | Airport Transfers section redesigned — Omio-style route cards with real pricing from backend. Backend airport_routes API added. Data shape bug fixed (StationSerializer shadow). Style audit 8 fixes. 1eec0aa + 3759dc2 pushed. Atom extracted: django-serializer-shadowing-pattern.
 
+## [2026-05-30] session-end | Width consistency audit + sort dropdown fix.3-agent team (header/sections/live-verifier). Root cause: w-full + max-w-[1200px] = full viewport. Fix: explicit w-[1200px] on hero absolute div. Sort dropdown inline with title row. AirportTransferSection commented out pending AT-1. 0ebd755 committed.
+
 ## [2026-05-29] session-end | added Ask Away + Explore More to ProfileMenu (auth+guest), removed CustomerServiceSection from homepage. 7650f3c pushed.
 
 ## [2026-05-29] session-end | ProfileButton redesign complete (dac7e66) + next/image hostname fixes (help/blog). Pill trigger single-line, guest path fixed, MUI-preserve, bottom sheet mobile.

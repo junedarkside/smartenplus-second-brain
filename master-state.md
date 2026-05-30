@@ -4,7 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-30 (session wrap-up #8)
+**Updated:** 2026-05-30 (session wrap-up #9)
+
+**Achieved this session (2026-05-30 #9):**
+- **Airport transfer page width audit** — 3-agent team (header-auditor, sections-auditor, live-verifier). Root cause: `w-full` + `max-w-[1200px]` = full viewport (max-width doesn't shrink back from 100%). Fix: explicit `w-[1200px]` on hero absolute div.
+- **Width consistency fixes applied:**
+  - `FeaturedImageHeader.js:121` — removed `w-full`, added `max-w-[1200px] mx-auto w-[1200px]` on absolute div
+  - `TripListingSection.js:63` — added `px-2 md:px-3` to grid container
+  - `StationInformation.js:15` — `sm:mx-3` → `px-2 md:px-3`
+  - `GuidesSection.js:12` — `sm:mx-3` → `px-2 md:px-3`
+  - `SearchAndLoading.js:7` — `px-4` → `px-2 md:px-3`
+  - `[slug].js:253` — added `w-full` to breadcrumb wrapper
+  - `[slug].js:257` — added `w-full` to calendar section outer
+  - `[slug].js:258` — `gap-2` → `gap-1` on calendar inner
+  - `TripListingSection.js:100` — added `mx-auto z-10` to outer section
+- **Sort dropdown in title row** — `TripListingSection.js` now has `SortDropdown` alongside title (same row), imported directly from `SortDropDown.js`
+- **AirportTransferSection hidden** from homepage — commented out in `homepagev2.js:358` pending AT-1 redesign
+- **Commit `0ebd755`** — width consistency + hide airport transfer section
 
 **Achieved this session (2026-05-30 #8) — vault optimize only, no code committed:**
 - **Vault structure fixed:**
@@ -39,12 +55,14 @@
 2. After redesign passes QA: merge `260528-feat/header-redesign-2026` → main
 3. Commit backend loose files (skip deleted .claude/agents/)
 4. QA ProfileButton + full homepage mobile
+5. **Width506px question unresolved** — trips page reference showed same ~506px at same viewport. Both pages consistent. User may revisit with specific screenshot.
+6. **Sort dropdown inline fix** — committed in `0ebd755`. Verify on reload.
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `1eec0aa` feat(homepage): redesign Airport Transfers section |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `0ebd755` fix(homepage): width consistency + hide airport transfer section |
 | `smartenplus-backend` | `main` | `3759dc2` feat(pages_info): add airport_routes to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
