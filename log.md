@@ -372,3 +372,9 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-05-28] session-end | Popular Routes no-white-bg + section/card gap fixes
 
 ## [2026-05-28] session-end | GYG split-card + all committed — 7 commits on header-redesign branch
+## [2026-05-30] audit | transportation-category-audit — 3-level category system documented, Airport Transfer architecture justified, Django shell queries for inventory/booking split
+## [2026-05-30] scrutinize | transportation-category-audit — 8 corrections applied: 26 not 25 station_types, TRANSFER/filter decoupled, lowest_price nullable, arrival-only gap, ZeroDivisionError guard, is_actived typo table, query_count Celery mechanism, 10% threshold is heuristic
+## [2026-05-30] design | airport-transfer-redesign-spec — professional redesign spec added to audit doc: image card with IATA badge + gradient fallback, carousel mobile, serializer expansion plan, null safety requirements
+## [2026-05-30] session-end | vault-only session — transport audit + scrutinize + redesign spec. master-state updated. AT-1 added as P0 next-session task. No code committed.
+## [2026-05-30] optimize | vault structure fix — rogue 04-knowledge/ deleted (file moved to 03-knowledge/), homepage/ folder deleted (2 files → 01-projects/), southeast_asia doc → 02-areas/, glassmorphism → 08-archive/, 3 stale DECIDED → COMPLETED, index updated + Archive section added. Known debt: 01-projects/smartenplus/ subfolder (50+ files) violates flat schema — defer, wikilinks resolve correctly.
+## [2026-05-30] session-end | #8 wrap-up — vault optimize complete. master-state updated. No code committed. Next: AT-1 airport transfer redesign (spec in 03-knowledge/transportation-category-audit-2026-05-30.md).

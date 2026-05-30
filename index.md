@@ -10,18 +10,18 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
-- [[profile-dropdown-redesign-2026-05-29]] — **DECIDED 2026-05-29.** 3-specialist review. 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split. MUI-preserve strategy. Ready for implementation on `260528-feat/header-redesign-2026`.
+- [[profile-dropdown-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** 3-specialist review. 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split. MUI-preserve strategy. Implemented on `260528-feat/header-redesign-2026`.
 
-- [[check-your-booking-redesign-2026-05-29]] — **DECIDED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
+- [[check-your-booking-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
 
-- [[airport-transfer-redesign-2026]] — **COMPLETED 2026-05-30.** Omio-style route cards. Backend: airport_routes key in /front-page/ API. Frontend: AirportTransferRouteCard + AirportTransferSection rewrite. Style audit 8 fixes. Data shape bug fixed (StationSerializer shadow).
+- [[destinations-redesign-review]] — Destinations section review: editorial grid vs carousel tradeoffs, image overlay patterns, mobile-first layout decisions.
+- [[airport-transfer-redesign-2026]] — **COMPLETED 2026-05-30.** Omio-style route cards. Backend: airport_routes key in /front-page/ API. Frontend: AirportTransferRouteCard + AirportTransferSection rewrite. Style audit 8 fixes. Data shape bug fixed (StationSerializer shadow). Professional redesign spec ready (AT-1) — see [[transportation-category-audit-2026-05-30]].
 - [[travel-thailand-better-section-redesign]] — **COMPLETED 2026-05-29.** `ce4d2d7` on `260528-feat/header-redesign-2026`. Replace 3 editorial sections with 1 unified "Travel Thailand Better" section. 1 featured + 2 secondary cards. AutoStoriesOutlined icon. Tailwind lib/ scan bug fixed.
 - [[header-redesign-2026-spec]] — **FINAL 2026-05-28.** Adaptive Type A/B header. Type A: single-row 80px (transactional). Type B: 2-row 96px (discovery/browse). All 5 nav items kept. /blog → Type B. Dynamic layout offset. 12-file implementation plan. 4-day rollout + 2 separate PRs.
-- [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. Day 4 QA pending. Handoff doc with full change log + QA checklist + remaining work.
+- [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. QA + AT-1 redesign pending before merge.
 - [[header-redesign-2026-team-review]] — 3-specialist audit (Design+UX+Frontend) + second audit (UX Architecture+Visual Design+Frontend Eng). All blockers resolved. Key decisions locked: Type A/B split, keep Explore Thailand, /blog = Type B, dynamic offset 80/96px, HeaderRowsContext pattern.
-- [[mobile-header-redesign-glassmorphism]] — Mobile header glassmorphism redesign spec (SUPERSEDED by header-redesign-2026-spec)
 - [[smartenplus-header-ux-v1]] — COMPLETED 2026-05-25. Desktop 2-row header: Row 1 (logo + THB + cart + profile), Row 2 (5 nav items, desktop only). Help Center added to profile dropdown. Submenus deferred.
-- [[backend-n8n-resend-webhook|backend-n8n-resend-webhook]] — Resend Operator n8n webhook forwarding. send_booking_data moved to bookings/tasks.py. 4 commits, merged to develop. 3 bugs caught by scrutinize audit (import crash ×2, orphaned try block) + 1 env var crash on startup (N8N_WEBHOOK_URL missing default=None)
+- [[backend-n8n-resend-webhook]] — Resend Operator n8n webhook forwarding. send_booking_data moved to bookings/tasks.py. 4 commits, merged to develop. 3 bugs caught by scrutinize audit (import crash ×2, orphaned try block) + 1 env var crash on startup (N8N_WEBHOOK_URL missing default=None)
 - [[fast-refresh-infinite-loop-audit-2026-05-23|Fast Refresh Infinite Loop Audit 2026-05-23]] — Root cause unconfirmed. RefreshTokenHandler diagnosis OVERTURNED (lastExpiryRef guard). Likely Next.js 14.2.x HMR + on-demand compilation cascade. 7 failed fixes documented. Next: debug instrumentation + git bisect
 - [[currency-context-infinite-fetch-2026-05-23|CurrencyContext Infinite Fetch 2026-05-23]] — race condition + unstable selectCurrency ref; fix applied on branch 260523-fix/currency-context-infinite-fetch
 - [[isr-429-cold-start-fix-2026-05-23|ISR 429 Cold-Start Fix + Stale Data 2026-05-23]] — cold `npm run dev` bursts `/front-page/` → 429; root: REVALIDATE_SECONDS=60 + refetchOnMountOrArgChange:300; fixes identified. + ISR stale data in Docker standalone, on-demand revalidation fix via Celery task
@@ -93,6 +93,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
 - [[django-serializer-shadowing-pattern]] — Local class redefines imported name in same file; silently changes exposed fields. Discovered via HomeSerializer/StationSerializer in products/serializers.py.
+- [[transportation-category-audit-2026-05-30]] — Full audit: 3-level category system (station_type / service_category / VehicleType), airport filter vs TRANSFER category decoupled, 26 station_types, lowest_price nullable, query_count Celery mechanism. Professional homepage section redesign spec (AT-1): image card + IATA badge + carousel mobile + serializer expansion.
 - [[mui-tailwind-css-specificity]] — MUI Emotion overrides Tailwind className on MUI components; use sx prop or div wrapper; sx responsive breakpoints fail without Emotion cache provider
 - [[nextjs-fixed-header-per-route]] — `position: fixed` on homepage only via `router.pathname === '/'`; sticky elsewhere; `<main>` gets `pt-[88px]` on non-homepage to clear header
 - [[payment-sentinel-idempotency]] — Timestamp sentinels as exactly-once guards; reusable for any side effect (email, booking, settlement)
@@ -112,11 +113,16 @@ Global navigation catalog. Updated on every ingest.
 
 - [[engineering]] — Software engineering practices and standards
 - [[business]] — Validated strategy: B2B supplier (12Go+Klook 90%) + B2C direct (10%). EN customer confirmed. Vertical integration moat. "Stippl for SEA with real booking" vision.
+- [[southeast_asia_transport_platform_direction]] — Product vision: SEA transport + experience infra platform. Stippl plans but can't book; 12Go books but can't plan — SmartEnPlus does both. B2B supplier → B2C direct roadmap. Core loop: destinations+dates+interests → AI plan → book.
 
 ## Decisions
 
 - [[adr-template]] — Architecture Decision Record template
 - [[atomic-note]] — Single-concept note template for extracted atoms
+
+## Archive
+
+- [[mobile-header-redesign-glassmorphism]] — SUPERSEDED 2026-05-28 by [[header-redesign-2026-spec]]. Dark gradient glass, sticky+blur on scroll, unified 2-row. Kept for reference.
 
 ## Systems
 
@@ -135,5 +141,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 69
-- Last updated: 2026-05-30 (airport-transfer-redesign-2026 + django-serializer-shadowing-pattern added)
+- Pages: 72
+- Last updated: 2026-05-30 (vault optimize: fixed folder structure, archived glassmorphism, updated stale statuses, added missing entries)

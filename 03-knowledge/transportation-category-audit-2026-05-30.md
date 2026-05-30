@@ -1,0 +1,317 @@
+# Transportation Category Audit — 2026-05-30
+
+## Summary
+Backend audit of SmartEnPlus transportation category structure to determine whether Airport Transfers justify dedicated homepage placement. Audit is code-only — no live DB access. Hard inventory/booking numbers require Django shell queries. Scrutinize pass applied 2026-05-30 — 8 corrections documented below.
+
+## Context
+Built `AirportTransferSection.js` homepage section (commit `1eec0aa`) using `/front-page/` API. Question: is this architecturally justified or should it be removed in favor of search-only discovery?
+
+Redesign spec added 2026-05-30 — see [[#Redesign Spec — Professional Airport Transfer Section]] below.
+
+---
+
+## Category Architecture
+
+### Three levels of classification
+
+**Level 1 — Station Type** (`stations/models.py:32`)
+`Station.station_type` CharField, **26 choices** (not 25 — motel, campground, helipad, parking_lot, rest_area, service_station present in model). Transport-relevant subset:
+
+| station_type | Transport mode |
+|---|---|
+| `airport` | Airport transfer routes |
+| `bus_station`, `bus_stop` | Bus |
+| `train_station`, `metro_station`, `light_rail_station`, `subway_station` | Rail |
+| `port`, `pier`, `ferry_terminal` | Ferry/water |
+| `taxi_stand`, `rideshare_pickup` | Ground transfer |
+| `hotel`, `hostel`, `resort`, `motel`, `bnb`, `guesthouse` | Accommodation endpoints |
+| `beach`, `park`, `campground` | Leisure destinations |
+| `helipad`, `parking_lot`, `rest_area`, `service_station`, `other` | Other |
+
+**Airport is first-class.** IATA code field on Station restricted to `station_type='airport'` only (`stations/models.py:108`). Exact validation:
+```python
+if self.iata_code and self.station_type != 'airport':
+    raise ValidationError({'iata_code': "IATA code can only be set for stations of type 'Airport'."})
+```
+
+**Level 2 — Contract Service Category** (`operators/models.py:296`)
+`Contract.service_category` CharField, 10 choices:
+
+```
+TRANSPORTATION (default) | DAY_TOUR | MULTI_DAY_TOUR | SPA_WELLNESS
+EVENT_TICKET | ATTRACTION_TICKET | FOOD_DINING | ACCOMMODATION | TRANSFER | OTHER
+```
+
+`TRANSFER` is separate from `TRANSPORTATION`. **Important: TRANSFER category and the airport filter are independent** — see Filter Architecture Note below.
+
+**Level 3 — Vehicle Type** (`operators/models.py:135`)
+`VehicleType.vehicle_type` — free text, no enum. Examples: Bus, Van, Minibus, Ferry. No hardcoded "Airport Transfer" vehicle type at this level.
+
+---
+
+## How Airport Transfers Are Stored
+
+Airport Transfer is **NOT a separate category or product type**. It is a **subset of transportation routes** identified by:
+
+```
+Route → departure_station → Station.station_type == 'airport'
+```
+
+The backend filter in `pages_info/views.py:330` (`_fetch_airport_routes_data`). Simplified — see actual file for full `.select_related()`, Subquery annotations, and Exists patterns:
+
+```python
+# Simplified. Full code: pages_info/views.py:330
+Route.objects.filter(
+    departure_station__station_type='airport'
+).filter(
+    Exists(Trip.objects.filter(route=OuterRef('pk')).values('id')[:1])
+).filter(
+    Exists(
+        Contract.objects.filter(
+            trip__route=OuterRef('pk'),
+            is_actived=True,
+        ).filter(Q(end_date__isnull=True) | Q(end_date__gt=today)).values('pk')[:1]
+    )
+).annotate(
+    lowest_price=Subquery(...),  # Contract_RateCard, selling_rate > 0, allow_null=True
+    operator_count=Count(...)
+).order_by('-query_count')[:4]  # default limit hardcoded in _fetch_airport_routes_data
+```
+
+Routes returned: BKK, HKT, HDY, CNX → any destination.
+
+**`lowest_price` can be null.** Annotation uses `allow_null=True`. Routes with no active rate cards still surface with `lowest_price=None`. Frontend (`AirportTransferRouteCard.js:39-44`) handles this — shows "Check price" fallback. The previous claim "only routes with selling_rate > 0 surface" was wrong: the filter ensures `selling_rate > 0` for the annotation only, not for route inclusion.
+
+**`query_count` ordering.** `query_count` is incremented asynchronously by Celery task `update_route_query_counts()` (`products/tasks.py:12`), which counts QueryLog entries from the past 1 week. Not real-time. Multiple routes with `query_count=0` (new/unpopular) return in non-deterministic order — no secondary sort field in current implementation.
+
+### Filter Architecture Note
+
+The airport filter (`departure_station__station_type='airport'`) and `Contract.service_category='TRANSFER'` are **completely independent**:
+
+- A route departing from an airport with `service_category='TRANSPORTATION'` (not TRANSFER) **will** appear
+- A `TRANSFER` contract on a non-airport departure station **will NOT** appear
+- The code never checks `service_category` in `_fetch_airport_routes_data`
+
+The TRANSFER category existence is not the architectural justification for the homepage section. The justification is `station_type='airport'` being first-class.
+
+### Arrival-Only Routes Not Covered
+
+The filter only checks `departure_station__station_type='airport'`. Inbound transfers (hotel → airport) are not surfaced. Section title "Airport Transfers" is technically outbound-only. This is an undocumented limitation, not necessarily a bug — but should be explicit.
+
+---
+
+## Route Model Has No Category Field
+
+`products/models.py:22` — Route model fields:
+`route_name`, `departure_station` (FK), `arrival_station` (FK), `slug`, `description`, `is_actived`, `query_count`
+
+No `route_type`, `transport_type`, `category`. Transport mode always derived via FK chain:
+`Route → Station.station_type` (departure-based) or `Route → Contract → VehicleType`
+
+### Field name gotcha: `is_actived` vs `is_active`
+
+Inconsistent across models — copy-paste carefully:
+
+| Model | Field name |
+|---|---|
+| Route, Trip, Contract | `is_actived` (with 'd') |
+| Contract_RateCard, BookingItem, TimeSlot | `is_active` (no 'd') |
+
+Django won't error on wrong field name in filter — it silently skips the constraint.
+
+---
+
+## Booking Data — Category Linkage
+
+`BookingItem` (`bookings/models.py`) has denormalized:
+- `departure_station` CharField — station NAME only, NOT station_type
+- `arrival_station` CharField — station NAME only
+- `route_name` CharField
+
+**No denormalized station_type on BookingItem.** To query bookings by transport category requires multi-join:
+
+```python
+BookingItem.objects.filter(
+    booking_status='Confirmed',  # exact capitalization — valid choices use Title Case
+    contract__trip__route__departure_station__station_type='airport'
+).count()
+```
+
+`booking_status` valid choices: `'Confirmed'`, `'No Show'`, `'Pending'`, `'Partially Refund'`, `'Fully Refund'`, `'Canceled'` — NOT uppercase.
+
+No existing analytics endpoint groups bookings by station_type. Must be written fresh.
+
+---
+
+## Platform Classification
+
+SmartEnPlus architecture supports **multi-category Travel OTA**, not pure transportation:
+
+Evidence from `Contract.SERVICE_CATEGORY_CHOICES`:
+- Tours: `DAY_TOUR`, `MULTI_DAY_TOUR`
+- Experiences: `EVENT_TICKET`, `ATTRACTION_TICKET`
+- Wellness: `SPA_WELLNESS`
+- Food: `FOOD_DINING`
+- Hotels: `ACCOMMODATION`
+- Transfers: `TRANSFER`
+
+Whether meaningful inventory exists in non-transport categories: unknown without DB access.
+
+---
+
+## Inventory + Booking Queries (Run in Django Shell)
+
+```python
+from products.models import Route
+from bookings.models import BookingItem
+
+# Inventory split
+total = Route.objects.filter(is_actived=True).distinct().count()
+airport = Route.objects.filter(
+    is_actived=True,
+    departure_station__station_type='airport'
+).distinct().count()
+# Guard against empty DB
+pct = (airport / total * 100) if total > 0 else 0
+print(f"Airport routes: {airport}/{total} = {pct:.1f}%")
+
+# Booking split
+total_b = BookingItem.objects.filter(booking_status='Confirmed').count()
+airport_b = BookingItem.objects.filter(
+    booking_status='Confirmed',
+    contract__trip__route__departure_station__station_type='airport'
+).count()
+pct_b = (airport_b / total_b * 100) if total_b > 0 else 0
+print(f"Airport bookings: {airport_b}/{total_b} = {pct_b:.1f}%")
+```
+
+Note: `distinct()` on Route queries is redundant but harmless (no M2M in these filters). FK chain verified: `BookingItem.contract` → `Contract.trip` → `Trip.route` → `Route.departure_station` → `Station.station_type` — all FKs exist.
+
+---
+
+## Homepage Recommendation
+
+**Airport Transfers section is architecturally justified:**
+
+1. `station_type='airport'` is a dedicated first-class type with IATA code support — not a tag or label
+2. Filter logic works, is in production, returns real routes with real pricing
+3. Airport-to-destination is a distinct user intent (fixed start point = airport) vs general route search
+4. Frontend handles null pricing gracefully
+
+**What's NOT a justification:** The `TRANSFER` service_category. It exists but is not checked by the filter. See Filter Architecture Note above.
+
+**Decision framework thresholds:** The "< 10% = demote" heuristic is from the original audit brief — not data-derived, not in codebase. Treat as a rough guideline only. Run queries above against production shell for hard numbers.
+
+**Recommendation:** Keep the section. If future inventory data shows airport routes < 10% AND bookings < 10%, demote to search-only.
+
+---
+
+## Decision
+
+Kept `AirportTransferSection.js` on homepage (`1eec0aa`). Section queries `/front-page/` → `airport_routes[]` key added in `3759dc2`.
+
+---
+
+## Redesign Spec — Professional Airport Transfer Section
+
+**Goal:** Redesign homepage section + card to match professional airport transfer products (Grab, Klook, 12Go level). Zero impact on other components, production, or existing functionality.
+
+### Scope
+
+| File | Change |
+|---|---|
+| `components/airport-transfer/AirportTransferRouteCard.js` | Full visual redesign — image card |
+| `lib/homepage/components/AirportTransferSection.js` | Layout upgrade — carousel mobile / grid desktop |
+| `products/serializers.py` (backend) | Expand local StationSerializer only |
+
+**Not changed:** all other homepage sections, `homepagev2.js`, detail pages, other airport-transfer components, API URL, Redux, RTK Query.
+
+### Backend: Serializer Expansion
+
+Expand the **local** `StationSerializer` inside `HomeSerializer` scope only (`products/serializers.py:696`). This class is used only by `HomeSerializer` — no shared serializer is touched.
+
+```python
+# Add to StationSerializer fields list
+fields = ['location', 'slug', 'station_name', 'iata_code']
+
+# Add to HomeSerializer fields list
+fields = ['route_name', 'departure_station', 'arrival_station',
+          'slug', 'query_count', 'lowest_price', 'operator_count']
+```
+
+Both `station_name` and `iata_code` exist on Station model. `route_name` exists on Route. Additive change — no breaking effect.
+
+### New Card: AirportTransferRouteCard
+
+**Design pattern:** GYG split-card (same as `PopularRouteImageCard.js`) — image top + info bottom.
+
+```
+┌─────────────────────────────┐
+│  [location.image OR         │  ← h-[160px], gradient fallback if no image
+│   blue gradient + plane]    │
+│  [BKK] badge top-left       │  ← iata_code, bg-fb-blue, text-white, rounded
+├─────────────────────────────┤
+│  Suvarnabhumi Airport       │  ← station_name, text-sm font-semibold gray-900
+│  → Bangkok City Center      │  ← arrival location_name, text-sm gray-500
+│  ─────────────────          │
+│  2 operators  From THB 450  │  ← footer: operators left, price right
+└─────────────────────────────┘
+```
+
+Design tokens:
+- Card: `bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-lg`
+- Image: `h-[160px] object-cover group-hover:scale-105 transition-transform duration-300`
+- Gradient fallback: `bg-gradient-to-br from-blue-900 to-blue-600` + `FlightTakeoffOutlinedIcon` overlay
+- IATA badge: `bg-fb-blue text-white text-xs font-bold px-2 py-0.5 rounded absolute top-2 left-2`
+- Airport name: `text-sm font-semibold text-gray-900 leading-tight`
+- Destination: `text-sm text-gray-500`
+- Operators: `text-xs text-gray-400`
+- Price: `text-sm font-bold text-gray-900`
+
+Props interface: `{ route, onClick }` — unchanged from today.
+
+### Section Layout Upgrade
+
+- Mobile: horizontal carousel via `CardCarouselContainer` (exists at `components/UI/CardCarouselContainer.js`)
+- Desktop lg+: 4-column grid (same as current)
+- Card width in carousel: `w-[75vw] sm:w-[45vw] md:w-[30vw] lg:w-full`
+- Section header: add subtitle + "View all →" link
+
+```jsx
+<header className="flex items-center justify-between pt-2 px-2">
+  <div className="flex items-center gap-2">
+    <FlightTakeoffOutlinedIcon className="text-gray-600" fontSize="small" />
+    <div>
+      <h2 className="text-xl font-semibold text-gray-900">Airport Transfers</h2>
+      <p className="text-xs text-gray-400 mt-0.5">Private transfers from Thailand's major airports</p>
+    </div>
+  </div>
+  <Link href="/airport-transfer" className="text-xs text-fb-blue font-medium hover:underline">
+    View all →
+  </Link>
+</header>
+```
+
+### Null Safety Requirements
+- `iata_code` null → hide badge entirely
+- `lowest_price` null → "Check price" (existing behavior)
+- `location.image` null → gradient fallback
+- `station_name` null → fall back to `location.location_name`
+
+### Verification
+1. `npm run dev` → homepage loads, section visible
+2. Cards show image/gradient, IATA badge, station name, price
+3. Null price card shows "Check price" — no crash
+4. Card click → `/airport-transfer/{slug}/` → detail page unchanged
+5. Mobile: carousel scrolls; desktop: 4-col grid
+6. No console errors; other sections unaffected
+7. `npm run build` passes
+
+---
+
+## Related
+
+- [[django-serializer-shadowing-pattern]] — HomeSerializer uses local StationSerializer (location + slug only currently; redesign adds station_name + iata_code)
+- [[airport-transfer-redesign-2026]] — frontend implementation notes
+- [[smartenplus-product-positioning]] — platform category strategy
+- [[carousel-design-standard]] — Embla carousel patterns, breakpoints, gap values

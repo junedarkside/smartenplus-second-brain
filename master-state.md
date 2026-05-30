@@ -4,19 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-30 (session wrap-up #6)
+**Updated:** 2026-05-30 (session wrap-up #8)
 
-**Achieved this session (2026-05-30 #6):**
-- **Airport Transfers homepage section — full redesign** (`1eec0aa`)
-  - Backend: `airport_routes` key added to `/front-page/` API via `_fetch_airport_routes_data()` in `pages_info/views.py`. Filters `Route` by `departure_station__station_type='airport'`, annotates `lowest_price` + `operator_count` via `HomeSerializer`. Default limit 4. Pushed `3759dc2` to backend `main`.
-  - Frontend: new `AirportTransferRouteCard.js` (Omio-style text card: airport → destination → price → View Route). `AirportTransferSection.js` rewritten — `<header>` semantic tag, `AirportShuttleOutlinedIcon`, 4-col grid, GTM tracking. `homepagev2.js` wired to `airport_routes` key.
-  - **Data shape bug fixed** — `departure_station.location.location_name` (HomeSerializer uses local `StationSerializer` with only `{location, slug}` — no `station_name`, no `iata_code`). See [[django-serializer-shadowing-pattern]].
-  - Style audit: 8 inconsistencies fixed vs design system (rounded-md, hover:shadow-lg, semantic header, no ContentCard, correct padding).
-  - Pushed frontend `1eec0aa` on `260528-feat/header-redesign-2026`.
+**Achieved this session (2026-05-30 #8) — vault optimize only, no code committed:**
+- **Vault structure fixed:**
+  - `04-knowledge/` rogue folder deleted → `backend-n8n-resend-webhook.md` moved to `03-knowledge/`
+  - `homepage/` rogue folder deleted → `airport-transfer-redesign-2026.md` + `destinations-redesign-review.md` → `01-projects/`
+  - `southeast_asia_transport_platform_direction.md` root orphan → `02-areas/`
+  - `mobile-header-redesign-glassmorphism.md` → `08-archive/`
+- **Index cleaned:** 3 stale DECIDED → COMPLETED, Archive section added, 3 missing entries added, stale one-liners updated, Stats 69→72
+- **Known debt logged:** `01-projects/smartenplus/` subfolder (50+ files) violates flat schema — wikilinks still resolve, defer flatten to separate session
 
-**Achieved previous session (2026-05-29 #5):**
-- **ProfileMenu forum links** — "Ask Away" + "Explore More" → `/forum`. `7650f3c` pushed.
-- **CustomerServiceSection removed from homepage** — `homepagev2.js` block removed. Component file kept.
+**Achieved previous session (2026-05-30 #7) — vault/research only:**
+- Transport category audit (3-agent), scrutinize pass (8 corrections), professional redesign spec for AT-1 written into `03-knowledge/transportation-category-audit-2026-05-30.md`
+
+**Achieved session (2026-05-30 #6):**
+- **Airport Transfers homepage section — full redesign** (`1eec0aa`) — Backend `3759dc2` + Frontend `1eec0aa`.
 
 **Blocked / carry-forward:**
 1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
@@ -25,12 +28,17 @@
 4. **Width increase deferred** — sitewide `Section.js` + all `max-w-[1200px]` pages together.
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
-**Next session resume point:**
-1. Merge `260528-feat/header-redesign-2026` → main
-2. Commit backend loose files (skip deleted agents)
-3. QA ProfileButton + Airport Transfers section on mobile
-4. QA homepage on mobile (Popular Routes carousel, Destinations grid, Check Your Booking)
-5. Decide sitewide width increase (1200→1440px)
+**Next session resume point (EXACT):**
+1. **P0 — Implement airport transfer professional redesign** (spec complete in vault — no research needed)
+   - Backend: `products/serializers.py:696` — add `station_name`, `iata_code` to local StationSerializer fields
+   - Backend: `products/serializers.py:~715` — add `route_name` to HomeSerializer fields
+   - Verify: GET `/front-page/` → `airport_routes[0]` has `station_name`, `iata_code`
+   - Frontend: redesign `components/airport-transfer/AirportTransferRouteCard.js` (image card, IATA badge, gradient fallback)
+   - Frontend: update `lib/homepage/components/AirportTransferSection.js` (subtitle, "View all →", mobile carousel)
+   - Full spec: `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec" section
+2. After redesign passes QA: merge `260528-feat/header-redesign-2026` → main
+3. Commit backend loose files (skip deleted .claude/agents/)
+4. QA ProfileButton + full homepage mobile
 
 ### Active Branches
 
@@ -41,7 +49,7 @@
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-30 (session wrap-up #6)_
+_Last verified 2026-05-30 (session wrap-up #8)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
@@ -56,6 +64,7 @@ _Last verified 2026-05-30 (session wrap-up #6)_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| AT-1 | **Airport Transfer professional redesign** | Spec complete in vault `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec". Backend: serializers.py:696 + :715. Frontend: AirportTransferRouteCard + AirportTransferSection. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js`, `lib/homepage/components/AirportTransferSection.js` |
 | PR-2 | Popular Routes mobile carousel QA | Check card min-w, arrow buttons, scroll on real mobile | `components/UI/PopularRouteImageCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
@@ -137,7 +146,7 @@ _Last verified 2026-05-30 (session wrap-up #6)_
 | `display_order` | Empty string → DRF rejects. Must be integer |
 | Navigation API | Returns `[]` if no NavigationSection records. Returns 404 only if server not restarted with new code. |
 | Popular Routes API | `/front-page/` → `home_routes[]`. Fields: `departure_station`, `arrival_station`, `lowest_price`, `operator_count`. NO rating/duration/category. |
-| Airport Routes API | `/front-page/` → `airport_routes[]`. Same shape as `home_routes`. `departure_station` = `{location: {location_name}, slug}` only — NO `station_name`, NO `iata_code` (local `StationSerializer` in `products/serializers.py:696` shadows the full one). |
+| Airport Routes API | `/front-page/` → `airport_routes[]`. Same shape as `home_routes`. Currently `departure_station` = `{location: {location_name}, slug}` only — NO `station_name`, NO `iata_code`. **Planned (AT-1):** expand local `StationSerializer` at `products/serializers.py:696` to add `station_name` + `iata_code`. HomeSerializer at :715 to add `route_name`. |
 
 ---
 
