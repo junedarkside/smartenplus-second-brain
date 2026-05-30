@@ -2,6 +2,10 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-30] scrutinize | homepage-experiences-section-audit — 3 critical wrong claims fixed: featured_image missing on Contract (use ImageGallery), service_category list incomplete (TRANSPORTATION/ACCOMMODATION missed), HomeSerializer wrong copy template (use ContractSerializer). Vault doc updated.
+
+## [2026-05-30] audit | homepage-experiences-section — 3-agent feasibility team (frontend+backend+vault). Verdict: VIABLE after AT-1. Backend ready, no new models. 5 files ~160 lines. Inventory gate required. Vault doc created.
+
 ## [2026-05-30] session-end | Airport Transfers section redesigned — Omio-style route cards with real pricing from backend. Backend airport_routes API added. Data shape bug fixed (StationSerializer shadow). Style audit 8 fixes. 1eec0aa + 3759dc2 pushed. Atom extracted: django-serializer-shadowing-pattern.
 
 ## [2026-05-30] session-end | Width consistency audit + sort dropdown fix.3-agent team (header/sections/live-verifier). Root cause: w-full + max-w-[1200px] = full viewport. Fix: explicit w-[1200px] on hero absolute div. Sort dropdown inline with title row. AirportTransferSection commented out pending AT-1. 0ebd755 committed.
@@ -380,3 +384,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-05-30] session-end | vault-only session — transport audit + scrutinize + redesign spec. master-state updated. AT-1 added as P0 next-session task. No code committed.
 ## [2026-05-30] optimize | vault structure fix — rogue 04-knowledge/ deleted (file moved to 03-knowledge/), homepage/ folder deleted (2 files → 01-projects/), southeast_asia doc → 02-areas/, glassmorphism → 08-archive/, 3 stale DECIDED → COMPLETED, index updated + Archive section added. Known debt: 01-projects/smartenplus/ subfolder (50+ files) violates flat schema — defer, wikilinks resolve correctly.
 ## [2026-05-30] session-end | #8 wrap-up — vault optimize complete. master-state updated. No code committed. Next: AT-1 airport transfer redesign (spec in 03-knowledge/transportation-category-audit-2026-05-30.md).
+## [2026-05-30] audit | airport-transfer-width — 3-agent parallel audit. Root cause: inner px/mx margins (px-2 md:px-3, mx-2, mx-3) eating into max-w-[1200px] container. Fix attempt (removing all margins) broke layout — reverted. Issue unresolved. Report: [[airport-transfer-width-audit-2026-05-30]]. Next team: redesign sections as full-width with centered inner content, or accept current padding.
