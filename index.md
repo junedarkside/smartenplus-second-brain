@@ -29,10 +29,6 @@ Global navigation catalog. Updated on every ingest.
 - [[trip-detail-uxui-audit-2026-05-22|Trip Detail UX/UI Audit 2026-05-22]] — 3-specialist audit: 32 issues, ContentCard abstraction absent, full-bleed mobile cards, typography violations, CLS fallbacks; all P0/P1 implemented in branch 260522-fix/trip-detail-ux
 - [[README|SmartEnPlus]] — Thailand transport booking platform (Next.js 14, Redux, Omise)
 - [[architecture|SmartEnPlus Architecture]] — Redux slices, RTK Query, component structure
-- [[payment-system|SmartEnPlus Payments]] — Omise integration, GatewayCharge, QR polling, payment internals
-- [[payment-checkout-architecture-audit-2026-05-17|Payment Checkout Audit 2026-05-17]] — 20/20 pass, getPrimaryCharge fix, PromptPay exclusion
-- [[multitab-payment-gaps-2026-05-18|Multi-Tab Payment Gaps 2026-05-18]] — All 7 gaps resolved, backend+frontend, 242 tests pass
-- [[payment-checkout-e2e-testing-2026-05-17|Payment Checkout E2E Testing 2026-05-17]] — 6-agent test suite, data-testid fix, 23+ specs written
 - [[checkout-flow|SmartEnPlus Checkout]] — SSR-disabled checkout, cart, guest mode
 - [[backend-architecture|SmartEnPlus Backend]] — Django apps, models, Celery, Docker
 - [[operators|Operators]] — Contract, TimeSlot, ContractAddon, ContractTranslation, tour system
@@ -44,8 +40,6 @@ Global navigation catalog. Updated on every ingest.
 - [[billings|Billings]] — BillingProfile, PaymentMethod (all Thai payment types)
 - [[api-endpoints|API Endpoints]] — all public/admin/payment/cart-order endpoints
 - [[docker-production|Docker Production]] — docker-compose-rds.yml, memory budgets, deploy
-- [[payments-deep-dive|Payments Deep Dive]] — create_charge, reconcile, _to_minor_units, JPY
-- [[payments-enums|Payments Enums]] — PaymentStatus, OmiseMethod, REDIRECT_METHODS, METHOD_EXPIRY
 - [[coupons|Coupons]] — Coupon model, times_used F()+1, restrictions
 - [[stations|Stations]] — Station, Location, Place, Timeline, RouteByLocationInfo
 - [[policies|Policies]] — CancellationPolicy, CancellationPolicies, BaggagePolicy, GeneralInformation
@@ -109,6 +103,13 @@ Global navigation catalog. Updated on every ingest.
 - [[smartenplus-2026-ux-direction]] — Strategic shift: cinematic → operational. Compact 45-60vh hero, calm premium minimalism, efficiency-first. Header, search, section redesign strategy.
 - [[mobile-header-scroll-behavior-change]] — Mobile header: dynamic (relative+Slide) → permanently fixed. Spacer removed, DOM paths diverged. 4 issues documented.
 
+- [[payment-gateway-charge-architecture]] — GatewayCharge model, finalize_payment() SSOT, locked_amount freeze, webhook sole finalization
+- [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling
+- [[payment-status-enums]] — PaymentStatus machine, OmiseMethod constants, REDIRECT_METHODS, METHOD_EXPIRY TTLs
+- [[multitab-payment-race-condition-fixes]] — 7 race conditions, select_for_update cart-wide lock, frontend reconciliation
+- [[payment-checkout-architecture-audit]] — 20/20 audit, getPrimaryCharge fix, cancelState guards, qrState clear
+- [[payment-checkout-e2e-testing]] — MSW intercept bug, 5 bugs fixed, session structure rule, manual test guide
+
 ## Areas
 
 - [[engineering]] — Software engineering practices and standards
@@ -141,5 +142,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 72
+- Pages: 78
 - Last updated: 2026-05-30 (vault optimize: fixed folder structure, archived glassmorphism, updated stale statuses, added missing entries)
