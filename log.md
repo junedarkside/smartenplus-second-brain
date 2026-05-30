@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-30] session-end | EXP-1 implemented: PopularExperienceSerializer + ExploreExperiencesSection + ExperienceCard. 27 contracts. Backend 4ab5771, frontend f27f077. Master-state Section 1-3 updated, EXP-1 moved to closed.
+
 ## [2026-05-30] session-end | vault-only session. Experiences section feasibility: 3-agent research + scrutinize (3 wrong claims fixed) + grill (all decisions locked). EXP-1 added to loose ends. No code changes.
 
 ## [2026-05-30] grill | homepage-experiences-section-audit — all design decisions locked: skip rating (N+1), hide booked_count (default=10 misleading), card=title+category+price, image=imagegallery_set S3, serializer=standalone ModelSerializer, prefetch_related imagegallery_set.

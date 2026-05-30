@@ -4,53 +4,47 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-30 (session wrap-up #10)
+**Updated:** 2026-05-30 (session wrap-up #11)
 
-**Achieved this session (2026-05-30 #10) — vault/research only, no code committed:**
-- **Homepage Experiences section feasibility** — 3-agent team (frontend + backend + vault) + scrutinize pass + grill pass. Full design locked.
-  - Created `03-knowledge/homepage-experiences-section-audit-2026-05-30.md`
-  - 3 scrutinize corrections: `featured_image` missing, `service_category` list incomplete, `HomeSerializer` wrong template
-  - Grill decisions locked: skip `average_rating` (N+1), hide `booked_count` (default=10), card=title+category+price, image=`imagegallery_set` S3, standalone `ModelSerializer`, `prefetch_related('imagegallery_set')`
-  - Vault commits: `dabff32` (audit + scrutinize), `e78049f` (grill decisions)
+**Achieved this session (2026-05-30 #11) — EXP-1 complete:**
+- **Experiences section on homepage** — built + committed
+  - Backend `4ab5771`: `PopularExperienceSerializer` (6 fields, standalone) + `_fetch_popular_experiences()` in `pages_info/views.py`. Inventory gate passed: 27 active contracts (12 DAY_TOUR + 3×5 others).
+  - Frontend `f27f077`: `ExperienceCard.js` + `ExploreExperiencesSection.js` + `homepagev2.js` wired. Section renders after Popular Routes, before Reviews.
+  - Both repos committed, ready for QA.
 
-**Achieved this session (2026-05-30 #9):**
-- **Width consistency fixes** + sort dropdown inline + AirportTransferSection hidden. Commit `0ebd755`.
+**Achieved previous session (2026-05-30 #10):**
+- Experiences section design fully locked (vault research + scrutinize + grill). All grill decisions confirmed correct.
 
-**Achieved previous sessions (2026-05-30 #6–8):**
-- AT section redesign `1eec0aa` + `3759dc2`. Vault structure fixed. Transport category audit + AT-1 spec.
+**Achieved sessions #6–9:**
+- AT section redesign `1eec0aa` + `3759dc2` + AT-1 spec. Width consistency `0ebd755`. Vault structure fixed.
 
 **Blocked / carry-forward:**
-1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
-2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. (agents deletion intentional)
+1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main (contains AT-1 spec + EXP-1 code).
+2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. (intentional)
 3. **Nav table empty** — restart backend + populate NavigationSection via admin UI.
 4. **Width increase deferred** — sitewide `Section.js` + all `max-w-[1200px]` pages together.
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **P0 — Implement airport transfer professional redesign** (spec complete — no research needed)
-   - Backend: `products/serializers.py:696` — add `station_name`, `iata_code` to local StationSerializer fields
-   - Backend: `products/serializers.py:~715` — add `route_name` to HomeSerializer fields
-   - Verify: GET `/front-page/` → `airport_routes[0]` has `station_name`, `iata_code`
-   - Frontend: redesign `components/airport-transfer/AirportTransferRouteCard.js` (image card, IATA badge, gradient fallback)
-   - Frontend: update `lib/homepage/components/AirportTransferSection.js` (subtitle, "View all →", mobile carousel)
-   - Full spec: `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec" section
-2. After AT-1 QA: run inventory check for experiences section, then build if ≥6 contracts
-   - Plan fully locked: `03-knowledge/homepage-experiences-section-audit-2026-05-30.md`
+1. **P0 — Implement airport transfer professional redesign** (spec `03-knowledge/transportation-category-audit-2026-05-30.md`)
+   - Backend: `products/serializers.py:696` + `:715` — add `station_name`, `iata_code`, `route_name`
+   - Frontend: redesign `AirportTransferRouteCard.js` + `AirportTransferSection.js`
+2. **P1 — EXP-1 QA** — start dev server, verify carousel + styling
 3. After both pass QA: merge `260528-feat/header-redesign-2026` → main
-4. Commit backend loose files (skip deleted `.claude/agents/`)
+4. Commit backend loose files (skip `.claude/agents/`)
 5. QA ProfileButton + full homepage mobile
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `0ebd755` fix(homepage): width consistency + hide airport transfer section |
-| `smartenplus-backend` | `main` | `3759dc2` feat(pages_info): add airport_routes to frontpage API |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `f27f077` feat(homepage): add Explore Experiences section (EXP-1) |
+| `smartenplus-backend` | `main` | `4ab5771` feat(pages_info): add popular_experiences to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-| `vault` | `master` | `e78049f` docs(vault): lock grill decisions on homepage experiences section |
+| `vault` | `master` | (pending commit) session-end: EXP-1 implemented |
 
-_Last verified 2026-05-30 (session wrap-up #10)_
+_Last verified 2026-05-30 (session wrap-up #11)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
@@ -67,8 +61,7 @@ _Last verified 2026-05-30 (session wrap-up #10)_
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
 | AT-2 | Airport-transfer post-calendar width mismatch | Fix attempt (remove px/mx margins) broke layout — reverted. Root cause: inner margins on StationInformation (px-2 md:px-3, mx-3) + GuidesSection (px-2 md:px-3) + ProductCardContainer (mx-2). Next team: redesign sections as full-width wrappers with centered inner content. Full report: `03-knowledge/airport-transfer-width-audit-2026-05-30.md` | `components/destinations/StationInformation.js`, `components/destinations/GuidesSection.js`, `components/image/ProductCardContainer.js` |
-| AT-1 | **Airport Transfer professional redesign** | Spec complete in vault `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec". Backend: serializers.py:696 + :715. Frontend: AirportTransferRouteCard + AirportTransferSection. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js`, `lib/homepage/components/AirportTransferSection.js` |
-| EXP-1 | **Experiences section on homepage** | Design fully locked. Gate: inventory check ≥6 contracts. Then: `PopularExperienceSerializer` (standalone, 6 fields) + `_fetch_popular_experiences()` + `ExperienceCard` + `ExploreExperiencesSection`. Full plan: `03-knowledge/homepage-experiences-section-audit-2026-05-30.md`. **Do after AT-1.** | `products/serializers.py`, `pages_info/views.py`, new `components/UI/ExperienceCard.js`, new `lib/homepage/components/ExploreExperiencesSection.js`, `pages/homepagev2.js` |
+| AT-1 | **Airport Transfer professional redesign** | P0. Spec complete in vault `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec". Backend: serializers.py:696 + :715. Frontend: AirportTransferRouteCard + AirportTransferSection. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js`, `lib/homepage/components/AirportTransferSection.js` |
 | PR-2 | Popular Routes mobile carousel QA | Check card min-w, arrow buttons, scroll on real mobile | `components/UI/PopularRouteImageCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
@@ -86,10 +79,11 @@ _Last verified 2026-05-30 (session wrap-up #10)_
 | GAP-6 | threshold=0 abrupt snap | P3 — `useStickyVisibility(50)` one-liner | `hooks/useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden at md–xl when search active | P3 | `main-header.js:95` |
 
-### Recently Closed (sessions #9–10)
+### Recently Closed (sessions #9–11)
 
 | Issue | Fix | Date |
 |-------|-----|------|
+| EXP-1 — Experiences section on homepage | `PopularExperienceSerializer` + `ExperienceCard` + `ExploreExperiencesSection`, 27 contracts, gate passed. Backend `4ab5771`, frontend `f27f077`. | 2026-05-30 |
 | Popular Routes card GYG-style | Split-card: image 180px top, white panel below, location label + title + operators + price | 2026-05-28 |
 | Popular Routes white section bg | Removed ContentCard wrapper from PopularRoutesSection happy path | 2026-05-28 |
 | Section gap 8px | `main gap-2` → `gap-8` | 2026-05-28 |
@@ -150,6 +144,7 @@ _Last verified 2026-05-30 (session wrap-up #10)_
 | `display_order` | Empty string → DRF rejects. Must be integer |
 | Navigation API | Returns `[]` if no NavigationSection records. Returns 404 only if server not restarted with new code. |
 | Popular Routes API | `/front-page/` → `home_routes[]`. Fields: `departure_station`, `arrival_station`, `lowest_price`, `operator_count`. NO rating/duration/category. |
+| Popular Experiences API | `/front-page/` → `popular_experiences[]`. Fields: `id`, `name`, `slug`, `service_category`, `image` (S3 URL via imagegallery_set), `min_price` (from Contract_RateCard). 8-item limit, ordered by -booked_count. |
 | Airport Routes API | `/front-page/` → `airport_routes[]`. Same shape as `home_routes`. Currently `departure_station` = `{location: {location_name}, slug}` only — NO `station_name`, NO `iata_code`. **Planned (AT-1):** expand local `StationSerializer` at `products/serializers.py:696` to add `station_name` + `iata_code`. HomeSerializer at :715 to add `route_name`. |
 
 ---
