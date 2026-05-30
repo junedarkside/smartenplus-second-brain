@@ -4,7 +4,7 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-30 (session wrap-up #11)
+**Updated:** 2026-05-30 (session #12 — back/share btn debug)
 
 **Achieved this session (2026-05-30 #11) — EXP-1 complete:**
 - **Experiences section on homepage** — built + committed
@@ -26,13 +26,13 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **P0 — Implement airport transfer professional redesign** (spec `03-knowledge/transportation-category-audit-2026-05-30.md`)
+1. **P0 — Verify back/share buttons** — run `npm run dev` (NOT `next start`), open `/trips/hatyai/koh-lipe`. Buttons should show as glassmorphism pills below header. Full details: `03-knowledge/hero-back-share-buttons-2row-header-fix.md`
+2. **P1 — Implement airport transfer professional redesign** (spec `03-knowledge/transportation-category-audit-2026-05-30.md`)
    - Backend: `products/serializers.py:696` + `:715` — add `station_name`, `iata_code`, `route_name`
    - Frontend: redesign `AirportTransferRouteCard.js` + `AirportTransferSection.js`
-2. **P1 — EXP-1 QA** — start dev server, verify carousel + styling
-3. After both pass QA: merge `260528-feat/header-redesign-2026` → main
-4. Commit backend loose files (skip `.claude/agents/`)
-5. QA ProfileButton + full homepage mobile
+3. **P2 — EXP-1 QA** — verify carousel + styling in dev mode
+4. After both pass QA: merge `260528-feat/header-redesign-2026` → main
+5. Commit backend loose files (skip `.claude/agents/`)
 
 ### Active Branches
 

@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-30] debug | hero back/share buttons: 3 root causes found (wrong prop name, wrong containing block, dynamic loader chain breaks showActions). Buttons moved to TripDetailHero/DayTripHero outer wrapper. Glassmorphism pill style. UNVERIFIED — server in production mode. Resume: npm run dev first.
 ## [2026-05-30] post-mortem | FeaturedImageHeader width bug: w-[1200px] hardcoded in 0ebd755 broke mobile. Fix: w-full + max-w-[1200px]. Vault note created.
 ## [2026-05-30] session-end | EXP-1 implemented: PopularExperienceSerializer + ExploreExperiencesSection + ExperienceCard. 27 contracts. Backend 4ab5771, frontend f27f077. Master-state Section 1-3 updated, EXP-1 moved to closed.
 
