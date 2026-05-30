@@ -109,6 +109,15 @@ Global navigation catalog. Updated on every ingest.
 - [[multitab-payment-race-condition-fixes]] — 7 race conditions, select_for_update cart-wide lock, frontend reconciliation
 - [[payment-checkout-architecture-audit]] — 20/20 audit, getPrimaryCharge fix, cancelState guards, qrState clear
 - [[payment-checkout-e2e-testing]] — MSW intercept bug, 5 bugs fixed, session structure rule, manual test guide
+- [[adaptive-header-route-type-pattern]] — Type A/B split (transactional/discovery), dynamic offset 80/96px, HeaderRowsContext
+- [[structured-data-schema-patterns]] — TravelAgency schema accuracy, WebSite+SearchAction, server-sitemap.xml 404 crawl budget
+- [[mui-dropdown-preserve-strategy]] — ARIA test compatibility, item reduction framework (11→6), Drawer bottom-sheet pattern
+- [[section-contentcard-wrapper-pattern]] — Section/ContentCard absent = full-bleed root cause; reuse across pages
+- [[editorial-grid-layout-pattern]] — Asymmetric 2fr 1fr CSS grid, CardCarouselContainer, rounded-xl imageCard token
+- [[section-render-order-principles]] — Trust before editorial, mobile scroll depth kills buried sections
+- [[dompurify-xss-prevention-pattern]] — dangerouslySetInnerHTML + SSR-safe sanitization (not DOMPurify which needs window)
+- [[api-mirroring-pattern-new-features]] — _fetch_X_data mirroring for new API features; reuse serializer; zero new endpoints
+- [[design-system-tokens-expansion]] — Border/shadow tokens missing from designSystem.js; hardcoded rgba values across components
 
 ## Areas
 
@@ -142,5 +151,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 78
+- Pages: 88
 - Last updated: 2026-05-30 (vault optimize: fixed folder structure, archived glassmorphism, updated stale statuses, added missing entries)
