@@ -4,7 +4,7 @@
 Assessed adding "Explore Experiences" carousel section to homepage, alongside existing Popular Routes. Three-agent research (frontend, backend, vault) + one scrutinize pass. Corrected 3 critical wrong claims.
 
 ## Verdict
-**VIABLE — after AT-1 completes + inventory check + image strategy decision.**
+**VIABLE — after AT-1 completes + inventory check. All design decisions locked (grill pass 2026-05-30).**
 
 ---
 
@@ -20,6 +20,23 @@ Assessed adding "Explore Experiences" carousel section to homepage, alongside ex
 - Inventory unknown — if < 6 active experience contracts, section is harmful
 - AT-1 (Airport Transfer redesign) is open P0 — close debt first
 - No `featured_image` on Contract model — image strategy needed before building
+
+---
+
+## Grill Decisions (2026-05-30)
+
+All locked. Do not re-debate.
+
+| Decision | Choice | Reason |
+|----------|--------|--------|
+| `average_rating` in serializer | **Skip** | `get_average_rating()` runs 2 DB queries per contract (ContentType lookup + Review aggregate). 8 contracts = 16 extra queries per cache miss. Not worth it. |
+| `booked_count` display on card | **Hide** | `Contract.booked_count` defaults to 10 for ALL new contracts (`operators/models.py:268`). Showing number is misleading. |
+| Card content | **title + category badge + min_price only** | Clean, no fake social proof |
+| Image source | **`imagegallery_set.first().image.url`** | S3 storage confirmed (`DEFAULT_FILE_STORAGE = MediaStorage`). `.url` returns full CDN URL. No migration needed. |
+| `min_price` query | **`Contract_RateCard.filter(contract=obj, is_active=True).order_by('selling_rate').first()`** | Reuse exact pattern at `products/serializers.py:1040–1045` |
+| Serializer base | **Standalone `ModelSerializer`** — NOT inheriting `ContractSerializer` | `ContractSerializer` is massive (50+ fields, `to_representation` override, ratecard date filtering). Inheriting adds all that weight for a 6-field homepage card. |
+| Image N+1 | **`prefetch_related('imagegallery_set')`** on queryset | Reduces 8 image queries → 1 prefetch |
+| `min_price` N+1 | **Acceptable** | 8 separate `Contract_RateCard` queries per cache miss. Small table, fast. If becomes problem: annotate with `Min()` in queryset. |
 
 ---
 
@@ -65,10 +82,12 @@ Assessed adding "Explore Experiences" carousel section to homepage, alongside ex
 Exclude: `TRANSPORTATION`, `TRANSFER`, `ACCOMMODATION`
 
 **API extension path:**
-- `products/serializers.py` — new `PopularExperienceSerializer` (ContractSerializer-based, NOT HomeSerializer)
+- `products/serializers.py` — new `PopularExperienceSerializer` (standalone `ModelSerializer`, NOT HomeSerializer, NOT ContractSerializer)
+- Fields: `['id', 'name', 'slug', 'service_category', 'image', 'min_price']` — nothing else
 - `pages_info/views.py:189` — `_fetch_popular_experiences()` mirrors `_fetch_home_routes_data()` pattern
+- Queryset: `Contract.objects.filter(...).prefetch_related('imagegallery_set').order_by('-booked_count')[:limit]`
 - Add to `response_data` dict in `list()` before `cache.set()`
-- **NO new endpoint. NO new URL. NO new model (if Option A for image).**
+- **NO new endpoint. NO new URL. NO new model. NO migration.**
 
 ---
 
@@ -85,7 +104,8 @@ Exclude: `TRANSPORTATION`, `TRANSFER`, `ACCOMMODATION`
 
 **Create lightweight:**
 - `components/UI/ExperienceCard.js` (~60 lines) — copy `PopularRouteImageCard.js` structure
-  - Image `h-[200px]` top, white panel below: category badge, title, rating, price
+  - Image `h-[200px]` top, white panel below: `service_category` badge (gray), `name` h3 (line-clamp-2), "From THB {min_price}"
+  - NO rating. NO booked count.
   - Link to `/activities/detail/${item.slug}`
 
 **SSR pattern:**
@@ -127,9 +147,10 @@ Hide section entirely if `!experiences?.length`. No empty UI.
 ## Blockers / Prerequisites
 
 1. **AT-1 first** — Airport Transfer redesign (open P0 on `260528-feat/header-redesign-2026`)
-2. **Image decision** — Option A (gallery method field, no migration) vs Option B (new URLField + migration). Recommend A.
-3. **Inventory check** — verify ≥6 experience contracts before any code
-4. **New branch** — after AT-1 merges to `main`
+2. **Inventory check** — verify ≥6 experience contracts before any code
+3. **New branch** — after AT-1 merges to `main`
+
+Image strategy locked: Option A (gallery method field, no migration). No longer a blocker.
 
 ---
 

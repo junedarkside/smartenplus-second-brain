@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-30] grill | homepage-experiences-section-audit — all design decisions locked: skip rating (N+1), hide booked_count (default=10 misleading), card=title+category+price, image=imagegallery_set S3, serializer=standalone ModelSerializer, prefetch_related imagegallery_set.
+
 ## [2026-05-30] scrutinize | homepage-experiences-section-audit — 3 critical wrong claims fixed: featured_image missing on Contract (use ImageGallery), service_category list incomplete (TRANSPORTATION/ACCOMMODATION missed), HomeSerializer wrong copy template (use ContractSerializer). Vault doc updated.
 
 ## [2026-05-30] audit | homepage-experiences-section — 3-agent feasibility team (frontend+backend+vault). Verdict: VIABLE after AT-1. Backend ready, no new models. 5 files ~160 lines. Inventory gate required. Vault doc created.
