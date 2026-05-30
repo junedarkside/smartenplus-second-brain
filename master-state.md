@@ -4,38 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-30 (session wrap-up #9)
+**Updated:** 2026-05-30 (session wrap-up #10)
+
+**Achieved this session (2026-05-30 #10) — vault/research only, no code committed:**
+- **Homepage Experiences section feasibility** — 3-agent team (frontend + backend + vault) + scrutinize pass + grill pass. Full design locked.
+  - Created `03-knowledge/homepage-experiences-section-audit-2026-05-30.md`
+  - 3 scrutinize corrections: `featured_image` missing, `service_category` list incomplete, `HomeSerializer` wrong template
+  - Grill decisions locked: skip `average_rating` (N+1), hide `booked_count` (default=10), card=title+category+price, image=`imagegallery_set` S3, standalone `ModelSerializer`, `prefetch_related('imagegallery_set')`
+  - Vault commits: `dabff32` (audit + scrutinize), `e78049f` (grill decisions)
 
 **Achieved this session (2026-05-30 #9):**
-- **Airport transfer page width audit** — 3-agent team (header-auditor, sections-auditor, live-verifier). Root cause: `w-full` + `max-w-[1200px]` = full viewport (max-width doesn't shrink back from 100%). Fix: explicit `w-[1200px]` on hero absolute div.
-- **Width consistency fixes applied:**
-  - `FeaturedImageHeader.js:121` — removed `w-full`, added `max-w-[1200px] mx-auto w-[1200px]` on absolute div
-  - `TripListingSection.js:63` — added `px-2 md:px-3` to grid container
-  - `StationInformation.js:15` — `sm:mx-3` → `px-2 md:px-3`
-  - `GuidesSection.js:12` — `sm:mx-3` → `px-2 md:px-3`
-  - `SearchAndLoading.js:7` — `px-4` → `px-2 md:px-3`
-  - `[slug].js:253` — added `w-full` to breadcrumb wrapper
-  - `[slug].js:257` — added `w-full` to calendar section outer
-  - `[slug].js:258` — `gap-2` → `gap-1` on calendar inner
-  - `TripListingSection.js:100` — added `mx-auto z-10` to outer section
-- **Sort dropdown in title row** — `TripListingSection.js` now has `SortDropdown` alongside title (same row), imported directly from `SortDropDown.js`
-- **AirportTransferSection hidden** from homepage — commented out in `homepagev2.js:358` pending AT-1 redesign
-- **Commit `0ebd755`** — width consistency + hide airport transfer section
+- **Width consistency fixes** + sort dropdown inline + AirportTransferSection hidden. Commit `0ebd755`.
 
-**Achieved this session (2026-05-30 #8) — vault optimize only, no code committed:**
-- **Vault structure fixed:**
-  - `04-knowledge/` rogue folder deleted → `backend-n8n-resend-webhook.md` moved to `03-knowledge/`
-  - `homepage/` rogue folder deleted → `airport-transfer-redesign-2026.md` + `destinations-redesign-review.md` → `01-projects/`
-  - `southeast_asia_transport_platform_direction.md` root orphan → `02-areas/`
-  - `mobile-header-redesign-glassmorphism.md` → `08-archive/`
-- **Index cleaned:** 3 stale DECIDED → COMPLETED, Archive section added, 3 missing entries added, stale one-liners updated, Stats 69→72
-- **Known debt logged:** `01-projects/smartenplus/` subfolder (50+ files) violates flat schema — wikilinks still resolve, defer flatten to separate session
-
-**Achieved previous session (2026-05-30 #7) — vault/research only:**
-- Transport category audit (3-agent), scrutinize pass (8 corrections), professional redesign spec for AT-1 written into `03-knowledge/transportation-category-audit-2026-05-30.md`
-
-**Achieved session (2026-05-30 #6):**
-- **Airport Transfers homepage section — full redesign** (`1eec0aa`) — Backend `3759dc2` + Frontend `1eec0aa`.
+**Achieved previous sessions (2026-05-30 #6–8):**
+- AT section redesign `1eec0aa` + `3759dc2`. Vault structure fixed. Transport category audit + AT-1 spec.
 
 **Blocked / carry-forward:**
 1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
@@ -45,18 +27,18 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **P0 — Implement airport transfer professional redesign** (spec complete in vault — no research needed)
+1. **P0 — Implement airport transfer professional redesign** (spec complete — no research needed)
    - Backend: `products/serializers.py:696` — add `station_name`, `iata_code` to local StationSerializer fields
    - Backend: `products/serializers.py:~715` — add `route_name` to HomeSerializer fields
    - Verify: GET `/front-page/` → `airport_routes[0]` has `station_name`, `iata_code`
    - Frontend: redesign `components/airport-transfer/AirportTransferRouteCard.js` (image card, IATA badge, gradient fallback)
    - Frontend: update `lib/homepage/components/AirportTransferSection.js` (subtitle, "View all →", mobile carousel)
    - Full spec: `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec" section
-2. After redesign passes QA: merge `260528-feat/header-redesign-2026` → main
-3. Commit backend loose files (skip deleted .claude/agents/)
-4. QA ProfileButton + full homepage mobile
-5. **Width506px question unresolved** — trips page reference showed same ~506px at same viewport. Both pages consistent. User may revisit with specific screenshot.
-6. **Sort dropdown inline fix** — committed in `0ebd755`. Verify on reload.
+2. After AT-1 QA: run inventory check for experiences section, then build if ≥6 contracts
+   - Plan fully locked: `03-knowledge/homepage-experiences-section-audit-2026-05-30.md`
+3. After both pass QA: merge `260528-feat/header-redesign-2026` → main
+4. Commit backend loose files (skip deleted `.claude/agents/`)
+5. QA ProfileButton + full homepage mobile
 
 ### Active Branches
 
@@ -66,11 +48,13 @@
 | `smartenplus-backend` | `main` | `3759dc2` feat(pages_info): add airport_routes to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
+| `vault` | `master` | `e78049f` docs(vault): lock grill decisions on homepage experiences section |
 
-_Last verified 2026-05-30 (session wrap-up #8)_
+_Last verified 2026-05-30 (session wrap-up #10)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
+`M components/airport-transfer/TripListingSection.js` + `M pages/airport-transfer/[slug].js` — on branch, not yet merged.
 
 **Backend:** 8 `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. Content repo: clean.
 
@@ -82,7 +66,9 @@ _Last verified 2026-05-30 (session wrap-up #8)_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| AT-2 | Airport-transfer post-calendar width mismatch | Fix attempt (remove px/mx margins) broke layout — reverted. Root cause: inner margins on StationInformation (px-2 md:px-3, mx-3) + GuidesSection (px-2 md:px-3) + ProductCardContainer (mx-2). Next team: redesign sections as full-width wrappers with centered inner content. Full report: `03-knowledge/airport-transfer-width-audit-2026-05-30.md` | `components/destinations/StationInformation.js`, `components/destinations/GuidesSection.js`, `components/image/ProductCardContainer.js` |
 | AT-1 | **Airport Transfer professional redesign** | Spec complete in vault `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec". Backend: serializers.py:696 + :715. Frontend: AirportTransferRouteCard + AirportTransferSection. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js`, `lib/homepage/components/AirportTransferSection.js` |
+| EXP-1 | **Experiences section on homepage** | Design fully locked. Gate: inventory check ≥6 contracts. Then: `PopularExperienceSerializer` (standalone, 6 fields) + `_fetch_popular_experiences()` + `ExperienceCard` + `ExploreExperiencesSection`. Full plan: `03-knowledge/homepage-experiences-section-audit-2026-05-30.md`. **Do after AT-1.** | `products/serializers.py`, `pages_info/views.py`, new `components/UI/ExperienceCard.js`, new `lib/homepage/components/ExploreExperiencesSection.js`, `pages/homepagev2.js` |
 | PR-2 | Popular Routes mobile carousel QA | Check card min-w, arrow buttons, scroll on real mobile | `components/UI/PopularRouteImageCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
