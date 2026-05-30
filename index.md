@@ -14,6 +14,7 @@ Global navigation catalog. Updated on every ingest.
 
 - [[check-your-booking-redesign-2026-05-29]] — **DECIDED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
 
+- [[airport-transfer-redesign-2026]] — **COMPLETED 2026-05-30.** Omio-style route cards. Backend: airport_routes key in /front-page/ API. Frontend: AirportTransferRouteCard + AirportTransferSection rewrite. Style audit 8 fixes. Data shape bug fixed (StationSerializer shadow).
 - [[travel-thailand-better-section-redesign]] — **COMPLETED 2026-05-29.** `ce4d2d7` on `260528-feat/header-redesign-2026`. Replace 3 editorial sections with 1 unified "Travel Thailand Better" section. 1 featured + 2 secondary cards. AutoStoriesOutlined icon. Tailwind lib/ scan bug fixed.
 - [[header-redesign-2026-spec]] — **FINAL 2026-05-28.** Adaptive Type A/B header. Type A: single-row 80px (transactional). Type B: 2-row 96px (discovery/browse). All 5 nav items kept. /blog → Type B. Dynamic layout offset. 12-file implementation plan. 4-day rollout + 2 separate PRs.
 - [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. Day 4 QA pending. Handoff doc with full change log + QA checklist + remaining work.
@@ -91,6 +92,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-contracts]] — Category registry, form flow, payload rules, helpers
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
+- [[django-serializer-shadowing-pattern]] — Local class redefines imported name in same file; silently changes exposed fields. Discovered via HomeSerializer/StationSerializer in products/serializers.py.
 - [[mui-tailwind-css-specificity]] — MUI Emotion overrides Tailwind className on MUI components; use sx prop or div wrapper; sx responsive breakpoints fail without Emotion cache provider
 - [[nextjs-fixed-header-per-route]] — `position: fixed` on homepage only via `router.pathname === '/'`; sticky elsewhere; `<main>` gets `pt-[88px]` on non-homepage to clear header
 - [[payment-sentinel-idempotency]] — Timestamp sentinels as exactly-once guards; reusable for any side effect (email, booking, settlement)
@@ -133,5 +135,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 67
-- Last updated: 2026-05-29 (travel-thailand-better-section-redesign marked COMPLETED)
+- Pages: 69
+- Last updated: 2026-05-30 (airport-transfer-redesign-2026 + django-serializer-shadowing-pattern added)

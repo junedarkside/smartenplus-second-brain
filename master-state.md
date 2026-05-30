@@ -4,48 +4,44 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-29 (session wrap-up #5)
+**Updated:** 2026-05-30 (session wrap-up #6)
 
-**Achieved this session (2026-05-29 #5):**
-- **ProfileMenu forum links** — added "Ask Away" + "Explore More" rows (both → `/forum`) to auth + guest sections. `7650f3c` pushed.
-- **CustomerServiceSection removed from homepage** — `homepagev2.js` block removed. Component file kept. Same commit.
+**Achieved this session (2026-05-30 #6):**
+- **Airport Transfers homepage section — full redesign** (`1eec0aa`)
+  - Backend: `airport_routes` key added to `/front-page/` API via `_fetch_airport_routes_data()` in `pages_info/views.py`. Filters `Route` by `departure_station__station_type='airport'`, annotates `lowest_price` + `operator_count` via `HomeSerializer`. Default limit 4. Pushed `3759dc2` to backend `main`.
+  - Frontend: new `AirportTransferRouteCard.js` (Omio-style text card: airport → destination → price → View Route). `AirportTransferSection.js` rewritten — `<header>` semantic tag, `AirportShuttleOutlinedIcon`, 4-col grid, GTM tracking. `homepagev2.js` wired to `airport_routes` key.
+  - **Data shape bug fixed** — `departure_station.location.location_name` (HomeSerializer uses local `StationSerializer` with only `{location, slug}` — no `station_name`, no `iata_code`). See [[django-serializer-shadowing-pattern]].
+  - Style audit: 8 inconsistencies fixed vs design system (rounded-md, hover:shadow-lg, semantic header, no ContentCard, correct padding).
+  - Pushed frontend `1eec0aa` on `260528-feat/header-redesign-2026`.
 
-**Achieved previous session (2026-05-29 #4):**
-- **ProfileButton full redesign** — 3-specialist team review (UX + UI/Visual + Frontend). 376L monolith → 3 files: `ProfileButton.js` (~120L), `ProfileMenu.js` (~120L), `ProfileBottomSheet.js` (~39L). Committed `dac7e66`.
-  - Menu: 11 items → 6 auth / 4 guest. Traveler mental model: My Trips / Account / Support+Exit.
-  - Guest path now includes "Find My Booking" → `/bookings?guest=true` (was dead-end).
-  - MUI Menu preserved (ARIA semantics + test contracts intact). Visual override via `sx`: 296px, `rounded-2xl`, soft shadow, `#E5E7EB` border.
-  - Mobile: MUI Drawer `anchor="bottom"`, drag handle, 80dvh, `rounded-t-2xl`.
-  - Logout 4-step flow: unchanged.
-- **ProfileImage pill trigger redesigned** — single-line label, no duplicate "My Account" subtitle. Label logic: `first_name → email.split('@')[0] → 'Account'`. Guest avatar: neutral gray + PersonOutlinedIcon. Auth avatar: `stringToHsl` brand-colored initials. 36px pill height, 24px avatar, rotating chevron.
-- **next/image hostname errors fixed** — `pages/help/index.js`: removed dead `getImageProps` call, use `bgDefaultImage1.src` (relative) for `FeaturedImageHeader`. `pages/blog/categories/[slug].js`: added `headerImageSrc` (relative) for header, `mainPageImage` (absolute) kept for SEO. `pages/blog/search/[...slug].js`: `searchImageUrl` now uses string URL or absolute fallback — static import object no longer used as SEO URL.
-- **Vault doc created** — `01-projects/profile-dropdown-redesign-2026-05-29.md` with full debate summary, spec, file structure.
+**Achieved previous session (2026-05-29 #5):**
+- **ProfileMenu forum links** — "Ask Away" + "Explore More" → `/forum`. `7650f3c` pushed.
+- **CustomerServiceSection removed from homepage** — `homepagev2.js` block removed. Component file kept.
 
 **Blocked / carry-forward:**
 1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main.
-2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked.
+2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. (agents deletion intentional)
 3. **Nav table empty** — restart backend + populate NavigationSection via admin UI.
-4. **Width increase deferred** — sitewide layout pass: update `Section.js` + all inline `max-w-[1200px]` in trips/blog/operators pages together.
-5. **HD-2 stale** — `ProfileButton.js:367` reference in loose ends table is now invalid (file restructured). Close HD-2.
-6. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
+4. **Width increase deferred** — sitewide `Section.js` + all `max-w-[1200px]` pages together.
+5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point:**
 1. Merge `260528-feat/header-redesign-2026` → main
-2. Commit backend loose files (skip deleted agents — intentional)
-3. QA ProfileButton dropdown on desktop + mobile (bottom sheet, guest flow, auth flow, logout)
+2. Commit backend loose files (skip deleted agents)
+3. QA ProfileButton + Airport Transfers section on mobile
 4. QA homepage on mobile (Popular Routes carousel, Destinations grid, Check Your Booking)
-5. Decide on sitewide width increase (1200→1440px)
+5. Decide sitewide width increase (1200→1440px)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `7650f3c` feat(profile): add Ask Away + Explore More to profile menu, remove homepage CustomerServiceSection |
-| `smartenplus-backend` | `main` | `2bdf31b` fix: N8N_WEBHOOK_URL default=None |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `1eec0aa` feat(homepage): redesign Airport Transfers section |
+| `smartenplus-backend` | `main` | `3759dc2` feat(pages_info): add airport_routes to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-05-29 (session wrap-up #5)_
+_Last verified 2026-05-30 (session wrap-up #6)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
@@ -141,6 +137,7 @@ _Last verified 2026-05-29 (session wrap-up #5)_
 | `display_order` | Empty string → DRF rejects. Must be integer |
 | Navigation API | Returns `[]` if no NavigationSection records. Returns 404 only if server not restarted with new code. |
 | Popular Routes API | `/front-page/` → `home_routes[]`. Fields: `departure_station`, `arrival_station`, `lowest_price`, `operator_count`. NO rating/duration/category. |
+| Airport Routes API | `/front-page/` → `airport_routes[]`. Same shape as `home_routes`. `departure_station` = `{location: {location_name}, slug}` only — NO `station_name`, NO `iata_code` (local `StationSerializer` in `products/serializers.py:696` shadows the full one). |
 
 ---
 
