@@ -2,7 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
-## [2026-05-31] audit | css consistency: 3-agent team (destinations/trips/patterns). 4 browse pages vs blog/homepage reference. 3 HIGH findings: card border-radius varies 0/4/6/12px, padding 8px vs 16px, grid gaps 4-8px vs 16-24px. Recommend rounded-xl (12px) for browse cards. Vault note created. Fix pending.
+## [2026-05-31] audit+fix | css consistency: 13 commits on `260528-feat/header-redesign-2026`. All browse pages fixed: destinations, locations, trips. Card border-radius, padding, grid gaps, section padding, card bg, back/share overlay added to trips. Pushed to remote.
 ## [2026-05-31] session-end | blog width audit + partial fix: BlogPostDisplay 4 fixes (section padding, article width lg:w-full, engagement bar px-, duplicate breadcrumb removed). Audit doc committed 73af6e9. BW-1/BW-2/BW-3 pending. Vault updated.
 ## [2026-05-31] session-end | carousel 4-card desktop fix: xl:w-[284px] on PopularRouteImageCard + ExperienceCard. 4×284+4×16=1200px. b104962 pushed. PR-2 closed.
 ## [2026-05-30] debug | hero back/share buttons: 3 root causes found (wrong prop name, wrong containing block, dynamic loader chain breaks showActions). Buttons moved to TripDetailHero/DayTripHero outer wrapper. Glassmorphism pill style. UNVERIFIED — server in production mode. Resume: npm run dev first.

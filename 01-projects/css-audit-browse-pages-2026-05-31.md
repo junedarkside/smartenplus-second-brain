@@ -1,7 +1,19 @@
 # CSS Audit — Browse Pages Consistency (Destinations/Locations/Trips/Activities)
 
 ## Summary
-Post-blog consistency update (commit 315cc2e), 4 browse pages audited against homepage, trip detail, blog reference patterns. Multiple inconsistencies found in border-radius, padding, grid gaps, section padding.
+**COMPLETED 2026-05-31.** Post-blog consistency update (commit 315cc2e), 4 browse pages audited + fixed against homepage, trip detail, blog reference patterns. 13 commits on branch `260528-feat/header-redesign-2026`.
+
+## What Was Fixed
+- Card border-radius: `rounded-xl` (12px) on all browse cards
+- Card padding: `p-4` (16px) on LocationCard, DayTripCard
+- Grid gaps: `gap-4 md:gap-6` (16-24px) on all browse grids
+- Section padding: `py-6 px-4 xl:px-0` on trips, locations, destinations
+- Card bg: `bg-white` on trips cards (vs transparent page)
+- LocationCard station items: `rounded-md` (per design system)
+- Back/share overlay: added to `/trips` matching `/locations` pattern
+- Removed redundant inner `mx-` margins (section `px-4` sufficient)
+- Removed grid `p-2` padding (cards self-pad with `p-4`)
+- designSystem.js: documented `rounded-xl` vs `rounded-md` token usage
 
 ## Pages Audited
 - `/destinations` — LocationCard component
