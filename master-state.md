@@ -4,7 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-31 (session #15 — header search input UI cleanup)
+**Updated:** 2026-06-01 (session #16 — vault atomization)
+
+**Achieved this session (2026-06-01 #16):**
+- **Vault atomization** — extracted 5 atomic notes from fat knowledge files:
+  - `airport-transfer-at1-redesign-spec` ← from `transportation-category-audit` (317→220 lines)
+  - `nextjs-hydration-rules` ← from `nextjs-patterns` (128→80 lines)
+  - `payment-checkout-5-principles` ← from `payment-integration` (137→110 lines)
+  - `nextjs-static-path-prop-divergence` ← from `trip-detail-deep-review` (H8 extracted)
+  - `designsystem-shadow-border-tokens` ← from `design-system-tokens-expansion` (105→55 lines)
+  - Source notes trimmed + wikilinked. index.md updated. Vault now 93 pages. Commit `75590b9`.
+- **Feature branch merged** — `260528-feat/header-redesign-2026` → `develop` (`81a8f99`). Shipped to production by user.
 
 **Achieved this session (2026-05-31 #15):**
 - **SearchDialogTrigger `variant='input'` cleanup** — 3 small UI fixes:
@@ -66,7 +76,7 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `aea6cf0` fix(header): fix input height mismatch with search button |
+| `smartenplus-frontend` | `develop` | `81a8f99` Merge branch '260528-feat/header-redesign-2026' into develop |
 | `smartenplus-backend` | `main` | `4ab5771` feat(pages_info): add popular_experiences to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |

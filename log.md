@@ -402,3 +402,5 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-05-31] session-end | #15 — header search input UI cleanup. Removed left icon, stripped 'Search' text from submit btn, fixed input height mismatch (h-full). Commits ff43d3d + aea6cf0 on 260528-feat/header-redesign-2026.
 
 ## [2026-06-01] lint | atomized 5 concepts — airport-transfer-at1-redesign-spec, nextjs-hydration-rules, payment-checkout-5-principles, nextjs-static-path-prop-divergence, designsystem-shadow-border-tokens. Source notes trimmed.
+
+## [2026-06-01] session-end | #16 — vault atomization (5 atoms). Feature branch merged to develop + shipped to production.
