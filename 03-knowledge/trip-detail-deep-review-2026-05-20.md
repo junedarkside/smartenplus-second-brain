@@ -134,9 +134,8 @@ Exchange rate hardcoded. Current ~33–36 THB/USD. Google indexes → incorrect 
 ---
 
 ### 🟡 H8 — `TRANSPORTATION_CATEGORIES` divergence is a correctness trap, not just maintenance debt
-Original flagged C8 as "maintainability." Real risk: `getStaticPaths` constant updated (e.g., add `'SHUTTLE'`) but `getStaticProps` constant not → shuttle pages pre-built then redirected at runtime. Silent routing failure — no build error, no 404, wrong redirect.
-
-**Fix:** Module-level constant mandatory, not optional.
+`getStaticPaths` and `getStaticProps` sharing different constant copies → silent routing failure (pre-built pages redirected at runtime, no build error).
+→ See [[nextjs-static-path-prop-divergence]]
 
 ---
 

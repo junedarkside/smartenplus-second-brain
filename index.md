@@ -123,6 +123,11 @@ Global navigation catalog. Updated on every ingest.
 - [[dompurify-xss-prevention-pattern]] — dangerouslySetInnerHTML + SSR-safe sanitization (not DOMPurify which needs window)
 - [[api-mirroring-pattern-new-features]] — _fetch_X_data mirroring for new API features; reuse serializer; zero new endpoints
 - [[design-system-tokens-expansion]] — Border/shadow tokens missing from designSystem.js; hardcoded rgba values across components
+- [[designsystem-shadow-border-tokens]] — SHADOWS, BORDERS, BORDER_RADIUS_CLASSES token definitions for helpers/designSystem.js. Replaces hardcoded rgba() across card/dropdown components
+- [[airport-transfer-at1-redesign-spec]] — AT-1 full redesign spec: image card + IATA badge + carousel mobile + serializer expansion (station_name, iata_code). Zero impact on other components
+- [[nextjs-hydration-rules]] — 6 rules preventing hydration mismatches + PersistGate SSR blocker pattern. Mismatch in _app.js triggers HMR infinite refresh
+- [[payment-checkout-5-principles]] — 5 core checkout architecture principles: webhook SSOT, single attempt, immutable snapshot, cart lock, explicit cancel-recreate
+- [[nextjs-static-path-prop-divergence]] — getStaticPaths + getStaticProps constant divergence = silent routing failure. Module-level constant mandatory
 
 ## Areas
 

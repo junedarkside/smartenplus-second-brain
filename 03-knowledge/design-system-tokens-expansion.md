@@ -23,42 +23,8 @@ No semantic tokens for:
 
 ## Decision
 
-### Add SHADOWS Token Set
-```js
-// helpers/designSystem.js
-
-export const SHADOWS = {
-  sm: '0 1px 2px rgba(0,0,0,0.05)',
-  md: '0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06)',
-  lg: '0 10px 15px rgba(0,0,0,0.10), 0 4px 6px rgba(0,0,0,0.05)',
-  xl: '0 20px 25px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.04)',
-  dropdown: '0 8px 24px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06)',
-  elevated: '0 4px 12px rgba(0,0,0,0.15)',
-};
-```
-
-### Add BORDERS Token Set
-```js
-export const BORDERS = {
-  light: '1px solid #E5E7EB',
-  medium: '1px solid #D1D5DB',
-  focus: '2px solid #3B82F6',
-  brand: '2px solid #3b5998',
-};
-```
-
-### Add BORDER_RADIUS_CLASSES Expansion
-```js
-export const BORDER_RADIUS_CLASSES = {
-  sm: 'rounded',
-  md: 'rounded-md',
-  lg: 'rounded-lg',
-  xl: 'rounded-xl', // 12px — editorial image cards
-  '2xl': 'rounded-2xl',   // 16px — large cards (verify before using)
-  full: 'rounded-full',
-  imageCard: 'rounded-xl', // 12px — explicit token for image cards
-};
-```
+SHADOWS, BORDERS, BORDER_RADIUS_CLASSES token definitions + affected components migration table extracted to atomic note.
+→ See [[designsystem-shadow-border-tokens]]
 
 ## Details
 

@@ -44,31 +44,8 @@ Save audit/log records outside `transaction.atomic()` → survive rollbacks. Bus
 
 ## Checkout Architecture — 5 Core Principles
 
-**1. Webhook = source of truth.** Frontend redirect MUST NOT finalize. Only webhook marks paid, creates booking items, finalizes settlement.
-
-**2. One active payment attempt.** One order → one pending intent → one amount snapshot. Prevents duplicate charges, conflicting QR codes.
-
-**3. Immutable payment snapshot.** Charge created → amount, items, discounts, method frozen. `CheckoutSnapshot` created after charge.
-
-**4. Cart locked during `payment_pending`.** ALL cart mutations blocked (PATCH/DELETE, add, coupon). Backend `409 PAYMENT_PENDING`. Frontend amber warning.
-
-**5. Explicit cancel-and-recreate.** Expire charge → unlock → user selects new method → new intent. Never mutate active payment.
-
-**State machine:**
-```
-editable → payment_pending → paid
-editable → payment_pending → expired/cancelled → editable
-```
-
-**Implemented patterns (frontend):**
-- `getBillingAndOrder.js`: 409 maps `payment_pending` → `PAYMENT_PENDING`, `amount_locked` → `AMOUNT_LOCKED`
-- `usePaymentInitialization.js`: idempotency key `cartId:total`
-- `PaymentComponent.js`: `handleCancelPendingPayment()` → expire + refetch
-- `expirePendingCharge()` + `getReconcileOrder()` in `getBillingAndOrder.js`
-- Cross-tab sync: `cart_version` storage key + listener in `store/index.js`
-- formData sessionStorage: persists form state, validates freshness (30min) + cartId match
-
-28-use-case ref: `docs/features/payment/PAYMENT_CHECKOUT_ARCHITECTURE_REVIEW.md`
+Webhook SSOT, single active attempt, immutable snapshot, cart lock during pending, explicit cancel-recreate. State machine + implemented patterns extracted to atomic note.
+→ See [[payment-checkout-5-principles]]
 
 ## QR Expiry — Parent/Child State
 
