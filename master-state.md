@@ -4,7 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-31 (session #14 — blog width audit + partial fix)
+**Updated:** 2026-05-31 (session #15 — header search input UI cleanup)
+
+**Achieved this session (2026-05-31 #15):**
+- **SearchDialogTrigger `variant='input'` cleanup** — 3 small UI fixes:
+  - Removed left magnifier icon from input container (was redundant with blue submit btn)
+  - Fixed input padding `pl-9` → `pl-3` (no icon to offset)
+  - Removed "Search" text from submit button (icon-only), added `aria-label="Search"`
+  - Fixed input/button height mismatch: added `h-full` to input (was `py-1.5` only, didn't fill `h-10`)
+  - Commits: `ff43d3d` (icon/text cleanup) + `aea6cf0` (height fix) on `260528-feat/header-redesign-2026`
 
 **Achieved this session (2026-05-31 #14):**
 - **Blog width audit** — design-review agent audited /blog vs /activities/detail width. Root cause: blog doesn't use Section/ContentCard abstractions.
@@ -58,7 +66,7 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `73af6e9` docs: add width-inconsistency audit report |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `aea6cf0` fix(header): fix input height mismatch with search button |
 | `smartenplus-backend` | `main` | `4ab5771` feat(pages_info): add popular_experiences to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
@@ -198,7 +206,7 @@ _Last verified 2026-05-31 (session wrap-up #13)_
 - `HeaderSearchContext` — single source of truth for header search content
 - Only `FilterTripsPage.js` and `homepagev2.js` call `setSearchBarContent()`
 - `HeaderSearchSummary` — guards `!from || !to` → renders `SearchDialogTrigger` CTA
-- `SearchDialogTrigger` `variant="input"` — white bg, search icon left, "Plan your Thailand journey", `bg-fb-blue` "Search" button right, `h-10`
+- `SearchDialogTrigger` `variant="input"` — white bg, NO left icon, "Plan your Thailand journey" placeholder, `bg-fb-blue` icon-only submit button right, `h-10`. Input `h-full` to match button height.
 - `PageMain` in `layout.js` — reads context, adaptive padding prevents layout gap
 - `useStickyVisibility` — IntersectionObserver, threshold=0 default
 - Search bar left-aligned: `main-header.js` uses `justify-start` + `max-w-2xl`
