@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-05-31] session-end | blog width audit + partial fix: BlogPostDisplay 4 fixes (section padding, article width lg:w-full, engagement bar px-, duplicate breadcrumb removed). Audit doc committed 73af6e9. BW-1/BW-2/BW-3 pending. Vault updated.
 ## [2026-05-31] session-end | carousel 4-card desktop fix: xl:w-[284px] on PopularRouteImageCard + ExperienceCard. 4×284+4×16=1200px. b104962 pushed. PR-2 closed.
 ## [2026-05-30] debug | hero back/share buttons: 3 root causes found (wrong prop name, wrong containing block, dynamic loader chain breaks showActions). Buttons moved to TripDetailHero/DayTripHero outer wrapper. Glassmorphism pill style. UNVERIFIED — server in production mode. Resume: npm run dev first.
 ## [2026-05-30] post-mortem | FeaturedImageHeader width bug: w-[1200px] hardcoded in 0ebd755 broke mobile. Fix: w-full + max-w-[1200px]. Vault note created.

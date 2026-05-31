@@ -4,7 +4,16 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-05-31 (session #13 — carousel 4-card fix)
+**Updated:** 2026-05-31 (session #14 — blog width audit + partial fix)
+
+**Achieved this session (2026-05-31 #14):**
+- **Blog width audit** — design-review agent audited /blog vs /activities/detail width. Root cause: blog doesn't use Section/ContentCard abstractions.
+- **BlogPostDisplay.js4 fixes applied:**
+  - Section wrapper: added `px-2 md:px-3 xl:px-0`
+  - Article: `lg:w-2/3` → `lg:w-full`
+  - Engagement bar: `px-2 md:px-4` → `px-2 md:px-3 xl:px-0`
+  - Removed duplicate breadcrumb (was in both BlogPageWrapper + BlogPostDisplay)
+- **Audit doc committed** `73af6e9` — `docs/width-inconsistency-audit-2026-05-30.md`
 
 **Achieved this session (2026-05-31 #13):**
 - **Homepage carousel 4-card fix** — `b104962` pushed to `260528-feat/header-redesign-2026`
@@ -34,7 +43,10 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **P0 — Verify back/share buttons** — run `npm run dev` (NOT `next start`), open `/trips/hatyai/koh-lipe`. Buttons should show as glassmorphism pills below header. Full details: `03-knowledge/hero-back-share-buttons-2row-header-fix.md`
+1. **P0 — Fix blog width inconsistencies** (BW-1, BW-2, BW-3)
+   - `pages/blog/index.js:186` — hero `px-4` → `px-2 md:px-3 xl:px-0`
+   - `pages/blog/index.js:206` — featured section `px-2 md:px-4` → `px-2 md:px-3 xl:px-0`
+   - `components/blog/BlogCard.js` — `rounded-lg` → `rounded-md` + add `mx-2 md:mx-3 xl:mx-0`
 2. **P1 — Implement airport transfer professional redesign** (spec `03-knowledge/transportation-category-audit-2026-05-30.md`)
    - Backend: `products/serializers.py:696` + `:715` — add `station_name`, `iata_code`, `route_name`
    - Frontend: redesign `AirportTransferRouteCard.js` + `AirportTransferSection.js`
@@ -46,11 +58,11 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `b104962` fix(homepage): show exactly 4 cards on xl desktop carousel |
+| `smartenplus-frontend` | `260528-feat/header-redesign-2026` | `73af6e9` docs: add width-inconsistency audit report |
 | `smartenplus-backend` | `main` | `4ab5771` feat(pages_info): add popular_experiences to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-| `vault` | `master` | (pending commit) session-end: EXP-1 implemented |
+| `vault` | `master` | (pending commit) session-end: blog width audit + partial fix |
 
 _Last verified 2026-05-31 (session wrap-up #13)_
 
@@ -68,6 +80,9 @@ _Last verified 2026-05-31 (session wrap-up #13)_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| BW-1 | Blog index hero `px-4` padding | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:186` |
+| BW-2 | Blog index featured section `px-2 md:px-4` | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:206` |
+| BW-3 | BlogCard `rounded-lg` + no mx- margins | Should be `rounded-md` + `mx-2 md:mx-3 xl:mx-0` | `components/blog/BlogCard.js` |
 | AT-2 | Airport-transfer post-calendar width mismatch | Fix attempt (remove px/mx margins) broke layout — reverted. Root cause: inner margins on StationInformation (px-2 md:px-3, mx-3) + GuidesSection (px-2 md:px-3) + ProductCardContainer (mx-2). Next team: redesign sections as full-width wrappers with centered inner content. Full report: `03-knowledge/airport-transfer-width-audit-2026-05-30.md` | `components/destinations/StationInformation.js`, `components/destinations/GuidesSection.js`, `components/image/ProductCardContainer.js` |
 | AT-1 | **Airport Transfer professional redesign** | P0. Spec complete in vault `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec". Backend: serializers.py:696 + :715. Frontend: AirportTransferRouteCard + AirportTransferSection. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js`, `lib/homepage/components/AirportTransferSection.js` |
 | PR-2 | ~~Popular Routes carousel 4-card desktop fix~~ | ✓ Closed `b104962` — `xl:w-[284px]` on both card components | — |
