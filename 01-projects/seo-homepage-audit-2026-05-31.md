@@ -74,8 +74,8 @@ Both `pages/_app.js:39` and `components/FrontPage/Seo.js:46` set `locale: 'en_US
 | P1-1 | Change locale to `th_TH` + en hreflang | `components/FrontPage/Seo.js:46`, `pages/_app.js:39` | Confirmed |
 | P1-2 | Add postalAddress to TravelAgency JSON-LD | `pages/homepagev2.js:238-264` | Confirmed |
 | P1-3 | Add HSTS, CSP, Permissions-Policy headers | `next.config.js` | Confirmed |
-| P1-4 | Wire FAQPageJsonLd into homepagev2 via SEOSection with isFAQ prop | `pages/homepagev2.js` + `components/SEO/SEOSection.js` | Confirmed |
-| P1-5 | Audit subcategoriesData shape before building FAQStructuredData | `pages/homepagev2.js:105` | TBD — data shape needed |
+| P1-4 | Wire FAQPageJsonLd into homepagev2 via SEOSection with isFAQ prop | `pages/homepagev2.js` + `components/SEO/SEOSection.js` | DONE — resolved via direct FAQPageJsonLd render (not SEOSection), extended WP query with faqsPosts |
+| P1-5 | Audit subcategoriesData shape before building FAQStructuredData | `pages/homepagev2.js:105` | DONE — WP query extended to fetch FAQ post title+content, transformed to question/answer |
 | P2-1 | Cap hero image sizes | `helpers/imageOptimization.js:25` | Confirmed |
 | P3-1 | Add contactPoint to TravelAgency | `pages/homepagev2.js` | Confirmed |
 | P3-2 | Add departureTime/arrivalTime to BusTrip | `lib/homepage/components/PopularRoutesStructuredData.js` | Confirmed |
