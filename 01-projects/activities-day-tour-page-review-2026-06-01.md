@@ -41,37 +41,11 @@ if (serviceCategory) params.append('service_category', serviceCategory);
 
 ---
 
-### DS-1 [P1] — Design system tokens imported but inconsistently applied
+### DS-1 [P1] — Design system tokens inconsistently applied
 
-**Hardcoded values with existing tokens:**
+Key gotcha: `TYPOGRAPHY_SCALE.caption` = `'text-xs'` (Tailwind string) — `.fontSize` is `undefined`. Never use in MUI `sx`. See [[design-token-caption-tailwind-gotcha]].
 
-| Component | Hardcoded | Token |
-|-----------|-----------|-------|
-| `DayTripCard.js` ×5 | `fontSize: '0.8125rem'` | `TYPOGRAPHY_SCALE.caption.fontSize` |
-| `DayTripCard.js:112` | `fontWeight: 600` | `FONT_WEIGHTS.semibold` |
-| `CategoryFilter.js:55,80` | `minHeight: 44` | `TOUCH_TARGET.minHeight` (used in FilterDayTripsPage — not here) |
-| `CategoryFilter.js:60` | `fontWeight: 500` | `FONT_WEIGHTS.medium` |
-| `FilterDayTripsPage.js` | `fontSize: '1.5rem'/'2rem'` | `TYPOGRAPHY_SCALE.h1` |
-| `FilterDayTripsPage.js` | `fontSize: '0.875rem'/'1rem'` | `TYPOGRAPHY_SCALE.body` |
-| `DayTripList.js` skeleton | `height: {xs:160, sm:192}` | no token — add `SKELETON_HEIGHT` or align to card 180px |
-| `DayTripList.js` | `spacing={1}` vs loading `spacing={2}` | inconsistent |
-
-**Already correct:**
-- ✓ `COLORS` imported + used across all components
-- ✓ `BORDER_RADIUS.imageCard` on card container
-- ✓ `TOUCH_TARGET.minHeight` in `FilterDayTripsPage` (not CategoryFilter)
-- ✓ Keyboard a11y in DayTripCard
-
-**`COMPONENT_CONFIGS` (Card, Button, Input) defined in designSystem.js — never referenced in browse components.** Defer full adoption — over-engineering relative to this sprint.
-
-**Scrutinize corrections:**
-- `TYPOGRAPHY_SCALE.caption` = `'text-xs'` (Tailwind string) — **no `.fontSize` property**. `TYPOGRAPHY_SCALE.caption.fontSize` = `undefined`. Applying it to MUI `sx` silently drops font size.
-- `FilterDayTripsPage.js:142` also has `minHeight: 44` (Pagination items) — audit missed it, claimed file was "correct".
-- `TOUCH_TARGET.minHeight` = `'44px'` (string). Current code uses `44` (number). MUI `sx` treats both identically — substitution safe, but note: don't use token in Tailwind class contexts.
-
-**Scoped fix (corrected — 2 changes, no abstractions):**
-1. `CategoryFilter.js:55,80` + `FilterDayTripsPage.js:142` — `minHeight: 44` → `TOUCH_TARGET.minHeight`
-2. `DayTripCard.js` ×5 — leave `fontSize: '0.8125rem'` OR add `export const SIZES = { caption: '0.8125rem' }` to designSystem.js and reference that. Do NOT use `TYPOGRAPHY_SCALE.caption.fontSize` — it is undefined.
+Scoped fix: `CategoryFilter.js:55,80` + `FilterDayTripsPage.js:142` → `TOUCH_TARGET.minHeight`. `DayTripCard.js` ×5 caption — use raw `'0.8125rem'` or add `MUI_FONT_SIZES.caption` to designSystem.js.
 
 ---
 

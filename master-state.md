@@ -4,7 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #21 — unified ActivitySearch + backend locations endpoint)
+**Updated:** 2026-06-01 (session #22 — experiences redesign plan + vault atomization)
+
+**Achieved this session (2026-06-01 #22 — experiences redesign plan + vault atomization):**
+- **Experiences 2026 redesign planned** — 4-phase plan. Phase 1: sidebar layout + premium card + sort bar (frontend only). Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad polish. 6 decisions documented. Vault doc: `01-projects/experiences-2026-marketplace-redesign.md`.
+- **5 atomic notes extracted** — design-token-caption-tailwind-gotcha, mui-autocomplete-inputvalue-sync, django-parse-int-list-text-fallback, pdf-contract-import-adversarial-review, django-async-ai-call-pattern. Source files trimmed (3 notes). Vault index + log updated.
+- **SortBar.js stub created** — `components/activities/browse/SortBar.js` untracked on `260601-fix/activities-browse-audit`. Phase 1 implementation interrupted mid-session — NOT committed.
 
 **Achieved this session (2026-06-01 #21):**
 - **ACT-5 done** — `utils/destinations.js` created (canonical rich Object[]). Both old `popularDestinations.js` files deleted. `ListLocation` + `SearchResultsList` import paths updated. `DayTripLocationSearch` deleted.
@@ -94,19 +99,16 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **Merge backend `260601-feat/contract-locations-endpoint` → main first** — endpoint must be live before frontend can call it
-2. **QA activities browse** — `npm run dev` → open `/activities` → verify unified search bar, type "Phuket" → dropdown shows real locations → select → `?location=Phuket` in URL, H1 shows "Day Trips in Phuket". Type "snorkeling" → `?search=snorkeling`.
-3. **Merge `260601-fix/activities-browse-audit` → develop** after QA passes
-4. **P0 — Fix blog width inconsistencies** (BW-1, BW-2, BW-3)
-   - `pages/blog/index.js:186` — hero `px-4` → `px-2 md:px-3 xl:px-0`
-   - `pages/blog/index.js:206` — featured section `px-2 md:px-4` → `px-2 md:px-3 xl:px-0`
-   - `components/blog/BlogCard.js` — `rounded-lg` → `rounded-md` + add `mx-2 md:mx-3 xl:mx-0`
-3. **P1 — Implement airport transfer professional redesign** (spec `03-knowledge/airport-transfer-at1-redesign-spec.md`)
-   - Backend: `products/serializers.py:696` + `:715` — add `station_name`, `iata_code`, `route_name`
-   - Frontend: redesign `AirportTransferRouteCard.js` + `AirportTransferSection.js`
-4. **P2 — EXP-1 QA** — verify carousel + styling in dev mode
-5. After QA: merge `260528-feat/header-redesign-2026` → main
-6. Commit backend loose files (skip `.claude/agents/`)
+1. **Phase 1 implementation** — `SortBar.js` already created (untracked). Continue:
+   - `ExperienceSidebar.js` (new, ≤80 lines) — `StickySidebar` wrapper + `CategoryFilter` vertical
+   - `FilterDayTripsPage.js` — 2-col grid `lg:grid-cols-[280px_1fr]`, move CategoryFilter to sidebar, add SortBar, compact header "Experiences in Thailand"
+   - `DayTripCard.js` — image 180→220px, wishlist heart (local state), hover elevation, shadow-sm
+   - `useDayTripFilters.js` — add `sort` field, sync `ordering` URL param
+   - `dayTripsApi.js` — pass `ordering` param in `getContracts`
+   - Plan doc: `01-projects/experiences-2026-marketplace-redesign.md`
+2. **QA Phase 1** — `npm run dev` → `/activities` → sidebar + 4-col grid + sort dropdown + card hover
+3. **Merge `260601-fix/activities-browse-audit` → develop** after Phase 1 QA passes
+4. **Previously pending** — BW-1/BW-2/BW-3 (blog width), AT-1 (airport transfer redesign)
 
 ### Active Branches
 

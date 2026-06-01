@@ -10,6 +10,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[experiences-2026-marketplace-redesign]] — **PLANNED 2026-06-01.** 4-phase redesign of `/activities` → world-class 2026 marketplace. Sidebar layout, 4-col grid, premium card, sort bar. Phase 1: frontend-only. Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad polish.
+
 - [[profile-dropdown-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** 3-specialist review. 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split. MUI-preserve strategy. Implemented on `260528-feat/header-redesign-2026`.
 
 - [[check-your-booking-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
@@ -110,6 +112,11 @@ Global navigation catalog. Updated on every ingest.
 - [[smartenplus-product-positioning]] — "Thailand Travel Infrastructure Platform." 5 DNA layers (transportation, experiences, route intelligence, editorial, trust). Core value: "Explore Thailand Easily."
 - [[smartenplus-2026-ux-direction]] — Strategic shift: cinematic → operational. Compact 45-60vh hero, calm premium minimalism, efficiency-first. Header, search, section redesign strategy.
 - [[mobile-header-scroll-behavior-change]] — Mobile header: dynamic (relative+Slide) → permanently fixed. Spacer removed, DOM paths diverged. 4 issues documented.
+- [[design-token-caption-tailwind-gotcha]] — `TYPOGRAPHY_SCALE.caption` = Tailwind string `'text-xs'` not an object. `.fontSize` = undefined. Never use in MUI `sx`. Use raw value or add parallel `MUI_FONT_SIZES` token.
+- [[mui-autocomplete-inputvalue-sync]] — MUI Autocomplete `inputValue` initialized via `useState(value)` doesn't sync when controlled `value` prop changes post-mount. Fix: `useEffect(() => setInputValue(value || ''), [value])`.
+- [[django-parse-int-list-text-fallback]] — `_parse_int_list` returns `[]` on text input. Caller branching to `.none()` returns zero results silently. Add text-search fallback branch.
+- [[pdf-contract-import-adversarial-review]] — 6 red flags for PDF import arch: async AI call required, soft-delete draft, remove LLM matching, pre-validation, no confidence auto-accept, large-delta warning. 3-screen UX. All must resolve before first commit.
+- [[django-async-ai-call-pattern]] — Django sync LLM calls block WSGI workers. Pattern: return `task_id` immediately, Celery handles AI call, frontend polls status endpoint.
 
 - [[payment-gateway-charge-architecture]] — GatewayCharge model, finalize_payment() SSOT, locked_amount freeze, webhook sole finalization
 - [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling

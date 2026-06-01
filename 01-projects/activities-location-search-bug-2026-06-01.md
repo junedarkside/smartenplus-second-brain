@@ -19,31 +19,11 @@ Location search on `/activities` returns zero results for any text input (e.g., 
 
 ### RC-1 [CRITICAL] — Backend location filter: string input → `.none()`
 
-**File:** `smartenplus-backend/products/views.py:446-453`
-
-```python
-location_ids = self.request.query_params.get('location')
-if location_ids:
-    location_ids_list = _parse_int_list(location_ids)  # "Phuket" → []
-    if location_ids_list:
-        queryset = queryset.filter(service_areas__id__in=location_ids_list).distinct()
-    else:
-        queryset = queryset.none()  # ← ZERO RESULTS for any text input
-```
-
-Frontend sends `?location=Phuket`. `_parse_int_list("Phuket")` returns `[]` (safely catches `ValueError`). `if location_ids_list:` is False → `.none()`.
-
-**No text-search fallback exists.** Location filter assumes all callers send integer IDs.
+`_parse_int_list("Phuket")` returns `[]`. Caller branches to `.none()` → zero results for any text. No text-search fallback. See [[django-parse-int-list-text-fallback]] for fix pattern + cache-clear requirement.
 
 ### RC-2 [CRITICAL] — Frontend Autocomplete: `inputValue` doesn't sync with `value` prop
 
-**File:** `smartenplus-frontend/components/activities/shared/DayTripLocationSearch.js:20`
-
-```js
-const [inputValue, setInputValue] = useState(value || '');  // initialized once
-```
-
-When user navigates to `/activities?location=Phuket`, `useDayTripFilters` hydrates `filters.location = "Phuket"` from URL. `FilterDayTripsPage` passes `value="Phuket"` to `DayTripLocationSearch`. BUT `inputValue` stays `""` (initial mount value). MUI Autocomplete uses `inputValue` for the visible text field — user sees blank input while `value="Phuket"` is in state.
+`useState(value || '')` initializes once — prop changes after mount (URL hydration) are invisible. User sees blank field. Fix: `useEffect(() => setInputValue(value || ''), [value])`. See [[mui-autocomplete-inputvalue-sync]].
 
 ### RC-3 [CRITICAL] — Frontend freetext doesn't trigger search until blur/select
 

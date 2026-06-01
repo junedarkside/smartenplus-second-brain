@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-01] lint | atomized 5 concepts from 3 notes — design-token-caption-tailwind-gotcha, mui-autocomplete-inputvalue-sync, django-parse-int-list-text-fallback, pdf-contract-import-adversarial-review, django-async-ai-call-pattern. Source files trimmed: day-tour-review (269→~235), location-search-bug (259→~230), pdf-contract-import (508→~370).
+## [2026-06-01] plan | experiences-2026-marketplace-redesign — 4-phase plan. Phase 1: sidebar+card+sortbar (frontend only). Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad. 6 decisions documented, codebase map complete.
 ## [2026-06-01] session-end | unified ActivitySearch shipped — ACT-5+ACT-6 done. utils/destinations.js canonical source, ActivitySearch fetches backend locations via GET /api/v1/contract/locations/. Frontend 02f9adf + backend 0b4b44f pushed. Backend branch needs merge first, then frontend QA + merge to develop.
 ## [2026-06-01] session-end | activities browse fixes shipped — 11 fixes (FQ-0→DS-1 + LAY-1 + LAY-2), commit 09e0db3, pushed 260601-fix/activities-browse-audit. Layout audit doc created. Next: QA then merge to main.
 ## [2026-06-01] audit | layout-spacing-consistency — activities vs homepage vs trips. 3 issues: LAY-1 h-padding wrong (p-2 → px-4 xl:px-0), LAY-2 grid spacing mismatch (loaded spacing=1 → spacing=2), LAY-3 sm:py-8 intentional exception. Vault: 03-knowledge/layout-spacing-consistency-audit-2026-06-01.md
