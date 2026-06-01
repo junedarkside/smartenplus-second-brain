@@ -4,7 +4,7 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-02 (session #27 — ACT-12 fully resolved, 4 commits pushed, branch ready to merge)
+**Updated:** 2026-06-02 (session #28 — BW-1/BW-2/BW-3 verified already fixed, closed in vault)
 
 **Achieved this session (2026-06-02 #27):**
 - **ACT-12 FULLY RESOLVED** — all bugs fixed, 4 commits pushed to `260601-feat/header-activities-search`. Branch ready to merge to develop.
@@ -20,16 +20,12 @@
 
 **Carry-forward:**
 1. **Merge** `260601-feat/header-activities-search` → develop (first action next session)
-2. **BW-1/BW-2/BW-3** — blog width padding fixes (small, fast)
-3. **AT-1** — airport transfer P0 redesign
-4. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+2. **AT-1** — airport transfer P0 redesign
+3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
 
 **Next session resume point (EXACT):**
 1. `git merge 260601-feat/header-activities-search` into develop, push
-2. BW-1: `pages/blog/index.js:186` px-4 → `px-2 md:px-3 xl:px-0`
-3. BW-2: `pages/blog/index.js:206` same padding fix
-4. BW-3: `components/blog/BlogCard.js` — `rounded-lg` → `rounded-md` + add `mx-2 md:mx-3 xl:mx-0`
-5. AT-1 — spec at `03-knowledge/transportation-category-audit-2026-05-30.md`
+2. AT-1 — spec at `03-knowledge/transportation-category-audit-2026-05-30.md`
 
 ### Active Branches
 
@@ -62,9 +58,9 @@ None — all clean.
 | ~~ACT-10~~ | ~~Phase 2 QA + merge~~ | ✓ Done `b552e55` → develop | — |
 | ~~ACT-11~~ | ~~Phase 3 mobile layout~~ | ✓ Done `f93df66` → develop | — |
 | ~~ACT-12~~ | ~~Header search~~ | ✓ Done `5eaf8e2` — all bugs resolved, branch ready to merge | — |
-| BW-1 | Blog index hero `px-4` padding | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:186` |
-| BW-2 | Blog index featured section `px-2 md:px-4` | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:206` |
-| BW-3 | BlogCard `rounded-lg` + no mx- margins | Should be `rounded-md` + `mx-2 md:mx-3 xl:mx-0` | `components/blog/BlogCard.js` |
+| ~~BW-1~~ | ~~Blog index hero `px-4` padding~~ | ✓ Already fixed | — |
+| ~~BW-2~~ | ~~Blog index featured section `px-2 md:px-4`~~ | ✓ Already fixed | — |
+| ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
 | AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |
 | AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit-2026-05-30.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
