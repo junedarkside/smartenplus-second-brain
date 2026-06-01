@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-01] session-end | Phase 1 activities marketplace shipped — 4-agent review resolved 7 blockers, backend avg_rating annotation (14b2368), frontend Phase 1 c669381 (sidebar+card+sort+wishlist), width fix b86da09. Next: QA + merge both branches.
+## [2026-06-01] review | experiences-2026-marketplace-redesign — 4-agent team (UX/Frontend/Backend/Design) audit. 7 blocking issues + 9 high-priority gaps found. All resolved: sidebar 280→240px, 4-col viable, sort options trimmed to 3 for Phase 1, `-average_rating` needs ORM annotation, `booked_count` legacy documented, hover animation fix, Phase 2 pre-flight checklist added. Doc updated.
 ## [2026-06-01] lint | atomized 5 concepts from 3 notes — design-token-caption-tailwind-gotcha, mui-autocomplete-inputvalue-sync, django-parse-int-list-text-fallback, pdf-contract-import-adversarial-review, django-async-ai-call-pattern. Source files trimmed: day-tour-review (269→~235), location-search-bug (259→~230), pdf-contract-import (508→~370).
 ## [2026-06-01] plan | experiences-2026-marketplace-redesign — 4-phase plan. Phase 1: sidebar+card+sortbar (frontend only). Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad. 6 decisions documented, codebase map complete.
 ## [2026-06-01] session-end | unified ActivitySearch shipped — ACT-5+ACT-6 done. utils/destinations.js canonical source, ActivitySearch fetches backend locations via GET /api/v1/contract/locations/. Frontend 02f9adf + backend 0b4b44f pushed. Backend branch needs merge first, then frontend QA + merge to develop.

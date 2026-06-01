@@ -4,12 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #22 — experiences redesign plan + vault atomization)
+**Updated:** 2026-06-01 (session #23 — 4-agent review + Phase 1 implementation shipped)
 
-**Achieved this session (2026-06-01 #22 — experiences redesign plan + vault atomization):**
-- **Experiences 2026 redesign planned** — 4-phase plan. Phase 1: sidebar layout + premium card + sort bar (frontend only). Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad polish. 6 decisions documented. Vault doc: `01-projects/experiences-2026-marketplace-redesign.md`.
-- **5 atomic notes extracted** — design-token-caption-tailwind-gotcha, mui-autocomplete-inputvalue-sync, django-parse-int-list-text-fallback, pdf-contract-import-adversarial-review, django-async-ai-call-pattern. Source files trimmed (3 notes). Vault index + log updated.
-- **SortBar.js stub created** — `components/activities/browse/SortBar.js` untracked on `260601-fix/activities-browse-audit`. Phase 1 implementation interrupted mid-session — NOT committed.
+**Achieved this session (2026-06-01 #23):**
+- **4-agent review (UX/Frontend/Backend/Design)** — audited `experiences-2026-marketplace-redesign.md`. Found 7 blocking issues + 9 high-priority gaps. All resolved. Vault doc updated with resolved decisions, Phase 2 pre-flight checklist, layout JSX structure, SIDEBAR_CONFIG token decision.
+- **Backend: avg_rating annotation** — `products/views.py` annotates `average_rating` via correlated `Subquery` (Review uses GenericForeignKey → ContentType). Whitelist updated. Committed `14b2368`, pushed `260601-feat/contract-locations-endpoint`.
+- **Frontend Phase 1 SHIPPED** — commit `c669381` on `260601-fix/activities-browse-audit`:
+  - `FilterDayTripsPage.js` — 2-col Tailwind grid `lg:grid-cols-[240px_1fr]`, ExperienceSidebar + SortBar wired, `ordering` param passed, `pageSize=16`
+  - `ExperienceSidebar.js` — new file, StickySidebar + CategoryFilter vertical + Phase 2 stubs
+  - `SortBar.js` — 3 Phase 1 options only (removed min_rate/-min_rate), active sort indicator
+  - `DayTripCard.js` — 220px image, `translateY(-2px)` hover, `duration-200`, per-card wishlist heart, rating gated `review_count >= 5`
+  - `DayTripList.js` — skeleton 220px
+  - `CategoryFilter.js` — `vertical` prop
+  - `useDayTripFilters.js` — `sort` field + URL sync
+  - `dayTripsApi.js` — `ordering` param
+  - `designSystem.js` — `SIDEBAR_CONFIG` token
+- **Width consistency fix** — commit `b86da09`: reverted `max-w-[1536px]` → site-standard `max-w-[1200px]`. Card grid `lg={3}` → `lg={4}` (3-col = 312px cards). Both pushed.
 
 **Achieved this session (2026-06-01 #21):**
 - **ACT-5 done** — `utils/destinations.js` created (canonical rich Object[]). Both old `popularDestinations.js` files deleted. `ListLocation` + `SearchResultsList` import paths updated. `DayTripLocationSearch` deleted.
@@ -99,34 +109,25 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **Phase 1 implementation** — `SortBar.js` already created (untracked). Continue:
-   - `ExperienceSidebar.js` (new, ≤80 lines) — `StickySidebar` wrapper + `CategoryFilter` vertical
-   - `FilterDayTripsPage.js` — 2-col grid `lg:grid-cols-[280px_1fr]`, move CategoryFilter to sidebar, add SortBar, compact header "Experiences in Thailand"
-   - `DayTripCard.js` — image 180→220px, wishlist heart (local state), hover elevation, shadow-sm
-   - `useDayTripFilters.js` — add `sort` field, sync `ordering` URL param
-   - `dayTripsApi.js` — pass `ordering` param in `getContracts`
-   - Plan doc: `01-projects/experiences-2026-marketplace-redesign.md`
-2. **QA Phase 1** — `npm run dev` → `/activities` → sidebar + 4-col grid + sort dropdown + card hover
-3. **Merge `260601-fix/activities-browse-audit` → develop** after Phase 1 QA passes
-4. **Previously pending** — BW-1/BW-2/BW-3 (blog width), AT-1 (airport transfer redesign)
+1. **QA Phase 1** — `npm run dev` → `/activities` → verify sidebar, 3-col grid (312px cards), sort dropdown (3 options), hover lift, wishlist heart, rating hidden <5 reviews
+2. **Merge `260601-fix/activities-browse-audit` → develop** after QA passes
+3. **Merge `260601-feat/contract-locations-endpoint` → develop/main** (backend: avg_rating annotation + locations endpoint)
+4. **Phase 2 pre-flight (backend)** — create `products/filters.py` FilterSet, define duration_type mapping, canonical extra.item slugs. See vault `01-projects/experiences-2026-marketplace-redesign.md` Phase 2 section.
+5. **Previously pending** — BW-1/BW-2/BW-3 (blog width), AT-1 (airport transfer redesign)
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `02f9adf` feat(activities): unified ActivitySearch + backend locations |
-| `smartenplus-backend` | `260601-feat/contract-locations-endpoint` | `0b4b44f` feat(contracts): GET /api/v1/contract/locations/ endpoint |
+| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `b86da09` fix(activities): revert container to max-w-[1200px] |
+| `smartenplus-backend` | `260601-feat/contract-locations-endpoint` | `14b2368` feat(contracts): annotate average_rating for ordering |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-| `vault` | `master` | (pending commit) session-end: #21 |
 
-_Last verified 2026-06-01 (session wrap-up #21)_
+_Last verified 2026-06-01 (session wrap-up #23)_
 
-### Uncommitted — Frontend
-`?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
-`M components/airport-transfer/TripListingSection.js` + `M pages/airport-transfer/[slug].js` — on branch, not yet merged.
-
-**Backend:** 8 `.claude/agents/` deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. Content repo: clean.
+### Uncommitted
+Frontend: clean. Backend: clean. Content: clean.
 
 ---
 
@@ -143,8 +144,11 @@ _Last verified 2026-06-01 (session wrap-up #21)_
 | ~~ACT-5~~ | ~~Destinations data consolidation~~ | ✓ Done `02f9adf` — `utils/destinations.js` created, 2 old files deleted, 3 consumers updated | — |
 | ~~ACT-6~~ | ~~Unified ActivitySearch component~~ | ✓ Done `02f9adf` — `ActivitySearch.js` with `useGetActivityLocationsQuery`, backend endpoint live on `260601-feat/contract-locations-endpoint` | — |
 | ACT-2 | ~~UX: two unlabeled search inputs~~ | ✓ Closed — side-by-side layout + icon diff + labels implemented. | — |
-| ACT-3 | `useDayTripFilters` pre-hydration init bug | `useState` reads `router.query` before hydration → all filters default even when URL has params. Fix: `router.isReady` guard. Severity: P1 (was understated as "spurious push"). | `hooks/useDayTripFilters.js:16–43` |
-| ACT-4 | Category chips include non-experience types | `ACCOMMODATION`, `TRANSPORTATION`, `OTHER` showing on activities page. Add `EXPERIENCE_CATEGORIES` array to `dayTripConstants.js`. | `constants/dayTripConstants.js` + `components/activities/browse/CategoryFilter.js:42` |
+| ~~ACT-3~~ | ~~`useDayTripFilters` pre-hydration init bug~~ | ✓ Fixed `09e0db3` — `router.isReady` guard + `hydrated` gate. `sort` field added `c669381`. | — |
+| ~~ACT-4~~ | ~~Category chips include non-experience types~~ | ✓ Fixed `09e0db3` — `EXPERIENCE_CATEGORIES` constant, chips limited to 6 types. `vertical` prop added `c669381`. | — |
+| ACT-7 | Phase 1 QA + merge | `npm run dev` → `/activities`. Verify 3-col grid, sidebar, sort, card hover. Merge `260601-fix/activities-browse-audit` → develop. | `260601-fix/activities-browse-audit` |
+| ACT-8 | Backend merge | Merge `260601-feat/contract-locations-endpoint` → main (locations endpoint + avg_rating annotation). | `260601-feat/contract-locations-endpoint` |
+| ACT-9 | Phase 2 pre-flight (backend) | Create `products/filters.py` FilterSet. Define `duration_type` mapping. Canonical `extra.item` slug list. See vault spec Phase 2 section. | `smartenplus-backend/products/` |
 | BW-1 | Blog index hero `px-4` padding | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:186` |
 | BW-2 | Blog index featured section `px-2 md:px-4` | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:206` |
 | BW-3 | BlogCard `rounded-lg` + no mx- margins | Should be `rounded-md` + `mx-2 md:mx-3 xl:mx-0` | `components/blog/BlogCard.js` |
