@@ -1,51 +1,27 @@
-# MUI Autocomplete — inputValue Doesn't Sync With value Prop
+# MUI Autocomplete — inputValue Not Syncing with value Prop
 
-## Summary
+**Bug:** `useState(value || '')` initializes once. Prop changes after mount (URL hydration) are invisible.
 
-MUI Autocomplete with local `inputValue` state initialized via `useState(value || '')` does NOT update when the controlled `value` prop changes after mount. The visible text field goes stale. Caused the location search invisible-on-URL-restore bug.
-
-## Problem
-
+**Example:**
 ```js
-// WRONG — inputValue is only set once at mount
-const [inputValue, setInputValue] = useState(value || '');
-
-// When parent changes value prop (e.g. URL hydration sets location="Phuket"):
-// → value prop = "Phuket"
-// → inputValue still = ""
-// → MUI renders blank text field
-// → user sees no location despite filter being active
+const [inputValue, setInputValue] = useState(value || '');  // ❌ One-time init
 ```
 
-## Fix
+URL restores `value="Phuket"` → component mounts → `inputValue` stays empty. User sees blank field.
 
-Add a `useEffect` to sync `inputValue` whenever `value` prop changes:
-
+**Fix:**
 ```js
-const [inputValue, setInputValue] = useState(value || '');
-
-React.useEffect(() => {
+useEffect(() => {
   setInputValue(value || '');
-}, [value]);
+}, [value]);  // Re-sync on value change
 ```
 
-This covers:
-- URL-restored filter state (router hydration post-mount)
-- Parent programmatically resetting the field
-- External navigation with pre-selected location
+Now URL-restored location visible in input field.
 
-## When This Occurs
+**Rule:** Never initialize state from prop unless prop is static. Use `useEffect` for prop→state sync.
 
-Any MUI Autocomplete component where:
-1. `inputValue` is managed locally with `useState`
-2. The `value` prop is controlled externally (Redux, URL params, parent state)
-3. Value can change after initial mount (URL hydration, navigation)
-
-## SmartEnPlus Instance
-
-`components/activities/shared/DayTripLocationSearch.js:20` — location search field shows blank when URL has `?location=Phuket`. Fix applied in branch `260601-fix/activities-browse-audit`.
+See [[activities-location-search-bug-2026-06-01]] F-1.
 
 ## Related
-
-- [[activities-location-search-bug-2026-06-01]] — RC-2 root cause
-- MUI Autocomplete docs: `inputValue` (uncontrolled display) vs `value` (controlled selection) are separate concerns
+- [[activities-location-search-bug-2026-06-01]]
+- React: prop updates must trigger effect, not be ignored

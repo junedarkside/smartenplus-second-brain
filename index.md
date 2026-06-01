@@ -192,3 +192,6 @@ Global navigation catalog. Updated on every ingest.
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx
+- [[activities-location-search-backend-text-fallback]] — RC-1: _parse_int_list text fallback for city name search
+- [[mui-autocomplete-inputvalue-sync]] — F-1: useEffect sync on value prop change to restore URL state
+- [[mui-autocomplete-handlInputchange-parent-emit]] — F-2: handleInputChange must call onChange to emit to parent
