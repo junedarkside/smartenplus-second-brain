@@ -4,130 +4,52 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #23 — 4-agent review + Phase 1 implementation shipped)
+**Updated:** 2026-06-01 (session #26 — ACT-12 deep debug, Option F attempted, 3 regressions found)
 
-**Achieved this session (2026-06-01 #23):**
-- **4-agent review (UX/Frontend/Backend/Design)** — audited `experiences-2026-marketplace-redesign.md`. Found 7 blocking issues + 9 high-priority gaps. All resolved. Vault doc updated with resolved decisions, Phase 2 pre-flight checklist, layout JSX structure, SIDEBAR_CONFIG token decision.
-- **Backend: avg_rating annotation** — `products/views.py` annotates `average_rating` via correlated `Subquery` (Review uses GenericForeignKey → ContentType). Whitelist updated. Committed `14b2368`, pushed `260601-feat/contract-locations-endpoint`.
-- **Frontend Phase 1 SHIPPED** — commit `c669381` on `260601-fix/activities-browse-audit`:
-  - `FilterDayTripsPage.js` — 2-col Tailwind grid `lg:grid-cols-[240px_1fr]`, ExperienceSidebar + SortBar wired, `ordering` param passed, `pageSize=16`
-  - `ExperienceSidebar.js` — new file, StickySidebar + CategoryFilter vertical + Phase 2 stubs
-  - `SortBar.js` — 3 Phase 1 options only (removed min_rate/-min_rate), active sort indicator
-  - `DayTripCard.js` — 220px image, `translateY(-2px)` hover, `duration-200`, per-card wishlist heart, rating gated `review_count >= 5`
-  - `DayTripList.js` — skeleton 220px
-  - `CategoryFilter.js` — `vertical` prop
-  - `useDayTripFilters.js` — `sort` field + URL sync
-  - `dayTripsApi.js` — `ordering` param
-  - `designSystem.js` — `SIDEBAR_CONFIG` token
-- **Width consistency fix** — commit `b86da09`: reverted `max-w-[1536px]` → site-standard `max-w-[1200px]`. Card grid `lg={3}` → `lg={4}` (3-col = 312px cards). Both pushed.
+**Achieved this session (2026-06-01 #26):**
+- **ACT-12 flicker root cause confirmed** — 3-specialist debug + scrutinize team. Kill chain: compact `ActivitySearch` mounts → calls `useDayTripFilters()` → hydration fires → `router.push({ shallow: true })` → `routeChangeStart` fires → `HeaderSearchContext` clears `setSearchBarContent(null)`. Original hypothesis (cleanup fires on re-render) was WRONG.
+- **HeaderSearchContext fix applied** — `routeChangeStart` listener now checks `{ shallow }` — only clears on non-shallow navigations. `components/contexts/HeaderSearchContext.js:12`. Flicker fixed.
+- **renderOption key warning fixed** — `ActivitySearch.js:102` — extracted `key` from spread props → `<li key={key} {...optionProps}>`. React 18 + MUI Autocomplete warning resolved.
+- **Option F attempted (BROKEN — DO NOT COMMIT)** — added `routeChangeComplete` listener + `isPushingRef` guard to `useDayTripFilters.js`. Attempted to fix: compact search writes URL but page hook never re-hydrates. Result: 2 regressions introduced (see ACT-12 bug report below). Files modified but not committed.
+- **inputValue sync fix applied (PARTIALLY BROKEN)** — `ActivitySearch.js:22–24` — `useEffect([filters.location, filters.search])` syncs `inputValue` after hydration. Fixes URL param display (e.g. `?search=samui` shows in input). But conflicts with Option F's `routeChangeComplete` re-hydration → `inputValue` overwritten mid-typing.
 
-**Achieved this session (2026-06-01 #21):**
-- **ACT-5 done** — `utils/destinations.js` created (canonical rich Object[]). Both old `popularDestinations.js` files deleted. `ListLocation` + `SearchResultsList` import paths updated. `DayTripLocationSearch` deleted.
-- **ACT-6 done** — `ActivitySearch.js` created. Single MUI Autocomplete. Fetches locations from backend via `useGetActivityLocationsQuery`. Dropdown → `?location=`, freetext → `?search=`. No static list, no `isLocationMatch`.
-- **New backend endpoint** — `GET /api/v1/contract/locations/?service_category=DAY_TOUR` on `ContractViewSet`. Returns distinct `Location` objects from active contracts. 1h cache. Invalidated on contract save/delete. Branch `260601-feat/contract-locations-endpoint`, committed + pushed.
-- **RC-3 backend fix committed** — `f7f7a85` location text-fallback + `primary_location` OR join committed to backend `main` before branching.
-- **Both repos pushed** — frontend `260601-fix/activities-browse-audit` (`02f9adf`), backend `260601-feat/contract-locations-endpoint` (`0b4b44f`).
-- **Vault doc updated** — `activities-search-merge-review-2026-06-01.md` marked COMPLETED.
+**Achieved this session (2026-06-01 #25):**
+- CHARTER type, Phase 2+3 merged, ACT-11 mobile shipped. See prior entries.
 
-**Achieved this session (2026-06-01 #19 — activities browse implementation + layout audit):**
-- **All P0/P1 audit fixes implemented** — commit `09e0db3` on `260601-fix/activities-browse-audit`, pushed to remote.
-  - FQ-0: `?status=active` added to `dayTripsApi.js:getContracts`
-  - FQ-1: SkeletonCard rewritten — image→2titles→bullets→rating+price (was showing Operator/Duration/KeyFeatures)
-  - UX-1: "Where?" label on location search, keyword search moved below category chips
-  - FQ-2: `useDayTripFilters` pre-hydration bug fixed — `router.isReady` guard + `hydrated` state gate
-  - UX-2: `EXPERIENCE_CATEGORIES` constant added, chips limited to 6 experience types (no Accommodation/Transportation/Other)
-  - UX-3: "Clear filters" button wired to empty state
-  - VD-3: Title line-clamp `xs:1→xs:2`
-  - FQ-3: `og:url` hardcoded domain → `NEXT_PUBLIC_SITE_URL`
-  - DS-1: `TOUCH_TARGET.minHeight` token applied to CategoryFilter chips
-  - LAY-1: Container `p-2` → `px-4 xl:px-0 py-2` (matches site-wide standard)
-  - LAY-2: Grid `spacing={1}` → `spacing={2}` on loaded state (no layout shift)
-- **Layout consistency audit** — compared activities vs homepage vs trips. 3 issues found, 2 fixed (LAY-1, LAY-2), 1 intentional exception (LAY-3: `sm:py-8`). Vault doc: `03-knowledge/layout-spacing-consistency-audit-2026-06-01.md`.
-
-**Achieved this session (2026-06-01 #18 — activities page audit):**
-- Full audit `/activities?category=DAY_TOUR`: 3-specialist → grill → scrutinize. 14 findings, 3 Critical.
-- **P0 bug:** `dayTripsApi.js:getContracts` never sends `?status=active` → inactive contracts in browse.
-- **Scrutinize corrected 4 wrong claims:** FQ-4, UX-2, FQ-1, DS-1 caption=Tailwind string.
-- **FQ-2 severity elevated:** `router.isReady` guard required.
-- **Vault doc:** `01-projects/activities-day-tour-page-review-2026-06-01.md`.
-
-**Achieved this session (2026-06-01 #17 — build error fix):**
-- `pages/help/index.js` — renamed `index` → `HelpPage` (fix `react-hooks/rules-of-hooks` ESLint error blocking Next.js build). 2-line change. Root cause: lowercase component name = not recognized as React component. Committed `efb59d7`, pushed to main.
-
-**Achieved this session (2026-06-01 #16):**
-- **Vault atomization** — extracted 5 atomic notes from fat knowledge files:
-  - `airport-transfer-at1-redesign-spec` ← from `transportation-category-audit` (317→220 lines)
-  - `nextjs-hydration-rules` ← from `nextjs-patterns` (128→80 lines)
-  - `payment-checkout-5-principles` ← from `payment-integration` (137→110 lines)
-  - `nextjs-static-path-prop-divergence` ← from `trip-detail-deep-review` (H8 extracted)
-  - `designsystem-shadow-border-tokens` ← from `design-system-tokens-expansion` (105→55 lines)
-  - Source notes trimmed + wikilinked. index.md updated. Vault now 93 pages. Commit `75590b9`.
-- **Feature branch merged** — `260528-feat/header-redesign-2026` → `develop` (`81a8f99`). Shipped to production by user.
-
-**Achieved this session (2026-05-31 #15):**
-- **SearchDialogTrigger `variant='input'` cleanup** — 3 small UI fixes:
-  - Removed left magnifier icon from input container (was redundant with blue submit btn)
-  - Fixed input padding `pl-9` → `pl-3` (no icon to offset)
-  - Removed "Search" text from submit button (icon-only), added `aria-label="Search"`
-  - Fixed input/button height mismatch: added `h-full` to input (was `py-1.5` only, didn't fill `h-10`)
-  - Commits: `ff43d3d` (icon/text cleanup) + `aea6cf0` (height fix) on `260528-feat/header-redesign-2026`
-
-**Achieved this session (2026-05-31 #14):**
-- **Blog width audit** — design-review agent audited /blog vs /activities/detail width. Root cause: blog doesn't use Section/ContentCard abstractions.
-- **BlogPostDisplay.js4 fixes applied:**
-  - Section wrapper: added `px-2 md:px-3 xl:px-0`
-  - Article: `lg:w-2/3` → `lg:w-full`
-  - Engagement bar: `px-2 md:px-4` → `px-2 md:px-3 xl:px-0`
-  - Removed duplicate breadcrumb (was in both BlogPageWrapper + BlogPostDisplay)
-- **Audit doc committed** `73af6e9` — `docs/width-inconsistency-audit-2026-05-30.md`
-
-**Achieved this session (2026-05-31 #13):**
-- **Homepage carousel 4-card fix** — `b104962` pushed to `260528-feat/header-redesign-2026`
-  - Root cause: `xl:w-[25vw]` overflowed 1200px container (4×300+4×16=1264px)
-  - Fix: `xl:w-[284px]` on `PopularRouteImageCard.js` + `ExperienceCard.js` (4×284+4×16=1200px)
-  - Applies to both "Explore Popular Routes" + "Explore Experiences" carousels
-
-**Achieved previous session (2026-05-30 #12 — back/share btn debug):**
-
-**Achieved this session (2026-05-30 #11) — EXP-1 complete:**
-- **Experiences section on homepage** — built + committed
-  - Backend `4ab5771`: `PopularExperienceSerializer` (6 fields, standalone) + `_fetch_popular_experiences()` in `pages_info/views.py`. Inventory gate passed: 27 active contracts (12 DAY_TOUR + 3×5 others).
-  - Frontend `f27f077`: `ExperienceCard.js` + `ExploreExperiencesSection.js` + `homepagev2.js` wired. Section renders after Popular Routes, before Reviews.
-  - Both repos committed, ready for QA.
-
-**Achieved previous session (2026-05-30 #10):**
-- Experiences section design fully locked (vault research + scrutinize + grill). All grill decisions confirmed correct.
-
-**Achieved sessions #6–9:**
-- AT section redesign `1eec0aa` + `3759dc2` + AT-1 spec. Width consistency `0ebd755`. Vault structure fixed.
+**Achieved sessions #23–24:** Phase 1+2 activities marketplace shipped.
 
 **Blocked / carry-forward:**
-1. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main (contains AT-1 spec + EXP-1 code).
-2. **Backend uncommitted** — 8 agent files deleted, `settings.local.json` + `CLAUDE.md` modified, `docs/n8n-webhook-resend-operator.md` untracked. (intentional)
-3. **Nav table empty** — restart backend + populate NavigationSection via admin UI.
-4. **Width increase deferred** — sitewide `Section.js` + all `max-w-[1200px]` pages together.
-5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
+1. **ACT-12 STILL OPEN — NEW BUGS INTRODUCED** — branch `260601-feat/header-activities-search`. 4 modified files, uncommitted. See bug report in Section 4.
+2. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main
+3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+4. **Width increase deferred** — sitewide `Section.js` + all `max-w-[1200px]` pages together
 
 **Next session resume point (EXACT):**
-1. **QA Phase 1** — `npm run dev` → `/activities` → verify sidebar, 3-col grid (312px cards), sort dropdown (3 options), hover lift, wishlist heart, rating hidden <5 reviews
-2. **Merge `260601-fix/activities-browse-audit` → develop** after QA passes
-3. **Merge `260601-feat/contract-locations-endpoint` → develop/main** (backend: avg_rating annotation + locations endpoint)
-4. **Phase 2 pre-flight (backend)** — create `products/filters.py` FilterSet, define duration_type mapping, canonical extra.item slugs. See vault `01-projects/experiences-2026-marketplace-redesign.md` Phase 2 section.
-5. **Previously pending** — BW-1/BW-2/BW-3 (blog width), AT-1 (airport transfer redesign)
+1. **ACT-12 — Finish header search** (PRIORITY — see full bug report Section 4)
+   - Branch: `260601-feat/header-activities-search`
+   - Flicker: FIXED (`HeaderSearchContext` shallow guard) ✓
+   - Remaining: compact search typing/URL-param display broken. 2 regressions from Option F. REVERT `useDayTripFilters.js` Option F changes, implement Option E instead.
+   - Option E: pass `filters` + `updateFilter` from page → compact via `setSearchBarContent(<ActivitySearch compact filters={filters} updateFilter={updateFilter} />)` + `useEffect` inputValue sync
+2. **BW-1/BW-2/BW-3** — blog width padding fixes (small, fast)
+3. **AT-1** — airport transfer P0 redesign
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `b86da09` fix(activities): revert container to max-w-[1200px] |
-| `smartenplus-backend` | `260601-feat/contract-locations-endpoint` | `14b2368` feat(contracts): annotate average_rating for ordering |
+| `smartenplus-frontend` | `develop` | `f93df66` Merge activities-mobile-filters |
+| `smartenplus-frontend` | `260601-feat/header-activities-search` | `1cbec0f` + 4 uncommitted changes (broken) |
+| `smartenplus-backend` | `develop` | `2d5a6ee` Merge contract-locations-endpoint |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-06-01 (session wrap-up #23)_
+_Last verified 2026-06-01 (session wrap-up #26)_
 
-### Uncommitted
-Frontend: clean. Backend: clean. Content: clean.
+### Uncommitted (frontend — DO NOT COMMIT YET)
+- `components/contexts/HeaderSearchContext.js` — shallow guard ✓ KEEP
+- `components/activities/shared/ActivitySearch.js` — renderOption key fix ✓ KEEP + inputValue sync ⚠️ REVIEW
+- `hooks/useDayTripFilters.js` — Option F routeChangeComplete ✗ REVERT
+- `components/activities/browse/FilterDayTripsPage.js` — unknown changes, review before commit
 
 ---
 
@@ -137,24 +59,17 @@ Frontend: clean. Backend: clean. Content: clean.
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| ~~LAY-1~~ | ~~Activities h-padding wrong~~ | ✓ Fixed `09e0db3` — `p-2` → `px-4 xl:px-0 py-2` | — |
-| ~~LAY-2~~ | ~~Activities grid gap mismatch~~ | ✓ Fixed `09e0db3` — loaded `spacing={1}` → `spacing={2}` | — |
-| ~~ACT-0~~ | ~~Activities browse returns inactive contracts~~ | ✓ Fixed `09e0db3` — `params.append('status', 'active')` | — |
-| ~~ACT-1~~ | ~~Activities skeleton anatomy wrong~~ | ✓ Fixed `09e0db3` — rewritten to image→2titles→bullets→rating+price | — |
-| ~~ACT-5~~ | ~~Destinations data consolidation~~ | ✓ Done `02f9adf` — `utils/destinations.js` created, 2 old files deleted, 3 consumers updated | — |
-| ~~ACT-6~~ | ~~Unified ActivitySearch component~~ | ✓ Done `02f9adf` — `ActivitySearch.js` with `useGetActivityLocationsQuery`, backend endpoint live on `260601-feat/contract-locations-endpoint` | — |
-| ACT-2 | ~~UX: two unlabeled search inputs~~ | ✓ Closed — side-by-side layout + icon diff + labels implemented. | — |
-| ~~ACT-3~~ | ~~`useDayTripFilters` pre-hydration init bug~~ | ✓ Fixed `09e0db3` — `router.isReady` guard + `hydrated` gate. `sort` field added `c669381`. | — |
-| ~~ACT-4~~ | ~~Category chips include non-experience types~~ | ✓ Fixed `09e0db3` — `EXPERIENCE_CATEGORIES` constant, chips limited to 6 types. `vertical` prop added `c669381`. | — |
-| ACT-7 | Phase 1 QA + merge | `npm run dev` → `/activities`. Verify 3-col grid, sidebar, sort, card hover. Merge `260601-fix/activities-browse-audit` → develop. | `260601-fix/activities-browse-audit` |
-| ACT-8 | Backend merge | Merge `260601-feat/contract-locations-endpoint` → main (locations endpoint + avg_rating annotation). | `260601-feat/contract-locations-endpoint` |
-| ACT-9 | Phase 2 pre-flight (backend) | Create `products/filters.py` FilterSet. Define `duration_type` mapping. Canonical `extra.item` slug list. See vault spec Phase 2 section. | `smartenplus-backend/products/` |
+| ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
+| ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |
+| ~~ACT-9~~ | ~~Phase 2 pre-flight (backend)~~ | ✓ Done `508949b` | — |
+| ~~ACT-10~~ | ~~Phase 2 QA + merge~~ | ✓ Done `b552e55` → develop | — |
+| ~~ACT-11~~ | ~~Phase 3 mobile layout~~ | ✓ Done `f93df66` → develop | — |
+| ACT-12 | **Header search — flicker FIXED, functional search BROKEN** | Flicker: `HeaderSearchContext` shallow guard ✓. Compact results: Option F failed (race + mid-type overwrite). Next: revert Option F → Option E (pass page filters+updateFilter to compact). | `hooks/useDayTripFilters.js` + `ActivitySearch.js` + `FilterDayTripsPage.js` |
 | BW-1 | Blog index hero `px-4` padding | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:186` |
 | BW-2 | Blog index featured section `px-2 md:px-4` | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:206` |
 | BW-3 | BlogCard `rounded-lg` + no mx- margins | Should be `rounded-md` + `mx-2 md:mx-3 xl:mx-0` | `components/blog/BlogCard.js` |
-| AT-2 | Airport-transfer post-calendar width mismatch | Fix attempt (remove px/mx margins) broke layout — reverted. Root cause: inner margins on StationInformation (px-2 md:px-3, mx-3) + GuidesSection (px-2 md:px-3) + ProductCardContainer (mx-2). Next team: redesign sections as full-width wrappers with centered inner content. Full report: `03-knowledge/airport-transfer-width-audit-2026-05-30.md` | `components/destinations/StationInformation.js`, `components/destinations/GuidesSection.js`, `components/image/ProductCardContainer.js` |
-| AT-1 | **Airport Transfer professional redesign** | P0. Spec complete in vault `03-knowledge/transportation-category-audit-2026-05-30.md` → "Redesign Spec". Backend: serializers.py:696 + :715. Frontend: AirportTransferRouteCard + AirportTransferSection. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js`, `lib/homepage/components/AirportTransferSection.js` |
-| PR-2 | ~~Popular Routes carousel 4-card desktop fix~~ | ✓ Closed `b104962` — `xl:w-[284px]` on both card components | — |
+| AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |
+| AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit-2026-05-30.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |
@@ -163,37 +78,13 @@ Frontend: clean. Backend: clean. Content: clean.
 | Nav | NavigationSection table empty | Restart backend + populate via admin | `pages_info` |
 | Explore Thailand submenu | Needs `location_type` CharField on `Location` model | `stations/models.py` |
 | HD-1 | CurrencySelector button too small at tablet | Low | `CurrencySelector.js:55` |
-| HD-2 | CartButton dim (70% opacity) | Low — acceptable | `CartButton.js:116` _(ProfileButton.js:367 ref stale — file restructured `dac7e66`)_ |
+| HD-2 | CartButton dim (70% opacity) | Low — acceptable | `CartButton.js:116` |
 | HD-3 | xl padding gap (px-0 vs px-3) | Low | `main-header.js:90` |
 | HD-6 | Logo size jump mobile→desktop | P2 | `main-header.js:66,95` |
 | GAP-3 | Mobile position flip relative→fixed | P2 | `main-header.js:45–77` |
 | GAP-5 | Nav hidden while searching on trip page | P2 — accepted tradeoff | `main-header.js:112` |
-| GAP-6 | threshold=0 abrupt snap | P3 — `useStickyVisibility(50)` one-liner | `hooks/useStickyVisibility.js:12` |
+| GAP-6 | threshold=0 abrupt snap | P3 | `hooks/useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden at md–xl when search active | P3 | `main-header.js:95` |
-
-### Recently Closed (sessions #9–11)
-
-| Issue | Fix | Date |
-|-------|-----|------|
-| EXP-1 — Experiences section on homepage | `PopularExperienceSerializer` + `ExperienceCard` + `ExploreExperiencesSection`, 27 contracts, gate passed. Backend `4ab5771`, frontend `f27f077`. | 2026-05-30 |
-| Popular Routes card GYG-style | Split-card: image 180px top, white panel below, location label + title + operators + price | 2026-05-28 |
-| Popular Routes white section bg | Removed ContentCard wrapper from PopularRoutesSection happy path | 2026-05-28 |
-| Section gap 8px | `main gap-2` → `gap-8` | 2026-05-28 |
-| Card gap 0px | `CardCarouselContainer gap-2 p-2` → `gap-3 items-start` | 2026-05-28 |
-| No section padding | `Section` gets `py-6 px-4 xl:px-0` | 2026-05-28 |
-
-### Recently Closed (sessions #7–8)
-
-| Issue | Fix | Date |
-|-------|-----|------|
-| GAP-1 — Homepage search lost on scroll | P0: `useStickyVisibility` + `setSearchBarContent` | 2026-05-28 |
-| GAP-2 — Header height gap (54px) | P1: `PageMain` in `layout.js` | 2026-05-28 |
-| Empty state broken ` → ` | Guard `if (!from \|\| !to)` → CTA | 2026-05-28 |
-| Empty state button→input redesign | `variant="input"`, h-10, fb-blue | 2026-05-28 |
-| Search bar centered→left-aligned | `justify-start` + `max-w-2xl` | 2026-05-28 |
-| Homepage redesign 2026 | `96bc6f9` — color tokens, Inter, DiscoverySection | 2026-05-28 |
-| StickySearchBar dead code | Deleted 138-line component | 2026-05-27 |
-| Header glassmorphism → solid white | `a4158b0` | 2026-05-28 |
 
 ---
 
@@ -203,6 +94,14 @@ Frontend: clean. Backend: clean. Content: clean.
 
 **Public:** `GET /contract/` | `GET /product-detail/{slug}/` | `GET /contract/{id}/availability/?date=YYYY-MM-DD&people=N`
 
+**Contract filter params (Phase 2 — session #24):**
+- `min_price` / `max_price` — THB decimals
+- `duration_type` — `half_day` | `full_day` | `multi_day`
+- `contract_type` — `JOIN` | `PRIVATE` | `CHARTER`
+- `features` — comma-sep exact Extra item strings (`Free Cancellation`, `Instant Confirmation`, `Hotel Pickup`)
+- `min_rating` — float (e.g. `4`)
+- `ordering` — now also accepts `min_rate` / `-min_rate` (requires price filter to annotate)
+
 **Admin:** `POST/PATCH/DELETE /admin-dashboard-operators/contract-details/{slug}/` | `POST .../copy/` | `POST /admin-dashboard-charge/manual-adjustment/`
 
 **Cart & Order:** `POST /api/carts/{id}/cartitems/` | `PATCH .../cartitems/{item_id}/` | `DELETE .../cartitems/{item_id}/` | `POST /api/orders/` | `GET /api/orders/{id}/`
@@ -211,16 +110,9 @@ Frontend: clean. Backend: clean. Content: clean.
 
 **User:** `GET /api/user/` (self, token) | `GET/PUT /users/{id}/` (admin-only)
 
-**CMS:** `GET /hero-banners/` | `POST/PATCH/DELETE /hero-banners/{id}/`
-
-**Navigation:** `GET /api/v1/pages-info/navigation/` — returns nav structure from NavigationSection/NavigationItem models
-
-**Forex:** `GET /admin-dashboard-charge/forex/` | `GET /admin-dashboard-charge/forex/fetch-rates/`
-
-**Route Analytics:** `GET /admin-dashboard-routes/home/`
+**CMS / Nav / Forex / Analytics:** unchanged
 
 ### Auth
-
 - Frontend: NextAuth session. Email = `session.user.email` NOT `session.email`
 - Admin: `Authorization: Token <key>`
 - Logout: CSRF + fetch → `/api/auth/force-logout`
@@ -233,11 +125,12 @@ Frontend: clean. Backend: clean. Content: clean.
 | Availability param | `people` (not `party_size`) |
 | Checkout SSR | Disabled: `dynamic(() => Promise.resolve(Index), { ssr: false })` |
 | ISR revalidate | `revalidate: 300` on trip detail pages |
-| `display_order` | Empty string → DRF rejects. Must be integer |
-| Navigation API | Returns `[]` if no NavigationSection records. Returns 404 only if server not restarted with new code. |
-| Popular Routes API | `/front-page/` → `home_routes[]`. Fields: `departure_station`, `arrival_station`, `lowest_price`, `operator_count`. NO rating/duration/category. |
-| Popular Experiences API | `/front-page/` → `popular_experiences[]`. Fields: `id`, `name`, `slug`, `service_category`, `image` (S3 URL via imagegallery_set), `min_price` (from Contract_RateCard). 8-item limit, ordered by -booked_count. |
-| Airport Routes API | `/front-page/` → `airport_routes[]`. Same shape as `home_routes`. Currently `departure_station` = `{location: {location_name}, slug}` only — NO `station_name`, NO `iata_code`. **Planned (AT-1):** expand local `StationSerializer` at `products/serializers.py:696` to add `station_name` + `iata_code`. HomeSerializer at :715 to add `route_name`. |
+| Contract price params | Always THB. Frontend divides by `currentRate.rate` for display only. |
+| Extra features filter | Exact DB strings: `'Free Cancellation'`, `'Instant Confirmation'`, `'Hotel Pickup'` (type=FEATURE) |
+| Contract_RateCard ORM | Reverse FK ORM path = `contract_ratecard` not `contract_ratecard_set` (`_set` = Python attr only) |
+| `formatCurrency(0)` | Use `value === null \|\| value === undefined` guard — `!value` returns `''` for 0 |
+| Navigation API | Returns `[]` if no NavigationSection records |
+| Popular Experiences | `/front-page/` → `popular_experiences[]`. 8 items, ordered `-booked_count`. |
 
 ---
 
@@ -254,6 +147,7 @@ Frontend: clean. Backend: clean. Content: clean.
 ### DB / ORM
 - Lock order: Coupon → Order → BookingItem → TimeSlot. Never invert.
 - `on_delete=PROTECT` on audit-trail FKs. `db_index=True` on hot fields.
+- Reverse FK ORM path: use model's `related_name` or Django default (`<model>` lowercase, no `_set`)
 
 ### Celery
 - Pass IDs to tasks, not model objects.
@@ -263,24 +157,86 @@ Frontend: clean. Backend: clean. Content: clean.
 - Memory: web 512MB | celery-worker 384MB | redis 64MB = ~960MB
 - `WebhookEvent.get_or_create` outside `atomic()`
 
+### Frontend Patterns
+- **Tailwind JIT:** Never interpolate into arbitrary class strings — only static strings scanned at build time
+- **Currency:** `useCurrency()` → display only. API always receives THB. Pattern: `formatCurrency(value / rate, currency)`
+- **Debounced inputs:** `lodash.debounce` in `useRef`, cancel on unmount. 400ms standard for filter inputs.
+- **`formatCurrency(0)`:** Guard = `=== null || === undefined` not `!value`
+- **PriceRangeSlider contract:** Internal values THB. Display converts via context. Never pass converted value to API.
+
 ### Header Search (2026-05-28)
-- `HeaderSearchContext` — single source of truth for header search content
-- Only `FilterTripsPage.js` and `homepagev2.js` call `setSearchBarContent()`
-- `HeaderSearchSummary` — guards `!from || !to` → renders `SearchDialogTrigger` CTA
-- `SearchDialogTrigger` `variant="input"` — white bg, NO left icon, "Plan your Thailand journey" placeholder, `bg-fb-blue` icon-only submit button right, `h-10`. Input `h-full` to match button height.
-- `PageMain` in `layout.js` — reads context, adaptive padding prevents layout gap
-- `useStickyVisibility` — IntersectionObserver, threshold=0 default
-- Search bar left-aligned: `main-header.js` uses `justify-start` + `max-w-2xl`
+- `HeaderSearchContext` — single source of truth
+- Only `FilterTripsPage.js` + `homepagev2.js` call `setSearchBarContent()` (+ `FilterDayTripsPage.js` from session #25, bug open)
+- `SearchDialogTrigger variant="input"` — white bg, NO left icon, `bg-fb-blue` icon-only submit, `h-10`, input `h-full`
+- `PageMain` in `layout.js` — adaptive padding prevents layout gap
+
+### ACT-12 Bug Report — Header Activities Search (2026-06-01, updated session #26)
+
+**STATUS: PARTIALLY FIXED. Flicker resolved. Functional search broken. Option F introduced regressions. Next session: revert Option F, implement Option E.**
+
+---
+
+#### Problem 1 — Flicker (FIXED ✓)
+Compact `ActivitySearch` mounts → `useDayTripFilters()` → `router.push({ shallow: true })` → `routeChangeStart` → `HeaderSearchContext` cleared.
+**Fix applied:** `HeaderSearchContext.js:12` — `(_url, { shallow }) => { if (!shallow) setSearchBarContent(null); }`. Verified correct.
+
+---
+
+#### Problem 2 — Compact search doesn't affect page results (UNFIXED ✗)
+**Root cause:** Compact `ActivitySearch` uses own `useDayTripFilters()` instance (line 13). Both instances independent — share only URL, not React state. Compact writes URL via `router.push(shallow)`. Page hook hydration deps = `[router.isReady]` — only fires once on mount. Page hook never re-reads URL after compact pushes → `useGetContractsQuery` args unchanged → results don't update.
+
+**Option F attempted (BROKEN — REVERT):**
+Added `routeChangeComplete` listener in `useDayTripFilters.js` to re-hydrate on external URL changes. `isPushingRef` guard (set during own push, cleared in `.finally()`) intended to prevent loop.
+
+**Regression 1 — Race condition:** `router.push().finally()` resolves async. `routeChangeComplete` fires before `.finally()` in some cases → `isPushingRef.current` still `true` when listener fires → listener skips re-hydration when it shouldn't. OR fires when it should skip → re-hydrates → resets filters to URL state discarding in-flight changes.
+
+**Regression 2 — inputValue overwrite mid-typing:** `ActivitySearch.js:22–24` `useEffect([filters.location, filters.search])` → `setInputValue(...)`. When user types: keystroke → `updateFilter('search', X)` → URL-sync push → `routeChangeComplete` → `setFilters(fromQuery)` → `filters.search` updates → sync effect → `setInputValue` overwrites what user is typing mid-keystroke. Input stutters/resets.
+
+---
+
+#### Problem 3 — URL param not shown in input on direct load (PARTIALLY FIXED ⚠️)
+`?search=samui` in URL → `useDayTripFilters` hydrates `filters.search='samui'` → but `inputValue` initialized from DEFAULT_FILTERS (empty) before hydration. Fixed by `useEffect([filters.location, filters.search])` in `ActivitySearch.js:22`. Works on direct load. Broken mid-typing due to Regression 2 above.
+
+---
+
+#### Next session: implement Option E
+
+**Revert `useDayTripFilters.js`** — remove `filtersFromQuery`, `isPushingRef`, `routeChangeComplete` listener. Restore original 2-effect structure. Keep `filtersFromQuery` as helper (clean extraction, no harm).
+
+**Option E implementation:**
+1. `FilterDayTripsPage.js:32–34` — pass page's `filters` + `updateFilter` into compact:
+```js
+// BEFORE:
+setSearchBarContent(<ActivitySearch compact />);
+// AFTER:
+setSearchBarContent(<ActivitySearch compact filters={filters} updateFilter={updateFilter} />);
+```
+2. `ActivitySearch.js:13–15` — when `compact=true` AND props provided, use props not own hook:
+```js
+const ownHook = useDayTripFilters();
+const filters = (compact && filtersProp) ? filtersProp : (compact ? ownHook.filters : filtersProp);
+const updateFilter = (compact && updateFilterProp) ? updateFilterProp : (compact ? ownHook.updateFilter : updateFilterProp);
+```
+3. Keep `useEffect([filters.location, filters.search])` inputValue sync in `ActivitySearch.js` — needed for URL-param display on direct load. Safe because page's `filters` only updates on hydration or user action, not mid-keystroke.
+
+**Why Option E is safe:** compact uses PAGE's hook — single source of truth. No second instance, no routeChangeComplete needed. `inputValue` sync effect fires on hydration only (not mid-typing) because page's `updateFilter` updates `filters` only on complete actions.
+
+---
+
+#### Files to change next session
+| File | Action |
+|------|--------|
+| `hooks/useDayTripFilters.js` | Revert Option F — remove routeChangeComplete listener + isPushingRef. Keep `filtersFromQuery` helper. |
+| `components/activities/browse/FilterDayTripsPage.js` | Pass `filters` + `updateFilter` to compact: `<ActivitySearch compact filters={filters} updateFilter={updateFilter} />` |
+| `components/activities/shared/ActivitySearch.js` | Update lines 13–15 to prefer props when compact+props provided. Keep inputValue sync effect. |
+| `components/contexts/HeaderSearchContext.js` | Already correct — keep as-is. |
 
 ### Popular Routes Section (2026-05-28)
-- `PopularRoutesSection.js` — NO `ContentCard` wrapper on happy path. `ContentCard` only in error state.
-- `Section` gets `py-6 px-4 xl:px-0` — standard section padding
-- `CardCarouselContainer` — `gap-3` cards, no inner `p-2` padding
-- `homepagev2.js` main — `gap-8` between all sections
-- `ContentCard` has hardcoded `bg-white` before `${className}` — cannot be overridden with Tailwind. Always remove wrapper instead of patching className.
+- `PopularRoutesSection.js` — NO `ContentCard` wrapper on happy path
+- `Section` gets `py-6 px-4 xl:px-0`
+- `ContentCard` hardcoded `bg-white` — cannot override with Tailwind
 
 ### Nav
-- `NavigationSection` + `NavigationItem` — two-level hierarchy (section → items)
-- API cached 1hr server-side via Django cache
-- Frontend fallback: static `constants/navConfig.js` when API unavailable
+- `NavigationSection` + `NavigationItem` — two-level hierarchy
+- API cached 1hr server-side. Frontend fallback: `constants/navConfig.js`
 - Migration 0010 applied locally — production needs `migrate`
