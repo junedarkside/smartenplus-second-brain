@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-02] session-end #27 | ACT-12 fully resolved — 4 commits pushed (979c45d→5eaf8e2). Fixes: dual-hook URL race (isControlled + enabled param), debounce (reused useDebounce.jsx), mid-type reset (isTypingRef + didMountRef), freeSolo Enter blank (string branch in handleChange). Knowledge atomized: [[react-dual-hook-url-race]]. Branch ready to merge. Next: merge → BW-1/2/3 blog padding → AT-1 airport transfer.
 ## [2026-06-01] session-end #26 | ACT-12 partial — flicker fixed (HeaderSearchContext shallow guard), Option F (routeChangeComplete) introduced 2 regressions (race condition + mid-type inputValue overwrite). 4 files modified uncommitted. Next: revert useDayTripFilters Option F, implement Option E (pass page filters+updateFilter to compact).
 ## [2026-06-01] scrutinize | ACT-12 root cause confirmed + original hypothesis overturned — kill chain: compact useDayTripFilters router.push(shallow) → routeChangeStart → HeaderSearchContext clears. Fix: 2-line shallow guard in HeaderSearchContext. Change 2 (readOnly) = unnecessary. Plan file + master-state updated.
 ## [2026-06-01] session-end #25 | ACT-10+11 done, ACT-12 open. Phase 2+3 merged develop (b552e55, f93df66, 2d5a6ee). Header activities search partial — flicker bug unresolved. Branch 260601-feat/header-activities-search (1cbec0f). Bug report + 3 next approaches in master-state Section 4 ACT-12.

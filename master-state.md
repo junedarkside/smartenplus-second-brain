@@ -4,50 +4,47 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #26 — ACT-12 deep debug, Option F attempted, 3 regressions found)
+**Updated:** 2026-06-02 (session #27 — ACT-12 fully resolved, 4 commits pushed, branch ready to merge)
 
-**Achieved this session (2026-06-01 #26):**
-- **ACT-12 flicker root cause confirmed** — 3-specialist debug + scrutinize team. Kill chain: compact `ActivitySearch` mounts → calls `useDayTripFilters()` → hydration fires → `router.push({ shallow: true })` → `routeChangeStart` fires → `HeaderSearchContext` clears `setSearchBarContent(null)`. Original hypothesis (cleanup fires on re-render) was WRONG.
-- **HeaderSearchContext fix applied** — `routeChangeStart` listener now checks `{ shallow }` — only clears on non-shallow navigations. `components/contexts/HeaderSearchContext.js:12`. Flicker fixed.
-- **renderOption key warning fixed** — `ActivitySearch.js:102` — extracted `key` from spread props → `<li key={key} {...optionProps}>`. React 18 + MUI Autocomplete warning resolved.
-- **Option F attempted (BROKEN — DO NOT COMMIT)** — added `routeChangeComplete` listener + `isPushingRef` guard to `useDayTripFilters.js`. Attempted to fix: compact search writes URL but page hook never re-hydrates. Result: 2 regressions introduced (see ACT-12 bug report below). Files modified but not committed.
-- **inputValue sync fix applied (PARTIALLY BROKEN)** — `ActivitySearch.js:22–24` — `useEffect([filters.location, filters.search])` syncs `inputValue` after hydration. Fixes URL param display (e.g. `?search=samui` shows in input). But conflicts with Option F's `routeChangeComplete` re-hydration → `inputValue` overwritten mid-typing.
+**Achieved this session (2026-06-02 #27):**
+- **ACT-12 FULLY RESOLVED** — all bugs fixed, 4 commits pushed to `260601-feat/header-activities-search`. Branch ready to merge to develop.
+  - `979c45d` Option E: compact search shares page `filters`+`updateFilter`. Removed Option F (routeChangeComplete + isPushingRef). `useCallback` stable refs. `isTypingRef` mid-type guard. Category-aware `getActivityLocationsQuery`.
+  - `37764cb` Debounce: reused existing `components/utils/useDebounce.jsx` (300ms). First consumer of that shared hook.
+  - `39ff918` `useDayTripFilters({ enabled })` — gate URL-sync on secondary instances. `isControlled` flag in `ActivitySearch` passes `enabled: false` to ownHook → stops URL race. `didMountRef` prevents debounce mount-fire clearing URL search.
+  - `5eaf8e2` MUI freeSolo Enter fix: `handleChange` string branch added — was missing → input blanked on Enter press.
+- **Knowledge atomized** — `03-knowledge/react-dual-hook-url-race.md` — dual-hook URL race + `{ enabled }` + `isControlled` + `didMountRef` + freeSolo string branch patterns.
 
-**Achieved this session (2026-06-01 #25):**
-- CHARTER type, Phase 2+3 merged, ACT-11 mobile shipped. See prior entries.
+**Achieved session #26:** HeaderSearchContext shallow guard (flicker fix). Option F attempted + failed (3 regressions). All recorded in prior entry.
 
-**Achieved sessions #23–24:** Phase 1+2 activities marketplace shipped.
+**Achieved sessions #23–25:** Phase 1+2+3 activities marketplace shipped. CHARTER type, mobile layout, sidebar filters.
 
-**Blocked / carry-forward:**
-1. **ACT-12 STILL OPEN — NEW BUGS INTRODUCED** — branch `260601-feat/header-activities-search`. 4 modified files, uncommitted. See bug report in Section 4.
-2. **Merge pending** — `260528-feat/header-redesign-2026` not merged to main
-3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
-4. **Width increase deferred** — sitewide `Section.js` + all `max-w-[1200px]` pages together
-
-**Next session resume point (EXACT):**
-1. **ACT-12 — Finish header search** (PRIORITY — see full bug report Section 4)
-   - Branch: `260601-feat/header-activities-search`
-   - Flicker: FIXED (`HeaderSearchContext` shallow guard) ✓
-   - Remaining: compact search typing/URL-param display broken. 2 regressions from Option F. REVERT `useDayTripFilters.js` Option F changes, implement Option E instead.
-   - Option E: pass `filters` + `updateFilter` from page → compact via `setSearchBarContent(<ActivitySearch compact filters={filters} updateFilter={updateFilter} />)` + `useEffect` inputValue sync
+**Carry-forward:**
+1. **Merge** `260601-feat/header-activities-search` → develop (first action next session)
 2. **BW-1/BW-2/BW-3** — blog width padding fixes (small, fast)
 3. **AT-1** — airport transfer P0 redesign
+4. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+
+**Next session resume point (EXACT):**
+1. `git merge 260601-feat/header-activities-search` into develop, push
+2. BW-1: `pages/blog/index.js:186` px-4 → `px-2 md:px-3 xl:px-0`
+3. BW-2: `pages/blog/index.js:206` same padding fix
+4. BW-3: `components/blog/BlogCard.js` — `rounded-lg` → `rounded-md` + add `mx-2 md:mx-3 xl:mx-0`
+5. AT-1 — spec at `03-knowledge/transportation-category-audit-2026-05-30.md`
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
 | `smartenplus-frontend` | `develop` | `f93df66` Merge activities-mobile-filters |
-| `smartenplus-frontend` | `260601-feat/header-activities-search` | `1cbec0f` + 4 uncommitted changes (broken) |
+| `smartenplus-frontend` | `260601-feat/header-activities-search` | `5eaf8e2` fix: freeSolo Enter — **READY TO MERGE** |
 | `smartenplus-backend` | `develop` | `2d5a6ee` Merge contract-locations-endpoint |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-06-01 (session wrap-up #26)_
+_Last verified 2026-06-02 (session wrap-up #27)_
 
-### Uncommitted (frontend — DO NOT COMMIT YET)
-- `components/contexts/HeaderSearchContext.js` — shallow guard ✓ KEEP
-- `components/activities/shared/ActivitySearch.js` — renderOption key fix ✓ KEEP + inputValue sync ⚠️ REVIEW
+### Uncommitted
+None — all clean.
 - `hooks/useDayTripFilters.js` — Option F routeChangeComplete ✗ REVERT
 - `components/activities/browse/FilterDayTripsPage.js` — unknown changes, review before commit
 
@@ -64,7 +61,7 @@ _Last verified 2026-06-01 (session wrap-up #26)_
 | ~~ACT-9~~ | ~~Phase 2 pre-flight (backend)~~ | ✓ Done `508949b` | — |
 | ~~ACT-10~~ | ~~Phase 2 QA + merge~~ | ✓ Done `b552e55` → develop | — |
 | ~~ACT-11~~ | ~~Phase 3 mobile layout~~ | ✓ Done `f93df66` → develop | — |
-| ACT-12 | **Header search — flicker FIXED, functional search BROKEN** | Flicker: `HeaderSearchContext` shallow guard ✓. Compact results: Option F failed (race + mid-type overwrite). Next: revert Option F → Option E (pass page filters+updateFilter to compact). | `hooks/useDayTripFilters.js` + `ActivitySearch.js` + `FilterDayTripsPage.js` |
+| ~~ACT-12~~ | ~~Header search~~ | ✓ Done `5eaf8e2` — all bugs resolved, branch ready to merge | — |
 | BW-1 | Blog index hero `px-4` padding | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:186` |
 | BW-2 | Blog index featured section `px-2 md:px-4` | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:206` |
 | BW-3 | BlogCard `rounded-lg` + no mx- margins | Should be `rounded-md` + `mx-2 md:mx-3 xl:mx-0` | `components/blog/BlogCard.js` |
@@ -164,72 +161,13 @@ _Last verified 2026-06-01 (session wrap-up #26)_
 - **`formatCurrency(0)`:** Guard = `=== null || === undefined` not `!value`
 - **PriceRangeSlider contract:** Internal values THB. Display converts via context. Never pass converted value to API.
 
-### Header Search (2026-05-28)
-- `HeaderSearchContext` — single source of truth
-- Only `FilterTripsPage.js` + `homepagev2.js` call `setSearchBarContent()` (+ `FilterDayTripsPage.js` from session #25, bug open)
+### Header Search (2026-06-02, updated session #27)
+- `HeaderSearchContext` — single source of truth. Clears only on non-shallow navigation.
+- `FilterTripsPage.js` + `homepagev2.js` + `FilterDayTripsPage.js` call `setSearchBarContent()`
+- `FilterDayTripsPage` passes `filters`+`updateFilter` into compact `ActivitySearch` — single state source, no dual-hook race
 - `SearchDialogTrigger variant="input"` — white bg, NO left icon, `bg-fb-blue` icon-only submit, `h-10`, input `h-full`
 - `PageMain` in `layout.js` — adaptive padding prevents layout gap
-
-### ACT-12 Bug Report — Header Activities Search (2026-06-01, updated session #26)
-
-**STATUS: PARTIALLY FIXED. Flicker resolved. Functional search broken. Option F introduced regressions. Next session: revert Option F, implement Option E.**
-
----
-
-#### Problem 1 — Flicker (FIXED ✓)
-Compact `ActivitySearch` mounts → `useDayTripFilters()` → `router.push({ shallow: true })` → `routeChangeStart` → `HeaderSearchContext` cleared.
-**Fix applied:** `HeaderSearchContext.js:12` — `(_url, { shallow }) => { if (!shallow) setSearchBarContent(null); }`. Verified correct.
-
----
-
-#### Problem 2 — Compact search doesn't affect page results (UNFIXED ✗)
-**Root cause:** Compact `ActivitySearch` uses own `useDayTripFilters()` instance (line 13). Both instances independent — share only URL, not React state. Compact writes URL via `router.push(shallow)`. Page hook hydration deps = `[router.isReady]` — only fires once on mount. Page hook never re-reads URL after compact pushes → `useGetContractsQuery` args unchanged → results don't update.
-
-**Option F attempted (BROKEN — REVERT):**
-Added `routeChangeComplete` listener in `useDayTripFilters.js` to re-hydrate on external URL changes. `isPushingRef` guard (set during own push, cleared in `.finally()`) intended to prevent loop.
-
-**Regression 1 — Race condition:** `router.push().finally()` resolves async. `routeChangeComplete` fires before `.finally()` in some cases → `isPushingRef.current` still `true` when listener fires → listener skips re-hydration when it shouldn't. OR fires when it should skip → re-hydrates → resets filters to URL state discarding in-flight changes.
-
-**Regression 2 — inputValue overwrite mid-typing:** `ActivitySearch.js:22–24` `useEffect([filters.location, filters.search])` → `setInputValue(...)`. When user types: keystroke → `updateFilter('search', X)` → URL-sync push → `routeChangeComplete` → `setFilters(fromQuery)` → `filters.search` updates → sync effect → `setInputValue` overwrites what user is typing mid-keystroke. Input stutters/resets.
-
----
-
-#### Problem 3 — URL param not shown in input on direct load (PARTIALLY FIXED ⚠️)
-`?search=samui` in URL → `useDayTripFilters` hydrates `filters.search='samui'` → but `inputValue` initialized from DEFAULT_FILTERS (empty) before hydration. Fixed by `useEffect([filters.location, filters.search])` in `ActivitySearch.js:22`. Works on direct load. Broken mid-typing due to Regression 2 above.
-
----
-
-#### Next session: implement Option E
-
-**Revert `useDayTripFilters.js`** — remove `filtersFromQuery`, `isPushingRef`, `routeChangeComplete` listener. Restore original 2-effect structure. Keep `filtersFromQuery` as helper (clean extraction, no harm).
-
-**Option E implementation:**
-1. `FilterDayTripsPage.js:32–34` — pass page's `filters` + `updateFilter` into compact:
-```js
-// BEFORE:
-setSearchBarContent(<ActivitySearch compact />);
-// AFTER:
-setSearchBarContent(<ActivitySearch compact filters={filters} updateFilter={updateFilter} />);
-```
-2. `ActivitySearch.js:13–15` — when `compact=true` AND props provided, use props not own hook:
-```js
-const ownHook = useDayTripFilters();
-const filters = (compact && filtersProp) ? filtersProp : (compact ? ownHook.filters : filtersProp);
-const updateFilter = (compact && updateFilterProp) ? updateFilterProp : (compact ? ownHook.updateFilter : updateFilterProp);
-```
-3. Keep `useEffect([filters.location, filters.search])` inputValue sync in `ActivitySearch.js` — needed for URL-param display on direct load. Safe because page's `filters` only updates on hydration or user action, not mid-keystroke.
-
-**Why Option E is safe:** compact uses PAGE's hook — single source of truth. No second instance, no routeChangeComplete needed. `inputValue` sync effect fires on hydration only (not mid-typing) because page's `updateFilter` updates `filters` only on complete actions.
-
----
-
-#### Files to change next session
-| File | Action |
-|------|--------|
-| `hooks/useDayTripFilters.js` | Revert Option F — remove routeChangeComplete listener + isPushingRef. Keep `filtersFromQuery` helper. |
-| `components/activities/browse/FilterDayTripsPage.js` | Pass `filters` + `updateFilter` to compact: `<ActivitySearch compact filters={filters} updateFilter={updateFilter} />` |
-| `components/activities/shared/ActivitySearch.js` | Update lines 13–15 to prefer props when compact+props provided. Keep inputValue sync effect. |
-| `components/contexts/HeaderSearchContext.js` | Already correct — keep as-is. |
+- `ActivitySearch` patterns: `isControlled` + `useDayTripFilters({ enabled })` + `didMountRef` + `isTypingRef`. See [[react-dual-hook-url-race]]
 
 ### Popular Routes Section (2026-05-28)
 - `PopularRoutesSection.js` — NO `ContentCard` wrapper on happy path

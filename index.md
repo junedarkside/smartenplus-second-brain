@@ -115,6 +115,7 @@ Global navigation catalog. Updated on every ingest.
 - [[design-token-caption-tailwind-gotcha]] — `TYPOGRAPHY_SCALE.caption` = Tailwind string `'text-xs'` not an object. `.fontSize` = undefined. Never use in MUI `sx`. Use raw value or add parallel `MUI_FONT_SIZES` token.
 - [[mui-autocomplete-inputvalue-sync]] — MUI Autocomplete `inputValue` initialized via `useState(value)` doesn't sync when controlled `value` prop changes post-mount. Fix: `useEffect(() => setInputValue(value || ''), [value])`.
 - [[django-parse-int-list-text-fallback]] — `_parse_int_list` returns `[]` on text input. Caller branching to `.none()` returns zero results silently. Add text-search fallback branch.
+- [[react-dual-hook-url-race]] — Two hook instances owning same URL race each other. Fix: `{ enabled }` param to gate URL-sync, `isControlled` detection, `didMountRef` to skip mount-fire, MUI freeSolo string branch in `onChange`.
 - [[pdf-contract-import-adversarial-review]] — 6 red flags for PDF import arch: async AI call required, soft-delete draft, remove LLM matching, pre-validation, no confidence auto-accept, large-delta warning. 3-screen UX. All must resolve before first commit.
 - [[django-async-ai-call-pattern]] — Django sync LLM calls block WSGI workers. Pattern: return `task_id` immediately, Celery handles AI call, frontend polls status endpoint.
 
@@ -186,5 +187,5 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 96
-- Last updated: 2026-06-01 (session #17: build error fix + atomic note)
+- Pages: 97
+- Last updated: 2026-06-02 (session #27: ACT-12 resolved, react-dual-hook-url-race atomic note)
