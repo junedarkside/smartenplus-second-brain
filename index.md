@@ -189,3 +189,6 @@ Global navigation catalog. Updated on every ingest.
 - Created: 2026-05-16
 - Pages: 97
 - Last updated: 2026-06-02 (session #27: ACT-12 resolved, react-dual-hook-url-race atomic note)
+- [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
+- [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
+- [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx

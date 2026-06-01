@@ -435,3 +435,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-06-01] fix | formatCurrency zero bug — `if (!value)` → `if (value === null || value === undefined)`. Slider tooltip now shows ฿0.00 at min position.
 ## [2026-06-01] session-end | #24 — Phase 2 complete (backend + frontend). Both repos committed + pushed. QA + merge next session. master-state updated.
 ## [2026-06-02] audit | BW-1/BW-2/BW-3 verified already fixed — blog padding + BlogCard radius/margins correct in code. Closed in master-state.
+## [2026-06-02] atomize | 3 concepts from activities-day-tour-page-review — inactive-contracts, hydration-spurious-push, design-token-caption-gotcha

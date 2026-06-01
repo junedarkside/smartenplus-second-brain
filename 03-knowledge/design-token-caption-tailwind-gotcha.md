@@ -1,52 +1,26 @@
-# Design Token Gotcha — TYPOGRAPHY_SCALE.caption is a Tailwind String
+# Design Token Gotcha — TYPOGRAPHY_SCALE.caption
 
-## Summary
+**Issue:** `TYPOGRAPHY_SCALE.caption = 'text-xs'` (Tailwind string). `.fontSize` is `undefined`.
 
-`TYPOGRAPHY_SCALE.caption` in `helpers/designSystem.js` equals `'text-xs'` — a Tailwind utility class string, not an object. Accessing `.fontSize` returns `undefined`. Passing `undefined` to MUI `sx` silently drops the style.
-
-## Problem
-
+**Wrong:**
 ```js
-// WRONG — .fontSize is undefined on a Tailwind string
-sx={{ fontSize: TYPOGRAPHY_SCALE.caption.fontSize }}
-
-// Result: font size not applied, no error thrown, bug invisible
+sx={{ fontSize: TYPOGRAPHY_SCALE.caption }}  // undefined — breaks MUI
 ```
 
-## Context
-
-`designSystem.js` mixes two conventions: some tokens are objects (e.g. `TYPOGRAPHY_SCALE.h1 = { xs: '1.5rem', sm: '2rem' }` for responsive MUI `sx` use), others are Tailwind strings (`TYPOGRAPHY_SCALE.caption = 'text-xs'` for className use). The two conventions are incompatible — you can't use a Tailwind class string inside MUI `sx`.
-
-## Fix
-
-Option A — use raw value (safe for MUI sx):
+**Right:**
 ```js
-sx={{ fontSize: '0.75rem' }}  // 12px = text-xs equivalent
+sx={{ fontSize: '0.75rem' }}  // raw value
+// OR add to designSystem.js:
+MUI_FONT_SIZES: { caption: '0.75rem' }
+sx={{ fontSize: MUI_FONT_SIZES.caption }}
 ```
 
-Option B — add a parallel MUI token to designSystem.js:
-```js
-export const MUI_FONT_SIZES = {
-  caption: '0.75rem',
-  body: '0.875rem',
-};
-// then: sx={{ fontSize: MUI_FONT_SIZES.caption }}
-```
+**Impact:** `CategoryFilter.js`, `DayTripCard.js` ×5 instances. Never use Tailwind string tokens in MUI `sx` prop.
 
-Option C — use Tailwind class on className, not sx:
-```jsx
-<Typography className="text-xs">...</Typography>
-```
+**Principle:** Separate token layers: Tailwind tokens (`text-xs`) for className, MUI tokens (`rem` values) for sx.
 
-## Rule
-
-Never use `TYPOGRAPHY_SCALE.*` in MUI `sx` props unless you verify it's an object (responsive map) not a Tailwind string. Check `designSystem.js` before use.
-
-## Discovery
-
-Caught during scrutinize pass on `activities-day-tour-page-review-2026-06-01`. DS-1 finding — incorrectly recommended `TYPOGRAPHY_SCALE.caption.fontSize` as fix, scrutinize corrected it.
+Part of [[activities-day-tour-page-review-2026-06-01]] DS-1 finding.
 
 ## Related
-
-- [[activities-day-tour-page-review-2026-06-01]] — DS-1
-- `helpers/designSystem.js` — token source
+- [[design-systems]]
+- [[activities-day-tour-page-review-2026-06-01]]
