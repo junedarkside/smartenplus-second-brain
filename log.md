@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-01] research | pdf-contract-import — full grill session. Architecture locked: NotebookLM → Django (GLM/MiniMax) → ContractImportDraft → admin review → PATCH. Parked for future implementation. Vault: 03-knowledge/pdf-contract-import-research.md
+## [2026-06-01] audit | timeline-update-display-bug — audit doc created. 4 suspected root causes: payload key mismatch, place shape mismatch, response race, empty place ID. Team investigation pending.
 ## [2026-06-01] session-end | build error fix: pages/help/index.js const index → HelpPage, react-hooks/rules-of-hooks ESLint error. efb59d7 pushed to main. Atomic note: react-hooks-rules-lowercase-component.
 ## [2026-05-31] session-end | seo audit: 7 fixes applied one-by-one on `260528-feat/header-redesign-2026`, CSP identified as runtime breaker, all verified OK, pushed `a2a4ff9`. Vault updated. Open: contactPoint, departureTime/arrivalTime.
 ## [2026-05-31] scrutinize | seo-homepage-audit-2026-05-31 — 2-agent scrutiny: P0-1 REFUTED (next-sitemap.config.js line 10 is empty array, no server-sitemap.xml reference, no active 404). P1-4 clarified: FAQPageJsonLd component exists, not wired to homepagev2. All P2/P3 confirmed correct. Fix queue verified accurate. Doc updated.

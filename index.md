@@ -20,6 +20,7 @@ Global navigation catalog. Updated on every ingest.
 - [[header-redesign-2026-spec]] — **FINAL 2026-05-28.** Adaptive Type A/B header. Type A: single-row 80px (transactional). Type B: 2-row 96px (discovery/browse). All 5 nav items kept. /blog → Type B. Dynamic layout offset. 12-file implementation plan. 4-day rollout + 2 separate PRs.
 - [[hero-back-share-buttons-2row-header-fix]] — **UNVERIFIED 2026-05-30.** Back/Share pills moved from `FeaturedImageHeader` to outer wrapper of `TripDetailHero`/`DayTripHero`. Glassmorphism style. Server was in production mode — needs `npm run dev` to verify. See note for full debug trail + root causes.
 - [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. QA + AT-1 redesign pending before merge.
+- [[timeline-update-display-bug-2026-06-01]] — **IN PROGRESS.** Timeline page display breaks after save. Suspected payload key mismatch (`dndCharacterData` vs `timeline`) + place object vs ID. Multi-agent investigation pending.
 - [[header-redesign-2026-team-review]] — 3-specialist audit (Design+UX+Frontend) + second audit (UX Architecture+Visual Design+Frontend Eng). All blockers resolved. Key decisions locked: Type A/B split, keep Explore Thailand, /blog = Type B, dynamic offset 80/96px, HeaderRowsContext pattern.
 - [[backend-n8n-resend-webhook]] — Resend Operator n8n webhook forwarding. send_booking_data moved to bookings/tasks.py. 4 commits, merged to develop. 3 bugs caught by scrutinize audit (import crash ×2, orphaned try block) + 1 env var crash on startup (N8N_WEBHOOK_URL missing default=None)
 - [[fast-refresh-infinite-loop-audit-2026-05-23|Fast Refresh Infinite Loop Audit 2026-05-23]] — Root cause unconfirmed. RefreshTokenHandler diagnosis OVERTURNED (lastExpiryRef guard). Likely Next.js 14.2.x HMR + on-demand compilation cascade. 7 failed fixes documented. Next: debug instrumentation + git bisect
@@ -85,6 +86,7 @@ Global navigation catalog. Updated on every ingest.
 - [[design-system-audit-2026-05-31]] — Design system audit: brand color (#3b5998), token gaps, hardcoded values found across components
 - [[carousel-design-standard]] — Embla carousel items-per-screen breakpoints, gap values, card widths, focus ring handling
 - [[admin-dashboard-contracts]] — Category registry, form flow, payload rules, helpers
+- [[pdf-contract-import-research]] — Team research + decision: Django+Claude tool_use pipeline for parsing non-standard operator PDFs to update contracts. Phase 1 scope + deferred Phase 2.
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
 - [[django-serializer-shadowing-pattern]] — Local class redefines imported name in same file; silently changes exposed fields. Discovered via HomeSerializer/StationSerializer in products/serializers.py.
