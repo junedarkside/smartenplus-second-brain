@@ -4,15 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #18 — activities page audit)
+**Updated:** 2026-06-01 (session #19 — activities browse fixes implemented + layout audit)
+
+**Achieved this session (2026-06-01 #19 — activities browse implementation + layout audit):**
+- **All P0/P1 audit fixes implemented** — commit `09e0db3` on `260601-fix/activities-browse-audit`, pushed to remote.
+  - FQ-0: `?status=active` added to `dayTripsApi.js:getContracts`
+  - FQ-1: SkeletonCard rewritten — image→2titles→bullets→rating+price (was showing Operator/Duration/KeyFeatures)
+  - UX-1: "Where?" label on location search, keyword search moved below category chips
+  - FQ-2: `useDayTripFilters` pre-hydration bug fixed — `router.isReady` guard + `hydrated` state gate
+  - UX-2: `EXPERIENCE_CATEGORIES` constant added, chips limited to 6 experience types (no Accommodation/Transportation/Other)
+  - UX-3: "Clear filters" button wired to empty state
+  - VD-3: Title line-clamp `xs:1→xs:2`
+  - FQ-3: `og:url` hardcoded domain → `NEXT_PUBLIC_SITE_URL`
+  - DS-1: `TOUCH_TARGET.minHeight` token applied to CategoryFilter chips
+  - LAY-1: Container `p-2` → `px-4 xl:px-0 py-2` (matches site-wide standard)
+  - LAY-2: Grid `spacing={1}` → `spacing={2}` on loaded state (no layout shift)
+- **Layout consistency audit** — compared activities vs homepage vs trips. 3 issues found, 2 fixed (LAY-1, LAY-2), 1 intentional exception (LAY-3: `sm:py-8`). Vault doc: `03-knowledge/layout-spacing-consistency-audit-2026-06-01.md`.
 
 **Achieved this session (2026-06-01 #18 — activities page audit):**
 - Full audit `/activities?category=DAY_TOUR`: 3-specialist → grill → scrutinize. 14 findings, 3 Critical.
-- **P0 bug:** `dayTripsApi.js:getContracts` never sends `?status=active` → inactive contracts in browse. Fix: `params.append('status', 'active')` 1 line, no backend change.
-- **Scrutinize corrected 4 wrong claims:** FQ-4 (PricingDisplay already guards price≤0 → "Price on Request" not "From THB 0"), UX-2 (TRANSFER not in frontend constants), FQ-1 (grid columns match — issue is skeleton anatomy fields), DS-1 (`TYPOGRAPHY_SCALE.caption.fontSize` = undefined — caption is Tailwind string `'text-xs'`).
-- **FQ-2 severity elevated:** root = `useState` reads `router.query` pre-hydration. Fix: `router.isReady` guard, not just mounted-ref.
-- **Branch:** `260601-fix/activities-browse-audit` off main — audit only, no code committed yet.
-- **Vault doc:** `01-projects/activities-day-tour-page-review-2026-06-01.md` — corrected + implementation-ready.
+- **P0 bug:** `dayTripsApi.js:getContracts` never sends `?status=active` → inactive contracts in browse.
+- **Scrutinize corrected 4 wrong claims:** FQ-4, UX-2, FQ-1, DS-1 caption=Tailwind string.
+- **FQ-2 severity elevated:** `router.isReady` guard required.
+- **Vault doc:** `01-projects/activities-day-tour-page-review-2026-06-01.md`.
 
 **Achieved this session (2026-06-01 #17 — build error fix):**
 - `pages/help/index.js` — renamed `index` → `HelpPage` (fix `react-hooks/rules-of-hooks` ESLint error blocking Next.js build). 2-line change. Root cause: lowercase component name = not recognized as React component. Committed `efb59d7`, pushed to main.
@@ -72,11 +86,9 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **P0 — Implement activities browse fixes** — branch `260601-fix/activities-browse-audit` (off main)
-   - Start with FQ-0: `store/api/dayTripsApi.js:54` → `params.append('status', 'active')` — 1 line
-   - Then FQ-1: rewrite `SkeletonCard` in `DayTripList.js:13–63` — image 180px → 2 title lines → bullets → rating+price
-   - Full fix sequence in `01-projects/activities-day-tour-page-review-2026-06-01.md`
-2. **P0 — Fix blog width inconsistencies** (BW-1, BW-2, BW-3)
+1. **QA activities browse** — `npm run dev` → open `/activities?category=SPA_WELLNESS` → verify URL doesn't flicker to DAY_TOUR, check skeleton anatomy, confirm chips show 6 experience types only, test "Clear filters" button
+2. **Merge `260601-fix/activities-browse-audit` → main** after QA passes
+3. **P0 — Fix blog width inconsistencies** (BW-1, BW-2, BW-3)
    - `pages/blog/index.js:186` — hero `px-4` → `px-2 md:px-3 xl:px-0`
    - `pages/blog/index.js:206` — featured section `px-2 md:px-4` → `px-2 md:px-3 xl:px-0`
    - `components/blog/BlogCard.js` — `rounded-lg` → `rounded-md` + add `mx-2 md:mx-3 xl:mx-0`
@@ -91,13 +103,13 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `efb59d7` (base — no code committed yet on this branch) |
+| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `09e0db3` fix(activities): browse audit fixes — P0/P1 + layout consistency |
 | `smartenplus-backend` | `main` | `0ecc226` fix(timeline): place_id scope bug |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-| `vault` | `master` | (pending commit) session-end: #16 vault atomization |
+| `vault` | `master` | (pending commit) session-end: #19 |
 
-_Last verified 2026-06-01 (session wrap-up #18)_
+_Last verified 2026-06-01 (session wrap-up #19)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
@@ -113,8 +125,10 @@ _Last verified 2026-06-01 (session wrap-up #18)_
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| ACT-0 | **Activities browse returns inactive contracts** | `dayTripsApi.js:getContracts` never sends `?status=active`. Fix: `params.append('status', 'active')` — 1 line. Branch: `260601-fix/activities-browse-audit` | `store/api/dayTripsApi.js:54` |
-| ACT-1 | Activities skeleton anatomy wrong | Shows Operator/Duration/KeyFeatures rows that don't exist in DayTripCard. Fix: rewrite SkeletonCard to image→2titles→bullets→rating+price | `components/activities/browse/DayTripList.js:13–63` |
+| ~~LAY-1~~ | ~~Activities h-padding wrong~~ | ✓ Fixed `09e0db3` — `p-2` → `px-4 xl:px-0 py-2` | — |
+| ~~LAY-2~~ | ~~Activities grid gap mismatch~~ | ✓ Fixed `09e0db3` — loaded `spacing={1}` → `spacing={2}` | — |
+| ~~ACT-0~~ | ~~Activities browse returns inactive contracts~~ | ✓ Fixed `09e0db3` — `params.append('status', 'active')` | — |
+| ~~ACT-1~~ | ~~Activities skeleton anatomy wrong~~ | ✓ Fixed `09e0db3` — rewritten to image→2titles→bullets→rating+price | — |
 | ACT-2 | UX: two unlabeled search inputs | Location + keyword both above chips, no hierarchy. Fix: label "Where?", move keyword below chips | `components/activities/browse/FilterDayTripsPage.js:54–88` |
 | ACT-3 | `useDayTripFilters` pre-hydration init bug | `useState` reads `router.query` before hydration → all filters default even when URL has params. Fix: `router.isReady` guard. Severity: P1 (was understated as "spurious push"). | `hooks/useDayTripFilters.js:16–43` |
 | ACT-4 | Category chips include non-experience types | `ACCOMMODATION`, `TRANSPORTATION`, `OTHER` showing on activities page. Add `EXPERIENCE_CATEGORIES` array to `dayTripConstants.js`. | `constants/dayTripConstants.js` + `components/activities/browse/CategoryFilter.js:42` |

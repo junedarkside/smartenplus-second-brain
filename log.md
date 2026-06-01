@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-01] session-end | activities browse fixes shipped — 11 fixes (FQ-0→DS-1 + LAY-1 + LAY-2), commit 09e0db3, pushed 260601-fix/activities-browse-audit. Layout audit doc created. Next: QA then merge to main.
+## [2026-06-01] audit | layout-spacing-consistency — activities vs homepage vs trips. 3 issues: LAY-1 h-padding wrong (p-2 → px-4 xl:px-0), LAY-2 grid spacing mismatch (loaded spacing=1 → spacing=2), LAY-3 sm:py-8 intentional exception. Vault: 03-knowledge/layout-spacing-consistency-audit-2026-06-01.md
 ## [2026-06-01] session-end | activities page audit complete — 3-specialist + grill + scrutinize. 14 findings (3P0/6P1/5P2). P0 bug: inactive contracts in browse (status=active param missing). 4 scrutinize corrections applied. Branch 260601-fix/activities-browse-audit ready. master-state updated.
 ## [2026-06-01] scrutinize | activities-day-tour-page-review — 4 wrong claims corrected: FQ-4 symptom (PricingDisplay guards price≤0), UX-2 TRANSFER absent frontend, FQ-1 title (grid OK, anatomy wrong), DS-1 fix path (caption=Tailwind string not fontSize). FQ-2 elevated to router.isReady fix.
 ## [2026-06-01] grill | activities-day-tour-page-review — FQ-0 P0 found: inactive contracts in browse. DS-1 P1: design token gaps (minHeight, caption fontSize). Constraints: no over-engineering, reuse only, simple fixes.
