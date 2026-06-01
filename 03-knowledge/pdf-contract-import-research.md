@@ -353,10 +353,156 @@ Return exactly this JSON structure:
 
 ---
 
+---
+
+## 🔴 Adversarial Review — Critical Findings (2026-06-01)
+
+Full critique by Product Designer + Operations Consultant + Django Architect. Optimize for operational efficiency and error prevention, not engineering elegance.
+
+### Root Problem With Current Design
+
+11 steps because it solves three problems as one pipeline: PDF extraction + AI matching + supervised update. This coupling is the root cause of most weaknesses. Clean design separates extraction → matching → confirmation as independent concerns.
+
+---
+
+### 🚨 Red Flags — Stop Before Development
+
+**Red Flag 1: One draft per contract with hard delete**
+Must reverse before any code is written. Silent data loss via TTL, audit impossible, race condition in concurrent use. Fix: append-with-batch-ID + soft-delete (status=expired, never DELETE).
+
+**Red Flag 2: Synchronous AI call in Django request**
+WSGI worker blocked 5-20 seconds per import. 5 concurrent admins = 5 blocked workers = entire dashboard degrades. Fix: return `task_id` immediately, Celery handles AI call, frontend polls status.
+
+**Red Flag 3: LLM doing contract matching**
+Passing all operator contracts to LLM = expensive, slow, non-deterministic. Fix: LLM does extraction only. Python fuzzy matching handles contract matching against pre-fetched queryset.
+
+**Red Flag 4: No pre-validation before draft creation**
+Rate type mismatch (JOIN contract with VEHICLE rate) returns 400 at confirmation time — after admin reviewed and approved. Trust destroyed. Fix: all validation runs at draft creation, not confirmation.
+
+**Red Flag 5: Confidence score as auto-accept gate**
+0.85 threshold that auto-checks a row is a live-pricing risk. One high-confidence wrong-direction match (southbound vs northbound, same route, score >0.85) propagates to production. Fix: confidence = display emphasis only. All rows require human checkbox.
+
+**Red Flag 6: No large-delta warning**
+LLM decimal parsing errors (13500 vs 1350) are real and common. Must flag rate change >30% as hard warning regardless of confidence. Two lines of Python. Non-negotiable in MVP.
+
+---
+
+### Draft Model — Required Changes Before First Commit
+
+Current design is unsafe. Required fields to add:
+
+```
+batch_id          UUID, indexed — one per import session
+created_by        FK to Account
+source_text_hash  SHA-256 of pasted input (dedup detection)
+confirmed_at      timestamp
+confirmed_by      FK to Account
+superseded_by     FK self-referential, nullable
+match_candidates  JSON — top 3 matches per row, not just best
+status            pending / confirmed / rejected / expired (never DELETE)
+```
+
+**TTL Celery task must set status=expired, not DELETE rows.** Confirmed drafts retained forever for audit.
+
+---
+
+### AI Matching — Core Risk
+
+Route names in PDFs ≠ route names in DB. "Hua Hin - Bangkok (VIP)" ≠ "Bangkok–Hua Hin VIP Coach". One route can have multiple contracts (same route, different trip departure times) — AI matching on route name + type alone cannot disambiguate.
+
+**Fix: two-stage matching**
+1. Match Route by name similarity (Python fuzzy, not LLM)
+2. Match Contract within route by type + trip departure time
+Show top 2-3 candidates per row — admin selects. Never auto-select a single match.
+
+---
+
+### UX — Reduce to 3 Screens (from 5)
+
+**Screen 1: Import Setup**
+Operator (pre-populated from context if possible) + paste area + Submit → returns task_id immediately.
+
+**Screen 2: Unified Review Table (replaces Match Review + Draft Review per contract)**
+One row per extracted update. Columns: route from PDF (raw) | matched contract + slug | confidence color band | field deltas inline ("ADULT: 1200→1350") | warnings | accept checkbox.
+Expandable row = field-level sub-table. Bulk accept/reject by threshold. Keyboard navigation (Tab/Space/Enter).
+
+**Screen 3: Confirmation Summary**
+"X contracts updated. Y have active bookings. Confirm?" One click.
+
+---
+
+### Missing Safeguards
+
+| Missing | Risk | Fix |
+|---------|------|-----|
+| Re-import guard | Second import silently overwrites first | Warn if `source_text_hash` match exists within TTL |
+| Active booking warning | Rate change on contract with future bookings | Query orders, surface count as hard warning |
+| Concurrent draft race condition | Two admins same contract = last write wins | `select_for_update()` on draft record |
+| `transaction.atomic()` on confirm | Contract PATCH succeeds, Trip PATCH fails = partial state | Wrap both PATCHes in single atomic block |
+| Rollback UI | No recovery after bad import | Phase 2: "Undo last import" via `django-simple-history` |
+| Audit log of import session | No record of who/what/when imported | Store import session (text, AI response, batch_id, user) |
+| Delta vs current-at-confirmation | Base state changes between draft creation and confirm | Show delta vs live values at confirm time, not draft-creation time |
+
+---
+
+### Scalability Concerns
+
+- **Async required from day 1.** Synchronous AI call blocks WSGI workers. Non-negotiable.
+- **Index `ContractImportDraft` on** `(operator_id, status, created_at)` from first migration.
+- **Cache extraction by `source_text_hash`.** Prevents duplicate LLM cost on re-import.
+- **Rate card delta must contain only changed types.** Full rate table in delta creates unnecessary `django-simple-history` entries for unchanged values.
+
+---
+
+### Architecture Component Verdicts
+
+| Component | Verdict |
+|-----------|---------|
+| NotebookLM extraction | **Simplify** — add structured prompt template to reduce output variance. Phase 2: direct PDF upload |
+| Django AI call (sync) | **Redesign** — async Celery task, returns task_id immediately |
+| LLM for matching | **Remove** — Python fuzzy matching only |
+| `ContractImportDraft` model | **Redesign** — append+batch_id+soft-delete before first line of code |
+| Match Review screen (separate) | **Remove** — merge into unified table |
+| Draft Review per contract (separate page) | **Simplify** — expandable row detail, not separate page |
+| Rate card delta merge | **Keep** — merge-by-type-key correct, tighten to changed types only |
+| Celery TTL hard delete | **Redesign** — status=expired transition only |
+
+---
+
+### MVP Recommendation (revised)
+
+**Scope:** Rate card updates only. No trip time updates. One async flow.
+
+**Staff workflow: 4 actions**
+1. Operator page → "Import from PDF"
+2. Paste NotebookLM output → Submit → spinner/task polling
+3. Unified review table → bulk accept high-confidence, handle low-confidence manually
+4. Confirm → done
+
+**New endpoints needed:**
+- `POST /admin-dashboard-operators/contract-import/` → returns `task_id`
+- `GET /admin-dashboard-operators/import-tasks/{task_id}/` → status + result
+- `POST /admin-dashboard-operators/contract-import/{batch_id}/confirm/` → list of draft IDs, `transaction.atomic()`
+
+**Not in MVP:** trip time updates, LocationSelector place resolution, rollback UI, direct PDF upload.
+
+---
+
+### Phase 2 Recommendation
+
+- Trip time updates (`departure_time`, `arrival_time`) with Bangkok timezone conversion + duplicate-trip pre-validation
+- Direct PDF upload replacing NotebookLM copy-paste
+- LocationSelector for place name resolution
+- Rollback UI via `django-simple-history`
+- Re-import conflict detection via `source_text_hash`
+- Import analytics: confidence distribution, rejection rate, override rate per operator
+
+---
+
 ## Related
 
 [[admin-dashboard-contracts]] — category registry, form flow, payload rules
 [[admin-dashboard-component-patterns]] — RTK Query, Formik, MUI patterns
 [[operators]] — Django Contract model, service_category enum, Place model
 [[stations]] — Station, Location, Place models (place ID resolution)
-[[celery-tasks]] — Celery beat pattern for TTL cleanup task
+[[celery-tasks]] — Celery beat pattern for TTL + async task patterns
