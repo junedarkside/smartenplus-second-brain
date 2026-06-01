@@ -15,22 +15,16 @@ Global navigation catalog. Updated on every ingest.
 - [[check-your-booking-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** OTA utility card adopted. Illustration removed. 840px centered card, warm-surface bg, larger inputs, trust row with fixed copy. Eyebrow removed per judge ruling.
 
 - [[destinations-redesign-review]] — Destinations section review: editorial grid vs carousel tradeoffs, image overlay patterns, mobile-first layout decisions.
-- [[seo-homepage-audit-2026-05-31]] — **DONE 2026-05-31.** 17 findings → 7 resolved + 2 open + 1 skipped. CSP identified as runtime breaker. All fixes re-applied one-by-one on `260528-feat/header-redesign-2026` (`a2a4ff9`). Isolation testing confirms CSP blocks Next.js inline scripts.
-- [[css-audit-browse-pages-2026-05-31]] — **COMPLETED 2026-05-31.** 13 commits on `260528-feat/header-redesign-2026`. All browse pages fixed: destinations, locations, trips. Card border-radius, padding, grid gaps, section padding, card bg, station item radius, back/share overlay added to trips.
 - [[featured-image-header-width-bug-2026-05-30]] — **RESOLVED 2026-05-30.** `w-[1200px]` hardcoded in `0ebd755` broke mobile. Fix: revert to `w-full` + `max-w-[1200px]`. Rule: never use `w-[Npx]` on layout-spanning elements. `FeaturedImageHeader.js:121`.
 - [[airport-transfer-width-audit-2026-05-30]] — **UNRESOLVED.** Post-calendar sections (StationInformation + GuidesSection) visually narrower than calendar. Root cause: inner `px-2 md:px-3` + `mx-2` margins eating into max-w-[1200px] content. Fix attempt reverted (broke layout). Next team: redesign sections as full-width with centered inner content, OR accept current padding as correct. Shared component `ProductCardContainer.js` involvement complicates fix.
-- [[travel-thailand-better-section-redesign]] — **COMPLETED 2026-05-29.** `ce4d2d7` on `260528-feat/header-redesign-2026`. Replace 3 editorial sections with 1 unified "Travel Thailand Better" section. 1 featured + 2 secondary cards. AutoStoriesOutlined icon. Tailwind lib/ scan bug fixed.
 - [[header-redesign-2026-spec]] — **FINAL 2026-05-28.** Adaptive Type A/B header. Type A: single-row 80px (transactional). Type B: 2-row 96px (discovery/browse). All 5 nav items kept. /blog → Type B. Dynamic layout offset. 12-file implementation plan. 4-day rollout + 2 separate PRs.
 - [[hero-back-share-buttons-2row-header-fix]] — **UNVERIFIED 2026-05-30.** Back/Share pills moved from `FeaturedImageHeader` to outer wrapper of `TripDetailHero`/`DayTripHero`. Glassmorphism style. Server was in production mode — needs `npm run dev` to verify. See note for full debug trail + root causes.
 - [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. QA + AT-1 redesign pending before merge.
 - [[header-redesign-2026-team-review]] — 3-specialist audit (Design+UX+Frontend) + second audit (UX Architecture+Visual Design+Frontend Eng). All blockers resolved. Key decisions locked: Type A/B split, keep Explore Thailand, /blog = Type B, dynamic offset 80/96px, HeaderRowsContext pattern.
-- [[smartenplus-header-ux-v1]] — COMPLETED 2026-05-25. Desktop 2-row header: Row 1 (logo + THB + cart + profile), Row 2 (5 nav items, desktop only). Help Center added to profile dropdown. Submenus deferred.
 - [[backend-n8n-resend-webhook]] — Resend Operator n8n webhook forwarding. send_booking_data moved to bookings/tasks.py. 4 commits, merged to develop. 3 bugs caught by scrutinize audit (import crash ×2, orphaned try block) + 1 env var crash on startup (N8N_WEBHOOK_URL missing default=None)
 - [[fast-refresh-infinite-loop-audit-2026-05-23|Fast Refresh Infinite Loop Audit 2026-05-23]] — Root cause unconfirmed. RefreshTokenHandler diagnosis OVERTURNED (lastExpiryRef guard). Likely Next.js 14.2.x HMR + on-demand compilation cascade. 7 failed fixes documented. Next: debug instrumentation + git bisect
 - [[currency-context-infinite-fetch-2026-05-23|CurrencyContext Infinite Fetch 2026-05-23]] — race condition + unstable selectCurrency ref; fix applied on branch 260523-fix/currency-context-infinite-fetch
 - [[isr-429-cold-start-fix-2026-05-23|ISR 429 Cold-Start Fix + Stale Data 2026-05-23]] — cold `npm run dev` bursts `/front-page/` → 429; root: REVALIDATE_SECONDS=60 + refetchOnMountOrArgChange:300; fixes identified. + ISR stale data in Docker standalone, on-demand revalidation fix via Celery task
-- [[daytrips-to-activities-rename-2026-05-23|Daytrips → Activities Rename 2026-05-23]] — COMPLETED 2026-05-23 — /daytrips → /activities rename, 7 phases + 5 scrutiny fixes, merged → develop d424d4e; deploy: clear ISR cache + resubmit GSC sitemap
-- [[trip-detail-uxui-audit-2026-05-22|Trip Detail UX/UI Audit 2026-05-22]] — 3-specialist audit: 32 issues, ContentCard abstraction absent, full-bleed mobile cards, typography violations, CLS fallbacks; all P0/P1 implemented in branch 260522-fix/trip-detail-ux
 - [[README|SmartEnPlus]] — Thailand transport booking platform (Next.js 14, Redux, Omise)
 - [[architecture|SmartEnPlus Architecture]] — Redux slices, RTK Query, component structure
 - [[checkout-flow|SmartEnPlus Checkout]] — SSR-disabled checkout, cart, guest mode
@@ -66,8 +60,10 @@ Global navigation catalog. Updated on every ingest.
 - [[seo-wave2-audit-2026-05-23|SEO Wave 2 Audit 2026-05-23]] — DONE. All 11 bugs verified + fixed + merged to main (`ceb0eac`). M5/M6: no-op. Auth pages noindex blocked by ProtectedComponent returning null SSR — fix deferred.
 - [[hero-section-comprehensive-audit-2026-05-26|Hero Section Comprehensive Audit 2026-05-26]] — 9-agent synthesis: 88px header-hero gap (double-offset root cause), cross-page hero inconsistencies (Activities Browse + Trip Detail missing heroes, H1 scale mismatch, CTA inconsistency), mobile header behavior change. Priority actions defined.
 - [[mobile-header-analysis-2026-05-26|Mobile Header Analysis 2026-05-26]] — Original vs current mobile header diff. Dynamic scroll→fixed position, Slide animation removed, separate DOM structures, missing spacer compensation.
+- [[airport-transfer-redesign-2026]] — Homepage airport transfer section UX/UI redesign + backend API extension. AT-1 full redesign spec.
 - [[smartenplus-wireframe-architecture|SmartEnPlus Wireframe Architecture]] — Full platform wireframe + information architecture. 15 sections: homepage, hero, journeys, destinations, search results, experiences, routes, guides, mobile strategy, design system.
 - [[smartenplus-uxui-redesign-research-2026|SmartEnPlus 2026 UX/UI Redesign Research]] — Strategic direction: "premium operational transportation platform" not cinematic travel website. Compact 45-60vh hero, calm premium minimalism, efficiency-first UX. Header, search module, section redesign strategy.
+- [[homepage-uxui-audit-2026-05-31]] — **COMPLETED 2026-05-31.** 6-phase UX/UI audit. Commit `ade94ee`. Layout, card differentiation, destination flow fixes.
 
 - [[docker-standalone-isr-revalidate-gap]] — ISR timer gap in Docker standalone, deploy volume clear workaround
 - [[on-demand-revalidation-api-route]] — pages/api/revalidate.js pattern, auth, 207 Multi-Status
@@ -86,6 +82,7 @@ Global navigation catalog. Updated on every ingest.
 - [[refund-flow|Refund Flow]] — payments.Refund model, cards.Refund (legacy), RefundViewSet deprecation
 - [[journeys|Journeys]] — UserJourneyEvent analytics, event types, metadata, dedup guard pattern
 - [[design-systems]] — Token-based design system approach
+- [[design-system-audit-2026-05-31]] — Design system audit: brand color (#3b5998), token gaps, hardcoded values found across components
 - [[carousel-design-standard]] — Embla carousel items-per-screen breakpoints, gap values, card widths, focus ring handling
 - [[admin-dashboard-contracts]] — Category registry, form flow, payload rules, helpers
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
@@ -104,6 +101,7 @@ Global navigation catalog. Updated on every ingest.
 - [[seo-homepage-specialist-team]] — SEO specialist team: 3-role sequential audit workflow, how to invoke, pre-conditions, known gaps found on first run 2026-05-21
 - [[hero-88px-gap-root-cause]] — 88px white gap between header and hero on non-homepage. Double-offset: sticky reserves 88px + pt-[88px] on main. Fix: remove global pt-[88px], make spacing component-local.
 - [[featured-image-header-usage-matrix]] — Cross-page FeaturedImageHeader comparison. 12 pages: 10 use component, 2 have no hero. Inconsistencies in cinematic mode, min-height, H1 size, CTA treatment.
+- [[react-hooks-rules-lowercase-component]] — ESLint `next/core-web-vitals` blocks build when hooks called in lowercase-named function. PascalCase mandatory for React components, even in index.js files.
 - [[smartenplus-product-positioning]] — "Thailand Travel Infrastructure Platform." 5 DNA layers (transportation, experiences, route intelligence, editorial, trust). Core value: "Explore Thailand Easily."
 - [[smartenplus-2026-ux-direction]] — Strategic shift: cinematic → operational. Compact 45-60vh hero, calm premium minimalism, efficiency-first. Header, search, section redesign strategy.
 - [[mobile-header-scroll-behavior-change]] — Mobile header: dynamic (relative+Slide) → permanently fixed. Spacer removed, DOM paths diverged. 4 issues documented.
@@ -128,12 +126,13 @@ Global navigation catalog. Updated on every ingest.
 - [[nextjs-hydration-rules]] — 6 rules preventing hydration mismatches + PersistGate SSR blocker pattern. Mismatch in _app.js triggers HMR infinite refresh
 - [[payment-checkout-5-principles]] — 5 core checkout architecture principles: webhook SSOT, single attempt, immutable snapshot, cart lock, explicit cancel-recreate
 - [[nextjs-static-path-prop-divergence]] — getStaticPaths + getStaticProps constant divergence = silent routing failure. Module-level constant mandatory
+- [[content-marketing-strategy-2026-05-24]] — 5-agent review + full playbook rewrite. 6 contradictions fixed, keyword opportunities, tech stack integrated.
 
 ## Areas
 
 - [[engineering]] — Software engineering practices and standards
 - [[business]] — Validated strategy: B2B supplier (12Go+Klook 90%) + B2C direct (10%). EN customer confirmed. Vertical integration moat. "Stippl for SEA with real booking" vision.
-- [[southeast_asia_transport_platform_direction]] — Product vision: SEA transport + experience infra platform. Stippl plans but can't book; 12Go books but can't plan — SmartEnPlus does both. B2B supplier → B2C direct roadmap. Core loop: destinations+dates+interests → AI plan → book.
+- [[southeast-asia-transport-platform-direction]] — Product vision: SEA transport + experience infra platform. Stippl plans but can't book; 12Go books but can't plan — SmartEnPlus does both. B2B supplier → B2C direct roadmap. Core loop: destinations+dates+interests → AI plan → book.
 
 ## Decisions
 
@@ -143,6 +142,21 @@ Global navigation catalog. Updated on every ingest.
 ## Archive
 
 - [[mobile-header-redesign-glassmorphism]] — SUPERSEDED 2026-05-28 by [[header-redesign-2026-spec]]. Dark gradient glass, sticky+blur on scroll, unified 2-row. Kept for reference.
+- [[daytrips-to-activities-rename-2026-05-23]] — **COMPLETED 2026-05-23.** /daytrips → /activities rename, 7 phases + 5 scrutiny fixes, merged → develop d424d4e.
+- [[css-audit-browse-pages-2026-05-31]] — **COMPLETED 2026-05-31.** 13 commits. All browse pages fixed: destinations, locations, trips.
+- [[travel-thailand-better-section-redesign]] — **COMPLETED 2026-05-29.** `ce4d2d7`. Replace 3 editorial sections with 1 unified "Travel Thailand Better" section.
+- [[smartenplus-header-ux-v1]] — **COMPLETED 2026-05-25.** Desktop 2-row header. Superseded by [[header-redesign-2026-spec]].
+- [[og-image-inferred-audit-2026-05-23]] — **COMPLETED 2026-05-23.** Homepage + blog og:image broken. Inline 3-tier fallback fix.
+- [[seo-homepage-audit-2026-05-31]] — **DONE 2026-05-31.** 17 findings → 7 resolved + 2 open + 1 skipped.
+- [[trip-detail-uxui-audit-2026-05-22]] — **DONE.** 3-specialist audit: 32 issues. All P0/P1 implemented.
+- [[homepage-uxui-audit-2026-05-31]] — **COMPLETED 2026-05-31.** 6-phase UX/UI audit. Commit `ade94ee`.
+- [[seo-wave2-audit-2026-05-23]] — **DONE.** All 11 bugs verified + fixed + merged to main (`ceb0eac`).
+- [[multitab-payment-gaps-2026-05-18]] — Original multitab payment gap analysis. Superseded by [[multitab-payment-race-condition-fixes]].
+- [[payment-checkout-architecture-audit-2026-05-17]] — Original payment audit. Superseded by [[payment-checkout-architecture-audit]].
+- [[payment-checkout-e2e-testing-2026-05-17]] — Original e2e testing notes. Superseded by [[payment-checkout-e2e-testing]].
+- [[payment-system]] — Legacy payment system notes. Archived.
+- [[payments-deep-dive]] — Legacy payment deep dive. Archived.
+- [[payments-enums]] — Legacy payment enums. Superseded by [[payment-status-enums]].
 
 ## Systems
 
@@ -156,10 +170,8 @@ Global navigation catalog. Updated on every ingest.
 - [[bug-report]] — Bug documentation template
 - [[architecture-review]] — ADR-style architecture review template
 
-- [[content-marketing-strategy-2026-05-24|Content Marketing Strategy 2026-05-24]] — 5-agent review + full playbook rewrite. 6 contradictions fixed, keyword opportunities, tech stack integrated.
-
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 88
-- Last updated: 2026-05-30 (vault optimize: fixed folder structure, archived glassmorphism, updated stale statuses, added missing entries)
+- Pages: 96
+- Last updated: 2026-06-01 (session #17: build error fix + atomic note)

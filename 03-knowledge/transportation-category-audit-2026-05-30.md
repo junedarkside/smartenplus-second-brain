@@ -165,27 +165,18 @@ Whether meaningful inventory exists in non-transport categories: unknown without
 from products.models import Route
 from bookings.models import BookingItem
 
-# Inventory split
 total = Route.objects.filter(is_actived=True).distinct().count()
-airport = Route.objects.filter(
-    is_actived=True,
-    departure_station__station_type='airport'
-).distinct().count()
-# Guard against empty DB
+airport = Route.objects.filter(is_actived=True, departure_station__station_type='airport').distinct().count()
 pct = (airport / total * 100) if total > 0 else 0
 print(f"Airport routes: {airport}/{total} = {pct:.1f}%")
 
-# Booking split
 total_b = BookingItem.objects.filter(booking_status='Confirmed').count()
-airport_b = BookingItem.objects.filter(
-    booking_status='Confirmed',
-    contract__trip__route__departure_station__station_type='airport'
-).count()
+airport_b = BookingItem.objects.filter(booking_status='Confirmed', contract__trip__route__departure_station__station_type='airport').count()
 pct_b = (airport_b / total_b * 100) if total_b > 0 else 0
 print(f"Airport bookings: {airport_b}/{total_b} = {pct_b:.1f}%")
 ```
 
-Note: `distinct()` on Route queries is redundant but harmless (no M2M in these filters). FK chain verified: `BookingItem.contract` → `Contract.trip` → `Trip.route` → `Route.departure_station` → `Station.station_type` — all FKs exist.
+FK chain verified: `BookingItem.contract` → `Contract.trip` → `Trip.route` → `Route.departure_station` → `Station.station_type`.
 
 ---
 
@@ -204,20 +195,14 @@ Note: `distinct()` on Route queries is redundant but harmless (no M2M in these f
 
 **Recommendation:** Keep the section. If future inventory data shows airport routes < 10% AND bookings < 10%, demote to search-only.
 
----
-
 ## Decision
 
 Kept `AirportTransferSection.js` on homepage (`1eec0aa`). Section queries `/front-page/` → `airport_routes[]` key added in `3759dc2`.
-
----
 
 ## Redesign Spec — Professional Airport Transfer Section
 
 Full AT-1 implementation spec (card design, serializer expansion, null safety, verification) extracted to atomic note.
 → See [[airport-transfer-at1-redesign-spec]]
-
----
 
 ## Related
 

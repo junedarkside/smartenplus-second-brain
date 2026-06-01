@@ -3,8 +3,6 @@
 
 > Last validated: 2026-05-24 via production data (GA4 + GSC + founder interview)
 
----
-
 # Core Identity
 
 The platform IS:
@@ -14,35 +12,13 @@ The platform IS:
 - A **hybrid marketplace** — own-operated tours + third-party operator inventory
 - **"Stippl for SEA with real booking"** — AI-assisted journey planner that executes, not just inspires
 
-The platform is NOT:
-- A social travel app
-- A gamified platform
-- A generic OTA competing on breadth today
-- A hotel-first marketplace
-- A Thai domestic travel platform (Phase 1)
-
----
+The platform is NOT: social travel app, gamified platform, generic OTA competing on breadth, hotel-first marketplace, Thai domestic-only.
 
 # Product Vision
 
 > Stippl plans trips but can't book them. 12Go books trips but can't plan them. SmartEnPlus does both — for Southeast Asia.
 
-**The gap we fill:**
-
-| Stippl | 12Go / Klook | SmartEnPlus target |
-|--------|-------------|-------------------|
-| AI itinerary builder | No planning layer | AI itinerary builder |
-| No real booking | Real booking, no planning | Real bookable inventory |
-| Global, shallow | Global, shallow SEA | SEA-deep expertise |
-| Social features | None | Not needed |
-
-**Core product loop:**
-1. Traveler inputs: destinations + dates + interests
-2. Platform suggests: full SEA journey (transport + experiences)
-3. Traveler books: everything in one flow
-4. Platform coordinates: timing, transfers, disruption alerts
-
----
+**Core product loop:** traveler inputs destinations+dates+interests → platform suggests full SEA journey → traveler books everything in one flow → platform coordinates timing, transfers, disruption alerts.
 
 # Business Model Reality
 
@@ -65,27 +41,16 @@ Grow B2C from 10% → 40%+ by building what B2B platforms can't replicate: own-b
 
 **Note:** Commission model only viable after operator self-serve dashboard exists. Markup is correct for current stage.
 
----
-
 # Strategic Position
 
 ## Now — Supplier to Incumbents
-Supply 12Go + Klook with validated Thailand transportation + tour inventory. This funds the B2C build.
-
-**Do not compete with 12Go on breadth today.** They have 10+ years of inventory and network. Match their breadth = lose.
+Supply 12Go + Klook with validated Thailand transportation + tour inventory. This funds the B2C build. **Do not compete with 12Go on breadth today.**
 
 ## Path — Dual Channel
 Grow B2C direct while maintaining B2B supply. B2B revenue = runway. B2C = long-term margin.
 
 ## Target — Platform Competitor
-Year 4-5: enough inventory + own-brand tours + journey coordination + direct traffic to compete with 12Go/Klook/GYG directly.
-
-**What incumbents cannot easily replicate:**
-- Own-operated tours bundled with transportation
-- Deep journey coordination (A→B→C in one booking)
-- SEA island + cross-border route expertise
-
----
+Year 4-5: enough inventory + own-brand tours + journey coordination + direct traffic to compete with 12Go/Klook/GYG directly. **Incumbents cannot easily replicate:** own-operated tours bundled with transportation, deep journey coordination (A→B→C in one booking), SEA island + cross-border route expertise.
 
 # Validated Primary Customer
 
@@ -99,11 +64,7 @@ Year 4-5: enough inventory + own-brand tours + journey coordination + direct tra
 **Secondary (Phase 2+):** Thai domestic, regional Asian travelers
 
 ## B2B: Major travel platforms
-- 12Go — transportation routes
-- Klook — transportation + tours
-- Potential next: GetYourGuide, Viator
-
----
+12Go (transportation routes), Klook (transportation + tours). Potential next: GetYourGuide, Viator.
 
 # Geographic Strategy (Validated)
 
@@ -115,8 +76,6 @@ Year 4-5: enough inventory + own-brand tours + journey coordination + direct tra
 | Phase 4 — Year 3+ | Indonesia (Bali/Lombok/Gili) | High complexity, expand after disruption systems mature |
 
 **Principle:** Dominate corridor density before expanding geographically.
-
----
 
 # Product Roadmap (Reality-Based Sequence)
 
@@ -144,8 +103,6 @@ Operator self-serve dashboard, reliability data, B2B API for GetYourGuide/Viator
 
 **B2B API priority:** Some inventory currently delivered manually to B2B partners. Automating via API unlocks more partners (GYG, Viator) without proportional ops headcount growth.
 
----
-
 # Competitive Moat (Honest Assessment)
 
 | Moat | Current State | Path |
@@ -161,8 +118,6 @@ Operator self-serve dashboard, reliability data, B2B API for GetYourGuide/Viator
 
 **Vertical integration is the real moat:** 12Go/Klook negotiate with operators for every route. SmartEnPlus owns/operates minivans + tours directly. Platform competitors would need years to replicate this infrastructure.
 
----
-
 # Supply-Side Reality
 
 **Current model:** Manual contracts per operator, whole period. Operator notifies team on changes → immediate inventory update.
@@ -173,15 +128,9 @@ Operator self-serve dashboard, reliability data, B2B API for GetYourGuide/Viator
 
 **Future goal:** Operator self-serve dashboard scales both B2B supply volume and B2C inventory.
 
----
-
 # Localization
 
-**Phase 1:** English only (validated — EN customers, no Thai UX built yet).
-**Phase 2:** Thai language when Thai domestic becomes strategic target.
-**Payment:** Omise + QR Pay live. Covers international cards + Thai QR. No Phase 1 gaps.
-
----
+**Phase 1:** English only (validated). **Phase 2:** Thai language when Thai domestic becomes strategic target. **Payment:** Omise + QR Pay live. No Phase 1 gaps.
 
 # Success Metrics
 
@@ -203,8 +152,6 @@ Operator self-serve dashboard, reliability data, B2B API for GetYourGuide/Viator
 - Regional route dominance (Thailand + Malaysia)
 
 **Anti-metrics:** Do not optimize for engagement loops, time-in-app, or vanity pageviews.
-
----
 
 # What To Avoid
 

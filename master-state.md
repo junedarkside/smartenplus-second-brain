@@ -4,7 +4,10 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #16 — vault atomization)
+**Updated:** 2026-06-01 (session #17 — build error fix)
+
+**Achieved this session (2026-06-01 #17 — build error fix):**
+- `pages/help/index.js` — renamed `index` → `HelpPage` (fix `react-hooks/rules-of-hooks` ESLint error blocking Next.js build). 2-line change. Root cause: lowercase component name = not recognized as React component. Committed `efb59d7`, pushed to main.
 
 **Achieved this session (2026-06-01 #16):**
 - **Vault atomization** — extracted 5 atomic notes from fat knowledge files:
@@ -76,13 +79,13 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `81a8f99` Merge branch '260528-feat/header-redesign-2026' into develop |
+| `smartenplus-frontend` | `main` | `efb59d7` fix(help): rename component to HelpPage to fix build error |
 | `smartenplus-backend` | `main` | `4ab5771` feat(pages_info): add popular_experiences to frontpage API |
 | `admin-dashboard` | `main` | `95082f3` fix(bookings): CSV export typo fixes |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-| `vault` | `master` | (pending commit) session-end: blog width audit + partial fix |
+| `vault` | `master` | (pending commit) session-end: #16 vault atomization |
 
-_Last verified 2026-05-31 (session wrap-up #13)_
+_Last verified 2026-06-01 (session wrap-up #17)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
