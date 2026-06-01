@@ -2,6 +2,7 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-01] session-end | unified ActivitySearch shipped — ACT-5+ACT-6 done. utils/destinations.js canonical source, ActivitySearch fetches backend locations via GET /api/v1/contract/locations/. Frontend 02f9adf + backend 0b4b44f pushed. Backend branch needs merge first, then frontend QA + merge to develop.
 ## [2026-06-01] session-end | activities browse fixes shipped — 11 fixes (FQ-0→DS-1 + LAY-1 + LAY-2), commit 09e0db3, pushed 260601-fix/activities-browse-audit. Layout audit doc created. Next: QA then merge to main.
 ## [2026-06-01] audit | layout-spacing-consistency — activities vs homepage vs trips. 3 issues: LAY-1 h-padding wrong (p-2 → px-4 xl:px-0), LAY-2 grid spacing mismatch (loaded spacing=1 → spacing=2), LAY-3 sm:py-8 intentional exception. Vault: 03-knowledge/layout-spacing-consistency-audit-2026-06-01.md
 ## [2026-06-01] session-end | activities page audit complete — 3-specialist + grill + scrutinize. 14 findings (3P0/6P1/5P2). P0 bug: inactive contracts in browse (status=active param missing). 4 scrutinize corrections applied. Branch 260601-fix/activities-browse-audit ready. master-state updated.
@@ -413,3 +414,8 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-06-01] lint | atomized 5 concepts — airport-transfer-at1-redesign-spec, nextjs-hydration-rules, payment-checkout-5-principles, nextjs-static-path-prop-divergence, designsystem-shadow-border-tokens. Source notes trimmed.
 
 ## [2026-06-01] session-end | #16 — vault atomization (5 atoms). Feature branch merged to develop + shipped to production.
+
+## [2026-06-01] audit | activities location search — 4-team audit, 3 critical bugs confirmed. RC-1: backend text→ID type mismatch (products/views.py:446). RC-2: inputValue prop desync. RC-3: freetext not emitting. Fix sequence in [[activities-location-search-bug-2026-06-01]].
+## [2026-06-01] audit | activities search merge review — true merge deferred, icon diff + side-by-side layout implemented. [[activities-search-merge-review-2026-06-01]]
+
+## [2026-06-01] session-end | #20 — grill overturned 'backend OR-union required' claim. True merge feasible via keywords[] intent detection. Tech debt mapped: 2 POPULAR_DESTINATIONS sources incompatible. ACT-5 (consolidate) + ACT-6 (unified ActivitySearch) added to open items. master-state + vault updated.

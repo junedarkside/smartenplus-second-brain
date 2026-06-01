@@ -4,7 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-01 (session #19 — activities browse fixes implemented + layout audit)
+**Updated:** 2026-06-01 (session #21 — unified ActivitySearch + backend locations endpoint)
+
+**Achieved this session (2026-06-01 #21):**
+- **ACT-5 done** — `utils/destinations.js` created (canonical rich Object[]). Both old `popularDestinations.js` files deleted. `ListLocation` + `SearchResultsList` import paths updated. `DayTripLocationSearch` deleted.
+- **ACT-6 done** — `ActivitySearch.js` created. Single MUI Autocomplete. Fetches locations from backend via `useGetActivityLocationsQuery`. Dropdown → `?location=`, freetext → `?search=`. No static list, no `isLocationMatch`.
+- **New backend endpoint** — `GET /api/v1/contract/locations/?service_category=DAY_TOUR` on `ContractViewSet`. Returns distinct `Location` objects from active contracts. 1h cache. Invalidated on contract save/delete. Branch `260601-feat/contract-locations-endpoint`, committed + pushed.
+- **RC-3 backend fix committed** — `f7f7a85` location text-fallback + `primary_location` OR join committed to backend `main` before branching.
+- **Both repos pushed** — frontend `260601-fix/activities-browse-audit` (`02f9adf`), backend `260601-feat/contract-locations-endpoint` (`0b4b44f`).
+- **Vault doc updated** — `activities-search-merge-review-2026-06-01.md` marked COMPLETED.
 
 **Achieved this session (2026-06-01 #19 — activities browse implementation + layout audit):**
 - **All P0/P1 audit fixes implemented** — commit `09e0db3` on `260601-fix/activities-browse-audit`, pushed to remote.
@@ -86,9 +94,10 @@
 5. **Deferred gaps** — GAP-3, GAP-5, GAP-6, GAP-7 — P2/P3, not blocking.
 
 **Next session resume point (EXACT):**
-1. **QA activities browse** — `npm run dev` → open `/activities?category=SPA_WELLNESS` → verify URL doesn't flicker to DAY_TOUR, check skeleton anatomy, confirm chips show 6 experience types only, test "Clear filters" button
-2. **Merge `260601-fix/activities-browse-audit` → main** after QA passes
-3. **P0 — Fix blog width inconsistencies** (BW-1, BW-2, BW-3)
+1. **Merge backend `260601-feat/contract-locations-endpoint` → main first** — endpoint must be live before frontend can call it
+2. **QA activities browse** — `npm run dev` → open `/activities` → verify unified search bar, type "Phuket" → dropdown shows real locations → select → `?location=Phuket` in URL, H1 shows "Day Trips in Phuket". Type "snorkeling" → `?search=snorkeling`.
+3. **Merge `260601-fix/activities-browse-audit` → develop** after QA passes
+4. **P0 — Fix blog width inconsistencies** (BW-1, BW-2, BW-3)
    - `pages/blog/index.js:186` — hero `px-4` → `px-2 md:px-3 xl:px-0`
    - `pages/blog/index.js:206` — featured section `px-2 md:px-4` → `px-2 md:px-3 xl:px-0`
    - `components/blog/BlogCard.js` — `rounded-lg` → `rounded-md` + add `mx-2 md:mx-3 xl:mx-0`
@@ -103,13 +112,13 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `09e0db3` fix(activities): browse audit fixes — P0/P1 + layout consistency |
-| `smartenplus-backend` | `main` | `0ecc226` fix(timeline): place_id scope bug |
+| `smartenplus-frontend` | `260601-fix/activities-browse-audit` | `02f9adf` feat(activities): unified ActivitySearch + backend locations |
+| `smartenplus-backend` | `260601-feat/contract-locations-endpoint` | `0b4b44f` feat(contracts): GET /api/v1/contract/locations/ endpoint |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-| `vault` | `master` | (pending commit) session-end: #19 |
+| `vault` | `master` | (pending commit) session-end: #21 |
 
-_Last verified 2026-06-01 (session wrap-up #19)_
+_Last verified 2026-06-01 (session wrap-up #21)_
 
 ### Uncommitted — Frontend
 `?? homepage-refinement-2026.md` — reference doc at project root, not committed intentionally.
@@ -129,7 +138,9 @@ _Last verified 2026-06-01 (session wrap-up #19)_
 | ~~LAY-2~~ | ~~Activities grid gap mismatch~~ | ✓ Fixed `09e0db3` — loaded `spacing={1}` → `spacing={2}` | — |
 | ~~ACT-0~~ | ~~Activities browse returns inactive contracts~~ | ✓ Fixed `09e0db3` — `params.append('status', 'active')` | — |
 | ~~ACT-1~~ | ~~Activities skeleton anatomy wrong~~ | ✓ Fixed `09e0db3` — rewritten to image→2titles→bullets→rating+price | — |
-| ACT-2 | UX: two unlabeled search inputs | Location + keyword both above chips, no hierarchy. Fix: label "Where?", move keyword below chips | `components/activities/browse/FilterDayTripsPage.js:54–88` |
+| ~~ACT-5~~ | ~~Destinations data consolidation~~ | ✓ Done `02f9adf` — `utils/destinations.js` created, 2 old files deleted, 3 consumers updated | — |
+| ~~ACT-6~~ | ~~Unified ActivitySearch component~~ | ✓ Done `02f9adf` — `ActivitySearch.js` with `useGetActivityLocationsQuery`, backend endpoint live on `260601-feat/contract-locations-endpoint` | — |
+| ACT-2 | ~~UX: two unlabeled search inputs~~ | ✓ Closed — side-by-side layout + icon diff + labels implemented. | — |
 | ACT-3 | `useDayTripFilters` pre-hydration init bug | `useState` reads `router.query` before hydration → all filters default even when URL has params. Fix: `router.isReady` guard. Severity: P1 (was understated as "spurious push"). | `hooks/useDayTripFilters.js:16–43` |
 | ACT-4 | Category chips include non-experience types | `ACCOMMODATION`, `TRANSPORTATION`, `OTHER` showing on activities page. Add `EXPERIENCE_CATEGORIES` array to `dayTripConstants.js`. | `constants/dayTripConstants.js` + `components/activities/browse/CategoryFilter.js:42` |
 | BW-1 | Blog index hero `px-4` padding | Should be `px-2 md:px-3 xl:px-0` | `pages/blog/index.js:186` |
