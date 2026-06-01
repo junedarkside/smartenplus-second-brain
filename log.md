@@ -2,6 +2,10 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-01] session-end | activities page audit complete — 3-specialist + grill + scrutinize. 14 findings (3P0/6P1/5P2). P0 bug: inactive contracts in browse (status=active param missing). 4 scrutinize corrections applied. Branch 260601-fix/activities-browse-audit ready. master-state updated.
+## [2026-06-01] scrutinize | activities-day-tour-page-review — 4 wrong claims corrected: FQ-4 symptom (PricingDisplay guards price≤0), UX-2 TRANSFER absent frontend, FQ-1 title (grid OK, anatomy wrong), DS-1 fix path (caption=Tailwind string not fontSize). FQ-2 elevated to router.isReady fix.
+## [2026-06-01] grill | activities-day-tour-page-review — FQ-0 P0 found: inactive contracts in browse. DS-1 P1: design token gaps (minHeight, caption fontSize). Constraints: no over-engineering, reuse only, simple fixes.
+## [2026-06-01] audit | activities-day-tour-page-review — 3-specialist code audit (UX+Design+FE). 12 findings: 2 Critical, 5 Major, 5 Minor. Top risks: skeleton mismatch, dual search inputs, non-experience categories in filter, spurious router.push on mount.
 ## [2026-06-01] research | pdf-contract-import — full grill session. Architecture locked: NotebookLM → Django (GLM/MiniMax) → ContractImportDraft → admin review → PATCH. Parked for future implementation. Vault: 03-knowledge/pdf-contract-import-research.md
 ## [2026-06-01] audit | timeline-update-display-bug — audit doc created. 4 suspected root causes: payload key mismatch, place shape mismatch, response race, empty place ID. Team investigation pending.
 ## [2026-06-01] session-end | build error fix: pages/help/index.js const index → HelpPage, react-hooks/rules-of-hooks ESLint error. efb59d7 pushed to main. Atomic note: react-hooks-rules-lowercase-component.
