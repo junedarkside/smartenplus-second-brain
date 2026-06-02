@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-02] session-end #30 | Price range slider max hardcode fixed — 10,000→30,000 THB in ExperienceSidebar.js:9. Multi-agent debate (3 specialists): dynamic endpoint vs 50k vs 30k. 30k won: matches Thai market ceiling, 40% better slider precision for 500–8k density band. Uncommitted. Next: commit price fix → merge header-activities-search → AT-1.
+
 ## [2026-06-02] session-end #29 | Backend min_rate ordering fix + activities sort/filter UX redesign. Fixed: FieldError on `ordering=min_rate` without price filter (annotation hoisted). Frontend: SORT_OPTIONS shared constant, active sort chip (SortBar), mobile sort bottom-sheet, outlined buttons with state-driven emphasis. UX pattern: hierarchy via content not color (9/10 travel app standard). Committed 1c94110 (backend) + 8f05ab3 (frontend). Knowledge atomized: [[activities-sort-filter-ux]]. Next: merge header-activities-search → AT-1 airport transfer P0.
 
 ## [2026-06-02] session-end #27 | ACT-12 fully resolved — 4 commits pushed (979c45d→5eaf8e2). Fixes: dual-hook URL race (isControlled + enabled param), debounce (reused useDebounce.jsx), mid-type reset (isTypingRef + didMountRef), freeSolo Enter blank (string branch in handleChange). Knowledge atomized: [[react-dual-hook-url-race]]. Branch ready to merge. Next: merge → BW-1/2/3 blog padding → AT-1 airport transfer.
@@ -439,3 +441,4 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-06-02] audit | BW-1/BW-2/BW-3 verified already fixed — blog padding + BlogCard radius/margins correct in code. Closed in master-state.
 ## [2026-06-02] atomize | 3 concepts from activities-day-tour-page-review — inactive-contracts, hydration-spurious-push, design-token-caption-gotcha
 ## [2026-06-02] atomize | 3 concepts from activities-location-search-bug — backend text fallback, autocomplete inputvalue sync, handleInputChange parent emit
+## [2026-06-02] decision | adr-activity-card-favorite-button — grilled + scrutinized. Findings: missing unique_together migration (blocker), unused content_type param in _validate_contract_params (major), pre-existing axiosInstance infinite fetch loop (document only). ADR updated with full implementation code + handoff in master-state as FAV-1.

@@ -4,46 +4,44 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-02 (session #29)
+**Updated:** 2026-06-02 (session #30)
+
+**Achieved this session (#30):**
+- **Price range slider fix:** `DEFAULT_MAX_PRICE_THB` raised 10,000 → 30,000 in `components/activities/browse/ExperienceSidebar.js:9`. Multi-agent team debate (Backend Architect vs Frontend Design vs UX Research) concluded 30k optimal — matches Thai activity market ceiling, preserves slider precision for 500–8k density band, no backend work needed.
+- **Multi-agent debate pattern used** — 3 specialist agents debated dynamic endpoint vs 30k vs 50k. 30k won: same 1-line fix as 50k but 40% better pixel-per-THB precision for majority of inventory.
+- **Frontier:** dynamic `GET /api/v1/contract/price-stats/` endpoint deferred until first product >28k THB is onboarded.
 
 **Achieved this session (#29):**
-- **Backend bugfix:** `min_rate` ordering crash fixed — annotation hoisted unconditionally in `get_queryset()` (`products/views.py`). `GET /api/v1/contract/?ordering=min_rate` → 200. Committed `1c94110` + pushed to backend `develop`.
-- **Activities sort/filter UX redesign:**
-  - `constants/sortOptions.js` (new) — shared `SORT_OPTIONS` + `SORT_SHORT_LABEL` (eliminates duplication)
-  - `components/activities/browse/SortBar.js` — active sort chip with directional arrow, click-to-reset
-  - `components/activities/browse/FilterDayTripsPage.js` — mobile sort bottom-sheet (Button → Drawer → RadioGroup), both sticky bar buttons outlined with state-driven emphasis
-  - UX pattern: hierarchy via state/content, not color (9/10 travel app standard). Committed `8f05ab3` + pushed to frontend `develop`.
-- **Knowledge atomized** — `03-knowledge/activities-sort-filter-ux.md` — state-driven button emphasis pattern, Klook/Booking.com benchmark.
-
-**Achieved session #26:** HeaderSearchContext shallow guard (flicker fix). Option F attempted + failed (3 regressions). All recorded in prior entry.
-
-**Achieved sessions #23–25:** Phase 1+2+3 activities marketplace shipped. CHARTER type, mobile layout, sidebar filters.
+- Backend bugfix: `min_rate` ordering crash fixed. Committed `1c94110`.
+- Activities sort/filter UX redesign. Committed `8f05ab3`.
+- Knowledge atomized — `03-knowledge/activities-sort-filter-ux.md`.
 
 **Carry-forward:**
 1. **Merge** `260601-feat/header-activities-search` → develop (first action next session)
 2. **AT-1** — airport transfer P0 redesign
 3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
+4. **Commit ExperienceSidebar.js** price fix (uncommitted — `M components/activities/browse/ExperienceSidebar.js`)
 
 **Next session resume point (EXACT):**
-1. `git merge 260601-feat/header-activities-search` into develop, push
-2. AT-1 — spec at `03-knowledge/transportation-category-audit-2026-05-30.md`
+1. Commit `ExperienceSidebar.js` price range fix on frontend `main`
+2. `git merge 260601-feat/header-activities-search` into develop, push
+3. AT-1 — spec at `03-knowledge/transportation-category-audit-2026-05-30.md`
+4. **FAV-1** — implement favorite heart. ADR fully designed + scrutinized: `04-decisions/adr-activity-card-favorite-button.md`. Sequence: (a) backend migration + views.py (b) BookmarkButton.js (c) DayTripCard.js
 
 ### Active Branches
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `8f05ab3` feat(activities): redesign sort/filter UX |
+| `smartenplus-frontend` | `main` | `d615c1e` fix(auth): session cookie — **1 uncommitted file** |
 | `smartenplus-frontend` | `260601-feat/header-activities-search` | `5eaf8e2` fix: freeSolo Enter — **READY TO MERGE** |
-| `smartenplus-backend` | `develop` | `1c94110` fix(contract): hoist min_rate annotation |
+| `smartenplus-backend` | `main` | `fcb0511` feat(bookmarks): extend BookmarkViewSet |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-06-02 (session wrap-up #29)_
+_Last verified 2026-06-02 (session wrap-up #30)_
 
 ### Uncommitted
-None — all clean.
-- `hooks/useDayTripFilters.js` — Option F routeChangeComplete ✗ REVERT
-- `components/activities/browse/FilterDayTripsPage.js` — unknown changes, review before commit
+- `smartenplus-frontend`: `M components/activities/browse/ExperienceSidebar.js` — price range max 10k→30k. **Commit next session.**
 
 ---
 
@@ -62,6 +60,7 @@ None — all clean.
 | ~~BW-1~~ | ~~Blog index hero `px-4` padding~~ | ✓ Already fixed | — |
 | ~~BW-2~~ | ~~Blog index featured section `px-2 md:px-4`~~ | ✓ Already fixed | — |
 | ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
+| FAV-1 | **Favorite heart on DayTripCard** | ADR fully designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
 | AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |
 | AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit-2026-05-30.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
