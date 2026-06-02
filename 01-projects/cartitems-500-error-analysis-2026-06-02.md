@@ -2,7 +2,7 @@
 
 ## Summary
 
-`POST /carts/{id}/cartitems/` returns 500 HTML page (not JSON) when user books a day trip activity. Three distinct bugs found — one in error handling, two in payload construction.
+**RESOLVED 2026-06-02.** `POST /carts/{id}/cartitems/` returned HTML 500 when booking day-trip/experience contracts. Root cause: `contract.trip = None` on non-transport contracts → `AttributeError` in `check_advance_hour()` → unhandled → Django HTML 500.
 
 ## Context
 
@@ -16,117 +16,66 @@ data: Django HTML 500 page
 error: "SyntaxError: Unexpected token '<'..."
 ```
 
-Files involved:
-- `components/activities/detail/DayTripBookingWidget.js`
-- `components/activities/detail/DayTripDetailPage.js`
-- `store/api/api-slice.js` (createCartItem endpoint)
-- `store/api/dayTripsApi.js` (getContractBySlug)
+## Root Cause (Confirmed)
 
-## Root Causes (Ranked)
+### Real Cause — `contract.trip = None` in `check_advance_hour()`
 
-### Bug 1 — P1: Stale `initialContract` ratecard IDs sent with specific `traveling_date`
+`carts/views.py:143` calls `check_advance_hour(contract_id, traveling_date_str)` inside `get_serializer_class()` with no exception guard.
 
-**How it breaks:**
-1. Page loads via SSG → `initialContract` has only null-`rate_date` default ratecards
-2. User selects a date → `selectedDate` flips from null to a date string
-3. `shouldSkipInitialFetch` flips `true → false` → RTK Query fires new fetch
-4. While fetch in-flight: `contract = fetchedContract ?? initialContract` = stale `initialContract`
-5. `filteredRatecards` useMemo falls back to null-`rate_date` default ratecards (no date-specific ones exist yet)
-6. User clicks "Add to Cart" → `convertToRatecard()` sends default ratecard IDs WITH a specific `traveling_date`
-7. Backend checks: these ratecard IDs are not valid for this date → Django IntegrityError → HTML 500
-
-**Code path:**
-```
-DayTripDetailPage.js:101 → contract = fetchedContract ?? initialContract (stale during loading)
-DayTripBookingWidget.js:47-70 → filteredRatecards useMemo → falls back to null-date ratecards
-DayTripBookingWidget.js:108-161 → convertToRatecard() sends wrong IDs
-DayTripBookingWidget.js:269-278 → payload to API with bad contract_ratecard
+`carts/utils.py:591`:
+```python
+trip_departure_time = contract.trip.departure_time  # CRASH if contract.trip is None
 ```
 
-**Fix:** Disable "Add to Cart" button while `isLoading` is true. Widget must not be interactive until date-specific contract arrives.
+Day-trip/experience contracts (`DAY_TOUR`, `SPA_WELLNESS`, etc.) have `trip = None` — the admin action `sanitize_category_fields()` explicitly sets `trip=None` for all non-transport contracts. `None.departure_time` → `AttributeError` → unhandled → Django 500 HTML page (not JSON, because DRF only catches its own exceptions).
 
-```js
-// Add to disabled condition in DayTripBookingWidget.js button:
-disabled={isLoading || totalParticipants === 0 || !selectedDate || ...}
+**Evidence:** `operators/models.py:232` — `trip = ForeignKey(..., null=True, blank=True)`. `operators/admin.py:985` — `sanitize_category_fields()` clears `trip` for non-transport categories.
+
+## Fix Applied — `9ef2752` (backend develop, merged main 2026-06-02)
+
+**`carts/utils.py:591`** — one-line null guard:
+```python
+# Before
+trip_departure_time = contract.trip.departure_time
+# After
+trip_departure_time = contract.trip.departure_time if contract.trip else None
 ```
+Fallback already present at line 592-593: `None` → defaults to `time(6, 0, 0)`.
 
-Pass `isLoading` prop through: `DayTripDetailPage → DayTripMobileBookingBar/PremiumBookingPanel → DayTripBookingWidget`.
-
----
-
-### Bug 2 — P1: `contract_ratecard: undefined` if ratecard uses `pk` not `id`
-
-**How it breaks:**
-`dayTripsApi.getContractBySlug` has no `transformResponse`. If backend returns ratecard objects with key `pk` instead of `id`, then:
-- `ratecards[0].id` = `undefined`
-- JSON.stringify drops `undefined` values
-- Payload becomes `{ "quantity": 1 }` (missing `contract_ratecard` field)
-- DRF serializer validation fails → Django 500
-
-**Evidence:** `api-slice.js:110-120` — no `transformResponse`. `convertToRatecard()` lines 115, 129, 138, 149 — no `.id` guard anywhere.
-
-**Fix:** Guard in `convertToRatecard()`:
-```js
-contract_ratecard: adultRate.id ?? adultRate.pk
+**`carts/views.py:143`** — exception wrapper at call site:
+```python
+try:
+    advance_ok = check_advance_hour(contract_id, traveling_date_str)
+except Exception:
+    logger.exception("[CartItem] check_advance_hour crashed for contract_id=%s", contract_id)
+    raise ValidationError("Unable to validate booking time. Please try again.")
 ```
-Also add `transformResponse` in `dayTripsApi.js` to normalize `pk → id` on all ratecard objects.
+Future crashes in `check_advance_hour` now return JSON 400, not HTML 500.
 
----
+## Vault Corrections (original analysis had errors)
 
-### Bug 3 — P0: `PARSING_ERROR` not caught by 500 error handler (silent failure)
+### Bug 1 — WRONG — guard already existed
+Original claim: `isLoading` not passed → button clickable during fetch → stale ratecards sent.
+**Reality:** `PremiumBookingPanel.js:58` and `DayTripMobileBookingBar.js:166` both hide widget entirely (not just disable) while `isLoading`. Guard was already correct. No fix needed.
 
-**How it breaks:**
-RTK Query sets `error.status = 'PARSING_ERROR'` (string) when response is non-JSON. The catch block:
-```js
-} else if (error.status >= 500) {  // DayTripBookingWidget.js:338
-```
-`'PARSING_ERROR' >= 500` evaluates `false` in JavaScript (string vs number). The 500 branch **never fires**. Falls through to generic "Could not add item to cart" toast — hides the real error.
+### Bug 2 — FALSE ALARM — backend always returns `id`
+`ContractRateCardSerializer` fields: `['id', 'rate_date', 'ratecard', 'selling_rate', 'bar_rate']`. Backend always returns `id`, never `pk`. `.id ?? .pk` fix unnecessary.
 
-**Fix:**
-```js
-} else if (error.status === 'PARSING_ERROR' || error.originalStatus >= 500) {
-  toast.error('Server error. Please try again later.', autoClose);
-}
-```
+### Bug 3 — REAL but secondary
+`DayTripBookingWidget.js:338`: `error.status >= 500` fails silently when RTK sets `status = 'PARSING_ERROR'` (string). Error masking — not the cause of 500, just hides it. **Not fixed this session** — deferred.
 
----
+### Bug 4 — NEW (dev-only edge case)
+`shouldSkipInitialFetch = !!initialContract && !selectedDate`. If `initialContract = null` (unbuilt slug), query fires without date → empty ratecards → `contract_ratecard: []` → 500. Low priority, dev-only.
 
-## Payload Shape (Actual)
+## Remaining Open Items
 
-```json
-{
-  "user": "<session.id | null>",
-  "contract_id": "<contract.id>",
-  "traveling_date": "YYYY-MM-DD",
-  "contract_ratecard": [
-    { "contract_ratecard": "<ratecard.id>", "quantity": 1 }
-  ],
-  "adult": 2,
-  "child": 0,
-  "infant": 0,
-  "product_type": "JOIN"
-}
-```
-
-## Fix Plan
-
-| Priority | File | Line | Change |
-|---|---|---|---|
-| P0 | `DayTripBookingWidget.js` | 338 | Fix PARSING_ERROR catch: `error.status === 'PARSING_ERROR' \|\| error.originalStatus >= 500` |
-| P1 | `DayTripBookingWidget.js` | button disabled | Add `isLoading` to disabled condition |
-| P1 | `DayTripDetailPage.js` | 235/247 | Pass `isLoading` prop to both booking components |
-| P1 | `DayTripBookingWidget.js` | 115, 129, 138, 149 | Add `.id ?? .pk` fallback in `convertToRatecard()` |
-| P2 | `store/api/dayTripsApi.js` | getContractBySlug | Add `transformResponse` to normalize ratecard field names |
-
-## Tradeoffs
-
-- **P0 error handler fix** — zero risk, pure improvement. Do immediately.
-- **P1 isLoading disable** — prevents booking with stale data at cost of brief UI lockout (spinner). Correct tradeoff.
-- **P2 transformResponse** — requires confirming whether backend actually returns `pk` vs `id`. Check backend serializer before adding. Could be defensive-only.
+| # | Item | Priority |
+|---|------|----------|
+| Bug 3 | Fix `PARSING_ERROR` catch in `DayTripBookingWidget.js:338` | P1 |
+| Bug 4 | Guard `initialContract = null` + empty ratecards path | P3 |
 
 ## Related
 
 - [[cart]] — CartItem model, cartitems endpoint
-- [[DayTripBookingWidget]] — booking flow
-- [[nextjs-isr-ratecard-empty-array-guard]] — similar stale data guard pattern
+- [[nextjs-isr-ratecard-empty-array-guard]] — similar stale data guard
 - [[payment-checkout-architecture-audit]] — error handling patterns

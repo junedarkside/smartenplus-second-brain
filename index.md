@@ -10,7 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
-- [[cartitems-500-error-analysis-2026-06-02]] — **OPEN 2026-06-02.** Production 500 on POST /carts/{id}/cartitems/. 3 bugs: stale initialContract ratecard IDs, undefined contract_ratecard pk/id, PARSING_ERROR not caught. Fix plan documented.
+- [[cartitems-500-error-analysis-2026-06-02]] — **RESOLVED 2026-06-02.** Production 500 on POST /carts/{id}/cartitems/. Real cause: `contract.trip=None` → AttributeError in `check_advance_hour()`. Fixed `carts/utils.py:591` + call-site guard. Original Bug 1/2 analysis was wrong. Bug 3 (PARSING_ERROR catch) deferred → CART-1.
 
 - [[experience-detail-page-redesign-2026-06-02]] — **PLANNED 2026-06-02.** Premium redesign of `/activities/detail/[slug]` → Airbnb-level experience detail page. Airbnb 5-up photo grid, trust badges, reviews moved up, timeline collapsed, 9 new components, 0 new API endpoints.
 

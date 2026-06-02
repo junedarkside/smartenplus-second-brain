@@ -4,50 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-02 (session #33)
+**Updated:** 2026-06-02 (session #34)
 
-**Achieved this session (#33):**
-- **FAQ fixes SHIPPED** to develop. Branch `260602-feat/experience-faq-single-source-of-truth` — merged.
-  - P0: Removed "Is this suitable for first-time visitors?" hardcoded filler
-  - P1: Built `buildExperienceFAQItems()` + `buildCancellationSummary()` in `helpers/experienceFAQBuilder.js`
-  - Fixed cancellation text: derived from `cancellation_policy_detail[]` (not hardcoded "24 hours")
-  - Fixed difficulty labels: use string enum keys (EASY/MODERATE/CHALLENGING) not integers
-  - Refactored `ExperienceFAQ.js`: single `contract` prop, calls builder, handles `isHtml` flag for rendering
-  - Updated `DayTripDetailPage.js`: pass full contract object
-  - P2: Added `@deprecated` comment to `DayTripContent.js` (verified no imports)
-- **Activities filter fix SHIPPED** to both repos. Branch `260602-fix/activities-filter-transportation-leak` — merged.
-  - Backend: `.get('service_category')` → `.getlist('service_category')` + `__in` filter (multi-value)
-  - Frontend: `EXPERIENCE_CATEGORIES` appended as repeated params when no category selected
-  - Removed `confirm=True` from listing queryset (kept in booking availability check)
-  - Fixes: "All" filter no longer leaks TRANSPORTATION/ACCOMMODATION/OTHER contracts
-- **RelatedExperiences carousel SHIPPED** to develop. Branch `260602-feat/related-experiences-carousel` — merged.
-  - Mobile/iPad: horizontal scroll carousel (flex + overflow-x-auto + snap-x)
-  - Desktop lg+: 3-column grid (switches with `lg:grid lg:grid-cols-3`)
-  - Card widths: 80vw (mobile ~1.1 visible) / 45vw (iPad ~2 visible) / auto (desktop grid)
+**Achieved this session (#34):**
+- **Production 500 fix SHIPPED** — `POST /carts/{id}/cartitems/` crashed for all day-trip/experience contracts.
+  - Root cause: `carts/utils.py:591` — `contract.trip.departure_time` → `AttributeError` when `contract.trip = None`
+  - All non-transport contracts have `trip=None` (set by `sanitize_category_fields()` admin action)
+  - Fix 1: `carts/utils.py:591` — null guard `contract.trip.departure_time if contract.trip else None`
+  - Fix 2: `carts/views.py:143` — try/except around `check_advance_hour()` call → JSON 400 not HTML 500
+  - Branch `260602-fix/cartitems-500-trip-null` → merged develop → you merged to main
+  - Commit: `9ef2752`
+- **Info alert removed** from `DayTripBookingWidget.js` — "This activity may have different participants..." — resets every remount, not actionable pre-booking. Committed directly on frontend `main` (wrong — should have been branch. Note for next session.)
+- **Debug console.logs removed** from `DayTripMobileBookingBar.js` — 4 logs including mount effect + render-phase. Commit `7582806`.
+- **Vault note corrected** — `cartitems-500-error-analysis-2026-06-02.md` — Bug 1 guard already existed, Bug 2 false alarm, real cause was `contract.trip = None`.
 
-**All work committed, merged to develop, pushed.**
+**All work committed, merged to develop, pushed. You merged develop → main.**
 
 **Next session resume point (EXACT):**
-1. Check vault log + update Section 1 with this session's PRs
-2. Continue **FAQ-1** deferred items: P1 admin-dashboard `ageRestriction` field (4 files)
+1. Fix Bug 3 deferred: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+2. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
 3. **AT-1** airport transfer redesign
 4. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
-
-### Session #33 Summary
-
-**None. All work committed and merged.**
-
-Branches closed:
-- `260602-feat/experience-faq-single-source-of-truth` → merged develop
-- `260602-fix/activities-filter-transportation-leak` → merged both repos
-- `260602-feat/related-experiences-carousel` → merged develop
 
 ### Active Branches
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `develop` | Clean — FAQ, carousel, filter all merged |
-| `smartenplus-backend` | `develop` | Clean — filter + confirm fix merged |
+| `smartenplus-frontend` | `main` | Clean — 500 fix + cleanup merged |
+| `smartenplus-backend` | `main` | Clean — `contract.trip` null fix merged |
 | `admin-dashboard` | `main` | Clean — awaits FAQ-1 P1 (ageRestriction field) |
 
 ---
@@ -68,6 +52,7 @@ Branches closed:
 | ~~BW-2~~ | ~~Blog index featured section `px-2 md:px-4`~~ | ✓ Already fixed | — |
 | ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
 | ~~EXP-DETAIL-1~~ | ~~Experience Detail Page premium redesign + tablet/mobile~~ | ✓ DONE (#33) — FAQ, carousel, filter all shipped and merged | — |
+| CART-1 | **Fix PARSING_ERROR catch** | `DayTripBookingWidget.js:338` — `error.status >= 500` fails silently when RTK sets string `'PARSING_ERROR'`. Fix: `error.status === 'PARSING_ERROR' \|\| error.originalStatus >= 500`. Deferred from session #34. | `components/activities/detail/DayTripBookingWidget.js:338` |
 | FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review-2026-06-02]] | `admin-dashboard/DayTripDetails.js` (deferred) |
 | FAV-1 | **Favorite heart on DayTripCard** | ADR fully designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
 | AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |

@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-02] session-end #34 | cartitems-500 FIXED — `contract.trip=None` → AttributeError in check_advance_hour(). carts/utils.py:591 null guard + call-site exception wrapper. Frontend: info alert removed + 4 console.logs cleaned. Original vault analysis corrected (Bug 1/2 false alarms). CART-1 deferred.
+
 ## [2026-06-02] bug | cartitems-500-error — 3 root causes: stale initialContract ratecard IDs, undefined contract_ratecard (pk/id mismatch), PARSING_ERROR not caught by error handler. Fix plan in [[cartitems-500-error-analysis-2026-06-02]].
 
 ## [2026-06-02] session-end #30 | Price range slider max hardcode fixed — 10,000→30,000 THB in ExperienceSidebar.js:9. Multi-agent debate (3 specialists): dynamic endpoint vs 50k vs 30k. 30k won: matches Thai market ceiling, 40% better slider precision for 500–8k density band. Uncommitted. Next: commit price fix → merge header-activities-search → AT-1.
