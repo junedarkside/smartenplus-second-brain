@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-02] session-end #29 | Backend min_rate ordering fix + activities sort/filter UX redesign. Fixed: FieldError on `ordering=min_rate` without price filter (annotation hoisted). Frontend: SORT_OPTIONS shared constant, active sort chip (SortBar), mobile sort bottom-sheet, outlined buttons with state-driven emphasis. UX pattern: hierarchy via content not color (9/10 travel app standard). Committed 1c94110 (backend) + 8f05ab3 (frontend). Knowledge atomized: [[activities-sort-filter-ux]]. Next: merge header-activities-search → AT-1 airport transfer P0.
+
 ## [2026-06-02] session-end #27 | ACT-12 fully resolved — 4 commits pushed (979c45d→5eaf8e2). Fixes: dual-hook URL race (isControlled + enabled param), debounce (reused useDebounce.jsx), mid-type reset (isTypingRef + didMountRef), freeSolo Enter blank (string branch in handleChange). Knowledge atomized: [[react-dual-hook-url-race]]. Branch ready to merge. Next: merge → BW-1/2/3 blog padding → AT-1 airport transfer.
 ## [2026-06-01] session-end #26 | ACT-12 partial — flicker fixed (HeaderSearchContext shallow guard), Option F (routeChangeComplete) introduced 2 regressions (race condition + mid-type inputValue overwrite). 4 files modified uncommitted. Next: revert useDayTripFilters Option F, implement Option E (pass page filters+updateFilter to compact).
 ## [2026-06-01] scrutinize | ACT-12 root cause confirmed + original hypothesis overturned — kill chain: compact useDayTripFilters router.push(shallow) → routeChangeStart → HeaderSearchContext clears. Fix: 2-line shallow guard in HeaderSearchContext. Change 2 (readOnly) = unnecessary. Plan file + master-state updated.

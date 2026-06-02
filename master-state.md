@@ -4,15 +4,16 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-02 (session #28 — BW-1/BW-2/BW-3 verified already fixed, closed in vault)
+**Updated:** 2026-06-02 (session #29)
 
-**Achieved this session (2026-06-02 #27):**
-- **ACT-12 FULLY RESOLVED** — all bugs fixed, 4 commits pushed to `260601-feat/header-activities-search`. Branch ready to merge to develop.
-  - `979c45d` Option E: compact search shares page `filters`+`updateFilter`. Removed Option F (routeChangeComplete + isPushingRef). `useCallback` stable refs. `isTypingRef` mid-type guard. Category-aware `getActivityLocationsQuery`.
-  - `37764cb` Debounce: reused existing `components/utils/useDebounce.jsx` (300ms). First consumer of that shared hook.
-  - `39ff918` `useDayTripFilters({ enabled })` — gate URL-sync on secondary instances. `isControlled` flag in `ActivitySearch` passes `enabled: false` to ownHook → stops URL race. `didMountRef` prevents debounce mount-fire clearing URL search.
-  - `5eaf8e2` MUI freeSolo Enter fix: `handleChange` string branch added — was missing → input blanked on Enter press.
-- **Knowledge atomized** — `03-knowledge/react-dual-hook-url-race.md` — dual-hook URL race + `{ enabled }` + `isControlled` + `didMountRef` + freeSolo string branch patterns.
+**Achieved this session (#29):**
+- **Backend bugfix:** `min_rate` ordering crash fixed — annotation hoisted unconditionally in `get_queryset()` (`products/views.py`). `GET /api/v1/contract/?ordering=min_rate` → 200. Committed `1c94110` + pushed to backend `develop`.
+- **Activities sort/filter UX redesign:**
+  - `constants/sortOptions.js` (new) — shared `SORT_OPTIONS` + `SORT_SHORT_LABEL` (eliminates duplication)
+  - `components/activities/browse/SortBar.js` — active sort chip with directional arrow, click-to-reset
+  - `components/activities/browse/FilterDayTripsPage.js` — mobile sort bottom-sheet (Button → Drawer → RadioGroup), both sticky bar buttons outlined with state-driven emphasis
+  - UX pattern: hierarchy via state/content, not color (9/10 travel app standard). Committed `8f05ab3` + pushed to frontend `develop`.
+- **Knowledge atomized** — `03-knowledge/activities-sort-filter-ux.md` — state-driven button emphasis pattern, Klook/Booking.com benchmark.
 
 **Achieved session #26:** HeaderSearchContext shallow guard (flicker fix). Option F attempted + failed (3 regressions). All recorded in prior entry.
 
@@ -31,13 +32,13 @@
 
 | Repo | Branch | Last Commit |
 |------|--------|-------------|
-| `smartenplus-frontend` | `develop` | `f93df66` Merge activities-mobile-filters |
+| `smartenplus-frontend` | `develop` | `8f05ab3` feat(activities): redesign sort/filter UX |
 | `smartenplus-frontend` | `260601-feat/header-activities-search` | `5eaf8e2` fix: freeSolo Enter — **READY TO MERGE** |
-| `smartenplus-backend` | `develop` | `2d5a6ee` Merge contract-locations-endpoint |
+| `smartenplus-backend` | `develop` | `1c94110` fix(contract): hoist min_rate annotation |
 | `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
 | `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
 
-_Last verified 2026-06-02 (session wrap-up #27)_
+_Last verified 2026-06-02 (session wrap-up #29)_
 
 ### Uncommitted
 None — all clean.
@@ -93,7 +94,7 @@ None — all clean.
 - `contract_type` — `JOIN` | `PRIVATE` | `CHARTER`
 - `features` — comma-sep exact Extra item strings (`Free Cancellation`, `Instant Confirmation`, `Hotel Pickup`)
 - `min_rating` — float (e.g. `4`)
-- `ordering` — now also accepts `min_rate` / `-min_rate` (requires price filter to annotate)
+- `ordering` — accepts `min_rate` / `-min_rate` unconditionally (annotation hoisted, no price filter required)
 
 **Admin:** `POST/PATCH/DELETE /admin-dashboard-operators/contract-details/{slug}/` | `POST .../copy/` | `POST /admin-dashboard-charge/manual-adjustment/`
 
