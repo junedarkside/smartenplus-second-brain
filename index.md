@@ -100,6 +100,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
 - [[django-serializer-shadowing-pattern]] — Local class redefines imported name in same file; silently changes exposed fields. Discovered via HomeSerializer/StationSerializer in products/serializers.py.
+- [[contract-trip-null-non-transport-pattern]] — **NEW 2026-06-03.** Non-transport contracts always have `trip=None`. Guard `contract?.trip` before accessing `departure_time`/`arrival_time`/`route`. Crashes render-root computed values without guard.
 - [[activities-sort-filter-ux]] — **NEW 2026-06-02.** State-driven button emphasis pattern (both outlined, active via badge/label). Travel app standard (Klook, Booking.com). Mobile sort bottom-sheet, desktop sort chip.
 - [[homepage-experiences-section-audit-2026-05-30]] — Feasibility audit: add "Explore Experiences" carousel to homepage. Verdict: VIABLE after AT-1 + inventory check. Backend ready (Contract model). 5 files, ~160 lines. Reuses CardCarouselContainer + PopularRoutesSection pattern.
 - [[transportation-category-audit-2026-05-30]] — Full audit: 3-level category system (station_type / service_category / VehicleType), airport filter vs TRANSFER category decoupled, 26 station_types, lowest_price nullable, query_count Celery mechanism. Professional homepage section redesign spec (AT-1): image card + IATA badge + carousel mobile + serializer expansion.

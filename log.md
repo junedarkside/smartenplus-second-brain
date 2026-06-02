@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-03] session-end #35 | checkout crash FIXED — `contract.trip=null` for non-transport items (DAY_TOUR/SPA/EVENT) crashed `hasPassedAdvanceHour` + `hasStopSaleDate` at render root. 3-line guard added `pages/checkout/index.js`. Commit `43b7ece`. Atomic note: [[contract-trip-null-non-transport-pattern]].
+
 ## [2026-06-02] session-end #34 | cartitems-500 FIXED — `contract.trip=None` → AttributeError in check_advance_hour(). carts/utils.py:591 null guard + call-site exception wrapper. Frontend: info alert removed + 4 console.logs cleaned. Original vault analysis corrected (Bug 1/2 false alarms). CART-1 deferred.
 
 ## [2026-06-02] bug | cartitems-500-error — 3 root causes: stale initialContract ratecard IDs, undefined contract_ratecard (pk/id mismatch), PARSING_ERROR not caught by error handler. Fix plan in [[cartitems-500-error-analysis-2026-06-02]].

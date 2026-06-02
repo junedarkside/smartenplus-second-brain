@@ -4,24 +4,19 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-02 (session #34)
+**Updated:** 2026-06-03 (session #35)
 
-**Achieved this session (#34):**
-- **Production 500 fix SHIPPED** — `POST /carts/{id}/cartitems/` crashed for all day-trip/experience contracts.
-  - Root cause: `carts/utils.py:591` — `contract.trip.departure_time` → `AttributeError` when `contract.trip = None`
-  - All non-transport contracts have `trip=None` (set by `sanitize_category_fields()` admin action)
-  - Fix 1: `carts/utils.py:591` — null guard `contract.trip.departure_time if contract.trip else None`
-  - Fix 2: `carts/views.py:143` — try/except around `check_advance_hour()` call → JSON 400 not HTML 500
-  - Branch `260602-fix/cartitems-500-trip-null` → merged develop → you merged to main
-  - Commit: `9ef2752`
-- **Info alert removed** from `DayTripBookingWidget.js` — "This activity may have different participants..." — resets every remount, not actionable pre-booking. Committed directly on frontend `main` (wrong — should have been branch. Note for next session.)
-- **Debug console.logs removed** from `DayTripMobileBookingBar.js` — 4 logs including mount effect + render-phase. Commit `7582806`.
-- **Vault note corrected** — `cartitems-500-error-analysis-2026-06-02.md` — Bug 1 guard already existed, Bug 2 false alarm, real cause was `contract.trip = None`.
+**Achieved this session (#35):**
+- **Production frontend crash FIXED** — Checkout page `TypeError: Cannot read properties of null (reading 'departure_time')` crashed on every render for users with non-transport cart items (DAY_TOUR, SPA_WELLNESS, EVENT_TICKET, etc.)
+  - Root cause: `pages/checkout/index.js:611` — `booking.contract.trip.departure_time` — no null guard. `contract.trip=None` is by-design for all non-transport contracts (`operators/models.py`: `trip = ForeignKey(..., null=True, blank=True)`)
+  - Crash site: `hasPassedAdvanceHour` + `hasStopSaleDate` computed at component render root, before step-0 validation fires
+  - Fix: `if (!booking.contract?.trip) return false` guard in `hasPassedAdvanceHour` + optional chaining + trip guard in `hasStopSaleDate`
+  - Commit: `43b7ece` pushed to `main`
 
-**All work committed, merged to develop, pushed. You merged develop → main.**
+**Previous session (#34) summary:** cartitems POST 500 fixed on backend (`carts/utils.py:591`). Frontend cleanup (info alert + console.logs removed).
 
 **Next session resume point (EXACT):**
-1. Fix Bug 3 deferred: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+1. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
 2. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
 3. **AT-1** airport transfer redesign
 4. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
@@ -30,8 +25,8 @@
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `main` | Clean — 500 fix + cleanup merged |
-| `smartenplus-backend` | `main` | Clean — `contract.trip` null fix merged |
+| `smartenplus-frontend` | `main` | Clean — checkout crash fix `43b7ece` |
+| `smartenplus-backend` | `main` | Clean — `contract.trip` null fix merged (session #34) |
 | `admin-dashboard` | `main` | Clean — awaits FAQ-1 P1 (ageRestriction field) |
 
 ---
