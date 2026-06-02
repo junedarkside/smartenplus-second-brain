@@ -4,44 +4,51 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-02 (session #30)
+**Updated:** 2026-06-02 (session #33)
 
-**Achieved this session (#30):**
-- **Price range slider fix:** `DEFAULT_MAX_PRICE_THB` raised 10,000 → 30,000 in `components/activities/browse/ExperienceSidebar.js:9`. Multi-agent team debate (Backend Architect vs Frontend Design vs UX Research) concluded 30k optimal — matches Thai activity market ceiling, preserves slider precision for 500–8k density band, no backend work needed.
-- **Multi-agent debate pattern used** — 3 specialist agents debated dynamic endpoint vs 30k vs 50k. 30k won: same 1-line fix as 50k but 40% better pixel-per-THB precision for majority of inventory.
-- **Frontier:** dynamic `GET /api/v1/contract/price-stats/` endpoint deferred until first product >28k THB is onboarded.
+**Achieved this session (#33):**
+- **FAQ fixes SHIPPED** to develop. Branch `260602-feat/experience-faq-single-source-of-truth` — merged.
+  - P0: Removed "Is this suitable for first-time visitors?" hardcoded filler
+  - P1: Built `buildExperienceFAQItems()` + `buildCancellationSummary()` in `helpers/experienceFAQBuilder.js`
+  - Fixed cancellation text: derived from `cancellation_policy_detail[]` (not hardcoded "24 hours")
+  - Fixed difficulty labels: use string enum keys (EASY/MODERATE/CHALLENGING) not integers
+  - Refactored `ExperienceFAQ.js`: single `contract` prop, calls builder, handles `isHtml` flag for rendering
+  - Updated `DayTripDetailPage.js`: pass full contract object
+  - P2: Added `@deprecated` comment to `DayTripContent.js` (verified no imports)
+- **Activities filter fix SHIPPED** to both repos. Branch `260602-fix/activities-filter-transportation-leak` — merged.
+  - Backend: `.get('service_category')` → `.getlist('service_category')` + `__in` filter (multi-value)
+  - Frontend: `EXPERIENCE_CATEGORIES` appended as repeated params when no category selected
+  - Removed `confirm=True` from listing queryset (kept in booking availability check)
+  - Fixes: "All" filter no longer leaks TRANSPORTATION/ACCOMMODATION/OTHER contracts
+- **RelatedExperiences carousel SHIPPED** to develop. Branch `260602-feat/related-experiences-carousel` — merged.
+  - Mobile/iPad: horizontal scroll carousel (flex + overflow-x-auto + snap-x)
+  - Desktop lg+: 3-column grid (switches with `lg:grid lg:grid-cols-3`)
+  - Card widths: 80vw (mobile ~1.1 visible) / 45vw (iPad ~2 visible) / auto (desktop grid)
 
-**Achieved this session (#29):**
-- Backend bugfix: `min_rate` ordering crash fixed. Committed `1c94110`.
-- Activities sort/filter UX redesign. Committed `8f05ab3`.
-- Knowledge atomized — `03-knowledge/activities-sort-filter-ux.md`.
-
-**Carry-forward:**
-1. **Merge** `260601-feat/header-activities-search` → develop (first action next session)
-2. **AT-1** — airport transfer P0 redesign
-3. **Nav table empty** — restart backend + populate NavigationSection via admin UI
-4. **Commit ExperienceSidebar.js** price fix (uncommitted — `M components/activities/browse/ExperienceSidebar.js`)
+**All work committed, merged to develop, pushed.**
 
 **Next session resume point (EXACT):**
-1. Commit `ExperienceSidebar.js` price range fix on frontend `main`
-2. `git merge 260601-feat/header-activities-search` into develop, push
-3. AT-1 — spec at `03-knowledge/transportation-category-audit-2026-05-30.md`
-4. **FAV-1** — implement favorite heart. ADR fully designed + scrutinized: `04-decisions/adr-activity-card-favorite-button.md`. Sequence: (a) backend migration + views.py (b) BookmarkButton.js (c) DayTripCard.js
+1. Check vault log + update Section 1 with this session's PRs
+2. Continue **FAQ-1** deferred items: P1 admin-dashboard `ageRestriction` field (4 files)
+3. **AT-1** airport transfer redesign
+4. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+
+### Session #33 Summary
+
+**None. All work committed and merged.**
+
+Branches closed:
+- `260602-feat/experience-faq-single-source-of-truth` → merged develop
+- `260602-fix/activities-filter-transportation-leak` → merged both repos
+- `260602-feat/related-experiences-carousel` → merged develop
 
 ### Active Branches
 
-| Repo | Branch | Last Commit |
-|------|--------|-------------|
-| `smartenplus-frontend` | `main` | `d615c1e` fix(auth): session cookie — **1 uncommitted file** |
-| `smartenplus-frontend` | `260601-feat/header-activities-search` | `5eaf8e2` fix: freeSolo Enter — **READY TO MERGE** |
-| `smartenplus-backend` | `main` | `fcb0511` feat(bookmarks): extend BookmarkViewSet |
-| `admin-dashboard` | `main` | `a962145` fix(timeline): new stop place.id null sentinel |
-| `smartenplus-content` | `master` | `fca8ee6` init: smartenplus-content repo |
-
-_Last verified 2026-06-02 (session wrap-up #30)_
-
-### Uncommitted
-- `smartenplus-frontend`: `M components/activities/browse/ExperienceSidebar.js` — price range max 10k→30k. **Commit next session.**
+| Repo | Branch | Status |
+|------|--------|--------|
+| `smartenplus-frontend` | `develop` | Clean — FAQ, carousel, filter all merged |
+| `smartenplus-backend` | `develop` | Clean — filter + confirm fix merged |
+| `admin-dashboard` | `main` | Clean — awaits FAQ-1 P1 (ageRestriction field) |
 
 ---
 
@@ -60,6 +67,8 @@ _Last verified 2026-06-02 (session wrap-up #30)_
 | ~~BW-1~~ | ~~Blog index hero `px-4` padding~~ | ✓ Already fixed | — |
 | ~~BW-2~~ | ~~Blog index featured section `px-2 md:px-4`~~ | ✓ Already fixed | — |
 | ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
+| ~~EXP-DETAIL-1~~ | ~~Experience Detail Page premium redesign + tablet/mobile~~ | ✓ DONE (#33) — FAQ, carousel, filter all shipped and merged | — |
+| FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review-2026-06-02]] | `admin-dashboard/DayTripDetails.js` (deferred) |
 | FAV-1 | **Favorite heart on DayTripCard** | ADR fully designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
 | AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |
 | AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit-2026-05-30.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |

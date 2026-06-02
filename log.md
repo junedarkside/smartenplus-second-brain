@@ -442,3 +442,19 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-06-02] atomize | 3 concepts from activities-day-tour-page-review — inactive-contracts, hydration-spurious-push, design-token-caption-gotcha
 ## [2026-06-02] atomize | 3 concepts from activities-location-search-bug — backend text fallback, autocomplete inputvalue sync, handleInputChange parent emit
 ## [2026-06-02] decision | adr-activity-card-favorite-button — grilled + scrutinized. Findings: missing unique_together migration (blocker), unused content_type param in _validate_contract_params (major), pre-existing axiosInstance infinite fetch loop (document only). ADR updated with full implementation code + handoff in master-state as FAV-1.
+
+## [2026-06-02] session-end | FAQ fixes + activities filter + carousel shipped
+
+**Completed:**
+- FAQ architecture: buildCancellationSummary() + buildExperienceFAQItems() utilities, removed hardcoded filler/text
+- Activities filter: multi-value service_category support, removed confirm=True from listing (kept on booking check)
+- RelatedExperiences: carousel on mobile/iPad, grid on desktop
+- Merged 3 branches to develop (frontend) and develop (backend)
+
+**Deferred to future session:**
+- FAQ-1 P1 admin-dashboard: ageRestriction field (4 files, separate repo task)
+- EXP-DETAIL-1: iPad/mobile redesign (waiting on session #32 uncommitted files, status unclear)
+
+**Vault docs updated:**
+- master-state.md: Section 1 + active branches + loose ends
+- log.md: this entry
