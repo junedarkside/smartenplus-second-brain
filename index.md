@@ -10,6 +10,10 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[cartitems-500-error-analysis-2026-06-02]] — **OPEN 2026-06-02.** Production 500 on POST /carts/{id}/cartitems/. 3 bugs: stale initialContract ratecard IDs, undefined contract_ratecard pk/id, PARSING_ERROR not caught. Fix plan documented.
+
+- [[experience-detail-page-redesign-2026-06-02]] — **PLANNED 2026-06-02.** Premium redesign of `/activities/detail/[slug]` → Airbnb-level experience detail page. Airbnb 5-up photo grid, trust badges, reviews moved up, timeline collapsed, 9 new components, 0 new API endpoints.
+
 - [[experiences-2026-marketplace-redesign]] — **PLANNED 2026-06-01.** 4-phase redesign of `/activities` → world-class 2026 marketplace. Sidebar layout, 4-col grid, premium card, sort bar. Phase 1: frontend-only. Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad polish.
 
 - [[profile-dropdown-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** 3-specialist review. 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split. MUI-preserve strategy. Implemented on `260528-feat/header-redesign-2026`.
@@ -53,6 +57,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
 - [[smartenplus-glassmorphism-header|Premium Glassmorphism Header]] — dark gradient glass, sticky + blur on scroll, unified 2-row, white typography, hero integration. Supersedes header-ux-v1.
 - [[adr-experiences-nav-category-filtering-2026-05-25|ADR: Experiences Nav Category Filtering]] — URL param → server-side API filter chain. Full category enum, navConfig values, contrast with client-side approach.
+- [[adr-activity-card-favorite-button|ADR: Activity Card Favorite Button]] — Extend BookmarkButton + fix BookmarkViewSet (2 ORM bugs + allow `contract` content type). No new model/migration. 3 files only.
 - [[nav-header-redesign|Nav/Header Redesign]] — Full nav evolution: Phase 0 label changes (Explore Thailand, Routes, Journeys, Experiences, Guides), Phase 1 Experiences dropdown, Phase 3 backend API + bug fixes. 6-agent validation. All submenus removed — single source of truth. A11y baseline, MUI+Tailwind coordination patterns
 - [[hero-banner-cms|Hero Banner CMS 2026-05-19]] — backend-controlled homepage hero, FileField+AVIF fix, admin dashboard CRUD, 5s slideshow
 - [[blog-seo-performance-2026-05-20|Blog SEO & Performance 2026-05-20]] — parallel fetches, image optimization, HMR fixes, patterns to reuse

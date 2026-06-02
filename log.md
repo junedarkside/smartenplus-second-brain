@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-02] bug | cartitems-500-error — 3 root causes: stale initialContract ratecard IDs, undefined contract_ratecard (pk/id mismatch), PARSING_ERROR not caught by error handler. Fix plan in [[cartitems-500-error-analysis-2026-06-02]].
+
 ## [2026-06-02] session-end #30 | Price range slider max hardcode fixed — 10,000→30,000 THB in ExperienceSidebar.js:9. Multi-agent debate (3 specialists): dynamic endpoint vs 50k vs 30k. 30k won: matches Thai market ceiling, 40% better slider precision for 500–8k density band. Uncommitted. Next: commit price fix → merge header-activities-search → AT-1.
 
 ## [2026-06-02] session-end #29 | Backend min_rate ordering fix + activities sort/filter UX redesign. Fixed: FieldError on `ordering=min_rate` without price filter (annotation hoisted). Frontend: SORT_OPTIONS shared constant, active sort chip (SortBar), mobile sort bottom-sheet, outlined buttons with state-driven emphasis. UX pattern: hierarchy via content not color (9/10 travel app standard). Committed 1c94110 (backend) + 8f05ab3 (frontend). Knowledge atomized: [[activities-sort-filter-ux]]. Next: merge header-activities-search → AT-1 airport transfer P0.
