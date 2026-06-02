@@ -100,6 +100,7 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
 - [[django-serializer-shadowing-pattern]] — Local class redefines imported name in same file; silently changes exposed fields. Discovered via HomeSerializer/StationSerializer in products/serializers.py.
+- [[checkout-null-contract-scan-2026-06-03]] — **RESOLVED 2026-06-03.** Full scan of checkout for unguarded contract/trip access. 1 real bug found + fixed (`05fc0aa`): `Passengers.js:1097` trip header label. All other flagged sites verified safe (JSX short-circuit guards).
 - [[contract-trip-null-non-transport-pattern]] — **NEW 2026-06-03.** Non-transport contracts always have `trip=None`. Guard `contract?.trip` before accessing `departure_time`/`arrival_time`/`route`. Crashes render-root computed values without guard.
 - [[activities-sort-filter-ux]] — **NEW 2026-06-02.** State-driven button emphasis pattern (both outlined, active via badge/label). Travel app standard (Klook, Booking.com). Mobile sort bottom-sheet, desktop sort chip.
 - [[homepage-experiences-section-audit-2026-05-30]] — Feasibility audit: add "Explore Experiences" carousel to homepage. Verdict: VIABLE after AT-1 + inventory check. Backend ready (Contract model). 5 files, ~160 lines. Reuses CardCarouselContainer + PopularRoutesSection pattern.

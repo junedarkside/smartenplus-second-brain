@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-03] session-end #36 | checkout null-contract sweep complete — 4 fixes shipped to production. Passengers.js info_fields + trip header + index.js render-root guards + FormCard button height unified h-12. Full scan vault: [[checkout-null-contract-scan-2026-06-03]].
+
 ## [2026-06-03] session-end #35 | checkout crash FIXED — `contract.trip=null` for non-transport items (DAY_TOUR/SPA/EVENT) crashed `hasPassedAdvanceHour` + `hasStopSaleDate` at render root. 3-line guard added `pages/checkout/index.js`. Commit `43b7ece`. Atomic note: [[contract-trip-null-non-transport-pattern]].
 
 ## [2026-06-02] session-end #34 | cartitems-500 FIXED — `contract.trip=None` → AttributeError in check_advance_hour(). carts/utils.py:591 null guard + call-site exception wrapper. Frontend: info alert removed + 4 console.logs cleaned. Original vault analysis corrected (Bug 1/2 false alarms). CART-1 deferred.

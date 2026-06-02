@@ -4,16 +4,16 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-03 (session #35)
+**Updated:** 2026-06-03 (session #36)
 
-**Achieved this session (#35):**
-- **Production frontend crash FIXED** — Checkout page `TypeError: Cannot read properties of null (reading 'departure_time')` crashed on every render for users with non-transport cart items (DAY_TOUR, SPA_WELLNESS, EVENT_TICKET, etc.)
-  - Root cause: `pages/checkout/index.js:611` — `booking.contract.trip.departure_time` — no null guard. `contract.trip=None` is by-design for all non-transport contracts (`operators/models.py`: `trip = ForeignKey(..., null=True, blank=True)`)
-  - Crash site: `hasPassedAdvanceHour` + `hasStopSaleDate` computed at component render root, before step-0 validation fires
-  - Fix: `if (!booking.contract?.trip) return false` guard in `hasPassedAdvanceHour` + optional chaining + trip guard in `hasStopSaleDate`
-  - Commit: `43b7ece` pushed to `main`
-
-**Previous session (#34) summary:** cartitems POST 500 fixed on backend (`carts/utils.py:591`). Frontend cleanup (info alert + console.logs removed).
+**Achieved this session (#36):**
+- **4 production fixes shipped** — all on `main`, deployed to production
+  1. `43b7ece` — `pages/checkout/index.js` — `hasPassedAdvanceHour` + `hasStopSaleDate` null guard for `contract.trip` (render-root crash on all non-transport items)
+  2. `5873403` — `components/forms/checkout/Passengers.js:259,501` — `info_fields.forEach` null guard (crash on Next click, lazy useState + useMemo)
+  3. `05fc0aa` — `components/forms/checkout/Passengers.js:1097` — trip header label `tripWrapper.trip.contract.trip.route_route` → full optional chain + fallback (found by 3-agent full scan)
+  4. `c89a702` — `components/forms/FormCard.js` — Back/Next/PayNow height unified to `h-12` (48px), removes `h-10`/`p-2` mismatch
+- **Full checkout null-contract scan** completed — vault report at [[checkout-null-contract-scan-2026-06-03]]. All other flagged sites verified safe (JSX `&&` short-circuit guards). 1 real bug found + fixed (`05fc0aa`).
+- **Atomic note created** — [[contract-trip-null-non-transport-pattern]]
 
 **Next session resume point (EXACT):**
 1. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
@@ -25,7 +25,7 @@
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `main` | Clean — checkout crash fix `43b7ece` |
+| `smartenplus-frontend` | `main` | Clean — 4 checkout fixes `c89a702` |
 | `smartenplus-backend` | `main` | Clean — `contract.trip` null fix merged (session #34) |
 | `admin-dashboard` | `main` | Clean — awaits FAQ-1 P1 (ageRestriction field) |
 
