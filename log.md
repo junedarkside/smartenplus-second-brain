@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-03] bug | checkout-confirmation-payment-crash — `formData.passengers.length` unguarded in `Confirmation.js:111,115`. Crashes for non-transport items at Confirmation step. Reproduction steps in [[checkout-confirmation-payment-crash-2026-06-03]]. Fix pending.
+
 ## [2026-06-03] session-end #36 | checkout null-contract sweep complete — 4 fixes shipped to production. Passengers.js info_fields + trip header + index.js render-root guards + FormCard button height unified h-12. Full scan vault: [[checkout-null-contract-scan-2026-06-03]].
 
 ## [2026-06-03] session-end #35 | checkout crash FIXED — `contract.trip=null` for non-transport items (DAY_TOUR/SPA/EVENT) crashed `hasPassedAdvanceHour` + `hasStopSaleDate` at render root. 3-line guard added `pages/checkout/index.js`. Commit `43b7ece`. Atomic note: [[contract-trip-null-non-transport-pattern]].
