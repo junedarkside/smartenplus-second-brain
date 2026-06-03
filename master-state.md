@@ -6,17 +6,25 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-03 (session #38)
+**Updated:** 2026-06-03 (session #39)
+
+**Achieved this session (#39):**
+- **Contract model ambiguity audit** — 4-round multi-agent team (R1 backend/frontend/domain, R2 cross-exam, R3 skeptic, R4 synthesizer). 6 conceptual overlaps confirmed; 1 customer-visible (i18n on `meeting_point_details`), 5 staff-side or dormant. Skeptic overturned 2 dead-code claims (S-1: `Trip.route` 25+ call sites alive; S-2: `meeting_point_place` active in admin/tests/serializer). Recommendation: document + 1 small backend fix, no model consolidation. Vault: [[contract-model-ambiguity-audit-2026-06-03]] (117 lines)
+- **Contract location help text fix (P0)** — admin form `ContractFormFields.js:179, 184, 222, 227` updated to match OR-search behavior (products/views.py:462-475). 4 strings: Primary Location tooltip + help, Service Areas tooltip + help. `service_areas` = pickup zones (per user). `primary_location` = main destination/operating area.
+  - File: `admin-dashboard/components/contracts/ContractFormFields.js` (+4/-4)
+  - Branch `260603-fix/contract-location-help-text` → develop → main
+  - Commit `fa2f16a` on origin/main
+- **Resolved session #38 carryover** — booking-summary fix `4bec691` confirmed on backend main; the "NOT yet merged" note in #38 was stale.
 
 **Achieved this session (#38):**
 - **booking-summary 500 fix** — `AdminBookingSummarySerializer.get_contract()` crashed when `contract.trip=None`. Guarded `trip` before accessing `.route` and `.departure_time`.
   - File: `bookings/serializers.py` (~5 lines)
   - Branch `260603-fix/booking-summary-trip-none-guard` committed + pushed to backend
-  - **NOT yet merged to develop**
+  - **Now on main: `4bec691`** (verified session #39)
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-1. **PUSH + merge** `260603-fix/booking-summary-trip-none-guard` → develop (backend) — 1 commit ahead of remote
+1. **Audit P1/P2** (deferred from #39 per "keep simple"): write 1-paragraph casing ADR, wire `get_translated_meeting_point_details` SerializerMethodField (mirrors `get_translated_inclusions` at `products/serializers.py:518-522`), add `Contract.clean()` for category/field invariants (B-7), wrap admin PATCH in try/except (B-9), delete dead `showStations` flag (F-10), run `primary_location` data inventory SQL
 2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
 3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
 4. **AT-1** airport transfer redesign
@@ -28,8 +36,8 @@ I'll compress the markdown text you provided directly, following the compression
 | Repo | Branch | Status |
 |------|--------|--------|
 | `smartenplus-frontend` | `main` | Clean |
-| `smartenplus-backend` | `260603-fix/booking-summary-trip-none-guard` | Pushed — needs merge to develop |
-| `admin-dashboard` | `main` | Clean — awaits FAQ-1 P1 (ageRestriction field) |
+| `smartenplus-backend` | `main` | Clean (booking-summary fix landed #38) |
+| `admin-dashboard` | `main` | Clean (contract-location help text landed #39) |
 
 ---
 
@@ -39,6 +47,7 @@ I'll compress the markdown text you provided directly, following the compression
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| CMA-1 | **Contract Model Ambiguity — P1/P2** | Audit complete ([[contract-model-ambiguity-audit-2026-06-03]]). P0 done in #39. P1 deferred: casing ADR, i18n wire, model `clean()`. P2 deferred: admin try/except, dead flag delete, data inventory SQL. | `operators/serializers.py`, `carts/utils.py`, `admin-dashboard/ContractFormFields.js`, `operators/views.py` |
 | ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
 | ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |
 | ~~ACT-9~~ | ~~Phase 2 pre-flight (backend)~~ | ✓ Done `508949b` | — |
