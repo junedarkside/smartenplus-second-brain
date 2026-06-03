@@ -16,11 +16,12 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-1. Merge `260603-fix/booking-summary-trip-none-guard` → develop (backend)
+1. **PUSH + merge** `260603-fix/booking-summary-trip-none-guard` → develop (backend) — 1 commit ahead of remote
 2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
 3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
 4. **AT-1** airport transfer redesign
 5. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+6. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
 
 ### Active Branches
 
