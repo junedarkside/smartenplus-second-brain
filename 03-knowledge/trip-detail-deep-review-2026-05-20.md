@@ -8,7 +8,7 @@ metadata:
 # Trip Detail Deep Review — 2026-05-20
 
 ## Summary
-4-specialist second-pass team (Adversarial · Blast-Radius · Hidden Issues · Production Risk) reviewed original 24-finding report. 3 overturned, 2 downgraded to conditional. 8 new hidden issues. 4 production failure scenarios.
+4-specialist second-pass team (Adversarial · Blast-Radius · Hidden Issues · Production Risk) reviewed original 24-finding report. 3 overturned, 2 downgraded conditional. 8 new hidden issues. 4 production failure scenarios.
 
 ## Context
 Follows [[trip-detail-page-review-2026-05-20]]. Branch: `260520-update/recommend-route`.
@@ -16,17 +16,17 @@ Follows [[trip-detail-page-review-2026-05-20]]. Branch: `260520-update/recommend
 ## SECTION 0 — ORIGINAL REPORT CORRECTIONS
 
 ### ❌ OVERTURNED — P2: "Remove `isClient` entirely"
-**`isClient` is a hydration safety guard — removing breaks app.**
+**`isClient` hydration safety guard — removing breaks app.**
 
-`TripDetailHero.js:79–82` uses `isClient` to prevent hydration mismatch. Server renders neutral placeholder, client switches to Redux value post-hydration. Without it: server `0 passengers`, client `2 passengers` → hydration mismatch every page load.
+`TripDetailHero.js:79–82` uses `isClient` to prevent hydration mismatch. Server renders neutral placeholder, client switches to Redux value post-hydration. Without: server `0 passengers`, client `2 passengers` → hydration mismatch every page load.
 
-**Fix:** Keep `isClient`. Combine its useEffect with calendar useEffect (one mount effect instead of two).
+**Fix:** Keep `isClient`. Combine its useEffect with calendar useEffect (one mount effect, not two).
 
 ### ❌ OVERTURNED — S1: "Change 307 → 301 redirect"
 Keep `permanent: false`. Products reclassifiable — 301 causes permanent browser/CDN cache pollution. See [[nextjs-307-vs-301-product-reclassify]].
 
 ### ⚠️ DOWNGRADED — C4: "'forword' typo, just fix it"
-`'forword'` in `homepagev1.js`, `useTripDetailData.js`, main detail page. Zero `'forward'` occurrences in codebase. Backend may accept `'forword'`. Changing blindly could silently break all direction filtering.
+`'forword'` in `homepagev1.js`, `useTripDetailData.js`, main detail page. Zero `'forward'` occurrences in codebase. Backend may accept `'forword'`. Blind change silently breaks all direction filtering.
 
 **Fix:** Check backend API `direction` enum first. If backend validates `'forword'`, fix both ends simultaneously.
 
@@ -96,7 +96,7 @@ Exchange rate hardcoded. Current ~33–36 THB/USD. Google indexes → incorrect 
 
 **Fix:** Remove USD conversion from FAQ schema, or integrate real forex data (`/forex/` endpoint already in project).
 
-### 🟡 H8 — `TRANSPORTATION_CATEGORIES` divergence is a correctness trap, not just maintenance debt
+### 🟡 H8 — `TRANSPORTATION_CATEGORIES` divergence is correctness trap, not maintenance debt
 `getStaticPaths` and `getStaticProps` sharing different constant copies → silent routing failure (pre-built pages redirected at runtime, no build error).
 → See [[nextjs-static-path-prop-divergence]]
 

@@ -24,17 +24,17 @@ Semantic naming: primary, secondary, success, warning, error, neutral shades. No
 - Audit-able — grep for raw hex or magic numbers
 
 ## Lessons
-- Start with tokens early, retrofit expensive
+- Start tokens early, retrofit expensive
 - Keep token file flat + simple — no computed values
 - MUI theme overrides + Tailwind config reference tokens, don't duplicate
 
 ## MUI + Tailwind Coordination
 
-MUI components manage own bg/color via theme. Tailwind on inner elements only works if MUI doesn't override.
+MUI manages own bg/color via theme. Tailwind on inner elements only works if MUI doesn't override.
 
 **AppBar:** Always `color="inherit"` with Tailwind bg classes. Without it, MUI injects `bgcolor: primary.main`.
 
-**Dual-background header:** `text-white md:text-gray-600` pattern for icons in header switching bg (brand blue mobile → white desktop). CartButton, ProfileButton, hamburger, logo use this.
+**Dual-background header:** `text-white md:text-gray-600` pattern for icons switching bg (brand blue mobile → white desktop). CartButton, ProfileButton, hamburger, logo use this.
 
 **overflow:hidden ancestors:** MUI AppBar has `overflow:hidden`. Children with negative offsets (badges, chevrons) must be in sized Box — don't rely on parent `overflow:visible`.
 

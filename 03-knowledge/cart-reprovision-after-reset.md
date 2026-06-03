@@ -4,7 +4,7 @@
 `resetCart()` nulls `cartId` — must fire `createCart()` immediately after or BookButton breaks on trip/search pages.
 
 ## Why It Matters
-`withCartValidation` HOC is the only mechanism creating new carts. Trip detail + search pages are NOT wrapped — `BookButton` reads `null`, fails silently. Two order pages require this pattern.
+`withCartValidation` HOC only mechanism creating new carts. Trip detail + search pages NOT wrapped — `BookButton` reads `null`, fails silently. Two order pages require this pattern.
 
 ## Detail
 ```js

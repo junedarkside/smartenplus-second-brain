@@ -2,14 +2,14 @@
 
 ## Summary
 
-Full critique of the original PDF import design. 6 red flags identified — all must be resolved before first commit. Core problem: extraction + matching + confirmation coupled into one pipeline. Clean design separates them. See [[pdf-contract-import-research]] for the full agreed architecture.
+Full critique of original PDF import design. 6 red flags — all must resolve before first commit. Core problem: extraction + matching + confirmation coupled in one pipeline. Clean design separates them. See [[pdf-contract-import-research]] for full agreed architecture.
 
 ---
 
 ## 6 Red Flags — Stop Before Development
 
 ### Red Flag 1: One draft per contract with hard delete
-Silent data loss via TTL. Audit impossible. Race condition in concurrent use.
+Silent data loss via TTL. Audit impossible. Race condition on concurrent use.
 
 **Fix:** Append-with-batch-ID + soft-delete (`status=expired`, never `DELETE`). Confirmed drafts retained forever.
 
@@ -19,22 +19,22 @@ WSGI worker blocked 5–20s per import. 5 concurrent admins = all workers stalle
 **Fix:** View returns `task_id` immediately. Celery handles AI call. Frontend polls `GET /tasks/{id}/`. See [[django-async-ai-call-pattern]].
 
 ### Red Flag 3: LLM doing contract matching
-Passing all operator contracts to LLM = expensive, slow, non-deterministic. Wrong direction matches are real (e.g. southbound vs northbound, same route, high confidence).
+All operator contracts to LLM = expensive, slow, non-deterministic. Wrong-direction matches real (e.g. southbound vs northbound, same route, high confidence).
 
-**Fix:** LLM does extraction only. Python fuzzy matching handles contract matching against pre-fetched queryset. Show top 2–3 candidates — admin selects.
+**Fix:** LLM extracts only. Python fuzzy matching handles contract matching against pre-fetched queryset. Show top 2–3 candidates — admin selects.
 
 ### Red Flag 4: No pre-validation before draft creation
 Rate type mismatch (JOIN contract + VEHICLE rate) surfaces as 400 at confirmation — after admin reviewed and approved. Trust destroyed.
 
-**Fix:** All validation runs at draft creation time. Errors in `validation_errors` JSONField, shown per-field in review UI.
+**Fix:** All validation at draft creation time. Errors in `validation_errors` JSONField, shown per-field in review UI.
 
 ### Red Flag 5: Confidence score as auto-accept gate
-0.85 threshold that auto-checks rows is a live-pricing risk.
+0.85 threshold auto-checking rows = live-pricing risk.
 
 **Fix:** Confidence = display emphasis only (color banding). All rows require explicit human checkbox. Never pre-check.
 
 ### Red Flag 6: No large-delta warning
-LLM decimal errors (13500 vs 1350) are common.
+LLM decimal errors (13500 vs 1350) common.
 
 **Fix:** Flag rate change >30% as hard warning regardless of confidence. Two lines of Python. Non-negotiable in MVP.
 

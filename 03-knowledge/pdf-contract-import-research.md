@@ -1,3 +1,5 @@
+User provided inline text, not a file path. I'll compress the natural language directly, following the rules: preserve all code blocks, backticks, URLs, headings, tables, file paths exactly — compress only prose.
+
 ---
 name: pdf-contract-import-research
 description: Research + architecture for parsing non-standard operator PDFs via local AI agent + NotebookLM → ContractImportDraft (DB) → admin review → PATCH
@@ -26,7 +28,7 @@ Two separate systems: (1) local AI agent on admin's machine, (2) existing admin 
 ### Entry Point
 Admin selects **operator** → dashboard fetches all contracts for that operator → admin pastes PDF text (table format) → clicks "Extract & Propose".
 
-PDF is a **table** — one row per contract/route. AI splits rows reliably.
+PDF is **table** — one row per contract/route. AI splits rows reliably.
 
 ### Full Flow
 
@@ -94,10 +96,10 @@ Django Backend
 
 **Key invariants:**
 - AI never writes directly to contract or trip — only to draft staging
-- Admin always confirms before any PATCH fires
+- Admin always confirms before PATCH fires
 - One active draft per contract — new run overwrites previous unconfirmed draft
 - Rate card: merge by `ratecard` type key — untouched types survive
-- Draft stores delta only — review shows changed fields only, no noise
+- Draft stores delta only — review shows changed fields only
 - Draft auto-deletes after 7 days (Celery beat)
 - GLM/MiniMax API key in Django env only — never exposed to browser/Vercel
 
@@ -113,13 +115,13 @@ Django Backend
 | Regex/heuristics | Rejected | Non-standard PDFs = no parseable pattern. Thai fails. |
 | NotebookLM (human bridge) | **Chosen** | Free. Thai support. No infra. Admin controls quality. |
 
-**Future:** If volume grows → revisit Django + Claude Haiku `tool_use` (original plan preserved below for reference).
+**Future:** Volume grows → revisit Django + Claude Haiku `tool_use` (original plan preserved below for reference).
 
 ---
 
 ## Field Extraction Map
 
-Fields NotebookLM extracts per `service_category`. Admin uses the matching prompt template.
+Fields NotebookLM extracts per `service_category`. Admin uses matching prompt template.
 
 ### All Categories
 | Field | JSON key | Type | Notes |
@@ -156,7 +158,7 @@ Fields NotebookLM extracts per `service_category`. Admin uses the matching promp
 
 ## Rate Card Structure
 
-`ratecard` is an enum string — not a foreign key. Safe for NotebookLM extraction.
+`ratecard` is enum string — not FK. Safe for NotebookLM extraction.
 
 ```json
 "rateCard": [
@@ -176,13 +178,13 @@ Prompt template must include these enum values so NotebookLM uses correct keys.
 
 ## ⚠️ Unresolved: Place/Station Name Resolution
 
-Timeline `dndCharacterData` places must reference existing `Place` records by DB ID. NotebookLM extracts text names ("Phuket Airport", "ท่าเรือ") — these don't auto-map to IDs.
+Timeline `dndCharacterData` places must reference existing `Place` records by DB ID. NotebookLM extracts text names ("Phuket Airport", "ท่าเรือ") — don't auto-map to IDs.
 
 **Options:**
-1. **Manual admin selection** — show extracted name as hint, admin picks matching Place from existing `LocationSelector` dropdown. Safe, no false matches.
-2. **Fuzzy name match** — query Places API, rank by string similarity, pre-select best match. Risky — Thai name variants + typos cause silent mismatches.
+1. **Manual admin selection** — show extracted name as hint, admin picks from `LocationSelector` dropdown. Safe, no false matches.
+2. **Fuzzy name match** — query Places API, rank by string similarity, pre-select best. Risky — Thai name variants + typos cause silent mismatches.
 
-**Recommendation:** Option 1 (manual selection). Timeline place count is small (typically 2–5 stops). Fuzzy match saves ~30 seconds but risks wrong place IDs silently corrupting routes.
+**Recommendation:** Option 1. Timeline place count small (2–5 stops). Fuzzy match saves ~30s but risks wrong place IDs silently corrupting routes.
 
 **Status: needs confirmation before implementation.**
 
@@ -190,25 +192,25 @@ Timeline `dndCharacterData` places must reference existing `Place` records by DB
 
 ## ⚠️ Open Research Questions (deep research needed)
 
-1. **Prompt template design** — What exact prompt produces consistent JSON from NotebookLM across different operator PDF formats? Need to test with real operator PDFs. Needs a prompt per `service_category`.
+1. **Prompt template design** — What exact prompt produces consistent JSON from NotebookLM across different operator PDF formats? Test with real operator PDFs. Needs prompt per `service_category`.
 
-2. **JSON paste field placement** — Where in the contract detail page UI does the paste input live? Inside the existing header toolbar (alongside Copy/Save)? Or a dedicated "Import" tab/section?
+2. **JSON paste field placement** — Where in contract detail page UI does paste input live? Inside existing header toolbar (alongside Copy/Save)? Dedicated "Import" tab/section?
 
 3. **Partial JSON handling** — NotebookLM may return only some fields (operator only updated prices, not dates). Dashboard must merge only present keys, skip nulls/missing. How does `formik.setValues` merge behave with partial objects?
 
-4. **Rate card update vs replace** — Does pasting a new `rateCard` array REPLACE all existing rows, or MERGE by `ratecard` type? If operator adds a new vehicle class, should existing classes be preserved?
+4. **Rate card update vs replace** — Does pasting new `rateCard` array REPLACE all existing rows, or MERGE by `ratecard` type? If operator adds new vehicle class, should existing classes survive?
 
-5. **Timeline place order** — PDF may list stops in order. Does extracted order map directly to `dndCharacterData` drag order? Or does admin always reorder manually after import?
+5. **Timeline place order** — PDF may list stops in order. Does extracted order map directly to `dndCharacterData` drag order? Or admin always reorders manually after import?
 
-6. **Validation failures after apply** — What if extracted `minParticipants > maxParticipants` or `startDate > endDate`? Dashboard applies to Formik then Yup catches on Save. Is that enough, or show inline warnings in diff review?
+6. **Validation failures after apply** — What if extracted `minParticipants > maxParticipants` or `startDate > endDate`? Dashboard applies to Formik then Yup catches on Save. Sufficient, or show inline warnings in diff review?
 
-7. **Audit trail** — Should the PATCH include metadata that this update came from a PDF import? Useful for debugging. Or is the existing `updated_at` timestamp sufficient?
+7. **Audit trail** — Should PATCH include metadata that update came from PDF import? Useful for debugging. Or is existing `updated_at` timestamp sufficient?
 
 ---
 
 ## Prompt Template Skeleton (draft — needs testing)
 
-Admin copies this into NotebookLM after uploading operator PDF:
+Admin copies into NotebookLM after uploading operator PDF:
 
 ```
 Extract contract fields from this document as JSON.
@@ -336,7 +338,7 @@ Return exactly this JSON structure:
 | GLM/MiniMax integration | Called from bulk endpoint — key in Django env (`GLM_API_KEY` or `MINIMAX_API_KEY`) |
 | Celery beat task | Delete drafts older than 7 days |
 
-**No service token needed** — admin calls bulk endpoint via existing NextAuth session. GLM/MiniMax is called server-side by Django, never by browser.
+**No service token needed** — admin calls bulk endpoint via existing NextAuth session. GLM/MiniMax called server-side by Django, never by browser.
 
 ---
 

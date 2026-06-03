@@ -1,8 +1,10 @@
+The compress skill processes files via the CLI script. I need to write the content directly since no file path was given — I'll compress inline.
+
 # Activities Location Search Bug — Team Audit 2026-06-01
 
 ## Summary
 
-Location search on `/activities` returns zero results for any text input (e.g., "Phuket"). Two independent root causes confirmed: backend expects Location integer IDs, frontend sends city name strings; and frontend Autocomplete `inputValue` diverges from `value` prop so URL-restored location is invisible to users. 4-specialist audit (Frontend, Next.js, Backend, DRF) + scrutinize pass. 3 critical bugs, 3 medium bugs. Backend fix: 4 lines. Frontend fix: 6 lines.
+Location search on `/activities` returns zero results for any text input (e.g., "Phuket"). Two independent root causes confirmed: backend expects Location integer IDs, frontend sends city name strings; frontend Autocomplete `inputValue` diverges from `value` prop so URL-restored location invisible to users. 4-specialist audit (Frontend, Next.js, Backend, DRF) + scrutinize pass. 3 critical bugs, 3 medium bugs. Backend fix: 4 lines. Frontend fix: 6 lines.
 
 ---
 
@@ -10,8 +12,8 @@ Location search on `/activities` returns zero results for any text input (e.g., 
 
 - **Route:** `/activities` → `FilterDayTripsPage.js` → `useDayTripFilters.js` → `dayTripsApi.js` → `GET /api/v1/contract/`
 - **Branch audited:** `260601-fix/activities-browse-audit`
-- **Public endpoint:** `products/views.py:355` `ContractViewSet` — `permission_classes = [AllowAny]`, `is_actived=True, confirm=True` hardcoded (NOT the admin `operators/views.py:95` `ContractViewSet` which requires `IsAuthenticated`)
-- **Previous audit** (`activities-day-tour-page-review-2026-06-01.md`) addressed UX/design/code quality. Did NOT investigate location search failure specifically.
+- **Public endpoint:** `products/views.py:355` `ContractViewSet` — `permission_classes = [AllowAny]`, `is_actived=True, confirm=True` hardcoded (NOT admin `operators/views.py:95` `ContractViewSet` which requires `IsAuthenticated`)
+- **Previous audit** (`activities-day-tour-page-review-2026-06-01.md`) addressed UX/design/code quality. Did NOT investigate location search failure.
 
 ---
 
@@ -23,7 +25,7 @@ Location search on `/activities` returns zero results for any text input (e.g., 
 
 ### RC-2 [CRITICAL] — Frontend Autocomplete: `inputValue` doesn't sync with `value` prop
 
-`useState(value || '')` initializes once — prop changes after mount (URL hydration) are invisible. User sees blank field. Fix: `useEffect(() => setInputValue(value || ''), [value])`. See [[mui-autocomplete-inputvalue-sync]].
+`useState(value || '')` initializes once — prop changes after mount (URL hydration) invisible. User sees blank field. Fix: `useEffect(() => setInputValue(value || ''), [value])`. See [[mui-autocomplete-inputvalue-sync]].
 
 ### RC-3 [CRITICAL] — Frontend freetext doesn't trigger search until blur/select
 
@@ -36,7 +38,7 @@ const handleInputChange = (event, newInputValue) => {
 };
 ```
 
-User types "Phuket" → `inputValue` updates locally → parent `filters.location` stays `null` → API called without `?location=` → all results returned unfiltered. Only selecting from dropdown OR blurring the field triggers `onChange` → `handleChange` → parent update. Freetext search doesn't work without selection.
+User types "Phuket" → `inputValue` updates locally → parent `filters.location` stays `null` → API called without `?location=` → all results returned unfiltered. Only selecting from dropdown OR blurring triggers `onChange` → `handleChange` → parent update. Freetext search doesn't work without selection.
 
 ---
 
@@ -56,7 +58,7 @@ User types "Phuket" → `inputValue` updates locally → parent `filters.locatio
 
 | ID | Sev | Finding |
 |----|-----|---------|
-| N-1 | Critical | `getState().session` always `undefined` — NextAuth session not in Redux (affects auth endpoints only; `getContracts` is public, unaffected) |
+| N-1 | Critical | `getState().session` always `undefined` — NextAuth session not in Redux (affects auth endpoints only; `getContracts` public, unaffected) |
 | N-2 | Medium | Double-fetch risk: `FilterDayTripsPage` `useEffect` updating filter from `initialLocation` prop + `useDayTripFilters` hydration both fire on mount |
 | N-3 | Medium | `initialLocation` effect in `FilterDayTripsPage` fragile — should be in hook not component |
 
@@ -67,14 +69,14 @@ User types "Phuket" → `inputValue` updates locally → parent `filters.locatio
 | ID | Sev | Finding |
 |----|-----|---------|
 | B-1 | Critical | `products/views.py:446-453` — text location input → `.none()` (RC-1 confirmed) |
-| B-2 | Critical | `service_areas` M2M is the only location join — `primary_location` FK (operators/models.py:402) ignored in public filter |
-| B-3 | Medium | DAY_TOUR contracts with `trip=NULL` cannot be found by trip-route location chains (transport-side filter in admin viewset only) |
+| B-2 | Critical | `service_areas` M2M is only location join — `primary_location` FK (`operators/models.py:402`) ignored in public filter |
+| B-3 | Medium | DAY_TOUR contracts with `trip=NULL` not findable by trip-route location chains (transport-side filter in admin viewset only) |
 
 **What works:** `_parse_int_list` safe on bad input (returns `[]`, no crash), `is_actived=True, confirm=True` hardcoded correctly, `icontains` ORM queries safe from SQL injection.
 
 ### DRF Specialist
 
-**Key correction:** There are **two** `ContractViewSet` classes:
+**Key correction:** Two `ContractViewSet` classes exist:
 - `operators/views.py:95` — admin internal, `IsAuthenticated`, NOT used by frontend
 - `products/views.py:355` — public browse, `AllowAny`, IS used by frontend via `apis/urls.py:38`
 
@@ -82,8 +84,8 @@ User types "Phuket" → `inputValue` updates locally → parent `filters.locatio
 
 | ID | Sev | Finding |
 |----|-----|---------|
-| D-1 | Info | `status=active` param sent by frontend is silently **ignored** by `products.ContractViewSet` — it hardcodes `is_actived=True`. Param is harmless but misleading. |
-| D-2 | Medium | 1-hour cache (`cache_key = f"contract_list_v1_{md5(params)}"`) means location filter fix won't be visible for up to 1 hour after deploy |
+| D-1 | Info | `status=active` param sent by frontend silently **ignored** by `products.ContractViewSet` — hardcodes `is_actived=True`. Param harmless but misleading. |
+| D-2 | Medium | 1-hour cache (`cache_key = f"contract_list_v1_{md5(params)}"`) means location filter fix invisible up to 1 hour after deploy |
 
 **What works:** Permission correct (`AllowAny`), serializer correct, URL routing correct, caching + pagination work.
 
@@ -93,21 +95,21 @@ User types "Phuket" → `inputValue` updates locally → parent `filters.locatio
 
 ### Debate 1 — Is F-2 (freetext not emitting) truly critical?
 
-Frontend specialist says freetext typing never updates parent. However: MUI Autocomplete with `freeSolo` fires `onChange` on Enter keypress and on blur with the typed value. So typing + pressing Enter DOES work. Typing without Enter/blur does NOT.
+Frontend specialist: freetext typing never updates parent. MUI Autocomplete with `freeSolo` fires `onChange` on Enter and blur with typed value. Typing + Enter DOES work. Typing without Enter/blur does NOT.
 
-**Verdict:** Confirmed medium-to-high severity. Not critical (Enter works) but broken UX — users expect results to filter as they type or at least on selection without pressing Enter. Still fix it.
+**Verdict:** Confirmed medium-to-high severity. Not critical (Enter works) but broken UX — users expect results to filter as they type or at least on selection without Enter. Still fix.
 
 ### Debate 2 — Should handleInputChange emit to parent (real-time search)?
 
-Next.js specialist questions whether emitting every keystroke would over-fetch. Backend has 1-hour cache. RTK Query deduplicates by cache key.
+Next.js specialist questions whether emitting every keystroke over-fetches. Backend has 1-hour cache. RTK Query deduplicates by cache key.
 
-**Verdict:** Emit on input change is fine. RTK deduplication prevents extra API calls for the same query. Adds debounce if performance concern arises later.
+**Verdict:** Emit on input change fine. RTK deduplication prevents extra API calls for same query. Add debounce if performance concern arises later.
 
 ### Debate 3 — `primary_location` vs `service_areas` for location filter
 
-Backend says both exist on Contract. DRF confirms public endpoint only uses `service_areas`. Which is correct for DAY_TOUR?
+Backend: both exist on Contract. DRF confirms public endpoint only uses `service_areas`. Which correct for DAY_TOUR?
 
-**Verdict:** Add both to filter with OR. `service_areas` is the canonical M2M. `primary_location` is single FK for upselling. For text search, check `service_areas__location_name__icontains` OR `primary_location__location_name__icontains`. Safe to OR them — `.distinct()` already applied.
+**Verdict:** Add both to filter with OR. `service_areas` canonical M2M. `primary_location` single FK for upselling. For text search, check `service_areas__location_name__icontains` OR `primary_location__location_name__icontains`. Safe to OR — `.distinct()` already applied.
 
 ---
 
@@ -191,11 +193,11 @@ const handleInputChange = (event, newInputValue) => {
 };
 ```
 
-The `if (event)` guard prevents firing during programmatic Autocomplete resets (MUI calls `onInputChange` with `event=null` during internal resets).
+`if (event)` guard prevents firing during programmatic Autocomplete resets (MUI calls `onInputChange` with `event=null` during internal resets).
 
 ### Fix 5 [Frontend] — Clear emits `null` (acceptable, no change needed)
 
-`handleClear` sending `null` is consistent with `useDayTripFilters` which checks `if (filters.location)` before adding to URL. No fix required — null and empty string both treated as "no filter".
+`handleClear` sending `null` consistent with `useDayTripFilters` which checks `if (filters.location)` before adding to URL. No fix required — null and empty string both treated as "no filter".
 
 ---
 
@@ -226,14 +228,14 @@ The `if (event)` guard prevents firing during programmatic Autocomplete resets (
 ## Consequences
 
 - After Fix 1 + cache clear: location text search works for any contract with `service_areas` or `primary_location` set
-- Admin must ensure DAY_TOUR contracts have `service_areas` populated — if both fields are null, contract won't appear in location searches (data quality issue, not code)
+- Admin must ensure DAY_TOUR contracts have `service_areas` populated — if both fields null, contract won't appear in location searches (data quality issue, not code)
 - Fix 4 (freetext emit) makes search feel instant — no need to press Enter or select from dropdown
 
 ---
 
 ## Related
 
-- [[activities-day-tour-page-review-2026-06-01]] — UX/design/code quality audit on same page (FQ-0, UX-1 through UX-5 are separate issues)
-- [[adr-experiences-nav-category-filtering-2026-05-25]] — Category URL param filter chain (working correctly, not related to this bug)
+- [[activities-day-tour-page-review-2026-06-01]] — UX/design/code quality audit on same page (FQ-0, UX-1 through UX-5 separate issues)
+- [[adr-experiences-nav-category-filtering-2026-05-25]] — Category URL param filter chain (working correctly, unrelated to this bug)
 - [[stations]] — `Location` model: `location_name`, `city`, `province`, `normalized_location_name` fields
 - [[backend-architecture]] — `products` app = public API; `operators` app = admin API

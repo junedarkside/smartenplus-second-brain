@@ -8,7 +8,7 @@
 
 ## Summary
 
-User reported `/airport-transfer/hatyai-airport` (and `/airport-transfer/phuket-airport`) have post-calendar sections visually narrower than the calendar section above. Investigation confirmed the issue but the applied fix broke the layout — reverted. No progress made.
+User reported `/airport-transfer/hatyai-airport` (and `/airport-transfer/phuket-airport`) post-calendar sections visually narrower than calendar above. Investigation confirmed. Applied fix broke layout — reverted. No progress.
 
 ---
 
@@ -42,11 +42,11 @@ User reported `/airport-transfer/hatyai-airport` (and `/airport-transfer/phuket-
 | Trips page | `<section className='w-full mx-auto z-10'>` | `max-w-[1200px] mx-auto flex flex-col gap-2` |
 | Airport-transfer | (none — inline `<div>`) | `max-w-[1200px] mx-auto flex flex-col gap-2` |
 
-**No structural difference in the container itself.**
+**No structural difference in container itself.**
 
 ### Problem: inner horizontal margins on StationInformation + GuidesSection
 
-Both components sit INSIDE the `max-w-[1200px]` container but have additional horizontal constraints inside:
+Both components sit INSIDE `max-w-[1200px]` but have additional horizontal constraints:
 
 | Component | Element | Class | Effect |
 |-----------|---------|-------|--------|
@@ -55,7 +55,7 @@ Both components sit INSIDE the `max-w-[1200px]` container but have additional ho
 | `GuidesSection.js:12` | outer `<section>` | `px-2 md:px-3` | Inner content narrower by ~32-48px |
 | `ProductCardContainer.js:28` | grid wrapper | `mx-2` | Grid cards narrower by ~16px each side |
 
-These margins exist INSIDE the `max-w-[1200px]` container — content doesn't reach full width.
+Margins exist INSIDE `max-w-[1200px]` — content doesn't reach full width.
 
 ### HTML from user's snapshot confirms
 
@@ -86,8 +86,8 @@ These margins exist INSIDE the `max-w-[1200px]` container — content doesn't re
 
 User reported "totally fuckup" — likely because:
 - Removing `px-2 md:px-3` from GuidesSection outer section collapsed internal padding, breaking card layout
-- Removing `mx-2` from ProductCardContainer removed the only horizontal margin on the grid, causing cards to touch edges
-- These components have content that legitimately needs internal spacing — cannot blanket-remove margins
+- Removing `mx-2` from ProductCardContainer removed only horizontal margin on grid, cards touch edges
+- Components have content needing internal spacing — can't blanket-remove margins
 
 ### Files reverted to original state.
 
@@ -95,21 +95,21 @@ User reported "totally fuckup" — likely because:
 
 ## Next Team: Correct Approach
 
-### The real problem
+### Real problem
 
-The sections ARE inside `max-w-[1200px]`. The issue is not the outer container — it's that StationInformation + GuidesSection look visually narrower because:
+Sections ARE inside `max-w-[1200px]`. Issue not the outer container — StationInformation + GuidesSection look narrower because:
 
-1. They have white `bg-white` + `rounded-lg` backgrounds — visually distinct from the page bg
-2. Their inner content (map, blog cards) has its own padding/margins creating a "content area" that appears narrower than the section itself
-3. The calendar section above has NO such visual treatment — it's transparent/embedded, making it appear wider
+1. White `bg-white` + `rounded-lg` backgrounds — visually distinct from page bg
+2. Inner content (map, blog cards) has own padding/margins creating "content area" appearing narrower than section itself
+3. Calendar above has NO such visual treatment — transparent/embedded, appears wider
 
 ### Recommended fix (DIFFERENT from attempted fix)
 
 **Do NOT remove all padding.** Instead:
 
-1. Identify what "full width" means visually — should the white card sections extend to 1200px edges, or should they have internal padding?
-2. If full-width white cards are desired: `px-2 md:px-3` is actually correct — it provides breathing room. The issue is that the PARENT container `max-w-[1200px]` has `mx-auto` centering — so the card appears centered at 1200px max.
-3. The ACTUAL fix likely requires: ensure StationInformation and GuidesSection outer `<section>` spans full viewport width (`w-full`) and their inner content is constrained to `max-w-[1200px] mx-auto` — NOT the current reversed structure.
+1. Identify what "full width" means visually — should white card sections extend to 1200px edges, or have internal padding?
+2. If full-width white cards desired: `px-2 md:px-3` is correct — provides breathing room. Issue is PARENT `max-w-[1200px]` has `mx-auto` centering — card appears centered at 1200px max.
+3. ACTUAL fix likely requires: ensure StationInformation and GuidesSection outer `<section>` spans full viewport width (`w-full`) and inner content constrained to `max-w-[1200px] mx-auto` — NOT current reversed structure.
 
 ### Specific files needing redesign
 
@@ -118,8 +118,8 @@ The sections ARE inside `max-w-[1200px]`. The issue is not the outer container �
 - `components/destinations/GuidesSection.js` — same pattern
 
 **Option B — Keep sections inside container, accept `px-2 md:px-3` padding:**
-- This is the CURRENT behavior — sections are correctly constrained. "Visual mismatch" may be perceived only because StationInfo/Guides have white bg vs calendar section's transparent bg.
-- If this is the case: no code change needed — explanation to user sufficient.
+- Current behavior — sections correctly constrained. "Visual mismatch" may be perceived only because StationInfo/Guides have white bg vs calendar's transparent bg.
+- If so: no code change needed — explanation to user sufficient.
 
 ---
 
@@ -131,16 +131,16 @@ The sections ARE inside `max-w-[1200px]`. The issue is not the outer container �
    - Calendar section wrapper: measure width → should be `max-w-[1200px]` centered
    - StationInformation section: measure width → same?
    - GuidesSection: measure width → same?
-4. If StationInfo/Guides appear narrower — use "Compute" tab to find which element/css is constraining width
+4. If StationInfo/Guides appear narrower — use "Compute" tab to find which element/css constrains width
 5. Compare with trips page at same viewport
 
 ---
 
 ## What NOT to do
 
-- Do NOT blindly remove `px-2 md:px-3` or `mx-2` from components without understanding the content flow
-- `ProductCardContainer.js` is shared across many pages — changing it affects all uses
-- Previous fix attempt was too aggressive — removed spacing that was semantically necessary
+- Do NOT blindly remove `px-2 md:px-3` or `mx-2` from components without understanding content flow
+- `ProductCardContainer.js` shared across many pages — changing affects all uses
+- Previous fix too aggressive — removed semantically necessary spacing
 
 ---
 

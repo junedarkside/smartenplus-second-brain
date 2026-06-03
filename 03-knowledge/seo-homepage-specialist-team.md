@@ -8,16 +8,16 @@ metadata:
 # SEO Homepage Specialist Team
 
 ## Summary
-3-specialist virtual team for deep SEO + performance audit of the SmartEnPlus homepage. Roles run sequentially inside one agent session. Leader synthesizes findings, debates conflicts, writes vault report.
+3-specialist virtual team for deep SEO + performance audit of SmartEnPlus homepage. Roles run sequentially inside one agent session. Leader synthesizes findings, debates conflicts, writes vault report.
 
 ## Context
-Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO infrastructure solid but has structured data errors and technical gaps not covered by UX review.
+Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO infrastructure solid but has structured data errors + technical gaps not covered by UX review.
 
 ## Team Composition
 
 | Role | Lens | Key Checks |
 |------|------|-----------|
-| **Specialist A — Structured Data** | JSON-LD schemas on the page | Hardcoded values, missing fields, invalid geo, stale dates, missing schema types |
+| **Specialist A — Structured Data** | JSON-LD schemas on page | Hardcoded values, missing fields, invalid geo, stale dates, missing schema types |
 | **Specialist B — Technical SEO** | Meta tags, sitemap, robots, _app.js | DefaultSeo gap, server-sitemap 404, og:locale, twitter:site, security headers |
 | **Specialist C — Page Performance** | Core Web Vitals risks | CLS from ssr:false, hero banner swap, preconnect, LCP image, image sizes |
 | **Leader** | Synthesis + conflict resolution | Debates cross-specialist conflicts, delivers verdict, writes vault report |
@@ -33,7 +33,7 @@ Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO inf
 **Agent file:** `smartenplus-frontend/.claude/agents/seo-homepage-auditor.md`
 
 ## Pre-conditions
-- Dev server running on port 3000 (agent self-checks, fails clearly if not)
+- Dev server on port 3000 (agent self-checks, fails clearly if not)
 - No other conditions — agent reads source files directly
 
 ## Known Issues Found on First Run (2026-05-21)
@@ -45,7 +45,7 @@ See [[homepage-seo-performance-deep-review-2026-05-21]] for full findings.
 - TravelAgency `aggregateRating` hardcoded `4.5/128` — live data already in component props
 - TravelAgency `sameAs` missing — social URLs already exported from `constants.js`
 - `WebPageJsonLd` `lastReviewed` hardcoded stale date (`2024-05-26`)
-- No `WebSite` + `SearchAction` schema despite having a search form
+- No `WebSite` + `SearchAction` schema despite having search form
 - `server-sitemap.xml` handler missing — `next-sitemap.config.js` points to it but no `pages/server-sitemap.xml.js` exists → Google gets 404
 - No `DefaultSeo` in `_app.js` — raw `<Head>` used; no global SEO fallback
 - `og:locale`, `og:site_name`, `twitter:site` absent from `Seo.js`

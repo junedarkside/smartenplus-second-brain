@@ -9,7 +9,7 @@ Extracted from [[nextjs-patterns]]. Discovered during [[hydration-infinite-refre
 ## Details
 
 ### Rule 1 — No dynamic values in render
-`Date.now()`, `new Date()`, `Math.random()` during render = server ≠ client = mismatch. Fix: module-level constant.
+`Date.now()`, `new Date()`, `Math.random()` in render = server ≠ client = mismatch. Fix: module-level constant.
 ```js
 // BAD — inside component
 "priceValidUntil": new Date(Date.now() + 365*24*60*60*1000).toISOString().split('T')[0]
@@ -21,26 +21,26 @@ const PRICE_VALID_UNTIL = new Date(Date.now() + 365*24*60*60*1000).toISOString()
 `isClient ? <TreeA> : <TreeB>` = mismatch. Fix: `<PersistGate persistor={persistor} loading={null}>` directly.
 
 ### Rule 3 — Memoize context value objects
-`{ a, b, c }` inside provider = new ref every render. Fix: `useMemo(() => ({ a, b, c }), [a, b, c])`.
+`{ a, b, c }` in provider = new ref each render. Fix: `useMemo(() => ({ a, b, c }), [a, b, c])`.
 
 ### Rule 4 — Memoize render-prop functions
-Inline `renderItem` prop = new ref = bypasses `memo()`. Fix: `useCallback` with correct deps.
+Inline `renderItem` = new ref = bypasses `memo()`. Fix: `useCallback` with correct deps.
 
 ### Rule 5 — useRouter() IS stable
-Stable ref, NOT new object each render. Safe in useCallback deps.
+Stable ref, not new object each render. Safe in useCallback deps.
 
 ### Rule 6 — refetchOnMountOrArgChange semantics
-`300` (number) = "refetch if cached data older than 300 seconds" — triggers immediately on cold mount with no cache. Use `true` to mean "refetch when args change". Use `false` to prevent refetch entirely. Never pass a number unless you explicitly want time-based stale cache refetch.
+`300` (number) = "refetch if cached data older than 300 seconds" — fires immediately on cold mount, no cache. Use `true` = refetch on arg change. Use `false` = no refetch. Never pass number unless explicitly want time-based stale cache refetch.
 
 ### PersistGate SSR Blocker
 
-`PersistGate loading={null}` renders **null on the server**. Any component inside it — `DefaultSeo`, `Head`, `<Component>` — is suppressed during SSR. Result: `next-head-count="2"`, empty `<title>`, no OG tags in view-source.
+`PersistGate loading={null}` renders **null on server**. Any component inside — `DefaultSeo`, `Head`, `<Component>` — suppressed during SSR. Result: `next-head-count="2"`, empty `<title>`, no OG tags in view-source.
 
 **Symptom:** opengraph.dev / view-source shows empty meta tags on ALL pages.
 
 **Diagnosis:** `curl http://localhost:3000/ | grep 'next-head-count'` → `content="2"` = SSR blocked.
 
-**Fix:** hoist `DefaultSeo`, `Head`, `Layout`, and `<Component>` above `PersistGate`. Only wrap client-only utilities (RefreshTokenHandler, DevToolsProvider) inside PersistGate.
+**Fix:** hoist `DefaultSeo`, `Head`, `Layout`, `<Component>` above `PersistGate`. Wrap only client-only utilities (RefreshTokenHandler, DevToolsProvider) inside PersistGate.
 
 ```jsx
 // BAD — everything suppressed SSR

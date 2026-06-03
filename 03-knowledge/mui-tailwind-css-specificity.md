@@ -66,7 +66,7 @@ Affected: `components/layout/main-header.js` help icon (commit a0e7aea tried MUI
 
 ## Consequences
 - Audit all MUI components using Tailwind `className` for color/display
-- `sx` prop is MUI-specific — not portable
+- `sx` prop MUI-specific — not portable
 - Div wrappers: minor DOM overhead (negligible)
 
 ## Related

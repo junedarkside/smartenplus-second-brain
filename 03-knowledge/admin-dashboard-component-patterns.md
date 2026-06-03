@@ -15,7 +15,7 @@ Formik+Yup, RTK Query, MUI patterns, critical gotchas.
 - Lazy hooks: explicitly destructure from exports: `useLazyValidateImageDeletionQuery`
 - `keepUnusedDataFor: 60`, `refetchOnMountOrArgChange`, tag cache invalidation
 - Raw `axios` + `fetchDataFromApi` deprecated. All pages use RTK Query hooks.
-- Dashboard migrated 2026-05-20: 3 RTK hooks replace 12 useState + useEffect + axios calls. Hooks run in parallel.
+- Dashboard migrated 2026-05-20: 3 RTK hooks replace 12 useState + useEffect + axios calls. Hooks run parallel.
 - New slice pattern: `store/api/dashboardApi.js` for dashboard-only endpoints
 
 ### Dashboard Data Sources
@@ -33,7 +33,7 @@ New RTK Query slice: import → reducerPath → blacklist → middleware concat.
 
 - Tel Input needs transpilation (`next.config.js`)
 - Date pickers: `AdapterDateFns`, not dayjs/moment
-- Duplicate `sx` props — second overwrites first. Merge into single object.
+- Duplicate `sx` props — second overwrites first. Merge single object.
 - `ImagePreviewModal` needs explicit `width`/`height` on desktop — `fill` on `next/image` requires parent dimensions
 
 ## React Patterns

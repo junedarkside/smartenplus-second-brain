@@ -39,7 +39,7 @@ Team: UX Research Agent (Hero/Search/Routes) + UX Research Agent (Content Sectio
 10. Customer Service
 ```
 
-Reviews position 8→5 = highest-leverage change. Most mobile users never scroll to position 8.
+Reviews 8→5 = highest-leverage change. Most mobile users never scroll to position 8.
 
 ## Critical Issues
 
@@ -51,7 +51,7 @@ dangerouslySetInnerHTML={{ __html: reviewText }}
 User content rendered raw. No DOMPurify. Active XSS risk.
 **Fix:** Sanitize backend before API serves. Client-only: `isomorphic-dompurify` — plain `DOMPurify` throws `window is not defined` on SSR (Next.js).
 
-### C2 — Hero Has No Product Value Proposition
+### C2 — Hero No Value Proposition
 **File:** `pages/homepagev2.js:335`
 `h1` from `seoData.title` — crawler-optimized, not user-optimized. No subheadline. First-time visitor lacks product context.
 **Fix:** Add static subheadline: *"Book buses, ferries and trains across Thailand — instantly confirmed."*
@@ -61,7 +61,7 @@ User content rendered raw. No DOMPurify. Active XSS risk.
 Empty fields show toast only. No field highlight, no inline message. Direct abandonment risk.
 **Fix:** Red border + inline error per empty required field on submit.
 
-### C4 — Locations Title Has No Transport Context
+### C4 — Locations Title No Transport Context
 **File:** `lib/homepage/components/LocationsSection.js:36`
 "Find Perfect Locations" reads like hotel/real estate. SEO structured data (line 27) says "Popular Travel Destinations in Thailand" — that copy should be visible heading.
 

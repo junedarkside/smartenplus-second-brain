@@ -2,13 +2,13 @@
 
 ## Summary
 
-Cross-page layout audit: activities browse (`/activities`) vs homepage (`/`) vs trips browse (`/trips`). 3 inconsistencies found. Container width consistent across all. Horizontal padding and card grid gap both deviate on activities.
+Cross-page layout audit: activities browse (`/activities`) vs homepage (`/`) vs trips browse (`/trips`). 3 inconsistencies found. Container width consistent. H-padding and card grid gap deviate on activities.
 
 ---
 
 ## Context
 
-Triggered by activities browse audit sprint (branch `260601-fix/activities-browse-audit`). After functional fixes (FQ-0 through DS-1), checked layout values against site-wide standards to catch spacing regressions before merge.
+Triggered by activities browse audit sprint (branch `260601-fix/activities-browse-audit`). After functional fixes (FQ-0 through DS-1), checked layout values against site-wide standards before merge.
 
 Pages compared:
 - Homepage: `pages/homepagev2.js` + `components/common/Section.js` + `lib/homepage/components/PopularRoutesSection.js`
@@ -19,7 +19,7 @@ Pages compared:
 
 ## Canonical Patterns
 
-These are the authoritative layout values used by homepage (most refined page). New browse pages should match.
+Authoritative layout values from homepage (most refined page). New browse pages match these.
 
 | Token | Value | Tailwind | Used in |
 |-------|-------|---------|--------|
@@ -31,7 +31,7 @@ These are the authoritative layout values used by homepage (most refined page). 
 | Inter-section gap (homepage) | 32px | `gap-8` | `homepagev2.js` main |
 | Section internal gap | 12px | `gap-3` | `Section.js` base |
 
-Trips uses a slightly tighter horizontal padding (`px-2 md:px-3`) because it has a hero search bar that extends full-bleed. For a clean browse page (no hero), use homepage standard `px-4 xl:px-0`.
+Trips uses tighter h-padding (`px-2 md:px-3`) — hero search bar extends full-bleed. Clean browse page (no hero): use homepage standard `px-4 xl:px-0`.
 
 ---
 
@@ -69,7 +69,7 @@ Trips uses a slightly tighter horizontal padding (`px-2 md:px-3`) because it has
 
 **File:** `components/activities/browse/FilterDayTripsPage.js:55`
 **Current:** `className="w-full max-w-[1200px] mx-auto p-2 pb-6 sm:py-8"`
-**Problem:** `p-2` applies 8px padding on ALL sides at ALL breakpoints. No `xl:px-0` to bleed edge-to-edge at wide viewports. Content appears too narrow-margined on mobile and still has margins on xl screens where it shouldn't.
+**Problem:** `p-2` applies 8px on ALL sides at ALL breakpoints. No `xl:px-0` to bleed edge-to-edge at wide viewports. Content too narrow-margined on mobile, still has margins on xl where it shouldn't.
 **Fix:**
 ```
 w-full max-w-[1200px] mx-auto px-4 xl:px-0 py-2 pb-6 sm:py-8
@@ -80,7 +80,7 @@ Change `p-2` → `px-4 xl:px-0`. Keep vertical padding as-is.
 
 **File:** `components/activities/browse/DayTripList.js`
 **Current:** Skeleton: `<Grid container spacing={2}>` | Loaded: `<Grid container spacing={1}>`
-**Problem:** `spacing={2}` = 16px gap while loading, collapses to `spacing={1}` = 8px on load. Visible layout shift. Cards jump 8px closer together when data arrives.
+**Problem:** `spacing={2}` = 16px while loading, collapses to `spacing={1}` = 8px on load. Visible layout shift. Cards jump 8px closer when data arrives.
 **Fix:** Both to `spacing={2}`. 16px matches trips' `gap-4` reference.
 ```js
 // Line 41 (skeleton) — already correct spacing={2}
@@ -92,7 +92,7 @@ Change `p-2` → `px-4 xl:px-0`. Keep vertical padding as-is.
 **File:** `components/activities/browse/FilterDayTripsPage.js:55`
 **Current:** `sm:py-8` = 32px vertical at sm+
 **Standard:** `py-6` = 24px (homepage + trips)
-**Assessment:** Browse pages are content-dense — extra breathing room (32px) is defensible. Not a bug. Recommend keeping `sm:py-8` and documenting as intentional browse-page exception.
+**Assessment:** Browse pages content-dense — extra breathing room (32px) defensible. Not a bug. Keep `sm:py-8`, document as intentional browse-page exception.
 
 ---
 
@@ -100,16 +100,16 @@ Change `p-2` → `px-4 xl:px-0`. Keep vertical padding as-is.
 
 | Decision | Choice | Reason |
 |----------|--------|--------|
-| Activities h-padding | Fix to `px-4 xl:px-0` | Match homepage standard. `p-2` is wrong — applies to all sides uniformly. |
-| Grid gap unification | Fix loaded to `spacing={2}` | Prevent layout shift. 16px is correct card density for image browse grid. |
-| Vertical `sm:py-8` | Keep — intentional exception | Browse pages benefit from extra top/bottom breathing room vs section cards. |
-| Card content padding | No change — intentional | DayTripCard at 24px is correct for image card anatomy. Trips list at 8px is correct for list-row style. |
+| Activities h-padding | Fix to `px-4 xl:px-0` | Match homepage standard. `p-2` wrong — applies all sides uniformly. |
+| Grid gap unification | Fix loaded to `spacing={2}` | Prevent layout shift. 16px correct card density for image browse grid. |
+| Vertical `sm:py-8` | Keep — intentional exception | Browse pages benefit from extra top/bottom breathing vs section cards. |
+| Card content padding | No change — intentional | DayTripCard at 24px correct for image card anatomy. Trips list at 8px correct for list-row style. |
 
 ---
 
 ## Fix Scope
 
-**LAY-1 + LAY-2** should be applied on `260601-fix/activities-browse-audit` before merge. Both are 1-2 line changes.
+**LAY-1 + LAY-2** apply on `260601-fix/activities-browse-audit` before merge. Both 1-2 line changes.
 
 - `FilterDayTripsPage.js:55` — `p-2` → `px-4 xl:px-0 py-2`
 - `DayTripList.js:85` — `spacing={1}` → `spacing={2}`

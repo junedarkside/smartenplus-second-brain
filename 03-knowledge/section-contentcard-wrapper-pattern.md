@@ -1,7 +1,7 @@
 # Section/ContentCard Wrapper Pattern
 
 ## Summary
-Missing Section/ContentCard wrappers cause full-bleed cards on mobile. Pattern: Section for page-level padding, ContentCard for card-level constraints. Trip detail audit found 9+ sites hardcoding layout instead of using abstractions.
+Missing Section/ContentCard wrappers = full-bleed cards on mobile. Pattern: Section for page-level padding, ContentCard for card-level constraints. Trip detail audit: 9+ sites hardcoding layout instead of using abstractions.
 
 ## Context
 `trip-detail-uxui-audit-2026-05-22.md` + `airport-transfer-redesign-2026.md`. Trip detail audit: 32 issues, root cause = Section/ContentCard absent. Airport transfer Pass 2: removed ContentCard (other sections don't use it).
@@ -42,7 +42,7 @@ Page ([...slug].js)
 - Vertical padding: `py-4` or context-dependent
 
 ### When to Skip ContentCard
-For photo-led editorial sections (e.g., Destinations, Airport Transfer cards):
+Photo-led editorial sections (e.g., Destinations, Airport Transfer cards):
 - `bg-white` irrelevant — photography fills cards
 - `overflow-hidden` should live on individual cards, not section wrapper
 - `flex-col` blocks asymmetric CSS grid layouts
@@ -84,13 +84,13 @@ import ContentCard from 'components/common/ContentCard';
 ```
 
 ## Tradeoffs
-- Per-component `mx-` breaks reuse on other pages — ContentCard at parent level is correct
-- Skipping ContentCard on editorial sections is intentional — verify with design before skipping
-- Section padding at page level means all child sections share same horizontal rhythm
+- Per-component `mx-` breaks reuse on other pages — ContentCard at parent level correct
+- Skipping ContentCard on editorial sections intentional — verify with design before skipping
+- Section padding at page level = all child sections share same horizontal rhythm
 
 ## Consequences
 - Trip detail: 8 issues resolved in one ContentCard wrapper pass
-- Mobile cards now have consistent horizontal padding
+- Mobile cards: consistent horizontal padding
 - Reuse on other pages preserved — components stay layout-agnostic
 
 ## Related

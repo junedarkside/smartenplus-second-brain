@@ -1,3 +1,7 @@
+Skill loaded. Now compressing the markdown you provided inline (no file path given, so I'll return compressed text directly).
+
+---
+
 # Experience Detail Page — Premium Redesign 2026
 
 **Status:** Planned (not implemented)
@@ -9,9 +13,9 @@
 
 ## Problem
 
-Current detail page reads like a logistics document. Trust signals weak. Reviews buried at bottom. Booking widget feels like a form. Timeline dominates page. Users must scroll far before deciding to book.
+Current detail page reads like logistics doc. Trust signals weak. Reviews buried at bottom. Booking widget feels like form. Timeline dominates. Users scroll far before deciding to book.
 
-**Conversion goal:** User understands within 5 seconds — what it is, why it's worth booking, why to trust it, how much it costs, how to reserve.
+**Conversion goal:** User understands within 5 seconds — what it is, why worth booking, why trust it, cost, how to reserve.
 
 ---
 
@@ -92,7 +96,7 @@ RIGHT COLUMN (30%, sticky):
 ### ExperienceHighlights.js
 - Props: `{ html }` — caller: `contract.translated_highlights || contract.tour_highlights`
 - Parse `<li>` text via `html-react-parser` (already installed), max 6 items
-- **`tour_highlights` is a free-form TextField** — operators may use `<p>`, `<ul><li>`, or prose. `<li>` parse is best-effort only.
+- **`tour_highlights` is free-form TextField** — operators may use `<p>`, `<ul><li>`, or prose. `<li>` parse is best-effort only.
 - Grid: `grid grid-cols-1 sm:grid-cols-2 gap-3`
 - Each card: `CheckCircleIcon` green + text (reuse `KeyFeatures.js` icon pattern)
 - **Fallback (most tours will hit this):** if `extractLiItems(html).length === 0` → render `HTMLContentRenderer html={html}` unchanged
@@ -175,7 +179,7 @@ RIGHT COLUMN (30%, sticky):
 ### `DayTripBookingWidget.js` — minor modification
 - **Remove `StickySidebar` wrapper** from `return` statement (line 374)
 - Change `return (<StickySidebar><Card...>` → `return (<Card...>`
-- Import `StickySidebar` removed from this file
+- Remove `StickySidebar` import from this file
 - Booking logic, state, props — unchanged
 
 ### Files NOT modified
@@ -183,7 +187,7 @@ RIGHT COLUMN (30%, sticky):
 - `DayTripDetailSEO.js` — SEO unchanged
 - `DayTripContent.js` — kept, not imported in page
 - `DayTripHighlights.js` — kept, not imported in page
-- `DayTripDetailHeader.js` — **retired, not deleted.** Step 7 rewrite removes its import and replaces with `ExperienceTitleArea.js`. File itself not edited — swap happens entirely in `DayTripDetailPage.js`. Do not import both: DayTripDetailHeader renders breadcrumbs, h1, rating, duration, operator logo, and all badge chips — same territory as ExperienceTitleArea.
+- `DayTripDetailHeader.js` — **retired, not deleted.** Step 7 rewrite removes its import, replaces with `ExperienceTitleArea.js`. File itself not edited — swap happens in `DayTripDetailPage.js`. Do not import both: DayTripDetailHeader renders breadcrumbs, h1, rating, duration, operator logo, all badge chips — same territory as ExperienceTitleArea.
 
 ---
 

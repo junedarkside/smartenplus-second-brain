@@ -1,7 +1,7 @@
 # Payment Integration — Thai Payment Methods
 
 ## Summary
-Thai payment methods via Omise. PromptPay, CC/debit, mobile banking, e-wallets. Canonical charge tracking + recoverable failure states.
+Thai payment via Omise. PromptPay, CC/debit, mobile banking, e-wallets. Canonical charge tracking + recoverable failure states.
 
 ## Thai Payment Methods
 

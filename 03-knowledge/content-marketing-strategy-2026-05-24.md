@@ -9,7 +9,7 @@ SmartEnPlus content marketing playbook (`Content-Marketing/thailand_travel_marke
 ## Key Findings (cross-agent consensus)
 
 **Critical internal contradiction (all 5 agents):**
-The doc warned "inspiration is overcrowded" then prescribed 40% inspiration content. Fixed to 20% inspiration, 50% route/education.
+Doc warned "inspiration overcrowded" then prescribed 40% inspiration content. Fixed: 20% inspiration, 50% route/education.
 
 **6 contradictions resolved:**
 1. 40% inspiration → 20%
@@ -35,21 +35,21 @@ The doc warned "inspiration is overcrowded" then prescribed 40% inspiration cont
 | langkawi to koh lipe ferry | 140 | $6.53 | smartenplus.co.th/trips/detail/langkawi-to-koh-lipe |
 | bangkok to samui ferry | 140 | $0.78 | smartenplus.co.th/trips/detail/bangkok-to-koh-samui |
 
-**Hat yai airport = $54.11 CPC — highest-value organic target in the dataset.**
+**Hat yai airport = $54.11 CPC — highest-value organic target in dataset.**
 
 ## Tech Stack Integration (second doc update)
 
 - Blog: WP headless at `blog.smartenplus.co.th`, served via WPGraphQL at `smartenplus.co.th/blog/[slug]` — no subdomain SEO split
 - Route pages: `/trips/detail/[...slug].js` — Product schema auto-generated via `generateSEOConfig()`
-- GA4: `G-04XT8ZYPTV` — already installed; missing `purchase` event on checkout success
+- GA4: `G-04XT8ZYPTV` — installed; missing `purchase` event on checkout success
 - TikTok pixel: not yet installed — add in `/components/layout/layout.js` alongside GA4
 - LINE OA: Phase 2 only — not current version
 
 ## Tradeoffs
 
-**Aspirational vs. deliverable positioning:** "Operating system" is aspiration. "Trusted transportation guide" is deliverable today. Doc now uses former only in Long-Term Vision, latter in all external content.
+**Aspirational vs. deliverable positioning:** "Operating system" = aspiration. "Trusted transportation guide" = deliverable today. Doc uses former only in Long-Term Vision, latter in all external content.
 
-**Audience ambiguity:** Backpackers vs. first-timers still unresolved by data. Doc now prescribes 60-90 day content experiment to pick primary via booking conversion signal.
+**Audience ambiguity:** Backpackers vs. first-timers unresolved by data. Doc prescribes 60-90 day content experiment to pick primary via booking conversion signal.
 
 ## Related
 [[business]] [[README]] [[smartenplus-synopsis]]

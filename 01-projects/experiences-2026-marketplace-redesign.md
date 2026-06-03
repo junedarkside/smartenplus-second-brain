@@ -1,18 +1,22 @@
+No file path given — user pasted text inline. Compressing manually per skill rules:
+
+---
+
 # Experiences 2026 Marketplace Redesign
 
 ## Summary
 
-Phase plan to redesign `/activities` into a world-class 2026 travel marketplace — Airbnb/Linear/Stripe-level UI. Sidebar filters, card grid, premium card, sort bar. Zero route change. Zero backend work in Phase 1. No existing functionality broken.
+Phase plan to redesign `/activities` into world-class 2026 travel marketplace — Airbnb/Linear/Stripe-level UI. Sidebar filters, card grid, premium card, sort bar. Zero route change. Zero backend work in Phase 1. No existing functionality broken.
 
-> **2026-06-01 update:** 4-agent review (UX, Frontend, Backend, Design) identified blocking issues and spec gaps. All resolved below. Do not start Phase 1 implementation until Decisions table is read.
+> **2026-06-01 update:** 4-agent review (UX, Frontend, Backend, Design) identified blocking issues + spec gaps. All resolved below. Read Decisions table before starting Phase 1.
 
 ---
 
 ## Context
 
-Current state: `FilterDayTripsPage.js` — full-width layout, no sidebar, basic `DayTripCard.js` (~180px image, inline feature bullets, no sort). Design spec requests Airbnb Experiences / GetYourGuide-level browse page with sidebar filter panel, premium card design, horizontal category chips, sort bar, and full responsive strategy.
+Current state: `FilterDayTripsPage.js` — full-width layout, no sidebar, basic `DayTripCard.js` (~180px image, inline feature bullets, no sort). Design spec requests Airbnb Experiences / GetYourGuide-level browse page with sidebar filter panel, premium card design, horizontal category chips, sort bar, full responsive strategy.
 
-Codebase exploration confirmed all necessary primitives exist and are reusable. No new infrastructure needed for Phase 1.
+Codebase exploration confirmed all necessary primitives exist + reusable. No new infrastructure needed for Phase 1.
 
 ---
 
@@ -24,7 +28,7 @@ Codebase exploration confirmed all necessary primitives exist and are reusable. 
 | Card approach | Enhance `DayTripCard.js` in-place | Only caller is `DayTripList.js` — safe |
 | Filter strategy | Phase it — backend-supported only in Phase 1 | No client-side filter hacks, no tech debt |
 | Sidebar scope | Sidebar in Phase 1 | Core visual change, can't defer |
-| Wishlist | Heart icon, `useState` only (per-card) | No backend endpoint exists yet. Per-card state — never lift to page level (causes 80 re-renders per click) |
+| Wishlist | Heart icon, `useState` only (per-card) | No backend endpoint yet. Per-card state — never lift to page level (causes 80 re-renders per click) |
 | Docs target | SmartEnPlus SB vault (this file) | Cross-project knowledge artifact |
 | Grid system | Tailwind grid for page layout; MUI Grid inside card list | Keep MUI Grid in `DayTripList.js`, wrap in Tailwind 2-col outer layout |
 | Card columns at 1440px | 4-col with 240px sidebar | 240px sidebar → ~(1440-240-48)/4 ≈ **288px** per card. Matches Airbnb (286px). Use `lg:grid-cols-[240px_1fr]` |
@@ -32,12 +36,12 @@ Codebase exploration confirmed all necessary primitives exist and are reusable. 
 | Hover animation | `translateY(-2px)` + shadow elevation, `duration-200` | 2px lift matches industry. Current code has `transform: none` — must remove. |
 | Transition duration | 200ms | Industry standard (Airbnb 150–200ms). Code has 300ms — fix to 200ms. |
 | CategoryFilter location | Sidebar ONLY | Removed from header. Mobile: bottom sheet (Phase 3). No dual placement. |
-| Sort options Phase 1 | 3 options only: Recommended / Most Popular / Highest Rated | `min_rate`/`-min_rate` removed — backend doesn't support until Phase 2 |
+| Sort options Phase 1 | 3 options only: Recommended / Most Popular / Highest Rated | `min_rate`/`-min_rate` removed — backend Phase 2 only |
 | Focus states | WCAG 2.1 AA required | `focus-visible:ring-2 ring-offset-2` on all interactive elements |
 | Rating threshold | Min 5 reviews before showing rating | Prevents noise from 1-review tours |
 | Sort active indicator | Required | Show "Sorted by: X" label when non-default sort active |
 | Sidebar width token | `SIDEBAR_CONFIG` in `helpers/designSystem.js` | No hardcoded px values in layout |
-| `-average_rating` ordering | Requires ORM annotation in `get_queryset()` before Phase 1 | Not a model field — computed from Review model. Must annotate. |
+| `-average_rating` ordering | Requires ORM annotation in `get_queryset()` before Phase 1 | Not model field — computed from Review model. Must annotate. |
 | `-booked_count` ordering | Acceptable Phase 1, document as low fidelity | `booked_count` is static field (default=10). Not real booking data. |
 
 ---
@@ -53,7 +57,7 @@ Codebase exploration confirmed all necessary primitives exist and are reusable. 
 | `hooks/useDayTripFilters.js` | Add `sort: ''` to DEFAULT_FILTERS. Sync `ordering` query param in URL. |
 | `store/api/dayTripsApi.js` | Add `ordering` arg to `getContracts`. Pass as `params.append('ordering', ordering)`. |
 | `helpers/designSystem.js` | Add `SIDEBAR_CONFIG = { widthValue: 240, width: 'w-[240px]', responsive: 'hidden lg:block' }` |
-| `smartenplus-backend/products/views.py` | Annotate `avg_rating = Avg(...)` in `ContractViewSet.get_queryset()` for `-average_rating` ordering to work |
+| `smartenplus-backend/products/views.py` | Annotate `avg_rating = Avg(...)` in `ContractViewSet.get_queryset()` for `-average_rating` ordering |
 
 ### New Files in Phase 1
 
@@ -100,7 +104,7 @@ Codebase exploration confirmed all necessary primitives exist and are reusable. 
 </section>
 ```
 
-**StickySidebar constraint:** `max-h-[calc(100vh-100px)] overflow-y-auto` must be on inner content wrapper, NOT on StickySidebar itself. Sticky breaks if the sticky element is a scroll container.
+**StickySidebar constraint:** `max-h-[calc(100vh-100px)] overflow-y-auto` must be on inner content wrapper, NOT on StickySidebar itself. Sticky breaks if sticky element is scroll container.
 
 ---
 
@@ -114,7 +118,7 @@ Codebase exploration confirmed all necessary primitives exist and are reusable. 
 | `location` | ✓ (location_name text) | 1 | |
 | `search` | ✓ substring (not full-text/fuzzy) | 1 | Document as substring search |
 | `ordering` | ✓ (`score`, `-booked_count`, `-average_rating`) | 1 | `-average_rating` requires ORM annotation. `-booked_count` uses legacy static field (low fidelity). |
-| `page`, `page_size` | ✓ | 1 | Default `page_size=10`. Frontend should use 12 or 16 for even grid fill. |
+| `page`, `page_size` | ✓ | 1 | Default `page_size=10`. Frontend use 12 or 16 for even grid fill. |
 | `min_price`, `max_price` | ✗ | 2 | Filter on `ratecards.selling_rate`. Use `annotate(min_rate=Min(...)).distinct()` — no raw JOIN (N+1 risk). |
 | `duration_type` | ✗ | 2 | See Phase 2 mapping table |
 | `contract_type` | ✗ (model has `type`: JOIN/PRIVATE/CHARTER) | 2 | |
@@ -163,7 +167,7 @@ const SORT_OPTIONS = [
 
 ### Phase 2 — Backend Filters
 
-**Phase 2 Pre-flight Checklist (backend, must complete before any Phase 2 frontend):**
+**Phase 2 Pre-flight Checklist (backend, complete before any Phase 2 frontend):**
 - [ ] Create `smartenplus-backend/products/filters.py` with `ContractFilter(FilterSet)`
 - [ ] Add `duration_type` mapping (see table below)
 - [ ] Define canonical `extra.item` slug list (see table below)
@@ -213,7 +217,7 @@ Frontend:
 - MUI Drawer `anchor="bottom"` for filter sheet (max-height 70vh, scrollable content, sticky "Apply" button)
 - Category chips inside bottom sheet: `flex flex-nowrap overflow-x-auto`
 - Cards: `grid-cols-1` mobile
-- Bottom bar is **local to FilterDayTripsPage**, not global layout
+- Bottom bar local to FilterDayTripsPage, not global layout
 
 ---
 
@@ -224,13 +228,13 @@ Frontend:
 - `DayTripList.js` grid: `xs=12 sm=6 md=6 lg=4 xl=3`
 - Skeletons match 220px card height
 - Empty state redesign (icon + contextual message + clear-filters CTA)
-- Dark mode (light only for Phase 1–3; add `dark:` tokens here if needed)
+- Dark mode (light only for Phase 1–3; add `dark:` tokens in Phase 4 if needed)
 
 ---
 
 ## Design Spec (Source of Truth)
 
-**Page:** `/activities` (NOT a homepage, NOT a travel guide)
+**Page:** `/activities` (NOT homepage, NOT travel guide)
 
 **Tone:** Airbnb Experiences + GetYourGuide + Linear design system
 
@@ -290,7 +294,7 @@ Frontend:
 - `SortBar` Phase 1: 3 options only (no price sort)
 - Sidebar width from `SIDEBAR_CONFIG` — no hardcoded px in grid template
 - Wishlist state: per-card `useState` only — never lifted to page level
-- `StickySidebar`: never add `overflow-y-auto` to the sticky element itself (breaks positioning)
+- `StickySidebar`: never add `overflow-y-auto` to sticky element itself (breaks positioning)
 
 ---
 
@@ -312,14 +316,14 @@ Frontend:
 
 ## Agent Review Notes (2026-06-01)
 
-Summary of 4-agent (UX, Frontend, Backend, Design) debate findings — all resolved above.
+4-agent (UX, Frontend, Backend, Design) debate findings — all resolved above.
 
 **Key discoveries:**
 - `SortBar.js` already existed with `min_rate`/`-min_rate` options not supported by backend — must strip for Phase 1
 - `useDayTripFilters.js` had no `sort` field — blocking
-- `-average_rating` ordering requires Django ORM annotation — not a model field
-- `booked_count` is a static legacy field (hardcoded default=10) — low fidelity sort, acceptable Phase 1
-- Card hover had `transform: none` override — explicitly blocks the lift animation
+- `-average_rating` ordering requires Django ORM annotation — not model field
+- `booked_count` is static legacy field (hardcoded default=10) — low fidelity sort, acceptable Phase 1
+- Card hover had `transform: none` override — explicitly blocks lift animation
 - Sidebar width 240px (not 280px) unlocks proper 4-col grid at 1440px (288px cards vs 270px)
 - CategoryFilter must move to sidebar only — no dual placement
 - Phase 2 N+1 risk on `min_price`/`max_price` filter — requires `annotate(min_rate=Min(...)).distinct()`

@@ -32,7 +32,7 @@ All blockers resolved.
 ### B-1: `rows` Prop Behavior Undefined
 **Where:** `layout.js:143`, `main-header.js:112`
 
-Current `rows={1}` hides nav on `/checkout`, `/payment`, `/login`, `/register`, `/search`, `/blog`. Spec v1 said "single-row everywhere" but didn't address this.
+`rows={1}` hides nav on `/checkout`, `/payment`, `/login`, `/register`, `/search`, `/blog`. Spec v1 said "single-row everywhere" but didn't address this.
 
 **Resolution:** Keep `rows` prop logic. Shows nav on most pages, hides on transactional. Type A/B split formalizes this.
 
@@ -60,9 +60,9 @@ Current `rows={1}` hides nav on `/checkout`, `/payment`, `/login`, `/register`, 
 ### H-2: Mobile Header Currently Uses `bg-fb-blue`
 **Where:** `main-header.js:47, 58`
 
-Mobile is hardcoded `bg-fb-blue`, not glass. Visual change: blue → white (more dramatic than desktop glass → white).
+Mobile hardcoded `bg-fb-blue`, not glass. Visual change: blue → white (more dramatic than desktop glass → white).
 
-WCAG contrast: both valid. But visual change on mobile more significant than spec implied.
+WCAG contrast: both valid. Visual change on mobile more significant than spec implied.
 
 **Resolution:** Addressed in spec.
 
@@ -71,7 +71,7 @@ WCAG contrast: both valid. But visual change on mobile more significant than spe
 
 MUI AppBar without `color="inherit"` or `sx={{ bgcolor: 'transparent' }}` defaults to primary.
 
-**Resolution:** `globals.css` already has `.MuiAppBar-root { background-color: transparent !important }` — covers it. Optional explicit `sx` is safer.
+**Resolution:** `globals.css` already has `.MuiAppBar-root { background-color: transparent !important }` — covers it. Optional explicit `sx` safer.
 
 ## Medium Priority Issues
 

@@ -1,7 +1,7 @@
 # Carousel Design Standard
 
 ## Summary
-Embla-carousel-react items-per-screen breakpoints, gap values, card widths, and focus ring handling for SmartEnPlus frontend.
+Embla-carousel-react items-per-screen breakpoints, gap values, card widths, focus ring handling for SmartEnPlus frontend.
 
 ## Context
 Popular Routes carousel investigation 2026-05-28. `gridCols={4}` hardcoded → overflow. Cards `flex-none` with fixed px widths → unpredictable items-per-screen. Blue focus ring from browser `box-shadow`, not `outline`.
@@ -24,21 +24,21 @@ Peek = partial next card visible → signals scrollability.
 
 ## Gap Values
 
-Follow design system spacing:
+Design system spacing:
 - Mobile: `gap-3` (12px) — `mr-2 sm:mr-3 last:mr-0`
 - Tablet+: `gap-4` (16px) — `mr-3 lg:mr-4 last:mr-0`
 
 ## Card Width Strategy
 
-Use vw-based widths, NOT fixed px. Fixed px doesn't adapt to viewport.
+vw-based widths, NOT fixed px. Fixed px breaks viewport adaptation.
 
 ```
 w-[80vw] sm:w-[45vw] md:w-[40vw] lg:w-[30vw] xl:w-[25vw] max-w-[320px]
 ```
 
-`max-w-[320px]` caps card width on very large screens.
+`max-w-[320px]` caps width on large screens.
 
-Also update `sizes` attribute on Next/Image to match:
+Update `sizes` on Next/Image to match:
 ```
 sizes="(max-width: 639px) 80vw, (max-width: 767px) 45vw, (max-width: 1023px) 40vw, 30vw"
 ```
@@ -71,10 +71,10 @@ const [emblaRef, emblaApi] = useEmblaCarousel({
 ```
 
 ### Key Rules
-- `overflow:hidden` and `ref` MUST be on same element
-- Buttons MUST be outside `overflow-hidden` container — otherwise clipped
-- Use `inset-0` on button wrapper for full-width coverage
-- `pointer-events-none` on outer, `pointer-events-auto` on inner for button targets
+- `overflow:hidden` + `ref` MUST be same element
+- Buttons MUST be outside `overflow-hidden` — otherwise clipped
+- `inset-0` on button wrapper for full-width coverage
+- `pointer-events-none` outer, `pointer-events-auto` inner for button targets
 - `flex-none` on slides prevents shrinking
 - Gap via `mr-N` on slides, NOT `gap-*` on flex container (embla transforms conflict)
 
@@ -86,7 +86,7 @@ Browser `focus-visible` uses `box-shadow`, NOT `outline`.
 <a style={{ outline: 'none', boxShadow: 'none' }}>
 ```
 
-Inline style required — Tailwind classes insufficient against browser defaults.
+Inline style required — Tailwind insufficient against browser defaults.
 
 ## Related
 

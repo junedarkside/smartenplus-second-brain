@@ -1,10 +1,10 @@
 # SmartEnPlus 2026 UX Direction
 
 ## Summary
-Strategic shift from "premium cinematic travel website" to "premium operational transportation platform." 2026 trend: efficiency-first premium UX. Compact 45-60vh hero, calm minimalism, low-stimulus design.
+Strategic shift: "premium cinematic travel website" → "premium operational transportation platform." 2026 trend: efficiency-first premium UX. Compact 45-60vh hero, calm minimalism, low-stimulus design.
 
 ## Context
-Extracted from [[smartenplus-uxui-redesign-research-2026]]. The biggest 2026 UX shift affecting SmartEnPlus: oversized cinematic heroes are declining, compact immersive interfaces are rising.
+Extracted from [[smartenplus-uxui-redesign-research-2026]]. Biggest 2026 UX shift for SmartEnPlus: oversized cinematic heroes declining, compact immersive interfaces rising.
 
 ## The Strategic Shift
 
@@ -41,7 +41,7 @@ Extracted from [[smartenplus-uxui-redesign-research-2026]]. The biggest 2026 UX 
 - Authentic transportation imagery > fake tourism scenes
 
 ### Modular Layout (Bento-inspired, restrained)
-- Organized cards, flexible layouts, editorial + utility combination
+- Organized cards, flexible layouts, editorial + utility combo
 
 ## Hero Section Direction
 

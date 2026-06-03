@@ -1,13 +1,13 @@
 # API Mirroring Pattern for New Features
 
 ## Summary
-When adding a new data variant to an existing endpoint, mirror the existing fetch method with a filtered queryset. `_fetch_X_data` naming convention. Reuse existing serializer. No new endpoints.
+New data variant on existing endpoint: mirror fetch method with filtered queryset. `_fetch_X_data` naming. Reuse existing serializer. No new endpoints.
 
 ## Context
 `airport-transfer-redesign-2026.md` (2026-05-30). Backend added `_fetch_airport_routes_data()` mirroring `_fetch_home_routes_data()`.
 
 ## Problem
-Old airport transfer section used station grid (name only, no routes, no prices). Zero booking intent. Options evaluated:
+Old airport transfer section: station grid (name only, no routes, no prices). Zero booking intent. Options:
 - A: Static hardcoded routes — prices stale, maintenance burden
 - B: Filter `home_routes` client-side — brittle, station_type not guaranteed
 - C: New `airport_routes` key in FrontPage API — **chosen**
@@ -42,7 +42,7 @@ response_data["airport_routes"] = self._fetch_airport_routes_data(request, parse
 ```
 
 ### Reuse Existing Serializer
-Uses `HomeSerializer` — same shape as `home_routes`. No new serializer needed.
+Uses `HomeSerializer` — same shape as `home_routes`. No new serializer.
 
 ### Frontend Consumption
 ```jsx
@@ -57,11 +57,11 @@ const airportRoutes = frontPageData?.airport_routes;
 
 ### Filtering Requirements
 - `departure_station__station_type='airport'` — station type filter
-- Must have active Trip + active non-expired Contract — operational validity
+- Active Trip + active non-expired Contract — operational validity
 - `lowest_price` via Subquery on Contract_RateCard — price anchor
 - `operator_count` — trust signal
 - Order by `-query_count` — most popular first
-- Default limit: 4 (homepage shows 4 cards)
+- Default limit: 4
 
 ### Reuse Audit (Airport Transfer)
 | Asset | Reused From | Notes |
@@ -72,22 +72,22 @@ const airportRoutes = frontPageData?.airport_routes;
 | `isGTMEnabled`, `sendGTMEvent` | `helpers/gtmUtils.js` | GTM pattern from PopularRoutesSection |
 | `formatPrice` | Inline (pattern from PopularRouteImageCard) | 7 lines |
 
-### Tech Debt:0
+### Tech Debt: 0
 - No hardcoded data
 - No new serializers
 - No new endpoints
 - No new dependencies
-- Component size<60 lines each
+- Component size <60 lines each
 
 ## Tradeoffs
-- Single method vs. separate endpoint — keeps API surface small
+- Single method vs. separate endpoint — API surface stays small
 - Shared cache TTL (300s) — airport prices may need shorter TTL if volatile
-- ISR refreshes data every 60s — acceptable for homepage discovery
+- ISR refreshes every 60s — acceptable for homepage discovery
 
 ## Consequences
 - Frontend gets dedicated `airport_routes` array — no client-side filtering
 - Backend cache reusable — same frontpage cache TTL
-- Pattern is repeatable for other station types (e.g., `port_routes`, `bus_station_routes`)
+- Pattern repeatable for other station types (e.g., `port_routes`, `bus_station_routes`)
 
 ## Related
 - [[nextjs-patterns]] — ISR patterns

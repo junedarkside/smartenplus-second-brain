@@ -2,7 +2,7 @@
 
 ## Summary
 
-Synchronous LLM API calls in Django views block WSGI workers for 5–20s. At 5 concurrent requests, all workers stall and the entire app degrades. Pattern: view returns `task_id` immediately, Celery task handles the AI call, frontend polls for result.
+Sync LLM calls in Django views block WSGI workers 5–20s. 5 concurrent requests = all workers stall = app degrades. Pattern: view returns `task_id` immediately, Celery handles AI call, frontend polls.
 
 ## Problem
 
@@ -14,7 +14,7 @@ def import_pdf(self, request):
     return Response(result)
 ```
 
-With 4 WSGI workers (typical Django/gunicorn config), 4 concurrent import requests = 0 workers available for all other requests. Dashboard freezes for all users.
+4 WSGI workers (typical Django/gunicorn), 4 concurrent import requests = 0 workers for everything else. Dashboard freezes for all users.
 
 ## Pattern
 
@@ -54,7 +54,7 @@ const pollTask = async (taskId) => {
 
 ## HTTP Status Codes
 
-- `202 Accepted` — task submitted, not yet complete
+- `202 Accepted` — task submitted, not complete
 - `200 OK` — task complete, result in body
 - `500` — task failed, error in body
 
@@ -66,11 +66,11 @@ Any Django endpoint that:
 - Runs image generation
 - Makes multiple chained API calls
 
-Threshold: if the operation takes >2s under load, make it async.
+Threshold: op takes >2s under load → make async.
 
 ## Existing Celery Infrastructure
 
-SmartEnPlus uses Celery beat for scheduled tasks. See [[celery-tasks]] for existing task patterns. Adding a new `@shared_task` follows the established pattern.
+SmartEnPlus uses Celery beat for scheduled tasks. See [[celery-tasks]] for existing patterns. New `@shared_task` follows established pattern.
 
 ## SmartEnPlus Instance
 

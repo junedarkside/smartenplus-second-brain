@@ -2,7 +2,7 @@
 
 ## Summary
 
-Django signals should trigger side effects via Celery tasks, not bare threads. Bare threads have no retry/monitoring/backpressure and die with Django restart.
+Django signals trigger side effects via Celery tasks, not bare threads. Bare threads: no retry/monitoring/backpressure, die on Django restart.
 
 ## Why Not Bare Thread
 
@@ -49,9 +49,9 @@ def trigger_isr_revalidation(self, slug):
 
 - `bind=True` — access `self` for retry
 - `max_retries=3` — fail-safe
-- `ignore_result=True` — don't store result in DB
+- `ignore_result=True` — no result stored in DB
 - Retry backoff: 60s
-- Deduplication: slug-based task_id prevents rapid-save flood
+- Deduplication: slug-based task_id blocks rapid-save flood
 
 ## Signal Wiring
 

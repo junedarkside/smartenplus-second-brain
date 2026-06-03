@@ -7,7 +7,7 @@
 
 ## Design Decision: Option A — Unified Glass
 
-Both Row 1 (logo+utilities) and Row 2 (nav) share identical glassmorphism treatment. Single dark gradient layer, no divider needed. Header feels like "one integrated navigation system."
+Row 1 (logo+utilities) + Row 2 (nav) share identical glassmorphism. Single dark gradient, no divider. Header = one integrated nav system.
 
 ---
 

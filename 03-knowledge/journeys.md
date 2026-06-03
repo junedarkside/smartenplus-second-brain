@@ -23,12 +23,12 @@
 - `cart_id`, `order_id`, `booking_slug` (all indexed)
 - `timestamp` (indexed)
 
-**Indexes:** 6 composite indexes. Ordered by `-timestamp`.
-**Helper:** `metadata_summary` property — extracts key fields from metadata.
+**Indexes:** 6 composite. Order: `-timestamp`.
+**Helper:** `metadata_summary` — extracts key fields from metadata.
 
 ## Usage: Dedup Guard
 
-`@log_email_event(email_type)` decorator checks for existing `UserJourneyEvent` with matching `email_*_sent` event_type. Prevents duplicate sends on task retry.
+`@log_email_event(email_type)` checks existing `UserJourneyEvent` for matching `email_*_sent` type. Blocks duplicate sends on task retry.
 
 ## Related
 - [[celery-tasks]]

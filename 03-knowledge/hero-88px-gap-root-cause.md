@@ -1,10 +1,10 @@
 # Hero 88px Gap — Root Cause
 
 ## Summary
-88px white gap between header bottom and hero image on non-homepage pages. Caused by double-offset: sticky header reserves 88px + `pt-[88px]` on `<main>` adds another 88px. Sticky covers one, leaving visible 88px gap.
+88px white gap between header bottom and hero image on non-homepage pages. Double-offset: sticky header reserves 88px + `pt-[88px]` on `<main>` adds another 88px. Sticky covers one, leaving visible 88px gap.
 
 ## Context
-Non-homepage pages use `position: sticky` header. Homepage uses `position: fixed`. The spacing model differs between the two, creating an asymmetric gap.
+Non-homepage pages use `position: sticky` header. Homepage uses `position: fixed`. Spacing model differs, creating asymmetric gap.
 
 ## The Mechanism
 
@@ -33,7 +33,7 @@ Viewport
 - Hero children: no `pt-[88px]` offset
 
 ### Why Double-Offset
-`position: sticky` with `top: 0` keeps element in document flow AND pins it. Combined with `pt-[88px]` on `<main>`, you get 88px (sticky space) + 88px (padding) = 176px equivalent offset. Sticky header covers 88px of it, leaving exactly **88px visible gap**.
+`position: sticky` with `top: 0` keeps element in document flow AND pins it. Combined with `pt-[88px]` on `<main>`: 88px (sticky space) + 88px (padding) = 176px equivalent offset. Sticky covers 88px, leaving exactly **88px visible gap**.
 
 ## Fix — Option A (recommended)
 
@@ -41,10 +41,10 @@ Viewport
 2. **`homepagev2.js` line 392:** Remove `pt-[88px]` from hero child div (redundant after `isCinematic` removal)
 3. **Non-homepage hero content divs:** Add `pt-[88px]` to hero content div
 
-Spacing becomes component-local rather than global.
+Spacing becomes component-local not global.
 
 ## Additional Finding
-88px hardcoded everywhere — not a CSS variable. Define `--header-height: 88px` as CSS custom property for maintainability.
+88px hardcoded everywhere — not CSS variable. Define `--header-height: 88px` as CSS custom property for maintainability.
 
 ## Files Affected
 

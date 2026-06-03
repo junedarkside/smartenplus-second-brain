@@ -8,9 +8,9 @@ Traditional RAG: retrieves chunks at query time, no accumulation. LLM Wiki: incr
 
 ## Three Layers
 
-1. **Raw sources** — immutable source documents. LLM reads, never modifies.
+1. **Raw sources** — immutable source docs. LLM reads, never modifies.
 2. **The wiki** — LLM-generated markdown. Summaries, entity pages, concepts. LLM owns.
-3. **The schema** — `CLAUDE.md` tells LLM how wiki structured, conventions, workflows.
+3. **The schema** — `CLAUDE.md` tells LLM wiki structure, conventions, workflows.
 
 ## Operations
 
@@ -24,9 +24,9 @@ Ask against wiki → LLM searches pages → synthesizes with citations. Good ans
 Periodic health-check: contradictions, stale claims, orphan pages, missing pages, broken cross-refs.
 
 ## Why It Works
-Humans abandon wikis due to maintenance burden. LLMs don't get bored, don't forget cross-refs, can touch 15 files per pass. Maintenance cost ≈ zero.
+Humans abandon wikis: maintenance burden. LLMs don't get bored, don't forget cross-refs, touch 15 files per pass. Maintenance cost ≈ zero.
 
-Human: curate sources, direct analysis, ask questions, interpret.
+H: curate sources, direct analysis, ask questions, interpret.
 LLM: summarize, cross-reference, file, bookkeep.
 
 ## Navigation

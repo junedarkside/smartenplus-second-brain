@@ -1,8 +1,8 @@
 # Second Brain — Vault Schema
 
-AI operating instructions for this Obsidian vault. Read first every session.
+AI operating instructions for Obsidian vault. Read first every session.
 
-LLM Wiki — persistent, compounding knowledge artifact. LLM writes and maintains. Human curates and directs. Knowledge compiled once, kept current, not re-derived on every query.
+LLM Wiki — persistent, compounding knowledge artifact. LLM writes+maintains. Human curates+directs. Knowledge compiled once, kept current, not re-derived per query.
 
 ---
 
@@ -10,9 +10,9 @@ LLM Wiki — persistent, compounding knowledge artifact. LLM writes and maintain
 
 1. **Simplicity First** — no over-engineering, no premature abstractions, no deep nesting, no complex tagging
 2. **Everything Is a Knowledge Asset** — conversations, bugs, architecture, research, lessons → structured reusable notes
-3. **AI-Optimized** — explain WHY not WHAT, preserve tradeoffs and decisions, include operational context, reduce ambiguity, stay readable months later
+3. **AI-Optimized** — explain WHY not WHAT, preserve tradeoffs+decisions, include operational context, reduce ambiguity, stay readable months later
 4. **Obsidian Is Source of Truth** — wiki, project OS, architecture handbook, decision database, operational memory, learning graph
-5. **Anti-Duplication** — search before creating. If existing page covers 80%, extend don't fork
+5. **Anti-Duplication** — search before creating. If existing page covers 80%: extend, don't fork
 6. **Anti-Overengineering** — 3 similar lines > premature helper. No config options "just in case"
 
 ## Folder Structure
@@ -66,7 +66,7 @@ Not every section required. Use what fits.
 
 ## Operations
 
-**Ingest:** User drops source → LLM reads → writes summary page → updates index + entity pages → appends log. Single source may touch 10–15 pages.
+**Ingest:** User drops source → LLM reads → writes summary page → updates index+entity pages → appends log. Single source may touch 10–15 pages.
 
 **Query:** User asks → LLM searches `index.md` → drills into pages → synthesizes with citations. Good answers filed back as new pages.
 
@@ -74,7 +74,7 @@ Not every section required. Use what fits.
 
 ## Quality Rules
 
-Every note must answer: What is this? Why does it matter? What problem does it solve? What are the tradeoffs? What should future AI understand?
+Every note must answer: What is this? Why does it matter? What problem does it solve? What are tradeoffs? What should future AI understand?
 
 Prefer: clarity, operational usefulness, explicit context, reusable knowledge.
 Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplicate concepts.
@@ -85,14 +85,14 @@ Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplic
 - **Update** — existing page incomplete or stale
 - **Merge** — two pages same topic → combine, update all links
 - **Archive** — completed/superseded → move to `08-archive/`. Never delete.
-- `[[page-name]]` wikilinks. No aliases. A `[[name]]` with no matching page = "worth writing later", not an error.
+- `[[page-name]]` wikilinks. No aliases. `[[name]]` with no matching page = "worth writing later", not error.
 - When updating: check if linked pages need updates too.
 
 ## Behavior Rules
 
 **Must:** flag tech debt | challenge bad architecture | prevent duplication | optimize for AI retrieval | preserve decision context | keep notes under 200 lines (split if longer) | suggest vault improvements
 
-**Must NOT:** create unnecessary folders | over-tag (folder structure IS the tag) | duplicate concepts | generate boilerplate | store temporary noise | create notes that should be a section | add abstraction "just in case" | encourage overengineering
+**Must NOT:** create unnecessary folders | over-tag (folder structure IS tag) | duplicate concepts | generate boilerplate | store temporary noise | create notes that should be sections | add abstraction "just in case" | encourage overengineering
 
 ## Special Files
 
@@ -105,7 +105,7 @@ Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplic
 
 ## Session Initialization Protocol
 
-At the start of every session when working on SmartEnPlus vault:
+At start of every session working on SmartEnPlus vault:
 
 1. **Read** `master-state.md` at vault root
 2. **Run live git commands** on all 4 repos:
@@ -119,8 +119,8 @@ At the start of every session when working on SmartEnPlus vault:
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content branch --show-current`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content log --oneline -3`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content status --short`
-3. **Update `master-state.md` Section 1** with live branch + commit data
-4. **Respond with 3-part brief** before writing any code or making changes:
+3. **Update `master-state.md` Section 1** with live branch+commit data
+4. **Respond with 3-part brief** before writing code or making changes:
 
 > **Current State Summary** — last worked on + next step + live uncommitted changes
 > **Immediate Focus** — top open item from master-state.md Section 2
@@ -143,7 +143,7 @@ At the start of every session when working on SmartEnPlus vault:
 4. User confirms or excludes items
 5. Extract confirmed atoms, update source notes, update `index.md`
 6. Append to `log.md`: `## [YYYY-MM-DD] lint | atomized N concepts from M notes`
-7. Commit + push vault
+7. Commit+push vault
 
 ---
 
@@ -160,12 +160,12 @@ At the start of every session when working on SmartEnPlus vault:
 3. **Update `master-state.md` Section 2** — close resolved items, add new bugs/edge cases
 4. **Leave Sections 3 and 4 unchanged** unless API contract or guardrail permanently changed
 5. **Atomize new knowledge** — for each note written or heavily modified this session:
-   a. Scan for concepts that are standalone, linkable, and reusable (see [[atomic-notes]])
+   a. Scan for standalone, linkable, reusable concepts (see [[atomic-notes]])
    b. Qualifies → extract to `03-knowledge/{domain}-{concept}.md` using `[[atomic-note]]` template, replace source content with 2-line summary + `[[wikilink]]`, add to `index.md`
    c. Already atomic or doesn't qualify → skip
    d. Max 5 atoms per session (prevents over-extraction noise)
 6. **Append to `log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
-7. **Commit + push vault and content repo** — stage all changes and push to GitHub:
+7. **Commit+push vault and content repo** — stage all changes and push to GitHub:
    ```bash
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" add -A
    git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" commit -m "session-end: <one-line summary>"

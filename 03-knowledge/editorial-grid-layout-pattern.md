@@ -7,7 +7,7 @@ Asymmetric 2fr 1fr CSS grid for featured destination cards. Desktop uses CSS gri
 `destinations-redesign-review.md` (2026-05-29). 3-agent review + scrutiny pass. Destinations section redesign from uniform grid to editorial layout.
 
 ## Problem
-- All7 cards identical size/weight — no visual hierarchy
+- All 7 cards identical size/weight — no visual hierarchy
 - `(N trips)` supply count not emotionally useful
 - "Explore More..." occupies full grid cell — wastes space
 - Uniform grid feels like sitemap
@@ -37,10 +37,10 @@ Reuse `CardCarouselContainer` via `DestinationsCarousel.js` wrapper:
 ### Border Radius: `rounded-xl` (12px)
 Token added to `BORDER_RADIUS_CLASSES` as `imageCard: 'rounded-xl'`.
 
-**Rationale:** `rounded-2xl` (16px) rejected. Codebase already has drift: `DiscoverySection.js` uses `rounded-xl`. Current LocationGridComponent cards use bare `rounded` (4px), not `rounded-md` (6px). Token addition fills a gap.
+**Rationale:** `rounded-2xl` (16px) rejected. Codebase has drift: `DiscoverySection.js` uses `rounded-xl`. Current LocationGridComponent cards use bare `rounded` (4px), not `rounded-md` (6px). Token fills gap.
 
 ### Skip ContentCard
-For photo-led editorial sections, ContentCard constraints are wrong:
+Photo-led editorial sections — ContentCard constraints wrong:
 - `bg-white` irrelevant (photography fills cards)
 - `overflow-hidden` should clip individual card images, not section wrapper
 - `flex-col` blocks asymmetric CSS grid
@@ -85,12 +85,12 @@ const DESTINATION_COPY = {
 ```
 
 ## Tradeoffs
-- `carouselBreakpoint="lg"` (1024px) chosen over `md` (768px) — asymmetric grid too cramped at tablet size
+- `carouselBreakpoint="lg"` (1024px) over `md` (768px) — asymmetric grid too cramped at tablet
 - ISR: featured card (`index === 0`) may go stale — acceptable, negotiate `featured: boolean` with backend
-- WCAG contrast: `bg-black/25` white text may fail 4.5:1 on light images — test and increase to `bg-black/35` if needed
+- WCAG contrast: `bg-black/25` white text may fail 4.5:1 on light images — test, increase to `bg-black/35` if needed
 
 ## Consequences
-- Visual hierarchy now explicit — featured card dominates
+- Visual hierarchy explicit — featured card dominates
 - Mobile carousel preserves horizontal scroll UX
 - Editorial copy via `destinationCopy.js` — quarterly review cadence, not code
 

@@ -1,10 +1,10 @@
 # NextAuth Session Shape
 
 ## Summary
-SmartEnPlus NextAuth session has custom root fields — `session.email` is always undefined.
+SmartEnPlus NextAuth session has custom root fields — `session.email` always undefined.
 
 ## Why It Matters
-Hits every auth feature. Wrong access pattern (`session?.email`) silently returns undefined — no error thrown, just blank email causing silent failures in cart, payment, order pages.
+Hits every auth feature. Wrong access pattern (`session?.email`) silently returns undefined — no error, just blank email causing silent failures in cart, payment, order pages.
 
 ## Detail
 ```js

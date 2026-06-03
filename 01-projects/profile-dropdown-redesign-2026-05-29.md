@@ -1,7 +1,7 @@
 # Profile Dropdown Redesign — 2026-05-29
 
 ## Summary
-3-specialist review (UX + UI/Visual + Frontend) of the current ProfileButton. Full redesign spec decided: 11→6 items, 3-file split, MUI-preserve strategy, pill trigger, bottom sheet mobile, 296px visual spec.
+3-specialist review (UX + UI/Visual + Frontend) of current ProfileButton. Full redesign spec decided: 11→6 items, 3-file split, MUI-preserve strategy, pill trigger, bottom sheet mobile, 296px visual spec.
 
 ## Status
 **DECIDED 2026-05-29.** Ready for implementation. Branch: `260528-feat/header-redesign-2026`.
@@ -10,24 +10,24 @@
 
 ## Problem
 
-Current ProfileButton (`components/auth/ProfileButton.js`) is a generic MUI Menu:
+Current ProfileButton (`components/auth/ProfileButton.js`) = generic MUI Menu:
 - **200px wide** — truncates labels like "Account Dashboard", "Family & Friends"
 - **11 items, 4 dividers** — no traveler mental model; reads as SaaS admin panel
-- **Guest state dead-end** — bare PersonOutlinedIcon navigates directly to /account/login, zero information scent
+- **Guest state dead-end** — bare PersonOutlinedIcon navigates to /account/login, zero information scent
 - **No identity confirmation** — auth header shows avatar only, no name/email; critical on shared devices
-- **Guest path missing** — `/pages/guest-order/[orderId].js` exists but profile gives guests no path to it
+- **Guest path missing** — `/pages/guest-order/[orderId].js` exists but profile gives guests no path
 - **Broken cart notice** — `sx` prop on `<span>` silently ignored; "N bookings will be saved" invisible on mobile
-- **Visual** — MUI defaults, no design language, `boxShadow: 3` is generic Material elevation
+- **Visual** — MUI defaults, no design language, `boxShadow: 3` = generic Material elevation
 
 ---
 
 ## Decision
 
 ### Architecture: Keep MUI Menu Core
-**Rationale:** Integration tests use `getByRole('menu')` / `getByRole('menuitem')` ARIA semantics. Swapping to Headless UI / Radix breaks those contracts. The `isLoggingOut` close-guard on MUI `onClose` is subtle behavior. Full visual control via `PaperProps` + `sx` overrides — zero test risk.
+**Rationale:** Integration tests use `getByRole('menu')` / `getByRole('menuitem')` ARIA semantics. Swapping to Headless UI / Radix breaks those contracts. `isLoggingOut` close-guard on MUI `onClose` = subtle behavior. Full visual control via `PaperProps` + `sx` overrides — zero test risk.
 
 ### Mobile: MUI Drawer (bottom sheet)
-`anchor="bottom"` gives backdrop, focus trap, scroll lock for free. Fits Fitts's Law — trigger is top-right corner, interaction zone is bottom of screen; bottom sheet resolves the spatial mismatch.
+`anchor="bottom"` gives backdrop, focus trap, scroll lock free. Fits Fitts's Law — trigger is top-right corner, interaction zone is bottom of screen; bottom sheet resolves spatial mismatch.
 
 ---
 
@@ -117,7 +117,7 @@ Replace bare Avatar + grey badge with **pill button**:
 - Far right: 16px chevron gray400, rotates 180deg when open
 - Mobile (`< md`): avatar-only 44×44px tap target, no text/chevron
 
-**Fix `stringToColor`:** constrain output to `hsl(H, 55%, 45%)` — brightness floor prevents near-black or oversaturated avatars.
+**Fix `stringToColor`:** constrain to `hsl(H, 55%, 45%)` — brightness floor prevents near-black or oversaturated avatars.
 
 ---
 
@@ -159,8 +159,8 @@ MUI `Drawer anchor="bottom"`, `PaperProps: { borderRadius: '16px 16px 0 0' }`, d
 ## Debate Summary
 
 **UX Specialist:**
-- Cut 5 items (Dashboard, Rate&Reviews, Edit Password as top-level, and restructure)
-- Guest dead-end is a conversion failure — guest order lookup path exists but unreachable
+- Cut 5 items (Dashboard, Rate&Reviews, Edit Password as top-level, restructure)
+- Guest dead-end = conversion failure — guest order lookup path exists but unreachable
 - Bottom sheet wins on Fitts's Law and OTA convention (Booking.com, Grab, Airbnb all use it)
 - Identity confirmation missing from auth header — critical on shared/family devices
 
@@ -168,17 +168,17 @@ MUI `Drawer anchor="bottom"`, `PaperProps: { borderRadius: '16px 16px 0 0' }`, d
 - 200px clips labels; 296px minimum
 - grey.300 badge creates competing affordances with fb-blue ring
 - `stringToColor` needs brightness floor — arbitrary hex produces jarring avatars
-- Only 2 dividers — current 4 carry equal weight, making sections feel arbitrary
-- Logout red text+icon is the signal; no background change needed
+- Only 2 dividers — current 4 carry equal weight, sections feel arbitrary
+- Logout red text+icon = signal; no background change needed
 
 **Frontend Engineer:**
-- Keep MUI Menu — tests use ARIA semantics that Radix/Headless UI would break
-- MUI Drawer for bottom sheet — backdrop + focus trap for free, reuses existing MUI stack
+- Keep MUI Menu — tests use ARIA semantics Radix/Headless UI would break
+- MUI Drawer for bottom sheet — backdrop + focus trap free, reuses existing MUI stack
 - 3-file split stays under 200L/component limit
 - Migration risk low — only `main-header.js` consumes ProfileButton, no API change
 - Some integration tests assert on `console.log` strings that don't exist in current code — already broken, need updating regardless
 
-**Consensus reached:** All 3 agree on item reduction, MUI-preserve, 3-file split, bottom sheet, 296px spec.
+**Consensus:** All 3 agree on item reduction, MUI-preserve, 3-file split, bottom sheet, 296px spec.
 
 ---
 
@@ -186,8 +186,8 @@ MUI `Drawer anchor="bottom"`, `PaperProps: { borderRadius: '16px 16px 0 0' }`, d
 - `navigateTo` + logout logic: pass as props to ProfileMenu (no state duplication)
 - RTK Query hooks (`useCheckCartIdQuery`, `useDeleteCartMutation`) stay in ProfileButton
 - `useSession` stays in ProfileButton
-- Language & Currency selector: deferred — can be added as optional footer row later
-- `Rate & Reviews` UX: recommend moving link to booking detail page (`/bookings/[id]`)
+- Language & Currency selector: deferred — can add as optional footer row later
+- `Rate & Reviews` UX: move link to booking detail page (`/bookings/[id]`)
 
 ---
 

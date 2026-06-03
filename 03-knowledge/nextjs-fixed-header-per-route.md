@@ -6,7 +6,7 @@ Use `router.pathname` to toggle MUI `AppBar` between `position="fixed"` (homepag
 
 ## Problem
 
-Homepage needs header to float over full-viewport hero image (`position: fixed`). All other pages need the header to participate in normal document flow (`position: sticky`). MUI AppBar doesn't support per-route positioning out of the box.
+Homepage needs header float over full-viewport hero (`position: fixed`). Other pages need header in normal doc flow (`position: sticky`). MUI AppBar no per-route positioning out of box.
 
 ## Pattern
 
@@ -25,21 +25,21 @@ const isHomepage = router.pathname === '/';
 <main className={`...${isHomepage ? '' : ' pt-[88px]'}`}>
 ```
 
-The `pt-[88px]` offset on non-homepage routes prevents content from hiding under the fixed-height header (88px = Row 1 48px + Row 2 40px).
+`pt-[88px]` offset on non-homepage routes prevents content hiding under fixed-height header (88px = Row 1 48px + Row 2 40px).
 
-Homepage needs no offset — the hero section fills the full viewport behind the fixed header intentionally.
+Homepage needs no offset — hero fills full viewport behind fixed header intentionally.
 
 ## Why Not CSS Only
 
-MUI's `position` prop maps to CSS `position` AND controls internal MUI layout behavior. Setting via Tailwind class alone won't override MUI's internal positioning logic — must go through the prop.
+MUI `position` prop maps to CSS `position` AND controls internal MUI layout behavior. Tailwind class alone won't override MUI internal logic — must go through prop.
 
 ## Tradeoffs
 
 | Pro | Con |
 |-----|-----|
-| Clean separation — homepage gets cinematic, others get normal | `pt-[88px]` hardcoded to header height — must update both if header height changes |
-| No context/prop drilling required | `isHomepage` computed in two places (main-header + layout) |
-| Works with MUI AppBar without fighting the library | |
+| Clean separation — homepage cinematic, others normal | `pt-[88px]` hardcoded to header height — update both if height changes |
+| No context/prop drilling | `isHomepage` computed in two places (main-header + layout) |
+| Works with MUI AppBar without fighting library | |
 
 ## Related
 

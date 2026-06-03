@@ -32,7 +32,7 @@ def task_name(self, arg):
 ## Beat Schedule
 
 ### Daily
-- **`reset_daily_counter`** — `0 0 * * *`. Adds `daily_counter` to `booked_count` on all Contracts, resets counter to 0.
+- **`reset_daily_counter`** — `0 0 * * *`. Adds `daily_counter` to `booked_count` on all Contracts, resets to 0.
 - **`soft_delete_expired_ratecards`** — `0 1 * * *`. Soft-deletes `Contract_RateCard` where `rate_date < today` + `rate_date IS NOT NULL`. Preserves defaults (`rate_date=NULL`).
 
 ### Periodic
@@ -64,8 +64,8 @@ def task_name(self, arg):
 ## Cleanup Tasks
 
 ### `cleanup_orphaned_cart_items` (`orders/tasks.py`)
-- Catches cart items not cleaned during normal payment processing.
-- Every 2 hours via beat. Finds paid orders (last 48h) with carts, deletes remaining `CartItem` entries.
+- Catches cart items missed during normal payment processing.
+- Every 2h via beat. Finds paid orders (last 48h) with carts, deletes remaining `CartItem` entries.
 - Telegram alert if ≥5 orphans. Stats cached (2h TTL), daily aggregate.
 
 ## Email Env Vars (Required)

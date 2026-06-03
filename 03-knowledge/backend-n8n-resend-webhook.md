@@ -9,7 +9,7 @@
 
 ## Summary
 
-Added n8n webhook forwarding to the "Resend Operator" button in admin-dashboard. The button triggers `send_booking_data` Celery task which POSTs booking JSON to configured external targets. New target: `N8N_WEBHOOK_URL` (plain webhook, no auth). This enables n8n automation workflows to receive booking data on demand.
+Added n8n webhook forwarding to "Resend Operator" button in admin-dashboard. Button triggers `send_booking_data` Celery task → POSTs booking JSON to external targets. New target: `N8N_WEBHOOK_URL` (plain webhook, no auth). Enables n8n automation workflows to receive booking data on demand.
 
 ---
 
@@ -40,9 +40,9 @@ Resend Operator btn → POST /admin-dashboard/booking-send/ {slug}
 
 ## Bug 1 — Import crash (orders/views.py + orders/services.py)
 
-**Symptom:** `send_booking_confirmation_email` imported from `bookings.tasks` — function NOT defined there, lives in `carts.tasks:220`. Would crash with `ImportError` at Django load.
+**Symptom:** `send_booking_confirmation_email` imported from `bookings.tasks` — NOT defined there, lives in `carts.tasks:220`. Crashes with `ImportError` at Django load.
 
-**Root cause:** Our refactor moved `send_booking_data` to `bookings.tasks` but did NOT move `send_booking_confirmation_email` (it stays in `carts.tasks`). We incorrectly updated import to pull all three from `bookings.tasks`.
+**Root cause:** Refactor moved `send_booking_data` to `bookings.tasks` but NOT `send_booking_confirmation_email` (stays in `carts.tasks`). Import incorrectly pulled all three from `bookings.tasks`.
 
 **Fix:** Split import in both files:
 ```python
@@ -56,9 +56,9 @@ from carts.tasks import send_booking_confirmation_email
 
 ## Bug 2 — Orphaned try block (carts/tasks.py)
 
-**Symptom:** Bare `try` block with Telegram code (169 lines) sat outside any function after comment `# Bookings dispatch tasks moved to bookings/tasks.py`. Would execute at import time — syntax/runtime error.
+**Symptom:** Bare `try` block with Telegram code (169 lines) outside any function after comment `# Bookings dispatch tasks moved to bookings/tasks.py`. Executes at import time — syntax/runtime error.
 
-**Root cause:** Incomplete cleanup when moving tasks. Only removed function definitions, left body behind.
+**Root cause:** Incomplete cleanup when moving tasks. Removed function definitions, left body.
 
 **Fix:** Deleted orphaned code block (lines 499-665).
 
@@ -70,9 +70,9 @@ from carts.tasks import send_booking_confirmation_email
 ```
 decouple.UndefinedValueError: N8N_WEBHOOK_URL not found. Declare it as envvar or define a default value.
 ```
-Celery crashed on every startup. Django couldn't load settings.
+Celery crashed every startup. Django couldn't load settings.
 
-**Root cause:** `config('N8N_WEBHOOK_URL')` with no default raises immediately if env var absent. All other optional URL env vars in `settings.py` use `default=None`.
+**Root cause:** `config('N8N_WEBHOOK_URL')` no default → raises immediately if env var absent. All other optional URL env vars in `settings.py` use `default=None`.
 
 **Fix:**
 ```python
@@ -99,15 +99,15 @@ N8N_WEBHOOK_URL = config('N8N_WEBHOOK_URL', default=None)
 |----------|----------|---------|-------------|
 | `N8N_WEBHOOK_URL` | No | `None` | Plain webhook URL for n8n automation |
 
-Auth: none. If not set → task logs warning and returns cleanly.
+Auth: none. Not set → task logs warning, returns cleanly.
 
 ---
 
 ## Retry Behavior
 
-`send_booking_data` has `bind=True, max_retries=3, default_retry_delay=60`. When any target raises network exception → `raise self.retry(exc=e)` → entire task re-queued (all targets re-sent). HTTP non-200 → logs error only, no retry.
+`send_booking_data` has `bind=True, max_retries=3, default_retry_delay=60`. Any target raises network exception → `raise self.retry(exc=e)` → task re-queued (all targets re-sent). HTTP non-200 → logs error only, no retry.
 
-**Important:** if n8n fails network-wise, primary AUTO_SMARTENPLUS_API_URL also re-sends on retry. Acceptable for n8n (external sink). If this is unacceptable, consider splitting into separate tasks.
+**Important:** n8n network failure → primary AUTO_SMARTENPLUS_API_URL also re-sends on retry. Acceptable for n8n (external sink). If unacceptable → split into separate tasks.
 
 ---
 
@@ -115,11 +115,11 @@ Auth: none. If not set → task logs warning and returns cleanly.
 
 ### N8N_WEBHOOK_URL Celery crash (commit 2bdf31b)
 
-**Root cause:** `config('N8N_WEBHOOK_URL')` with no `default=` raises UndefinedValueError when env var absent. All other optional URL env vars use `default=None` — new var didn't follow pattern.
+**Root cause:** `config('N8N_WEBHOOK_URL')` no `default=` → raises UndefinedValueError when env var absent. All other optional URL env vars use `default=None` — new var didn't follow pattern.
 
 **Fix:** `default=None` added.
 
-**Why slipped:** Author didn't follow existing pattern. No CI gate tests Django startup without all optional env vars.
+**Why slipped:** Didn't follow existing pattern. No CI gate tests Django startup without all optional env vars.
 
 ---
 

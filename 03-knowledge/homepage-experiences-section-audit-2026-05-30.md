@@ -1,7 +1,7 @@
 # Homepage Experiences Section — Feasibility Audit
 
 ## Summary
-Assessed adding "Explore Experiences" carousel section to homepage, alongside existing Popular Routes. Three-agent research (frontend, backend, vault) + one scrutinize pass. Corrected 3 critical wrong claims.
+Assessed adding "Explore Experiences" carousel to homepage alongside Popular Routes. Three-agent research (frontend, backend, vault) + one scrutinize pass. Corrected 3 critical wrong claims.
 
 ## Verdict
 **VIABLE — after AT-1 completes + inventory check. All design decisions locked (grill pass 2026-05-30).**
@@ -17,8 +17,8 @@ Assessed adding "Explore Experiences" carousel section to homepage, alongside ex
 - Vault strategy (`smartenplus-uxui-redesign-research-2026.md` §8) explicitly endorses experiences on homepage
 
 ### Against
-- Inventory unknown — if < 6 active experience contracts, section is harmful
-- AT-1 (Airport Transfer redesign) is open P0 — close debt first
+- Inventory unknown — if < 6 active experience contracts, section harmful
+- AT-1 (Airport Transfer redesign) open P0 — close debt first
 - No `featured_image` on Contract model — image strategy needed before building
 
 ---
@@ -30,13 +30,13 @@ All locked. Do not re-debate.
 | Decision | Choice | Reason |
 |----------|--------|--------|
 | `average_rating` in serializer | **Skip** | `get_average_rating()` runs 2 DB queries per contract (ContentType lookup + Review aggregate). 8 contracts = 16 extra queries per cache miss. Not worth it. |
-| `booked_count` display on card | **Hide** | `Contract.booked_count` defaults to 10 for ALL new contracts (`operators/models.py:268`). Showing number is misleading. |
+| `booked_count` display on card | **Hide** | `Contract.booked_count` defaults to 10 for ALL new contracts (`operators/models.py:268`). Showing number misleading. |
 | Card content | **title + category badge + min_price only** | Clean, no fake social proof |
 | Image source | **`imagegallery_set.first().image.url`** | S3 storage confirmed (`DEFAULT_FILE_STORAGE = MediaStorage`). `.url` returns full CDN URL. No migration needed. |
 | `min_price` query | **`Contract_RateCard.filter(contract=obj, is_active=True).order_by('selling_rate').first()`** | Reuse exact pattern at `products/serializers.py:1040–1045` |
-| Serializer base | **Standalone `ModelSerializer`** — NOT inheriting `ContractSerializer` | `ContractSerializer` is massive (50+ fields, `to_representation` override, ratecard date filtering). Inheriting adds all that weight for a 6-field homepage card. |
+| Serializer base | **Standalone `ModelSerializer`** — NOT inheriting `ContractSerializer` | `ContractSerializer` massive (50+ fields, `to_representation` override, ratecard date filtering). Inheriting adds all that weight for 6-field homepage card. |
 | Image N+1 | **`prefetch_related('imagegallery_set')`** on queryset | Reduces 8 image queries → 1 prefetch |
-| `min_price` N+1 | **Acceptable** | 8 separate `Contract_RateCard` queries per cache miss. Small table, fast. If becomes problem: annotate with `Min()` in queryset. |
+| `min_price` N+1 | **Acceptable** | 8 separate `Contract_RateCard` queries per cache miss. Small table, fast. If problem: annotate with `Min()` in queryset. |
 
 ---
 
@@ -47,14 +47,14 @@ All locked. Do not re-debate.
 - **Reality:** `operators/models.py` — Contract has `ImageGallery` relationship but no `featured_image` field
 - **Fix:** Serializer SerializerMethodField → `obj.imagegallery_set.first()` (Option A, no migration). Or add `featured_image = URLField(blank=True, null=True)` + migration (Option B). **Recommend Option A.**
 
-### Correction 2 — `service_category` choices list was incomplete
+### Correction 2 — `service_category` choices list incomplete
 - **Wrong claim:** Choices listed without `TRANSPORTATION`, `ACCOMMODATION`
 - **Actual full list:** `TRANSPORTATION`, `DAY_TOUR`, `MULTI_DAY_TOUR`, `SPA_WELLNESS`, `EVENT_TICKET`, `ATTRACTION_TICKET`, `FOOD_DINING`, `ACCOMMODATION`, `TRANSFER`, `OTHER`
-- **Fix:** Inventory check and serializer filter must use correct experience-only subset: `['DAY_TOUR','MULTI_DAY_TOUR','SPA_WELLNESS','EVENT_TICKET','ATTRACTION_TICKET','FOOD_DINING']`. Exclude `TRANSPORTATION`, `TRANSFER`, `ACCOMMODATION`.
+- **Fix:** Inventory check + serializer filter must use correct experience-only subset: `['DAY_TOUR','MULTI_DAY_TOUR','SPA_WELLNESS','EVENT_TICKET','ATTRACTION_TICKET','FOOD_DINING']`. Exclude `TRANSPORTATION`, `TRANSFER`, `ACCOMMODATION`.
 
-### Correction 3 — `HomeSerializer` is wrong copy template
+### Correction 3 — `HomeSerializer` wrong copy template
 - **Wrong claim:** "HomeSerializer at products/serializers.py:706 is the copy template"
-- **Reality:** HomeSerializer is for the `Route` model (transport), not Contract
+- **Reality:** HomeSerializer for `Route` model (transport), not Contract
 - **Fix:** New `PopularExperienceSerializer` must inherit from ContractSerializer or be standalone for Contract model. Do NOT copy HomeSerializer.
 
 ### Verified (correct)
@@ -110,7 +110,7 @@ Exclude: `TRANSPORTATION`, `TRANSFER`, `ACCOMMODATION`
 
 **SSR pattern:**
 - No RTK Query needed
-- `getStaticProps` already passes `frontPageData` object through — adding `popular_experiences[]` to backend response is sufficient. Frontend just destructures + passes as prop.
+- `getStaticProps` already passes `frontPageData` object through — adding `popular_experiences[]` to backend response sufficient. Frontend destructures + passes as prop.
 
 ---
 
@@ -140,7 +140,7 @@ Require ≥6 total. Stop if not.
 After `<PopularRoutesSection>` (~line 347), before `<ReviewsSection>`. Discovery flow: transport → experiences → social proof.
 
 ### Empty State
-Hide section entirely if `!experiences?.length`. No empty UI.
+Hide section if `!experiences?.length`. No empty UI.
 
 ---
 
@@ -150,7 +150,7 @@ Hide section entirely if `!experiences?.length`. No empty UI.
 2. **Inventory check** — verify ≥6 experience contracts before any code
 3. **New branch** — after AT-1 merges to `main`
 
-Image strategy locked: Option A (gallery method field, no migration). No longer a blocker.
+Image strategy locked: Option A (gallery method field, no migration). No longer blocker.
 
 ---
 

@@ -1,10 +1,10 @@
 # Airport Transfer AT-1 Redesign Spec
 
 ## Summary
-Full spec for AT-1: professional homepage airport transfer section. Image card + IATA badge + carousel mobile + serializer expansion. Zero impact on other components.
+Full spec AT-1: professional homepage airport transfer section. Image card + IATA badge + carousel mobile + serializer expansion. Zero impact other components.
 
 ## Context
-Extracted from [[transportation-category-audit-2026-05-30]]. Goal: match Grab/Klook/12Go level polish on homepage airport section. Backend adds `station_name` + `iata_code` to local serializer only.
+Extracted from [[transportation-category-audit-2026-05-30]]. Goal: match Grab/Klook/12Go polish on homepage airport section. Backend adds `station_name` + `iata_code` to local serializer only.
 
 ## Details
 
@@ -20,7 +20,7 @@ Extracted from [[transportation-category-audit-2026-05-30]]. Goal: match Grab/Kl
 
 ### Backend: Serializer Expansion
 
-Expand the **local** `StationSerializer` inside `HomeSerializer` scope only (`products/serializers.py:696`). This class is used only by `HomeSerializer` — no shared serializer is touched.
+Expand **local** `StationSerializer` inside `HomeSerializer` scope only (`products/serializers.py:696`). Used only by `HomeSerializer` — no shared serializer touched.
 
 ```python
 # Add to StationSerializer fields list
@@ -31,7 +31,7 @@ fields = ['route_name', 'departure_station', 'arrival_station',
           'slug', 'query_count', 'lowest_price', 'operator_count']
 ```
 
-Both `station_name` and `iata_code` exist on Station model. `route_name` exists on Route. Additive change — no breaking effect.
+`station_name` + `iata_code` exist on Station model. `route_name` exists on Route. Additive — no breaking effect.
 
 ### New Card: AirportTransferRouteCard
 
@@ -60,12 +60,12 @@ Design tokens:
 - Operators: `text-xs text-gray-400`
 - Price: `text-sm font-bold text-gray-900`
 
-Props interface: `{ route, onClick }` — unchanged from today.
+Props interface: `{ route, onClick }` — unchanged.
 
 ### Section Layout Upgrade
 
-- Mobile: horizontal carousel via `CardCarouselContainer` (exists at `components/UI/CardCarouselContainer.js`)
-- Desktop lg+: 4-column grid (same as current)
+- Mobile: horizontal carousel via `CardCarouselContainer` (`components/UI/CardCarouselContainer.js`)
+- Desktop lg+: 4-col grid (same as current)
 - Card width in carousel: `w-[75vw] sm:w-[45vw] md:w-[30vw] lg:w-full`
 - Section header: add subtitle + "View all →" link
 
@@ -85,7 +85,7 @@ Props interface: `{ route, onClick }` — unchanged from today.
 ```
 
 ### Null Safety Requirements
-- `iata_code` null → hide badge entirely
+- `iata_code` null → hide badge
 - `lowest_price` null → "Check price" (existing behavior)
 - `location.image` null → gradient fallback
 - `station_name` null → fall back to `location.location_name`
@@ -93,7 +93,7 @@ Props interface: `{ route, onClick }` — unchanged from today.
 ### Verification
 1. `npm run dev` → homepage loads, section visible
 2. Cards show image/gradient, IATA badge, station name, price
-3. Null price card shows "Check price" — no crash
+3. Null price → "Check price", no crash
 4. Card click → `/airport-transfer/{slug}/` → detail page unchanged
 5. Mobile: carousel scrolls; desktop: 4-col grid
 6. No console errors; other sections unaffected

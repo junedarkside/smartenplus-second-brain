@@ -1,6 +1,6 @@
 # MUI Autocomplete — inputValue Not Syncing with value Prop
 
-**Bug:** `useState(value || '')` initializes once. Prop changes after mount (URL hydration) are invisible.
+**Bug:** `useState(value || '')` initializes once. Prop changes after mount (URL hydration) invisible.
 
 **Example:**
 ```js
@@ -16,9 +16,9 @@ useEffect(() => {
 }, [value]);  // Re-sync on value change
 ```
 
-Now URL-restored location visible in input field.
+URL-restored location now visible in input.
 
-**Rule:** Never initialize state from prop unless prop is static. Use `useEffect` for prop→state sync.
+**Rule:** Never init state from prop unless prop static. Use `useEffect` for prop→state sync.
 
 See [[activities-location-search-bug-2026-06-01]] F-1.
 

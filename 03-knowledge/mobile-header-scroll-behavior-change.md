@@ -1,10 +1,10 @@
 # Mobile Header Scroll Behavior Change
 
 ## Summary
-Mobile header changed from dynamic (scroll-with-content + Slide hide/show animation) to permanently fixed (no scroll behavior). Removed spacer `<Toolbar />` in layout.js. Two separate DOM structures for mobile/desktop diverged from original unified row.
+Mobile header: dynamic (scroll-with-content + Slide hide/show) → permanently fixed. Removed spacer `<Toolbar />` in layout.js. Two separate DOM structures for mobile/desktop diverged from original unified row.
 
 ## Context
-Original header (`main-header.js` at git HEAD before redesign) had dynamic mobile behavior. Current header (post-redesign) is permanently fixed. This affects content layout, scroll UX, and maintenance.
+Original header (`main-header.js` at git HEAD before redesign) had dynamic mobile behavior. Current (post-redesign) permanently fixed. Affects content layout, scroll UX, maintenance.
 
 ## What Changed
 
@@ -19,13 +19,13 @@ Original header (`main-header.js` at git HEAD before redesign) had dynamic mobil
 
 ## Issues
 
-1. **Fixed header without spacer breaks content layout** — Original had `<Toolbar />` creating top spacer equal to header height. Removed. Content scrolls under fixed header on mobile.
+1. **Fixed header without spacer breaks content layout** — Original `<Toolbar />` created top spacer equal to header height. Removed. Content scrolls under fixed header on mobile.
 
-2. **Scroll-hide behavior removed** — Users who relied on header hiding on scroll down (to see more content) now have permanently visible header consuming viewport space.
+2. **Scroll-hide removed** — Users who relied on header hiding on scroll down now have permanently visible header consuming viewport space.
 
-3. **Desktop/mobile code paths diverged** — Original: single row adapting via CSS. Current: two completely separate DOM structures. Increases maintenance burden, potential for inconsistencies.
+3. **Desktop/mobile code paths diverged** — Original: single row, CSS-adaptive. Current: two separate DOM structures. More maintenance burden, inconsistency risk.
 
-4. **Missing spacer compensation** — `position="fixed"` on mobile + no spacer in layout.js = first content element partially obscured by header on page load.
+4. **Missing spacer compensation** — `position="fixed"` on mobile + no spacer in layout.js = first content element obscured by header on load.
 
 ## Related
 - [[hero-section-comprehensive-audit-2026-05-26]] — Contains mobile header analysis section

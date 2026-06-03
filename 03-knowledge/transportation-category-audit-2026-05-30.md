@@ -1,10 +1,10 @@
 # Transportation Category Audit — 2026-05-30
 
 ## Summary
-Backend audit of SmartEnPlus transportation category structure to determine whether Airport Transfers justify dedicated homepage placement. Audit is code-only — no live DB access. Hard inventory/booking numbers require Django shell queries. Scrutinize pass applied 2026-05-30 — 8 corrections documented below.
+Backend audit of SmartEnPlus transportation category structure to determine whether Airport Transfers justify dedicated homepage placement. Code-only — no live DB access. Hard inventory/booking numbers require Django shell queries. Scrutinize pass applied 2026-05-30 — 8 corrections documented below.
 
 ## Context
-Built `AirportTransferSection.js` homepage section (commit `1eec0aa`) using `/front-page/` API. Question: is this architecturally justified or should it be removed in favor of search-only discovery?
+Built `AirportTransferSection.js` homepage section (commit `1eec0aa`) using `/front-page/` API. Question: architecturally justified or remove in favor of search-only discovery?
 
 Redesign spec added 2026-05-30 — see [[#Redesign Spec — Professional Airport Transfer Section]] below.
 
@@ -42,7 +42,7 @@ TRANSPORTATION (default) | DAY_TOUR | MULTI_DAY_TOUR | SPA_WELLNESS
 EVENT_TICKET | ATTRACTION_TICKET | FOOD_DINING | ACCOMMODATION | TRANSFER | OTHER
 ```
 
-`TRANSFER` is separate from `TRANSPORTATION`. **Important: TRANSFER category and the airport filter are independent** — see Filter Architecture Note below.
+`TRANSFER` separate from `TRANSPORTATION`. **`TRANSFER` category and airport filter are independent** — see Filter Architecture Note below.
 
 **Level 3 — Vehicle Type** (`operators/models.py:135`)
 `VehicleType.vehicle_type` — free text, no enum. Examples: Bus, Van, Minibus, Ferry. No hardcoded "Airport Transfer" vehicle type at this level.
@@ -57,7 +57,7 @@ Airport Transfer is **NOT a separate category or product type**. It is a **subse
 Route → departure_station → Station.station_type == 'airport'
 ```
 
-The backend filter in `pages_info/views.py:330` (`_fetch_airport_routes_data`). Simplified — see actual file for full `.select_related()`, Subquery annotations, and Exists patterns:
+Backend filter in `pages_info/views.py:330` (`_fetch_airport_routes_data`). Simplified — see actual file for full `.select_related()`, Subquery annotations, and Exists patterns:
 
 ```python
 # Simplified. Full code: pages_info/views.py:330
@@ -80,23 +80,23 @@ Route.objects.filter(
 
 Routes returned: BKK, HKT, HDY, CNX → any destination.
 
-**`lowest_price` can be null.** Annotation uses `allow_null=True`. Routes with no active rate cards still surface with `lowest_price=None`. Frontend (`AirportTransferRouteCard.js:39-44`) handles this — shows "Check price" fallback. The previous claim "only routes with selling_rate > 0 surface" was wrong: the filter ensures `selling_rate > 0` for the annotation only, not for route inclusion.
+**`lowest_price` can be null.** Annotation uses `allow_null=True`. Routes with no active rate cards still surface with `lowest_price=None`. Frontend (`AirportTransferRouteCard.js:39-44`) handles this — shows "Check price" fallback. Previous claim "only routes with selling_rate > 0 surface" was wrong: filter ensures `selling_rate > 0` for annotation only, not route inclusion.
 
-**`query_count` ordering.** `query_count` is incremented asynchronously by Celery task `update_route_query_counts()` (`products/tasks.py:12`), which counts QueryLog entries from the past 1 week. Not real-time. Multiple routes with `query_count=0` (new/unpopular) return in non-deterministic order — no secondary sort field in current implementation.
+**`query_count` ordering.** `query_count` incremented asynchronously by Celery task `update_route_query_counts()` (`products/tasks.py:12`), which counts QueryLog entries from past 1 week. Not real-time. Multiple routes with `query_count=0` (new/unpopular) return in non-deterministic order — no secondary sort field in current implementation.
 
 ### Filter Architecture Note
 
-The airport filter (`departure_station__station_type='airport'`) and `Contract.service_category='TRANSFER'` are **completely independent**:
+Airport filter (`departure_station__station_type='airport'`) and `Contract.service_category='TRANSFER'` are **completely independent**:
 
-- A route departing from an airport with `service_category='TRANSPORTATION'` (not TRANSFER) **will** appear
-- A `TRANSFER` contract on a non-airport departure station **will NOT** appear
-- The code never checks `service_category` in `_fetch_airport_routes_data`
+- Route departing from airport with `service_category='TRANSPORTATION'` (not TRANSFER) **will** appear
+- `TRANSFER` contract on non-airport departure station **will NOT** appear
+- Code never checks `service_category` in `_fetch_airport_routes_data`
 
-The TRANSFER category existence is not the architectural justification for the homepage section. The justification is `station_type='airport'` being first-class.
+TRANSFER category existence is not architectural justification for homepage section. Justification is `station_type='airport'` being first-class.
 
 ### Arrival-Only Routes Not Covered
 
-The filter only checks `departure_station__station_type='airport'`. Inbound transfers (hotel → airport) are not surfaced. Section title "Airport Transfers" is technically outbound-only. This is an undocumented limitation, not necessarily a bug — but should be explicit.
+Filter only checks `departure_station__station_type='airport'`. Inbound transfers (hotel → airport) not surfaced. Section title "Airport Transfers" is technically outbound-only. Undocumented limitation, not necessarily a bug — but should be explicit.
 
 ---
 
@@ -117,7 +117,7 @@ Inconsistent across models — copy-paste carefully:
 | Route, Trip, Contract | `is_actived` (with 'd') |
 | Contract_RateCard, BookingItem, TimeSlot | `is_active` (no 'd') |
 
-Django won't error on wrong field name in filter — it silently skips the constraint.
+Django won't error on wrong field name in filter — silently skips constraint.
 
 ---
 
@@ -128,7 +128,7 @@ Django won't error on wrong field name in filter — it silently skips the const
 - `arrival_station` CharField — station NAME only
 - `route_name` CharField
 
-**No denormalized station_type on BookingItem.** To query bookings by transport category requires multi-join:
+**No denormalized station_type on BookingItem.** Querying bookings by transport category requires multi-join:
 
 ```python
 BookingItem.objects.filter(
@@ -155,7 +155,7 @@ Evidence from `Contract.SERVICE_CATEGORY_CHOICES`:
 - Hotels: `ACCOMMODATION`
 - Transfers: `TRANSFER`
 
-Whether meaningful inventory exists in non-transport categories: unknown without DB access.
+Meaningful inventory in non-transport categories: unknown without DB access.
 
 ---
 
@@ -182,18 +182,18 @@ FK chain verified: `BookingItem.contract` → `Contract.trip` → `Trip.route` �
 
 ## Homepage Recommendation
 
-**Airport Transfers section is architecturally justified:**
+**Airport Transfers section architecturally justified:**
 
-1. `station_type='airport'` is a dedicated first-class type with IATA code support — not a tag or label
-2. Filter logic works, is in production, returns real routes with real pricing
-3. Airport-to-destination is a distinct user intent (fixed start point = airport) vs general route search
+1. `station_type='airport'` is dedicated first-class type with IATA code support — not a tag or label
+2. Filter logic works, in production, returns real routes with real pricing
+3. Airport-to-destination is distinct user intent (fixed start point = airport) vs general route search
 4. Frontend handles null pricing gracefully
 
-**What's NOT a justification:** The `TRANSFER` service_category. It exists but is not checked by the filter. See Filter Architecture Note above.
+**Not a justification:** `TRANSFER` service_category. Exists but not checked by filter. See Filter Architecture Note above.
 
-**Decision framework thresholds:** The "< 10% = demote" heuristic is from the original audit brief — not data-derived, not in codebase. Treat as a rough guideline only. Run queries above against production shell for hard numbers.
+**Decision framework thresholds:** "< 10% = demote" heuristic from original audit brief — not data-derived, not in codebase. Rough guideline only. Run queries above against production shell for hard numbers.
 
-**Recommendation:** Keep the section. If future inventory data shows airport routes < 10% AND bookings < 10%, demote to search-only.
+**Recommendation:** Keep section. If future inventory data shows airport routes < 10% AND bookings < 10%, demote to search-only.
 
 ## Decision
 

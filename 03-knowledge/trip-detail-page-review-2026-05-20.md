@@ -43,7 +43,7 @@ Breadcrumb absent from static HTML. Googlebot misses it. JSON-LD breadcrumb in T
 **Fix:** Keep `refetchOnMountOrArgChange: true`. Remove `refetchOnFocus` and `refetchOnReconnect`.
 
 ### 🟡 P6 — `domainURL` from `router.asPath` unstable at hydration (line 116)
-`router.asPath` empty string during SSR → canonical URL wrong first render → passed to TripDetailSEO → extra re-render when router stabilizes.
+`router.asPath` empty during SSR → canonical URL wrong first render → passed to TripDetailSEO → extra re-render when router stabilizes.
 **Fix:** Use `router.isReady` guard or derive canonical from `productData.slug` (static, SSR-available).
 
 ### 🟡 P7 — `setTimeout(100)` scroll hack (line 251)
@@ -80,7 +80,7 @@ Title 72 chars → description 104+ chars (truncated). Title duplicated.
 **Fix:** Pull from `productData.description` or `productData.route.route_info`.
 
 ### 🟡 S5 — `DynamicReviewListByProduct` has `ssr: false` (line 51)
-Review text not in static HTML. Googlebot misses reviews. AggregateRating claims reviews exist but crawlers can't verify.
+Review text absent from static HTML. Googlebot misses reviews. AggregateRating claims reviews exist but crawlers can't verify.
 **Fix:** Remove `ssr: false`.
 
 ### 🟡 S6 — Broken `aria-labelledby` (lines 350, 370)
@@ -91,7 +91,7 @@ Review text not in static HTML. Googlebot misses reviews. AggregateRating claims
 Screen readers announce nothing.
 **Fix:** Add `<h2 id="trip-details-heading">` inside each section, or change to `aria-label="..."`.
 
-### 🟡 S7 — "Pricing Unavailable" state is indexable thin content (line 288)
+### 🟡 S7 — "Pricing Unavailable" state indexable thin content (line 288)
 `lowestRate === null` renders empty state but page stays indexed. Google sees thin content.
 **Fix:** Return `notFound: true` from `getStaticProps` if no ratecard, or add `<meta name="robots" content="noindex" />`.
 

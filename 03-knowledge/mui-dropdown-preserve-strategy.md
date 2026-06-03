@@ -1,13 +1,13 @@
 # MUI Dropdown Preserve Strategy
 
 ## Summary
-Keep MUI Menu core for ARIA test compatibility. Mobile: MUI Drawer as bottom sheet. Item reduction 11→6.3-file split architecture.
+Keep MUI Menu core for ARIA test compatibility. Mobile: MUI Drawer as bottom sheet. Item reduction 11→6. 3-file split architecture.
 
 ## Context
-`profile-dropdown-redesign-2026-05-29.md`. 3-specialist review (UX + UI/Visual + Frontend). ProfileButton was generic MUI Menu with 11 items, no traveler mental model.
+`profile-dropdown-redesign-2026-05-29.md`. 3-specialist review (UX + UI/Visual + Frontend). ProfileButton was generic MUI Menu, 11 items, no traveler mental model.
 
 ## Problem
--200px width truncates labels like "Account Dashboard", "Family& Friends"
+- 200px width truncates labels like "Account Dashboard", "Family& Friends"
 - 11 items, 4 dividers — reads as SaaS admin panel
 - Guest state dead-end — no path to guest order lookup
 - No identity confirmation on shared devices
@@ -95,11 +95,11 @@ Constrain output to `hsl(H, 55%, 45%)` — brightness floor prevents near-black 
 ## Tradeoffs
 - 3-file split keeps each file under 200L/component limit
 - Guest state loses "Help Center" divider aesthetic — acceptable
-- Logout red text+icon is signal enough — no background change needed
+- Logout red text+icon signal enough — no background change needed
 
 ## Consequences
-- Integration tests continue to pass with `getByRole('menu')` queries
-- Guest users now have path to booking lookup
+- Integration tests pass with `getByRole('menu')` queries
+- Guest users have path to booking lookup
 - Identity confirmation via avatar + name + email in header
 
 ## Related

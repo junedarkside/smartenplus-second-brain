@@ -1,10 +1,10 @@
 # Structured Data Schema Patterns
 
 ## Summary
-Homepage uses7 schema types. Critical gaps: fake TravelAgency phone/address, missing WebSite+SearchAction, server-sitemap.xml 404. Live data should replace hardcoded literals.
+Homepage uses 7 schema types. Critical gaps: fake TravelAgency phone/address, missing WebSite+SearchAction, server-sitemap.xml 404. Live data should replace hardcoded literals.
 
 ## Context
-`homepage-seo-performance-deep-review-2026-05-21.md`.3-specialist audit (Structured Data + Technical SEO + Performance).11 SD findings.
+`homepage-seo-performance-deep-review-2026-05-21.md`. 3-specialist audit (Structured Data + Technical SEO + Performance). 11 SD findings.
 
 ## Problem
 
@@ -15,10 +15,10 @@ Homepage uses7 schema types. Critical gaps: fake TravelAgency phone/address, mis
 `"streetAddress": "123 Sukhumvit Road"` — no `COMPANY_ADDRESS` constant exists. False address risks manual action.
 
 ### SD7 — WebSite + SearchAction missing
-No `WebSite` schema. Required for Sitelinks Search Box in Google results. Trip search URL maps to `SearchAction`.
+No `WebSite` schema. Required for Sitelinks Search Box. Trip search URL maps to `SearchAction`.
 
 ### TS6 — server-sitemap.xml 404
-`next-sitemap.config.js:12` and `public/robots.txt:17` reference `server-sitemap.xml` — file does not exist. Active 404 suppresses dynamic trip route indexing.
+`next-sitemap.config.js:12` + `public/robots.txt:17` reference `server-sitemap.xml` — file missing. 404 suppresses dynamic trip route indexing.
 
 ## Decision
 
@@ -61,7 +61,7 @@ export const COMPANY_ADDRESS = {
 ### server-sitemap.xml hotfix + proper fix
 **Hotfix (5 min):** Remove from `next-sitemap.config.js` + `robots.txt`.
 
-**Proper fix:** Create `pages/server-sitemap.xml.js` using `getServerSideSitemap` fetching live trip routes. Pattern documented in `[[blog-seo-performance-2026-05-20]]`.
+**Proper fix:** Create `pages/server-sitemap.xml.js` using `getServerSideSitemap` fetching live trip routes. Pattern in `[[blog-seo-performance-2026-05-20]]`.
 
 ## Details
 
@@ -81,13 +81,13 @@ export const COMPANY_ADDRESS = {
 - `twitter:site` missing — add `site: '@smartenplus'`
 
 ## Tradeoffs
-- `server-sitemap.xml.js` proper fix requires backend API to enumerate live trip routes — sprint task, not hotfix
-- Adding `COMPANY_ADDRESS` requires backend team alignment on legal entity address
+- `server-sitemap.xml.js` proper fix needs backend API enumerating live trip routes — sprint task, not hotfix
+- `COMPANY_ADDRESS` needs backend team alignment on legal entity address
 
 ## Consequences
 - TravelAgency schema accuracy affects Google Business Profile integration
-- server-sitemap.xml 404 means Google cannot discover dynamic trip routes — suppresses crawl budget
-- AggregateRating wired to live data — schema refreshes with ISR (60s)
+- server-sitemap.xml 404 = Google can't discover dynamic trip routes, suppresses crawl budget
+- AggregateRating wired to live data refreshes with ISR (60s)
 
 ## Related
 - [[blog-seo-performance-2026-05-20]] — server-sitemap.xml pattern

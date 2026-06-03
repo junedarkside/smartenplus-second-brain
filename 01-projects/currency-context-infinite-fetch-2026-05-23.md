@@ -1,15 +1,15 @@
 # CurrencyContext Infinite Fetch Bug 2026-05-23
 
 ## Summary
-Frontend hammers `/admin-dashboard-charge/forex/` + `/front-page/` + `/carts/` OPTIONS repeatedly. Hard reload fixes temporarily. Root cause is **not** a simple `useCallback`/`useEffect` circular dep — full trace below overturns initial diagnosis. Two separate issues. Neither yet fixed.
+Frontend hammers `/admin-dashboard-charge/forex/` + `/front-page/` + `/carts/` OPTIONS repeatedly. Hard reload fixes temporarily. Root cause **not** simple `useCallback`/`useEffect` circular dep — full trace below overturns initial diagnosis. Two separate issues. Neither fixed.
 
 ---
 
 ## Scrutiny Note (2026-05-23)
 
-> **Initial diagnosis was mechanically incorrect. Updated after full trace.**
+> **Initial diagnosis mechanically incorrect. Updated after full trace.**
 > Initial claim: `useCallback([selectedCurrency])` + `useEffect([selectedCurrency, fetchRate])` creates infinite loop.
-> **Refutation:** `useState` setter (`setSelectedCurrency`) is stable. During a fetch, `setLoading(true)` / `setCurrentRate(data)` do NOT change `selectedCurrency`. So `fetchRate` ref from `useCallback([selectedCurrency])` does NOT change mid-cycle. `useEffect` deps `[selectedCurrency, fetchRate]` remain stable. **Effect does NOT re-run in a loop from this mechanism.**
+> **Refutation:** `useState` setter (`setSelectedCurrency`) stable. During fetch, `setLoading(true)` / `setCurrentRate(data)` do NOT change `selectedCurrency`. So `fetchRate` ref from `useCallback([selectedCurrency])` does NOT change mid-cycle. `useEffect` deps `[selectedCurrency, fetchRate]` remain stable. **Effect does NOT re-run in loop from this mechanism.**
 
 ---
 
@@ -17,27 +17,27 @@ Frontend hammers `/admin-dashboard-charge/forex/` + `/front-page/` + `/carts/` O
 
 ### Issue A — Fast Refresh full reload loop (primary symptom driver)
 
-**Symptom:** `⚠ Fast Refresh had to perform a full reload` repeating in dev console. Every full reload remounts the entire app tree → 1 new `fetchForexData()` call + 1 `getStaticProps` `/front-page/` hit + 1 cart OPTIONS preflight.
+**Symptom:** `⚠ Fast Refresh had to perform a full reload` repeating in dev console. Every full reload remounts entire app tree → 1 new `fetchForexData()` call + 1 `getStaticProps` `/front-page/` hit + 1 cart OPTIONS preflight.
 
 **Mechanism:** `GET /_next/static/webpack/fc0ef4491715613d.webpack.hot-update.json 404`
-- Browser holds a stale compilation hash from before a recompile
+- Browser holds stale compilation hash from before recompile
 - Requests hot-update JSON for old hash → 404 (file no longer exists in memory)
 - Next.js Fast Refresh falls back to full page reload
-- Full reload triggers another compilation cycle if any watched file has changed
+- Full reload triggers another compilation cycle if any watched file changed
 - Stale hash → 404 → reload → compile → new hash → stale again → loop
 
-**What triggers repeated recompilations in dev?** Not confirmed yet. Candidates:
-1. A watched file being written to disk during dev (e.g., a log file inside `components/` or `pages/`)
-2. The `public/audit-screenshots/` directory receiving new files (Playwright audit scripts)
-3. Some other process touching files in the watched directory
+**What triggers repeated recompilations in dev?** Not confirmed. Candidates:
+1. Watched file written to disk during dev (e.g., log file inside `components/` or `pages/`)
+2. `public/audit-screenshots/` receiving new files (Playwright audit scripts)
+3. Some other process touching files in watched directory
 
 **Evidence:** Frontend logs show `GET / 200` → `hot-update.json 404` → `Fast Refresh had to perform a full reload` → `GET / 200` repeating ~1/sec, synchronized with `/front-page/` and `/carts/` hits.
 
-**Fix:** Identify what is writing files to webpack's watched directories during dev. If `public/audit-screenshots/` is the culprit, add it to `next.config.js` `watchOptions.ignored` or move screenshots outside project root.
+**Fix:** Identify what writes files to webpack's watched directories during dev. If `public/audit-screenshots/` culprit, add to `next.config.js` `watchOptions.ignored` or move screenshots outside project root.
 
 ---
 
-### Issue B — CurrencyContext correctness issues (real bugs, just not an infinite loop)
+### Issue B — CurrencyContext correctness issues (real bugs, not infinite loop)
 
 **File:** `components/contexts/CurrencyContext.js`
 
@@ -52,7 +52,7 @@ const fetchRate = useCallback(async (currency = selectedCurrency) => {
 }, [selectedCurrency]);
 ```
 
-If user switches currency quickly (THB → USD → EUR), three concurrent fetches race. Last to resolve wins regardless of order. Can show wrong currency rate.
+User switches currency quickly (THB → USD → EUR) → three concurrent fetches race. Last to resolve wins regardless of order. Can show wrong currency rate.
 
 **Bug B2 — `selectCurrency` missing from `useMemo` deps**
 
@@ -63,11 +63,11 @@ const value = useMemo(() => ({
 }), [currentRate, loading, error]); // ← selectCurrency NOT in deps
 ```
 
-`selectCurrency` is a plain function (new ref every render) included in the memoized value but not in deps. When the memo recomputes (loading/error change), it captures the current `selectCurrency` ref — which happens to be correct since `selectCurrency` only calls `setSelectedCurrency` (stable). So this is not causing a loop, but it violates React deps rules and will cause lint warnings. Consumers that put `selectCurrency` in their own `useCallback`/`useMemo` deps get a new ref on every context recompute.
+`selectCurrency` plain function (new ref every render) included in memoized value but not in deps. Not causing loop — `selectCurrency` only calls `setSelectedCurrency` (stable) so captures correct ref. But violates React deps rules, causes lint warnings. Consumers putting `selectCurrency` in own `useCallback`/`useMemo` deps get new ref on every context recompute.
 
 **Bug B3 — `fetchRate` exposed via `useCallback` but not in context value**
 
-`fetchRate` is created but never exposed. The `useCallback` wrapper adds unnecessary complexity with no benefit. Only used inside the file's own `useEffect`.
+`fetchRate` created but never exposed. `useCallback` wrapper adds unnecessary complexity with no benefit. Only used inside file's own `useEffect`.
 
 ---
 
@@ -83,7 +83,7 @@ fswatch -r /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-frontend/page
   --exclude='\.next' 2>/dev/null
 ```
 
-If `public/audit-screenshots/` is writing during dev, add to `next.config.js`:
+If `public/audit-screenshots/` writing during dev, add to `next.config.js`:
 ```js
 // next.config.js
 webpack: (config, { dev }) => {
@@ -162,7 +162,7 @@ Remove `fetchRate` `useCallback` entirely.
 
 Key consumers:
 - `components/UI/CurrencySelector.js` — calls `selectCurrency` on user click
-- `components/trips/FilterTrip.js:150` — `currentRate` in `useMemo` deps (will benefit from stable ref)
+- `components/trips/FilterTrip.js:150` — `currentRate` in `useMemo` deps (benefits from stable ref)
 - `components/itinerary/TripDetail3.js`
 - `components/trips/TripItem.js`
 - `pages/checkout/PaymentComponent.js`
@@ -173,7 +173,7 @@ Key consumers:
 
 ## Investigation Order
 
-1. **First: diagnose Fast Refresh loop** — `fswatch` or add console.log to webpack `watchOptions.ignored` callback, identify which file triggers recompile. Fix that first since it accounts for most backend log noise.
+1. **First: diagnose Fast Refresh loop** — `fswatch` or add console.log to webpack `watchOptions.ignored` callback, identify which file triggers recompile. Fix first — accounts for most backend log noise.
 2. **Then: apply CurrencyContext Fix B** — correctness fix, stops race condition, cleans deps.
 
 ---

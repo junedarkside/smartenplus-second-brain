@@ -20,7 +20,7 @@ const handleInputChange = (event, newInputValue) => {
 };
 ```
 
-Now freetext search works without requiring blur or dropdown selection.
+Freetext search works without blur or dropdown selection.
 
 **File:** `components/activities/shared/DayTripLocationSearch.js:26-28` (RC-3).
 

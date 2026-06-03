@@ -3,7 +3,7 @@
 ## Brand Color
 **`#3b5998`** — Facebook blue, correct brand color.
 
-Was incorrectly changed to `#1E40AF` in earlier edits. Reverted to `#3b5998`.
+Was `#1E40AF` in earlier edits. Reverted to `#3b5998`.
 
 ## Single Source of Truth
 `helpers/designSystem.js` — all design tokens defined here.
@@ -79,6 +79,6 @@ import { COLORS, getButtonClasses, getCardClasses, getInputClasses, BUTTON_CONFI
 ## Audit Findings (before fix)
 - 16 high severity hardcoded brand/badge colors
 - 21 medium severity hardcoded status colors
-- 0 components used `getButtonClasses()` before this audit
+- 0 components used `getButtonClasses()` before audit
 - Only `UnifiedCard` used `getCardClasses()`
 - 3 homepage sections used `rounded-xl` on non-image-card elements
