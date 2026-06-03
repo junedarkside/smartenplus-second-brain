@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-04] ingest | gyg-page-analysis — 3-specialist GYG Chiang Rai tour analysis, 11 candidates → 5 adopted (1 P0 footer meta strip, 2 P1 not-suitable-for + review thumbnails, 2 P2 sort/filter + itinerary disclaimer), 4 P3 backend debt flagged (audio guide 41 langs, private group, per-aspect rating, provider response), AI summary user-deferred. Vault: `01-projects/gyg-page-analysis-2026-06-04/`. Supersedes [[experience-detail-page-redesign-2026-06-02]] deltas. WebFetch unavailable, text dump used.
+
 ## [2026-06-03] ingest | business-development-docs — Ingested 6 business-development docs into vault. Notes created in 01-projects/: thesis (2026-2029), thailand-platform-analysis, thailand-bundle-architecture, thailand-bundling-margin, unified-travel-wellness-thesis, zeitrip-mvp. Index updated.
 
 ## [2026-06-03] decision | vault note strategy — 2-agent debate (bulk vs atomic). Team: bulk-advocate (one note per doc), atomic-advocate (per-concept extraction). User chose project notes (01-projects/ one note per source doc). Preserves document context, aligns with vault anti-overengineering rules.

@@ -14,6 +14,8 @@ Global navigation catalog. Updated on every ingest.
 
 - [[experience-detail-page-redesign-2026-06-02]] — **PLANNED 2026-06-02.** Premium redesign of `/activities/detail/[slug]` → Airbnb-level experience detail page. Airbnb 5-up photo grid, trust badges, reviews moved up, timeline collapsed, 9 new components, 0 new API endpoints.
 
+- [[gyg-page-analysis-2026-06-04]] — **INCREMENTAL 2026-06-04.** 3-specialist GYG Chiang Rai tour (product 846675) analysis vs SmartEnPlus activity detail page. 11 candidates → 5 adopted (P0 footer meta strip, P1 not-suitable-for badges + review thumbnails, P2 review sort/filter + itinerary disclaimer). 4 P3 backend debt flagged (audio guide, private group, per-aspect rating, provider response). AI summary user-deferred.
+
 - [[experiences-2026-marketplace-redesign]] — **PLANNED 2026-06-01.** 4-phase redesign of `/activities` → world-class 2026 marketplace. Sidebar layout, 4-col grid, premium card, sort bar. Phase 1: frontend-only. Phase 2: backend filter params. Phase 3: mobile. Phase 4: iPad polish.
 
 - [[profile-dropdown-redesign-2026-05-29]] — **COMPLETED 2026-05-29.** 3-specialist review. 11→6 items, 296px, pill trigger, bottom sheet mobile, 3-file split. MUI-preserve strategy. Implemented on `260528-feat/header-redesign-2026`.
