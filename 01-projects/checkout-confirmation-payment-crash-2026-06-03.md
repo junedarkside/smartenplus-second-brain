@@ -1,10 +1,29 @@
-# Checkout Confirmation/Payment Crash — 2026-06-03
+# Non-transport trip=None — Full Flow Fix — 2026-06-03
 
 ## Summary
-Checkout crashes at Confirmation/Payment step for non-transport cart items. Two unguarded accesses in `Confirmation.js` + one fragile pattern in `TripsConfirmation.js`.
+Non-transport contracts (DAY_TOUR, SPA_WELLNESS etc.) always have `contract.trip = None`. This caused crashes at every stage of the user flow: checkout confirmation, payment, order page, booking detail page. All crash sites fixed + booking detail page now receives full contract info from API.
 
 ## Status
-OPEN — reproduction steps documented. Fix pending.
+PENDING COMMIT/MERGE — Code done 2026-06-03 session 2. Uncommitted on branch `260603-fix/non-transport-trip-none-guard` (both repos). Needs: Django restart → test → commit → merge develop.
+
+## All Fixes Applied (session 1 + 2)
+
+### Frontend — `260603-fix/non-transport-trip-none-guard`
+| File | Fix |
+|------|-----|
+| `components/forms/checkout/Confirmation.js:111,115` | `formData.passengers?.length ?? 0` + `|| []` |
+| `components/forms/checkout/TripsConfirmation.js:18-20` | `?.substring(0, 5) ?? '--:--'` |
+| `components/order/OrderDetail.js:171-183` | 5 props null-guarded with `?.` + `?? null` |
+| `components/bookings/BookingInfoDialog.js:44` | `trip?.route \|\| {}` |
+| `components/bookings/BookingDetail/ServiceTabbedInfo.js` | `?.general_information?.description` + `refund_hours` |
+| `components/bookings/BookingDetail/ServiceDetail.js` | Contract name h2 + `customFormatDuration` |
+| `helpers/designSystem.js` | `COLORS.badge.category/tourTypePrivate/tourTypeCharter` |
+
+### Backend — `260603-fix/non-transport-trip-none-guard`
+| File | Fix |
+|------|-----|
+| `carts/utils.py` | `_trip/_route` null guards before `BookingItem.objects.create()` |
+| `operators/serializers.py` | Extended `ContractSerializer` with 10 non-transport fields + 3 helper serializers |
 
 ## Root Cause
 

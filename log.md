@@ -2,6 +2,17 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-03] session-end | #38 — booking-summary 500 fix: guard contract.trip=None in AdminBookingSummarySerializer. Branch 260603-fix/booking-summary-trip-none-guard pushed to backend, needs merge.
+
+## [2026-06-03] fix | copy-cartitem-trip-none-guard — `carts/utils.py:copy_cartitem_to_bookingitem()` crashed `contract.trip.route` when `trip=None` (DAY_TOUR etc.). Guard added. Atomic note: [[copy-cartitem-trip-none-guard]]. Also: Confirmation.js:111,115 guarded (`formData.passengers?.length ?? 0`, `|| []`).
+
+## [2026-06-03] session-end | #37 — non-transport trip=None full flow fix complete (code done, uncommitted)
+
+**Fixed:** 9 files across 2 repos. All crash sites on checkout→payment→order→booking path guarded. ContractSerializer extended with 10 non-transport fields (general_information, cancellation_policy, image gallery, tour_highlights, inclusions, exclusions, what_to_bring, difficulty_level, duration, instant_confirmation, mobile_ticket_enabled, meeting_point_type/details). ServiceTabbedInfo.js: `refund_hours` field fix + `?.description` guard.
+
+**Vault:** [[contract-serializer-non-transport-fields-2026-06-03]] created. [[checkout-confirmation-payment-crash-2026-06-03]] updated with full fix table. master-state updated.
+
+**Next:** Restart Django → test `/bookings/JOH4017133` → commit both repos → merge develop. Then back to CART-1/FAQ-1/AT-1.
 ## [2026-06-03] bug | checkout-confirmation-payment-crash — `formData.passengers.length` unguarded in `Confirmation.js:111,115`. Crashes for non-transport items at Confirmation step. Reproduction steps in [[checkout-confirmation-payment-crash-2026-06-03]]. Fix pending.
 
 ## [2026-06-03] session-end #36 | checkout null-contract sweep complete — 4 fixes shipped to production. Passengers.js info_fields + trip header + index.js render-root guards + FormCard button height unified h-12. Full scan vault: [[checkout-null-contract-scan-2026-06-03]].

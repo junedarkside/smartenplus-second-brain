@@ -6,29 +6,27 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-03 (session #36)
+**Updated:** 2026-06-03 (session #38)
 
-**Achieved this session (#36):**
-- **4 production fixes shipped** — all on `main`, deployed to production
-  1. `43b7ece` — `pages/checkout/index.js` — `hasPassedAdvanceHour` + `hasStopSaleDate` null guard for `contract.trip` (render-root crash on all non-transport items)
-  2. `5873403` — `components/forms/checkout/Passengers.js:259,501` — `info_fields.forEach` null guard (crash on Next click, lazy useState + useMemo)
-  3. `05fc0aa` — `components/forms/checkout/Passengers.js:1097` — trip header label `tripWrapper.trip.contract.trip.route_route` → full optional chain + fallback (found by 3-agent full scan)
-  4. `c89a702` — `components/forms/FormCard.js` — Back/Next/PayNow height unified to `h-12` (48px), removes `h-10`/`p-2` mismatch
-- **Full checkout null-contract scan** completed — vault report at [[checkout-null-contract-scan-2026-06-03]]. All other flagged sites verified safe (JSX `&&` short-circuit guards). 1 real bug found + fixed (`05fc0aa`).
-- **Atomic note created** — [[contract-trip-null-non-transport-pattern]]
+**Achieved this session (#38):**
+- **booking-summary 500 fix** — `AdminBookingSummarySerializer.get_contract()` crashed when `contract.trip=None`. Guarded `trip` before accessing `.route` and `.departure_time`.
+  - File: `bookings/serializers.py` (~5 lines)
+  - Branch `260603-fix/booking-summary-trip-none-guard` committed + pushed to backend
+  - **NOT yet merged to develop**
 
 **Next session resume point (EXACT):**
-1. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
-2. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
-3. **AT-1** airport transfer redesign
-4. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+1. Merge `260603-fix/booking-summary-trip-none-guard` → develop (backend)
+2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
+4. **AT-1** airport transfer redesign
+5. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
 
 ### Active Branches
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `main` | Clean — 4 checkout fixes `c89a702` |
-| `smartenplus-backend` | `main` | Clean — `contract.trip` null fix merged (session #34) |
+| `smartenplus-frontend` | `main` | Clean |
+| `smartenplus-backend` | `260603-fix/booking-summary-trip-none-guard` | Pushed — needs merge to develop |
 | `admin-dashboard` | `main` | Clean — awaits FAQ-1 P1 (ageRestriction field) |
 
 ---
