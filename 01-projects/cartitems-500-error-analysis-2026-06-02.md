@@ -16,6 +16,10 @@ data: Django HTML 500 page
 error: "SyntaxError: Unexpected token '<'..."
 ```
 
+## Atoms Extracted
+- [[view-utility-call-exception-wrapper]] — the `try/except → ValidationError` pattern at view boundary
+- [[contract-trip-null-non-transport-pattern]] — `contract.trip` null-guard (covered in detail below)
+
 ## Root Cause (Confirmed)
 
 ### Real Cause — `contract.trip = None` in `check_advance_hour()`
@@ -79,3 +83,5 @@ Original claim: `isLoading` not passed → button clickable during fetch → sta
 - [[cart]] — CartItem model, cartitems endpoint
 - [[nextjs-isr-ratecard-empty-array-guard]] — similar stale data guard
 - [[payment-checkout-architecture-audit]] — error handling patterns
+- [[view-utility-call-exception-wrapper]] — the `try/except → ValidationError` pattern (new atom)
+- [[contract-trip-null-non-transport-pattern]] — the `contract.trip` null-guard pattern

@@ -2,7 +2,15 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
-## [2026-06-03] session-end | #38 — booking-summary 500 fix: guard contract.trip=None in AdminBookingSummarySerializer. Branch 260603-fix/booking-summary-trip-none-guard pushed to backend, needs merge.
+## [2026-06-03] ingest | business-development-docs — Ingested 6 business-development docs into vault. Notes created in 01-projects/: thesis (2026-2029), thailand-platform-analysis, thailand-bundle-architecture, thailand-bundling-margin, unified-travel-wellness-thesis, zeitrip-mvp. Index updated.
+
+## [2026-06-03] decision | vault note strategy — 2-agent debate (bulk vs atomic). Team: bulk-advocate (one note per doc), atomic-advocate (per-concept extraction). User chose project notes (01-projects/ one note per source doc). Preserves document context, aligns with vault anti-overengineering rules.
+
+## [2026-06-03] decision | airport-transfer-width-fix — 3-agent debate + judge. Option C (targeted margin reduction) chosen over Option A (full-width restructure) and Option B (status quo). Surgical: remove `px-2 md:px-3` from outer section, add `px-4 xl:px-0` to inner wrapper. LAY-1 precedent applied. 2 files, ~4 line edits. ProductCardContainer mx-2 preserved. Doc updated: [[airport-transfer-width-audit-2026-05-30]] now RESOLVED. — 1007-line source condensed to `02-areas/content-marketing-strategy-2026-06-03.md` (~190 lines). Hub-and-spoke: Travel Routes primary + 4 spokes (Cheat Codes, Tourist Mistakes, Thailand Costs, Route Intelligence). 6-platform distribution (TikTok, IG Reels, FB Groups-first, YT Shorts+Long-form, Pinterest new). Top keyword: $54.11 CPC on "hat yai airport to koh lipe". Route Demand Index identified as data moat. Plus 3 atom notes: `03-knowledge/keyword-research-routes.md` (4 CSV reference index for Bangkok-Samui / Chiang Mai / Hat Yai-Lipe en-th / Langkawi-Lipe) and 2 image reference notes (`business-development-new-site-diagram.md`, `business-development-new-site-idea.md`) linking to PNG assets. Index Areas + Knowledge Domains updated.
+
+## [2026-06-03] ingest | business-development-thesis — SmartEnPlus strategic thesis created at `/Users/charuwatnaranong/Desktop/SmartEnPlus/business-development/business-development-thesis.md`. Condensed to vault note at `02-areas/business-development-thesis-2026.md`. Index + business.md updated. Key thesis: "Thailand's Travel Commerce Platform" — own travel connectivity not inventory. Four-phase growth model: revenue per traveler → retention → AI intelligence → journey commerce. B2B+B2C distribution.
+
+## [2026-06-03] session-end | #38: guard contract.trip=None in AdminBookingSummarySerializer. Branch 260603-fix/booking-summary-trip-none-guard pushed to backend, needs merge.
 
 ## [2026-06-03] fix | copy-cartitem-trip-none-guard — `carts/utils.py:copy_cartitem_to_bookingitem()` crashed `contract.trip.route` when `trip=None` (DAY_TOUR etc.). Guard added. Atomic note: [[copy-cartitem-trip-none-guard]]. Also: Confirmation.js:111,115 guarded (`formData.passengers?.length ?? 0`, `|| []`).
 
@@ -479,3 +487,17 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 **Vault docs updated:**
 - master-state.md: Section 1 + active branches + loose ends
 - log.md: this entry
+
+## [2026-06-03] session-end | 5-agent test team: 979 tests run, BLOCK RELEASE, 4-5 dev days to fix
+- Jest: 217/719 failed (30%), coverage 3.92% vs 70% threshold
+- Playwright: 233/260 failed (90%), only 4/10 pages covered, mobile 100% fail
+- 6 CRITICAL issues: 0% BookButton coverage, checkout timeout, mobile E2E broken, jest-axe missing, MUI emotion mismatch, payment path unverified
+- Vault note: [[frontend-test-infrastructure-audit-2026-06-03]]
+- Resume: merge backend branch `260603-fix/booking-summary-trip-none-guard` → develop
+
+- Source: [[checkout-confirmation-payment-crash-2026-06-03]] (148 lines, no .original.md)
+- Source: [[cartitems-500-error-analysis-2026-06-02]] (95 lines, no .original.md)
+- Extracted: [[service-detail-non-transport-display]] — booking detail page field-name contract (refund_hours, general_information?.description, customFormatDuration safety)
+- Extracted: [[view-utility-call-exception-wrapper]] — view-layer `try/except → ValidationError` defense-in-depth pattern
+- Index: source entries updated with atom pointers. Page count: 97 → 99.
+- Pre-existing atoms unchanged: [[contract-trip-null-non-transport-pattern]], [[copy-cartitem-trip-none-guard]], [[contract-serializer-non-transport-fields-2026-06-03]], [[checkout-null-contract-scan-2026-06-03]] already covered the bulk of the patterns.

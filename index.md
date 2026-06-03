@@ -10,7 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
-- [[cartitems-500-error-analysis-2026-06-02]] — **RESOLVED 2026-06-02.** Production 500 on POST /carts/{id}/cartitems/. Real cause: `contract.trip=None` → AttributeError in `check_advance_hour()`. Fixed `carts/utils.py:591` + call-site guard. Original Bug 1/2 analysis was wrong. Bug 3 (PARSING_ERROR catch) deferred → CART-1.
+- [[frontend-test-infrastructure-audit-2026-06-03]] — **BLOCK RELEASE 2026-06-03.** 5-agent team: Jest (719 tests, 30% fail) + Playwright (260 tests, 90% fail). 3.92% coverage vs 70% threshold. 6 CRITICAL issues: 0% BookButton coverage (payment path), checkout 30s timeout, mobile 100% fail, jest-axe missing, MUI emotion mismatch. 4-5 dev days to fix. Money flow (checkout → payment) completely unverified.
 
 - [[experience-detail-page-redesign-2026-06-02]] — **PLANNED 2026-06-02.** Premium redesign of `/activities/detail/[slug]` → Airbnb-level experience detail page. Airbnb 5-up photo grid, trust badges, reviews moved up, timeline collapsed, 9 new components, 0 new API endpoints.
 
@@ -62,6 +62,15 @@ Global navigation catalog. Updated on every ingest.
 - [[hero-banner-cms|Hero Banner CMS 2026-05-19]] — backend-controlled homepage hero, FileField+AVIF fix, admin dashboard CRUD, 5s slideshow
 - [[blog-seo-performance-2026-05-20|Blog SEO & Performance 2026-05-20]] — parallel fetches, image optimization, HMR fixes, patterns to reuse
 - [[hydration-infinite-refresh-fix-2026-05-20|Hydration Infinite Refresh Fix 2026-05-20]] — all-page HMR loop from 4 hydration issues; agent accuracy ~55%; PersistGate SSR pattern
+
+## Business Development (2026)
+
+- [[business-development-thesis-2026-2029]] — SmartEnPlus strategic transformation: Travel Commerce Platform, "travel connectivity" vs OTA/inventory competition, 4-phase growth model
+- [[business-development-thailand-platform-analysis]] — 12Go vs Klook vs GetYourGuide funnel mapping: transport aggregation, deals/bundles, premium tours. Gap: end-to-end itinerary unowned
+- [[business-development-thailand-bundle-architecture]] — End-to-end bundle design: MaaS skeleton + activity decoration + wellness add-ons. Timeline UI + conflict detection. v1: 3 corridors
+- [[business-development-thailand-bundling-margin]] — Margin tiers: transport (low), activities (medium), wellness/SIMs (high). Bundle Score UX. Klook content marketing model
+- [[business-development-unified-travel-wellness-thesis]] — 30%+ operating margins via integrated transport+wellness. Wellness as differentiator. Gamification loops. Domestic Thai focus
+- [[business-development-zeitrip-mvp]] — MVP: single itinerary timeline vs cart. 3 corridors, wizard flow, conflict detection. "Plan your Thailand trip in one timeline"
 - [[trip-detail-page-review-2026-05-20|Trip Detail Page Review 2026-05-20]] — 3-agent review: 8 perf + 8 SEO + 8 code quality issues; 24 verified findings with line numbers and fix order
 - [[trip-detail-deep-review-2026-05-20|Trip Detail Deep Review 2026-05-20]] — 4-agent adversarial pass: 3 findings overturned, 8 hidden issues, 4 prod failure scenarios; top risks: ratecard wipe, fetch timeout, invalid ISO8601 schema
 - [[homepage-ux-review-2026-05-21|Homepage UX/UI Review 2026-05-21]] — 3-agent review, 11 sections, 4 critical + 34 major issues; XSS in reviews, section reorder, inline validation, hero value prop
@@ -100,11 +109,13 @@ Global navigation catalog. Updated on every ingest.
 - [[admin-dashboard-image-pipeline]] — Frontend image state, error reset hooks, dedup helpers
 - [[admin-dashboard-component-patterns]] — Formik+Yup, RTK Query, MUI patterns, gotchas
 - [[django-serializer-shadowing-pattern]] — Local class redefines imported name in same file; silently changes exposed fields. Discovered via HomeSerializer/StationSerializer in products/serializers.py.
-- [[checkout-confirmation-payment-crash-2026-06-03]] — **PENDING COMMIT 2026-06-03.** Full flow fixed (9 files, 2 repos). ContractSerializer extended. ServiceTabbedInfo.js refund_hours fix. Commit + merge next session.
+- [[checkout-confirmation-payment-crash-2026-06-03]] — **PENDING COMMIT 2026-06-03.** Full flow fixed (9 files, 2 repos). ContractSerializer extended. ServiceTabbedInfo.js refund_hours fix. Commit + merge next session. Atoms: [[service-detail-non-transport-display]], [[contract-trip-null-non-transport-pattern]], [[copy-cartitem-trip-none-guard]], [[contract-serializer-non-transport-fields-2026-06-03]], [[checkout-null-contract-scan-2026-06-03]].
 - [[contract-serializer-non-transport-fields-2026-06-03]] — **NEW 2026-06-03.** ContractSerializer had minimal fields list — missing all non-transport data. Fix: 3 helper serializers + 10 new fields. Key: `refund_hours` not `cancellation_window`. `duration` DurationField → `"8:00:00"` format, safe with `customFormatDuration`.
 - [[copy-cartitem-trip-none-guard]] — **NEW 2026-06-03.** `carts/utils.py:copy_cartitem_to_bookingitem()` crashed `trip.route` when `trip=None`. Guard pattern + `str()` coercion for route/station CharFields. No migration.
 - [[checkout-null-contract-scan-2026-06-03]] — **RESOLVED 2026-06-03.** Full scan of checkout for unguarded contract/trip access. 1 real bug found + fixed (`05fc0aa`): `Passengers.js:1097` trip header label. All other flagged sites verified safe (JSX short-circuit guards).
 - [[contract-trip-null-non-transport-pattern]] — **NEW 2026-06-03.** Non-transport contracts always have `trip=None`. Guard `contract?.trip` before accessing `departure_time`/`arrival_time`/`route`. Crashes render-root computed values without guard.
+- [[service-detail-non-transport-display]] — **NEW 2026-06-03.** Booking detail page field-name contract: `general_information?.description`, `refund_hours` (not `cancellation_window`), `customFormatDuration(duration)` safe with "8:00:00" DurationField format. Reusable for any contract display in booking/order/email rendering.
+- [[view-utility-call-exception-wrapper]] — **NEW 2026-06-03.** View-layer `try/except → ValidationError` wrapper for untrusted utility calls. Ensures JSON 400 instead of HTML 500 when utility crashes. Defense-in-depth, not a substitute for internal null guards.
 - [[activities-sort-filter-ux]] — **NEW 2026-06-02.** State-driven button emphasis pattern (both outlined, active via badge/label). Travel app standard (Klook, Booking.com). Mobile sort bottom-sheet, desktop sort chip.
 - [[homepage-experiences-section-audit-2026-05-30]] — Feasibility audit: add "Explore Experiences" carousel to homepage. Verdict: VIABLE after AT-1 + inventory check. Backend ready (Contract model). 5 files, ~160 lines. Reuses CardCarouselContainer + PopularRoutesSection pattern.
 - [[transportation-category-audit-2026-05-30]] — Full audit: 3-level category system (station_type / service_category / VehicleType), airport filter vs TRANSFER category decoupled, 26 station_types, lowest_price nullable, query_count Celery mechanism. Professional homepage section redesign spec (AT-1): image card + IATA badge + carousel mobile + serializer expansion.
@@ -152,9 +163,14 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-checkout-5-principles]] — 5 core checkout architecture principles: webhook SSOT, single attempt, immutable snapshot, cart lock, explicit cancel-recreate
 - [[nextjs-static-path-prop-divergence]] — getStaticPaths + getStaticProps constant divergence = silent routing failure. Module-level constant mandatory
 - [[content-marketing-strategy-2026-05-24]] — 5-agent review + full playbook rewrite. 6 contradictions fixed, keyword opportunities, tech stack integrated.
+- [[keyword-research-routes]] — 4 CSV data assets (Bangkok-Samui, Chiang Mai, Hat Yai-Lipe en-th, Langkawi-Lipe). Reference index, files live in smartenplus-content/keyword-research/. Feeds [[content-marketing-strategy-2026-06-03]] SEO targets.
+- [[business-development-new-site-diagram]] — Reference image (new site diagram.png) for [[business-development-thesis-2026]]. PNG stored outside vault, large file.
+- [[business-development-new-site-idea]] — Reference image (new site idea.png) for [[business-development-thesis-2026]]. PNG stored outside vault, large file.
 
 ## Areas
 
+- [[business-development-thesis-2026]] — **NEW 2026-06-03.** SmartEnPlus strategic thesis: Thailand Travel Commerce Platform. Four-phase growth model (revenue per traveler → retention → AI intelligence → journey commerce). Competitive position: "travel connectivity" not inventory. B2B+B2C distribution. [[business]] updated.
+- [[content-marketing-strategy-2026-06-03]] — **NEW 2026-06-03.** Full Thailand travel content marketing playbook. Hub-and-spoke (Travel Routes primary + 4 spokes), 6-platform distribution, $54.11 CPC hat yai target, Route Demand Index as data moat. Supersedes [[content-marketing-strategy-2026-05-24]] (which becomes the meta-review).
 - [[engineering]] — Software engineering practices and standards
 - [[business]] — Validated strategy: B2B supplier (12Go+Klook 90%) + B2C direct (10%). EN customer confirmed. Vertical integration moat. "Stippl for SEA with real booking" vision.
 - [[southeast-asia-transport-platform-direction]] — Product vision: SEA transport + experience infra platform. Stippl plans but can't book; 12Go books but can't plan — SmartEnPlus does both. B2B supplier → B2C direct roadmap. Core loop: destinations+dates+interests → AI plan → book.
@@ -198,8 +214,8 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 97
-- Last updated: 2026-06-02 (session #27: ACT-12 resolved, react-dual-hook-url-race atomic note)
+- Pages: 99
+- Last updated: 2026-06-03 (vault-atomize: service-detail-non-transport-display + view-utility-call-exception-wrapper)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx

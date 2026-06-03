@@ -6,6 +6,13 @@ Non-transport contracts (DAY_TOUR, SPA_WELLNESS etc.) always have `contract.trip
 ## Status
 PENDING COMMIT/MERGE — Code done 2026-06-03 session 2. Uncommitted on branch `260603-fix/non-transport-trip-none-guard` (both repos). Needs: Django restart → test → commit → merge develop.
 
+## Atoms Extracted
+- [[contract-trip-null-non-transport-pattern]] — frontend `contract?.trip` guard pattern
+- [[copy-cartitem-trip-none-guard]] — backend `copy_cartitem_to_bookingitem` null guard
+- [[contract-serializer-non-transport-fields-2026-06-03]] — serializer fields expansion
+- [[service-detail-non-transport-display]] — booking detail page field-name contract
+- [[checkout-null-contract-scan-2026-06-03]] — full checkout scan results
+
 ## All Fixes Applied (session 1 + 2)
 
 ### Frontend — `260603-fix/non-transport-trip-none-guard`

@@ -13,6 +13,7 @@ I'll compress the markdown text you provided directly, following the compression
   - File: `bookings/serializers.py` (~5 lines)
   - Branch `260603-fix/booking-summary-trip-none-guard` committed + pushed to backend
   - **NOT yet merged to develop**
+- **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
 1. Merge `260603-fix/booking-summary-trip-none-guard` → develop (backend)
@@ -51,6 +52,7 @@ I'll compress the markdown text you provided directly, following the compression
 | FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review-2026-06-02]] | `admin-dashboard/DayTripDetails.js` (deferred) |
 | FAV-1 | **Favorite heart on DayTripCard** | ADR designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
 | AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |
+| TSTD-1 | **Frontend test infrastructure** | BLOCK RELEASE: 6 CRITICAL issues (0% BookButton coverage, checkout timeout, mobile 100% fail). 4-5 dev days. Vault: [[frontend-test-infrastructure-audit-2026-06-03]] | `jest.setup.js`, `jest.config.js`, `playwright.config.ts`, `e2e/` |
 | AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit-2026-05-30.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
@@ -67,6 +69,10 @@ I'll compress the markdown text you provided directly, following the compression
 | GAP-5 | Nav hidden while searching on trip page | P2 — accepted tradeoff | `main-header.js:112` |
 | GAP-6 | threshold=0 abrupt snap | P3 | `hooks/useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden at md–xl when search active | P3 | `main-header.js:95` |
+| IDX-1 | Add `experience-detail-ipad-mobile-redesign-2026-06-02` to index.md | Unindexed: file exists in `01-projects/` but absent from index. Cross-referenced from [[experience-faq-architecture-review-2026-06-02]]:151. Add to Active Projects. | `01-projects/experience-detail-ipad-mobile-redesign-2026-06-02.md` |
+| IDX-2 | Add `experience-faq-architecture-review-2026-06-02` to index.md | Unindexed: file exists in `01-projects/` but absent from index. Already linked from master-state line 51. Add to Active Projects. | `01-projects/experience-faq-architecture-review-2026-06-02.md` |
+| IDX-3 | Reconcile today's planned `content-marketing-strategy-2026-06-03` | NOT in index.md AND no file exists at `03-knowledge/content-marketing-strategy-2026-06-03.md`. Likely a planned-but-not-ingested note. Verify intent, ingest, or remove from roadmap. | `03-knowledge/content-marketing-strategy-2026-06-03.md` (missing) |
+| IDX-4 | Resolve duplicate-basename wikilink conflicts | 3 filenames exist in two directories (knowledge + archive or projects + archive), causing ambiguous Obsidian resolution. Pick canonical location, rename the other with suffix `-v1` or move to archive-only. | `og-image-inferred-audit-2026-05-23`, `seo-wave2-audit-2026-05-23`, `homepage-uxui-audit-2026-05-31` |
 
 ---
 

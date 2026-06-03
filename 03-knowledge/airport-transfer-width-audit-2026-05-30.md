@@ -1,8 +1,8 @@
 # Width Inconsistency Audit — airport-transfer post-calendar sections
 
 **Date:** 2026-05-30
-**Status:** UNRESOLVED — root cause identified, fix reverted
-**Next team:** See Section 4
+**Status:** **RESOLVED 2026-06-03** — Option C chosen via 3-agent debate + judge
+**Resolution:** Targeted margin reduction (surgical padding relocation)
 
 ---
 
@@ -148,3 +148,44 @@ Sections ARE inside `max-w-[1200px]`. Issue not the outer container — StationI
 
 - `03-knowledge/transportation-category-audit-2026-05-30.md` — AT-1 redesign spec (separate issue)
 - `docs/width-inconsistency-audit-2026-05-30.md` — earlier audit report (partial)
+
+---
+
+## Resolution — 2026-06-03 (3-Agent Debate + Judge)
+
+### Debate Summary
+
+3 advocates argued in parallel, judge picked winner.
+
+**Advocate-A (Option A — Full-width):** Restructure outer `section` → `w-full`, inner wrapper → `max-w-[1200px] mx-auto`. Claim: canonical homepage pattern. Rejected: unnecessary structural rework, wide blast radius.
+
+**Advocate-B (Option B — Status quo):** No change needed. Claim: visual mismatch is perceptual. Rejected: user already complained, perception IS the problem.
+
+**Advocate-C (Option C — Targeted reduction):** Remove `px-2 md:px-3` from outer section, add `px-4 xl:px-0` to inner wrapper. Matches LAY-1 precedent. **Winner.**
+
+### Why Option C
+
+- Matches `layout-spacing-consistency-audit` LAY-1 fix pattern: `p-2` → `px-4 xl:px-0` (surgical relocation, not deletion)
+- Minimal blast radius: 2 files, ~4 line edits
+- Preserves `mx-3` on inner map section + `mx-2` on ProductCardContainer (shared component untouched)
+- Same visual result as Option A at fraction of structural change
+
+### Implementation (Decision — Not Yet Committed)
+
+**`components/destinations/StationInformation.js`:**
+- Line 15: `<section className="relative sm:rounded-lg bg-white flex flex-col gap-2">` (remove `px-2 md:px-3`)
+- Add inner wrapper with `max-w-[1200px] mx-auto px-4 xl:px-0`
+- Keep `mx-3` on inner map section
+
+**`components/destinations/GuidesSection.js`:**
+- Line 12: `<section className="relative sm:rounded-lg bg-white flex flex-col gap-2">` (remove `px-2 md:px-3`)
+- No other changes
+
+**Files NOT changed:** `ProductCardContainer.js` (`mx-2` stays — shared, warned against touching)
+
+### Verification
+
+1. Run `npm run dev`
+2. Navigate to `http://localhost:3000/airport-transfer/hatyai-airport`
+3. Compare calendar section width vs StationInformation + GuidesSection width — should visually match
+4. Test mobile (<768px) and xl (≥1280px) breakpoints
