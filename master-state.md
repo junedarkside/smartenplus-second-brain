@@ -59,7 +59,7 @@ I'll compress the markdown text you provided directly, following the compression
 |------|--------|--------|
 | `smartenplus-frontend` | `develop` | Latest: `375e501` info_fields casing ADR comments |
 | `smartenplus-backend` | `main` | Latest: `09d6f3a` meeting_point_type/details in AdminBookingSummarySerializer |
-| `admin-dashboard` | `main` | Clean (`a88686d` timeline null-id sentinel) |
+| `admin-dashboard` | `main` | Latest: `b3d37df` CLAUDE.md compressed |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 
 ---

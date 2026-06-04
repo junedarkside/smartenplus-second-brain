@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-04] session-end | #42: CMA-1 casing ADR (375e501) + CMA-2 meeting_point fix (09d6f3a backend) + get_translated_meeting_point_details deferred. Next: ContractDetailSerializer.validate() HOTEL_PICKUP invariant.
+
 ## [2026-06-04] decision | adr-info-fields-casing: info_fields casing boundary documented — 1 vault ADR + inline comments in 6 frontend files. CMA-1 casing item closed.
 
 ## [2026-06-04] session-end | CMA-1 partial: showStations deleted (ff8006e frontend) + admin PATCH guard fixed (22dc045 backend) + debate found Contract.clean() mis-scoped (rescoped to ContractDetailSerializer.validate()) + CMA-2 new gap ServiceDetail.js:35
