@@ -45,8 +45,8 @@ I'll compress the markdown text you provided directly, following the compression
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `main` | Clean (`2f4679f` timeline display null-safe) |
-| `smartenplus-backend` | `main` | Clean (`55f603a` timeline fix + migration 0028) |
+| `smartenplus-frontend` | `develop` | 2 new merges: `62dd45c` trust-badges-real-fields, `5014b96` gyg-activity-detail-incremental |
+| `smartenplus-backend` | `main` | Clean (`d600a77` Stripe gateway deprecated migration 0022) |
 | `admin-dashboard` | `main` | Clean (`a88686d` timeline null-id sentinel) |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 
