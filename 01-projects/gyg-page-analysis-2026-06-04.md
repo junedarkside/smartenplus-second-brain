@@ -77,11 +77,11 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 
 ## Priority Fix Queue
 
-- [ ] **P0** Footer meta strip — `components/activities/detail/DayTripDetailPage.js` (visual) + `components/activities/detail/DayTripDetailSEO.js` (JSON-LD `provider` field)
-- [ ] **P1** Not-suitable-for badges — new component or inline in `components/activities/detail/IncludedExcluded.js`
-- [ ] **P1** Review thumbnails — modify `components/review/ReviewListByProduct.js` (verify `Review.images[]` first)
-- [ ] **P2** Review sort + filter — modify `components/review/ReviewListByProduct.js` (verify client-render first)
-- [ ] **P2** "For reference only" disclaimer — modify `components/activities/detail/DayTripDetailPage.js`
+- [x] **P0** Footer meta strip — DONE. Visual: `DayTripDetailPage.js:234`. JSON-LD: `[...slug].js:138` → `generateProviderSchema` → `DayTripDetailSEO.js:37`
+- [x] **P1** Not-suitable-for badges — DONE. No `restrictions` field exists; derived from `age_restriction` + `difficulty_level` (MODERATE/CHALLENGING). Inline in `IncludedExcluded.js` using `BadgeChip`. Branch `260605-feat/not-suitable-badges`.
+- [ ] **P1** Review thumbnails — NOT DONE. Blocked: V4 verify `Review.images[]` backend field first.
+- [x] **P2** Review sort + filter — DONE. Filter chips (All/5★/4★+/3★+) added. Branch `260605-feat/review-filter` commit `d5d7482`. Affects all 3 consumers: activity detail, trip detail, TripDetailPricing.
+- [x] **P2** "For reference only" disclaimer — DONE. `DayTripDetailPage.js:193-198` inside Timeline accordion.
 
 **P3 Backend Debt (out of scope this round):**
 - Audio guide 41 languages — needs `audio_guide_languages[]` on Contract

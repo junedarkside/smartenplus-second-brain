@@ -6,7 +6,13 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-04 (session #43)
+**Updated:** 2026-06-05 (session #44)
+
+**Achieved this session (#44):**
+- **GYG P1 not-suitable badges — DONE** — `IncludedExcluded.js` + `DayTripDetailPage.js`. "Good to know" section with `BadgeChip` derived from `age_restriction` + `difficulty_level` (MODERATE/CHALLENGING). No backend changes. Branch `260605-feat/not-suitable-badges` (`3f12f52`) → develop.
+- **GYG P2 review filter — DONE** — `ReviewListByProduct.js` filter chips (All/5★/4★+/3★+) above sort dropdown. Combined `useMemo`. Affects activity detail + trip detail + TripDetailPricing. Branch `260605-feat/review-filter` (`d5d7482`) → develop.
+- **GYG P1 review thumbnails — DEFERRED** — no `Review.images[]` field on backend. Added as GYG-THUMB item below.
+- **develop now at `5d811e6`**
 
 **Achieved this session (#43):**
 - **CMA-1 HOTEL_PICKUP invariant — DONE** — `ContractDetailSerializer.validate()` added to `operators/serializers.py`. Rejects `HOTEL_PICKUP` + empty `meeting_point_details` on API PATCH. Handles partial PATCH via instance fallback. Commit `3a59a41` → backend main. Verified: 3 shell tests pass.
@@ -49,6 +55,7 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
+0. **GYG-THUMB** Review thumbnails — backend: add `ReviewImage` model (or `images` JSONField) to `reviews/models.py` + migration + serializer. Frontend: render thumbnails in `CustomerReviewCard` (`ReviewListByProduct.js`).
 1. **CMA-1 remaining:**
    - Data inventory: query `historical_contract` (simple_history) for `primary_location` changes last 90 days
 2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
@@ -87,6 +94,7 @@ I'll compress the markdown text you provided directly, following the compression
 | ~~BW-2~~ | ~~Blog index featured section `px-2 md:px-4`~~ | ✓ Already fixed | — |
 | ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
 | ~~EXP-DETAIL-1~~ | ~~Experience Detail Page premium redesign + tablet/mobile~~ | ✓ DONE (#33) — FAQ, carousel, filter all shipped and merged | — |
+| GYG-IMPL | **GYG 5-pattern impl status** | P0 footer strip DONE. P1 badges DONE. P2 disclaimer DONE. P2 sort+filter DONE (`260605-feat/review-filter`). P1 review-thumbnails blocked: V4 `Review.images[]` backend field needed. | backend `Review` model |
 | CART-1 | **Fix PARSING_ERROR catch** | `DayTripBookingWidget.js:338` — `error.status >= 500` fails silently when RTK sets string `'PARSING_ERROR'`. Fix: `error.status === 'PARSING_ERROR' \|\| error.originalStatus >= 500`. Deferred from session #34. | `components/activities/detail/DayTripBookingWidget.js:338` |
 | FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review-2026-06-02]] | `admin-dashboard/DayTripDetails.js` (deferred) |
 | FAV-1 | **Favorite heart on DayTripCard** | ADR designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
