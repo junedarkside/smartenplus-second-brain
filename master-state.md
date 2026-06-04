@@ -6,7 +6,12 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-04 (session #42)
+**Updated:** 2026-06-04 (session #43)
+
+**Achieved this session (#43):**
+- **CMA-1 HOTEL_PICKUP invariant — DONE** — `ContractDetailSerializer.validate()` added to `operators/serializers.py`. Rejects `HOTEL_PICKUP` + empty `meeting_point_details` on API PATCH. Handles partial PATCH via instance fallback. Commit `3a59a41` → backend main. Verified: 3 shell tests pass.
+- **Admin-dashboard HOTEL_PICKUP frontend validation — DONE** — Yup `.when('meetingPointType')` + `.trim()` in `schemas/index.js`. Helper text in `DayTripDetails.js`. Commits `c2e8e4e` + `5f068ef` (whitespace bypass fix) → admin-dashboard main.
+- **Activity detail MeetingPointCard reviewed** — working correctly, no changes needed.
 
 **Achieved this session (#42):**
 - **CMA-1 casing ADR — DONE** — vault ADR `04-decisions/adr-info-fields-casing.md` written. 6 inline comments across `checkoutPersistence.js`, `Passengers.js`, `BookingDetail/index.js`, `Information.js`, `PdfViewImproved.js`, `PdfView.js`. Frontend commit `375e501` → develop. Vault commit `6a35014` → master.
@@ -45,7 +50,6 @@ I'll compress the markdown text you provided directly, following the compression
 
 **Next session resume point (EXACT):**
 1. **CMA-1 remaining:**
-   - `ContractDetailSerializer.validate()` at `operators/serializers.py:535` — HOTEL_PICKUP invariant (NOT model `clean()` — never fires on API PATCH)
    - Data inventory: query `historical_contract` (simple_history) for `primary_location` changes last 90 days
 2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
 3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
@@ -58,8 +62,8 @@ I'll compress the markdown text you provided directly, following the compression
 | Repo | Branch | Status |
 |------|--------|--------|
 | `smartenplus-frontend` | `develop` | Latest: `375e501` info_fields casing ADR comments |
-| `smartenplus-backend` | `main` | Latest: `09d6f3a` meeting_point_type/details in AdminBookingSummarySerializer |
-| `admin-dashboard` | `main` | Latest: `b3d37df` CLAUDE.md compressed |
+| `smartenplus-backend` | `main` | Latest: `3a59a41` HOTEL_PICKUP invariant in ContractDetailSerializer.validate() |
+| `admin-dashboard` | `main` | Latest: `5f068ef` HOTEL_PICKUP whitespace fix |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 
 ---
@@ -71,7 +75,7 @@ I'll compress the markdown text you provided directly, following the compression
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
-| CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501` (6 files + vault). `get_translated_meeting_point_details` DEFERRED (English-only, not needed). **Remaining:** `ContractDetailSerializer.validate()` at `operators/serializers.py:535` (**NOT** model `clean()` — never fires on API PATCH), data inventory via `historical_contract`. | `operators/serializers.py:535` |
+| CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501`. ✓ `ContractDetailSerializer.validate()` HOTEL_PICKUP guard `3a59a41`. `get_translated_meeting_point_details` DEFERRED. **Remaining:** data inventory via `historical_contract` (simple_history, `primary_location` changes last 90 days). | `operators/models.py` (simple_history) |
 | ~~CMA-2~~ | ~~`ServiceDetail.js:35` zero i18n fallback~~ | ✓ RESOLVED #42. `meeting_point_type` + `meeting_point_details` added to `AdminBookingSummarySerializer.get_contract()` (`09d6f3a`). English-only — no translated fallback needed. | — |
 | ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
 | ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |

@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-04] session-end | #43: HOTEL_PICKUP invariant (3a59a41 backend) + admin-dashboard Yup validation (c2e8e4e+5f068ef) + MeetingPointCard reviewed OK. CMA-1 nearly closed — only data inventory remains.
+
 ## [2026-06-04] session-end | #42: CMA-1 casing ADR (375e501) + CMA-2 meeting_point fix (09d6f3a backend) + get_translated_meeting_point_details deferred. Next: ContractDetailSerializer.validate() HOTEL_PICKUP invariant.
 
 ## [2026-06-04] decision | adr-info-fields-casing: info_fields casing boundary documented — 1 vault ADR + inline comments in 6 frontend files. CMA-1 casing item closed.
