@@ -6,7 +6,12 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-04 (session #41)
+**Updated:** 2026-06-04 (session #42)
+
+**Achieved this session (#42):**
+- **CMA-1 casing ADR — DONE** — vault ADR `04-decisions/adr-info-fields-casing.md` written. 6 inline comments across `checkoutPersistence.js`, `Passengers.js`, `BookingDetail/index.js`, `Information.js`, `PdfViewImproved.js`, `PdfView.js`. Frontend commit `375e501` → develop. Vault commit `6a35014` → master.
+- **CMA-2 meeting_point_details — FIXED** — 3-specialist debate (backend + frontend + skeptic). Skeptic’s “no UI consumer” claim overturned: admin sets field, activity detail shows it, booking confirmation was broken end. Fix: 2 lines in `AdminBookingSummarySerializer.get_contract()` (`bookings/serializers.py`). Commit `09d6f3a` → backend main.
+- **`get_translated_meeting_point_details` — DEFERRED** — English-only version. `ProductDetailSerializer` already exposes raw `meeting_point_details` via `fields = '__all__'`. Frontend `DayTripDetailPage.js:211` fallback `translated_X || X` handles it. No action until translation UI ships.
 
 **Achieved this session (#41):**
 - **CMA-1 partial — 2 of 6 items shipped** — 4-agent debate team (backend + frontend + domain + skeptic) reviewed all deferred items. Key overturns: `Contract.clean()` mis-scoped (model layer never fires on API PATCH; must be `ContractDetailSerializer.validate()`), new CMA-2 gap found (`ServiceDetail.js:35` zero i18n fallback).
@@ -39,24 +44,21 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-1. **CMA-1 remaining** (rescoped after debate):
-   - Casing ADR: 1-paragraph vault doc + comments in 6 files (`checkoutPersistence.js:~179`, `Passengers.js:~524`, `BookingDetail/index.js:137`, `Information.js:11`, `PdfViewImproved.js:257`, `PdfView.js:192`)
-   - `get_translated_meeting_point_details`: 2 lines in `products/serializers.py` after line 522 — gate on translation UI, but trivial to ship anytime
-   - `ContractDetailSerializer.validate()` at `operators/serializers.py:535` — HOTEL_PICKUP invariant (NOT model `clean()` — that never fires on API PATCH)
+1. **CMA-1 remaining:**
+   - `ContractDetailSerializer.validate()` at `operators/serializers.py:535` — HOTEL_PICKUP invariant (NOT model `clean()` — never fires on API PATCH)
    - Data inventory: query `historical_contract` (simple_history) for `primary_location` changes last 90 days
-2. **CMA-2** — `ServiceDetail.js:35` zero i18n fallback. Pre-flight: audit `bookings/serializers.py` `AdminBookingSummarySerializer` first.
-3. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
-4. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
-5. **AT-1** airport transfer redesign
-6. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
-7. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
+2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
+4. **AT-1** airport transfer redesign
+5. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+6. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
 
 ### Active Branches
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `develop` | Latest: `ff8006e` showStations dead flag removed |
-| `smartenplus-backend` | `main` | Latest: `22dc045` admin PATCH guard fixed |
+| `smartenplus-frontend` | `develop` | Latest: `375e501` info_fields casing ADR comments |
+| `smartenplus-backend` | `main` | Latest: `09d6f3a` meeting_point_type/details in AdminBookingSummarySerializer |
 | `admin-dashboard` | `main` | Clean (`a88686d` timeline null-id sentinel) |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 
@@ -69,8 +71,8 @@ I'll compress the markdown text you provided directly, following the compression
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
-| CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. **Remaining:** casing ADR (6 files not 2), `get_translated_meeting_point_details` (2 lines `products/serializers.py:522`), `ContractDetailSerializer.validate()` at `operators/serializers.py:535` (**NOT** model `clean()` — never fires on API PATCH), data inventory via `historical_contract`. | `operators/serializers.py:535`, `products/serializers.py:522`, `carts/utils.py` |
-| CMA-2 | **`ServiceDetail.js:35` zero i18n fallback** | NEW #41. Post-booking confirmation reads `contract.meeting_point_details` with no `translated_X \|\| X` pattern. Pre-flight: confirm `AdminBookingSummarySerializer` in `bookings/serializers.py` exposes `translated_meeting_point_details`. Then add fallback at `ServiceDetail.js:35`. | `components/bookings/BookingDetail/ServiceDetail.js:35`, `bookings/serializers.py` |
+| CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501` (6 files + vault). `get_translated_meeting_point_details` DEFERRED (English-only, not needed). **Remaining:** `ContractDetailSerializer.validate()` at `operators/serializers.py:535` (**NOT** model `clean()` — never fires on API PATCH), data inventory via `historical_contract`. | `operators/serializers.py:535` |
+| ~~CMA-2~~ | ~~`ServiceDetail.js:35` zero i18n fallback~~ | ✓ RESOLVED #42. `meeting_point_type` + `meeting_point_details` added to `AdminBookingSummarySerializer.get_contract()` (`09d6f3a`). English-only — no translated fallback needed. | — |
 | ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
 | ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |
 | ~~ACT-9~~ | ~~Phase 2 pre-flight (backend)~~ | ✓ Done `508949b` | — |
