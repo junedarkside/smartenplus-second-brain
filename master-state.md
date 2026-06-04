@@ -6,7 +6,12 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-04 (session #40)
+**Updated:** 2026-06-04 (session #41)
+
+**Achieved this session (#41):**
+- **CMA-1 partial — 2 of 6 items shipped** — 4-agent debate team (backend + frontend + domain + skeptic) reviewed all deferred items. Key overturns: `Contract.clean()` mis-scoped (model layer never fires on API PATCH; must be `ContractDetailSerializer.validate()`), new CMA-2 gap found (`ServiceDetail.js:35` zero i18n fallback).
+  - **`showStations` dead flag deleted** — `helpers/serviceCategoryHelper.js` (-9 lines). Write-only property, zero callers across all 3 repos. Branch `260604-fix/cma1-dead-code-cleanup` → develop (`ff8006e`). Verified grep clean.
+  - **Admin PATCH guard fixed** — `operators/views.py:807` `pass` → `return Response(400)` for bad `primary_location`. `service_areas.set()` wrapped try/except ValueError → 400. Branch `260604-fix/cma1-admin-patch-guard` → main (`22dc045`). Verified: 3 shell tests pass (bad primary_location 400 ✓, bad service_areas 400 ✓, null clear 200 ✓).
 
 **Achieved this session (#40):**
 - **Timeline stop deletion bug — FIXED + SHIPPED** — root cause: Django `update_timeline()` had `continue` in create branch for stops without a Place, silently skipping them from `existing_place_ids`. Delete sweep then wiped all DB stops. Fix: 5 changes across 3 repos.
@@ -34,19 +39,24 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-1. **Audit P1/P2** (deferred from #39 per "keep simple"): write 1-paragraph casing ADR, wire `get_translated_meeting_point_details` SerializerMethodField (mirrors `get_translated_inclusions` at `products/serializers.py:518-522`), add `Contract.clean()` for category/field invariants (B-7), wrap admin PATCH in try/except (B-9), delete dead `showStations` flag (F-10), run `primary_location` data inventory SQL
-2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
-3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
-4. **AT-1** airport transfer redesign
-5. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
-6. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
+1. **CMA-1 remaining** (rescoped after debate):
+   - Casing ADR: 1-paragraph vault doc + comments in 6 files (`checkoutPersistence.js:~179`, `Passengers.js:~524`, `BookingDetail/index.js:137`, `Information.js:11`, `PdfViewImproved.js:257`, `PdfView.js:192`)
+   - `get_translated_meeting_point_details`: 2 lines in `products/serializers.py` after line 522 — gate on translation UI, but trivial to ship anytime
+   - `ContractDetailSerializer.validate()` at `operators/serializers.py:535` — HOTEL_PICKUP invariant (NOT model `clean()` — that never fires on API PATCH)
+   - Data inventory: query `historical_contract` (simple_history) for `primary_location` changes last 90 days
+2. **CMA-2** — `ServiceDetail.js:35` zero i18n fallback. Pre-flight: audit `bookings/serializers.py` `AdminBookingSummarySerializer` first.
+3. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+4. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
+5. **AT-1** airport transfer redesign
+6. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+7. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
 
 ### Active Branches
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `develop` | 2 new merges: `62dd45c` trust-badges-real-fields, `5014b96` gyg-activity-detail-incremental |
-| `smartenplus-backend` | `main` | Clean (`d600a77` Stripe gateway deprecated migration 0022) |
+| `smartenplus-frontend` | `develop` | Latest: `ff8006e` showStations dead flag removed |
+| `smartenplus-backend` | `main` | Latest: `22dc045` admin PATCH guard fixed |
 | `admin-dashboard` | `main` | Clean (`a88686d` timeline null-id sentinel) |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 
@@ -59,7 +69,8 @@ I'll compress the markdown text you provided directly, following the compression
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
-| CMA-1 | **Contract Model Ambiguity — P1/P2** | Audit complete ([[contract-model-ambiguity-audit-2026-06-03]]). P0 done in #39. P1 deferred: casing ADR, i18n wire, model `clean()`. P2 deferred: admin try/except, dead flag delete, data inventory SQL. | `operators/serializers.py`, `carts/utils.py`, `admin-dashboard/ContractFormFields.js`, `operators/views.py` |
+| CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. **Remaining:** casing ADR (6 files not 2), `get_translated_meeting_point_details` (2 lines `products/serializers.py:522`), `ContractDetailSerializer.validate()` at `operators/serializers.py:535` (**NOT** model `clean()` — never fires on API PATCH), data inventory via `historical_contract`. | `operators/serializers.py:535`, `products/serializers.py:522`, `carts/utils.py` |
+| CMA-2 | **`ServiceDetail.js:35` zero i18n fallback** | NEW #41. Post-booking confirmation reads `contract.meeting_point_details` with no `translated_X \|\| X` pattern. Pre-flight: confirm `AdminBookingSummarySerializer` in `bookings/serializers.py` exposes `translated_meeting_point_details`. Then add fallback at `ServiceDetail.js:35`. | `components/bookings/BookingDetail/ServiceDetail.js:35`, `bookings/serializers.py` |
 | ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
 | ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |
 | ~~ACT-9~~ | ~~Phase 2 pre-flight (backend)~~ | ✓ Done `508949b` | — |

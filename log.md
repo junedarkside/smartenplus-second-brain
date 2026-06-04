@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-04] session-end | CMA-1 partial: showStations deleted (ff8006e frontend) + admin PATCH guard fixed (22dc045 backend) + debate found Contract.clean() mis-scoped (rescoped to ContractDetailSerializer.validate()) + CMA-2 new gap ServiceDetail.js:35
+
 ## [2026-06-04] session-end | fix timeline stop deletion bug — 3 repos, migration 0028 applied, all merged to main. 3 atoms: django-nested-delete-sweep-pattern, django-nullable-fk-migration-pattern, react-client-key-null-id-pattern
 
 ## [2026-06-04] ingest | gyg-page-analysis — 3-specialist GYG Chiang Rai tour analysis, 11 candidates → 5 adopted (1 P0 footer meta strip, 2 P1 not-suitable-for + review thumbnails, 2 P2 sort/filter + itinerary disclaimer), 4 P3 backend debt flagged (audio guide 41 langs, private group, per-aspect rating, provider response), AI summary user-deferred. Vault: `01-projects/gyg-page-analysis-2026-06-04/`. Supersedes [[experience-detail-page-redesign-2026-06-02]] deltas. WebFetch unavailable, text dump used.
