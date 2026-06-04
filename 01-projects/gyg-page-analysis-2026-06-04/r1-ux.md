@@ -113,13 +113,11 @@ metadata:
 | UX-4 | Page feedback widget | low | maybe | small | KEEP | Telemetry, trivial cost |
 | UX-5 | Footer meta strip | low | yes | trivial | KEEP | Free win |
 | UX-6 | SEO footer blocks | high | **no** | large | DROP | Off-brand, auto-reject |
-| ~~UX-7~~ | ~~Audio guide 41 langs~~ | — | — | — | P3 backend | Auto-drop |
-| ~~UX-8~~ | ~~Private group badge~~ | — | — | — | P3 backend | Auto-drop |
-| ~~UX-9~~ | ~~AI-summarized review~~ | — | — | — | DEFER | User decision |
+| ~~P3-1~~ | ~~Audio guide 41 langs~~ | — | — | — | P3 backend | Auto-drop (see P3 pre-flagged) |
+| ~~P3-2~~ | ~~Private group badge~~ | — | — | — | P3 backend | Auto-drop (see P3 pre-flagged) |
+| ~~DEFER-1~~ | ~~AI-summarized review~~ | — | — | — | DEFER | User decision (see P3 pre-flagged) |
 
-**5 KEEP candidates:** UX-1, UX-3, UX-4, UX-5, UX-6-DROP-counter. That's only 4 KEEPs.
-
-Wait — let me recount. UX-1, UX-3, UX-4, UX-5 = 4 KEEPs. UX-2 auto-defer. UX-6 auto-drop. We have 4 candidates, not 5. Need one more or accept 4.
+**4 KEEP candidates from initial 6:** UX-1, UX-3, UX-4, UX-5 (UX-2 deferred P3, UX-6 dropped off-brand). Re-examination below adds 4 more candidates.
 
 ---
 
@@ -188,9 +186,9 @@ Reviewing GYG sections not yet addressed:
 | UX-2 | Per-aspect rating | high | yes | large | DEFER P3 |
 | UX-6 | SEO footer blocks | high | no | large | DROP |
 | UX-9 | Provider response | med | yes | medium | DEFER P3 (likely) |
-| ~~UX-7-extra~~ | Audio guide 41 langs | — | — | — | P3 backend |
-| ~~UX-8-extra~~ | Private group badge | — | — | — | P3 backend |
-| ~~UX-9-extra~~ | AI summary | — | — | — | DEFER |
+| ~~P3-1~~ | Audio guide 41 langs | — | — | — | P3 backend |
+| ~~P3-2~~ | Private group badge | — | — | — | P3 backend |
+| ~~DEFER-1~~ | AI summary | — | — | — | DEFER |
 
 **7 KEEP candidates compete for 5 slots.** Skeptic must enforce cap.
 
@@ -220,12 +218,13 @@ Will let R2 Skeptic adjudicate.
 
 ## Quality Check
 
-- 11 candidates surfaced (was 6 from IA, expanded to 11 with re-examination)
-- 3 axes scored: yes
-- P3 flagged: yes (UX-2, UX-9, audio guide, private group)
-- Deferred: yes (AI summary)
-- Skeptic pre-loaded: yes
-- Effort estimates concrete: yes (file paths referenced where possible)
+- Candidates surfaced: 11 (6 initial from IA + 5 from re-examination; UX-7/8/9/10 re-examined, 1 = stop-type legend)
+- Axes scored: 3 (ROI, brand-fit, effort) for all 11
+- P3 flagged: 4 (P3-1 audio, P3-2 private, UX-2 per-aspect, UX-9 provider response) — see P3 pre-flagged table
+- Deferred: 1 (DEFER-1 AI summary, user decision)
+- Skeptic pre-loaded: 4 objections queued (UX-4, UX-8, UX-10, UX-7-conditional)
+- Effort estimates: file-path-referenced where possible
+- UX-ID scheme: clean — UX-1 to UX-10 = scored; P3-1/P3-2/DEFER-1 = pre-flagged (no collision)
 
 ---
 

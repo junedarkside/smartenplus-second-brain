@@ -12,10 +12,12 @@ metadata:
 
 **Role:** adjudicate R1↔R2. Final 5 patterns with P0/P1/P2 ranking.
 
-**Priority rubric:**
-- P0 = direct conversion lift + brand-fit yes + trivial/small effort
-- P1 = trust/scanability lift + brand-fit yes OR (high ROI + maybe brand-fit)
-- P2 = polish + small/medium effort + brand-fit yes/maybe
+**Priority rubric (revised — see note below):**
+- **P0 = free-win tier:** trivial effort + brand-fit yes + visible-or-JSON-LD signal. **NOT gated on conversion ROI.** P0 = "free, ships same week, low risk".
+- **P1 = trust/scanability lift + brand-fit yes** (med-high ROI, small effort)
+- **P2 = polish + small/medium effort + brand-fit yes/maybe** (low-med ROI, optional)
+
+**Why P0 redefined:** original rubric said "direct conversion lift" but the only P0 assigned (footer meta) has ROI=low (audit/SEO utility, not conversion). The P0 designation is justified by effort=trivial + dual-purpose (visible + JSON-LD) — not by conversion. New rubric makes this explicit.
 
 **Skeptic open questions (4):**
 1. UX-7 backend field — `Review.images[]` exists?
@@ -23,7 +25,13 @@ metadata:
 3. UX-5 duplicate risk — operator name already in `ExperienceTitleArea`?
 4. UX-1 source field — `restrictions` TextField or `difficulty_level` enum only?
 
-**Leader ruling:** assume **best-case for the pattern** (verify at implementation, not synthesis). If verification fails, the pattern drops to P3 — not P0/P1. This keeps the synthesis actionable.
+**Leader ruling (drop-to-P3 rule):** assume **best-case for the pattern** (verify at implementation, not synthesis). If verification fails, the pattern drops to P3 — not P0/P1. **Per-pattern rule:**
+- **UX-5:** if `operator.operator_name` already in `ExperienceTitleArea` → DROP entirely (P0 → removed, not P3)
+- **UX-7:** if `Review.images[]` absent → P3 (defer, no frontend workaround)
+- **UX-3:** if SSR/SSG baked → P3 (effort escalates; backend sort params needed)
+- **UX-1:** if no `restrictions` field AND `difficulty_level` insufficient → P3
+
+Main doc `## Verification Matrix` tracks all 4. This keeps the synthesis actionable.
 
 ---
 
@@ -152,14 +160,14 @@ metadata:
 
 ## Quality Check
 
-- 5 patterns finalized: yes
-- P0/P1/P2 assigned: yes
-- Skeptic open questions adjudicated: yes (best-case for pattern, verify at implementation)
-- Backend debt flagged: yes (4 items)
-- User-deferred respected: yes (AI summary)
-- Implementation hints concrete: yes (file paths + patterns)
-- LoC estimates: yes
-- Sequencing provided: yes
+- Patterns finalized: 5 (cap enforced)
+- Priority assignment: 1 P0 + 2 P1 + 2 P2
+- Skeptic open questions adjudicated: 4 (best-case for pattern, drop-to-P3-if-verify-fails rule per pattern)
+- Backend debt flagged: 4 (audio guide 41 langs, private group, per-aspect rating, provider response)
+- User-deferred: 1 (DEFER-1 AI summary)
+- Implementation hints: 5 (one per final pattern, with file paths + code patterns)
+- LoC estimates: 44-70 total (P0: 4-6, P1: 14-22, P2: 26-42)
+- Sequencing: 5 steps (trivial first, then conditional-to-verify, then medium effort last)
 
 ---
 

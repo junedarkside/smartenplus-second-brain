@@ -1,6 +1,6 @@
 ---
 name: gyg-page-analysis-2026-06-04
-description: 3-specialist GYG Chiang Rai tour analysis vs SmartEnPlus /activities/detail/[slug]. 11 candidates surfaced, 5 adopted (P0/P1/P2), 4 backend debt flagged, AI summary deferred. Supersedes [[experience-detail-page-redesign-2026-06-02]] deltas.
+description: 3-specialist GYG Chiang Rai tour analysis vs SmartEnPlus /activities/detail/[slug]. 11 candidates surfaced, 5 adopted (P0/P1/P2), 4 backend debt flagged, AI summary deferred. Supplements [[experience-detail-page-redesign-2026-06-02]] (additive gap analysis; not a replacement).
 metadata:
   type: project
   reviewed_by: gyg-vs-smartenplus-orchestrator
@@ -59,9 +59,9 @@ No P0 = confirms 2026-06-02 redesign covered critical SEO surface. P1 gaps: Tour
 
 Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at implementation, pattern drops to P3 (not P0/P1). P0/P1/P2 assignment:
 
-- P0 = direct conversion lift + brand-fit yes + trivial/small
-- P1 = trust/scanability lift + brand-fit yes
-- P2 = polish + small/medium effort + brand-fit yes/maybe
+- P0 = free-win tier: trivial effort + brand-fit yes + visible-or-JSON-LD signal (NOT gated on conversion ROI)
+- P1 = trust/scanability lift + brand-fit yes (med-high ROI)
+- P2 = polish + small/medium effort + brand-fit yes/maybe (low-med ROI)
 
 ## Leader Synthesis — Final 5 Ranked
 
@@ -73,7 +73,7 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 | 4 | **P2** | Review sort + filter | med | maybe | medium | 25-40 | **Verify `ReviewListByProduct` is client-rendered** |
 | 5 | **P2** | "For reference only" itinerary disclaimer | low | yes | trivial | 1-2 | None |
 
-**Single most impactful:** #1 footer meta strip — P0, trivial, dual-purpose (visible footer + JSON-LD `provider` field). Pure free win.
+**Highest ROI-per-effort:** #1 footer meta strip — P0, trivial, dual-purpose (visible footer + JSON-LD `provider` field). Pure free win. Note: ROI=low (not conversion); P0 placement justified by free-win tier (trivial cost + brand-fit yes).
 
 ## Priority Fix Queue
 
@@ -89,6 +89,19 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 - Per-aspect rating (Guide/Transport/Value) — needs `ReviewAspect` model + aggregation
 - Provider response to reviews — needs `provider_response_text` + `provider_response_date` on Review
 - AI-summarized review — LLM service, user-deferred
+
+## Verification Matrix
+
+4 backend/data questions block adoption. Each must be verified before commit. If verify fails, pattern drops to P3 (not P0/P1/P2).
+
+| # | Pattern | Verify | Where to check | Drop-to-P3 if |
+|---|---------|--------|----------------|---------------|
+| V1 | UX-1 Not-suitable-for badges | `Contract.restrictions` field exists? | Backend serializer (Django admin) or API response | No `restrictions` field AND `difficulty_level` enum insufficient |
+| V2 | UX-3 Review sort + filter | `ReviewListByProduct` is client-rendered? | Component source + Redux store | SSR/SSG baked — sort needs API params (effort escalates medium → large) |
+| V3 | UX-5 Footer meta strip | `operator.operator_name` not already visible in `ExperienceTitleArea`? | Read `ExperienceTitleArea.js` for operator logo/text | Already visible — DROP entirely (duplicate = noise) |
+| V4 | UX-7 Review thumbnails | `Review.images[]` array exists in backend serializer? | Backend `Review` model + API response sample | Field absent — DEFER P3 (no frontend workaround) |
+
+**Verification owner:** backend team for V1, V4 (field existence); frontend lead for V2, V3 (code inspection). All 4 should be checked in a single dev-day before any P0/P1 implementation starts.
 
 ## Key Files
 

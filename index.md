@@ -28,7 +28,7 @@ Global navigation catalog. Updated on every ingest.
 - [[header-redesign-2026-spec]] — **FINAL 2026-05-28.** Adaptive Type A/B header. Type A: single-row 80px (transactional). Type B: 2-row 96px (discovery/browse). All 5 nav items kept. /blog → Type B. Dynamic layout offset. 12-file implementation plan. 4-day rollout + 2 separate PRs.
 - [[hero-back-share-buttons-2row-header-fix]] — **UNVERIFIED 2026-05-30.** Back/Share pills moved from `FeaturedImageHeader` to outer wrapper of `TripDetailHero`/`DayTripHero`. Glassmorphism style. Server was in production mode — needs `npm run dev` to verify. See note for full debug trail + root causes.
 - [[header-redesign-2026-implementation]] — **Days 1–3 DONE 2026-05-28.** Branch `260528-feat/header-redesign-2026` commit `a4158b0`. 10 files. QA + AT-1 redesign pending before merge.
-- [[timeline-update-display-bug-2026-06-01]] — **IN PROGRESS.** Timeline page display breaks after save. Suspected payload key mismatch (`dndCharacterData` vs `timeline`) + place object vs ID. Multi-agent investigation pending.
+- [[timeline-update-display-bug-2026-06-01]] — **RESOLVED 2026-06-04.** Root cause: Django `continue` skipping placeless stops from `existing_place_ids` → delete sweep wiped all stops. Fix: 5 changes across 3 repos + migration 0028. See [[django-nested-delete-sweep-pattern]].
 - [[activities-day-tour-page-review-2026-06-01]] — 3-specialist code audit of `/activities?category=DAY_TOUR`. 2 Critical (skeleton mismatch, dual unlabeled search), 5 Major, 5 Minor. Fix sequence documented.
 - [[activities-location-search-bug-2026-06-01]] — **IN PROGRESS.** 4-specialist team audit. Location search returns zero results. 3 critical bugs: backend text→ID type mismatch (`products/views.py:446`), `inputValue` divergence (`DayTripLocationSearch.js:20`), freetext not emitting to parent (`DayTripLocationSearch.js:26`). Fix sequence documented.
 - [[activities-search-merge-review-2026-06-01]] — **UPDATED 2026-06-01.** 3-specialist review + grill. True merge "backend blocker" claim OVERTURNED — intent detection via static `keywords[]` match, no backend change needed. Blocked by tech debt: 2 incompatible `POPULAR_DESTINATIONS` sources. Next: consolidate → `utils/destinations.js` (ACT-5), then build unified `ActivitySearch` (ACT-6).
@@ -140,6 +140,9 @@ Global navigation catalog. Updated on every ingest.
 - [[design-token-caption-tailwind-gotcha]] — `TYPOGRAPHY_SCALE.caption` = Tailwind string `'text-xs'` not an object. `.fontSize` = undefined. Never use in MUI `sx`. Use raw value or add parallel `MUI_FONT_SIZES` token.
 - [[mui-autocomplete-inputvalue-sync]] — MUI Autocomplete `inputValue` initialized via `useState(value)` doesn't sync when controlled `value` prop changes post-mount. Fix: `useEffect(() => setInputValue(value || ''), [value])`.
 - [[django-parse-int-list-text-fallback]] — `_parse_int_list` returns `[]` on text input. Caller branching to `.none()` returns zero results silently. Add text-search fallback branch.
+- [[django-nested-delete-sweep-pattern]] — Exclude-based delete sweep wipes all rows when `existing_ids` set is empty. Guard: never `continue` in create branch + `if existing_ids:` before delete.
+- [[django-nullable-fk-migration-pattern]] — FK `CASCADE → SET_NULL null=True` + migration. View-layer `None` without migration = `IntegrityError`. Deploy order matters.
+- [[react-client-key-null-id-pattern]] — `id: null` sentinel for unsaved records + `_clientKey: Date.now()` for stable React key. Avoids PK collision + duplicate key warnings.
 - [[react-dual-hook-url-race]] — Two hook instances owning same URL race each other. Fix: `{ enabled }` param to gate URL-sync, `isControlled` detection, `didMountRef` to skip mount-fire, MUI freeSolo string branch in `onChange`.
 - [[pdf-contract-import-adversarial-review]] — 6 red flags for PDF import arch: async AI call required, soft-delete draft, remove LLM matching, pre-validation, no confidence auto-accept, large-delta warning. 3-screen UX. All must resolve before first commit.
 - [[django-async-ai-call-pattern]] — Django sync LLM calls block WSGI workers. Pattern: return `task_id` immediately, Celery handles AI call, frontend polls status endpoint.
@@ -217,8 +220,8 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 99
-- Last updated: 2026-06-03 (vault-atomize: service-detail-non-transport-display + view-utility-call-exception-wrapper)
+- Pages: 102
+- Last updated: 2026-06-04 (session #40: django-nested-delete-sweep-pattern, django-nullable-fk-migration-pattern, react-client-key-null-id-pattern)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx

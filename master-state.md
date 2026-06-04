@@ -6,7 +6,17 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-03 (session #39)
+**Updated:** 2026-06-04 (session #40)
+
+**Achieved this session (#40):**
+- **Timeline stop deletion bug — FIXED + SHIPPED** — root cause: Django `update_timeline()` had `continue` in create branch for stops without a Place, silently skipping them from `existing_place_ids`. Delete sweep then wiped all DB stops. Fix: 5 changes across 3 repos.
+  - `stations/models.py` — `TimeLinePlace.place` FK `CASCADE → SET_NULL null=True blank=True`
+  - `stations/migrations/0028_timelineplace_place_nullable` — applied ✓
+  - `operators/views.py` — `id=null` guard → DoesNotExist; removed `continue`; dropped `id=` from create; guarded delete sweep (`if existing_place_ids`); guarded `place_id` in update branch
+  - `admin-dashboard/TimeLine.js` — `id: null` sentinel + `_clientKey: Date.now()` for React key
+  - `smartenplus-frontend/TimeLineDisplay.js` — `place?.name`, `place?.image_gallery?.length` null-safe
+  - Branch `fix/timeline-stop-deletion-bug` → develop → main all 3 repos
+  - Atoms: [[django-nested-delete-sweep-pattern]], [[django-nullable-fk-migration-pattern]], [[react-client-key-null-id-pattern]]
 
 **Achieved this session (#39):**
 - **Contract model ambiguity audit** — 4-round multi-agent team (R1 backend/frontend/domain, R2 cross-exam, R3 skeptic, R4 synthesizer). 6 conceptual overlaps confirmed; 1 customer-visible (i18n on `meeting_point_details`), 5 staff-side or dormant. Skeptic overturned 2 dead-code claims (S-1: `Trip.route` 25+ call sites alive; S-2: `meeting_point_place` active in admin/tests/serializer). Recommendation: document + 1 small backend fix, no model consolidation. Vault: [[contract-model-ambiguity-audit-2026-06-03]] (117 lines)
@@ -35,9 +45,10 @@ I'll compress the markdown text you provided directly, following the compression
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `main` | Clean |
-| `smartenplus-backend` | `main` | Clean (booking-summary fix landed #38) |
-| `admin-dashboard` | `main` | Clean (contract-location help text landed #39) |
+| `smartenplus-frontend` | `main` | Clean (`2f4679f` timeline display null-safe) |
+| `smartenplus-backend` | `main` | Clean (`55f603a` timeline fix + migration 0028) |
+| `admin-dashboard` | `main` | Clean (`a88686d` timeline null-id sentinel) |
+| `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 
 ---
 
@@ -47,6 +58,7 @@ I'll compress the markdown text you provided directly, following the compression
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
 | CMA-1 | **Contract Model Ambiguity — P1/P2** | Audit complete ([[contract-model-ambiguity-audit-2026-06-03]]). P0 done in #39. P1 deferred: casing ADR, i18n wire, model `clean()`. P2 deferred: admin try/except, dead flag delete, data inventory SQL. | `operators/serializers.py`, `carts/utils.py`, `admin-dashboard/ContractFormFields.js`, `operators/views.py` |
 | ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
 | ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |

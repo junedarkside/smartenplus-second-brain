@@ -90,33 +90,39 @@ Status legend:
 | 29 | Country/region/depth footer breadcrumb (Thailand > Chiang Rai (Province) > Mae Kachan Hot Spring) | `StandardBreadcrumb` (SP-2) | already-have | Already renders. |
 | 30 | Language/currency selector + payment methods | OUT OF SCOPE (global header/footer) | skip-off-brand | Not page-specific. |
 
-**GYG sections counted: 22 distinct (per spec, mapped to 30 rows in my table for granularity).** Some are sub-sections of broader patterns (e.g. #7 chips = 8 chips, #28 = 4 SEO blocks).
+**GYG sections counted: 30 table rows representing 22 conceptual sections + 8 sub-element notes** (e.g. #7 chips = 8 chips, #28 = 4 SEO blocks). Sub-elements are noted inline, not classified as separate sections. The 22-count reflects GYG's main page-level patterns; the 30-row table captures per-element detail for the R1-UX scoring stage.
 
 ---
 
 ## Classification Summary
 
+30 table rows classified. 2 P3 backend-debt items are sub-elements of existing rows (not counted as separate sections).
+
 | Status | Count | Items |
 |--------|-------|-------|
-| already-have | 12 | Breadcrumb, Title, Top-rated, Rating, Wishlist (partial), Photo grid, Highlights, Description, Includes (partial), Trust strip, Related, Reviews header |
-| already-have (partial) | 8 | Action row, About chips, Timeline legend, Meeting point maps link, Important info, Price anchor, Review cards, Breadcrumb depth |
-| missing-candidate | 6 | Not-suitable-for, Review sub-categories, Review sort/filter, Page feedback, Footer meta, SEO footer blocks |
-| skip-backend-debt | 3 | Audio guide 41 langs, Private group badge, Review sub-categories (Guide/Transport/Value needs new backend field) |
-| skip-off-brand | 3 | Cherry-picked 5-star reviews, Newsletter signup, Language/currency selector |
-| skip-deferred | 1 | AI-summarized review |
+| already-have | 11 | Breadcrumb (1), Title (2), Top-rated badge (3), Star rating (4), Photo grid (6), See-more link (9), Highlights (11), Description (12), Trust strip (18), Related (19), Country/region breadcrumb (29) |
+| already-have (partial) | 9 | Action row (5), About chips (7), Timeline + legend (10), Includes + add-ons (13), Meeting point + Maps (15), Important info (16), Price block (17), Reviews header (20), Review cards (24) |
+| missing-candidate | 6 | Not-suitable-for (14), Per-aspect rating (21), Review sort+filter (23), Page feedback (25), Footer meta (26), SEO footer blocks (28) |
+| skip-backend-debt (sub-elements) | 2 | Audio guide 41 langs (in #7 chips), Private group badge (in #7 chips) |
+| skip-off-brand | 3 | Cherry-picked 5-star (8), Newsletter (27), Language/currency selector (30) |
+| skip-deferred | 1 | AI-summarized review (22) |
+
+**Note:** Per-aspect rating (row 21) is missing-candidate at UI level but requires P3 backend debt (`ReviewAspect` model). Carried forward to R1-UX for scoring with backend-debt flag.
 
 ---
 
 ## Net Diff: 6 missing-candidates
 
 1. **Not-suitable-for badges** (GYG: "Not suitable for: People with mobility impairments")
-2. **Per-aspect rating breakdown** (GYG: Guide 4.8 / Transport 4.7 / Value 4.7)
+2. **Per-aspect rating breakdown** (GYG: Guide 4.8 / Transport 4.7 / Value 4.7) — *P3 backend debt attached*
 3. **Review sort + filter** (GYG: "Sort by Recommended | Filter")
 4. **Page feedback widget** (GYG: "Was the information on this page helpful? Yes/No")
 5. **Footer meta strip** (GYG: "Product ID: 846675, Activity provider: ...")
 6. **SEO footer blocks** (GYG: 4 numbered 20-item lists — Top Attractions, Experiences, Tours, Things to do)
 
-**P3 backend debt (auto-defer):** Audio guide 41 langs, Private group badge, Per-aspect ratings (Guide/Transport/Value needs `ReviewAspect` model or annotation).
+**P3 backend debt (auto-defer, sub-elements):** Audio guide 41 langs (in #7 chips), Private group badge (in #7 chips). Both ride on same `Contract` model field additions.
+
+**P3 backend debt (standalone):** Per-aspect ratings (Guide/Transport/Value) — needs `ReviewAspect` model or annotation on `Review`.
 
 **P3 user-deferred:** AI-summarized review.
 
@@ -135,13 +141,14 @@ These are SmartEnPlus-specific design choices, NOT gaps. Keep.
 
 ## Quality Check
 
-- All 22 GYG sections accounted for: yes
-- Silent drops: none
-- Already-have classified correctly: cross-referenced 2026-06-02 redesign doc
-- Backend debt flagged: yes (3 items)
-- Out-of-scope items called out: yes (newsletter, lang/currency selector)
+- Rows classified: 30 (11 already-have + 9 partial + 6 missing + 3 off-brand + 1 deferred = 30; 2 P3 sub-elements additional)
+- Silent drops: 0
+- Cross-referenced against `[[experience-detail-page-redesign-2026-06-02]]`: yes
+- Backend debt flagged: 3 items (2 sub-elements + 1 standalone)
+- Out-of-scope called out: 3 (newsletter, lang/currency selector, cherry-picked 5-star)
+- Math reconciles: 11+9+6+3+1 = 30 (rows) + 2 (sub-elements)
 
-**Output:** 6 missing-candidates ready for R1-UX scoring.
+**Output:** 6 missing-candidates ready for R1-UX scoring. Per-aspect rating (#2) carries P3 flag.
 
 ---
 

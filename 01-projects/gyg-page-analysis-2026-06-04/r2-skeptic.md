@@ -28,9 +28,9 @@ metadata:
 |----|---------|--------|
 | UX-2 | Per-aspect rating breakdown | Backend debt (ReviewAspect model). DEFER P3. |
 | UX-6 | SEO footer blocks (4×20 lists) | brand-fit=no (GYG-conversion-density). |
-| UX-7-extra | Audio guide 41 langs | Backend debt. DEFER P3. |
-| UX-8-extra | Private group badge | Backend debt. DEFER P3. |
-| UX-9-extra | AI-summarized review | User-deferred. |
+| P3-1 | Audio guide 41 langs | Backend debt. DEFER P3. |
+| P3-2 | Private group badge | Backend debt. DEFER P3. |
+| DEFER-1 | AI-summarized review | User-deferred. |
 | UX-9 | Provider response to reviews | Likely backend debt. DEFER P3 pending verify. |
 
 ---
@@ -133,6 +133,19 @@ metadata:
 
 Leader must adjudicate these before final synthesis.
 
+## Verification Checklist
+
+Pulled from Open Questions above. Each must clear before commit. If verify fails, pattern drops to P3 (not P0/P1/P2) — see main doc Verification Matrix for downstream impact.
+
+| # | Pattern | Verify | Where | Owner | Drop-to-P3 if |
+|---|---------|--------|-------|-------|---------------|
+| V1 | UX-1 Not-suitable-for | `Contract.restrictions` TextField exists OR `difficulty_level` enum sufficient | Django admin or API response sample | Backend | Neither field gives a usable signal — defer P3 |
+| V2 | UX-3 Review sort + filter | `ReviewListByProduct` is client-rendered (not SSR/SSG baked) | Component source + Redux store | Frontend lead | SSR/SSG — needs API params, effort medium → large |
+| V3 | UX-5 Footer meta | `operator.operator_name` not already shown in `ExperienceTitleArea` | Read `ExperienceTitleArea.js` | Frontend lead | Already visible — DROP entirely (duplicate = noise) |
+| V4 | UX-7 Review thumbnails | `Review.images[]` array in backend serializer response | Django `Review` model + API sample | Backend | Field absent — defer P3, no frontend workaround |
+
+**Recommended order:** V3 + V2 first (frontend-only inspection, < 1 dev-day), then V1 + V4 (need backend team, ~2 dev-days including async).
+
 ---
 
 ## SEO Cross-Reference
@@ -150,13 +163,13 @@ Leader must adjudicate these before final synthesis.
 
 ## Quality Check
 
-- 5 patterns finalized: yes
-- Cap enforced: yes
-- Auto-DROP rules applied: yes (UX-4, UX-6, UX-10)
-- Backend debt flagged: yes (UX-2, UX-7-conditional, UX-9, audio guide, private group)
-- User-deferred respected: yes (AI summary)
-- Open questions flagged: yes (4 verification questions)
-- Tiebreak order applied: yes (ROI high→low, brand yes→maybe, effort trivial→large)
+- Patterns finalized: 5 (cap enforced)
+- Auto-DROP rules applied: 3 (UX-4 ROI=low+brand=maybe, UX-6 brand=no, UX-10 ROI=low+brand=maybe)
+- Auto-DEFER P3 applied: 3 (UX-2 per-aspect, UX-9 provider response, audio guide + private group sub-elements)
+- User-deferred respected: 1 (DEFER-1 AI summary)
+- Open questions → Verification Checklist: 4 (V1, V2, V3, V4)
+- Tiebreak order applied: ROI high→low, brand-fit yes→maybe, effort trivial→large
+- SEO cross-ref: 3 P1 fixes noted (SEO-2, SEO-3, SEO-5); SEO-9 merged with UX-5
 
 ---
 

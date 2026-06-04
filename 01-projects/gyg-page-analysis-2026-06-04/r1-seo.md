@@ -125,20 +125,22 @@ metadata:
 
 **Effort estimate:** All 3 in same file. ~30 lines total. 1 commit. Trivial-to-small.
 
-**SEO-9 (footer meta + JSON-LD provider):** Add `provider` field to JSON-LD + 1-line visual render. Trivial.
+**P1 fix scope summary (SEO-2, SEO-3, SEO-5):** All in `DayTripDetailSEO.js`. Total ~30 LoC. 1 atomic commit. Reuses existing fields — no backend changes required. **Exception:** SEO-3 (Review array) requires `contract.reviews[]` array in API response — verify backend serializer returns this array. If only `aggregateRating` is emitted (no per-review data), SEO-3 partial-render only (emit aggregateRating, skip review array).
+
+**SEO-9 (footer meta + JSON-LD provider):** Add `provider` field to JSON-LD + 1-line visual render. Trivial. **Cross-ref:** merged with UX-5 (P0) — see main doc Verification Matrix V3 for duplicate-check.
 
 ---
 
 ## Quality Check
 
-- GYG markup patterns cited: yes (4-5 patterns)
-- SmartEnPlus gaps file:line-referenced: yes (DayTripDetailSEO.js)
-- Severity assigned: yes
-- P3 flagged: yes
-- Cross-referenced R1-IA: yes
-- All P1 fixes reuse existing data: yes
+- GYG markup patterns cited: 5 (provider meta, 4×20 lists, aggregateRating, AI summary, breadcrumb)
+- SmartEnPlus gaps file-referenced: `DayTripDetailSEO.js`
+- Severity: 0 P0 + 3 P1 + 5 P2 + 1 P3 = 9 findings
+- P3 flagged: SEO-6 (UX density issue, deferred)
+- Cross-referenced: R1-IA (UX-5/SEO-9 merge)
+- P1 fixes reuse existing data: 3 of 3 (TouristAttraction uses existing fields; BreadcrumbList uses StandardBreadcrumb data; Review array requires backend serializer verify)
 
-**Output:** 3 P1 + 5 P2 + 1 P3 = 9 SEO findings, 4 concrete actions (SEO-2, SEO-3, SEO-5, SEO-9), all small effort.
+**Output:** 4 concrete actions (SEO-2 TouristAttraction, SEO-3 Review array, SEO-5 BreadcrumbList, SEO-9 footer provider) — all small effort, all in single file.
 
 ---
 
