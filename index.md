@@ -10,6 +10,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[homepage-terminology-audit-2026-06-05]] — **COMPLETED 2026-06-05.** 3-agent SEO+UX+Tech audit of homepage nav/section terminology. Phase 2 production SEO review overturned /locations→/destinations consolidation (different products). Implemented: "Journeys"→"Routes", "Explore Thailand"→"Destinations", H1 fix on activities page. 3 atoms extracted.
+
 - [[frontend-test-infrastructure-audit-2026-06-03]] — **BLOCK RELEASE 2026-06-03.** 5-agent team: Jest (719 tests, 30% fail) + Playwright (260 tests, 90% fail). 3.92% coverage vs 70% threshold. 6 CRITICAL issues: 0% BookButton coverage (payment path), checkout 30s timeout, mobile 100% fail, jest-axe missing, MUI emotion mismatch. 4-5 dev days to fix. Money flow (checkout → payment) completely unverified.
 
 - [[experience-detail-page-redesign-2026-06-02]] — **PLANNED 2026-06-02.** Premium redesign of `/activities/detail/[slug]` → Airbnb-level experience detail page. Airbnb 5-up photo grid, trust badges, reviews moved up, timeline collapsed, 9 new components, 0 new API endpoints.
@@ -142,6 +144,9 @@ Global navigation catalog. Updated on every ingest.
 - [[django-parse-int-list-text-fallback]] — `_parse_int_list` returns `[]` on text input. Caller branching to `.none()` returns zero results silently. Add text-search fallback branch.
 - [[django-nested-delete-sweep-pattern]] — Exclude-based delete sweep wipes all rows when `existing_ids` set is empty. Guard: never `continue` in create branch + `if existing_ids:` before delete.
 - [[django-nullable-fk-migration-pattern]] — FK `CASCADE → SET_NULL null=True` + migration. View-layer `None` without migration = `IntegrityError`. Deploy order matters.
+- [[nav-label-url-slug-two-layer-strategy]] — Nav label (brand word) and URL slug (SEO word) should differ. Google indexes URLs not nav labels. Safe to change nav anytime; URL = permanent infrastructure.
+- [[production-url-rename-cost-framework]] — Decision framework: refs >100 = never rename; multi-year indexed = high risk. True duplicate test before any consolidation.
+- [[locations-destinations-product-split]] — /locations = routes FROM a city (departure browser). /destinations = booking TO a station (trip purchase). Different APIs, different intent. Never consolidate or cross-canonical.
 - [[react-client-key-null-id-pattern]] — `id: null` sentinel for unsaved records + `_clientKey: Date.now()` for stable React key. Avoids PK collision + duplicate key warnings.
 - [[react-dual-hook-url-race]] — Two hook instances owning same URL race each other. Fix: `{ enabled }` param to gate URL-sync, `isControlled` detection, `didMountRef` to skip mount-fire, MUI freeSolo string branch in `onChange`.
 - [[pdf-contract-import-adversarial-review]] — 6 red flags for PDF import arch: async AI call required, soft-delete draft, remove LLM matching, pre-validation, no confidence auto-accept, large-delta warning. 3-screen UX. All must resolve before first commit.
@@ -221,8 +226,8 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 102
-- Last updated: 2026-06-04 (session #40: django-nested-delete-sweep-pattern, django-nullable-fk-migration-pattern, react-client-key-null-id-pattern)
+- Pages: 106
+- Last updated: 2026-06-05 (vault organize + ingest: homepage-terminology-audit, 3 atoms: nav-label-url-slug-two-layer-strategy, production-url-rename-cost-framework, locations-destinations-product-split)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx
