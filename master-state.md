@@ -6,7 +6,20 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-05 (session #47)
+**Updated:** 2026-06-05 (session #48)
+
+**Achieved this session (#48):**
+- **GSC-1 Phase 1 + Phase 2 — SHIPPED** — Two confirmed root causes of 52,400 "Crawled Not Indexed" fixed:
+  1. `seoConfig.js:41`: `noindex: false` → `noindex: !dataValid` — empty-data trip pages now get `noindex:true` automatically via existing `dataValid = data?.length` already in scope. No prop threading needed.
+  2. `generateRoutesSitemap()` station-slug block deleted — was generating `/trips/koh-bulone/koh-ngai-any-hotel` alongside location-slug URL. Station-slug API returns `{routes:[],contracts:[]}`. Google saw duplicate thin pages, selected no canonical, indexed neither.
+  3. `revalidate: 300 → 3600` on empty-route `getStaticProps` path.
+  - Branch `260605-fix/sitemap-route-filter` (`effdc49`) → develop `0eaf9b2` → pushed
+- **`NEXT_PUBLIC_DOMAIN` leading-space bug — FOUND + USER FIXED** — All canonical/og:url/hreflang hrefs had `href=" https://..."` (space before https). Root cause: GitHub Actions Secret had leading space. User updated in GitHub Settings. Redeploy needed to propagate.
+- **Multi-agent review** — SEO specialist + frontend specialist + /scrutinize + /debug-mantra. Key overturns: catch block must NOT get noindex (API failure ≠ no inventory), GridComponent3 fix wrong branch (caller passes strings not objects), `noindex:!dataValid` simpler than 4-file prop chain.
+- **`operator_count > 0` sitemap filter** (`3c67218`) — zero effect (all 150 routes already pass). Kept as harmless future-proofing.
+- **Deferred:** GridComponent3 internal slug fix — only caller (`locations/[slug].js`) passes `departure_station` as plain string; `stationField.slug` object branch unreachable. Needs separate investigation of API data shape.
+- **Known gap:** routes with `data.length > 0` but empty `avaliable_routes` (suspended contracts) still get `noindex:false`. Out of scope for this fix.
+- **frontend develop now at `0eaf9b2`**
 
 **Achieved this session (#47):**
 - **GSC 52,400 "Crawled Not Indexed" investigation — RESEARCH COMPLETE, NO CODE DEPLOYED**
@@ -76,11 +89,10 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-0. **GSC-1** Run Phase 0 data collection (2 days, no code): GSC export + seasonal SQL + cross-reference impressions × zero inventory. Go/no-go gates Phase 1. See [[gsc-crawled-not-indexed-investigation-2026-06-05]].
+0. **Deploy + cache clear** — trigger GitHub Actions deploy workflow (NEXT_PUBLIC_DOMAIN secret updated). After deploy: clear `smartenplus_next_cache` Docker volume on server. Verify `/trips/koh-bulone/koh-ngai-any-hotel` → `robots: noindex,follow` in page source.
 1. **GYG-THUMB** Review thumbnails — backend: add `ReviewImage` model (or `images` JSONField) to `reviews/models.py` + migration + serializer. Frontend: render thumbnails in `CustomerReviewCard` (`ReviewListByProduct.js`).
-2. **CMA-1 remaining:**
-   - Data inventory: query `historical_contract` (simple_history) for `primary_location` changes last 90 days
-3. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+2. **CMA-1 remaining:** Data inventory — query `historical_contract` (simple_history) for `primary_location` changes last 90 days.
+3. Fix **CART-1**: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
 4. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
 5. **AT-1** airport transfer redesign
 6. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
@@ -90,7 +102,7 @@ I'll compress the markdown text you provided directly, following the compression
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `develop` | Latest: `b0fce4f` SEO canonical CLAUDE.md gotchas |
+| `smartenplus-frontend` | `develop` | Latest: `0eaf9b2` GSC-1 noindex + station-slug sitemap fix |
 | `smartenplus-backend` | `main` | Latest: `3a59a41` HOTEL_PICKUP invariant in ContractDetailSerializer.validate() |
 | `admin-dashboard` | `main` | Latest: `5f068ef` HOTEL_PICKUP whitespace fix |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
@@ -103,7 +115,8 @@ I'll compress the markdown text you provided directly, following the compression
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| GSC-1 | **GSC Crawled-Not-Indexed — Phase 0 data collection** | Run 5 data queries before any code change. See [[gsc-crawled-not-indexed-investigation-2026-06-05]]. Phase 0: GSC export + seasonal SQL + impressions×inventory cross-ref. Phase 1 (after data): sitemap filter only. Phase 2: surgical noindex. Phase 3: three-tier model (needs backend `route_exists` field). **NEVER `notFound: true` in catch block.** | `pages/trips/[...slug].js:99`, `pages/server-sitemap.xml/index.js`, `components/SEO/seoConfig.js:41` |
+| GSC-1 | **GSC Crawled-Not-Indexed — Phase 1+2 SHIPPED, monitoring** | ✓ `noindex:!dataValid` deployed (`effdc49`). ✓ Station-slug sitemap duplicates removed. Needs: deploy trigger + `smartenplus_next_cache` Docker volume clear. Monitor GSC Coverage 2–3 weeks. Phase 3 (three-tier model) still needs backend `route_exists` field. **NEVER `notFound: true` in catch block.** Known gap: `data.length > 0` but empty `avaliable_routes` still indexed. GridComponent3 slug fix deferred (caller passes strings, wrong branch). | `components/SEO/seoConfig.js:41` (shipped), `pages/server-sitemap.xml/index.js` (shipped), `components/UI/GridComponent3.js:24` (deferred) |
+| DOMAIN-1 | **NEXT_PUBLIC_DOMAIN leading space** | GitHub Secret updated by user. Redeploy required to propagate. After deploy: verify `<link rel="canonical" href="https://...">` (no leading space). | GitHub Actions secret `NEXT_PUBLIC_DOMAIN` |
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
 | CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501`. ✓ `ContractDetailSerializer.validate()` HOTEL_PICKUP guard `3a59a41`. `get_translated_meeting_point_details` DEFERRED. **Remaining:** data inventory via `historical_contract` (simple_history, `primary_location` changes last 90 days). | `operators/models.py` (simple_history) |
 | ~~CMA-2~~ | ~~`ServiceDetail.js:35` zero i18n fallback~~ | ✓ RESOLVED #42. `meeting_point_type` + `meeting_point_details` added to `AdminBookingSummarySerializer.get_contract()` (`09d6f3a`). English-only — no translated fallback needed. | — |
