@@ -89,7 +89,7 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-0. **Deploy + cache clear** — trigger GitHub Actions deploy workflow (NEXT_PUBLIC_DOMAIN secret updated). After deploy: clear `smartenplus_next_cache` Docker volume on server. Verify `/trips/koh-bulone/koh-ngai-any-hotel` → `robots: noindex,follow` in page source.
+0. **Deploy + cache clear** — user handles via GitHub Actions workflow. NEXT_PUBLIC_DOMAIN secret already updated.
 1. **GYG-THUMB** Review thumbnails — backend: add `ReviewImage` model (or `images` JSONField) to `reviews/models.py` + migration + serializer. Frontend: render thumbnails in `CustomerReviewCard` (`ReviewListByProduct.js`).
 2. **CMA-1 remaining:** Data inventory — query `historical_contract` (simple_history) for `primary_location` changes last 90 days.
 3. Fix **CART-1**: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
