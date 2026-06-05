@@ -2,6 +2,10 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-05] session-end | #51: activities pagination orphan + dead-space fix SHIPPED to develop. 3-specialist audit (UX/Visual/Performance) → Skeptic → Leader → 2 P0 (pageSize 16→12, remove min-h) + 1 P1 (skeleton 6→12). Backend verify PASS (CustomPagination max=100). 4 LoC, 2 files, 1 commit (`2226981`). Merged develop `2bfc2bd`. Vault: [[activities-pagination-ux-audit-2026-06-05]]
+
+## [2026-06-05] session-end | #50: activities card rating gate fix SHIPPED to develop. Drop `review_count >= 5` gate → `average_rating > 0`. Rating visible from 1 review. Color-coding rejected (GYG standard = uniform gold). 1 LoC, 1 commit (`3ce3c12`). Vault: [[gyg-card-rate-analysis-2026-06-05]]
+
 ## [2026-06-05] session-end | #49: activities /activities default category fix (3a4db81, DAY_TOUR→null) + pagination reset bug root-caused + fixed (01b3708). Root cause: React StrictMode + didMountRef persistence + setFilters side effect. Fix: no-op guard in setFilters callback + scroll:false on shallow URL push. 3 atoms extracted. develop 01b3708.
 
 ## [2026-06-05] session-end | #48: GSC-1 Phase 1+2 SHIPPED — noindex:!dataValid on empty trip pages + station-slug sitemap duplicates removed. NEXT_PUBLIC_DOMAIN leading-space bug found + user fixed in GitHub Secrets. develop 0eaf9b2. 3 files changed.

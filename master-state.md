@@ -6,10 +6,35 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-05 (session #49)
+**Updated:** 2026-06-05 (session #50)
 
-**Achieved this session (#49):**
-- **Activities /activities default category — FIXED + SHIPPED** — `hooks/useDayTripFilters.js` `DEFAULT_FILTERS.category`: DAY_TOUR → null. `filtersFromQuery` `|| null` fallback (was `|| SERVICE_CATEGORIES.DAY_TOUR`). `pages/activities/index.js` only reads query — no useEffect involved. Removed unused `SERVICE_CATEGORIES` import. Commit `3a4db81` → frontend develop → pushed.
+**Achieved this session (#50):**
+- **DOMAIN-1 closed** — deploy + cache clear confirmed by user. `NEXT_PUBLIC_DOMAIN` propagated.
+- **GYG-THUMB Review Images — DONE (unmerged)** — Full review image support across 2 repos:
+  - Backend: `ReviewImage` model (FK to Review, ImageField, caption, order, is_approved). `process_review_image()` in `dialogue/utils.py` converts uploads to WebP ≤120KB (progressive quality reduction, dimension fallback 1200→800→600px, max 20MB input). `ReviewViewSet.create` handles max 5 images with validation before save. `prefetch_related('images')` on all review querysets. Admin inline with image preview. Migration `0027_reviewimage.py`.
+  - Frontend: `ReviewImageThumbnails.js` (64x64 grid + lightbox via yet-another-react-lightbox + Zoom). `CustomerReviewCard` renders thumbnails. `RateAndReviewForm` adds file input with preview (blob URL cleanup via useMemo+useEffect). Profile dropdown menu: added "Rate & Reviews" link. Review detail page: added thumbnail rendering. Trip detail page: CSR refetch for fresh reviews (bypasses ISR stale cache). Fixed BadgeChip `label` prop bug → `children`.
+  - **Bugs found+fixed:** ValidationError class mismatch (DRF vs Django), image count validation ordering (before save), blob URL memory leak, misleading helper text, dead code, missing prefetch_related on 3 querysets, process_review_image moved from models.py → utils.py.
+  - Backend branch `260605-feat/review-images` (`3d1d91a`) pushed. Frontend branch `260605-feat/review-images` (`e73fc23`) pushed. Both unmerged.
+- **Vault log created** — `07-logs/log.md` initialized.
+
+**Next session resume point (EXACT):**
+1. **Merge `260605-feat/review-images`** → develop (frontend) + main (backend). Run migration on production.
+2. **GYG-THUMB follow-up:** Review edit mode (RateAndReviewForm dual-mode create/edit). Backend `partial_update` for image add/remove.
+3. **CMA-1 remaining:** Data inventory — query `historical_contract` (simple_history) for `primary_location` changes last 90 days.
+4. Fix **CART-1**: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+5. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
+6. **AT-1** airport transfer redesign
+7. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+8. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
+
+### Active Branches
+
+| Repo | Branch | Status |
+|------|--------|--------|
+| `smartenplus-frontend` | `260605-feat/review-images` | Latest: `e73fc23` — unmerged, pushed |
+| `smartenplus-backend` | `260605-feat/review-images` | Latest: `3d1d91a` — unmerged, pushed |
+| `admin-dashboard` | `main` | Latest: `5f068ef` HOTEL_PICKUP whitespace fix |
+| `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
 - **Activities pagination reset bug — ROOT CAUSE FOUND + FIXED + SHIPPED** — Symptom: click pagination page 2+ → scroll past search bar (either direction) → pagination chip jumps to page 1. Root cause: React StrictMode + `didMountRef` guard pattern. `useRef` state persists across StrictMode simulated remount (setup→cleanup→setup). When sticky compact `<ActivitySearch>` mounts in header, the debounce effect at `ActivitySearch.js:35-38` second setup bypasses `didMountRef` (already `true`), fires `updateFilter('search', '')`, which `setFilters({...prev, search:'', page:1})` resets page to 1.
   - Fix: hook-level no-op guard in `useDayTripFilters.js:67-75` — `if (prev[key] === value) return prev`. React bails out, no re-render, no page reset. Hardens all callers (defense in depth).
   - Also added `scroll: false` to `router.push` to prevent scroll jumps on shallow URL sync.
@@ -97,25 +122,6 @@ I'll compress the markdown text you provided directly, following the compression
   - **Now on main: `4bec691`** (verified session #39)
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
-**Next session resume point (EXACT):**
-0. **Deploy + cache clear** — user handles via GitHub Actions workflow. NEXT_PUBLIC_DOMAIN secret already updated.
-1. **GYG-THUMB** Review thumbnails — backend: add `ReviewImage` model (or `images` JSONField) to `reviews/models.py` + migration + serializer. Frontend: render thumbnails in `CustomerReviewCard` (`ReviewListByProduct.js`).
-2. **CMA-1 remaining:** Data inventory — query `historical_contract` (simple_history) for `primary_location` changes last 90 days.
-3. Fix **CART-1**: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
-4. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
-5. **AT-1** airport transfer redesign
-6. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
-7. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
-
-### Active Branches
-
-| Repo | Branch | Status |
-|------|--------|--------|
-| `smartenplus-frontend` | `develop` | Latest: `01b3708` activities no-op guard + scroll:false |
-| `smartenplus-backend` | `main` | Latest: `3a59a41` HOTEL_PICKUP invariant in ContractDetailSerializer.validate() |
-| `admin-dashboard` | `main` | Latest: `5f068ef` HOTEL_PICKUP whitespace fix |
-| `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
-
 ---
 
 ## Section 2 — Loose Ends
@@ -124,8 +130,8 @@ I'll compress the markdown text you provided directly, following the compression
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
-| GSC-1 | **GSC Crawled-Not-Indexed — Phase 1+2 SHIPPED, monitoring** | ✓ `noindex:!dataValid` deployed (`effdc49`). ✓ Station-slug sitemap duplicates removed. Needs: deploy trigger + `smartenplus_next_cache` Docker volume clear. Monitor GSC Coverage 2–3 weeks. Phase 3 (three-tier model) still needs backend `route_exists` field. **NEVER `notFound: true` in catch block.** Known gap: `data.length > 0` but empty `avaliable_routes` still indexed. GridComponent3 slug fix deferred (caller passes strings, wrong branch). | `components/SEO/seoConfig.js:41` (shipped), `pages/server-sitemap.xml/index.js` (shipped), `components/UI/GridComponent3.js:24` (deferred) |
-| DOMAIN-1 | **NEXT_PUBLIC_DOMAIN leading space** | GitHub Secret updated by user. Redeploy required to propagate. After deploy: verify `<link rel="canonical" href="https://...">` (no leading space). | GitHub Actions secret `NEXT_PUBLIC_DOMAIN` |
+| GSC-1 | **GSC Crawled-Not-Indexed — Phase 1+2 SHIPPED, monitoring** | ✓ `noindex:!dataValid` deployed (`effdc49`). ✓ Station-slug sitemap duplicates removed. ✓ Deploy + cache clear confirmed 2026-06-05. Monitor GSC Coverage 2–3 weeks. Phase 3 (three-tier model) still needs backend `route_exists` field. **NEVER `notFound: true` in catch block.** Known gap: `data.length > 0` but empty `avaliable_routes` still indexed. GridComponent3 slug fix deferred (caller passes strings, wrong branch). | `components/SEO/seoConfig.js:41` (shipped), `pages/server-sitemap.xml/index.js` (shipped), `components/UI/GridComponent3.js:24` (deferred) |
+| ~~DOMAIN-1~~ | ~~NEXT_PUBLIC_DOMAIN leading space~~ | ✓ RESOLVED 2026-06-05. GitHub Secret updated + deploy + cache clear confirmed by user. | — |
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
 | CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501`. ✓ `ContractDetailSerializer.validate()` HOTEL_PICKUP guard `3a59a41`. `get_translated_meeting_point_details` DEFERRED. **Remaining:** data inventory via `historical_contract` (simple_history, `primary_location` changes last 90 days). | `operators/models.py` (simple_history) |
 | ~~CMA-2~~ | ~~`ServiceDetail.js:35` zero i18n fallback~~ | ✓ RESOLVED #42. `meeting_point_type` + `meeting_point_details` added to `AdminBookingSummarySerializer.get_contract()` (`09d6f3a`). English-only — no translated fallback needed. | — |
@@ -141,7 +147,7 @@ I'll compress the markdown text you provided directly, following the compression
 | ~~BW-2~~ | ~~Blog index featured section `px-2 md:px-4`~~ | ✓ Already fixed | — |
 | ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
 | ~~EXP-DETAIL-1~~ | ~~Experience Detail Page premium redesign + tablet/mobile~~ | ✓ DONE (#33) — FAQ, carousel, filter all shipped and merged | — |
-| GYG-IMPL | **GYG 5-pattern impl status** | P0 footer strip DONE. P1 badges DONE. P2 disclaimer DONE. P2 sort+filter DONE (`260605-feat/review-filter`). P1 review-thumbnails blocked: V4 `Review.images[]` backend field needed. | backend `Review` model |
+| GYG-IMPL | **GYG 5-pattern impl status** | P0 footer strip DONE. P1 badges DONE. P2 disclaimer DONE. P2 sort+filter DONE. P1 review-thumbnails DONE (branch `260605-feat/review-images`, unmerged). Frontend: thumbnails + lightbox + file upload form + profile menu link + review detail page + CSR refetch. Backend: ReviewImage model + WebP conversion + admin inline + prefetch. | Merge branch to develop/main |
 | CART-1 | **Fix PARSING_ERROR catch** | `DayTripBookingWidget.js:338` — `error.status >= 500` fails silently when RTK sets string `'PARSING_ERROR'`. Fix: `error.status === 'PARSING_ERROR' \|\| error.originalStatus >= 500`. Deferred from session #34. | `components/activities/detail/DayTripBookingWidget.js:338` |
 | FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review-2026-06-02]] | `admin-dashboard/DayTripDetails.js` (deferred) |
 | FAV-1 | **Favorite heart on DayTripCard** | ADR designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
