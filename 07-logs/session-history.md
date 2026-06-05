@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #51 (2026-06-06)
+- **HEIC review upload — IMPLEMENTATED, local deps ready** — pillow-heif 0.15.0 + libheif 1.23.0 installed locally. Backend restarted with HEIC opener registered. Code committed: backend `f82b182`, frontend `0a4e6d4`. Branch: `260606-fix/heic-review-upload`.
+- **Multi-agent debate** — 2 agents evaluated base64 proxy vs pillow-heif. Chose server-side (5 lines, 33% less payload, no memory spike).
+- **Test deferred** — User to test HEIC upload later, then merge to production.
+
+**Resume point:**
+1. **Test HEIC upload locally** — Upload HEIC file via review form, verify WebP conversion ≤120KB.
+2. **Merge `260606-fix/heic-review-upload`** → main (backend) + develop (frontend).
+3. **Build production Docker** with libheif-dev.
+
+---
+
 ## Session #50 (2026-06-05)
 - **DOMAIN-1 closed** — deploy + cache clear confirmed. `NEXT_PUBLIC_DOMAIN` propagated.
 - **GYG-THUMB Review Images — DONE (unmerged)** — Full image support across 2 repos: ReviewImage model + WebP ≤120KB conversion + lightbox thumbnails + file upload form + profile menu + review detail page + CSR refetch. 7 bugs found+fixed. Backend `3d1d91a`, frontend `e73fc23`, both pushed.

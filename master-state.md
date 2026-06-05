@@ -7,13 +7,14 @@
 **Updated:** 2026-06-06 (session #51)
 
 **Achieved this session (#51):**
-- **HEIC review upload — IMPLEMENTED** — Server-side HEIC/HEIF support via pillow-heif. Backend converts HEIC → WebP (≤120KB) via existing pipeline. 5 files changed across 2 repos. Backend `f82b182`, frontend `0a4e6d4`. Branch: `260606-fix/heic-review-upload`.
-- **Debate complete** — Base64 proxy approach rejected (33% payload bloat, memory spike, contract change). Chose pillow-heif server-side (5 lines of code).
+- **HEIC review upload — IMPLEMENTATED, local deps ready** — pillow-heif 0.15.0 + libheif 1.23.0 installed locally. Backend restarted with HEIC opener registered. Code committed: backend `f82b182`, frontend `0a4e6d4`. Branch: `260606-fix/heic-review-upload`.
+- **Multi-agent debate** — 2 agents evaluated base64 proxy vs pillow-heif. Chose server-side (5 lines, 33% less payload, no memory spike).
 
 **Resume point (EXACT):**
-1. **Docker rebuild + test HEIC upload** — Build backend image with libheif-dev, verify pillow-heif loads, test iPhone HEIC file upload in review form.
+1. **Test HEIC upload locally** — Upload HEIC file via review form, verify WebP conversion ≤120KB.
 2. **Merge `260606-fix/heic-review-upload`** → main (backend) + develop (frontend).
-3. **Outstanding from #50:** Merge `260605-feat/review-images` → develop (frontend) + main (backend). Run migration on production.
+3. **Build production Docker** with libheif-dev.
+4. **Outstanding from #50:** Merge `260605-feat/review-images` → develop (frontend) + main (backend). Run migration on production.
 
 ---
 
@@ -21,7 +22,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| HEIC-1 | iPhone HEIC review upload | Implemented, unmerged. Branch `260606-fix/heic-review-upload`. Needs Docker rebuild + test. | `dialogue/utils.py`, `RateAndReviewForm.js` |
+| HEIC-1 | iPhone HEIC review upload | Implemented, deps ready. Branch `260606-fix/heic-review-upload`. Local test pending, then merge. | `dialogue/utils.py`, `RateAndReviewForm.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails unmerged (`260605-feat/review-images`). | Merge `260605-feat/review-images` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
 | CMA-1 | Contract Model Ambiguity | P1/P2 partial. Remaining: data inventory. | `operators/models.py` |
