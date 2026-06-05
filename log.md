@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-05] session-end | #45: homepage nav labels fixed (Journeys→Routes, Explore Thailand→Destinations, H1 fix), vault organized, 3 atoms extracted, develop `aef5548`
+
 ## [2026-06-05] ingest | homepage-terminology-audit: 3-agent SEO+UX+Tech debate, production SEO phase 2, nav labels fixed (3 files), 3 atoms extracted, vault organized (root strays moved, inbox cleared)
 
 ## [2026-06-04] session-end | #43: HOTEL_PICKUP invariant (3a59a41 backend) + admin-dashboard Yup validation (c2e8e4e+5f068ef) + MeetingPointCard reviewed OK. CMA-1 nearly closed — only data inventory remains.
