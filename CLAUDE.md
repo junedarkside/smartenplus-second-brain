@@ -155,25 +155,24 @@ At start of every session working on SmartEnPlus vault:
 - Thai: "พอแล้ว", "เลิกแล้ว", "พักก่อน", "โอเคพอ"
 
 **Steps:**
-1. **Run live git** on all 4 repos (`status --short` + `log --oneline -3`)
-2. **Rewrite `master-state.md` Section 1** — achieved / broken / in-progress / exact resume point (file + function + step)
-3. **Update `master-state.md` Section 2** — close resolved items, add new bugs/edge cases
-4. **Leave Sections 3 and 4 unchanged** unless API contract or guardrail permanently changed
-5. **Atomize new knowledge** — for each note written or heavily modified this session:
-   a. Scan for standalone, linkable, reusable concepts (see [[atomic-notes]])
-   b. Qualifies → extract to `03-knowledge/{domain}-{concept}.md` using `[[atomic-note]]` template, replace source content with 2-line summary + `[[wikilink]]`, add to `index.md`
-   c. Already atomic or doesn't qualify → skip
-   d. Max 5 atoms per session (prevents over-extraction noise)
-6. **Append to `log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
-7. **Commit+push vault and content repo** — stage all changes and push to GitHub:
+1. **Run `bash vault-wrapup.sh`** — collects git state for all 4 repos. Use output for Section 1.
+2. **Edit `master-state.md` Section 1** — overwrite latest session block with achievements + exact resume point. Move previous session to `07-logs/session-history.md`.
+3. **Edit `master-state.md` Section 2** — close resolved items (move to `07-logs/closed-items.md`), add new bugs/edge cases.
+4. **Atomize** (max 5 per session) — extract to `03-knowledge/`, update `index.md`.
+5. **Append to `07-logs/log.md`** — `## [YYYY-MM-DD] session-end | <one-line summary>`
+6. **Commit+push vault and content repo:**
    ```bash
-   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" add -A
-   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" commit -m "session-end: <one-line summary>"
-   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content" push
-   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" add -A
-   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" commit -m "session-end: <one-line summary>"
-   git -C "/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project" push
+   git -C vault add -A && git -C vault commit -m "session-end: <summary>" && git -C vault push
+   git -C content add -A && git -C content commit -m "session-end: <summary>" && git -C content push
    ```
+
+**File structure (optimized):**
+- `master-state.md` — Section 1 (latest session + resume point) + Section 2 (open items only). ~60 lines.
+- `vault-protocol.md` — API contract. Read only when working on API changes.
+- `vault-guardrails.md` — Architecture guardrails. Read only when working on payment/infra.
+- `07-logs/session-history.md` — Historical sessions (#38+).
+- `07-logs/closed-items.md` — Resolved items for audit trail.
+- `vault-wrapup.sh` — Git state collection script.
 
 ## Projects in This Vault
 
