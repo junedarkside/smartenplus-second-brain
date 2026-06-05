@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-05] session-end | #49: activities /activities default category fix (3a4db81, DAY_TOUR→null) + pagination reset bug root-caused + fixed (01b3708). Root cause: React StrictMode + didMountRef persistence + setFilters side effect. Fix: no-op guard in setFilters callback + scroll:false on shallow URL push. 3 atoms extracted. develop 01b3708.
+
 ## [2026-06-05] session-end | #48: GSC-1 Phase 1+2 SHIPPED — noindex:!dataValid on empty trip pages + station-slug sitemap duplicates removed. NEXT_PUBLIC_DOMAIN leading-space bug found + user fixed in GitHub Secrets. develop 0eaf9b2. 3 files changed.
 
 ## [2026-06-05] session-end | #47: GSC 52,400 "Crawled Not Indexed" investigation. 3-team adversarial review. Primary cause: empty ISR pages (not URL pollution). notFound blanket approach overturned — 14 Koh Lipe seasonal routes at risk. Safe 3-phase plan documented. No code deployed. Vault: [[gsc-crawled-not-indexed-investigation-2026-06-05]]

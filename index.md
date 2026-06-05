@@ -155,6 +155,9 @@ Global navigation catalog. Updated on every ingest.
 - [[react-dual-hook-url-race]] — Two hook instances owning same URL race each other. Fix: `{ enabled }` param to gate URL-sync, `isControlled` detection, `didMountRef` to skip mount-fire, MUI freeSolo string branch in `onChange`.
 - [[pdf-contract-import-adversarial-review]] — 6 red flags for PDF import arch: async AI call required, soft-delete draft, remove LLM matching, pre-validation, no confidence auto-accept, large-delta warning. 3-screen UX. All must resolve before first commit.
 - [[django-async-ai-call-pattern]] — Django sync LLM calls block WSGI workers. Pattern: return `task_id` immediately, Celery handles AI call, frontend polls status endpoint.
+- [[react-strictmode-useref-persistence]] — **NEW 2026-06-05.** useRef state persists across StrictMode simulated remount. Mount-only `didMountRef` guards bypass on second setup, firing effects only in dev. Solution: make effects idempotent.
+- [[react-state-no-op-guard-side-effect-prevention]] — **NEW 2026-06-05.** Guard `setState` callback against same-value writes: `if (prev[key] === value) return prev`. Prevents coupled side effects (page reset, URL push) from firing on no-op writes.
+- [[nextjs-shallow-router-push-scroll-false]] — **NEW 2026-06-05.** `router.push({...}, undefined, { shallow: true, scroll: false })` for URL sync on filter change. Default `scroll: true` causes scroll jumps on every state change.
 
 - [[payment-gateway-charge-architecture]] — GatewayCharge model, finalize_payment() SSOT, locked_amount freeze, webhook sole finalization
 - [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling

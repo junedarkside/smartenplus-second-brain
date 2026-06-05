@@ -6,7 +6,16 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-05 (session #48)
+**Updated:** 2026-06-05 (session #49)
+
+**Achieved this session (#49):**
+- **Activities /activities default category — FIXED + SHIPPED** — `hooks/useDayTripFilters.js` `DEFAULT_FILTERS.category`: DAY_TOUR → null. `filtersFromQuery` `|| null` fallback (was `|| SERVICE_CATEGORIES.DAY_TOUR`). `pages/activities/index.js` only reads query — no useEffect involved. Removed unused `SERVICE_CATEGORIES` import. Commit `3a4db81` → frontend develop → pushed.
+- **Activities pagination reset bug — ROOT CAUSE FOUND + FIXED + SHIPPED** — Symptom: click pagination page 2+ → scroll past search bar (either direction) → pagination chip jumps to page 1. Root cause: React StrictMode + `didMountRef` guard pattern. `useRef` state persists across StrictMode simulated remount (setup→cleanup→setup). When sticky compact `<ActivitySearch>` mounts in header, the debounce effect at `ActivitySearch.js:35-38` second setup bypasses `didMountRef` (already `true`), fires `updateFilter('search', '')`, which `setFilters({...prev, search:'', page:1})` resets page to 1.
+  - Fix: hook-level no-op guard in `useDayTripFilters.js:67-75` — `if (prev[key] === value) return prev`. React bails out, no re-render, no page reset. Hardens all callers (defense in depth).
+  - Also added `scroll: false` to `router.push` to prevent scroll jumps on shallow URL sync.
+  - Commit `01b3708` → frontend develop → pushed.
+  - 3 atoms: [[react-strictmode-useref-persistence]], [[react-state-no-op-guard-side-effect-prevention]], [[nextjs-shallow-router-push-scroll-false]]
+- **frontend develop now at `01b3708`**
 
 **Achieved this session (#48):**
 - **GSC-1 Phase 1 + Phase 2 — SHIPPED** — Two confirmed root causes of 52,400 "Crawled Not Indexed" fixed:
@@ -102,7 +111,7 @@ I'll compress the markdown text you provided directly, following the compression
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `develop` | Latest: `0eaf9b2` GSC-1 noindex + station-slug sitemap fix |
+| `smartenplus-frontend` | `develop` | Latest: `01b3708` activities no-op guard + scroll:false |
 | `smartenplus-backend` | `main` | Latest: `3a59a41` HOTEL_PICKUP invariant in ContractDetailSerializer.validate() |
 | `admin-dashboard` | `main` | Latest: `5f068ef` HOTEL_PICKUP whitespace fix |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |
@@ -120,6 +129,8 @@ I'll compress the markdown text you provided directly, following the compression
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
 | CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501`. ✓ `ContractDetailSerializer.validate()` HOTEL_PICKUP guard `3a59a41`. `get_translated_meeting_point_details` DEFERRED. **Remaining:** data inventory via `historical_contract` (simple_history, `primary_location` changes last 90 days). | `operators/models.py` (simple_history) |
 | ~~CMA-2~~ | ~~`ServiceDetail.js:35` zero i18n fallback~~ | ✓ RESOLVED #42. `meeting_point_type` + `meeting_point_details` added to `AdminBookingSummarySerializer.get_contract()` (`09d6f3a`). English-only — no translated fallback needed. | — |
+| ~~ACT-DEFAULT-CAT~~ | ~~`/activities` defaulted to DAY_TOUR~~ | ✓ RESOLVED 2026-06-05 #49. `DEFAULT_FILTERS.category: null` + `\|\| null` fallback. `3a4db81`. | — |
+| ~~ACT-PAGINATION-RESET~~ | ~~Pagination chip jumped to page 1 on sticky search mount~~ | ✓ RESOLVED 2026-06-05 #49. StrictMode + didMountRef bug. No-op guard in `setFilters` callback + `scroll:false` on URL push. `01b3708`. Atoms: [[react-strictmode-useref-persistence]], [[react-state-no-op-guard-side-effect-prevention]], [[nextjs-shallow-router-push-scroll-false]] | — |
 | ~~ACT-7~~ | ~~Phase 1 QA + merge~~ | ✓ Done | — |
 | ~~ACT-8~~ | ~~Backend merge~~ | ✓ Done `2d5a6ee` → develop | — |
 | ~~ACT-9~~ | ~~Phase 2 pre-flight (backend)~~ | ✓ Done `508949b` | — |
