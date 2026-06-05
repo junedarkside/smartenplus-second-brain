@@ -6,7 +6,11 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-05 (session #45)
+**Updated:** 2026-06-05 (session #46)
+
+**Achieved this session (#46):**
+- **Blog canonical URL bug — FIXED + SHIPPED** — GSC "Alternate page with proper canonical tag" root cause: `String.replace('http://...')` never matched WP's HTTPS `opengraphUrl`. Canonical resolved to `blog.smartenplus.co.th` → Google skipped main domain. Fix: derive canonical from slug directly. Also fixed `pages/help/[...slug].js` regex + missing `www.` prefix. Commits `3d30407` + `b0fce4f` → frontend develop → pushed. Vault: [[blog-canonical-url-wp-subdomain-bug]].
+- **frontend develop now at `b0fce4f`**
 
 **Achieved this session (#45):**
 - **Homepage terminology audit — DONE** — 3-agent SEO+UX+Tech team + debate. Nav labels fixed: "Journeys"→"Routes", "Explore Thailand"→"Destinations". H1 fix on activities page. Branch `260605-feat/homepage-terminology-audit` (`36e2786`) → develop (`aef5548`) → pushed.
@@ -75,7 +79,7 @@ I'll compress the markdown text you provided directly, following the compression
 
 | Repo | Branch | Status |
 |------|--------|--------|
-| `smartenplus-frontend` | `develop` | Latest: `aef5548` homepage nav labels standardized |
+| `smartenplus-frontend` | `develop` | Latest: `b0fce4f` SEO canonical CLAUDE.md gotchas |
 | `smartenplus-backend` | `main` | Latest: `3a59a41` HOTEL_PICKUP invariant in ContractDetailSerializer.validate() |
 | `admin-dashboard` | `main` | Latest: `5f068ef` HOTEL_PICKUP whitespace fix |
 | `smartenplus-content` | `master` | Untracked: `strategy/business-development-thesis.md` (user work) |

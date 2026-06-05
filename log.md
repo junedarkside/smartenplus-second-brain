@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-05] session-end | #46: blog canonical URL bug fixed (GSC "Alternate page"), WP subdomain https? regex fix, help page www prefix, develop `b0fce4f`, vault atom [[blog-canonical-url-wp-subdomain-bug]]
+
 ## [2026-06-05] session-end | #45: homepage nav labels fixed (Journeys→Routes, Explore Thailand→Destinations, H1 fix), vault organized, 3 atoms extracted, develop `aef5548`
 
 ## [2026-06-05] ingest | homepage-terminology-audit: 3-agent SEO+UX+Tech debate, production SEO phase 2, nav labels fixed (3 files), 3 atoms extracted, vault organized (root strays moved, inbox cleared)
