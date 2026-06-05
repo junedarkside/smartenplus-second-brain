@@ -10,6 +10,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[gsc-crawled-not-indexed-investigation-2026-06-05]] — **IN PROGRESS 2026-06-05.** 52,400 "Crawled Not Indexed" root cause investigation. 3-team adversarial review. Primary cause: empty ISR trip pages (88% confidence), NOT URL pollution. `notFound: true` blanket approach OVERTURNED — 14 Koh Lipe seasonal routes at risk. 3-phase safe plan: sitemap filter → surgical noindex → three-tier model. Data collection required before any code change.
+
 - [[blog-canonical-url-wp-subdomain-bug]] — **FIXED 2026-06-05.** GSC "Alternate page with proper canonical tag". `String.replace('http://...')` silently failed on HTTPS WP `opengraphUrl`. Canonical = WP subdomain. Fix: derive from slug. Also fixed help page regex + missing www. `3d30407` → develop.
 
 - [[homepage-terminology-audit-2026-06-05]] — **COMPLETED 2026-06-05.** 3-agent SEO+UX+Tech audit of homepage nav/section terminology. Phase 2 production SEO review overturned /locations→/destinations consolidation (different products). Implemented: "Journeys"→"Routes", "Explore Thailand"→"Destinations", H1 fix on activities page. 3 atoms extracted.

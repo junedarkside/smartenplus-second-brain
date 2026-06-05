@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-05] session-end | #47: GSC 52,400 "Crawled Not Indexed" investigation. 3-team adversarial review. Primary cause: empty ISR pages (not URL pollution). notFound blanket approach overturned — 14 Koh Lipe seasonal routes at risk. Safe 3-phase plan documented. No code deployed. Vault: [[gsc-crawled-not-indexed-investigation-2026-06-05]]
+
 ## [2026-06-05] session-end | #46: blog canonical URL bug fixed (GSC "Alternate page"), WP subdomain https? regex fix, help page www prefix, develop `b0fce4f`, vault atom [[blog-canonical-url-wp-subdomain-bug]]
 
 ## [2026-06-05] session-end | #45: homepage nav labels fixed (Journeys→Routes, Explore Thailand→Destinations, H1 fix), vault organized, 3 atoms extracted, develop `aef5548`

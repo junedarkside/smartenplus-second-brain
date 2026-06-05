@@ -6,7 +6,17 @@ I'll compress the markdown text you provided directly, following the compression
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-05 (session #46)
+**Updated:** 2026-06-05 (session #47)
+
+**Achieved this session (#47):**
+- **GSC 52,400 "Crawled Not Indexed" investigation — RESEARCH COMPLETE, NO CODE DEPLOYED**
+- 3-team adversarial specialist review (SEO root cause, duplicate/middleware risk, business risk)
+- Primary cause confirmed: empty ISR trip pages (`data: []`, `noindex: false` hardcoded) — 88% confidence
+- `notFound: true` blanket approach OVERTURNED — 14 Koh Lipe seasonal routes in `helpers/routeConstants.js` would deindex every monsoon season
+- Three-tier model designed (correct architecture, needs backend `route_exists` field first)
+- Safe 3-phase plan documented: Phase 0 = data collection → Phase 1 = sitemap filter → Phase 2 = surgical noindex → Phase 3 = three-tier with backend change
+- Vault: [[gsc-crawled-not-indexed-investigation-2026-06-05]]
+- **No frontend code changed this session**
 
 **Achieved this session (#46):**
 - **Blog canonical URL bug — FIXED + SHIPPED** — GSC "Alternate page with proper canonical tag" root cause: `String.replace('http://...')` never matched WP's HTTPS `opengraphUrl`. Canonical resolved to `blog.smartenplus.co.th` → Google skipped main domain. Fix: derive canonical from slug directly. Also fixed `pages/help/[...slug].js` regex + missing `www.` prefix. Commits `3d30407` + `b0fce4f` → frontend develop → pushed. Vault: [[blog-canonical-url-wp-subdomain-bug]].
@@ -66,14 +76,15 @@ I'll compress the markdown text you provided directly, following the compression
 - **Frontend test infrastructure audit** — 5-agent team ran Jest (719 tests) + Playwright (260 tests). 54% pass rate, 3.92% coverage. BLOCK RELEASE. 6 CRITICAL issues. 4-5 dev days to fix. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
 
 **Next session resume point (EXACT):**
-0. **GYG-THUMB** Review thumbnails — backend: add `ReviewImage` model (or `images` JSONField) to `reviews/models.py` + migration + serializer. Frontend: render thumbnails in `CustomerReviewCard` (`ReviewListByProduct.js`).
-1. **CMA-1 remaining:**
+0. **GSC-1** Run Phase 0 data collection (2 days, no code): GSC export + seasonal SQL + cross-reference impressions × zero inventory. Go/no-go gates Phase 1. See [[gsc-crawled-not-indexed-investigation-2026-06-05]].
+1. **GYG-THUMB** Review thumbnails — backend: add `ReviewImage` model (or `images` JSONField) to `reviews/models.py` + migration + serializer. Frontend: render thumbnails in `CustomerReviewCard` (`ReviewListByProduct.js`).
+2. **CMA-1 remaining:**
    - Data inventory: query `historical_contract` (simple_history) for `primary_location` changes last 90 days
-2. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
-3. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
-4. **AT-1** airport transfer redesign
-5. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
-6. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
+3. Fix CART-1: `DayTripBookingWidget.js:338` — `error.status === 'PARSING_ERROR' || error.originalStatus >= 500`
+4. Continue **FAQ-1** deferred: P1 admin-dashboard `ageRestriction` field (4 files)
+5. **AT-1** airport transfer redesign
+6. **FAV-1** favorite heart (ADR at `04-decisions/adr-activity-card-favorite-button.md`)
+7. **TSTD-1** frontend test infrastructure fix (4-5 dev days, vault: [[frontend-test-infrastructure-audit-2026-06-03]])
 
 ### Active Branches
 
@@ -92,6 +103,7 @@ I'll compress the markdown text you provided directly, following the compression
 
 | # | Issue | Blocker | Where |
 |---|-------|---------|-------|
+| GSC-1 | **GSC Crawled-Not-Indexed — Phase 0 data collection** | Run 5 data queries before any code change. See [[gsc-crawled-not-indexed-investigation-2026-06-05]]. Phase 0: GSC export + seasonal SQL + impressions×inventory cross-ref. Phase 1 (after data): sitemap filter only. Phase 2: surgical noindex. Phase 3: three-tier model (needs backend `route_exists` field). **NEVER `notFound: true` in catch block.** | `pages/trips/[...slug].js:99`, `pages/server-sitemap.xml/index.js`, `components/SEO/seoConfig.js:41` |
 | ~~TL-1~~ | ~~Timeline stop deletion bug~~ | ✓ RESOLVED 2026-06-04. Migration 0028 applied. 3 atoms extracted. | — |
 | CMA-1 | **Contract Model Ambiguity — P1/P2 partial** | ✓ P0 done #39. ✓ `showStations` deleted `ff8006e`. ✓ Admin PATCH guard `22dc045`. ✓ Casing ADR `375e501`. ✓ `ContractDetailSerializer.validate()` HOTEL_PICKUP guard `3a59a41`. `get_translated_meeting_point_details` DEFERRED. **Remaining:** data inventory via `historical_contract` (simple_history, `primary_location` changes last 90 days). | `operators/models.py` (simple_history) |
 | ~~CMA-2~~ | ~~`ServiceDetail.js:35` zero i18n fallback~~ | ✓ RESOLVED #42. `meeting_point_type` + `meeting_point_details` added to `AdminBookingSummarySerializer.get_contract()` (`09d6f3a`). English-only — no translated fallback needed. | — |
