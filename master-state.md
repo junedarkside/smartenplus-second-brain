@@ -4,12 +4,11 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-06 (session #60)
+**Updated:** 2026-06-06 (session #61)
 
-**Achieved this session (#60):**
-- **F3 — Social icon 40×40 wrapper batch** (Sprint 1 P0 closeout). 1 commit on frontend `develop`:
-  - `9472df5` — Wrap isolated social icons in `inline-flex items-center justify-center min-w-[40px] min-h-[40px]` per `icon-button-size-decision` atom. 4 files: `components/UI/ShareButton.js` (WhatsApp `<span>`), `components/layout/footer.js` (4 social `<Link>`s), `components/search/Passenger.js` (3 social `<Link>`s), `components/pages-info/ContactUs.js` (4 social `<Link>`s). Added missing `aria-label`s. **Row-wide consistency rule applied:** when WhatsApp wrapped, all sibling icons in the same row wrapped too (same a11y gap, visual consistency).
-- **WA-1 Sprint 1 P0 CLOSED.** F1 (search 16px) + F2 (44→40px dense UI) + F3 (40px wrapper) all shipped.
+**Achieved this session (#61):**
+- **Currency selector bug fix** — frontpage cards no longer hardcode "From THB". 1 commit on frontend `develop`:
+  - `e15cd1b` — **Currency-aware price formatting** across 4 card components. Root cause: 3 cards (`PopularRouteImageCard`, `ExperienceCard`, `AirportTransferRouteCard`) hardcoded `"From THB "` in JSX and defined local `formatPrice` that ignored `useCurrency()`. Selector pill updated correctly (read context directly) but cards never subscribed. **Fix:** extracted `hooks/useFormatPrice.js` (single source of truth wrapping `useCurrency` + `formatCurrency` + null-on-empty). Refactored 4 cards to use the hook (3 broken + `RecommendationCard` for dedup of 12 lines of identical inline logic). Net: 5 files, 33+/30− lines, **−16 net lines** after dedup. **No side effects** — `RecommendationCard` 1:1 logic replacement, memoization deps unchanged, `CurrencyContext` provider untouched. Other 15+ consumers (`DayTripCard`, `CartDetailDisplay`, `FilterPopover`, `PriceRangeSlider`, etc.) unaffected.
 
 **Resume point (EXACT):**
 1. **WA-2 Sprint 2 P1 (F4-F8)** — Inter font self-host, carousel `align: 'start'`, nav dedupe, OG image 1200×630, search form overflow. ~7 hrs.
