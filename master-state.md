@@ -4,26 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-06 (session #58)
+**Updated:** 2026-06-06 (session #59)
 
-**Achieved this session (#58):**
-- **Sprint 1 P0 — F1 + F2 SHIPPED** (website audit). 4 commits on frontend `develop`:
-  - `40c01e2` **F1** — Search input font 14→16px (iOS zoom fix). 6 inputs across `ProductSearchForm2.js` + `SearchDialogTrigger.js`.
-  - `0f9df12` **F2** — 44×44px touch targets (WCAG 2.5.5). 5 component files: `CurrencySelector.js`, `ProfileImage.js`, `CartButton.js`, `ProductSearchForm2.js` (3 buttons), `CarouselArrowButtons.js`. New regression spec `e2e/a11y/touch-targets.spec.ts` (8 assertions × 4 viewport projects).
-- **ProfileMenu UX consolidation** (3 commits):
-  - `44e209d` — Post-F2 regression fix: desktop `<Menu>` Paper had no `maxHeight`/`overflowY`; F2's `ProfileImage` 36→44 height pushed the anchored menu 8px past viewport edge. Added `MenuListProps` + `PaperProps` with `maxHeight: calc(100vh - 120px)`, `overflowY: auto`.
-  - `40b0a36` — Combine Ask Away + Explore More into expandable `<ExpandableMenuRow>` parent + 2 `<SubMenuRow>` children (both → `/forum`).
-  - `f4d581f` — Group Edit Profile + Family & Friends + Change Password into "Account" expandable. Newly surfaces `/account/editPassword` route.
-  - `314020c` — Group My Bookings + My Orders + Rate & Reviews into "My Activity" expandable.
-  - **Cumulative menu height savings: −240px** (default collapsed). Desktop menu now fits fully on 1280×720 with all 3 expandables open.
-- **3 atoms extracted to `03-knowledge/`** — `mui-menu-paper-overflow-guard`, `expandable-menu-row-mui-collapse`, `wcag-touch-target-enforcement`.
+**Achieved this session (#59):**
+- **3 touch-target bug fixes** on frontend `develop`. 3 commits:
+  - `1e4c549` — **Swap button re-center** after F2 44px bump. `ProductSearchForm2.js:249` `left: -17px` → `-23px` (re-center 46px wrapping div on From/To boundary).
+  - `fbdca15` — **Swap/currency/profile 44→40 revert** (user feedback: 44 too big for dense UI). 4 files: `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js`, `e2e/a11y/touch-targets.spec.ts` (3 test thresholds). Swap wrapper `left: -23px` → `-21px` to match 4px shrink.
+  - `e782c41` — **Mobile drawer English/currency center** fix. `components/layout/layout.js:204-206` 3 className edits: parent `items-start` → `items-center`, both cells `text-center` → `flex justify-center items-center`, English cell `py-2` for 40px pill visual parity.
+- **1 atom extracted** to `03-knowledge/` — `icon-button-size-decision` (40px default for icon buttons in dense UI, 44px reserved for primary CTAs).
 
 **Resume point (EXACT):**
-1. **F3 — WhatsApp 20×20 → 44×44 wrapper** (Sprint 1 P0 last item). 4 files: `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js`. ~1 hr, low risk. Reuse `min-h-[44px] min-w-[44px]` pattern + extend `e2e/a11y/touch-targets.spec.ts`. Commit: `fix(audit-F3): WhatsApp 44×44 wrapper batch (WCAG 2.5.5)`.
+1. **F3 — WhatsApp 20×20 → 44×44 wrapper** (Sprint 1 P0 last item, NOT yet touched). 4 files: `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js`. ~1 hr, low risk. Commit: `fix(audit-F3): WhatsApp 44×44 wrapper batch (WCAG 2.5.5)`. **Note:** new atom says 40px is preferred for icon buttons in dense UI — apply 40px to F3 (WhatsApp) for visual consistency with swap/currency.
 2. **Sprint 2 P1** (F4-F8) — Inter font self-host, carousel `align: 'start'`, nav dedupe, OG image 1200×630, search form overflow. ~7 hrs.
 3. **Verify FE-22 API shape** — `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
 4. **Build production Docker** with `libheif-dev` (backend HEIC dependency).
-5. **WA-5** (new) — Footer secondary nav + SearchDialogTrigger mobile button touch targets (deferred from F2; separate mini-batch).
+5. **WA-5** — Footer secondary nav + SearchDialogTrigger mobile button touch targets (deferred from F2; separate mini-batch).
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -33,10 +28,11 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **WA-1** | **Website audit Sprint 1 (F1-F3)** | F1 + F2 DONE (`40c01e2` + `0f9df12`). F3 (WhatsApp wrapper) OPEN. ~1 hr. | `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js` |
+| **WA-1** | **Website audit Sprint 1 (F1-F3)** | F1 + F2 DONE (`40c01e2` + `0f9df12`). F2-followups DONE (`1e4c549` + `fbdca15` + `e782c41` — 40px preferred for icon buttons in dense UI). F3 (WhatsApp wrapper) OPEN. ~1 hr. Apply 40px to F3 for visual consistency. | `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | P1 batch. Inter font self-host, carousel scroll-snap, nav dedupe, OG image, search form overflow. ~7 hrs. | `_document.js`, `*Carousel.js`, `navConfig.js`, `og-image.webp` |
 | **WA-3** | **Website audit Sprint 3 (F9-F11)** | P2 batch. Inline style extraction, brand name, FAQPage. ~6 hrs. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
+| **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
 | **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 DONE. FE-22 deferred (API unverified). Sprint 1 (P1-3→P1-9) pending. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails done (unmerged). | Merge `260605-feat/review-images` |

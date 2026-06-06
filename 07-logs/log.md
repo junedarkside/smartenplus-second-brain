@@ -1,5 +1,6 @@
 # Vault Log
 
+## [2026-06-06] session-end #59 | 3 touch-target bug fixes (swap re-center, 44→40 revert, drawer English/currency center)
 ## [2026-06-06] session-end #58 | Sprint 1 P0 (F1+F2) + ProfileMenu UX consolidation
 ## [2026-06-06] fix | HEIC-1 closed — client-side HEIC preview via heic2any, commit 6c10137
 ## [2026-06-06] session-end | rate-review page redesign — hero/nav/CSS aligned with blog/trips platform pattern
