@@ -255,3 +255,178 @@ SmartEnPlus is a legitimate booking platform.
 
 ## Related
 [[homepage-seo-performance-deep-review-2026-05-21]] · [[structured-data-schema-patterns]] · [[carousel-design-standard]] · [[nextjs-patterns]] · [[seo-homepage-specialist-team]] · [[blog-seo-performance-2026-05-20]]
+
+---
+
+# Team Review & Implementation Plan
+
+**Reviewed by:** website-audit-team-orchestrator (3 specialists + skeptic + leader)
+**Date:** 2026-06-06
+**Session:** #56
+**Working files:** [[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]]
+
+## Summary
+
+15 audit issues → **12 final implementation items** across 3 sprints. Top 3 wins: iOS zoom fix (14px→16px inputs, 30 min), WCAG 44×44 touch targets (1-2 hrs), self-host Inter font via `next/font` (2-3 hrs). 5 audit claims reclassified as ALREADY DONE (compress, WebP config, GTM deferred, InArticleCTA, DayTripDetailSEO). Total ~18 hrs frontend work.
+
+## Pre-Flight Wins (NOT work to do)
+
+5 audit items already addressed in current codebase:
+
+| Audit ID | Item | Evidence |
+|----------|------|----------|
+| C1 | compress: true | `next.config.js:8` |
+| H1 | WebP/AVIF formats | `next.config.js:16` + `helpers/imageOptimization.js:41-53` |
+| M4 | GTM deferred | `pages/_app.js:80-85` `strategy="afterInteractive"` |
+| Identity P2 | InArticleCTA exists | `components/blog/InArticleCTA.js` used in `BlogPostDisplay.js:200, 217` |
+| AI Gap 2 | ProductJsonLd on Experience | `components/activities/detail/DayTripDetailSEO.js:31` |
+| AI Gap 3 | BreadcrumbList on Experience | `components/activities/detail/DayTripDetailSEO.js:34` |
+
+## Specialist Verdicts (Top 3 per role)
+
+### Performance/CWV Engineer (full: [[r1-performance]])
+
+1. **PERF-1+3** — Inter via `next/font/google` (self-host) — `pages/_document.js:20-22` render-blocking, FCP -0.3s
+2. **PERF-2** — 213 inline styles → extract `boxShadow` to `ELEVATION_TOKENS` in `designSystem.js` (top 5 files: ProfileMenu 20, OrderDetail 18, layout 14)
+3. **PERF-6** — 14px `text-sm` in `ProductSearchForm2.js:231, 260, 283, 311, 329` → `text-base` (iOS zoom fix)
+
+### Mobile UX & Accessibility Specialist (full: [[r1-mobile-ux]])
+
+1. **MOB-1** — 14px search inputs (iOS auto-zoom) — `ProductSearchForm2.js:231+`, `SearchDialogTrigger.js:19`
+2. **MOB-2** — 13/18 touch targets <44px (WCAG 2.5.5) — `TOUCH_TARGET` token in `designSystem.js:210-213` exists but unused. Test at 320px before merge.
+3. **MOB-4** — Carousel scroll-snap broken — `lib/homepage/components/*Carousel.js` missing `align: 'start'` in Embla options
+
+### SEO + AI Recognition Specialist (full: [[r1-seo-ai]])
+
+1. **SEO-1** — Duplicate "Routes" in `navConfig.js:14-23` (5 min config fix)
+2. **SEO-5** — Brand inconsistency: "SmartEnPlus" vs "smartenplus" — add `BRAND_NAME` constant, rename `smartenpus-...webp` typo
+3. **SEO-3** — OG image `smartenplus.png` 250×50 too small — replace with `og-image.webp` 1200×630
+
+## Skeptic Verdicts (Top 5 downgrades)
+
+| Audit Claim | Skeptic Verdict | Reason |
+|-------------|-----------------|--------|
+| 10 sync scripts blocking FCP | DOWNGRADE to P3 | Only GTM via `next/script` exists. Already `afterInteractive`. Misread. |
+| Only 4 mobile media queries | DROP | Tailwind JIT emits only USED breakpoints. No code change. |
+| Blog lacks booking CTAs | DROP | InArticleCTA exists, used in `BlogPostDisplay.js:200, 217` |
+| No Product schema on Experience | DROP | `DayTripDetailSEO.js:31` has `<ProductJsonLd>` |
+| Hamburger nav ≤768px | DEFER | Major nav restructure — defer to [[nav-header-redesign]] |
+
+## Final Priority Queue
+
+### P0 — Critical (Sprint 1, ~3 hrs)
+
+- [ ] **F1** — 14px input font → 16px (iOS zoom fix) — `ProductSearchForm2.js:231, 260, 283, 311, 329` + `SearchDialogTrigger.js:19`
+- [ ] **F2** — 44×44px touch targets (WCAG 2.5.5) — `CurrencySelector.js:55`, `ProfileButton.js:367`, `CartButton.js:116`, swap/date/passenger buttons in `ProductSearchForm2.js`
+- [ ] **F3** — WhatsApp 20×20px → 44×44 wrapper — `ShareButton.js:176-183`, `footer.js:18`, `Passenger.js:339-340`, `ContactUs.js:37`
+
+### P1 — High impact (Sprint 2, ~7 hrs)
+
+- [ ] **F4** — Self-host Inter via `next/font/google` (eliminates render-blocking CSS) — `pages/_document.js:20-22` + `pages/_app.js`
+- [ ] **F5** — Carousel scroll-snap (`align: 'start'`) — `lib/homepage/components/*Carousel.js`
+- [ ] **F6** — Dedupe "Routes" in navConfig — `constants/navConfig.js:14-23`
+- [ ] **F7** — OG image to WebP 1200×630 — replace `smartenplus.png` 250×50 with `og-image.webp` 1200×630, update `_app.js:42-48`
+- [ ] **F8** — Search form mobile overflow — `ProductSearchForm2.js` add `flex-wrap` + responsive stacking
+
+### P2 — Structured data + identity (Sprint 3, ~6 hrs)
+
+- [ ] **F9** — Inline style extraction (top 5 files) — `ProfileMenu.js:20` (boxShadow → `ELEVATION_TOKENS`), `OrderDetail.js` (18), `layout.js` (14)
+- [ ] **F10** — Brand name consistency — add `BRAND_NAME` to `helpers/constants.js`, rename `smartenpus-...webp` → `smartenplus-...webp`
+- [ ] **F11** — FAQPage content + schema — `pages/homepagev2.js:493-495` use `helpSubcategories` data, add visible FAQ section
+
+### P3 — Polish (Sprint 4, ~2 hrs)
+
+- [ ] **F12** — Fixed-width container audit — `grep -rn "width: 1280px\|w-\[1280px\]" components/ pages/` replace with `max-w-[1200px]`
+
+## Sprint Plan
+
+| Sprint | Days | Items | Effort |
+|--------|------|-------|--------|
+| **Sprint 1** | Day 1-2 | F1, F2, F3 (P0 batch) | ~3 hrs |
+| **Sprint 2** | Day 3-4 | F4, F5, F6, F7, F8 (P1 batch) | ~7 hrs |
+| **Sprint 3** | Day 5-7 | F9, F10, F11 (P2 batch) | ~6 hrs |
+| **Sprint 4** | Day 8+ | F12 + mobile testing matrix | ~2 hrs |
+
+**Total: ~18 hours frontend work over 8-10 days**
+
+## File Change Inventory
+
+| # | File | Changes | Effort | Risk |
+|---|------|---------|--------|------|
+| 1 | `components/search/ProductSearchForm2.js` | 14px→16px (5x), 44px buttons, mobile flex-wrap | 2 hrs | low |
+| 2 | `components/search/SearchDialogTrigger.js` | 14px→16px | 5 min | low |
+| 3 | `components/search/CurrencySelector.js` | 44px min-h/w | 15 min | low |
+| 4 | `components/auth/ProfileButton.js` | 44px min-h/w | 15 min | low |
+| 5 | `components/cart/CartButton.js` | 44px min-h/w | 15 min | low |
+| 6 | `components/UI/ShareButton.js` | WhatsApp 44px wrapper | 15 min | low |
+| 7 | `components/layout/footer.js` | WhatsApp 44px wrapper | 15 min | low |
+| 8 | `components/search/Passenger.js` | WhatsApp 44px wrapper | 15 min | low |
+| 9 | `components/pages-info/ContactUs.js` | WhatsApp 44px wrapper | 15 min | low |
+| 10 | `pages/_app.js` | next/font Inter + DefaultSeo keywords + BRAND_NAME | 3 hrs | medium |
+| 11 | `pages/_document.js` | Remove font preconnect/stylesheet (next/font handles) | 5 min | low |
+| 12 | `tailwind.config.js` | fontFamily.sans = `['var(--font-inter)']` | 5 min | low |
+| 13 | `lib/homepage/components/*Carousel.js` | `align: 'start'` option | 1-2 hrs | low |
+| 14 | `constants/navConfig.js` | Dedupe "Routes" | 5 min | low |
+| 15 | `public/og-image.webp` | NEW asset (1200×630) | 30 min | n/a |
+| 16 | `public/smartenpus-...webp` | RENAME → `smartenplus-...webp` (typo fix) | 5 min | low |
+| 17 | `components/auth/ProfileMenu.js` | boxShadow → `ELEVATION_TOKENS` | 30 min | low |
+| 18 | `components/order/OrderDetail.js` | 18 inline styles → audit | 1 hr | low |
+| 19 | `components/layout/layout.js` | 14 inline styles → audit | 1 hr | low |
+| 20 | `helpers/constants.js` | `BRAND_NAME` constant | 5 min | low |
+| 21 | `helpers/designSystem.js` | `ELEVATION_TOKENS`, `TOUCH_TARGET` enforcement | 1 hr | low |
+| 22 | `pages/homepagev2.js:493-495` | FAQPage schema + visible FAQ | 2 hrs | low |
+| 23 | Multiple schema files | Use `BRAND_NAME` constant | 30 min | low |
+
+## Regression Test Matrix
+
+| Page | Breakpoint | Test |
+|------|-----------|------|
+| `/` | 375, 768, 1440 | Speed (LCP<2.5s), CLS<0.1, touch targets, FAQ renders |
+| `/blog/[slug]` | 375, 768 | InArticleCTA renders, no CLS shift |
+| `/destinations` | 375 | Carousel swipe works |
+| `/search` | 375, 414 | Search form fits, no overflow |
+| `/trips` | 375, 768 | Trip cards swipable |
+| `/activities/detail/[slug]` | 375, 768 | Product schema validates (Rich Results Test) |
+| Mobile focus test | 375, iOS Safari | No auto-zoom on input focus |
+| Hamburger menu | 768 | Already implemented (verify) |
+| WhatsApp tap | 375 | Tappable, opens WhatsApp |
+| Lighthouse | 375, 1440 | Performance score >80 (was 40) |
+
+## Key Files Referenced
+
+**SmartEnPlus frontend:**
+- `pages/_app.js`, `pages/_document.js`, `pages/homepagev2.js`
+- `lib/homepage/components/*StructuredData*.js`, `*Carousel.js`
+- `components/activities/detail/DayTripDetailSEO.js`
+- `components/blog/InArticleCTA.js`, `BlogPostHeader.js`, `BlogPostDisplay.js`
+- `components/search/ProductSearchForm2.js`, `SearchDialogTrigger.js`, `CurrencySelector.js`, `Passenger.js`
+- `components/auth/ProfileButton.js`, `ProfileMenu.js`
+- `components/cart/CartButton.js`
+- `components/UI/ShareButton.js`, `FeaturedImageHeader.js`
+- `components/layout/footer.js`
+- `components/pages-info/ContactUs.js`
+- `constants/navConfig.js`
+- `helpers/constants.js`, `helpers/designSystem.js`, `helpers/imageOptimization.js`
+- `next.config.js`, `next-sitemap.config.js`, `tailwind.config.js`
+- `public/smartenpus-...webp` (typo)
+
+**Vault working files (this review):**
+- `01-projects/website-audit-full-2026-06-06/r1-performance.md`
+- `01-projects/website-audit-full-2026-06-06/r1-mobile-ux.md`
+- `01-projects/website-audit-full-2026-06-06/r1-seo-ai.md`
+- `01-projects/website-audit-full-2026-06-06/r2-skeptic.md`
+- `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
+
+## Out of Scope (deferred)
+
+- **C2** "10 sync scripts" — GTM already `afterInteractive`. Bundle chunks are auto-split. Misread.
+- **H4** deferred stylesheet (`data-href`) — 0 hits in source. Likely Cloudflare. Defer to devops.
+- **H5** Cloudflare Insights beacon — server-side config, not code
+- **MH1** "Only 4 mobile MQ" — Tailwind JIT handles. No action.
+- **Hamburger nav at ≤768px** — major nav restructure, defer to [[nav-header-redesign]]
+- **BusTrip `departureTime` schema** — backend field missing, defer to API team
+- **Brand URL change** — cannot change URL (SEO debt). Wordmark = "SmartEnPlus", URL stays.
+
+## Related
+
+[[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[carousel-design-standard]] · [[mobile-header-analysis-2026-05-26]]

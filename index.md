@@ -10,7 +10,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
-- [[website-audit-full-2026-06-06]] — **OPEN 2026-06-06.** External website audit: SEO 75/100, Speed 40/100, A11y 85/100. Critical: 10 blocking scripts, 66 inline styles, 18 non-WebP images, 13/18 touch targets <44px. Blog outranking booking pages (content depth gap). 15 priority actions ordered by impact.
+- [[website-audit-full-2026-06-06]] — **OPEN 2026-06-06.** External website audit: SEO 75/100, Speed 40/100, A11y 85/100. Critical: 10 blocking scripts, 66 inline styles, 18 non-WebP images, 13/18 touch targets <44px. Blog outranking booking pages (content depth gap). 15 priority actions ordered by impact. **3-specialist team review done:** 15 → 12 P0-P3 items with file:line refs + sprint plan. 5 audit items reclassified as ALREADY DONE (compress, WebP config, GTM deferred, InArticleCTA, DayTripDetailSEO). ~18 hrs impl work. Working files: `r1-performance`, `r1-mobile-ux`, `r1-seo-ai`, `r2-skeptic`, `r3-leader-synthesis`.
 
 - [[rate-review-uxui-audit-2026-06-06]] — **OPEN 2026-06-06.** 4-specialist UX/UI audit of `/rate-review` flow (list, detail, submit-review). 52 raw findings → 34 unique actionable (3 P0, 10 P1). P0: stored XSS (`dangerouslySetInnerHTML` no DOMPurify at `[reviewSlug].js:455`), `parseISO(null)` page crash (`BookingReviewList.js:43-45`), star rating ARIA broken (multiple simultaneous `aria-pressed`). P1: wrong router import breaks "Write Review" CTA, unmasked email GDPR violation, redirect produces `/rate-review/undefined` after submission. Implementation order in `r3-leader-synthesis.md`. Overall health: 4.5/10.
 

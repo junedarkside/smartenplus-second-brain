@@ -4,16 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-06 (session #55)
+**Updated:** 2026-06-06 (session #56)
 
-**Achieved this session (#55):**
-- **Website audit ingested** — Full external audit (SEO 75, Speed 40, A11y 85) stored as `01-projects/website-audit-full-2026-06-06.md`. 15 priority actions, mobile UX failures, structured data inventory, identity analysis. `index.md` + `log.md` updated.
-- **Vault optimizer run** — Confirmed fully optimized (master-state 55 lines). Removed stale HEIC-1 closed item + duplicate GYG-IMPL row from Section 2. Moved HEIC-1 to `closed-items.md`.
+**Achieved this session (#56):**
+- **Website audit team review COMPLETE** — 3 specialists (Performance/CWV, Mobile UX/A11y, SEO+AI Recognition) + Skeptic + Leader. 15 audit issues → **12 P0-P3 items** with file:line refs, ~18 hrs impl work. 5 audit claims reclassified as ALREADY DONE (compress, WebP config, GTM deferred, InArticleCTA, DayTripDetailSEO).
+- **Created orchestrator agent** — `smartenplus-frontend/.claude/agents/website-audit-team-orchestrator.md` (mirrors gyg/seo-homepage pattern, ready for future audits).
+- **5 working files** in `01-projects/website-audit-full-2026-06-06/`: r1-performance, r1-mobile-ux, r1-seo-ai, r2-skeptic, r3-leader-synthesis.
+- **Extended main doc** — `01-projects/website-audit-full-2026-06-06.md` 258→432 lines, added `# Team Review & Implementation Plan` section.
+- **Vault index + log updated.**
 
 **Resume point (EXACT):**
-1. **Verify FE-22 API shape** — check `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
-2. **Sprint 1** — P1-3 through P1-9 per `r5-implementation-plan.md`. Start with P1-3 after FE-22 verified.
+1. **Sprint 1 P0 (Website Audit)** — frontend branch `develop`. Start with F1 (lowest risk):
+   - F1: 14px → 16px search inputs — `components/search/ProductSearchForm2.js:231, 260, 283, 311, 329` + `SearchDialogTrigger.js:19` (30 min)
+   - F2: 44×44px touch targets (WCAG 2.5.5) — CurrencySelector, ProfileButton, CartButton, swap/date/passenger buttons (1-2 hrs)
+   - F3: WhatsApp 20×20 → 44×44 wrapper — ShareButton, footer, Passenger, ContactUs (1 hr)
+   - Test at 320px (iPhone SE) before F2 merge
+2. **Verify FE-22 API shape** — check `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
 3. **Build production Docker** with `libheif-dev` (backend HEIC dependency).
+
+Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 ---
 
@@ -21,6 +30,9 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **WA-1** | **Website audit Sprint 1 (F1-F3)** | P0 batch. 14px→16px inputs, 44×44 touch targets, WhatsApp wrapper. ~3 hrs. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileButton.js`, etc. |
+| **WA-2** | **Website audit Sprint 2 (F4-F8)** | P1 batch. Inter font self-host, carousel scroll-snap, nav dedupe, OG image, search form overflow. ~7 hrs. | `_document.js`, `*Carousel.js`, `navConfig.js`, `og-image.webp` |
+| **WA-3** | **Website audit Sprint 3 (F9-F11)** | P2 batch. Inline style extraction, brand name, FAQPage. ~6 hrs. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 DONE. FE-22 deferred (API unverified). Sprint 1 (P1-3→P1-9) pending. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails done (unmerged). | Merge `260605-feat/review-images` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
