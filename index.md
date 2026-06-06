@@ -10,6 +10,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[rate-review-uxui-audit-2026-06-06]] — **OPEN 2026-06-06.** 4-specialist UX/UI audit of `/rate-review` flow (list, detail, submit-review). 52 raw findings → 34 unique actionable (3 P0, 10 P1). P0: stored XSS (`dangerouslySetInnerHTML` no DOMPurify at `[reviewSlug].js:455`), `parseISO(null)` page crash (`BookingReviewList.js:43-45`), star rating ARIA broken (multiple simultaneous `aria-pressed`). P1: wrong router import breaks "Write Review" CTA, unmasked email GDPR violation, redirect produces `/rate-review/undefined` after submission. Implementation order in `r3-leader-synthesis.md`. Overall health: 4.5/10.
+
 - [[gsc-crawled-not-indexed-investigation-2026-06-05]] — **IN PROGRESS 2026-06-05.** 52,400 "Crawled Not Indexed" root cause investigation. 3-team adversarial review. Primary cause: empty ISR trip pages (88% confidence), NOT URL pollution. `notFound: true` blanket approach OVERTURNED — 14 Koh Lipe seasonal routes at risk. 3-phase safe plan: sitemap filter → surgical noindex → three-tier model. Data collection required before any code change.
 
 - [[blog-canonical-url-wp-subdomain-bug]] — **FIXED 2026-06-05.** GSC "Alternate page with proper canonical tag". `String.replace('http://...')` silently failed on HTTPS WP `opengraphUrl`. Canonical = WP subdomain. Fix: derive from slug. Also fixed help page regex + missing www. `3d30407` → develop.
@@ -233,8 +235,8 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 106
-- Last updated: 2026-06-05 (vault organize + ingest: homepage-terminology-audit, 3 atoms: nav-label-url-slug-two-layer-strategy, production-url-rename-cost-framework, locations-destinations-product-split)
+- Pages: 112
+- Last updated: 2026-06-06 (rate-review UX/UI audit: 5 files created, 34 findings, 3 P0 confirmed)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx

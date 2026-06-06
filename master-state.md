@@ -4,17 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-06 (session #51)
+**Updated:** 2026-06-06 (session #53)
 
-**Achieved this session (#51):**
-- **HEIC review upload — IMPLEMENTATED, local deps ready** — pillow-heif 0.15.0 + libheif 1.23.0 installed locally. Backend restarted with HEIC opener registered. Code committed: backend `f82b182`, frontend `0a4e6d4`. Branch: `260606-fix/heic-review-upload`.
-- **Multi-agent debate** — 2 agents evaluated base64 proxy vs pillow-heif. Chose server-side (5 lines, 33% less payload, no memory spike).
+**Achieved this session (#53):**
+- **Rate-review page redesign COMPLETE** — All 3 pages (`index`, `[reviewSlug]`, `submit-review/[...slug]`) now match platform visual language (blog/trips): `FeaturedImageHeader` hero, floating `bg-white/80 backdrop-blur rounded-full` back+share buttons, `text-gray-50` H1 overlaid on hero, breadcrumb below hero.
+- **CSS inconsistency sweep** — Fixed `BookingReviewList` heading color (`text-gray-600` → `text-gray-900`), button sizing (`py-2 px-4` → `py-3 px-6 rounded-lg`), hover token (`hover:bg-blue-600` → `hover:bg-brand-primary-dark`), star color tokenized to `COLORS.status.warning`, dead `EventAvailableOutlined` import removed.
+- **Additional fixes** — Dead imports cleaned (`FeaturedImageHeader`, `bgDefault`, `ReviewList`), canonical URLs fixed (`www.` + dynamic `/${reviewSlug}`), `useMemo` dep bug fixed, error state now `UnifiedCard` with back button, `CircularProgress` brand-colored, cancel button now routes to `/rate-review` not `/`.
+- **Knowledge atoms** — 3 new atoms: `rate-review-page-shell-pattern.md`, `rate-review-css-audit-2026-06-06.md`, `star-aria-radiogroup-pattern.md`.
 
 **Resume point (EXACT):**
-1. **Test HEIC upload locally** — Upload HEIC file via review form, verify WebP conversion ≤120KB.
-2. **Merge `260606-fix/heic-review-upload`** → main (backend) + develop (frontend).
-3. **Build production Docker** with libheif-dev.
-4. **Outstanding from #50:** Merge `260605-feat/review-images` → develop (frontend) + main (backend). Run migration on production.
+1. **Verify FE-22 API shape** — check `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
+2. **Merge `260606-fix/heic-review-upload`** → develop (HEIC + all rate-review fixes in one PR).
+3. **Test HEIC upload locally** — Upload HEIC file, verify WebP ≤120KB.
+4. **Sprint 1** — P1-3 through P1-9 per `r5-implementation-plan.md`. Start with P1-3 after FE-22 verified.
+5. **Build production Docker** with `libheif-dev`.
 
 ---
 
@@ -22,6 +25,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 DONE. FE-22 deferred (API unverified). Sprint 1 (P1-3→P1-9) pending. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
 | HEIC-1 | iPhone HEIC review upload | Implemented, deps ready. Branch `260606-fix/heic-review-upload`. Local test pending, then merge. | `dialogue/utils.py`, `RateAndReviewForm.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails unmerged (`260605-feat/review-images`). | Merge `260605-feat/review-images` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
