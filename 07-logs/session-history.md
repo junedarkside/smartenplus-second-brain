@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #59 (2026-06-06)
+- **3 touch-target bug fixes** on frontend `develop`. 3 commits:
+  - `1e4c549` — **Swap button re-center** after F2 44px bump. `ProductSearchForm2.js:249` `left: -17px` → `-23px` (re-center 46px wrapping div on From/To boundary).
+  - `fbdca15` — **Swap/currency/profile 44→40 revert** (user feedback: 44 too big for dense UI). 4 files: `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js`, `e2e/a11y/touch-targets.spec.ts` (3 test thresholds). Swap wrapper `left: -23px` → `-21px` to match 4px shrink.
+  - `e782c41` — **Mobile drawer English/currency center** fix. `components/layout/layout.js:204-206` 3 className edits: parent `items-start` → `items-center`, both cells `text-center` → `flex justify-center items-center`, English cell `py-2` for 40px pill visual parity.
+- **1 atom extracted** to `03-knowledge/` — `icon-button-size-decision` (40px default for icon buttons in dense UI, 44px reserved for primary CTAs).
+
+**Resume point:**
+1. F3 — WhatsApp 20×20 → 44×44 wrapper (`components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js`) ~1 hr.
+2. Sprint 2 P1 (F4-F8) — Inter font self-host, carousel `align: 'start'`, nav dedupe, OG image 1200×630, search form overflow. ~7 hrs.
+3. Verify FE-22 API shape — `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response.
+4. Build production Docker with `libheif-dev` (backend HEIC dependency).
+5. WA-5 — Footer secondary nav + SearchDialogTrigger mobile button touch targets.
+
+---
+
 ## Session #58 (2026-06-06)
 - **Sprint 1 P0 — F1 + F2 SHIPPED** (website audit). 4 commits on frontend `develop`:
   - `40c01e2` **F1** — Search input font 14→16px (iOS zoom fix). 6 inputs across `ProductSearchForm2.js` + `SearchDialogTrigger.js`.

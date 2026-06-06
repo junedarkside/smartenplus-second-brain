@@ -1,5 +1,6 @@
 # Vault Log
 
+## [2026-06-06] session-end #60 | F3 social icon 40×40 wrapper batch — WA-1 Sprint 1 P0 closed
 ## [2026-06-06] session-end #59 | 3 touch-target bug fixes (swap re-center, 44→40 revert, drawer English/currency center)
 ## [2026-06-06] session-end #58 | Sprint 1 P0 (F1+F2) + ProfileMenu UX consolidation
 ## [2026-06-06] fix | HEIC-1 closed — client-side HEIC preview via heic2any, commit 6c10137

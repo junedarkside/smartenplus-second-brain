@@ -4,21 +4,19 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-06 (session #59)
+**Updated:** 2026-06-06 (session #60)
 
-**Achieved this session (#59):**
-- **3 touch-target bug fixes** on frontend `develop`. 3 commits:
-  - `1e4c549` — **Swap button re-center** after F2 44px bump. `ProductSearchForm2.js:249` `left: -17px` → `-23px` (re-center 46px wrapping div on From/To boundary).
-  - `fbdca15` — **Swap/currency/profile 44→40 revert** (user feedback: 44 too big for dense UI). 4 files: `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js`, `e2e/a11y/touch-targets.spec.ts` (3 test thresholds). Swap wrapper `left: -23px` → `-21px` to match 4px shrink.
-  - `e782c41` — **Mobile drawer English/currency center** fix. `components/layout/layout.js:204-206` 3 className edits: parent `items-start` → `items-center`, both cells `text-center` → `flex justify-center items-center`, English cell `py-2` for 40px pill visual parity.
-- **1 atom extracted** to `03-knowledge/` — `icon-button-size-decision` (40px default for icon buttons in dense UI, 44px reserved for primary CTAs).
+**Achieved this session (#60):**
+- **F3 — Social icon 40×40 wrapper batch** (Sprint 1 P0 closeout). 1 commit on frontend `develop`:
+  - `9472df5` — Wrap isolated social icons in `inline-flex items-center justify-center min-w-[40px] min-h-[40px]` per `icon-button-size-decision` atom. 4 files: `components/UI/ShareButton.js` (WhatsApp `<span>`), `components/layout/footer.js` (4 social `<Link>`s), `components/search/Passenger.js` (3 social `<Link>`s), `components/pages-info/ContactUs.js` (4 social `<Link>`s). Added missing `aria-label`s. **Row-wide consistency rule applied:** when WhatsApp wrapped, all sibling icons in the same row wrapped too (same a11y gap, visual consistency).
+- **WA-1 Sprint 1 P0 CLOSED.** F1 (search 16px) + F2 (44→40px dense UI) + F3 (40px wrapper) all shipped.
 
 **Resume point (EXACT):**
-1. **F3 — WhatsApp 20×20 → 44×44 wrapper** (Sprint 1 P0 last item, NOT yet touched). 4 files: `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js`. ~1 hr, low risk. Commit: `fix(audit-F3): WhatsApp 44×44 wrapper batch (WCAG 2.5.5)`. **Note:** new atom says 40px is preferred for icon buttons in dense UI — apply 40px to F3 (WhatsApp) for visual consistency with swap/currency.
-2. **Sprint 2 P1** (F4-F8) — Inter font self-host, carousel `align: 'start'`, nav dedupe, OG image 1200×630, search form overflow. ~7 hrs.
+1. **WA-2 Sprint 2 P1 (F4-F8)** — Inter font self-host, carousel `align: 'start'`, nav dedupe, OG image 1200×630, search form overflow. ~7 hrs.
+2. **WA-5** — Footer secondary nav + SearchDialogTrigger mobile button touch targets. ~2 hrs.
 3. **Verify FE-22 API shape** — `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
 4. **Build production Docker** with `libheif-dev` (backend HEIC dependency).
-5. **WA-5** — Footer secondary nav + SearchDialogTrigger mobile button touch targets (deferred from F2; separate mini-batch).
+5. **TSTD-1 test infra** — BLOCKS RELEASE. 6 CRITICAL gaps. Schedule 4-5 day block.
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -28,7 +26,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **WA-1** | **Website audit Sprint 1 (F1-F3)** | F1 + F2 DONE (`40c01e2` + `0f9df12`). F2-followups DONE (`1e4c549` + `fbdca15` + `e782c41` — 40px preferred for icon buttons in dense UI). F3 (WhatsApp wrapper) OPEN. ~1 hr. Apply 40px to F3 for visual consistency. | `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js` |
+| **WA-1** | **Website audit Sprint 1 (F1-F3)** | **CLOSED** (2026-06-06 #60). F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. | `components/UI/ShareButton.js`, `components/layout/footer.js`, `components/search/Passenger.js`, `components/pages-info/ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | P1 batch. Inter font self-host, carousel scroll-snap, nav dedupe, OG image, search form overflow. ~7 hrs. | `_document.js`, `*Carousel.js`, `navConfig.js`, `og-image.webp` |
 | **WA-3** | **Website audit Sprint 3 (F9-F11)** | P2 batch. Inline style extraction, brand name, FAQPage. ~6 hrs. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
