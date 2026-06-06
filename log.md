@@ -2,6 +2,10 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-06] session-end | #55: website audit ingested + vault optimizer run. master-state cleaned (HEIC-1 closed, GYG-IMPL deduped). No code changes.
+
+## [2026-06-06] ingest | website-audit-full-2026-06-06 — full external audit, SEO 75/Speed 40/A11y 85, 3 critical speed blockers, 5 high, 4 medium. Blog identity crisis + mobile touch target failures. 15 priority actions. Vault: [[website-audit-full-2026-06-06]]
+
 ## [2026-06-06] session-end | #52: rate-review 6-agent audit COMPLETE + Release 1 SHIPPED. r1-ux+r1-visual+r1-frontend+r2-skeptic+r3-leader+r4-scrutinize+r5-impl. 52 raw → 34 findings. P0-1 XSS DOMPurify fix (`[reviewSlug].js:460`), P0-2 parseISO null guard (`BookingReviewList.js:43-46,110`), P0-3 star ARIA radiogroup (`RateAndReviewForm.js`), P1-1 router import+paths (`BookingReviewList.js`), P1-2 email masking (`ReviewList.js:55`). FE-22 deferred. Sprint 1 queued. Vault: [[rate-review-uxui-audit-2026-06-06]]
 
 ## [2026-06-06] audit | rate-review UX/UI audit — 5-agent team (3 specialists + skeptic + leader). 52 raw findings, 34 unique actionable, 3 P0 confirmed. P0: stored XSS in [reviewSlug].js (dangerouslySetInnerHTML no DOMPurify), parseISO(null) page crash (BookingReviewList sort+render), star rating broken ARIA (aria-pressed vs radiogroup). P1: wrong router import (next/navigation in Pages Router), unmasked email GDPR violation, redirect produces /rate-review/undefined after submission. Design system compliance: 6.1/10 current → 9.0/10 target. Status: OPEN. Vault: [[rate-review-uxui-audit-2026-06-06]]

@@ -19,3 +19,4 @@ Archived from master-state.md Section 2. Audit trail only.
 | BW-2 | Blog index featured px-2 md:px-4 | Already fixed |
 | BW-3 | BlogCard rounded-lg + no mx- | Already fixed |
 | EXP-DETAIL-1 | Experience Detail Page redesign | #33 — shipped |
+| HEIC-1 | iPhone HEIC review upload | 2026-06-06 #54. Client-side preview via heic2any. `6c10137`. |
