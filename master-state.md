@@ -4,23 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-06 (session #56)
+**Updated:** 2026-06-06 (session #58)
 
-**Achieved this session (#56):**
-- **Website audit team review COMPLETE** — 3 specialists (Performance/CWV, Mobile UX/A11y, SEO+AI Recognition) + Skeptic + Leader. 15 audit issues → **12 P0-P3 items** with file:line refs, ~18 hrs impl work. 5 audit claims reclassified as ALREADY DONE (compress, WebP config, GTM deferred, InArticleCTA, DayTripDetailSEO).
-- **Created orchestrator agent** — `smartenplus-frontend/.claude/agents/website-audit-team-orchestrator.md` (mirrors gyg/seo-homepage pattern, ready for future audits).
-- **5 working files** in `01-projects/website-audit-full-2026-06-06/`: r1-performance, r1-mobile-ux, r1-seo-ai, r2-skeptic, r3-leader-synthesis.
-- **Extended main doc** — `01-projects/website-audit-full-2026-06-06.md` 258→432 lines, added `# Team Review & Implementation Plan` section.
-- **Vault index + log updated.**
+**Achieved this session (#58):**
+- **Sprint 1 P0 — F1 + F2 SHIPPED** (website audit). 4 commits on frontend `develop`:
+  - `40c01e2` **F1** — Search input font 14→16px (iOS zoom fix). 6 inputs across `ProductSearchForm2.js` + `SearchDialogTrigger.js`.
+  - `0f9df12` **F2** — 44×44px touch targets (WCAG 2.5.5). 5 component files: `CurrencySelector.js`, `ProfileImage.js`, `CartButton.js`, `ProductSearchForm2.js` (3 buttons), `CarouselArrowButtons.js`. New regression spec `e2e/a11y/touch-targets.spec.ts` (8 assertions × 4 viewport projects).
+- **ProfileMenu UX consolidation** (3 commits):
+  - `44e209d` — Post-F2 regression fix: desktop `<Menu>` Paper had no `maxHeight`/`overflowY`; F2's `ProfileImage` 36→44 height pushed the anchored menu 8px past viewport edge. Added `MenuListProps` + `PaperProps` with `maxHeight: calc(100vh - 120px)`, `overflowY: auto`.
+  - `40b0a36` — Combine Ask Away + Explore More into expandable `<ExpandableMenuRow>` parent + 2 `<SubMenuRow>` children (both → `/forum`).
+  - `f4d581f` — Group Edit Profile + Family & Friends + Change Password into "Account" expandable. Newly surfaces `/account/editPassword` route.
+  - `314020c` — Group My Bookings + My Orders + Rate & Reviews into "My Activity" expandable.
+  - **Cumulative menu height savings: −240px** (default collapsed). Desktop menu now fits fully on 1280×720 with all 3 expandables open.
+- **3 atoms extracted to `03-knowledge/`** — `mui-menu-paper-overflow-guard`, `expandable-menu-row-mui-collapse`, `wcag-touch-target-enforcement`.
 
 **Resume point (EXACT):**
-1. **Sprint 1 P0 (Website Audit)** — frontend branch `develop`. Start with F1 (lowest risk):
-   - F1: 14px → 16px search inputs — `components/search/ProductSearchForm2.js:231, 260, 283, 311, 329` + `SearchDialogTrigger.js:19` (30 min)
-   - F2: 44×44px touch targets (WCAG 2.5.5) — CurrencySelector, ProfileButton, CartButton, swap/date/passenger buttons (1-2 hrs)
-   - F3: WhatsApp 20×20 → 44×44 wrapper — ShareButton, footer, Passenger, ContactUs (1 hr)
-   - Test at 320px (iPhone SE) before F2 merge
-2. **Verify FE-22 API shape** — check `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
-3. **Build production Docker** with `libheif-dev` (backend HEIC dependency).
+1. **F3 — WhatsApp 20×20 → 44×44 wrapper** (Sprint 1 P0 last item). 4 files: `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js`. ~1 hr, low risk. Reuse `min-h-[44px] min-w-[44px]` pattern + extend `e2e/a11y/touch-targets.spec.ts`. Commit: `fix(audit-F3): WhatsApp 44×44 wrapper batch (WCAG 2.5.5)`.
+2. **Sprint 2 P1** (F4-F8) — Inter font self-host, carousel `align: 'start'`, nav dedupe, OG image 1200×630, search form overflow. ~7 hrs.
+3. **Verify FE-22 API shape** — `smartenplus-backend/dialogue/serializers.py` ReviewSerializer POST response: `slug` or `booking_item_slug`? Fix `[...slug].js:71-72` accordingly.
+4. **Build production Docker** with `libheif-dev` (backend HEIC dependency).
+5. **WA-5** (new) — Footer secondary nav + SearchDialogTrigger mobile button touch targets (deferred from F2; separate mini-batch).
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -30,9 +33,11 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **WA-1** | **Website audit Sprint 1 (F1-F3)** | P0 batch. 14px→16px inputs, 44×44 touch targets, WhatsApp wrapper. ~3 hrs. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileButton.js`, etc. |
+| **WA-1** | **Website audit Sprint 1 (F1-F3)** | F1 + F2 DONE (`40c01e2` + `0f9df12`). F3 (WhatsApp wrapper) OPEN. ~1 hr. | `components/review/ShareButton.js`, footer, `Passenger.js`, `ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | P1 batch. Inter font self-host, carousel scroll-snap, nav dedupe, OG image, search form overflow. ~7 hrs. | `_document.js`, `*Carousel.js`, `navConfig.js`, `og-image.webp` |
 | **WA-3** | **Website audit Sprint 3 (F9-F11)** | P2 batch. Inline style extraction, brand name, FAQPage. ~6 hrs. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
+| **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
+| **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 DONE. FE-22 deferred (API unverified). Sprint 1 (P1-3→P1-9) pending. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails done (unmerged). | Merge `260605-feat/review-images` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |

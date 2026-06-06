@@ -267,11 +267,11 @@ SmartEnPlus is a legitimate booking platform.
 
 ## Summary
 
-15 audit issues → **12 final implementation items** across 3 sprints. Top 3 wins: iOS zoom fix (14px→16px inputs, 30 min), WCAG 44×44 touch targets (1-2 hrs), self-host Inter font via `next/font` (2-3 hrs). 5 audit claims reclassified as ALREADY DONE (compress, WebP config, GTM deferred, InArticleCTA, DayTripDetailSEO). Total ~18 hrs frontend work.
+15 audit issues → **12 final implementation items** across 3 sprints. Top 3 wins: iOS zoom fix (14px→16px inputs, 30 min), WCAG 44×44 touch targets (1-2 hrs), self-host Inter font via `next/font` (2-3 hrs). 6 audit claims reclassified as ALREADY DONE (compress, WebP config, GTM deferred, InArticleCTA, ProductJsonLd on Experience, BreadcrumbList on Experience). Total ~18 hrs frontend work.
 
 ## Pre-Flight Wins (NOT work to do)
 
-5 audit items already addressed in current codebase:
+6 audit items already addressed in current codebase:
 
 | Audit ID | Item | Evidence |
 |----------|------|----------|
@@ -362,7 +362,7 @@ SmartEnPlus is a legitimate booking platform.
 | 7 | `components/layout/footer.js` | WhatsApp 44px wrapper | 15 min | low |
 | 8 | `components/search/Passenger.js` | WhatsApp 44px wrapper | 15 min | low |
 | 9 | `components/pages-info/ContactUs.js` | WhatsApp 44px wrapper | 15 min | low |
-| 10 | `pages/_app.js` | next/font Inter + DefaultSeo keywords + BRAND_NAME | 3 hrs | medium |
+| 10 | `pages/_app.js` | next/font Inter + DefaultSeo keywords + BRAND_NAME | 3 hrs | high |
 | 11 | `pages/_document.js` | Remove font preconnect/stylesheet (next/font handles) | 5 min | low |
 | 12 | `tailwind.config.js` | fontFamily.sans = `['var(--font-inter)']` | 5 min | low |
 | 13 | `lib/homepage/components/*Carousel.js` | `align: 'start'` option | 1-2 hrs | low |

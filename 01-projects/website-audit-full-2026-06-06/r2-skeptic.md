@@ -97,7 +97,7 @@ date: 2026-06-06
 
 ## Verdict Summary
 
-15 audit issues → **12 final items** (3 cap due to: 5 already done + backend-deferred + over-scoped).
+15 audit issues → **12 final items** (3 cap due to: 6 already done + backend-deferred + over-scoped).
 
 Ranked by ROI:
 1. **MOB-1/PERF-6** (14px input fix) — 30 min, P0

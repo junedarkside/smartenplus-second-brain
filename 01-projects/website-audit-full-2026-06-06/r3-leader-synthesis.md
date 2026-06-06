@@ -11,7 +11,7 @@ date: 2026-06-06
 
 ## Pre-flight Wins (NOT work to do)
 
-5 audit items already addressed in current codebase:
+6 audit items already addressed in current codebase:
 - **C1** compress: true (`next.config.js:8`) ✓
 - **H1** WebP/AVIF config (`next.config.js:16`) ✓
 - **M4** GTM deferred (`_app.js:80-85`) ✓
@@ -31,6 +31,7 @@ date: 2026-06-06
   - `components/search/SearchDialogTrigger.js:19` — `text-sm` → `text-base`
   - `helpers/designSystem.js:188` — `INPUT_CONFIG.base` already has `text-base` (enforcement by example)
 - **Estimated LoC:** 5-8 lines
+- **Verify:** Chrome DevTools + iOS Simulator — focus From input on `/`, page does not zoom. iOS Safari 17+.
 
 ### Final 2 — Touch target 44×44px (P0)
 - **Sprint:** 1
@@ -46,6 +47,7 @@ date: 2026-06-06
     - Carousel prev/next arrows in `lib/homepage/components/*Carousel.js`
   - **Mitigation:** Test at 320px (iPhone SE) before merge — may overflow at 320-360px
 - **Estimated LoC:** 15-20 lines
+- **Verify:** Playwright at 320px + 360px + 414px viewports, no horizontal overflow on `/` or `/search`. Lighthouse a11y >90.
 
 ### Final 3 — WhatsApp button 44×44 wrapper (P0)
 - **Sprint:** 1
@@ -59,6 +61,7 @@ date: 2026-06-06
     - `components/search/Passenger.js:339-340`
     - `components/pages-info/ContactUs.js:37`
 - **Estimated LoC:** 12-16 lines
+- **Verify:** Lighthouse a11y score >90. Manual tap test on iPhone SE WhatsApp icon — opens WhatsApp app.
 
 ### Final 4 — Inter font self-host via next/font (P1)
 - **Sprint:** 2
@@ -71,7 +74,9 @@ date: 2026-06-06
   - Remove `pages/_document.js:20-22` preconnect + stylesheet links (next/font handles)
   - `tailwind.config.js:64-66` — `fontFamily.sans: ['var(--font-inter)', ...]`
 - **Estimated LoC:** 10-15 lines + config
-- **Risk:** Test CLS + FOUT before merge
+- **Risk:** high — global font swap affects every page. FOUT/CLS regressions possible.
+- **Verify:** Lighthouse before/after FCP + CLS at /, /trips, /blog/[slug]. No FOUT in slow 3G throttle. Rollback if CLS >0.1.
+- **Rollback:** keep `_document.js:20-22` commented (not deleted) until next/font proven in production. Revert by uncommenting + removing `next/font` import.
 
 ### Final 5 — Carousel scroll-snap (P1)
 - **Sprint:** 2
@@ -84,6 +89,7 @@ date: 2026-06-06
   - All other Embla carousels in `lib/homepage/`
   - Reference [[carousel-design-standard]] for breakpoint values
 - **Estimated LoC:** 5-10 lines
+- **Verify:** Manual swipe on iPhone SE in `/destinations` and `/` — cards snap to start position, no overflow off-screen.
 
 ### Final 6 — Dedupe "Routes" in navConfig (P1)
 - **Sprint:** 2
@@ -91,10 +97,10 @@ date: 2026-06-06
 - **What Audit Found:** Two "Routes" entries in nav (M2)
 - **Skeptic Verdict:** KEEP — confirmed `navConfig.js:14-23`
 - **Implementation:**
-  - `constants/navConfig.js:19-23` — rename `label: 'Routes'` (href `/trips`) to `label: 'Locations'` (matches href `/locations`)
-  - Wait — actually `/locations` is the one with "Locations" semantic, `/trips` is trip search. Reverse: rename `/trips` "Routes" → keep, rename `/locations` "Routes" → "Locations"
-  - Verify backend `NavigationSection` doesn't also have duplicate
+  - `constants/navConfig.js:19-23` — rename `label: 'Routes'` (href `/locations`) → `label: 'Locations'`. Keep `label: 'Routes'` for href `/trips` (semantic = trip search).
+  - Verify backend `NavigationSection` (RTK Query `pages-info/navigation/`) doesn't also have duplicate "Routes" — if yes, mirror rename.
 - **Estimated LoC:** 1-2 lines
+- **Verify:** Visual check on `/` — only one "Routes" nav item remains; "Locations" rendered for `/locations` link.
 
 ### Final 7 — OG image to WebP 1200×630 (P1)
 - **Sprint:** 2
@@ -107,6 +113,7 @@ date: 2026-06-06
   - `pages/_app.js:42-48` — update `url`, `width: 1200`, `height: 630`
   - Also update `public/smartenpus-...webp` → rename to `smartenplus-...webp` (typo fix)
 - **Estimated LoC:** 5 lines + design asset
+- **Verify:** Facebook Sharing Debugger + Twitter Card Validator render at 1200×630. LINE debugger also valid for Thai market.
 
 ### Final 8 — Search form mobile overflow (P1)
 - **Sprint:** 2
@@ -118,6 +125,7 @@ date: 2026-06-06
   - Reference existing `StickySearchBar.js` pattern for mobile compact layout
   - Test at 320, 375, 414px
 - **Estimated LoC:** 10-15 lines
+- **Verify:** Playwright at 320/375/414px — search form fits on `/` and `/search`, all 5 inputs (From/To/Date/Passengers/Search) visible without horizontal scroll.
 
 ### Final 9 — Inline style extraction (top 5 files) (P2)
 - **Sprint:** 3
@@ -125,11 +133,13 @@ date: 2026-06-06
 - **What Audit Found:** 213 inline `style={{}}` in components/ (C3)
 - **Skeptic Verdict:** SCOPE — only static `boxShadow` + colors in top 5 (ProfileMenu, OrderDetail, layout, ProductSearchForm2, ProductSearchForm). Skip dynamic transforms.
 - **Implementation:**
-  - `components/auth/ProfileMenu.js:20` — `boxShadow: '0 8px 24px ...'` → extract to `BUTTON_CONFIG.elevated` in `designSystem.js`
-  - `components/order/OrderDetail.js` — 18 instances, audit each
-  - `components/layout/layout.js` — 14 instances, audit each
-  - Add `ELEVATION_TOKENS` to `designSystem.js` with `none/sm/md/lg/xl` scale
+  - `components/auth/ProfileMenu.js:20` — `boxShadow: '0 8px 24px ...'` → extract to `BUTTON_CONFIG.elevated.boxShadow`
+  - `components/order/OrderDetail.js` — extract only static `boxShadow` strings (skip dynamic transforms/colors)
+  - `components/layout/layout.js` — extract only static `boxShadow` strings
+  - Add `ELEVATION_TOKENS = { none, sm, md, lg, xl }` to `designSystem.js`
+- **Scope:** static values only. Dynamic transforms (loading spinners), conditional colors stay inline. (Per r2-skeptic verdict.)
 - **Estimated LoC:** 30-50 lines (extraction + token additions)
+- **Verify:** grep `style={{` in top 5 files — count reduced by static extractions only. No new `style={{` for dynamic values.
 
 ### Final 10 — Brand name consistency (P2)
 - **Sprint:** 3
@@ -146,6 +156,7 @@ date: 2026-06-06
   - Rename `public/smartenpus-...webp` → `public/smartenplus-...webp` (typo fix)
   - Update imports in `components/blog/BlogPostHeader.js:5`
 - **Estimated LoC:** 15-20 lines
+- **Verify:** grep `'SmartEnPlus'` — only `BRAND_NAME` constant declaration + `import { BRAND_NAME }` lines remain.
 
 ### Final 11 — FAQPage content + schema (P2)
 - **Sprint:** 3
@@ -154,9 +165,11 @@ date: 2026-06-06
 - **Skeptic Verdict:** KEEP — content work, not just schema
 - **Implementation:**
   - Audit `pages/homepagev2.js:493-495` (per prior SEO audit SD10) — `helpSubcategories` exists
-  - Add FAQPage schema using `helpSubcategories` data
+  - **Pre-check:** grep `helpSubcategories` to confirm data shape. If categories (not Q&A), find real FAQ source in `lib/homepage/` schema files before proceeding.
+  - Add FAQPage schema using verified Q&A source
   - Add visible FAQ section (5 collapsible `<details>`) to homepage or `/faq` page
   - Reference [[structured-data-schema-patterns]] for FAQPage format
+- **Risk:** medium — `helpSubcategories` may be subcategory metadata, not Q&A content. Pre-check required.
 - **Estimated LoC:** 30-40 lines (schema + UI)
 
 ### Final 12 — Fixed-width container audit (P3)
@@ -169,6 +182,7 @@ date: 2026-06-06
   - Replace any with `max-w-[1200px]`
   - Add to CLAUDE.md as lint rule (avoid hardcoded widths)
 - **Estimated LoC:** 0-5 lines (audit only)
+- **Verify:** grep returns 0 hits for `width: 1280px` and `w-[1280px]` in `components/` and `pages/`.
 
 ## Sprint Plan
 
@@ -194,7 +208,7 @@ date: 2026-06-06
 | 7 | `components/layout/footer.js` | WhatsApp 44px wrapper | 15 min | low |
 | 8 | `components/search/Passenger.js` | WhatsApp 44px wrapper | 15 min | low |
 | 9 | `components/pages-info/ContactUs.js` | WhatsApp 44px wrapper | 15 min | low |
-| 10 | `pages/_app.js` | next/font Inter + DefaultSeo keywords + BRAND_NAME | 3 hrs | medium |
+| 10 | `pages/_app.js` | next/font Inter + DefaultSeo keywords + BRAND_NAME | 3 hrs | high |
 | 11 | `pages/_document.js` | Remove font preconnect/stylesheet (next/font handles) | 5 min | low |
 | 12 | `tailwind.config.js` | fontFamily.sans = ['var(--font-inter)'] | 5 min | low |
 | 13 | `lib/homepage/components/*Carousel.js` | align: 'start' option | 1-2 hrs | low |
@@ -207,7 +221,9 @@ date: 2026-06-06
 | 20 | `helpers/constants.js` | BRAND_NAME constant | 5 min | low |
 | 21 | `helpers/designSystem.js` | ELEVATION_TOKENS, TOUCH_TARGET enforcement | 1 hr | low |
 | 22 | `pages/homepagev2.js:493-495` | FAQPage schema + visible FAQ | 2 hrs | low |
-| 23 | Multiple schema files | Use BRAND_NAME constant | 30 min | low |
+| 23a | `lib/homepage/components/PopularRoutesStructuredData.js` | provider name → `BRAND_NAME` (lines 31, 60) | 10 min | low |
+| 23b | `lib/homepage/components/LocationsStructuredData.js` | provider name → `BRAND_NAME` (lines 65, 71) | 10 min | low |
+| 23c | `lib/homepage/components/ReviewsStructuredData.js` | provider name → `BRAND_NAME` (lines 64, 66) | 10 min | low |
 
 ## Regression Test Matrix
 
