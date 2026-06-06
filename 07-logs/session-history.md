@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #62 (2026-06-07) — WA-2 Sprint 2 CLOSED (F4-F8)
+- **F4** `1d2d749` — Inter font self-host via `next/font/google` (no FOUT, GDPR clean)
+- **F5** (static) — Carousel `align: 'start'` already in `CardCarouselContainer.js:17-21`; 2 unmerged remotes are ancestors of develop
+- **F6** `041f51a` — Nav dedupe: `/locations` label "Routes" → "Locations" in `navConfig.js`
+- **F7** `7895695` — OG image 1200×630 WebP (new asset + 4-line `pages/_app.js` edit)
+- **F8** `d1fcf47` — `flex-wrap` + `min-w-0` on `ProductSearchForm2.js` row (MH3, High)
+- All 5 branches fast-forwarded to develop, pushed
+- Code review (grill) on F8 found false positive: desktop 2-line wrap is design intent (search button CTA below 5 inputs)
+- WA-7 noted: mobile input height inconsistency between From/To (no min-h) and Date/Return/Passenger (min-h-[44px])
+
+**Resume point:** WA-3 → WA-7 → WA-5 → RR-1 Sprint 1 → GYG-IMPL → TSTD-1
+
 ## Session #60 (2026-06-06)
 - **F3 — Social icon 40×40 wrapper batch** (Sprint 1 P0 closeout). 1 commit on frontend `develop`:
   - `9472df5` — Wrap isolated social icons in `inline-flex items-center justify-center min-w-[40px] min-h-[40px]` per `icon-button-size-decision` atom. 4 files: `components/UI/ShareButton.js` (WhatsApp `<span>`), `components/layout/footer.js` (4 social `<Link>`s), `components/search/Passenger.js` (3 social `<Link>`s), `components/pages-info/ContactUs.js` (4 social `<Link>`s). Added missing `aria-label`s. **Row-wide consistency rule applied:** when WhatsApp wrapped, all sibling icons in the same row wrapped too (same a11y gap, visual consistency).
