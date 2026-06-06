@@ -1,6 +1,6 @@
 # Vault Log
 
-## [2026-06-07] session-end #62 | WA-2 F4 Inter self-host SHIPPED (`1d2d749`) + F5 carousel CLOSED (static) + F6 nav dedupe SHIPPED (`041f51a`) + F7 OG image 1200x630 SHIPPED (`7895695`, new asset + 4-line edit) + vault sync. Next: F8 search overflow, WA-5, TSTD-1.
+## [2026-06-07] session-end #62 | WA-2 F4 Inter self-host SHIPPED (`1d2d749`) + F5 carousel CLOSED (static) + F6 nav dedupe SHIPPED (`041f51a`) + F7 OG image 1200x630 SHIPPED (`7895695`, new asset + 4-line edit) + F8 search overflow SHIPPED (`d1fcf47`, flex-wrap + min-w-0, 1 file 8+/8-) + WA-2 Sprint 2 CLOSED + vault sync. Next: WA-3 Sprint 3, WA-5, RR-1 Sprint 1, GYG-IMPL, TSTD-1.
 ## [2026-06-06] session-end #61 | Currency selector bug fix — extracted useFormatPrice hook, 4 cards refactored (3 broken + RecommendationCard dedup)
 ## [2026-06-06] session-end #60 | F3 social icon 40×40 wrapper batch — WA-1 Sprint 1 P0 closed
 ## [2026-06-06] session-end #59 | 3 touch-target bug fixes (swap re-center, 44→40 revert, drawer English/currency center)
