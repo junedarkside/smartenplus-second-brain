@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #66 (2026-06-07) — WA-3 F10-followup Part 3 SHIPPED
+- **F10 Part 3** `324d449` — Replace 5 hardcoded `'SmartEnPlus'` NextSeo `siteName` sites with `siteName` import from `helpers/constants.js`. 5 files, 10+/5-: `components/FrontPage/Seo.js`, `pages/privacy/index.js`, `pages/ref/index.js`, `pages/ref/[type].js`, `pages/blog/index.js`. Fast-forward to develop. Lint clean.
+- **F10 + F10-followup fully CLOSED.** No more hardcoded brand name in OG siteName. No `BRAND_NAME`. No typo refs. `siteName` = single source of truth.
+
+**Resume point:** WA-3 F9 → F11 → WA-5 → RR-1 → GYG-IMPL → TSTD-1
+
 ## Session #65 (2026-06-07) — WA-3 F10-followup closed (clean state)
 - **F10 revert** `cf71511` — Drop `BRAND_NAME`, keep `siteName` (user callout: duplication). 5 files, 9+/14-: `helpers/constants.js` (-1 export), `pages/_app.js` (-1 import + 4 sites), 3 structured data files (-1 import + 5 sites). Fast-forward to develop.
 - **F10 typo imports fix** `a2c6d27` — Update 9 imports + 1 URL to renamed `smartenplus-transportation-booking-online.webp`. 10 files, 10+/10-. F10 (#64) renamed file but only updated 1 import; build was broken at 9 import sites. Fast-forward to develop.

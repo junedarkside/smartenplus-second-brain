@@ -1,5 +1,6 @@
 # Vault Log
 
+## [2026-06-07] session-end #66 | WA-3 F10-followup Part 3 SHIPPED (`324d449`, 5 hardcoded 'SmartEnPlus' siteName sites → siteName import). F10 + F10-followup CLOSED. Next: WA-3 F9, F11, WA-5, RR-1, GYG-IMPL, TSTD-1.
 ## [2026-06-07] session-end #65 | WA-3 F10-followup closed (clean state) — BRAND_NAME dropped + typo imports fixed (`cf71511` + `a2c6d27`, 15 files). Next: WA-3 F10-followup Part 3 (5 hardcoded sites), F9, F11, WA-5, TSTD-1.
 ## [2026-06-07] session-end #64 | WA-3 F10 brand name consistency SHIPPED (`e3194dc`, BRAND_NAME constant + 8 sites + 1 typo file rename, 7 files) + 30+ followup sites deferred. Next: WA-3 F10-followup, WA-3 F9, WA-3 F11, WA-5, TSTD-1.
 ## [2026-06-07] session-end #63 | WA-7 mobile input height parity SHIPPED (`f1cbb5d`, min-h-[44px] on From/To labels) + grill review passed (no issues) + vault sync. Next: WA-3 Sprint 3, WA-5, RR-1 Sprint 1, GYG-IMPL, TSTD-1.

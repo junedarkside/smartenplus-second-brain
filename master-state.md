@@ -4,21 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #65)
+**Updated:** 2026-06-07 (session #66)
 
-**Achieved this session (#65):**
-- **WA-3 F10-followup (Part 1: BRAND_NAME revert)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f10-revert-brand-name`):
-  - `cf71511` — **Drop `BRAND_NAME`, keep `siteName`** (per user callout — duplication with existing `siteName` in `helpers/constants.js`). 5 files, 9 insertions, 14 deletions. Reverted: `helpers/constants.js` (remove BRAND_NAME export), `pages/_app.js` (4 sites back to hardcoded 'SmartEnPlus'), `lib/homepage/components/PopularRoutesStructuredData.js` (2 sites), `lib/homepage/components/LocationsStructuredData.js` (2 sites), `lib/homepage/components/ReviewsStructuredData.js` (1 composite site). **Lint clean.** **Fast-forward merge to develop.**
-- **WA-3 F10-followup (Part 2: typo file rename complete)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f10-typo-imports`):
-  - `a2c6d27` — **Update 9 imports + 1 URL** to renamed `public/smartenplus-transportation-booking-online.webp`. 10 files, 10 insertions, 10 deletions. F10 (#64) renamed the file but only updated `BlogPostHeader.js:5`, leaving 9 imports + 1 URL pointing to the now-nonexistent `smartenpus-` filename (build-breaking). Fixed: `components/blog/AuthorBio.js`, `RelatedPostsWidget.js`, `BlogPostSchemaGenerator.js` (URL string at L67), `pages/homepagev1.js`, `blog/index.js`, `locations/index.js`, `locations/[slug].js`, `help/[...slug].js`, `trips/index.js` (commented), `helpers/constants.js`. **Lint clean.** **Fast-forward merge to develop.**
-- **F10 closed cleanly.** No `BRAND_NAME` in code (grep clean). No `smartenpus-` typo refs (grep clean). `siteName` remains single source of truth (9 use sites).
+**Achieved this session (#66):**
+- **WA-3 F10-followup (Part 3: hardcoded sites) SHIPPED** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f10-part3-hardcoded-sites`):
+  - `324d449` — **Replace 5 hardcoded `'SmartEnPlus'` sites with `siteName` import.** 5 files, 10 insertions, 5 deletions. All sites were `siteName:` properties in NextSeo `openGraph`. Files: `components/FrontPage/Seo.js:55`, `pages/privacy/index.js:30`, `pages/ref/index.js:117`, `pages/ref/[type].js:134`, `pages/blog/index.js:119`. Each gets `import { siteName } from '<rel-path>/helpers/constants';` + `siteName: siteName,`. **Lint clean.** **Fast-forward merge to develop.**
+- **F10 + F10-followup closed.** All brand name sites now use `siteName` (helpers/constants.js) as single source of truth. No more hardcoded `'SmartEnPlus'` in OpenGraph `siteName` properties. No `BRAND_NAME` in code. No `smartenpus-` typo refs.
 
 **Resume point (EXACT):**
-1. **WA-3 F10-followup (Part 3: hardcoded sites)** — replace 5 hardcoded `'SmartEnPlus'` sites in `pages/` with `siteName` import. ~1 hr.
-2. **WA-3 F9** — Inline style extraction, 3 hrs
-3. **WA-3 F11** — FAQPage, 2 hrs (pre-check helpSubcategories)
-4. **WA-5** — Touch targets, 2 hrs
-5. **TSTD-1** — release blocker
+1. **WA-3 F9** — Inline style extraction, 3 hrs
+2. **WA-3 F11** — FAQPage, 2 hrs (pre-check helpSubcategories)
+3. **WA-5** — Touch targets, 2 hrs
+4. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
+5. **GYG-IMPL** — merge `260605-feat/review-images`
+6. **TSTD-1** — release blocker
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -30,8 +29,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 |---|-------|--------|-------|
 | **WA-1** | **Website audit Sprint 1 (F1-F3)** | **CLOSED** (2026-06-06 #60). F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. | `components/UI/ShareButton.js`, `components/layout/footer.js`, `components/search/Passenger.js`, `components/pages-info/ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | **CLOSED** (`d1fcf47` #62). F4 + F5 + F6 + F7 + F8 all shipped. | `ProductSearchForm2.js` |
-| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **F10 DONE** (`e3194dc` #64 + `cf71511` #65 revert + `a2c6d27` #65 typo fix). F9 + F11 remaining. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
-| **WA-3 F10-followup (Part 3)** | **5 hardcoded 'SmartEnPlus' sites → siteName import** | OPEN. Files: `components/FrontPage/Seo.js:55`, `pages/privacy/index.js:30`, `pages/ref/index.js:117`, `pages/ref/[type].js:134`, `pages/blog/index.js:119`. ~1 hr. | various |
+| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **F10 CLOSED** (`e3194dc` #64 + `cf71511` #65 + `a2c6d27` #65 + `324d449` #66). F9 + F11 remaining. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
 | **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
 | **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |
