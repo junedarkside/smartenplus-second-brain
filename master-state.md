@@ -4,7 +4,18 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #80)
+**Updated:** 2026-06-08 (session #81)
+
+**Achieved this session (#81):**
+- **TSTD-1 REMOVED from active queue** per user request. User has direct access to test infra (can self-verify). No code changes made.
+- Cleaned TSTD-1 mentions from master-state (7 "Next:" lines across sessions #72-#80, 1 row in Section 2).
+- **No new tasks accepted.** Queue empty. Awaiting user direction.
+- P0 re-audit work from prior turn preserved mentally: Jest 30.4% fail rate (501/719 pass), Playwright desktop 79% fail (15/71 pass), mobile/tablet not yet tested, `e2e/payment/` empty, no BookButton test, no jest-axe. Available if user wants to revisit later.
+
+**Resume point (EXACT):**
+1. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+
+**Achieved this session (#80):**
 
 **Achieved this session (#80):**
 - **F11-FOLLOWUP landing page SHIPPED** — 1 commit on frontend `develop` (`43ed62a`, 2 files 139+). Branch `260607-feat/help-faqs-landing` created + FF-merged to develop.
@@ -19,8 +30,7 @@
 - **F11-FOLLOWUP arc fully closed** (homepage FAQ reworked #72 + landing page shipped #80)
 
 **Resume point (EXACT):**
-1. **TSTD-1** — test infrastructure, release blocker (4-5 dev days)
-2. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+1. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
 3. **F11-FOLLOWUP B2B CTA strip** (waits for 280px product decision) + shared `<Accordion>` atom (waits for 2nd use case)
 
 **Achieved this session (#79):**
@@ -34,7 +44,6 @@
 - **RR-1 arc fully closed** (Tier 1+2 + Tier 3 + auth UX gap + P1-7 spec correction).
 
 **Resume point (EXACT):**
-1. **TSTD-1** — test infrastructure, release blocker (4-5 dev days)
 2. **F11-FOLLOWUP build** — `/help/faqs` page implementation (waits for spec approval + 3 open question answers)
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md` + `01-projects/help-faqs-landing-2026-06-07/audit.md`
@@ -51,7 +60,6 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md` + 
 - Lint clean. One file touched. Zero effect on other components.
 
 **Resume point (EXACT):**
-1. **TSTD-1** — test infrastructure, release blocker
 2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As) — needs new audit doc
 3. **RR-1 audit-missed follow-ups** — submit-review auth model confirm w/ backend, P1-7 spec update
 
@@ -67,7 +75,6 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 - Plan doc: `/Users/charuwatnaranong/.claude/plans/check-vault-ot-resume-validated-wigderson.md`
 
 **Resume point (EXACT):**
-1. **TSTD-1** — test infrastructure, release blocker
 2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As) — needs new audit doc
 3. **RR-1 audit-missed follow-ups** — submit-review auth model confirm w/ backend, P1-7 spec update
 
@@ -103,7 +110,6 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 - Total time: ~2.5 hrs as estimated (optimistic scenario)
 
 **Resume point (EXACT):**
-1. **TSTD-1** — test infrastructure, release blocker
 2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
 3. **Audit-missed follow-ups** — `submit-review/[...slug].js` no session guard (confirm with backend), P1-9 dead code cleanup at `[reviewSlug].js:43` (was deferred but kept in scope? — verify), P1-7 spec update (3 files not 2)
 
@@ -123,7 +129,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 **Resume point (EXACT):**
 1. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
-2. **TSTD-1** — release blocker
+2. ~~**TSTD-1** — release blocker~~ (REMOVED #81 — user self-checks)
 3. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
@@ -159,7 +165,6 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | FAV-1 | Favorite heart | ADR ready. 4 files. | `dialogue/views.py`, `BookmarkButton.js` |
 | AT-1 | Airport Transfer redesign | P0. Spec: `03-knowledge/transportation-category-audit`. | `AirportTransferRouteCard.js` |
 | AT-2 | Airport-transfer width mismatch | Inner margins. | `StationInformation.js` etc. |
-| TSTD-1 | Test infrastructure | BLOCK RELEASE. 6 CRITICAL. 4-5 dev days. | `jest.setup.js`, `e2e/` |
 | 15 | refetchOnMountOrArgChange | Needs justification. | `useTripData.js:16,24` |
 | 1 | AdminBookingSummaryViewSet auth | Needs frontend sign-off. | `orders/views.py` |
 | 2 | Delete RefundViewSet | Waiting on zero DEPRECATED_ENDPOINT_USED. | `cards/views.py` |
