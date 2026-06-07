@@ -4,20 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #68)
+**Updated:** 2026-06-07 (session #70)
 
-**Achieved this session (#68):**
-- **WA-3 F11 SHIPPED (spec mismatch corrected)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f11-faqpage-schema`):
-  - `d9d1425` — **Add visible FAQ section to homepage.** 1 file, 18 insertions, 0 deletions. New `<Section id="faq-section">` between TravelThailandBetterSection and LocationsSection in `pages/homepagev2.js`. Renders top 5 items from existing `faqsData` as native `<details>/<summary>` (no JS state, no new component). `dangerouslySetInnerHTML` for answer (matches existing WP content pattern). **Lint clean.** **Fast-forward merge to develop.**
-  - **Spec mismatch noted:** F11 spec said "Add FAQPage schema using verified Q&A source". Reality: `FAQPageJsonLd` already wired at homepagev2.js:240 (pre-existing). Only visible FAQ was missing. Pre-check found: `helpSubcategories` is subcategory metadata, not Q&A; real Q&A source is `faqsPosts` (line 454, also pre-existing). New work = visible content only.
+**Achieved this session (#70):**
+- **Scrutinize #69** — WA-5 audit found F2 was partial (top 5 controls only). Recommended comprehensive sweep.
+- **WA-5 EXPANDED — Comprehensive touch-target audit SHIPPED** — 1 commit on frontend `develop` (branch `260607-fix/wa5-comprehensive-touch-targets`):
+  - `781bf7a` — **Floor 15+ clickables at 40px** (WCAG 2.5.5). 15 files, 52 insertions, 30 deletions.
+  - **SearchDialogTrigger** (3 variants): mobile 26×26 → 40×40, desktop 32 → 40, input h-10 → h-11 (alignment with ProductSearchForm2 cells)
+  - **Footer secondary nav**: 9 links with `inline-flex items-center min-h-[40px]`
+  - **10 MUI IconButton `size="small"` → `size="medium"`**: PassengerCounter (2), AlertMessage, EnhancedTripCard (3), OfflineTripDetailWrapper (3), BookmarkButton, CartDetails
+  - **8 single-file fixes**: SingleComment (30→40), SearchBar (close btn), SearchResultsList (min-h-32→40), PaymentComponent (text-sm btn), ReactionTrigger, Coupon, LocationTree
+  - **e2e test extended** with 2 new assertions (search trigger mobile, footer privacy)
+  - **Checkpoint tag** `pre-wa5-audit-2026-06-07` created for rollback safety
+  - **Lint clean** on touched files (5 pre-existing warnings unrelated)
+  - **Fast-forward merge to develop**
 
-- **WA-3 Sprint 3 CLOSED.** F9 + F10 + F10-followup + F11 all shipped. Audit spec audited, mismatches noted, pragmatic delivery.
+- **Out of scope (deferred):** 5 text-xs onClick spans (TripItem, tripItemv2, TripItemFooter, TripDetailsAttribute, TripDetailInfo) + TripDetailBooking/TripDetail3 role=button divs — visually risky in dense list rows, need product decision first.
 
 **Resume point (EXACT):**
-1. **WA-5** — Touch targets, 2 hrs
-2. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
-3. **GYG-IMPL** — merge `260605-feat/review-images`
-4. **TSTD-1** — release blocker
+1. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
+2. **GYG-IMPL** — merge `260605-feat/review-images`
+3. **TSTD-1** — release blocker
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -32,7 +39,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | **WA-3** | **Website audit Sprint 3 (F9-F11)** | **CLOSED** (`0b30580` #67 + `d9d1425` #68). All 3 Sprint 3 features shipped. | `pages/homepagev2.js` |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
 | **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
-| **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |
+| **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | **CLOSED** (`781bf7a` #70). Expanded to 15+ clickables across 15 files. Checkpoint tag `pre-wa5-audit-2026-06-07` for rollback. 5 text-xs onClick spans + 2 role=button divs deferred (visually risky). | 15 files |
 | **WA-7** | **ProductSearchForm2 mobile input height inconsistency** | **CLOSED** (`f1cbb5d` #63). From/To labels (lines 228, 257) now have `min-h-[44px]` matching Date/Return/Passenger cells. Grill review passed (no issues). | `components/search/ProductSearchForm2.js:228,257` |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 + FE-22 RESOLVED 2026-06-07 (serializer verified — both `slug` + `booking_item_slug` present, commits `a4cb344`/`7a74394`/`f82b182`/`3d1d91a`). Sprint 1 (P1-3→P1-9) unblocked. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails done (unmerged). | Merge `260605-feat/review-images` |

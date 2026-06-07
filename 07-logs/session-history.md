@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #70 (2026-06-07) — WA-5 EXPANDED (comprehensive touch-target audit)
+- **Scrutinize #69** found F2 was partial; recommended comprehensive audit
+- **WA-5** `781bf7a` — Floor 15+ clickables at 40px (WCAG 2.5.5). 15 files, 52+/30-.
+- SearchDialogTrigger (3 variants): mobile 26→40, desktop 32→40, input h-10→h-11
+- Footer nav: 9 links → `inline-flex items-center min-h-40`
+- 10 IconButton `size=small` → `size=medium`
+- 8 single-file fixes (SingleComment, SearchBar, SearchResultsList, PaymentComponent, ReactionTrigger, Coupon, LocationTree)
+- e2e test +2 assertions (search trigger mobile, footer privacy)
+- Checkpoint tag `pre-wa5-audit-2026-06-07` for rollback
+- Lint clean (5 pre-existing warnings unrelated)
+- **Deferred:** 5 text-xs onClick spans (TripItem, tripItemv2, TripItemFooter, TripDetailsAttribute, TripDetailInfo) + TripDetailBooking/TripDetail3 role=button — visually risky, need product decision
+
+**Resume point:** RR-1 → GYG-IMPL → TSTD-1
+
 ## Session #68 (2026-06-07) — WA-3 F11 SHIPPED (spec mismatch corrected)
 - **F11** `d9d1425` — Add visible FAQ section to homepage. 1 file, 18+. `pages/homepagev2.js` insert `<Section id="faq-section">` between TravelThailandBetterSection and LocationsSection. 5 native `<details>/<summary>` from existing `faqsData`. No JS state, no new component. Lint clean. Fast-forward to develop.
 - **Spec mismatch noted.** F11 spec said "Add FAQPage schema"; reality: `FAQPageJsonLd` already wired at line 240 (pre-existing). Pre-check: `helpSubcategories` is subcategory metadata, not Q&A. Real Q&A source = `faqsPosts` (line 454, pre-existing). New work = visible content only.
