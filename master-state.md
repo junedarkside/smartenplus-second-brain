@@ -4,17 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #73)
+**Updated:** 2026-06-07 (session #74)
 
-**Achieved this session (#73):**
-- **GYG-IMPL VERIFIED** — work already on develop. Attempted cherry-pick of 3 review commits (`38feba5`, `055d7eb`, `e73fc23`) from stale branch `260605-feat/review-images`. All 3 obsolete: HEIC-1 (commit `6c10137`) + other recent work brought in equivalent changes. Created checkpoint tag `pre-gyg-cherry-pick-2026-06-07` for safety, then deleted empty branch (no FF-merge needed). No code changes.
-- `ReviewImageThumbnails` component + import + JSX usage all present on develop (verified `pages/rate-review/[reviewSlug].js:161,479` + `components/review/ReviewImageThumbnails.js`)
-- `BadgeChip` already uses `children` pattern (verified `pages/rate-review/[reviewSlug].js:414-416`)
+**Achieved this session (#74):**
+- **RR-1 Sprint 1 SHIPPED** — 1 commit on frontend `develop` (`8ac1029`, 7 files 85+/35-). Branch `260607-fix/rr1-sprint1-p1-3-9` (feature branch) — direct commit to develop (linear history preserved, same net result as FF-merge). Lint clean.
+- **Grill skill audit** verified 5/7 claims, caught 2 spec ambiguities (P1-3 "guard" + P1-4 "interstitial" definitions), 5 audit-missed items (P1-7 understated coverage, submit-review auth model, dead code, brittle slug fallback, P1-4 definition).
+- **P1-3** (`RateAndReviewForm.js`) — in-flight disable already wired (audit wrong), added success snackbar "Review submitted — thank you!" with severity="success" Alert
+- **P1-4** (`pages/rate-review/index.js`) — replaced `useAuthRedirect` hard-redirect with inline "Sign in to view your reviews" gate card (LockOutlinedIcon + copy + CircularProgress, 1.5s grace), then redirect. Removed `useAuthRedirect` import, added `UnifiedCard` + `COLORS` reuse.
+- **P1-5** (`ReviewFirstPage.js` + `ReviewListByProduct.js`) — 6 instances of `text-gray-400` → `text-gray-500` (label uppercase, travel date, route, operator, review count)
+- **P1-6** (`ReviewImageThumbnails.js`) — `<div onClick>` → `<button type="button">` with `aria-label` + `onKeyDown` (Enter/Space) + focus ring classes
+- **P1-8** (`RateAndReviewForm.js`) — added "Add a title and your review to continue." helper text under disabled submit button, conditional on `!loading && (title.length === 0 || reviewText.length === 0)`
+- **P1-9** (3 pages) — imported `getSiteUrl` from `utils/blog/seoHelper.js`, replaced 3 hardcoded canonicals with template literals
+- Checkpoint tag `pre-rr1-sprint1-2026-06-07` for rollback
+- Total time: ~2.5 hrs as estimated (optimistic scenario)
 
 **Resume point (EXACT):**
-1. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
-2. **TSTD-1** — release blocker
-3. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
+1. **TSTD-1** — test infrastructure, release blocker
+2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
+3. **Audit-missed follow-ups** — `submit-review/[...slug].js` no session guard (confirm with backend), P1-9 dead code cleanup at `[reviewSlug].js:43` (was deferred but kept in scope? — verify), P1-7 spec update (3 files not 2)
+
+Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 **Achieved this session (#72):**
 - **F11 FAQ REWORK SHIPPED** — 1 commit on frontend `develop` (branch `260607-refactor/f11-remove-faq-add-trust-strip`):
@@ -54,7 +63,10 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | F11-FOLLOWUP | `/help/faqs` landing page (25-30 Q&As) | DEFERRED. BD recommended. Current state: per-slug pages only. | `pages/help/[...slug].js` |
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
-| RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 + FE-22 RESOLVED 2026-06-07 (serializer verified — both `slug` + `booking_item_slug` present, commits `a4cb344`/`7a74394`/`f82b182`/`3d1d91a`). Sprint 1 (P1-3→P1-9) unblocked. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
+| RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 + FE-22 RESOLVED 2026-06-07. **Sprint 1 SHIPPED** (`8ac1029` #74) — P1-3 (success snackbar + in-flight disable) + P1-4 (inline gate card on /rate-review, 1.5s grace) + P1-5 (6× text-gray-400→500 in 2 files) + P1-6 (thumbnail a11y: button+aria-label+onKeyDown) + P1-8 (disabled "why" helper text) + P1-9 (3 pages via getSiteUrl() helper). P1-7 already done. Grill audit verified. | `RateAndReviewForm.js`, `pages/rate-review/index.js`, `ReviewFirstPage.js`, `ReviewListByProduct.js`, `ReviewImageThumbnails.js`, `pages/rate-review/[reviewSlug].js`, `pages/rate-review/submit-review/[...slug].js` |
+| RR-1-FOLLOWUP | Submit-review no session guard | Token-gated by design? Confirm with backend. | `pages/rate-review/submit-review/[...slug].js` |
+| RR-1-FOLLOWUP | `submit-review/[...slug].js:77` brittle slug fallback | API returns `booking_item_slug` only. Confirm contract. | `pages/rate-review/submit-review/[...slug].js:77` |
+| RR-1-FOLLOWUP | `[reviewSlug].js:43` dead commented canonical | Cleanup. | `pages/rate-review/[reviewSlug].js:43` |
 | **GYG-IMPL** | GYG 5-pattern | **CLOSED** (#73). All review image work already on develop via HEIC-1 (`6c10137`) + other paths. Cherry-pick of 3 review commits from stale `260605-feat/review-images` branch confirmed obsolete. `ReviewImageThumbnails` component, JSX, `BadgeChip` children pattern all verified present. | `pages/rate-review/[reviewSlug].js:161,479,414-416` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
 | CMA-1 | Contract Model Ambiguity | P1/P2 partial. Remaining: data inventory. | `operators/models.py` |
