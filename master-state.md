@@ -4,27 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #70)
+**Updated:** 2026-06-07 (session #72)
 
-**Achieved this session (#70):**
-- **Scrutinize #69** — WA-5 audit found F2 was partial (top 5 controls only). Recommended comprehensive sweep.
-- **WA-5 EXPANDED — Comprehensive touch-target audit SHIPPED** — 1 commit on frontend `develop` (branch `260607-fix/wa5-comprehensive-touch-targets`):
-  - `781bf7a` — **Floor 15+ clickables at 40px** (WCAG 2.5.5). 15 files, 52 insertions, 30 deletions.
-  - **SearchDialogTrigger** (3 variants): mobile 26×26 → 40×40, desktop 32 → 40, input h-10 → h-11 (alignment with ProductSearchForm2 cells)
-  - **Footer secondary nav**: 9 links with `inline-flex items-center min-h-[40px]`
-  - **10 MUI IconButton `size="small"` → `size="medium"`**: PassengerCounter (2), AlertMessage, EnhancedTripCard (3), OfflineTripDetailWrapper (3), BookmarkButton, CartDetails
-  - **8 single-file fixes**: SingleComment (30→40), SearchBar (close btn), SearchResultsList (min-h-32→40), PaymentComponent (text-sm btn), ReactionTrigger, Coupon, LocationTree
-  - **e2e test extended** with 2 new assertions (search trigger mobile, footer privacy)
-  - **Checkpoint tag** `pre-wa5-audit-2026-06-07` created for rollback safety
-  - **Lint clean** on touched files (5 pre-existing warnings unrelated)
-  - **Fast-forward merge to develop**
+**Achieved this session (#72):**
+- **F11 FAQ REWORK SHIPPED** — 1 commit on frontend `develop` (branch `260607-refactor/f11-remove-faq-add-trust-strip`):
+  - `3534e21` — **Remove visible FAQ from homepage, add trust strip + footer Help link**. 3 files, 69+/31-.
+  - **pages/homepagev2.js**: deleted visible FAQ Section (was 383-410), deleted FAQPageJsonLd (line 240), removed `faqsData` getStaticProps extraction (no remaining usage)
+  - **lib/homepage/components/TrustStripSection.js**: NEW component. Row 1 = 6 payment logos (VISA, MC, JCB, PromptPay, Apple Pay, Google Pay — all existing assets). Row 2 = 4 trust signals (TAT Licensed, 24/7 Thai/English Support, Free Cancellation 24h, SSL Secure Payment). Uses CARD_CONFIG styling.
+  - **components/layout/footer.js**: added "Help & FAQs" link in secondary nav → `/help/faqs`
+  - **Lint clean**, fast-forward merge to develop
+- **6-agent debate synthesis** (3 scrutinize + 3 stakeholder roleplay) confirmed: F11 placement = wrong funnel stage (PM), 280px is revenue slot not trust slot (BD), 1.86/5 design score (UX), JSON-LD silently invalid + FAQPage rich results deprecated by Google Aug 2023 (scrutinize).
 
-- **Out of scope (deferred):** 5 text-xs onClick spans (TripItem, tripItemv2, TripItemFooter, TripDetailsAttribute, TripDetailInfo) + TripDetailBooking/TripDetail3 role=button divs — visually risky in dense list rows, need product decision first.
+**Achieved this session (#71):**
+- Visual check via dev server (no code changes). All WA-5 fixes render correctly on localhost:3000.
 
 **Resume point (EXACT):**
 1. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
 2. **GYG-IMPL** — merge `260605-feat/review-images`
 3. **TSTD-1** — release blocker
+4. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As) per BD recommendation. Deferred from #72.
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -41,6 +39,10 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
 | **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | **CLOSED** (`781bf7a` #70). Expanded to 15+ clickables across 15 files. Checkpoint tag `pre-wa5-audit-2026-06-07` for rollback. 5 text-xs onClick spans + 2 role=button divs deferred (visually risky). | 15 files |
 | **WA-7** | **ProductSearchForm2 mobile input height inconsistency** | **CLOSED** (`f1cbb5d` #63). From/To labels (lines 228, 257) now have `min-h-[44px]` matching Date/Return/Passenger cells. Grill review passed (no issues). | `components/search/ProductSearchForm2.js:228,257` |
+| **F11** | **Homepage visible FAQ section** | **REWORKED** (`3534e21` #72). Removed visible FAQ + invalid JSON-LD from homepage. Replaced with trust strip (payment logos + trust signals) at same position. Added footer "Help & FAQs" link → /help/faqs. Reason: 1.86/5 design score, wrong funnel stage, FAQPage rich results deprecated Aug 2023, JSON-LD silently invalid (field shape mismatch). 6-agent synthesis (PM/BD/UX + 3 scrutinize). | `pages/homepagev2.js`, `lib/homepage/components/TrustStripSection.js` (NEW), `components/layout/footer.js` |
+| F11-FOLLOWUP | `/help/faqs` landing page (25-30 Q&As) | DEFERRED. BD recommended. Current state: per-slug pages only. | `pages/help/[...slug].js` |
+| F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
+| F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 + FE-22 RESOLVED 2026-06-07 (serializer verified — both `slug` + `booking_item_slug` present, commits `a4cb344`/`7a74394`/`f82b182`/`3d1d91a`). Sprint 1 (P1-3→P1-9) unblocked. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
 | GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails done (unmerged). | Merge `260605-feat/review-images` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
