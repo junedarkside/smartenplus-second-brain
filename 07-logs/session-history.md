@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #63 (2026-06-07) — WA-7 closed
+- **WA-7** `f1cbb5d` — Mobile input height parity: `min-h-[44px]` added to From/To labels (lines 228, 257) in `ProductSearchForm2.js` to match Date/Return/Passenger cell pattern
+- 1 file, +2/-2, fast-forward merge to develop
+- Grill review: passed — no High/Medium issues, F8's `min-w-0` and WA-7's `min-h-[44px]` are independent CSS axes
+- All 5 input cells now have `min-h-[44px]` (Date/Return/Passenger + From/To)
+
+**Resume point:** WA-3 → WA-5 → RR-1 Sprint 1 → GYG-IMPL → TSTD-1
+
 ## Session #62 (2026-06-07) — WA-2 Sprint 2 CLOSED (F4-F8)
 - **F4** `1d2d749` — Inter font self-host via `next/font/google` (no FOUT, GDPR clean)
 - **F5** (static) — Carousel `align: 'start'` already in `CardCarouselContainer.js:17-21`; 2 unmerged remotes are ancestors of develop
