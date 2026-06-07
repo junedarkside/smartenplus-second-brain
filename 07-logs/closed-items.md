@@ -21,3 +21,5 @@ Archived from master-state.md Section 2. Audit trail only.
 | BW-3 | BlogCard rounded-lg + no mx- | Already fixed |
 | EXP-DETAIL-1 | Experience Detail Page redesign | #33 — shipped |
 | HEIC-1 | iPhone HEIC review upload | 2026-06-06 #54. Client-side preview via heic2any. `6c10137`. |
+| RR-REVIEW-DETAIL-T1+2 | Review detail page Tier 1+2 | 2026-06-07 #77. `cc3a0dc`. B1 XSS, B2 race, B3 ProfileImage, B4 Sticky, M1 DOMPurify memo, M2 specific errors, M10 back 44px, N1+N2 cleanup. |
+| RR-REVIEW-DETAIL-T3 | Review detail page Tier 3 polish | 2026-06-07 #78. `6c09c7d`. M6 sticky@md, M7 skeleton, M8 h1 cap, N3 useMemo normalize. M3 hook deferred. |

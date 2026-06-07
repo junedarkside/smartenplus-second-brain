@@ -35,9 +35,8 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 **Resume point (EXACT):**
 1. **TSTD-1** — test infrastructure, release blocker
-2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
-3. **RR-1 audit-missed follow-ups** — submit-review auth model, dead code, P1-7 spec update
-4. **RR Tier 3 polish (deferred)** — M3 useReviewBySlug hook, M6 sticky at md, M7 loading skeleton, M8 hero h1 cap, N3 useMemo normalizeReviewForSummary
+2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As) — needs new audit doc
+3. **RR-1 audit-missed follow-ups** — submit-review auth model confirm w/ backend, P1-7 spec update
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -115,10 +114,10 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | F11-FOLLOWUP | `/help/faqs` landing page (25-30 Q&As) | DEFERRED. BD recommended. Current state: per-slug pages only. | `pages/help/[...slug].js` |
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
-| RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 + FE-22 RESOLVED 2026-06-07. **Sprint 1 SHIPPED** (`8ac1029` #74) — P1-3 (success snackbar + in-flight disable) + P1-4 (inline gate card on /rate-review, 1.5s grace) + P1-5 (6× text-gray-400→500 in 2 files) + P1-6 (thumbnail a11y: button+aria-label+onKeyDown) + P1-8 (disabled "why" helper text) + P1-9 (3 pages via getSiteUrl() helper). P1-7 already done. Grill audit verified. | `RateAndReviewForm.js`, `pages/rate-review/index.js`, `ReviewFirstPage.js`, `ReviewListByProduct.js`, `ReviewImageThumbnails.js`, `pages/rate-review/[reviewSlug].js`, `pages/rate-review/submit-review/[...slug].js` |
+| RR-1 | Rate-review Release 1 shipped | P0+P1-1→P1-9 + FE-22 RESOLVED 2026-06-07. **Sprint 1 SHIPPED** (`8ac1029` #74) — P1-3,4,5,6,8,9. P1-7 already done. **Tier 1+2 SHIPPED** (`cc3a0dc` #77) — B1 XSS, B2 race, B3 ProfileImage, B4 Sticky, M1 DOMPurify memo, M2 specific errors, M10 back 44px, N1+N2 cleanup. **Tier 3 SHIPPED** (`6c09c7d` #78) — M6 sticky@md, M7 skeleton, M8 h1 cap, N3 useMemo normalize. M3 hook extraction deferred — different endpoints/auth. Grill audit verified. | `RateAndReviewForm.js`, `pages/rate-review/index.js`, `ReviewFirstPage.js`, `ReviewListByProduct.js`, `ReviewImageThumbnails.js`, `pages/rate-review/[reviewSlug].js`, `pages/rate-review/submit-review/[...slug].js` |
 | RR-1-FOLLOWUP | Submit-review no session guard | Token-gated by design? Confirm with backend. | `pages/rate-review/submit-review/[...slug].js` |
 | RR-1-FOLLOWUP | `submit-review/[...slug].js:77` brittle slug fallback | API returns `booking_item_slug` only. Confirm contract. | `pages/rate-review/submit-review/[...slug].js:77` |
-| RR-1-FOLLOWUP | `[reviewSlug].js:43` dead commented canonical | Cleanup. | `pages/rate-review/[reviewSlug].js:43` |
+| RR-1-FOLLOWUP | `[reviewSlug].js:43` dead commented canonical | **CLOSED** (#77 N2 — 135-line dead block deleted in Tier 1+2, line 43 is now `dynamic()` import of `StandardBreadcrumb`). | `pages/rate-review/[reviewSlug].js:43` |
 | **GYG-IMPL** | GYG 5-pattern | **CLOSED** (#73). All review image work already on develop via HEIC-1 (`6c10137`) + other paths. Cherry-pick of 3 review commits from stale `260605-feat/review-images` branch confirmed obsolete. `ReviewImageThumbnails` component, JSX, `BadgeChip` children pattern all verified present. | `pages/rate-review/[reviewSlug].js:161,479,414-416` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
 | CMA-1 | Contract Model Ambiguity | P1/P2 partial. Remaining: data inventory. | `operators/models.py` |
