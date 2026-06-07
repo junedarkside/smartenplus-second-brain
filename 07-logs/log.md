@@ -1,5 +1,6 @@
 # Vault Log
 
+## [2026-06-07] session-end #71 | Visual check session (no code changes). Dev server verified WA-5 fixes render correctly on localhost:3000. All commits from #70 intact.
 ## [2026-06-07] session-end #70 | WA-5 EXPANDED SHIPPED (`781bf7a`, comprehensive touch-target audit, 15 files, 52+/30-). Checkpoint tag pre-wa5-audit-2026-06-07. 5 text-xs onClick + 2 role=button deferred. Next: RR-1, GYG-IMPL, TSTD-1.
 ## [2026-06-07] session-end #68 | WA-3 F11 SHIPPED (`d9d1425`, visible FAQ section, 18 lines). WA-3 Sprint 3 CLOSED. Next: WA-5, RR-1, GYG-IMPL, TSTD-1.
 ## [2026-06-07] session-end #67 | WA-3 F9 SHIPPED (`0b30580`, ELEVATION_TOKENS + 2 boxShadow extractions, spec mismatch noted). Next: WA-3 F11, WA-5, RR-1, GYG-IMPL, TSTD-1.
