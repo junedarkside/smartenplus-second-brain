@@ -4,7 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #72)
+**Updated:** 2026-06-07 (session #73)
+
+**Achieved this session (#73):**
+- **GYG-IMPL VERIFIED** — work already on develop. Attempted cherry-pick of 3 review commits (`38feba5`, `055d7eb`, `e73fc23`) from stale branch `260605-feat/review-images`. All 3 obsolete: HEIC-1 (commit `6c10137`) + other recent work brought in equivalent changes. Created checkpoint tag `pre-gyg-cherry-pick-2026-06-07` for safety, then deleted empty branch (no FF-merge needed). No code changes.
+- `ReviewImageThumbnails` component + import + JSX usage all present on develop (verified `pages/rate-review/[reviewSlug].js:161,479` + `components/review/ReviewImageThumbnails.js`)
+- `BadgeChip` already uses `children` pattern (verified `pages/rate-review/[reviewSlug].js:414-416`)
+
+**Resume point (EXACT):**
+1. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
+2. **TSTD-1** — release blocker
+3. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
 
 **Achieved this session (#72):**
 - **F11 FAQ REWORK SHIPPED** — 1 commit on frontend `develop` (branch `260607-refactor/f11-remove-faq-add-trust-strip`):
@@ -20,9 +30,8 @@
 
 **Resume point (EXACT):**
 1. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
-2. **GYG-IMPL** — merge `260605-feat/review-images`
-3. **TSTD-1** — release blocker
-4. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As) per BD recommendation. Deferred from #72.
+2. **TSTD-1** — release blocker
+3. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -46,7 +55,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1+P1-2 + FE-22 RESOLVED 2026-06-07 (serializer verified — both `slug` + `booking_item_slug` present, commits `a4cb344`/`7a74394`/`f82b182`/`3d1d91a`). Sprint 1 (P1-3→P1-9) unblocked. | `[reviewSlug].js`, `BookingReviewList.js`, `RateAndReviewForm.js`, `ReviewList.js` |
-| GYG-IMPL | GYG 5-pattern | P0-P2 done. P1 thumbnails done (unmerged). | Merge `260605-feat/review-images` |
+| **GYG-IMPL** | GYG 5-pattern | **CLOSED** (#73). All review image work already on develop via HEIC-1 (`6c10137`) + other paths. Cherry-pick of 3 review commits from stale `260605-feat/review-images` branch confirmed obsolete. `ReviewImageThumbnails` component, JSX, `BadgeChip` children pattern all verified present. | `pages/rate-review/[reviewSlug].js:161,479,414-416` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
 | CMA-1 | Contract Model Ambiguity | P1/P2 partial. Remaining: data inventory. | `operators/models.py` |
 | CART-1 | PARSING_ERROR catch | Deferred from #34. | `DayTripBookingWidget.js:338` |
