@@ -4,19 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #67)
+**Updated:** 2026-06-07 (session #68)
 
-**Achieved this session (#67):**
-- **WA-3 F9 SHIPPED (spec mismatch corrected)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f9-inline-style-extraction`):
-  - `0b30580` — **Add `ELEVATION_TOKENS` + extract 2 real boxShadow literals.** 3 files, 15 insertions, 2 deletions. Added `ELEVATION_TOKENS = { none, sm, md, lg, xl }` to `helpers/designSystem.js`. Extracted: `components/auth/ProfileButton.js:20` → `ELEVATION_TOKENS.lg`; `components/layout/NavDropdown.js:72` → `ELEVATION_TOKENS.md`. **Lint clean.** **Fast-forward merge to develop.**
-  - **Spec mismatch noted:** F9 spec listed 5 files (ProfileMenu, OrderDetail, layout, ProductSearchForm2, ProductSearchForm) for extraction. Audit found those have only dynamic/ternary styles that correctly stay inline per F9 rule. The 2 real static boxShadows live in 2 different files. User decision: "Extract the 2 real ones" — pragmatic, no fabrication. Other 11 static boxShadows in components/ are out of scope (none/sm/xl scale reserved for future use).
+**Achieved this session (#68):**
+- **WA-3 F11 SHIPPED (spec mismatch corrected)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f11-faqpage-schema`):
+  - `d9d1425` — **Add visible FAQ section to homepage.** 1 file, 18 insertions, 0 deletions. New `<Section id="faq-section">` between TravelThailandBetterSection and LocationsSection in `pages/homepagev2.js`. Renders top 5 items from existing `faqsData` as native `<details>/<summary>` (no JS state, no new component). `dangerouslySetInnerHTML` for answer (matches existing WP content pattern). **Lint clean.** **Fast-forward merge to develop.**
+  - **Spec mismatch noted:** F11 spec said "Add FAQPage schema using verified Q&A source". Reality: `FAQPageJsonLd` already wired at homepagev2.js:240 (pre-existing). Only visible FAQ was missing. Pre-check found: `helpSubcategories` is subcategory metadata, not Q&A; real Q&A source is `faqsPosts` (line 454, also pre-existing). New work = visible content only.
+
+- **WA-3 Sprint 3 CLOSED.** F9 + F10 + F10-followup + F11 all shipped. Audit spec audited, mismatches noted, pragmatic delivery.
 
 **Resume point (EXACT):**
-1. **WA-3 F11** — FAQPage, 2 hrs (pre-check helpSubcategories)
-2. **WA-5** — Touch targets, 2 hrs
-3. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
-4. **GYG-IMPL** — merge `260605-feat/review-images`
-5. **TSTD-1** — release blocker
+1. **WA-5** — Touch targets, 2 hrs
+2. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
+3. **GYG-IMPL** — merge `260605-feat/review-images`
+4. **TSTD-1** — release blocker
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -28,7 +29,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 |---|-------|--------|-------|
 | **WA-1** | **Website audit Sprint 1 (F1-F3)** | **CLOSED** (2026-06-06 #60). F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. | `components/UI/ShareButton.js`, `components/layout/footer.js`, `components/search/Passenger.js`, `components/pages-info/ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | **CLOSED** (`d1fcf47` #62). F4 + F5 + F6 + F7 + F8 all shipped. | `ProductSearchForm2.js` |
-| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **F9 CLOSED** (`0b30580` #67) + **F10 CLOSED** (4 commits #64-66). F11 remaining. | `ProfileButton.js`, `NavDropdown.js`, `designSystem.js` |
+| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **CLOSED** (`0b30580` #67 + `d9d1425` #68). All 3 Sprint 3 features shipped. | `pages/homepagev2.js` |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
 | **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
 | **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |

@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #68 (2026-06-07) — WA-3 F11 SHIPPED (spec mismatch corrected)
+- **F11** `d9d1425` — Add visible FAQ section to homepage. 1 file, 18+. `pages/homepagev2.js` insert `<Section id="faq-section">` between TravelThailandBetterSection and LocationsSection. 5 native `<details>/<summary>` from existing `faqsData`. No JS state, no new component. Lint clean. Fast-forward to develop.
+- **Spec mismatch noted.** F11 spec said "Add FAQPage schema"; reality: `FAQPageJsonLd` already wired at line 240 (pre-existing). Pre-check: `helpSubcategories` is subcategory metadata, not Q&A. Real Q&A source = `faqsPosts` (line 454, pre-existing). New work = visible content only.
+- **WA-3 Sprint 3 CLOSED.** F9 + F10 + F10-followup + F11 all shipped.
+
+**Resume point:** WA-5 → RR-1 → GYG-IMPL → TSTD-1
+
 ## Session #67 (2026-06-07) — WA-3 F9 SHIPPED (spec mismatch corrected)
 - **F9** `0b30580` — Add `ELEVATION_TOKENS` (`none/sm/md/lg/xl`) to `helpers/designSystem.js`. Extract 2 real boxShadows: `ProfileButton.js:20` → `ELEVATION_TOKENS.lg`; `NavDropdown.js:72` → `ELEVATION_TOKENS.md`. 3 files, 15+/2-. Lint clean. Fast-forward to develop.
 - **Spec mismatch noted.** F9 spec listed 5 files for extraction; audit found only 2 boxShadows in entire codebase, in 2 different files. Spec-listed files have only dynamic/ternary styles that correctly stay inline per F9 rule. User accepted "extract the 2 real ones" — no fabrication.
