@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #67 (2026-06-07) — WA-3 F9 SHIPPED (spec mismatch corrected)
+- **F9** `0b30580` — Add `ELEVATION_TOKENS` (`none/sm/md/lg/xl`) to `helpers/designSystem.js`. Extract 2 real boxShadows: `ProfileButton.js:20` → `ELEVATION_TOKENS.lg`; `NavDropdown.js:72` → `ELEVATION_TOKENS.md`. 3 files, 15+/2-. Lint clean. Fast-forward to develop.
+- **Spec mismatch noted.** F9 spec listed 5 files for extraction; audit found only 2 boxShadows in entire codebase, in 2 different files. Spec-listed files have only dynamic/ternary styles that correctly stay inline per F9 rule. User accepted "extract the 2 real ones" — no fabrication.
+
+**Resume point:** WA-3 F11 → WA-5 → RR-1 → GYG-IMPL → TSTD-1
+
 ## Session #66 (2026-06-07) — WA-3 F10-followup Part 3 SHIPPED
 - **F10 Part 3** `324d449` — Replace 5 hardcoded `'SmartEnPlus'` NextSeo `siteName` sites with `siteName` import from `helpers/constants.js`. 5 files, 10+/5-: `components/FrontPage/Seo.js`, `pages/privacy/index.js`, `pages/ref/index.js`, `pages/ref/[type].js`, `pages/blog/index.js`. Fast-forward to develop. Lint clean.
 - **F10 + F10-followup fully CLOSED.** No more hardcoded brand name in OG siteName. No `BRAND_NAME`. No typo refs. `siteName` = single source of truth.

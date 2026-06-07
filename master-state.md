@@ -4,20 +4,19 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #66)
+**Updated:** 2026-06-07 (session #67)
 
-**Achieved this session (#66):**
-- **WA-3 F10-followup (Part 3: hardcoded sites) SHIPPED** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f10-part3-hardcoded-sites`):
-  - `324d449` — **Replace 5 hardcoded `'SmartEnPlus'` sites with `siteName` import.** 5 files, 10 insertions, 5 deletions. All sites were `siteName:` properties in NextSeo `openGraph`. Files: `components/FrontPage/Seo.js:55`, `pages/privacy/index.js:30`, `pages/ref/index.js:117`, `pages/ref/[type].js:134`, `pages/blog/index.js:119`. Each gets `import { siteName } from '<rel-path>/helpers/constants';` + `siteName: siteName,`. **Lint clean.** **Fast-forward merge to develop.**
-- **F10 + F10-followup closed.** All brand name sites now use `siteName` (helpers/constants.js) as single source of truth. No more hardcoded `'SmartEnPlus'` in OpenGraph `siteName` properties. No `BRAND_NAME` in code. No `smartenpus-` typo refs.
+**Achieved this session (#67):**
+- **WA-3 F9 SHIPPED (spec mismatch corrected)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f9-inline-style-extraction`):
+  - `0b30580` — **Add `ELEVATION_TOKENS` + extract 2 real boxShadow literals.** 3 files, 15 insertions, 2 deletions. Added `ELEVATION_TOKENS = { none, sm, md, lg, xl }` to `helpers/designSystem.js`. Extracted: `components/auth/ProfileButton.js:20` → `ELEVATION_TOKENS.lg`; `components/layout/NavDropdown.js:72` → `ELEVATION_TOKENS.md`. **Lint clean.** **Fast-forward merge to develop.**
+  - **Spec mismatch noted:** F9 spec listed 5 files (ProfileMenu, OrderDetail, layout, ProductSearchForm2, ProductSearchForm) for extraction. Audit found those have only dynamic/ternary styles that correctly stay inline per F9 rule. The 2 real static boxShadows live in 2 different files. User decision: "Extract the 2 real ones" — pragmatic, no fabrication. Other 11 static boxShadows in components/ are out of scope (none/sm/xl scale reserved for future use).
 
 **Resume point (EXACT):**
-1. **WA-3 F9** — Inline style extraction, 3 hrs
-2. **WA-3 F11** — FAQPage, 2 hrs (pre-check helpSubcategories)
-3. **WA-5** — Touch targets, 2 hrs
-4. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
-5. **GYG-IMPL** — merge `260605-feat/review-images`
-6. **TSTD-1** — release blocker
+1. **WA-3 F11** — FAQPage, 2 hrs (pre-check helpSubcategories)
+2. **WA-5** — Touch targets, 2 hrs
+3. **RR-1 Sprint 1** — P1-3→P1-9, 3-4 hrs
+4. **GYG-IMPL** — merge `260605-feat/review-images`
+5. **TSTD-1** — release blocker
 
 Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
@@ -29,7 +28,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 |---|-------|--------|-------|
 | **WA-1** | **Website audit Sprint 1 (F1-F3)** | **CLOSED** (2026-06-06 #60). F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. | `components/UI/ShareButton.js`, `components/layout/footer.js`, `components/search/Passenger.js`, `components/pages-info/ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | **CLOSED** (`d1fcf47` #62). F4 + F5 + F6 + F7 + F8 all shipped. | `ProductSearchForm2.js` |
-| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **F10 CLOSED** (`e3194dc` #64 + `cf71511` #65 + `a2c6d27` #65 + `324d449` #66). F9 + F11 remaining. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
+| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **F9 CLOSED** (`0b30580` #67) + **F10 CLOSED** (4 commits #64-66). F11 remaining. | `ProfileButton.js`, `NavDropdown.js`, `designSystem.js` |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
 | **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
 | **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |
