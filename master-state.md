@@ -4,7 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #77)
+**Updated:** 2026-06-07 (session #78)
+
+**Achieved this session (#78):**
+- **RR Review Detail Tier 3 SHIPPED** — 1 commit on frontend `develop` (`6c09c7d`, 1 file 34+/8-). Branch `260607-fix/rr-detail-tier3-polish` created + FF-merged to develop.
+- **4 polish fixes** on `pages/rate-review/[reviewSlug].js`:
+  - **M6** sticky breakpoint `lg` → `md` (matches `STICKY_CONFIG` token at `helpers/designSystem.js:137`)
+  - **M7** loading state: `h-screen` spinner → `FeaturedImageHeaderSkeleton` + breadcrumb + 2-col grid skeleton (no CLS)
+  - **M8** hero h1: `text-2xl md:text-4xl lg:text-5xl` → `text-2xl sm:text-3xl md:text-4xl` (matches `TYPOGRAPHY_SCALE.h1` at `helpers/designSystem.js:67`, caps at 36px)
+  - **N3** `useMemo(normalizeReviewForSummary, [review])` — was running 2×/render, now 1×
+- Removed unused `CircularProgress` import (no longer used after M7)
+- **M3 (`useReviewBySlug` hook) deferred** — re-checked: 2 pages fetch different endpoints (`/dialogue/reviews/{slug}/` vs `/dialogue/reviews/token/{token}/`) with different auth models (public vs token-gated). Forced abstraction adds more surface than it removes. Revisit if 3rd caller appears.
+- Lint clean. One file touched. Zero effect on other components.
+
+**Resume point (EXACT):**
+1. **TSTD-1** — test infrastructure, release blocker
+2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As) — needs new audit doc
+3. **RR-1 audit-missed follow-ups** — submit-review auth model confirm w/ backend, P1-7 spec update
+
+Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 **Achieved this session (#77):**
 - **RR Review Detail Tier 1+2 SHIPPED** — 1 commit on frontend `develop` (`cc3a0dc`, 1 file 37+/150-). Branch `260607-fix/review-detail-blockers-tier1` created + FF-merged to develop.
