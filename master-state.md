@@ -4,7 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #76)
+**Updated:** 2026-06-07 (session #77)
+
+**Achieved this session (#77):**
+- **RR Review Detail Tier 1+2 SHIPPED** — 1 commit on frontend `develop` (`cc3a0dc`, 1 file 37+/150-). Branch `260607-fix/review-detail-blockers-tier1` created + FF-merged to develop.
+- **2-agent parallel audit** of `/rate-review/[reviewSlug].js` (UX + Technical). Found 4 blockers + 10 major + 8 minor.
+- **Blockers fixed:** B1 XSS (safe DOMPurify SSR fallback), B2 race (AbortController + state reset), B3 ProfileImage prop (email not first_name), B4 StickySidebar (added `min-h-[calc(100vh-6rem)]` on grid parent).
+- **Major fixed:** M1 DOMPurify memoized in useMemo, M2 specific 404/500/network error messages, M10 back button 36→44px (WCAG 2.2).
+- **Minor fixed:** N1 removed unused TYPOGRAPHY_SCALE import, N2 deleted ~150 lines of dead commented code.
+- Lint clean. One file touched. No new components. Zero effect on other components.
+- Plan doc: `/Users/charuwatnaranong/.claude/plans/check-vault-ot-resume-validated-wigderson.md`
+
+**Resume point (EXACT):**
+1. **TSTD-1** — test infrastructure, release blocker
+2. **F11-FOLLOWUP** — `/help/faqs` landing page (25-30 Q&As)
+3. **RR-1 audit-missed follow-ups** — submit-review auth model, dead code, P1-7 spec update
+4. **RR Tier 3 polish (deferred)** — M3 useReviewBySlug hook, M6 sticky at md, M7 loading skeleton, M8 hero h1 cap, N3 useMemo normalizeReviewForSummary
+
+Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 
 **Achieved this session (#76):**
 - **RR padding aligned to blog** — 1 commit on frontend `develop` (`50eb626`, 3 files 13+/13-). Branch `260607-fix/rr-pages-match-blog-padding` created + FF-merged to develop.
