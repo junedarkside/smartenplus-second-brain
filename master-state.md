@@ -4,13 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #74)
+**Updated:** 2026-06-07 (session #75)
+
+**Achieved this session (#75):**
+- **P1-4 refactor SHIPPED** — 1 commit on frontend `develop` (`95216ec`, 1 file 8+/3-). Branch `260607-refactor/rr1-p1-4-reuse-auth-hook` created + FF-merged to develop.
+- **Refactor:** restored `useAuthRedirect` hook usage in `pages/rate-review/index.js` (consistent with 11+ other usages). Kept gate card UX via separate `showGate` state + 1.5s timer. Hook now handles redirect, page shows gate card.
+- User feedback: "no tech debt, reusable components, no effect on other components". Original Sprint 1 P1-4 used inline `setTimeout` + `router.push` — created tech debt by removing standard hook pattern. Refactor fixes.
+- Stale browser cache error (webpack factory undefined on /rate-review) was a non-issue — resolved in fresh browser. No code relation to refactor.
+- Lint clean. Only `pages/rate-review/index.js` modified. Zero effect on other components.
 
 **Achieved this session (#74):**
 - **RR-1 Sprint 1 SHIPPED** — 1 commit on frontend `develop` (`8ac1029`, 7 files 85+/35-). Branch `260607-fix/rr1-sprint1-p1-3-9` (feature branch) — direct commit to develop (linear history preserved, same net result as FF-merge). Lint clean.
 - **Grill skill audit** verified 5/7 claims, caught 2 spec ambiguities (P1-3 "guard" + P1-4 "interstitial" definitions), 5 audit-missed items (P1-7 understated coverage, submit-review auth model, dead code, brittle slug fallback, P1-4 definition).
 - **P1-3** (`RateAndReviewForm.js`) — in-flight disable already wired (audit wrong), added success snackbar "Review submitted — thank you!" with severity="success" Alert
-- **P1-4** (`pages/rate-review/index.js`) — replaced `useAuthRedirect` hard-redirect with inline "Sign in to view your reviews" gate card (LockOutlinedIcon + copy + CircularProgress, 1.5s grace), then redirect. Removed `useAuthRedirect` import, added `UnifiedCard` + `COLORS` reuse.
+- **P1-4** (`pages/rate-review/index.js`) — replaced `useAuthRedirect` hard-redirect with inline "Sign in to view your reviews" gate card (LockOutlinedIcon + copy + CircularProgress, 1.5s grace), then redirect. **Refactored in #75** to use `useAuthRedirect` for redirect while keeping gate card UX.
 - **P1-5** (`ReviewFirstPage.js` + `ReviewListByProduct.js`) — 6 instances of `text-gray-400` → `text-gray-500` (label uppercase, travel date, route, operator, review count)
 - **P1-6** (`ReviewImageThumbnails.js`) — `<div onClick>` → `<button type="button">` with `aria-label` + `onKeyDown` (Enter/Space) + focus ring classes
 - **P1-8** (`RateAndReviewForm.js`) — added "Add a title and your review to continue." helper text under disabled submit button, conditional on `!loading && (title.length === 0 || reviewText.length === 0)`
