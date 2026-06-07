@@ -4,7 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #78)
+**Updated:** 2026-06-07 (session #79)
+
+**Achieved this session (#79):**
+- **RR-1 Submit-Review UX gap SHIPPED** — 1 commit on frontend `develop` (`de964e3`, 1 file 10+/0-). Branch `260607-fix/rate-review-submit-as-alert` created + FF-merged to develop.
+- **"Submitting as X" Alert** added to `RateAndReviewForm.js` (line 110-117):
+  - Authed: blue MUI Alert `Submitting as {email}`
+  - Guest: blue MUI Alert `Submitting as guest. Your review will be associated with the email on your booking.`
+- Reuses `Alert` (already imported at line 11) + `session` (already destructured at line 29). No new dependencies. No backend change.
+- **Auth model confirmed intentional** via deep-read of `dialogue/views.py:1037-1040` (`AllowAny` on non-list actions) + `views.py:1180-1195` (user + guest_email derivation). Finding doc: `00-inbox/finding-submit-review-auth-2026-06-07.md`
+- Lint clean. One file touched. Zero effect on other components.
+- **RR-1 arc fully closed** (Tier 1+2 + Tier 3 + auth UX gap + P1-7 spec correction).
+
+**Resume point (EXACT):**
+1. **TSTD-1** — test infrastructure, release blocker (4-5 dev days)
+2. **F11-FOLLOWUP build** — `/help/faqs` page implementation (waits for spec approval + 3 open question answers)
+
+Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md` + `01-projects/help-faqs-landing-2026-06-07/audit.md`
 
 **Achieved this session (#78):**
 - **RR Review Detail Tier 3 SHIPPED** — 1 commit on frontend `develop` (`6c09c7d`, 1 file 34+/8-). Branch `260607-fix/rr-detail-tier3-polish` created + FF-merged to develop.
@@ -114,9 +130,9 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | F11-FOLLOWUP | `/help/faqs` landing page (25-30 Q&As) | DEFERRED. BD recommended. Current state: per-slug pages only. | `pages/help/[...slug].js` |
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
-| RR-1 | Rate-review Release 1 shipped | P0+P1-1→P1-9 + FE-22 RESOLVED 2026-06-07. **Sprint 1 SHIPPED** (`8ac1029` #74) — P1-3,4,5,6,8,9. P1-7 already done. **Tier 1+2 SHIPPED** (`cc3a0dc` #77) — B1 XSS, B2 race, B3 ProfileImage, B4 Sticky, M1 DOMPurify memo, M2 specific errors, M10 back 44px, N1+N2 cleanup. **Tier 3 SHIPPED** (`6c09c7d` #78) — M6 sticky@md, M7 skeleton, M8 h1 cap, N3 useMemo normalize. M3 hook extraction deferred — different endpoints/auth. Grill audit verified. | `RateAndReviewForm.js`, `pages/rate-review/index.js`, `ReviewFirstPage.js`, `ReviewListByProduct.js`, `ReviewImageThumbnails.js`, `pages/rate-review/[reviewSlug].js`, `pages/rate-review/submit-review/[...slug].js` |
-| RR-1-FOLLOWUP | Submit-review no session guard | Token-gated by design? Confirm with backend. | `pages/rate-review/submit-review/[...slug].js` |
-| RR-1-FOLLOWUP | `submit-review/[...slug].js:77` brittle slug fallback | API returns `booking_item_slug` only. Confirm contract. | `pages/rate-review/submit-review/[...slug].js:77` |
+| RR-1 | Rate-review Release 1 shipped | P0+P1-1→P1-9 + FE-22 RESOLVED 2026-06-07. **Sprint 1 SHIPPED** (`8ac1029` #74) — P1-3,4,5,6,8,9. P1-7 already done. **Tier 1+2 SHIPPED** (`cc3a0dc` #77) — B1 XSS, B2 race, B3 ProfileImage, B4 Sticky, M1 DOMPurify memo, M2 specific errors, M10 back 44px, N1+N2 cleanup. **Tier 3 SHIPPED** (`6c09c7d` #78) — M6 sticky@md, M7 skeleton, M8 h1 cap, N3 useMemo normalize. **UX gap SHIPPED** (`de964e3` #79) — "Submitting as X" Alert in form. M3 hook extraction deferred — different endpoints/auth. Grill audit verified. Auth model confirmed intentional via `00-inbox/finding-submit-review-auth-2026-06-07.md`. | `RateAndReviewForm.js`, `pages/rate-review/index.js`, `ReviewFirstPage.js`, `ReviewListByProduct.js`, `ReviewImageThumbnails.js`, `pages/rate-review/[reviewSlug].js`, `pages/rate-review/submit-review/[...slug].js` |
+| RR-1-FOLLOWUP | Submit-review no session guard | **CLOSED** (#79 — auth model confirmed intentional, finding doc `00-inbox/finding-submit-review-auth-2026-06-07.md`. UX gap "Submitting as X" shipped `de964e3`). | `pages/rate-review/submit-review/[...slug].js` |
+| RR-1-FOLLOWUP | `submit-review/[...slug].js:77` brittle slug fallback | API returns `booking_item_slug` only. Confirm contract. Low priority. | `pages/rate-review/submit-review/[...slug].js:77` |
 | RR-1-FOLLOWUP | `[reviewSlug].js:43` dead commented canonical | **CLOSED** (#77 N2 — 135-line dead block deleted in Tier 1+2, line 43 is now `dynamic()` import of `StandardBreadcrumb`). | `pages/rate-review/[reviewSlug].js:43` |
 | **GYG-IMPL** | GYG 5-pattern | **CLOSED** (#73). All review image work already on develop via HEIC-1 (`6c10137`) + other paths. Cherry-pick of 3 review commits from stale `260605-feat/review-images` branch confirmed obsolete. `ReviewImageThumbnails` component, JSX, `BadgeChip` children pattern all verified present. | `pages/rate-review/[reviewSlug].js:161,479,414-416` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
