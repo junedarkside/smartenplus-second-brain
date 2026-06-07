@@ -162,7 +162,7 @@ See `r3-leader-synthesis.md` for full spec. Priority order:
 2. P1-4 — guest redirect interstitial + session loading guard (`index.js`)
 3. P1-5 — caption contrast `text-gray-400` → `text-gray-500` (2 files)
 4. P1-6 — thumbnail keyboard access (`ReviewImageThumbnails.js`)
-5. P1-7 — back button `aria-label` (2 page files)
+5. P1-7 — back button `aria-label` (3 page files: `[reviewSlug].js`, `index.js`, `submit-review/[...slug].js`)
 6. P1-8 — submit button disabled feedback (`RateAndReviewForm.js`)
 7. P1-9 — canonical URLs fix with `getSiteUrl()` (3 page files); `reviewSlug` confirmed in scope at `[reviewSlug].js:243`
 

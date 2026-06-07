@@ -173,9 +173,9 @@ The guest flow is nearly invisible with no affordance or guidance:
 
 ### P1-7 — Back IconButton has no accessible label
 - **Finding:** FE-06 (confirmed P1 by skeptic)
-- **Files:** `pages/rate-review/[reviewSlug].js:327-339`, `pages/rate-review/submit-review/[...slug].js:95-109`
-- **Fix:** Add `aria-label="Back to reviews"` directly on both `IconButton` elements. MUI Tooltip does not propagate `aria-label` to the button in MUI v5.
-- **Effort:** XS (1 line each, 2 files)
+- **Files:** `pages/rate-review/[reviewSlug].js:248`, `pages/rate-review/index.js:94`, `pages/rate-review/submit-review/[...slug].js:102` (3 files, not 2 — audit missed `index.js` back button)
+- **Fix:** Add `aria-label="Back to reviews"` (or "Go back" on `index.js`) directly on all `IconButton` elements. MUI Tooltip does not propagate `aria-label` to the button in MUI v5.
+- **Effort:** XS (1 line each, 3 files)
 
 ---
 
@@ -410,7 +410,7 @@ Fix in this sequence to minimize risk and maximize dependency resolution:
 5. **P1-9 — Canonical URLs** (3 page files) — isolated SEO fix, no UI dependencies. Ship with initial batch.
 6. **P0-3 — Star ARIA radiogroup** (`RateAndReviewForm.js:111-147`) — form-only, no page dependencies. Next.
 7. **P1-5 — Caption contrast** (`RateAndReviewForm.js:262`, `BookingReviewList.js:109`) — ship with P0-3 (same files open).
-8. **P1-7 + P1-10 — Back button aria-label + aria-required fix** (2 page files + form file) — accessibility sweep, batch together.
+8. **P1-7 + P1-10 — Back button aria-label + aria-required fix** (3 page files + form file) — accessibility sweep, batch together.
 9. **P1-3 — Post-submission guard + success banner** (`[...slug].js:71-76`) — depends on understanding redirect field; verify `booking_item_slug` === `slug` with backend before shipping.
 10. **P1-4 — Guest interstitial / loading guard** (`index.js`) — also covers P2-11 (session loading flash) + FE-11 (router dep). Batch together.
 11. **P1-6 — Thumbnail keyboard access** (`ReviewImageThumbnails.js`) — isolated component.
