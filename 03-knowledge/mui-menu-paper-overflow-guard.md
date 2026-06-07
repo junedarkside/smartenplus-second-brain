@@ -3,7 +3,7 @@ name: mui-menu-paper-overflow-guard
 description: When MUI Menu content height > viewport, cap Paper + MenuList with maxHeight calc(100vh - N) and explicit overflow to prevent content from clipping past the bottom edge of the menu.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # MUI Menu Paper Overflow Guard

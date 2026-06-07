@@ -64,4 +64,4 @@ User chose **Option A** after debate: keep drop-gate (`average_rating > 0`), ski
 
 - [[r1-ux]]
 - [[r3-leader-synthesis]]
-- [[../gyg-page-analysis-2026-06-04]] — sibling: detail page analysis
+- [[../gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]] — sibling: detail page analysis

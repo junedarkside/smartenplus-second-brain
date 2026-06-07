@@ -3,7 +3,7 @@ name: carousel-embla-align-start-mobile-snap
 description: Embla carousel align: 'start' option for scroll-snap on mobile. Reference carousel-design-standard.md for breakpoint values.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # Carousel Embla Align Start Mobile Snap
@@ -64,4 +64,4 @@ Apply to:
 - All other Embla carousels in `lib/homepage/`
 
 ## Related
-[[website-audit-full-2026-06-06]] · [[r1-mobile-ux]] · [[r3-leader-synthesis]] · [[carousel-design-standard]]
+[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r1-mobile-ux]] · [[r3-leader-synthesis]] · [[carousel-design-standard]]

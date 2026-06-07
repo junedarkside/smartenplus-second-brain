@@ -3,7 +3,7 @@ name: touch-target-44px-enforcement
 description: WCAG 2.5.5 enforcement strategy. TOUCH_TARGET token exists in designSystem.js but components don't use it. Batch-fix with min-h-[44px] min-w-[44px].
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # Touch Target 44px Enforcement
@@ -57,4 +57,4 @@ Batch-fix all 13 sites in Sprint 1 (F2 + F3). Test at 320px (iPhone SE) before m
 Mitigation: test at 320px before merge. If overflow, use `flex-shrink: 0` on parent + reduce padding.
 
 ## Related
-[[website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-mobile-ux]] · [[mobile-header-analysis-2026-05-26]]
+[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-mobile-ux]] · [[mobile-header-analysis-2026-05-26]]

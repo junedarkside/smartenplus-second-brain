@@ -3,7 +3,7 @@ name: ios-zoom-input-16px-rule
 description: iOS Safari auto-zooms on inputs <16px font-size. Rule: all form inputs use text-base (16px) minimum.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # iOS Zoom Input 16px Rule
@@ -49,4 +49,4 @@ Replace `text-sm` → `text-base` in all form inputs. Update `INPUT_CONFIG.base`
 Test at iOS Safari 17+ before merge. Reference [[form-layout]] for input sizing patterns.
 
 ## Related
-[[website-audit-full-2026-06-06]] · [[r1-mobile-ux]] · [[r3-leader-synthesis]]
+[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r1-mobile-ux]] · [[r3-leader-synthesis]]

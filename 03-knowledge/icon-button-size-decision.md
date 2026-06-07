@@ -3,7 +3,7 @@ name: icon-button-size-decision
 description: 40px is the default for icon buttons in dense UI (Material Design 3 medium). 44px reserved for primary CTAs. Reverted 3 components from F2's 44px after user feedback ("too big").
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # Icon Button Size Decision (40px default)
@@ -90,4 +90,4 @@ F2 follow-up `1e4c549` updated `left: -17px` → `-23px` for the 44px swap. `fbd
 ## Related
 - [[wcag-touch-target-enforcement]] — original 3-part pattern (token, Tailwind/MUI, Playwright spec)
 - [[mui-menu-paper-overflow-guard]] — companion for F2's anchor shift regression
-- [[website-audit-full-2026-06-06]] — parent audit
+- [[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] — parent audit

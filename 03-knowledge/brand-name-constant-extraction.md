@@ -3,7 +3,7 @@ name: brand-name-constant-extraction
 description: Extract brand name to single constant. "SmartEnPlus" wordmark vs "smartenplus.co.th" URL. Rename smartenpus-...webp typo.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # Brand Name Constant Extraction
@@ -53,4 +53,4 @@ Standardize on "SmartEnPlus" wordmark for display. URL stays "smartenplus.co.th"
 Reference [[nav-label-url-slug-two-layer-strategy]] for URL/label split rationale. Reference [[production-url-rename-cost-framework]] for URL change cost analysis.
 
 ## Related
-[[website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-seo-ai]] · [[nav-label-url-slug-two-layer-strategy]]
+[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-seo-ai]] · [[nav-label-url-slug-two-layer-strategy]]

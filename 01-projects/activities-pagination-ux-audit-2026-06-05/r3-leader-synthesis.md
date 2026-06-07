@@ -95,7 +95,7 @@ metadata:
 
 ## P3 Backend Debt (Out of scope, flagged for future)
 
-- SSR/SSG first page — covered in [[../gyg-page-analysis-2026-06-04]]
+- SSR/SSG first page — covered in [[../gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]]
 - Lazy-load images beyond first 6 — separate image-optimization task
 - "N+ results available" microcopy — needs `Contract.has_next` backend field
 - Cursor pagination for "Load more" — backend change required
@@ -140,5 +140,5 @@ metadata:
 - [[r1-visual]]
 - [[r1-performance]]
 - [[r2-skeptic]]
-- [[../gyg-page-analysis-2026-06-04]] — sibling: detail page audit
+- [[../gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]] — sibling: detail page audit
 - [[../gyg-card-rate-analysis-2026-06-05]] — sibling: card rate display audit (this session)

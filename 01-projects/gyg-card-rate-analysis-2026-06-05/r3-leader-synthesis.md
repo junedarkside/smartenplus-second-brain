@@ -131,5 +131,5 @@ metadata:
 
 - [[r1-ux]]
 - [[r2-skeptic]]
-- [[../gyg-page-analysis-2026-06-04]] — sibling: detail page
+- [[../gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]] — sibling: detail page
 - [[../activities-pagination-ux-audit-2026-06-05]] — sibling: pagination audit (this session)

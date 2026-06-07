@@ -3,7 +3,7 @@ name: expandable-menu-row-mui-collapse
 description: MUI Menu + Collapse pattern for parent rows that toggle 2-3 child rows. Per-row useState, aria-expanded, chevron rotation animation. Saves 60-120px per collapsed group in tall menus.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # Expandable Menu Row (MUI Collapse)

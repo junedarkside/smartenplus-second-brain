@@ -1,6 +1,6 @@
 ---
 name: gyg-card-rate-analysis-2026-06-05
-description: SmartEnPlus /activities product card rate display vs GYG reference. UX/Conversion specialist review → Skeptic → Leader → 5 P0/P1/P2 patterns. Scope: card on listing page rate display, NOT detail page. Pairs with [[gyg-page-analysis-2026-06-04]] (detail page).
+description: SmartEnPlus /activities product card rate display vs GYG reference. UX/Conversion specialist review → Skeptic → Leader → 5 P0/P1/P2 patterns. Scope: card on listing page rate display, NOT detail page. Pairs with [[gyg-page-analysis-2026-06-04-overview|gyg-page-analysis-2026-06-04]] (detail page).
 metadata:
   type: project
   page: http://localhost:3000/activities
@@ -69,14 +69,14 @@ See `r3-leader-synthesis.md` for final 5 ranked P0 → P2.
 
 ## Out of Scope
 
-- Detail page rate display (covered by [[gyg-page-analysis-2026-06-04]])
+- Detail page rate display (covered by [[gyg-page-analysis-2026-06-04-overview|gyg-page-analysis-2026-06-04]])
 - Search/filter bar rate display
 - AB test for wording variants
 - AI-summarized price ("Best price for July 4-6 weekend") — P3 future
 
 ## Related
 
-- [[gyg-page-analysis-2026-06-04]] — sibling: detail page analysis
+- [[gyg-page-analysis-2026-06-04-overview|gyg-page-analysis-2026-06-04]] — sibling: detail page analysis
 - [[experience-detail-page-redesign-2026-06-02]] — 9 components shipped, includes detail rate display
 - [[business-development-thailand-platform-analysis]] — GYG competitive positioning
 - [[trip-detail-uxui-audit-2026-05-22]] — prior detail page audit pattern

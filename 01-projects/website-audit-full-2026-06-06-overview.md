@@ -1,5 +1,5 @@
 ---
-name: website-audit-full-2026-06-06
+name: website-audit-full-2026-06-06-overview
 description: Full external website audit — SEO/speed scores, mobile UX, identity analysis, AI classification, 15 priority actions.
 metadata:
   type: project

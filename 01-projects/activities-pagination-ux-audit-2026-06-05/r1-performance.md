@@ -60,4 +60,4 @@ Same as V-1 — pure class removal. Pairs with V-1.
 - [[r1-visual]]
 - [[r2-skeptic]]
 - [[r3-leader-synthesis]]
-- [[../gyg-page-analysis-2026-06-04]] — sibling: detail page audit
+- [[../gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]] — sibling: detail page audit

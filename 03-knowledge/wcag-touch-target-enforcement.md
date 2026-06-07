@@ -3,7 +3,7 @@ name: wcag-touch-target-enforcement
 description: 3-part pattern for WCAG 2.5.5 compliance: (a) TOUCH_TARGET design token, (b) Tailwind min-h-[44px] min-w-[44px] + MUI sx minWidth/minHeight, (c) Playwright boundingBox regression spec at 320/375/414 viewports.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # WCAG 2.5.5 Touch Target Enforcement
@@ -155,4 +155,4 @@ npx playwright test e2e/a11y/touch-targets.spec.ts \
 ## Related
 - [[mui-menu-paper-overflow-guard]] — companion for height-change regressions
 - [[ios-zoom-input-16px-rule]] — companion iOS rule
-- [[website-audit-full-2026-06-06]] — parent audit project
+- [[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] — parent audit project

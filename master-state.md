@@ -160,7 +160,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | **GYG-IMPL** | GYG 5-pattern | **CLOSED** (#73). All review image work already on develop via HEIC-1 (`6c10137`) + other paths. Cherry-pick of 3 review commits from stale `260605-feat/review-images` branch confirmed obsolete. `ReviewImageThumbnails` component, JSX, `BadgeChip` children pattern all verified present. | `pages/rate-review/[reviewSlug].js:161,479,414-416` |
 | GSC-1 | GSC Crawled-Not-Indexed | Phase 1+2 shipped, monitoring. Phase 3 needs backend `route_exists`. | `seoConfig.js:41`, `server-sitemap.xml` |
 | CMA-1 | Contract Model Ambiguity | P1/P2 partial. Remaining: data inventory. | `operators/models.py` |
-| CART-1 | PARSING_ERROR catch | Deferred from #34. | `DayTripBookingWidget.js:338` |
+| CART-1 | PARSING_ERROR catch | **CLOSED** (#82). Branch added at `DayTripBookingWidget.js` before generic `else` — surfaces `error.status === 'PARSING_ERROR'` (RTK Query string from HTML 500 page) with clear user-facing message. Per `01-projects/cartitems-500-error-analysis-2026-06-02` Bug 3 + `03-knowledge/view-utility-call-exception-wrapper.md` caveat. No backend change. | `smartenplus-frontend/components/activities/detail/DayTripBookingWidget.js` |
 | FAQ-1 | ExperienceFAQ | P0-P2 done. Admin `ageRestriction` deferred. | `admin-dashboard/DayTripDetails.js` |
 | FAV-1 | Favorite heart | ADR ready. 4 files. | `dialogue/views.py`, `BookmarkButton.js` |
 | AT-1 | Airport Transfer redesign | P0. Spec: `03-knowledge/transportation-category-audit`. | `AirportTransferRouteCard.js` |
@@ -172,7 +172,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | 8 | Forex endpoint naming | Naming debt. | `cards/urls.py` |
 | Nav | NavigationSection empty | Restart backend + populate. | `pages_info` |
 | Explore | location_type CharField | Needs `Location` model change. | `stations/models.py` |
-| HD-1 | CurrencySelector small tablet | Low. | `CurrencySelector.js:55` |
+| HD-1 | CurrencySelector small tablet | **CLOSED** (#82). Audit claim 40×24 stale — codebase already has `min-h-[40px] min-w-[40px]` per WA-6 user feedback 40px standard. Actual path `components/UI/CurrencySelector.js:55` (audit said `search/`). | `components/UI/CurrencySelector.js:55` |
 | HD-2 | CartButton dim (70%) | Low — acceptable. | `CartButton.js:116` |
 | HD-3 | xl padding gap | Low. | `main-header.js:90` |
 | HD-6 | Logo size jump | P2. | `main-header.js:66,95` |
@@ -180,10 +180,10 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | GAP-5 | Nav hidden while searching | P2 — accepted. | `main-header.js:112` |
 | GAP-6 | threshold=0 abrupt snap | P3. | `useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden md-xl | P3. | `main-header.js:95` |
-| IDX-1 | Unindexed experience-detail | Add to index.md. | `01-projects/` |
-| IDX-2 | Unindexed experience-faq | Add to index.md. | `01-projects/` |
-| IDX-3 | Missing content-marketing-strategy | Verify intent. | `03-knowledge/` |
-| IDX-4 | Duplicate-basename wikilinks | 3 conflicts. Rename with suffix. | Various |
+| IDX-1 | Unindexed experience-detail | **CLOSED** (#82). Already indexed in `index.md:25` (row created during ingestion 2026-06-02). Stale master-state entry. | `index.md:25` |
+| IDX-2 | Unindexed experience-faq | **CLOSED** (#82). Added wikilink entry in `index.md` under "Active Projects" with 1-line decision summary. Pairs with `experience-detail-page-redesign-2026-06-02` (sibling). | `index.md` (under Active Projects) |
+| IDX-3 | Missing content-marketing-strategy | **CLOSED** (#82). Already indexed in `index.md:191` (full Thailand travel playbook). Stale master-state entry. | `index.md:191` |
+| IDX-4 | Duplicate-basename wikilinks | **CLOSED** (#82). 3 files renamed with `-overview` suffix: `website-audit-full-2026-06-06`, `rate-review-uxui-audit-2026-06-06`, `gyg-page-analysis-2026-06-04`. 17 wikilink references + 9 YAML `parent:` fields updated across `index.md`, `master-state.md`, `03-knowledge/*` (9 atoms), `01-projects/gyg-card-rate-analysis-2026-06-05/*` (4 files), `01-projects/activities-pagination-ux-audit-2026-06-05/*` (2 files), `01-projects/gyg-page-analysis-2026-06-04-overview.md` (self-ref). `log.md` historical refs preserved (4 entries) per vault protocol. `.obsidian/workspace.json` auto-updates on next launch. | `01-projects/*-overview.md` (3 files) |
 
 ---
 

@@ -97,7 +97,7 @@ See `r3-leader-synthesis.md` for final 5 ranked.
 
 ## Related
 
-- [[gyg-page-analysis-2026-06-04]] — sibling: detail page audit
+- [[gyg-page-analysis-2026-06-04-overview|gyg-page-analysis-2026-06-04]] — sibling: detail page audit
 - [[gyg-card-rate-analysis-2026-06-05]] — sibling: card rate display audit (this session)
 - [[trip-detail-uxui-audit-2026-05-22]] — prior detail page audit pattern (3-specialist)
 - [[seo-homepage-auditor]] — SEO specialist team pattern

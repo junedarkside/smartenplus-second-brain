@@ -1,5 +1,5 @@
 ---
-name: gyg-page-analysis-2026-06-04
+name: gyg-page-analysis-2026-06-04-overview
 description: 3-specialist GYG Chiang Rai tour analysis vs SmartEnPlus /activities/detail/[slug]. 11 candidates surfaced, 5 adopted (P0/P1/P2), 4 backend debt flagged, AI summary deferred. Supplements [[experience-detail-page-redesign-2026-06-02]] (additive gap analysis; not a replacement).
 metadata:
   type: project
@@ -111,7 +111,7 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 - `01-projects/gyg-page-analysis-2026-06-04/r1-seo.md`
 - `01-projects/gyg-page-analysis-2026-06-04/r2-skeptic.md`
 - `01-projects/gyg-page-analysis-2026-06-04/r3-leader-synthesis.md`
-- `01-projects/gyg-page-analysis-2026-06-04.md` (this file)
+- `01-projects/gyg-page-analysis-2026-06-04-overview.md` (this file)
 
 ### SmartEnPlus components referenced
 - `pages/activities/detail/[...slug].js`

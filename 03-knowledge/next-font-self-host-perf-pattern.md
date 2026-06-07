@@ -3,7 +3,7 @@ name: next-font-self-host-perf-pattern
 description: Switch from render-blocking external CSS to next/font/google for self-hosted fonts. Eliminates 3rd-party DNS lookup + render-blocking CSS fetch.
 type: knowledge-atom
 date: 2026-06-06
-parent: website-audit-full-2026-06-06
+parent: website-audit-full-2026-06-06-overview
 ---
 
 # Next.js Font Self-Host Pattern
@@ -52,4 +52,4 @@ Use `next/font/google` over hand-rolled preload. Auto-self-hosts, eliminates 3rd
 Test CLS + FOUT in Lighthouse before merge. Reference [[nextjs-patterns]] for font-related gotchas.
 
 ## Related
-[[website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[design-system-audit-2026-05-31]]
+[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[design-system-audit-2026-05-31]]
