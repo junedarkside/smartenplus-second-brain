@@ -4,7 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #79)
+**Updated:** 2026-06-07 (session #80)
+
+**Achieved this session (#80):**
+- **F11-FOLLOWUP landing page SHIPPED** — 1 commit on frontend `develop` (`43ed62a`, 2 files 139+). Branch `260607-feat/help-faqs-landing` created + FF-merged to develop.
+- **New file `pages/help/faqs.js`** (123 lines) — wins Pages Router resolution over `[...slug].js` for exact URL `/help/faqs`. Replaces the broken catch-all stub (`[...slug].js:36` read `data.nodes?.forEach` on edges-shaped response → page was near-blank with wrong hero). Individual Q&As at `/help/faqs/{postSlug}` still route to catch-all (unchanged).
+- **`helpers/wordpress/api.js`** added new top-level `POSTS_BY_FAQ_CATEGORY` constant (16 lines). Old dead `faqsPosts` alias inside `GET_HOMEPAGE_WORDPRESS_DATA` query NOT touched (separate cleanup PR).
+- **4-agent team debate** (explorer + nextjs-architect + seo + code-reviewer) refined plan from "2-3 hrs" to "~90 min": added h1 inside `FeaturedImageHeader` children block (component doesn't emit h1), DOMPurify on WP content via lazy require (matches 7+ other review files), canonical tag filtering (not `nodes[0]`), FAQPage + BreadcrumbList JSON-LD, sharpened description, first Q in each group open by default.
+- **3 reusable patterns confirmed:** `generateBreadcrumbSchema` from `utils/blog/seoHelper.js`, `JsonLd` from `components/SEO/JsonLd.js`, lazy `require('dompurify')` in useEffect.
+- **Defaults assumed** (no blockers): `first: 30` cap, canonical tag slugs `[transport, payment, booking, cancellation] + other`, no source link per Q&A. Content questions doc sent to BD/content team: `00-inbox/2026-06-07-content-questions-help-faqs.md`. If answers differ, 1-line patches needed.
+- Lint clean. Linter + manual syntax check passed (no `next build` run — heavy; deferred to CI).
+- **Plan doc:** `/Users/charuwatnaranong/.claude/plans/check-vault-ot-resume-validated-wigderson.md` (now historical)
+- **Debate findings captured:** see `01-projects/help-faqs-landing-2026-06-07/audit.md` § Debate
+- **F11-FOLLOWUP arc fully closed** (homepage FAQ reworked #72 + landing page shipped #80)
+
+**Resume point (EXACT):**
+1. **TSTD-1** — test infrastructure, release blocker (4-5 dev days)
+2. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+3. **F11-FOLLOWUP B2B CTA strip** (waits for 280px product decision) + shared `<Accordion>` atom (waits for 2nd use case)
 
 **Achieved this session (#79):**
 - **RR-1 Submit-Review UX gap SHIPPED** — 1 commit on frontend `develop` (`de964e3`, 1 file 10+/0-). Branch `260607-fix/rate-review-submit-as-alert` created + FF-merged to develop.
@@ -127,7 +144,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | **F11** | **Homepage visible FAQ section** | **REWORKED** (`3534e21` #72). Removed visible FAQ + invalid JSON-LD from homepage. Replaced with trust strip (payment logos + trust signals) at same position. Added footer "Help & FAQs" link → /help/faqs. Reason: 1.86/5 design score, wrong funnel stage, FAQPage rich results deprecated Aug 2023, JSON-LD silently invalid (field shape mismatch). 6-agent synthesis (PM/BD/UX + 3 scrutinize). | `pages/homepagev2.js`, `lib/homepage/components/TrustStripSection.js` (NEW), `components/layout/footer.js` |
 | **F11-FIX-1** | **Pre-existing `item.locationFields` undefined in /help/faqs** | **CLOSED** (`e6d1731` #72-followup). F11 footer link exposed latent bug: WordPress FAQ posts with unset `locationFields` threw `undefined.location` in useEffect. Added `?.` to 3 reads (lines 39, 45, 51). Posts without `locationFields` skip grouping, fall to `generalPosts` filter (line 74). | `pages/help/[...slug].js:39,45,51` |
 | **TRUST-STRIP-1** | **Trust strip white card wrapper** | **CLOSED** (`9505117` #72-followup). 3-designer debate (minimalist+conversion=drop, design system=keep via HOMEPAGE_SECTION). HOMEPAGE_SECTION token defined but unused in codebase; neighbors are full-bleed. Dropped `bg-white rounded-md border border-gray-200 shadow-sm p-4 md:p-6`. Added `bg-gray-50 border-y border-gray-200` to Section. Visual: flat tinted section, no card chrome. | `lib/homepage/components/TrustStripSection.js` |
-| F11-FOLLOWUP | `/help/faqs` landing page (25-30 Q&As) | DEFERRED. BD recommended. Current state: per-slug pages only. | `pages/help/[...slug].js` |
+| F11-FOLLOWUP | `/help/faqs` landing page (25-30 Q&As) | **CLOSED** (`43ed62a` #80). New `pages/help/faqs.js` (123 lines) replaces broken catch-all stub. Static segment wins Pages Router over catch-all. Individual Q&As at `/help/faqs/{postSlug}` still route to catch-all (unchanged). Footer link from #72 now serves real Q&A content. 4-agent team debate refined spec. Content questions sent to BD/content team: `00-inbox/2026-06-07-content-questions-help-faqs.md`. If answers differ from defaults, 1-line patches needed. | `pages/help/faqs.js` (NEW), `helpers/wordpress/api.js` (+`POSTS_BY_FAQ_CATEGORY`) |
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
 | RR-1 | Rate-review Release 1 shipped | P0+P1-1→P1-9 + FE-22 RESOLVED 2026-06-07. **Sprint 1 SHIPPED** (`8ac1029` #74) — P1-3,4,5,6,8,9. P1-7 already done. **Tier 1+2 SHIPPED** (`cc3a0dc` #77) — B1 XSS, B2 race, B3 ProfileImage, B4 Sticky, M1 DOMPurify memo, M2 specific errors, M10 back 44px, N1+N2 cleanup. **Tier 3 SHIPPED** (`6c09c7d` #78) — M6 sticky@md, M7 skeleton, M8 h1 cap, N3 useMemo normalize. **UX gap SHIPPED** (`de964e3` #79) — "Submitting as X" Alert in form. M3 hook extraction deferred — different endpoints/auth. Grill audit verified. Auth model confirmed intentional via `00-inbox/finding-submit-review-auth-2026-06-07.md`. | `RateAndReviewForm.js`, `pages/rate-review/index.js`, `ReviewFirstPage.js`, `ReviewListByProduct.js`, `ReviewImageThumbnails.js`, `pages/rate-review/[reviewSlug].js`, `pages/rate-review/submit-review/[...slug].js` |
