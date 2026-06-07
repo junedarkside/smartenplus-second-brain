@@ -4,20 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-08 (session #81)
+**Updated:** 2026-06-08 (session #83)
 
-**Achieved this session (#81):**
-- **TSTD-1 REMOVED from active queue** per user request. User has direct access to test infra (can self-verify). No code changes made.
-- Cleaned TSTD-1 mentions from master-state (7 "Next:" lines across sessions #72-#80, 1 row in Section 2).
-- **No new tasks accepted.** Queue empty. Awaiting user direction.
-- P0 re-audit work from prior turn preserved mentally: Jest 30.4% fail rate (501/719 pass), Playwright desktop 79% fail (15/71 pass), mobile/tablet not yet tested, `e2e/payment/` empty, no BookButton test, no jest-axe. Available if user wants to revisit later.
+**Achieved this session (#83):**
+- **FAV-1 FAVORITE HEART SHIPPED** — 7 commits merged to `develop` across 2 repos (5 FE + 2 BE), pushed to origin. Manual smoke on detail page PASSED.
+- **Team workflow (3 parallel specialists → synthesis → skeptic → leader) → 7 vault files** in `01-projects/favorite-heart-analysis-2026-06-08/`: `audit.md`, `r1-backend.md`, `r1-frontend.md`, `r1-ux.md`, `r2-skeptic.md`, `r3-leader-synthesis.md`, `migration-0026-runbook.md`.
+- **5 BLOCKERs closed:** cross-CT data loss (blog path filter silent corruption), LikeViewSet 405 on DELETE, BookmarkViewSet 405 on DELETE, DayTripCard keyboard race stopPropagation, prod dup audit (DROPPED per user "doint touch rds" — runbook in vault).
+- **3 NITs closed:** lru_cache(maxsize=1) on contract ContentType, RTK Query migration supersedes useAuthAxios hook plan (Q5), IntersectionObserver rootMargin 100px→200px.
+- **Frontend commits:** `7267ed7` (keyboard race), `23630f3` (RTK Query refactor BookmarkButton + LikeButton), `b003168` (44px a11y + focus ring + scale pulse + IntersectionObserver hydration), `4bc852b` (DEAD CODE on DayTripHero.js — file never imported), `d6c8b8c` (port favorite to actual hero AirbnbPhotoGrid).
+- **Backend commits:** `d1cf0b1` (cross-CT filter fix + 2x @action decorator), `15b51b5` (lru_cache contract CT).
+- **Grill decisions Q1-Q5:** Q1 prod dup audit first → DROPPED; Q2 IntersectionObserver hydration (defer /check/ until card visible); Q3 wishlist page out of scope (Q3 contradiction with UX spec resolved: user said defer); Q4 keep 6 agents (~90 min); Q5 RTK Query supersedes useAuthAxios hook (user pushback: "you use axios? why dont you use rtk query?").
+- **Two-tab race policy (§B):** 409/404 treated as success (unique_together guarantees idempotency).
+- **No PR review** (no `gh` CLI installed; user opted for direct merge).
+- **Vault updates:** 7 FAV-1 files + 1 log.md entry + 1 master-state FAV-1 row closed.
+- **Lint clean** (3 pre-existing warnings unrelated to FAV-1).
 
 **Resume point (EXACT):**
 1. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+2. **RDS 0026 migration apply** (deferred from this env) — whoever runs prod migrations owns: pre-apply audit SQL → cleanup if dups → apply 0026 → apply 0027 (cascades). Full runbook: `01-projects/favorite-heart-analysis-2026-06-08/migration-0026-runbook.md`.
 
-**Achieved this session (#80):**
+**Achieved this session (#82):**
+- **QUICK WINS SWEEP** — 2 commits (1 vault + 1 frontend `develop`). Closed 6 Section 2 rows: HD-1, IDX-1, IDX-2, IDX-3, IDX-4, CART-1. CART-1 PARSING_ERROR catch in `DayTripBookingWidget.js:336-340`. IDX-4 renamed 3 files to `-overview.md` suffix, updated 17 wikilinks + 9 YAML `parent:` fields. Queue now: F11-FOLLOWUP content answers only.
 
-**Achieved this session (#80):**
+**Achieved this session (#81):**
 - **F11-FOLLOWUP landing page SHIPPED** — 1 commit on frontend `develop` (`43ed62a`, 2 files 139+). Branch `260607-feat/help-faqs-landing` created + FF-merged to develop.
 - **New file `pages/help/faqs.js`** (123 lines) — wins Pages Router resolution over `[...slug].js` for exact URL `/help/faqs`. Replaces the broken catch-all stub (`[...slug].js:36` read `data.nodes?.forEach` on edges-shaped response → page was near-blank with wrong hero). Individual Q&As at `/help/faqs/{postSlug}` still route to catch-all (unchanged).
 - **`helpers/wordpress/api.js`** added new top-level `POSTS_BY_FAQ_CATEGORY` constant (16 lines). Old dead `faqsPosts` alias inside `GET_HOMEPAGE_WORDPRESS_DATA` query NOT touched (separate cleanup PR).
@@ -162,7 +171,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | CMA-1 | Contract Model Ambiguity | P1/P2 partial. Remaining: data inventory. | `operators/models.py` |
 | CART-1 | PARSING_ERROR catch | **CLOSED** (#82). Branch added at `DayTripBookingWidget.js` before generic `else` — surfaces `error.status === 'PARSING_ERROR'` (RTK Query string from HTML 500 page) with clear user-facing message. Per `01-projects/cartitems-500-error-analysis-2026-06-02` Bug 3 + `03-knowledge/view-utility-call-exception-wrapper.md` caveat. No backend change. | `smartenplus-frontend/components/activities/detail/DayTripBookingWidget.js` |
 | FAQ-1 | ExperienceFAQ | P0-P2 done. Admin `ageRestriction` deferred. | `admin-dashboard/DayTripDetails.js` |
-| FAV-1 | Favorite heart | ADR ready. 4 files. | `dialogue/views.py`, `BookmarkButton.js` |
+| FAV-1 | Favorite heart | **CLOSED** (`951bd9c` FE + `3c0d1b6` BE #83). Both repos merged to develop + pushed to origin. 5 BLOCKERs + 3 NITs closed via 6-agent team workflow. Manual smoke on detail page PASSED. RDS 0026 migration DROPPED per user "doint touch rds" — runbook in vault `01-projects/favorite-heart-analysis-2026-06-08/migration-0026-runbook.md` for whoever runs prod migrations. Vault docs: `audit.md` + `r1-{backend,frontend,ux}.md` + `r2-skeptic.md` + `r3-leader-synthesis.md`. | `dialogue/views.py`, `BookmarkButton.js`, `LikeButton.js`, `DayTripCard.js`, `AirbnbPhotoGrid.js`, `store/api/api-slice.js` |
 | AT-1 | Airport Transfer redesign | P0. Spec: `03-knowledge/transportation-category-audit`. | `AirportTransferRouteCard.js` |
 | AT-2 | Airport-transfer width mismatch | Inner margins. | `StationInformation.js` etc. |
 | 15 | refetchOnMountOrArgChange | Needs justification. | `useTripData.js:16,24` |
