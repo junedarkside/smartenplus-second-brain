@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #64 (2026-06-07) — WA-3 F10 closed (spec scope)
+- **WA-3 F10** `e3194dc` — Brand name consistency: `BRAND_NAME = 'SmartEnPlus'` constant added to `helpers/constants.js`, 8 hardcoded sites replaced in 4 files (DefaultSeo + 3 structured data components), 1 typo file renamed
+- 7 files changed, +15/-10, fast-forward merge to develop
+- **Spec under-scoped:** audit found 39 total `'SmartEnPlus'` occurrences; spec listed 9. Shipped spec-faithful 8 sites; 30+ deferred to **F10-followup**
+- Lint clean
+
+**Resume point:** WA-3 F10-followup → F9 → F11 → WA-5 → TSTD-1
+
 ## Session #63 (2026-06-07) — WA-7 closed
 - **WA-7** `f1cbb5d` — Mobile input height parity: `min-h-[44px]` added to From/To labels (lines 228, 257) in `ProductSearchForm2.js` to match Date/Return/Passenger cell pattern
 - 1 file, +2/-2, fast-forward merge to develop

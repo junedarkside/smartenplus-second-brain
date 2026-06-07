@@ -4,11 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-07 (session #63)
+**Updated:** 2026-06-07 (session #64)
 
-**Achieved this session (#63):**
-- **WA-7 — Mobile input height parity SHIPPED** — 1 commit on frontend `develop` (branch `260607-fix/wa7-mobile-input-height`):
-  - `f1cbb5d` — **`min-h-[44px]` on From/To labels in `ProductSearchForm2.js`**. 1 file, 2 insertions, 2 deletions. From label (line 228) + To label (line 257): added `min-h-[44px]` to match the existing pattern at Date/Return/Passenger cells (lines 270, 291, 321). Mobile `flex-col` mode now shows consistent row heights. Desktop unchanged (min-height only kicks in below natural content size; From/To natural height ~48px from `py-3` + 24px icon). **Grill review:** passed — no High/Medium issues. F8's `min-w-0` (horizontal) and WA-7's `min-h-[44px]` (vertical) are independent CSS axes. **Lint clean.** **Fast-forward merge to develop.** **WA-7 CLOSED.**
+**Achieved this session (#64):**
+- **WA-3 F10 — Brand name consistency SHIPPED (spec scope)** — 1 commit on frontend `develop` (branch `260607-fix/wa3-f10-brand-name`):
+  - `e3194dc` — **`BRAND_NAME` constant + 8 site replacements + 1 file rename**. 7 files changed, 15 insertions, 10 deletions. `helpers/constants.js:31` adds `export const BRAND_NAME = 'SmartEnPlus'`. `pages/_app.js`: 4 sites (defaultTitle, titleTemplate, siteName, alt). `lib/homepage/components/PopularRoutesStructuredData.js`: 2 sites (provider, seller). `LocationsStructuredData.js`: 2 sites (seller, provider). `ReviewsStructuredData.js:65`: composite `\`${BRAND_NAME} Travel Service\`` (preserves "Travel Service" suffix). Renamed `public/smartenpus-transportation-booking-online.webp` → `public/smartenplus-transportation-booking-online.webp` (typo fix). `BlogPostHeader.js:5`: import updated. **Lint clean.** **Fast-forward merge to develop.**
+  - **Spec scope under-scoped:** audit found 39 `'SmartEnPlus'` occurrences total; spec listed ~9. Spec-faithful 8 sites shipped. 30+ remaining sites in `pages/`/`hooks/`/`utils/`/`components/blog/` deferred to **F10-followup**.
 
 **Resume point (EXACT):**
 1. **WA-3 Sprint 3 (F9-F11)** — P2 batch. Inline style extraction, brand name, FAQPage. ~6 hrs.
@@ -27,7 +28,8 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 |---|-------|--------|-------|
 | **WA-1** | **Website audit Sprint 1 (F1-F3)** | **CLOSED** (2026-06-06 #60). F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. | `components/UI/ShareButton.js`, `components/layout/footer.js`, `components/search/Passenger.js`, `components/pages-info/ContactUs.js` |
 | **WA-2** | **Website audit Sprint 2 (F4-F8)** | **CLOSED** (`d1fcf47` #62). F4 + F5 + F6 + F7 + F8 all shipped. | `ProductSearchForm2.js` |
-| **WA-3** | **Website audit Sprint 3 (F9-F11)** | P2 batch. Inline style extraction, brand name, FAQPage. ~6 hrs. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
+| **WA-3** | **Website audit Sprint 3 (F9-F11)** | **F10 DONE** (`e3194dc` #64). F9 + F11 remaining. | `ProfileMenu.js`, `helpers/constants.js`, `homepagev2.js:493-495` |
+| **WA-3 F10-followup** | **30+ remaining brand name sites** | OPEN. Spec scope was 8 sites; audit found 39 total. Remaining in: `pages/ref/`, `pages/privacy/`, `pages/forum/`, `pages/locations/`, `pages/help/`, `pages/blog/`, `pages/homepagev{1,2}.js`, `components/blog/AuthorBio.js:79` (substring check), `components/blog/BlogCard.js:39`, `components/FrontPage/Seo.js:55`, `components/SEO/seoConfig.js:138,147`, `components/blog/BlogPostHeader.js:20`, `components/omisecharge/OmiseCharge.js:6`, `components/payment/OmiseScriptLoader.js:21`, `hooks/useRouteSeo.js:80,103`, `hooks/useStructuredData.js:56`, `utils/blog/seoHelper.js:22,74,106,126,144`, `utils/blog/cardUtils.js:16`, `utils/serviceWorkerRegistration.js:146`, `public/service-worker.js:457` (SW, no import), `lib/homepage/hooks/useHomeSeoData.js:11,12` (keyword arrays), `lib/homepage/components/ReviewsStructuredData.js:24` (long description). ~2 hrs. | various |
 | **WA-4** | **ProfileMenu UX consolidation** | DONE (`44e209d` + `40b0a36` + `f4d581f` + `314020c`). Overflow guard + 3 expandable groups. −240px default height. | `ProfileButton.js`, `ProfileMenu.js` |
 | **WA-6** | **F2 refinements — 40px icon button standard** | DONE (`1e4c549` + `fbdca15` + `e782c41`). User feedback after F2 44px: too big for dense UI. Reverted swap/currency/profile to 40px (Material Design medium). Token `TOUCH_TARGET.minHeight` still 44 — defer update. Atom: [[icon-button-size-decision]]. | `ProductSearchForm2.js`, `CurrencySelector.js`, `ProfileImage.js` |
 | **WA-5** | **Footer secondary nav + SearchDialogTrigger touch targets** | OPEN. Sub-44px items flagged in F2 commit body. Separate mini-batch. | footer, `SearchDialogTrigger.js:33-43` |
