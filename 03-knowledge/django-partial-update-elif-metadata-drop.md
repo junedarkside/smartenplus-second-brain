@@ -1,6 +1,6 @@
 ---
 name: django-partial-update-elif-metadata-drop
-description: Backend partial_update `elif` that only handles ONE field (e.g. order) silently drops all other payload fields on existing rows. Fix: unconditional sync of all payload fields.
+description: Backend partial_update `elif` that handles only ONE field silently drops all other payload fields on existing rows. Fix: unconditional sync of all payload fields.
 metadata:
   type: knowledge
 ---
@@ -9,19 +9,19 @@ metadata:
 
 ## Summary
 
-`partial_update` in DRF that branches on `elif field_changed` only writes THAT field, dropping every other payload field on the existing row. Symptom: "first save works, every subsequent edit of the dropped fields does nothing."
+`partial_update` in DRF that branches on `elif field_changed` only writes THAT field, dropping every other payload field on existing row. Symptom: "first save works, every subsequent edit of dropped fields does nothing."
 
 ## Context
 
-Two model branches in a `partial_update`: a CREATE branch for new rows, and an UPDATE branch for existing rows. The UPDATE branch was written to handle reorder (`elif instance.order != new_order`) — the body only saves `order`. The CREATE branch correctly persists all metadata fields (`alt_text`, `description`, `caption`).
+Two branches in `partial_update`: CREATE for new rows, UPDATE for existing. UPDATE written to handle reorder (`elif instance.order != new_order`) — body only saves `order`. CREATE persists all metadata (`alt_text`, `description`, `caption`).
 
 ## Problem
 
-User adds image (CREATE branch → metadata saved correctly). User edits metadata only, doesn't reorder, saves contract. UPDATE branch runs, `elif order != new_order` is FALSE, body skipped. Metadata never reaches the DB. **Only the first save after add works; all subsequent metadata edits vanish.**
+User adds image (CREATE → metadata saved). User edits metadata only, no reorder, saves contract. UPDATE runs, `elif order != new_order` FALSE, body skipped. Metadata never reaches DB. **First save after add works; every subsequent metadata edit vanishes.**
 
 ## Details
 
-The `elif` body looks like:
+`elif` body:
 
 ```python
 elif image_gallery_instance.order != order:
@@ -29,31 +29,31 @@ elif image_gallery_instance.order != order:
     image_gallery_instance.save()
 ```
 
-The fix is to drop the `elif` condition and unconditionally write all payload fields, like the CREATE branch does:
+Fix: drop `elif` condition, unconditionally write all payload fields like CREATE does:
 
 ```python
 else:  # existing row, order unchanged or changed
-    instance.alt_text = payload.get('alt_text') or (source_instance.alt_text or '' if source_instance else '')
-    instance.description = payload.get('description') or (source_instance.description or '' if source_instance else '')
-    instance.caption = payload.get('caption') or (source_instance.caption or '' if source_instance else '')
+    instance.alt_text = payload.get('alt_text') or (source.alt_text or '' if source else '')
+    instance.description = payload.get('description') or (source.description or '' if source else '')
+    instance.caption = payload.get('caption') or (source.caption or '' if source else '')
     instance.order = order
     instance.save()
 ```
 
 ## Decision
 
-**Always sync ALL payload fields in UPDATE, not just the one the branch condition was designed for.** The branch is a short-circuit optimization that costs you the user's edits. Order is the easy field to detect; metadata is what users actually edit repeatedly.
+**Sync ALL payload fields in UPDATE, not just the one the branch condition was designed for.** Branch is a short-circuit optimization that costs user edits. Order easy to detect; metadata is what users edit repeatedly.
 
 ## Tradeoffs
 
-- Unconditional save writes ALL fields every update, even unchanged ones. Cost: 1 extra UPDATE query per save. Worth it: never lose user data.
-- The fallback chain (`payload.get('x') or source_instance.x`) ensures blanks in payload don't overwrite existing data with empty string.
+- Unconditional save writes ALL fields every update. Cost: 1 extra UPDATE query. Worth it: never lose user data.
+- Fallback chain (`payload.get('x') or source.x`) prevents blanks in payload from overwriting existing data with empty string.
 
 ## Consequences
 
-- Always re-test the "edit metadata only, no reorder" path after writing any `partial_update` with branched logic. First-save-success is not enough.
-- When two write paths exist (CREATE + UPDATE), make them write IDENTICAL fields. Drift = lost data.
-- For view-level `partial_update` with many payload fields, prefer `serializer.partial_update(instance, validated_data)` so DRF handles field iteration uniformly.
+- Re-test "edit metadata only, no reorder" path after writing any `partial_update` with branched logic. First-save-success not enough.
+- Two write paths (CREATE + UPDATE) must write IDENTICAL fields. Drift = lost data.
+- For view-level `partial_update` with many payload fields, prefer `serializer.partial_update(instance, validated_data)` so DRF iterates fields uniformly.
 
 ## Related
 

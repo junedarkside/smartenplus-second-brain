@@ -9,11 +9,11 @@ metadata:
 
 ## Summary
 
-When a sub-component's edits (e.g. image metadata dialog) should be persisted by the parent form's existing Save button, write to Formik state on confirm. The parent's `setFieldValue` is the contract; no new mutation endpoint, no new save button, no extra notify wiring.
+When a sub-component's edits (e.g. image metadata dialog) should be persisted by parent form's existing Save button, write to Formik state on confirm. Parent's `setFieldValue` is the contract; no new mutation endpoint, no new save button, no extra notify wiring.
 
 ## Context
 
-Two image surfaces in admin-dashboard: OperatorImages (gallery) and ProductImages (per-contract selected set). User wants to edit metadata (alt_text, description, caption) on a selected image. There's already a contract Save button. Adding a "Save metadata" button to the dialog would create two save paths + need to handle ordering conflicts.
+Two image surfaces in admin-dashboard: OperatorImages (gallery) + ProductImages (per-contract selected set). User edits metadata (alt_text, description, caption) on a selected image. Contract Save button already exists. Adding "Save metadata" button to dialog = two save paths + ordering conflicts.
 
 ## Problem
 
@@ -23,7 +23,7 @@ Two image surfaces in admin-dashboard: OperatorImages (gallery) and ProductImage
 
 ## Details
 
-Wire the dialog as a controlled Formik consumer:
+Wire dialog as controlled Formik consumer:
 
 ```jsx
 const handleMetadataUpdate = ({ altText, description, caption }) => {
@@ -42,30 +42,30 @@ const handleMetadataUpdate = ({ altText, description, caption }) => {
 <ImageMetadataDialog
   isEditMode
   isSubmitting={false}
-  onSubmit={handleMetadataUpdate}  // no readOnly flag — dialog becomes form
+  onSubmit={handleMetadataUpdate}  // no readOnly — dialog becomes form
 />
 ```
 
-`transformContractFormValues` already passes `imageSelection` through to the backend payload verbatim. Contract Save → backend → response → re-seed Formik → all in one loop.
+`transformContractFormValues` already passes `imageSelection` through to backend payload verbatim. Contract Save → backend → response → re-seed Formik → one loop.
 
 ## Decision
 
-**Reuse the parent form's save flow.** The dialog's job is: gather edit, write to Formik, show snackbar, close. Persistence is the parent's job. This is the same pattern as any other Formik field — image metadata is just a nested field array.
+**Reuse parent form's save flow.** Dialog job: gather edit, write to Formik, show snackbar, close. Persistence is parent's job. Same pattern as any other Formik field — image metadata is just a nested field array.
 
 ## Tradeoffs
 
-- Snackbars say "Image metadata updated" but the data isn't in the DB until user clicks contract Save. Technically correct (Formik state IS updated) but might confuse users who close the tab without saving. Tradeoff accepted — alternative is more code for marginal UX win.
-- If the parent form has validation that rejects the new image metadata, the dialog edit is silently rolled back. This is rare (image fields are loose) but possible. Document in the dialog's contract.
+- Snackbar says "Image metadata updated" but data not in DB until user clicks contract Save. Technically correct (Formik state IS updated) but may confuse users who close tab without saving. Tradeoff accepted — alternative = more code for marginal UX win.
+- If parent form has validation that rejects new image metadata, dialog edit silently rolled back. Rare (image fields loose) but possible. Document in dialog's contract.
 
 ## Consequences
 
 - Zero new endpoints, zero new save buttons, zero new state. Reuses `useAlert` provider (snackbar), `setFieldValue` (state), parent Save (persistence).
-- The backend must read all metadata fields from the request payload, not just rely on FK lookups. See [[django-partial-update-elif-metadata-drop]] for the matching backend invariant.
+- Backend must read all metadata fields from request payload, not just rely on FK lookups. See [[django-partial-update-elif-metadata-drop]] for matching backend invariant.
 - For dialogs that DO need immediate persistence (e.g. confirmation that can't be undone), this pattern doesn't fit. Use a direct mutation then.
 
 ## Related
 
-- [[add-flow-metadata-helper-pattern]] — matching helper for the other side (gallery → selected)
+- [[add-flow-metadata-helper-pattern]] — matching helper for other side (gallery → selected)
 - [[django-partial-update-elif-metadata-drop]] — backend invariant that makes this work
 - [[nextjs-hmr-cross-module-callback-staleness]] — gotcha when dialogs go through parent onSubmit
 - Source: `admin-dashboard/components/Images/ProductImages.js:65-76`
