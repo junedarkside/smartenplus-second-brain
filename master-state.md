@@ -4,7 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-08 (session #85)
+**Updated:** 2026-06-08 (session #86)
+
+**Achieved this session (#86):**
+- **Operator image alt_text + caption SHIPPED** — 2 repos on `develop`:
+  - `admin-dashboard` `71c2352` — feat(operator-images): edit alt_text + caption alongside description
+  - `smartenplus-backend` `08b6593` — feat(operators): add alt_text + caption to OperatorImageGallery
+- **Schema** — 2 nullable `CharField(250)` on `OperatorImageGallery` (alt_text, caption). Migration `0058_operatorimagegallery_alt_text_and_more` (no data loss). Serializer exposes both as writable (not in `read_only_fields`).
+- **Dialog UX** — `pages/routemanagement/operators/images/ImageEditDialog.js` now has 3 `TextField`s (alt/description/caption), each `maxLength=250`. Alt text auto-prefills from `<operatorName> - <filename-slug>` when empty. Grid `alt` chain: `alt_text || description || operator_name || ''`.
+- **Debug saga (worth atomizing)** — symptom "only description persists" survived hard refresh. Five `[DBG-IMG-EDIT]` probes (dialog → page → RTK → network → backend) proved the code was correct end-to-end. Root cause: Next.js Pages Router Fast Refresh replaced `ImageEditDialog` module (3 fields visible) but left the parent `index.js` module's `handleDialogSubmit` callback stale → it destructured only the OLD keys and dropped alt/caption. Hard refresh after the second `.next` recompile finally replaced the parent module. Probes removed, code clean.
+- **IMG-ALT-1 CLOSED** — feature shipped. Atom: [[operator-image-alt-caption-fields]]. Debuggable artifact: [[nextjs-hmr-cross-module-callback-staleness]].
+
+**Resume point (EXACT):**
+1. **Open: IMG-ALT-DEBUG-1** — confirm whether HMR staleness recurs on future dialogs. If so: refactor `ImageEditDialog` to call `useUpdateOperatorImageMutation` directly (drop parent `onSubmit` indirection). Atomic prevention note captured. Optional.
+2. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults. Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+3. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref` (per BRANCH-INCIDENT-1 lesson) → `xargs git push origin --delete {}`.
+
+**Plan doc:** `/Users/charuwatnaranong/.claude/plans/create-team-to-check-modular-diffie.md`
+
+Full plan: [[operator-image-alt-caption-fields]]
 
 **Achieved this session (#85):**
 - **Operator/contract image independence audit complete** — confirmed `OperatorImageGallery` and `ImageGallery` are intentionally independent models. Soft-delete on operator gallery does NOT cascade to contract `ImageGallery` rows. No behavior change required. Vault: [[operator-image-soft-delete-cascade-gap]]
@@ -210,6 +228,8 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | **BRANCH-INCIDENT-1** | `develop` branch accidentally deleted in #84 during bulk cleanup | **CLOSED** (#84). Cause: `sed 's/^ //'` only strips 1 leading space; `git branch --merged develop` line for `develop` itself has 2 spaces. `git branch -d develop` succeeded because develop IS merged (into itself). `-d` only refuses unmerged, not "currently checked out sibling" branches. `main` was checked out, error hidden in 94-successes output. `origin/develop` intact at `f15d7cf`. User self-restored via `git branch develop origin/develop`. **Lesson:** use `git for-each-ref --format='%(refname:short)' refs/heads/` for clean branch names in scripts. Avoid `sed 's/^ //'` + anchored regex on `git branch` output. | N/A |
 | **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | OPEN. Local cleanup (94) done in #84. Need: `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`. Verify `git branch -r | wc -l` → 2. Run `git fetch --prune`. | `origin/2606*` (81 branches) |
 | **IMG-IND-1** | Operator/contract image independence audit + dialog copy | **CLOSED** (#85). Confirmed intentional separation (no cascade). 1 admin-dashboard file change (informational Alert in delete dialog). Atom: [[django-soft-delete-s3-file-preserve]]. Optional follow-ups (`safe_to_delete` split, `is_deleted` in `_ImageGallerySerializer`) deferred. | `pages/routemanagement/operators/images/index.js:365-376` |
+| **IMG-ALT-1** | Operator image alt_text + caption editing | **CLOSED** (#86). 2 nullable CharField(250) on `OperatorImageGallery`, serializer writable, migration `0058`, dialog 3-field + auto-prefill, grid alt chain updated. Both repos on `develop` (`admin-dashboard` `71c2352` + `smartenplus-backend` `08b6593`). Atom: [[operator-image-alt-caption-fields]]. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:143,263`; `operators/models.py:559-561`, `serializers.py:33` |
+| **IMG-ALT-DEBUG-1** | Next.js HMR cross-module callback staleness | OPEN. Fast Refresh can replace a child module (dialog) but leave the parent module's callback stale → new fields silently dropped, hard refresh may or may not fix. Confirmed in #86 via 5-probe instrumentation. Prevention: move mutation call INTO the dialog component, drop parent `onSubmit` indirection. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Optional refactor. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:140-178` |
 
 ---
 
