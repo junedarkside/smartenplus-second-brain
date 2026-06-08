@@ -4,24 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-08 (session #83)
+**Updated:** 2026-06-08 (session #84)
 
-**Achieved this session (#83):**
-- **FAV-1 FAVORITE HEART SHIPPED** — 7 commits merged to `develop` across 2 repos (5 FE + 2 BE), pushed to origin. Manual smoke on detail page PASSED.
-- **Team workflow (3 parallel specialists → synthesis → skeptic → leader) → 7 vault files** in `01-projects/favorite-heart-analysis-2026-06-08/`: `audit.md`, `r1-backend.md`, `r1-frontend.md`, `r1-ux.md`, `r2-skeptic.md`, `r3-leader-synthesis.md`, `migration-0026-runbook.md`.
-- **5 BLOCKERs closed:** cross-CT data loss (blog path filter silent corruption), LikeViewSet 405 on DELETE, BookmarkViewSet 405 on DELETE, DayTripCard keyboard race stopPropagation, prod dup audit (DROPPED per user "doint touch rds" — runbook in vault).
-- **3 NITs closed:** lru_cache(maxsize=1) on contract ContentType, RTK Query migration supersedes useAuthAxios hook plan (Q5), IntersectionObserver rootMargin 100px→200px.
-- **Frontend commits:** `7267ed7` (keyboard race), `23630f3` (RTK Query refactor BookmarkButton + LikeButton), `b003168` (44px a11y + focus ring + scale pulse + IntersectionObserver hydration), `4bc852b` (DEAD CODE on DayTripHero.js — file never imported), `d6c8b8c` (port favorite to actual hero AirbnbPhotoGrid).
-- **Backend commits:** `d1cf0b1` (cross-CT filter fix + 2x @action decorator), `15b51b5` (lru_cache contract CT).
-- **Grill decisions Q1-Q5:** Q1 prod dup audit first → DROPPED; Q2 IntersectionObserver hydration (defer /check/ until card visible); Q3 wishlist page out of scope (Q3 contradiction with UX spec resolved: user said defer); Q4 keep 6 agents (~90 min); Q5 RTK Query supersedes useAuthAxios hook (user pushback: "you use axios? why dont you use rtk query?").
-- **Two-tab race policy (§B):** 409/404 treated as success (unique_together guarantees idempotency).
-- **No PR review** (no `gh` CLI installed; user opted for direct merge).
-- **Vault updates:** 7 FAV-1 files + 1 log.md entry + 1 master-state FAV-1 row closed.
-- **Lint clean** (3 pre-existing warnings unrelated to FAV-1).
+**Achieved this session (#84):**
+- **HOMEPAGE SEARCH BAR FIX SHIPPED** — `915ebe2` (revert d1fcf47) on `260608-fix/homepage-search-bar-layout`. Single conceptual change: drop `flex-wrap` + `min-w-0` from `components/search/ProductSearchForm2.js` lines 227/228/257/270/291/321/332. `f15d7cf` merged to develop. User confirmed in production. Lint clean.
+- **Fix branch deleted** — `260608-fix/homepage-search-bar-layout` (local + remote). `develop` history clean.
+- **Bulk local branch cleanup** — 94 merged local branches deleted via `xargs git branch -d`. Kept 2 unmerged: `260522-fix/trip-detail-width-consistency`, `260601-feat/header-activities-search`. Kept `main`, `develop`.
+- **INCIDENT — `develop` branch accidentally deleted** — bug in sed filter (`s/^ //` strips 1 space, missed 2-space `  develop` line from `git branch --merged develop`). `git branch -d develop` succeeded because `-d` only refuses unmerged, not "currently checked out sibling" branches. `main` was checked out, so error was hidden in the 94-successes output. `origin/develop` intact at `f15d7cf`. User self-restored via `git branch develop origin/develop`.
+- **Remote branch cleanup NOT done** — 81 remote `origin/2606*` branches still pending. Stopped when develop incident surfaced.
+- Plan: `/Users/charuwatnaranong/.claude/plans/check-homepage-at-search-ticklish-thimble.md`
 
 **Resume point (EXACT):**
-1. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
-2. **RDS 0026 migration apply** (deferred from this env) — whoever runs prod migrations owns: pre-apply audit SQL → cleanup if dups → apply 0026 → apply 0027 (cascades). Full runbook: `01-projects/favorite-heart-analysis-2026-06-08/migration-0026-runbook.md`.
+1. **Delete 81 remote merged branches** — use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||'` (no leading-space ambiguity) → `xargs -I {} git push origin --delete {}`. Verify `git branch -r | wc -l` → 2. Run `git fetch --prune`.
+2. **BRANCH-INCIDENT-1 lesson** — `git branch` output has variable leading whitespace. Always use `git for-each-ref --format='%(refname:short)' refs/heads/` for clean names in scripts. Avoid `sed 's/^ //'` for any exclusion filter that uses anchored regex. Captured in Section 2.
+3. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
 
 **Achieved this session (#82):**
 - **QUICK WINS SWEEP** — 2 commits (1 vault + 1 frontend `develop`). Closed 6 Section 2 rows: HD-1, IDX-1, IDX-2, IDX-3, IDX-4, CART-1. CART-1 PARSING_ERROR catch in `DayTripBookingWidget.js:336-340`. IDX-4 renamed 3 files to `-overview.md` suffix, updated 17 wikilinks + 9 YAML `parent:` fields. Queue now: F11-FOLLOWUP content answers only.
@@ -193,6 +189,8 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | IDX-2 | Unindexed experience-faq | **CLOSED** (#82). Added wikilink entry in `index.md` under "Active Projects" with 1-line decision summary. Pairs with `experience-detail-page-redesign-2026-06-02` (sibling). | `index.md` (under Active Projects) |
 | IDX-3 | Missing content-marketing-strategy | **CLOSED** (#82). Already indexed in `index.md:191` (full Thailand travel playbook). Stale master-state entry. | `index.md:191` |
 | IDX-4 | Duplicate-basename wikilinks | **CLOSED** (#82). 3 files renamed with `-overview` suffix: `website-audit-full-2026-06-06`, `rate-review-uxui-audit-2026-06-06`, `gyg-page-analysis-2026-06-04`. 17 wikilink references + 9 YAML `parent:` fields updated across `index.md`, `master-state.md`, `03-knowledge/*` (9 atoms), `01-projects/gyg-card-rate-analysis-2026-06-05/*` (4 files), `01-projects/activities-pagination-ux-audit-2026-06-05/*` (2 files), `01-projects/gyg-page-analysis-2026-06-04-overview.md` (self-ref). `log.md` historical refs preserved (4 entries) per vault protocol. `.obsidian/workspace.json` auto-updates on next launch. | `01-projects/*-overview.md` (3 files) |
+| **BRANCH-INCIDENT-1** | `develop` branch accidentally deleted in #84 during bulk cleanup | **CLOSED** (#84). Cause: `sed 's/^ //'` only strips 1 leading space; `git branch --merged develop` line for `develop` itself has 2 spaces. `git branch -d develop` succeeded because develop IS merged (into itself). `-d` only refuses unmerged, not "currently checked out sibling" branches. `main` was checked out, error hidden in 94-successes output. `origin/develop` intact at `f15d7cf`. User self-restored via `git branch develop origin/develop`. **Lesson:** use `git for-each-ref --format='%(refname:short)' refs/heads/` for clean branch names in scripts. Avoid `sed 's/^ //'` + anchored regex on `git branch` output. | N/A |
+| **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | OPEN. Local cleanup (94) done in #84. Need: `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`. Verify `git branch -r | wc -l` → 2. Run `git fetch --prune`. | `origin/2606*` (81 branches) |
 
 ---
 

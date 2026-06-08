@@ -4,6 +4,23 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #83 (2026-06-08) — FAV-1 FAVORITE HEART SHIPPED (7 commits)
+- **FAV-1** — 7 commits merged to develop across 2 repos (5 FE + 2 BE), pushed to origin. Manual smoke on detail page PASSED.
+- **Team workflow** (3 parallel specialists → synthesis → skeptic → leader) → 7 vault files in `01-projects/favorite-heart-analysis-2026-06-08/`: `audit.md`, `r1-backend.md`, `r1-frontend.md`, `r1-ux.md`, `r2-skeptic.md`, `r3-leader-synthesis.md`, `migration-0026-runbook.md`.
+- **5 BLOCKERs closed:** cross-CT data loss (blog path filter silent corruption), LikeViewSet 405 on DELETE, BookmarkViewSet 405 on DELETE, DayTripCard keyboard race stopPropagation, prod dup audit (DROPPED per user "doint touch rds" — runbook in vault).
+- **3 NITs closed:** lru_cache(maxsize=1) on contract ContentType, RTK Query migration supersedes useAuthAxios hook plan (Q5), IntersectionObserver rootMargin 100px→200px.
+- **Frontend commits:** `7267ed7` (keyboard race), `23630f3` (RTK Query refactor BookmarkButton + LikeButton), `b003168` (44px a11y + focus ring + scale pulse + IntersectionObserver hydration), `4bc852b` (DEAD CODE on DayTripHero.js — file never imported), `d6c8b8c` (port favorite to actual hero AirbnbPhotoGrid).
+- **Backend commits:** `d1cf0b1` (cross-CT filter fix + 2x @action decorator), `15b51b5` (lru_cache contract CT).
+- **Grill decisions Q1-Q5:** Q1 prod dup audit first → DROPPED; Q2 IntersectionObserver hydration; Q3 wishlist page defer; Q4 keep 6 agents (~90 min); Q5 RTK Query supersedes useAuthAxios hook.
+- **Two-tab race policy (§B):** 409/404 treated as success (unique_together guarantees idempotency).
+- **No PR review** (no `gh` CLI installed; user opted for direct merge).
+- **Vault updates:** 7 FAV-1 files + 1 log.md entry + 1 master-state FAV-1 row closed.
+- **Lint clean** (3 pre-existing warnings unrelated to FAV-1).
+
+**Resume point:**
+1. F11-FOLLOWUP content answers — apply 1-line patches if BD/content team answers differ from defaults (Q1.1 FAQ count, Q1.2 tag slugs, Q2.1 source links). Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+2. RDS 0026 migration apply (deferred from this env) — whoever runs prod migrations owns: pre-apply audit SQL → cleanup if dups → apply 0026 → apply 0027 (cascades). Full runbook: `01-projects/favorite-heart-analysis-2026-06-08/migration-0026-runbook.md`.
+
 ## Session #71 (2026-06-07) — Visual check session (no code)
 - Verified WA-5 fixes render correctly via dev server (localhost:3000).
 - All 15 file changes from `781bf7a` intact.
