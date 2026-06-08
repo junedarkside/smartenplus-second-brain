@@ -4,7 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-08 (session #84)
+**Updated:** 2026-06-08 (session #85)
+
+**Achieved this session (#85):**
+- **Operator/contract image independence audit complete** — confirmed `OperatorImageGallery` and `ImageGallery` are intentionally independent models. Soft-delete on operator gallery does NOT cascade to contract `ImageGallery` rows. No behavior change required. Vault: [[operator-image-soft-delete-cascade-gap]]
+- **A+ cascade recommendation retracted** — earlier audit proposed cascade, user clarified contracts are self-managed. No code change.
+- **Admin dialog copy SHIPPED** — `pages/routemanagement/operators/images/index.js:365-376`. New info Alert in delete dialog when `active_contracts > 0`. Explains operator/contract independence. Reuses `validationData.usage.active_contracts`. No new state, no new mutation, no new endpoint.
+- **Atom extracted** — [[django-soft-delete-s3-file-preserve]] captured the generic soft-delete-preserves-S3 invariant from the destroy docstring (`operators/views.py:1860-1868`). Parent note trimmed. `index.md` + `log.md` updated.
+- **IMG-IND-1 CLOSED** — audit + dialog copy complete. 1 file touched (admin-dashboard). Vault-only changes otherwise.
+
+**Resume point (EXACT):**
+1. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults. Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
+2. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref` (per BRANCH-INCIDENT-1 lesson) → `xargs git push origin --delete {}`.
+3. **(Optional) Defer IMG-IND follow-ups** — split `safe_to_delete` into `safe_for_operator_gallery` + `safe_for_consumer`; add `is_deleted` to `_ImageGallerySerializer` for admin tooling. Not required. Captured in [[operator-image-soft-delete-cascade-gap]] Tradeoffs.
+
+**Plan doc:** `/Users/charuwatnaranong/.claude/plans/create-an-team-to-sharded-conway.md`
+
+Full plan: [[operator-image-soft-delete-cascade-gap]]
+
+**Achieved this session (#84):**
 
 **Achieved this session (#84):**
 - **HOMEPAGE SEARCH BAR FIX SHIPPED** — `915ebe2` (revert d1fcf47) on `260608-fix/homepage-search-bar-layout`. Single conceptual change: drop `flex-wrap` + `min-w-0` from `components/search/ProductSearchForm2.js` lines 227/228/257/270/291/321/332. `f15d7cf` merged to develop. User confirmed in production. Lint clean.
@@ -191,6 +209,7 @@ Full plan: `01-projects/website-audit-full-2026-06-06/r3-leader-synthesis.md`
 | IDX-4 | Duplicate-basename wikilinks | **CLOSED** (#82). 3 files renamed with `-overview` suffix: `website-audit-full-2026-06-06`, `rate-review-uxui-audit-2026-06-06`, `gyg-page-analysis-2026-06-04`. 17 wikilink references + 9 YAML `parent:` fields updated across `index.md`, `master-state.md`, `03-knowledge/*` (9 atoms), `01-projects/gyg-card-rate-analysis-2026-06-05/*` (4 files), `01-projects/activities-pagination-ux-audit-2026-06-05/*` (2 files), `01-projects/gyg-page-analysis-2026-06-04-overview.md` (self-ref). `log.md` historical refs preserved (4 entries) per vault protocol. `.obsidian/workspace.json` auto-updates on next launch. | `01-projects/*-overview.md` (3 files) |
 | **BRANCH-INCIDENT-1** | `develop` branch accidentally deleted in #84 during bulk cleanup | **CLOSED** (#84). Cause: `sed 's/^ //'` only strips 1 leading space; `git branch --merged develop` line for `develop` itself has 2 spaces. `git branch -d develop` succeeded because develop IS merged (into itself). `-d` only refuses unmerged, not "currently checked out sibling" branches. `main` was checked out, error hidden in 94-successes output. `origin/develop` intact at `f15d7cf`. User self-restored via `git branch develop origin/develop`. **Lesson:** use `git for-each-ref --format='%(refname:short)' refs/heads/` for clean branch names in scripts. Avoid `sed 's/^ //'` + anchored regex on `git branch` output. | N/A |
 | **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | OPEN. Local cleanup (94) done in #84. Need: `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`. Verify `git branch -r | wc -l` → 2. Run `git fetch --prune`. | `origin/2606*` (81 branches) |
+| **IMG-IND-1** | Operator/contract image independence audit + dialog copy | **CLOSED** (#85). Confirmed intentional separation (no cascade). 1 admin-dashboard file change (informational Alert in delete dialog). Atom: [[django-soft-delete-s3-file-preserve]]. Optional follow-ups (`safe_to_delete` split, `is_deleted` in `_ImageGallerySerializer`) deferred. | `pages/routemanagement/operators/images/index.js:365-376` |
 
 ---
 

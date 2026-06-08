@@ -50,3 +50,4 @@ Backend: ext whitelist + 10MB max. Client mirrors.
 ## Related
 - [[operators]]
 - [[admin-dashboard-contracts]]
+- [[operator-image-soft-delete-cascade-gap]] — soft-delete does NOT cascade to contract `ImageGallery` rows (shared URL string, no FK)
