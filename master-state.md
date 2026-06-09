@@ -4,29 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-08 (session #87)
+**Updated:** 2026-06-09 (session #88)
 
-**Achieved this session (#87):**
-- **ProductImages ↔ OperatorImages parity SHIPPED** — 2 repos on `develop`:
-  - `admin-dashboard` `c425ff6` — feat(operator-images): bring ProductImages to parity (search/filter, metadata dialog, caption bar)
-  - `smartenplus-backend` `e777816` — feat(operators): add alt_text/description/caption to ImageGallery + persist on update
-- **Backend schema** — 3 nullable `CharField(250)` on `ImageGallery` (alt_text, description, caption). Migration `0059` applied. Serializer exposes all 3 as writable.
-- **Shared module** — `components/Images/shared/` with `ImageMetadataDialog`, `ImageSearchBar`, `useImageSearch`, `DraggableImageCard` (caption bar). OperatorImages + ProductImages both consume it. No duplication.
-- **Add-flow carries metadata** — `addImageIfUnique` copies alt_text/description/caption from `OperatorImageGallery` to `ImageGallery` via `imageSelection` payload. No FK, only string refs.
-- **Edit-flow reuses contract Save** — click tile → `ImageMetadataDialog` in edit mode → writes to Formik `imageSelection` + provider `useAlert` snackbar → contract Save persists. No separate mutation endpoint. No new save button.
-- **Bug fix (debug-mantra)** — symptom "editing alt/description/caption can't be saved" survived 4 hypotheses. Root cause: `operators/views.py:720-722` `elif` branch only wrote `order` on existing `ImageGallery` rows, dropped metadata. CREATE branch (line 711-719) wrote metadata → first save after add worked; every subsequent metadata edit silently lost. Fix: `else` branch with unconditional metadata sync + operator_image fallback chain. `c185523`.
-- **3 atoms extracted** — [[django-partial-update-elif-metadata-drop]], [[image-metadata-formik-state-only-save]], [[add-flow-metadata-helper-pattern]]. `index.md` + `log.md` updated.
+**Achieved this session (#88):**
+- **WordPress Media Library tab SHIPPED** — `admin-dashboard` `99e45b2` on `develop`:
+  - `WordpressImages.js` — new component: search + debounce + Load More pagination via `X-WP-TotalPages`
+  - `ImageSelection.js` — MUI Tabs (Operator Images / WordPress Media), both panels mounted + RTK cached
+  - `wordpressMediaApi.js` — RTK Query slice proxied through `/wp-api`, normalises WP response (`wp_` id prefix, `stripHtml` caption)
+  - `store/index.js` — registered reducer + middleware, blacklisted from persist
+  - `next.config.js` — `/wp-api/:path*` rewrite + `smartenplus-wp-s3` remotePattern
+- **Image URL bug pipeline fixed** — `smartenplus-backend` `b3b8ee0` + `f7010d2` on `develop`:
+  - `operators/serializers.py` — `get_image()` SerializerMethodField on both `_ImageGallerySerializer` + `ImageGallerySerializer`: returns stored `https://` verbatim, no presigned URL generation
+  - `operators/views.py` — store full `https://` verbatim for non-primary-S3 paths (WP S3 bucket); guard PK lookup against non-integer IDs (`wp_` prefix)
+  - `products/serializers.py` — same `get_image()` fix; `ContractSerializer.image` + `ProductDetailSerializer.image` converted to `SerializerMethodField` filtering `is_deleted=False` — prevents soft-deleted rows appearing in API responses
+- **Root cause confirmed** — id=2881 `is_deleted=True` row with wrong bucket URL was leaking through `imagegallery_set` (no filter). Fix: `obj.imagegallery_set.filter(is_deleted=False)`.
+- **smartenplus-frontend debug clean** — console logs added/removed in `AirbnbPhotoGrid.js`, no commit needed.
+- **`.claude/settings.local.json` gitignored** — admin-dashboard `620c561`.
 
 **Resume point (EXACT):**
-1. **Open: IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Low priority.
-2. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults. Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`. Deadline 2026-06-09.
-3. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref` (per BRANCH-INCIDENT-1 lesson) → `xargs git push origin --delete {}`.
+1. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`.
+2. **IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Low priority.
+3. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults. Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`.
 
-**Plan doc:** `/Users/charuwatnaranong/.claude/plans/create-team-to-review-tranquil-pebble.md`
-
-Full plan: [[product-images-operator-images-parity-2026-06-08]]
-
-**Achieved this session (#86):**
+**Achieved this session (#87):**
 - **Operator image alt_text + caption SHIPPED** — 2 repos on `develop`:
   - `admin-dashboard` `71c2352` — feat(operator-images): edit alt_text + caption alongside description
   - `smartenplus-backend` `08b6593` — feat(operators): add alt_text + caption to OperatorImageGallery
@@ -41,6 +41,7 @@ Full plan: [[product-images-operator-images-parity-2026-06-08]]
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **WP-IMAGE-1** | WordPress Media Library tab + image URL pipeline | **CLOSED** (#88). WP media tab in `ImageSelection.js` (MUI Tabs), `WordpressImages.js`, `wordpressMediaApi.js` RTK slice. Backend: `get_image()` verbatim https:// fix on 3 serializers, `is_deleted=False` filter on `imagegallery_set`, PK guard for `wp_` prefix. All 3 repos pushed. | `components/Images/{WordpressImages,ImageSelection}.js`, `store/api/wordpressMediaApi.js`, `operators/{serializers,views}.py`, `products/serializers.py` |
 | **IMG-PARITY-1** | ProductImages ↔ OperatorImages parity | **CLOSED** (#87). 3 backend fields (alt_text/description/caption) on `ImageGallery` (migration 0059), 4 shared components in `components/Images/shared/`, add-flow carries metadata, edit-flow reuses contract Save. Both repos on `develop` (`admin-dashboard` `c425ff6` + `smartenplus-backend` `e777816`). 3 atoms extracted. | `components/Images/{ProductImages,OperatorImages,shared/*}.js`, `operators/models.py:520-522`, `serializers.py:151,303`, `views.py:711-728` |
 | **IMG-ALT-1** | Operator image alt_text + caption editing | **CLOSED** (#86). 2 nullable CharField(250) on `OperatorImageGallery`, serializer writable, migration `0058`, dialog 3-field + auto-prefill, grid alt chain updated. Both repos on `develop` (`admin-dashboard` `71c2352` + `smartenplus-backend` `08b6593`). Atom: [[operator-image-alt-caption-fields]]. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:143,263`; `operators/models.py:559-561`, `serializers.py:33` |
 | **IMG-ALT-DEBUG-1** | Next.js HMR cross-module callback staleness | OPEN. Fast Refresh can replace a child module (dialog) but leave the parent module's callback stale → new fields silently dropped, hard refresh may or may not fix. Confirmed in #86 via 5-probe instrumentation. Prevention: move mutation call INTO the dialog component, drop parent `onSubmit` indirection. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Optional refactor. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:140-178` |

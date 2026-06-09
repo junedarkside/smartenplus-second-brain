@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #87 (archived from 2026-06-09)
+
+**Achieved:**
+- **ProductImages ↔ OperatorImages parity SHIPPED** — 2 repos on `develop`:
+  - `admin-dashboard` `c425ff6` — feat(operator-images): bring ProductImages to parity (search/filter, metadata dialog, caption bar)
+  - `smartenplus-backend` `e777816` — feat(operators): add alt_text/description/caption to ImageGallery + persist on update
+- **Backend schema** — 3 nullable `CharField(250)` on `ImageGallery` (alt_text, description, caption). Migration `0059` applied. Serializer exposes all 3 as writable.
+- **Shared module** — `components/Images/shared/` with `ImageMetadataDialog`, `ImageSearchBar`, `useImageSearch`, `DraggableImageCard` (caption bar). OperatorImages + ProductImages both consume it. No duplication.
+- **Add-flow carries metadata** — `addImageIfUnique` copies alt_text/description/caption from `OperatorImageGallery` to `ImageGallery` via `imageSelection` payload. No FK, only string refs.
+- **Edit-flow reuses contract Save** — click tile → `ImageMetadataDialog` in edit mode → writes to Formik `imageSelection` + provider `useAlert` snackbar → contract Save persists. No separate mutation endpoint. No new save button.
+- **Bug fix (debug-mantra)** — `operators/views.py:720-722` `elif` branch only wrote `order` on existing `ImageGallery` rows, dropped metadata. Fix: `else` branch with unconditional metadata sync + operator_image fallback chain. `c185523`.
+- **3 atoms extracted** — [[django-partial-update-elif-metadata-drop]], [[image-metadata-formik-state-only-save]], [[add-flow-metadata-helper-pattern]].
+
+---
+
 ## Session #83 (2026-06-08) — FAV-1 FAVORITE HEART SHIPPED (7 commits)
 - **FAV-1** — 7 commits merged to develop across 2 repos (5 FE + 2 BE), pushed to origin. Manual smoke on detail page PASSED.
 - **Team workflow** (3 parallel specialists → synthesis → skeptic → leader) → 7 vault files in `01-projects/favorite-heart-analysis-2026-06-08/`: `audit.md`, `r1-backend.md`, `r1-frontend.md`, `r1-ux.md`, `r2-skeptic.md`, `r3-leader-synthesis.md`, `migration-0026-runbook.md`.
