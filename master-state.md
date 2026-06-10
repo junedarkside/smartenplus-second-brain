@@ -4,7 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-10 (session #90)
+**Updated:** 2026-06-10 (session #91)
+
+**Achieved this session (#91):**
+- **"People also book" full cross-sell redesign** — frontend `feat/redesign-people-also-book-cards` `3cda359`:
+  - `RecommendationCard.js` — horizontal compact card (72px thumbnail left, info right); per-category thumbnail (operator logo for transport, `getDayTripCoverImage` for activities); subtitle = route+duration (transport) or category label+duration (activities); shadow-only card; "Book" button replacing "View →" link
+  - `RecommendationSkeleton.js` — compact variant updated to horizontal shape
+  - `CheckoutRelatedTrips.js` — count pill in header, `flex flex-col gap-2` grid, `openInNewTab={false}`
+  - `findMinVehicleSeat.js` — null guard for undefined `transport_composit`
+  - `BookButton.js` — `formatItemName` optional-chain for non-transport; `transport_composit?.map() || []` GTM guard
+- **`RecommendationBookingModal.js`** (new) — inline date+passenger picker, books any category without leaving checkout:
+  - MUI DatePicker `shouldDisableDate` blocks all 4 rules (stop_sale, non-operational, advance_hr, out-of-range)
+  - Transport: reads Redux `passenger-slice`; activities: local `PassengerCounter` state
+  - `deduplicateRatecards` for date-accurate pricing; PRIVATE/CHARTER vs JOIN/per-person ratecard build
+  - `useCreateCartItemMutation` on submit; 409/404 mapped to toasts; modal closes + stays on checkout
+- **`useDayTripAvailability.js` fixed** — fail-open when `is_actived`/`start_date`/`end_date` undefined (missing from API response); `isBookingDateInRange` also fail-open on missing bounds
+- **Backend availability bug fixed** — `ContractRecommendationSerializer` `62e8755` on `develop`:
+  - Added 11 missing fields: `is_actived`, `start_date`, `end_date`, `stop_sale_dates`, `operational_days`, `advance_hr`, `service_category`, `name`, `type`, `transport_composit`, `get_operational_days`
+  - All 4 recommendation query blocks now prefetch `operational_day`, `stop_sale_dates`, `contract_transpotcomposit_set` (N+1 prevention)
+  - Root cause: `is_actived` undefined → `!undefined = true` → `inactive: true` → "This tour is currently unavailable" blocking all bookings
+
+**Resume point (EXACT):**
+1. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. After merge, BD creates: return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Verify `checkout_recommendation_view` fires with `recommendation_count > 0` in GTM dataLayer.
+2. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`.
+3. **IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Low priority.
+
+---
 
 **Achieved this session (#90):**
 - **Checkout Next btn bug FIXED (frontend)** — `FormCard.js` `f7d2956` on `develop`:
@@ -15,11 +40,6 @@
   - `copy_cartitem_to_bookingitem`: now calls `check_advance_hour()` + `stop_sale_dates` filter before creating BookingItem — previously only `is_actived`/`confirm` checked at booking creation time.
   - `AddCartSerializer.validate`: stop_sale_dates check added alongside existing `is_valid_travel_date` — CartItem creation now also blocked on stop-sale dates (previously only availability endpoint enforced this).
 - **2-agent debate** — strict vs permissive reviewers identified 5 gaps total; auth-race selected as high-priority fix. Remaining gaps (stale isFetching, is_actived null, null traveling_date, QR forward nav) logged but deferred.
-
-**Resume point (EXACT):**
-1. **CROSS-SELL-1** — BD must create: return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Once done, verify `checkout_recommendation_view` fires with `recommendation_count > 0` in GTM dataLayer. 60-day measurement begins.
-2. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`.
-3. **IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Low priority.
 
 **Achieved this session (#88):**
 - **WordPress Media Library tab SHIPPED** — `admin-dashboard` `99e45b2` on `develop`:
@@ -51,7 +71,8 @@
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **CHECKOUT-BTN-1** | Checkout Next btn stays enabled when advance booking passed or auth loading | **CLOSED** (#90). Root cause: commit `92bf653` dropped `isAdvanceBookingError` from `shouldDisableNext`. Fix: `(!isCurrentStepValid \|\| isAdvanceBookingError \|\| isAuthLoading)` in `FormCard.js`. Backend also hardened: `copy_cartitem_to_bookingitem` + `AddCartSerializer.validate` now enforce advance_hr + stop_sale_dates. Both repos on `develop`. | `components/forms/FormCard.js:44`, `carts/utils.py:68-72`, `carts/serializers.py:315` |
-| **CROSS-SELL-1** | BD inventory gate — cross-sell returns 0 until BD creates contracts | OPEN. BD must create: (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. GTM clock starts on first `checkout_recommendation_view` with `recommendation_count > 0`. Post-add-to-cart modal (BACKLOG) also blocked by same gap. | `checkout/index.js` + `03-knowledge/cross-sell-placement-strategy.md` |
+| **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop`; then BD creates inventory | OPEN. PR raised. After merge: BD creates (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Verify `checkout_recommendation_view` fires with `recommendation_count > 0`. | `feat/redesign-people-also-book-cards`, `checkout/index.js` |
+| **CROSS-SELL-1** | BD inventory gate — cross-sell returns 0 until BD creates contracts | **CLOSED** (#91). Inline booking modal shipped. Backend serializer fixed. Blocked on BD creating inventory + PR merge. → superseded by CROSS-SELL-MERGE. | `checkout/index.js` + `03-knowledge/cross-sell-placement-strategy.md` |
 |---|-------|--------|-------|
 | **WP-IMAGE-1** | WordPress Media Library tab + image URL pipeline | **CLOSED** (#88). WP media tab in `ImageSelection.js` (MUI Tabs), `WordpressImages.js`, `wordpressMediaApi.js` RTK slice. Backend: `get_image()` verbatim https:// fix on 3 serializers, `is_deleted=False` filter on `imagegallery_set`, PK guard for `wp_` prefix. All 3 repos pushed. | `components/Images/{WordpressImages,ImageSelection}.js`, `store/api/wordpressMediaApi.js`, `operators/{serializers,views}.py`, `products/serializers.py` |
 | **IMG-PARITY-1** | ProductImages ↔ OperatorImages parity | **CLOSED** (#87). 3 backend fields (alt_text/description/caption) on `ImageGallery` (migration 0059), 4 shared components in `components/Images/shared/`, add-flow carries metadata, edit-flow reuses contract Save. Both repos on `develop` (`admin-dashboard` `c425ff6` + `smartenplus-backend` `e777816`). 3 atoms extracted. | `components/Images/{ProductImages,OperatorImages,shared/*}.js`, `operators/models.py:520-522`, `serializers.py:151,303`, `views.py:711-728` |

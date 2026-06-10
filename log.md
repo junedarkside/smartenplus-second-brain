@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-10] session-end | cross-sell full redesign: horizontal cards + inline booking modal + backend serializer availability fix
+
 ## [2026-06-08] optimize | caveman-compress 3 atoms (django-partial-update-elif-metadata-drop, image-metadata-formik-state-only-save, add-flow-metadata-helper-pattern) — stripped articles, shortened sentences, kept code/headings/links exact. Result: clearer mental model, ~12% byte reduction, zero info loss.
 
 ## [2026-06-08] atomize | two-surface-parity-shared-module — extracted from this session's `components/Images/shared/` extraction. Pattern: when 2 UI surfaces need identical UX (grid, search, dialog, actions) over different data sources, extract `shared/` module of sub-pieces. Each surface becomes thin wrapper. Multiple variants stay separate components, not boolean props. Reusable for any "two pages need same UX" / "two product types share field editor" / "two list views need same toolbar" scenario.
