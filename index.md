@@ -67,6 +67,10 @@ Global navigation catalog. Updated on every ingest.
 - [[dialogue|Dialogue]] — Review, Thread, Post, Comment, Reaction (WordPress), GenericForeignKey patterns
 - [[recommendation-system|Recommendation System]] — precompute tasks, cache warming, beat schedule, Popular Routes admin analytics page
 - [[cross-sell-placement-strategy]] — **NEW 2026-06-09.** Industry standard cross-sell placement: post-booking #1 (built+mounted), trip detail #2 (live), checkout sidebar = avoid. Filtering rules: same-route exclude (station→location fallback), operational_day weekday, price filter. BD gap: no DAY_TOUR/SPA at Koh Lipe blocks value.
+- [[people-also-book-checkout-audit]] — **AUDIT+FIXED 2026-06-10/11.** 3-agent + debug-mantra audit. 1 real bug confirmed (3 overturned): duplicate toast caught 409 but backend returns 400 — fixed `a64d280`. Anchor stability + ghost-item filter fixed `d64adcf`. 3 atoms extracted.
+- [[rtk-cart-tag-invalidation-auto-refetch]] — Cart mutations invalidate `Cart:{cartId}` tag → `checkCartId` auto-refetches. No `onSuccess` callbacks needed. `recommendationsApi` is separate slice — NOT invalidated by cart mutations.
+- [[recommendation-anchor-first-transport-rule]] — Anchor = first transport (not last). Last transport causes circular recommendations when cross-sell transports added. `CheckoutRelatedTrips.js:27`.
+- [[django-400-vs-409-duplicate-cart-item]] — Backend raises 400 (not 409) for duplicate cart items. Frontend must catch 400 + check `includes('already exists')`. 409 = payment_pending only.
 - [[tickets|Tickets]] — Ticket model, GenericForeignKey attachable to any model, HistoricalRecords audit
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
 - [[smartenplus-glassmorphism-header|Premium Glassmorphism Header]] — dark gradient glass, sticky + blur on scroll, unified 2-row, white typography, hero integration. Supersedes header-ux-v1.

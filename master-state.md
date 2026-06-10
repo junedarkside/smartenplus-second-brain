@@ -4,32 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-10 (session #91)
+**Updated:** 2026-06-11 (session #92)
 
-**Achieved this session (#91):**
-- **"People also book" full cross-sell redesign** — frontend `feat/redesign-people-also-book-cards` `3cda359`:
-  - `RecommendationCard.js` — horizontal compact card (72px thumbnail left, info right); per-category thumbnail (operator logo for transport, `getDayTripCoverImage` for activities); subtitle = route+duration (transport) or category label+duration (activities); shadow-only card; "Book" button replacing "View →" link
-  - `RecommendationSkeleton.js` — compact variant updated to horizontal shape
-  - `CheckoutRelatedTrips.js` — count pill in header, `flex flex-col gap-2` grid, `openInNewTab={false}`
-  - `findMinVehicleSeat.js` — null guard for undefined `transport_composit`
-  - `BookButton.js` — `formatItemName` optional-chain for non-transport; `transport_composit?.map() || []` GTM guard
-- **`RecommendationBookingModal.js`** (new) — inline date+passenger picker, books any category without leaving checkout:
-  - MUI DatePicker `shouldDisableDate` blocks all 4 rules (stop_sale, non-operational, advance_hr, out-of-range)
-  - Transport: reads Redux `passenger-slice`; activities: local `PassengerCounter` state
-  - `deduplicateRatecards` for date-accurate pricing; PRIVATE/CHARTER vs JOIN/per-person ratecard build
-  - `useCreateCartItemMutation` on submit; 409/404 mapped to toasts; modal closes + stays on checkout
-- **`useDayTripAvailability.js` fixed** — fail-open when `is_actived`/`start_date`/`end_date` undefined (missing from API response); `isBookingDateInRange` also fail-open on missing bounds
-- **Backend availability bug fixed** — `ContractRecommendationSerializer` `62e8755` on `develop`:
-  - Added 11 missing fields: `is_actived`, `start_date`, `end_date`, `stop_sale_dates`, `operational_days`, `advance_hr`, `service_category`, `name`, `type`, `transport_composit`, `get_operational_days`
-  - All 4 recommendation query blocks now prefetch `operational_day`, `stop_sale_dates`, `contract_transpotcomposit_set` (N+1 prevention)
-  - Root cause: `is_actived` undefined → `!undefined = true` → `inactive: true` → "This tour is currently unavailable" blocking all bookings
+**Achieved this session (#92):**
+- **People Also Book — 3-agent audit + debug-mantra falsification**: Initial 4 bugs → 1 confirmed real bug. Duplicate detection toast never fired (backend 400 ≠ frontend catches 409). Fixed `RecommendationBookingModal.js:177-183` (`a64d280`).
+- **People Also Book — 5-agent update-behavior research**: Full trace of how recommendations refresh after cart add. Cart IS live (RTK tag invalidation `api-slice.js:58,119`). Two design flaws found and fixed (`d64adcf`):
+  1. Anchor changed from last→first transport — prevents circular recommendations when cross-sell transports added
+  2. `visibleRecommendations` now filters `cartContractIds` — already-booked trips no longer ghost in list
+- **3 atoms extracted**: [[rtk-cart-tag-invalidation-auto-refetch]], [[recommendation-anchor-first-transport-rule]], [[django-400-vs-409-duplicate-cart-item]]
+- **Vault audit updated**: [[people-also-book-checkout-audit]] corrected twice (3 false positives overturned)
 
 **Resume point (EXACT):**
-1. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. After merge, BD creates: return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Verify `checkout_recommendation_view` fires with `recommendation_count > 0` in GTM dataLayer.
-2. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`.
-3. **IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Low priority.
-
----
+1. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. After merge: BD creates return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Verify `checkout_recommendation_view` fires in GTM.
+2. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion.
+3. **IMG-ALT-DEBUG-1** — optional HMR refactor (low priority).
 
 **Achieved this session (#90):**
 - **Checkout Next btn bug FIXED (frontend)** — `FormCard.js` `f7d2956` on `develop`:

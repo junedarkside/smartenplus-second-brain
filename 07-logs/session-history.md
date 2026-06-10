@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Achieved this session (#91):**
+- **"People also book" full cross-sell redesign** — frontend `feat/redesign-people-also-book-cards` `3cda359`:
+  - `RecommendationCard.js` — horizontal compact card (72px thumbnail left, info right); per-category thumbnail (operator logo for transport, `getDayTripCoverImage` for activities); subtitle = route+duration (transport) or category label+duration (activities); shadow-only card; "Book" button replacing "View →" link
+  - `RecommendationSkeleton.js` — compact variant updated to horizontal shape
+  - `CheckoutRelatedTrips.js` — count pill in header, `flex flex-col gap-2` grid, `openInNewTab={false}`
+  - `findMinVehicleSeat.js` — null guard for undefined `transport_composit`
+  - `BookButton.js` — `formatItemName` optional-chain for non-transport; `transport_composit?.map() || []` GTM guard
+- **`RecommendationBookingModal.js`** (new) — inline date+passenger picker, books any category without leaving checkout
+- **`useDayTripAvailability.js` fixed** — fail-open when `is_actived`/`start_date`/`end_date` undefined
+- **Backend availability bug fixed** — `ContractRecommendationSerializer` `62e8755`: 11 missing fields added, N+1 prefetch on all 4 query blocks
+
+---
+
 **Updated:** 2026-06-10 (session #89)
 
 **Achieved this session (#89):**

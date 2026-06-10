@@ -2,6 +2,14 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-11] atomize | 3 atoms from People Also Book session: [[rtk-cart-tag-invalidation-auto-refetch]], [[recommendation-anchor-first-transport-rule]], [[django-400-vs-409-duplicate-cart-item]]. master-state updated to session #92.
+
+## [2026-06-10] fix | people-also-book recommendations — stable anchor (first transport) + filter already-carted trips from visibleRecommendations. `d64adcf` on develop.
+
+## [2026-06-10] fix | people-also-book duplicate toast — catch 400 + includes('already exists') in RecommendationBookingModal catch block. `a64d280` on develop.
+
+## [2026-06-10] correction | people-also-book-checkout-audit — debug-mantra falsification overturned 3 of 4 initial bug claims. Only 1 real bug confirmed: duplicate detection toast never fires (backend 400 ≠ frontend catches 409). 1 UX gap: greyed pre-fill with no explanation. Empty ratecard, stale date, string comparison all overturned on code read. [[people-also-book-checkout-audit]] updated.
+
 ## [2026-06-10] session-end | cross-sell full redesign: horizontal cards + inline booking modal + backend serializer availability fix
 
 ## [2026-06-08] optimize | caveman-compress 3 atoms (django-partial-update-elif-metadata-drop, image-metadata-formik-state-only-save, add-flow-metadata-helper-pattern) — stripped articles, shortened sentences, kept code/headings/links exact. Result: clearer mental model, ~12% byte reduction, zero info loss.
