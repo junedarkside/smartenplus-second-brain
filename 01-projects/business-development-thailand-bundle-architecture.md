@@ -4,6 +4,10 @@
 
 End-to-end itinerary bundling architecture: MaaS-style transport skeleton + curated activity decoration + high-margin wellness add-ons. Single timeline UI with conflict detection. v1 covers 3 corridors with wizard flow.
 
+## Status
+
+**ACTIVE — Phase 1 (2026-06-09).** Non-transport (DAY_TOUR/SPA_WELLNESS) now live on B2C. Bundle UX is current build priority — cross-sell transport buyers into activities. Full timeline/conflict-detection UI (Zeitrip) gated behind bundle conversion validation.
+
 ## Context
 
 Zeitrip's bundle architecture fills the gap between 12Go (transport only) and Klook/GYG (activities only). The product treats transport and activities as components of a single itinerary—not a cart of separate items.

@@ -4,6 +4,10 @@
 
 MVP built around single itinerary timeline—not marketplace cart. Time-based planning surfaces gaps, overlaps, transfer buffers where current tools are weak. First corridors: Bangkok-Chiang Mai, Bangkok-Phuket/Krabi, Bangkok-Koh Samui.
 
+## Status
+
+**GATED — 2026-06-09.** Journey builder build deferred until cross-sell + bundle conversion validated. Non-transport booking now live on B2C. Next step: prove multi-booking rate rising via bundle/cross-sell UX. When validated → proceed with this spec.
+
 ## Context
 
 12Go owns transport, GetYourGuide owns activity discovery. Gap: no platform offers "finished trip" feel—separate tickets glued together. Zeitrip fills this with better trip composition.

@@ -43,6 +43,10 @@ Position SmartEnPlus as Thailand's Travel Commerce Platform. Focus on bookings-p
 - Product roadmap prioritizes cross-sell, bundles, recommendation engine over planning UI
 - Success measured by Revenue Per Traveler, Bookings Per Traveler, AOV, Repeat Purchase Rate
 - Competitive differentiation requires execution excellence in connectivity UX
+- Journey builder explicitly gated — build only after multi-booking rate confirms demand (validated 2026-06-09)
+
+## Decision Log
+- **2026-06-09:** Non-transport booking (DAY_TOUR/SPA_WELLNESS) now live on B2C (commits `9ef2752`, `0c3bb14`). Journey builder deferred. Next step: cross-sell + bundle UX to validate Revenue Per Traveler uplift before journey builder investment.
 
 ## Related
 

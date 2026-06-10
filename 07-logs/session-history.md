@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #88 (archived from 2026-06-10)
+
+**Achieved:**
+- **WP Media Library tab SHIPPED** — `admin-dashboard` `99e45b2`: `WordpressImages.js`, `wordpressMediaApi.js` RTK slice, MUI Tabs in `ImageSelection.js`, `/wp-api` rewrite proxy
+- **Image URL bug pipeline fixed** — `smartenplus-backend` `b3b8ee0`: `get_image()` verbatim https:// fix, `is_deleted=False` filter on `imagegallery_set`, PK guard for `wp_` prefix
+- **WP-IMAGE-1 CLOSED.**
+
+---
+
 ## Session #87 (archived from 2026-06-09)
 
 **Achieved:**

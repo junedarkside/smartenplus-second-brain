@@ -4,7 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-09 (session #88)
+**Updated:** 2026-06-10 (session #89)
+
+**Achieved this session (#89):**
+- **Cross-sell system IMPLEMENTED** — all 10 service categories supported, BD validation gate wired:
+  - `find_activity_contracts` — new backend function: location-JOIN (`primary_location` + `service_areas` M2M + `.distinct()`) returns DAY_TOUR/SPA/etc at transport arrival location. `'activity'` added as valid rec type. `smartenplus-backend` `4877d65` on `260610-feat/cross-sell-activity-recommendations`
+  - `CheckoutRelatedTrips` — full rewrite: category-aware anchor (transport→`packages`, activity→`activity`), sessionKey GTM de-dup (sessionStorage), expanded by default, "People also book" title, price floor filter, 161 lines. `smartenplus-frontend` `61f2ec2` on `260609-feat/cross-sell-gtm-recommendations`
+  - `checkout/index.js` — mounted at formStep=0 after ItinerariesStep
+  - `RelatedExperiences` — migrated to recommendations API
+  - `CheckoutSidebar` — cross-sell removed (abandonment risk at payment step)
+  - `RecommendationCard` — service_category chip for non-transport products
+- **Cross-sell strategy fully documented** — `03-knowledge/cross-sell-placement-strategy.md`: 10-category matrix, rec type logic, branches, BD gate, GTM clock definition
+- **CROSS-SELL-1 OPEN** — blocked by BD inventory gap (no return route + no DAY_TOUR/SPA contracts at Koh Lipe → engine returns 0 → 60-day BD clock cannot start)
+
+**Resume point (EXACT):**
+1. **CROSS-SELL-1** — BD must create: return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Once done, verify `checkout_recommendation_view` fires with `recommendation_count > 0` in GTM dataLayer. 60-day measurement begins.
+2. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`.
+3. **IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Low priority.
 
 **Achieved this session (#88):**
 - **WordPress Media Library tab SHIPPED** — `admin-dashboard` `99e45b2` on `develop`:
@@ -14,17 +30,11 @@
   - `store/index.js` — registered reducer + middleware, blacklisted from persist
   - `next.config.js` — `/wp-api/:path*` rewrite + `smartenplus-wp-s3` remotePattern
 - **Image URL bug pipeline fixed** — `smartenplus-backend` `b3b8ee0` + `f7010d2` on `develop`:
-  - `operators/serializers.py` — `get_image()` SerializerMethodField on both `_ImageGallerySerializer` + `ImageGallerySerializer`: returns stored `https://` verbatim, no presigned URL generation
-  - `operators/views.py` — store full `https://` verbatim for non-primary-S3 paths (WP S3 bucket); guard PK lookup against non-integer IDs (`wp_` prefix)
-  - `products/serializers.py` — same `get_image()` fix; `ContractSerializer.image` + `ProductDetailSerializer.image` converted to `SerializerMethodField` filtering `is_deleted=False` — prevents soft-deleted rows appearing in API responses
-- **Root cause confirmed** — id=2881 `is_deleted=True` row with wrong bucket URL was leaking through `imagegallery_set` (no filter). Fix: `obj.imagegallery_set.filter(is_deleted=False)`.
-- **smartenplus-frontend debug clean** — console logs added/removed in `AirbnbPhotoGrid.js`, no commit needed.
-- **`.claude/settings.local.json` gitignored** — admin-dashboard `620c561`.
-
-**Resume point (EXACT):**
-1. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Use `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' | sed 's|^origin/||' | xargs -I {} git push origin --delete {}`.
-2. **IMG-ALT-DEBUG-1** — confirm HMR staleness recurs on future dialogs. Optional refactor: move mutation into `ImageEditDialog`. Low priority.
-3. **F11-FOLLOWUP content answers** — apply 1-line patches if BD/content team answers differ from defaults. Doc: `00-inbox/2026-06-07-content-questions-help-faqs.md`.
+  - `operators/serializers.py` — `get_image()` SerializerMethodField: returns stored `https://` verbatim
+  - `operators/views.py` — store full `https://` verbatim; guard PK lookup against `wp_` prefix
+  - `products/serializers.py` — `get_image()` fix + `is_deleted=False` filter on `imagegallery_set`
+- **Root cause** — id=2881 `is_deleted=True` row with wrong-bucket URL leaking through unfiltered `imagegallery_set`.
+- **WP-IMAGE-1 CLOSED.**
 
 **Achieved this session (#87):**
 - **Operator image alt_text + caption SHIPPED** — 2 repos on `develop`:
@@ -40,6 +50,8 @@
 ## Section 2 — Loose Ends (Open)
 
 | # | Issue | Status | Where |
+|---|-------|--------|-------|
+| **CROSS-SELL-1** | BD inventory gate — cross-sell returns 0 until BD creates contracts | OPEN. BD must create: (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. GTM clock starts on first `checkout_recommendation_view` with `recommendation_count > 0`. Post-add-to-cart modal (BACKLOG) also blocked by same gap. | `checkout/index.js` + `03-knowledge/cross-sell-placement-strategy.md` |
 |---|-------|--------|-------|
 | **WP-IMAGE-1** | WordPress Media Library tab + image URL pipeline | **CLOSED** (#88). WP media tab in `ImageSelection.js` (MUI Tabs), `WordpressImages.js`, `wordpressMediaApi.js` RTK slice. Backend: `get_image()` verbatim https:// fix on 3 serializers, `is_deleted=False` filter on `imagegallery_set`, PK guard for `wp_` prefix. All 3 repos pushed. | `components/Images/{WordpressImages,ImageSelection}.js`, `store/api/wordpressMediaApi.js`, `operators/{serializers,views}.py`, `products/serializers.py` |
 | **IMG-PARITY-1** | ProductImages ↔ OperatorImages parity | **CLOSED** (#87). 3 backend fields (alt_text/description/caption) on `ImageGallery` (migration 0059), 4 shared components in `components/Images/shared/`, add-flow carries metadata, edit-flow reuses contract Save. Both repos on `develop` (`admin-dashboard` `c425ff6` + `smartenplus-backend` `e777816`). 3 atoms extracted. | `components/Images/{ProductImages,OperatorImages,shared/*}.js`, `operators/models.py:520-522`, `serializers.py:151,303`, `views.py:711-728` |

@@ -4,7 +4,7 @@
 Non-transport contracts (DAY_TOUR, SPA_WELLNESS etc.) always have `contract.trip = None`. This caused crashes at every stage of the user flow: checkout confirmation, payment, order page, booking detail page. All crash sites fixed + booking detail page now receives full contract info from API.
 
 ## Status
-PENDING COMMIT/MERGE — Code done 2026-06-03 session 2. Uncommitted on branch `260603-fix/non-transport-trip-none-guard` (both repos). Needs: Django restart → test → commit → merge develop.
+RESOLVED — Merged to develop 2026-06-03. Frontend branch `260603-fix/non-transport-trip-none-guard` merged at commit `0c3bb14`. Backend merged at `9ef2752` (develop, merged main 2026-06-02). Non-transport booking (DAY_TOUR, SPA_WELLNESS) fully live on B2C.
 
 ## Atoms Extracted
 - [[contract-trip-null-non-transport-pattern]] — frontend `contract?.trip` guard pattern

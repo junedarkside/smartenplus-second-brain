@@ -5,6 +5,7 @@ SmartEnPlus is a vertically integrated SEA transportation + tour operator runnin
 
 ## Context
 Validated 2026-05-24 via GA4, GSC, operator data, and founder interview. Replaces hypothesis-based direction.
+Last updated: 2026-06-09 — non-transport booking live, roadmap sequencing revised (journey builder gated behind cross-sell/bundle validation).
 
 ## Validated Customer
 
@@ -36,7 +37,7 @@ B2B is the cash engine. B2C is the growth bet. Commission model deferred until o
 | Third-party experiences | Marketplace commission | Low-Medium |
 | Flights (future) | Meta search affiliate | Low / traffic |
 
-Own-brand tours already validated on Klook. Need to surface on SmartEnPlus.com to capture margin directly.
+Own-brand tours validated on Klook and now bookable on SmartEnPlus.com B2C. Cart + checkout support DAY_TOUR/SPA_WELLNESS — fixed 2026-06-02/03 (commits `9ef2752`, `0c3bb14`).
 
 ## Product Vision
 
@@ -59,7 +60,7 @@ No social features. No gamification. Operational utility only.
 | Moat | State |
 |------|-------|
 | Owned minivan network (nationwide Thailand) | Live |
-| Own-brand tours (Klook-validated) | Operational, not on B2C yet |
+| Own-brand tours (Klook-validated) | Live on B2C (fixed 2026-06-02/03) |
 | Tour operator network Thailand | Live |
 | Cross-border route (Langkawi↔Lipe) | Live |
 | B2B supply relationships (12Go + Klook) | Validated |
@@ -78,23 +79,28 @@ No social features. No gamification. Operational utility only.
 
 ## Product Roadmap Sequence
 
-1. **Now:** Simple search + book (parity with 12Go). B2B supply healthy.
-2. **Next:** Own-brand tours + packages on B2C platform. Klook-validated — capture margin directly.
-3. **Then:** Journey builder UI (A→B→C itinerary in one flow). Multi-leg near-zero today — UX problem not demand problem.
-4. **After:** Post-booking coordination (timeline, alerts, disruption handling).
-5. **Later:** Operator self-serve dashboard. B2B API (some inventory still manual to 12Go/Klook).
+1. **Done:** Simple search + book (parity with 12Go). B2B supply healthy.
+2. **Done:** Own-brand tours + packages on B2C platform. DAY_TOUR/SPA_WELLNESS bookable — margin captured directly (2026-06-02/03).
+3. **Now:** Cross-sell + bundle UX. Surface own-brand tours to existing transport buyers. Validate Revenue Per Traveler uplift before investing in journey builder.
+4. **Next (gated):** Journey builder UI (A→B→C itinerary in one flow) — build only after multi-booking rate rises. UX problem not demand problem.
+5. **After:** Post-booking coordination (timeline, alerts, disruption handling).
+6. **Later:** Operator self-serve dashboard. B2B API (some inventory still manual to 12Go/Klook).
 
 ## Strategic Path
 
 - **Now:** B2B supplier to 12Go + Klook. Don't compete on breadth yet.
-- **Year 2-3:** Dual channel. Grow B2C to 30-40%. Own-brand tours live.
+- **Year 2-3:** Dual channel. Grow B2C to 30-40%. Own-brand tours already live (2026-06-02).
 - **Year 4-5:** Platform competitor to 12Go/Klook/GYG. Stippl-style planning layer on top of owned infrastructure.
 
 ## What To Avoid
 - Competing with 12Go on inventory breadth before B2C is 30%+ revenue
+- Building journey builder before cross-sell/bundle conversion is validated
 - Building coordination infrastructure before journey builder UX is fixed
 - Thai domestic UX before EN market is saturated
 - Commission model before operator self-serve exists
+
+## Decision Log
+- **2026-06-09:** Journey builder deferred. Must validate cross-sell + bundle revenue uplift first. Planning UI does not auto-generate revenue — many planning products fail to monetize. Gate: multi-booking rate rising → then build journey builder.
 
 ## Related
 

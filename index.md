@@ -66,6 +66,7 @@ Global navigation catalog. Updated on every ingest.
 - [[policies|Policies]] — CancellationPolicy, CancellationPolicies, BaggagePolicy, GeneralInformation
 - [[dialogue|Dialogue]] — Review, Thread, Post, Comment, Reaction (WordPress), GenericForeignKey patterns
 - [[recommendation-system|Recommendation System]] — precompute tasks, cache warming, beat schedule, Popular Routes admin analytics page
+- [[cross-sell-placement-strategy]] — **NEW 2026-06-09.** Industry standard cross-sell placement: post-booking #1 (built+mounted), trip detail #2 (live), checkout sidebar = avoid. Filtering rules: same-route exclude (station→location fallback), operational_day weekday, price filter. BD gap: no DAY_TOUR/SPA at Koh Lipe blocks value.
 - [[tickets|Tickets]] — Ticket model, GenericForeignKey attachable to any model, HistoricalRecords audit
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
 - [[smartenplus-glassmorphism-header|Premium Glassmorphism Header]] — dark gradient glass, sticky + blur on scroll, unified 2-row, white typography, hero integration. Supersedes header-ux-v1.

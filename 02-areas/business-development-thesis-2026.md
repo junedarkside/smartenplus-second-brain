@@ -58,11 +58,15 @@ Two parallel channels:
 
 ## Business Development Priorities
 
-1. Increase bookings per traveler
-2. Increase average order value
-3. Increase repeat purchase rate
-4. Expand distribution partnerships
-5. Introduce travel intelligence capabilities
+1. **Now — Cross-sell + bundles:** Surface own-brand tours to existing transport buyers. Measure Revenue Per Traveler uplift.
+2. **Now — AOV:** Increase average order value via bundle UX + recommendations.
+3. **Gated — Journey builder:** Build only after multi-booking rate validates demand. Do not invest in planning UI before commerce is proven.
+4. Increase repeat purchase rate
+5. Expand distribution partnerships
+6. Introduce travel intelligence capabilities
+
+## Decision Log
+- **2026-06-09:** Journey builder explicitly deferred until cross-sell/bundle conversion validated. Non-transport (DAY_TOUR/SPA_WELLNESS) now live on B2C — focus shifts to surfacing + converting, not building new booking flows.
 
 ## Risks
 
