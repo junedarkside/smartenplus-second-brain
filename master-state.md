@@ -4,18 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-10 (session #89)
+**Updated:** 2026-06-10 (session #90)
 
-**Achieved this session (#89):**
-- **Cross-sell system IMPLEMENTED** — all 10 service categories supported, BD validation gate wired:
-  - `find_activity_contracts` — new backend function: location-JOIN (`primary_location` + `service_areas` M2M + `.distinct()`) returns DAY_TOUR/SPA/etc at transport arrival location. `'activity'` added as valid rec type. `smartenplus-backend` `4877d65` on `260610-feat/cross-sell-activity-recommendations`
-  - `CheckoutRelatedTrips` — full rewrite: category-aware anchor (transport→`packages`, activity→`activity`), sessionKey GTM de-dup (sessionStorage), expanded by default, "People also book" title, price floor filter, 161 lines. `smartenplus-frontend` `61f2ec2` on `260609-feat/cross-sell-gtm-recommendations`
-  - `checkout/index.js` — mounted at formStep=0 after ItinerariesStep
-  - `RelatedExperiences` — migrated to recommendations API
-  - `CheckoutSidebar` — cross-sell removed (abandonment risk at payment step)
-  - `RecommendationCard` — service_category chip for non-transport products
-- **Cross-sell strategy fully documented** — `03-knowledge/cross-sell-placement-strategy.md`: 10-category matrix, rec type logic, branches, BD gate, GTM clock definition
-- **CROSS-SELL-1 OPEN** — blocked by BD inventory gap (no return route + no DAY_TOUR/SPA contracts at Koh Lipe → engine returns 0 → 60-day BD clock cannot start)
+**Achieved this session (#90):**
+- **Checkout Next btn bug FIXED (frontend)** — `FormCard.js` `f7d2956` on `develop`:
+  - Root cause: commit `92bf653` ("resolve active contract", 2026-02-27) replaced `isAdvanceBookingError` in `shouldDisableNext` with `!isCurrentStepValid`, accidentally dropping the advance-hour/stop-sale guard. `isAdvanceBookingError` remained computed + used for the warning Alert but never blocked the button.
+  - Fix: `(currentStep === 0 && (!isCurrentStepValid || isAdvanceBookingError || isAuthLoading))` — one line.
+  - Also added `isAuthLoading` prop — blocks Next while `useSession` resolves (`status === 'loading'`), closing auth-race gap where unauthenticated user could reach step 1.
+- **Backend validation gaps CLOSED** — `carts/utils.py` + `carts/serializers.py` `aed70f6` on `develop`:
+  - `copy_cartitem_to_bookingitem`: now calls `check_advance_hour()` + `stop_sale_dates` filter before creating BookingItem — previously only `is_actived`/`confirm` checked at booking creation time.
+  - `AddCartSerializer.validate`: stop_sale_dates check added alongside existing `is_valid_travel_date` — CartItem creation now also blocked on stop-sale dates (previously only availability endpoint enforced this).
+- **2-agent debate** — strict vs permissive reviewers identified 5 gaps total; auth-race selected as high-priority fix. Remaining gaps (stale isFetching, is_actived null, null traveling_date, QR forward nav) logged but deferred.
 
 **Resume point (EXACT):**
 1. **CROSS-SELL-1** — BD must create: return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Once done, verify `checkout_recommendation_view` fires with `recommendation_count > 0` in GTM dataLayer. 60-day measurement begins.
@@ -51,6 +50,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **CHECKOUT-BTN-1** | Checkout Next btn stays enabled when advance booking passed or auth loading | **CLOSED** (#90). Root cause: commit `92bf653` dropped `isAdvanceBookingError` from `shouldDisableNext`. Fix: `(!isCurrentStepValid \|\| isAdvanceBookingError \|\| isAuthLoading)` in `FormCard.js`. Backend also hardened: `copy_cartitem_to_bookingitem` + `AddCartSerializer.validate` now enforce advance_hr + stop_sale_dates. Both repos on `develop`. | `components/forms/FormCard.js:44`, `carts/utils.py:68-72`, `carts/serializers.py:315` |
 | **CROSS-SELL-1** | BD inventory gate — cross-sell returns 0 until BD creates contracts | OPEN. BD must create: (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. GTM clock starts on first `checkout_recommendation_view` with `recommendation_count > 0`. Post-add-to-cart modal (BACKLOG) also blocked by same gap. | `checkout/index.js` + `03-knowledge/cross-sell-placement-strategy.md` |
 |---|-------|--------|-------|
 | **WP-IMAGE-1** | WordPress Media Library tab + image URL pipeline | **CLOSED** (#88). WP media tab in `ImageSelection.js` (MUI Tabs), `WordpressImages.js`, `wordpressMediaApi.js` RTK slice. Backend: `get_image()` verbatim https:// fix on 3 serializers, `is_deleted=False` filter on `imagegallery_set`, PK guard for `wp_` prefix. All 3 repos pushed. | `components/Images/{WordpressImages,ImageSelection}.js`, `store/api/wordpressMediaApi.js`, `operators/{serializers,views}.py`, `products/serializers.py` |

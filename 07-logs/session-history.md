@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-10 (session #89)
+
+**Achieved this session (#89):**
+- **Cross-sell system IMPLEMENTED** — all 10 service categories supported, BD validation gate wired:
+  - `find_activity_contracts` — new backend function: location-JOIN (`primary_location` + `service_areas` M2M + `.distinct()`) returns DAY_TOUR/SPA/etc at transport arrival location. `'activity'` added as valid rec type. `smartenplus-backend` `4877d65` on `260610-feat/cross-sell-activity-recommendations`
+  - `CheckoutRelatedTrips` — full rewrite: category-aware anchor (transport→`packages`, activity→`activity`), sessionKey GTM de-dup (sessionStorage), expanded by default, "People also book" title, price floor filter, 161 lines. `smartenplus-frontend` `61f2ec2` on `260609-feat/cross-sell-gtm-recommendations`
+  - `checkout/index.js` — mounted at formStep=0 after ItinerariesStep
+  - `RelatedExperiences` — migrated to recommendations API
+  - `CheckoutSidebar` — cross-sell removed (abandonment risk at payment step)
+  - `RecommendationCard` — service_category chip for non-transport products
+- **Cross-sell strategy fully documented** — `03-knowledge/cross-sell-placement-strategy.md`: 10-category matrix, rec type logic, branches, BD gate, GTM clock definition
+- **CROSS-SELL-1 OPEN** — blocked by BD inventory gap (no return route + no DAY_TOUR/SPA contracts at Koh Lipe → engine returns 0 → 60-day BD clock cannot start)
+
+---
+
 ## Session #88 (archived from 2026-06-10)
 
 **Achieved:**

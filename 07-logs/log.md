@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-10] session-end #90 | Checkout Next btn fix (advance booking + auth race) + backend advance_hr/stop_sale enforcement at booking creation. Both repos on develop.
+
 ## [2026-06-10] session-end #89 | CROSS-SELL SYSTEM IMPLEMENTED — all 10 service categories, checkout step-0 BD gate, find_activity_contracts backend. Blocked by BD inventory (no Koh Lipe return route / DAY_TOUR / SPA contracts). CROSS-SELL-1 OPEN.
 
 ## [2026-06-10] decision | checkout step-0 cross-sell: 3-agent debate (UX+FE+BD). Consensus: inline CheckoutRelatedTrips at formStep=0 (checkout/index.js:1007). 3 lines. Collapsed accordion, non-blocking. BD gate signal: checkout_recommendation_click ≥5% over 60 days unlocks journey builder. Blocked by inventory gap — auto-hides until BD creates DAY_TOUR/SPA at Koh Lipe. UX/UI+Design deep debate launched next.
