@@ -84,7 +84,7 @@ ISR cache volume cleared on deploy (`deploy-ghcr.sh:168`). notFound correct on t
 
 ## Implementation — 2026-06-12
 
-**Branch `fix/seo-audit-2026-06-11`, commit `1f3f7a2`** (26 files, +361/−756). NOT merged to develop yet.
+**Branch `fix/seo-audit-2026-06-11`, commit `1f3f7a2`** (26 files, +361/−756). Merged → develop `d88f50b` + pushed 2026-06-12.
 
 **Fixed:**
 - **P0-2** fake reviews deleted from **4 sources** — audit found 3; implementation grep found 4th: `components/SEO/AirportTransferJsonLd.js:75-93` (same TwoVit/Jim block as destinations). `productProperties.js` aggregateRating now conditional on `averageRating > 0 && reviews.length > 0`.
@@ -104,7 +104,7 @@ ISR cache volume cleared on deploy (`deploy-ghcr.sh:168`). notFound correct on t
 - P1-3 route soft-404 — per [[gsc-crawled-not-indexed-investigation-2026-06-05]] 3-phase plan
 - P1-8 sitemap silent-shrink hardening — deferred
 - P3 dead-code sweep (helpers/seoConfig.js, helpers/seoHelpers.js, hooks/useDayTripSEO.js, BlogPostSEO.js) — separate chore
-- Merge branch → develop → deploy (NOTE: P0-3/P1-7 only take effect after rebuild+deploy; ISR cache volume cleared by deploy-ghcr.sh)
+- Deploy to prod (NOTE: P0-3/P1-7 only take effect after rebuild+deploy; ISR cache volume cleared by deploy-ghcr.sh)
 
 ## Related
 [[gsc-crawled-not-indexed-investigation-2026-06-05]] · [[website-audit-full-2026-06-06-overview]] · [[seo-wave2-audit-2026-05-23]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[homepage-terminology-audit-2026-06-05]] · [[og-image-inferred-audit-2026-05-23]] · [[blog-canonical-url-wp-subdomain-bug]] · [[structured-data-schema-patterns]] · [[seo-homepage-specialist-team]] · [[persistgate-ssr-suppresses-head-component]]
