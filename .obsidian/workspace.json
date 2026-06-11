@@ -11,10 +11,14 @@
             "id": "219dc9b58039cc70",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "01-projects/rate-review-uxui-audit-2026-06-06/r1-visual.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "r1-visual"
             }
           }
         ]
@@ -180,6 +184,7 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "07-logs/vault-optimization-report-2026-06-01.md",
     "master-state.md.tmp.84281.30d4c5624aeb",
     "03-knowledge/django-400-vs-409-duplicate-cart-item.md",
     "03-knowledge/recommendation-anchor-first-transport-rule.md",
@@ -215,7 +220,6 @@
     "07-logs/log.md.tmp.1772.7030c922971b",
     "index.md.tmp.1772.72990b112c7a",
     "master-state.md.tmp.1772.c9d268a57667",
-    "01-projects/touch-target-sizing-2026-06-06",
     "Untitled.canvas",
     "Untitled 1.canvas"
   ]

@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-11] audit | booking→checkout→payment e2e audit (FE+BE) — 4 confirmed bugs (useCartSync stable_id dead paths, remnants, BookButton dead hook), 2 candidates pending repro, order-lookup ruled intentional design + hardening recs, payment layer verified clean, 4 overturned. [[booking-payment-e2e-audit-2026-06-11]]
+
 ## [2026-06-11] atomize | 3 atoms from People Also Book session: [[rtk-cart-tag-invalidation-auto-refetch]], [[recommendation-anchor-first-transport-rule]], [[django-400-vs-409-duplicate-cart-item]]. master-state updated to session #92.
 
 ## [2026-06-10] fix | people-also-book recommendations — stable anchor (first transport) + filter already-carted trips from visibleRecommendations. `d64adcf` on develop.
