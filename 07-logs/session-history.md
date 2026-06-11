@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-11 (session #92)
+
+**Achieved this session (#92):**
+- **People Also Book — 3-agent audit + debug-mantra falsification**: Initial 4 bugs → 1 confirmed real bug. Duplicate detection toast never fired (backend 400 ≠ frontend catches 409). Fixed `RecommendationBookingModal.js:177-183` (`a64d280`).
+- **People Also Book — 5-agent update-behavior research**: Full trace of how recommendations refresh after cart add. Cart IS live (RTK tag invalidation `api-slice.js:58,119`). Two design flaws found and fixed (`d64adcf`):
+  1. Anchor changed from last→first transport — prevents circular recommendations when cross-sell transports added
+  2. `visibleRecommendations` now filters `cartContractIds` — already-booked trips no longer ghost in list
+- **3 atoms extracted**: [[rtk-cart-tag-invalidation-auto-refetch]], [[recommendation-anchor-first-transport-rule]], [[django-400-vs-409-duplicate-cart-item]]
+- **Vault audit updated**: [[people-also-book-checkout-audit]] corrected twice (3 false positives overturned)
+
+---
+
 **Achieved this session (#91):**
 - **"People also book" full cross-sell redesign** — frontend `feat/redesign-people-also-book-cards` `3cda359`:
   - `RecommendationCard.js` — horizontal compact card (72px thumbnail left, info right); per-category thumbnail (operator logo for transport, `getDayTripCoverImage` for activities); subtitle = route+duration (transport) or category label+duration (activities); shadow-only card; "Book" button replacing "View →" link
@@ -14,6 +26,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 - **`RecommendationBookingModal.js`** (new) — inline date+passenger picker, books any category without leaving checkout
 - **`useDayTripAvailability.js` fixed** — fail-open when `is_actived`/`start_date`/`end_date` undefined
 - **Backend availability bug fixed** — `ContractRecommendationSerializer` `62e8755`: 11 missing fields added, N+1 prefetch on all 4 query blocks
+
+---
+
+**Achieved this session (#90):**
+- **Checkout Next btn bug FIXED (frontend)** — `FormCard.js` `f7d2956` on `develop`:
+  - Root cause: commit `92bf653` ("resolve active contract", 2026-02-27) replaced `isAdvanceBookingError` in `shouldDisableNext` with `!isCurrentStepValid`, accidentally dropping the advance-hour/stop-sale guard. `isAdvanceBookingError` remained computed + used for the warning Alert but never blocked the button.
+  - Fix: `(currentStep === 0 && (!isCurrentStepValid || isAdvanceBookingError || isAuthLoading))` — one line.
+  - Also added `isAuthLoading` prop — blocks Next while `useSession` resolves (`status === 'loading'`), closing auth-race gap where unauthenticated user could reach step 1.
+- **Backend validation gaps CLOSED** — `carts/utils.py` + `carts/serializers.py` `aed70f6` on `develop`:
+  - `copy_cartitem_to_bookingitem`: now calls `check_advance_hour()` + `stop_sale_dates` filter before creating BookingItem — previously only `is_actived`/`confirm` checked at booking creation time.
+  - `AddCartSerializer.validate`: stop_sale_dates check added alongside existing `is_valid_travel_date` — CartItem creation now also blocked on stop-sale dates (previously only availability endpoint enforced this).
+- **2-agent debate** — strict vs permissive reviewers identified 5 gaps total; auth-race selected as high-priority fix. Remaining gaps (stale isFetching, is_actived null, null traveling_date, QR forward nav) logged but deferred.
 
 ---
 
@@ -53,6 +77,33 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 - **Edit-flow reuses contract Save** — click tile → `ImageMetadataDialog` in edit mode → writes to Formik `imageSelection` + provider `useAlert` snackbar → contract Save persists. No separate mutation endpoint. No new save button.
 - **Bug fix (debug-mantra)** — `operators/views.py:720-722` `elif` branch only wrote `order` on existing `ImageGallery` rows, dropped metadata. Fix: `else` branch with unconditional metadata sync + operator_image fallback chain. `c185523`.
 - **3 atoms extracted** — [[django-partial-update-elif-metadata-drop]], [[image-metadata-formik-state-only-save]], [[add-flow-metadata-helper-pattern]].
+
+---
+
+## Sessions #88/#87 — fuller blocks (moved from master-state 2026-06-11; condensed versions above)
+
+**Achieved this session (#88):**
+- **WordPress Media Library tab SHIPPED** — `admin-dashboard` `99e45b2` on `develop`:
+  - `WordpressImages.js` — new component: search + debounce + Load More pagination via `X-WP-TotalPages`
+  - `ImageSelection.js` — MUI Tabs (Operator Images / WordPress Media), both panels mounted + RTK cached
+  - `wordpressMediaApi.js` — RTK Query slice proxied through `/wp-api`, normalises WP response (`wp_` id prefix, `stripHtml` caption)
+  - `store/index.js` — registered reducer + middleware, blacklisted from persist
+  - `next.config.js` — `/wp-api/:path*` rewrite + `smartenplus-wp-s3` remotePattern
+- **Image URL bug pipeline fixed** — `smartenplus-backend` `b3b8ee0` + `f7010d2` on `develop`:
+  - `operators/serializers.py` — `get_image()` SerializerMethodField: returns stored `https://` verbatim
+  - `operators/views.py` — store full `https://` verbatim; guard PK lookup against `wp_` prefix
+  - `products/serializers.py` — `get_image()` fix + `is_deleted=False` filter on `imagegallery_set`
+- **Root cause** — id=2881 `is_deleted=True` row with wrong-bucket URL leaking through unfiltered `imagegallery_set`.
+- **WP-IMAGE-1 CLOSED.**
+
+**Achieved this session (#87, alt_text + caption — note: Section 2 logs IMG-ALT-1 as closed #86):**
+- **Operator image alt_text + caption SHIPPED** — 2 repos on `develop`:
+  - `admin-dashboard` `71c2352` — feat(operator-images): edit alt_text + caption alongside description
+  - `smartenplus-backend` `08b6593` — feat(operators): add alt_text + caption to OperatorImageGallery
+- **Schema** — 2 nullable `CharField(250)` on `OperatorImageGallery` (alt_text, caption). Migration `0058`. Serializer exposes both as writable.
+- **Dialog UX** — `pages/routemanagement/operators/images/ImageEditDialog.js` now has 3 `TextField`s (alt/description/caption), each `maxLength=250`. Alt text auto-prefills from `<operatorName> - <filename-slug>` when empty. Grid `alt` chain: `alt_text || description || operator_name || ''`.
+- **Debug saga** — symptom "only description persists" survived hard refresh. Five `[DBG-IMG-EDIT]` probes (dialog → page → RTK → network → backend) proved code was correct end-to-end. Root cause: Next.js Pages Router Fast Refresh replaced `ImageEditDialog` module (3 fields visible) but left the parent `index.js` module's `handleDialogSubmit` callback stale → it destructured only OLD keys and dropped alt/caption. Hard refresh after the second `.next` recompile finally replaced the parent module. Probes removed, code clean.
+- **IMG-ALT-1 CLOSED.** Atom: [[operator-image-alt-caption-fields]]. Debuggable artifact: [[nextjs-hmr-cross-module-callback-staleness]].
 
 ---
 

@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-11] session-end #93 | Two-pass falsification audit of booking-payment e2e doc — all root causes survived disproof, doc amended (test files + falsification notes), 2 atoms extracted (rtk-lazy-query-tuple-misuse, redux-persist-gate-scope-gap). Next: BOOKING-PAY-FIX-1 (implement bugs 1-4).
+
 ## [2026-06-10] session-end #90 | Checkout Next btn fix (advance booking + auth race) + backend advance_hr/stop_sale enforcement at booking creation. Both repos on develop.
 
 ## [2026-06-10] session-end #89 | CROSS-SELL SYSTEM IMPLEMENTED — all 10 service categories, checkout step-0 BD gate, find_activity_contracts backend. Blocked by BD inventory (no Koh Lipe return route / DAY_TOUR / SPA contracts). CROSS-SELL-1 OPEN.

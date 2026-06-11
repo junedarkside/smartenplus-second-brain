@@ -4,6 +4,8 @@
 
 Full-flow audit (frontend booking/cart + checkout + payment, backend order/payment). 3 Explore agents + hand-verification of every candidate (debug-mantra recheck on the big one). Result: **4 confirmed bugs (1 LOW new), 2 candidates pending repro, 2 hardening recommendations, payment layer verified clean, 3 explorer claims overturned.**
 
+**Second-pass falsification audit (2026-06-11, debug-mantra):** every root cause survived active disproof. Key double-confirmation: backend emits zero `stable_id` anywhere (`grep` over backend `*.py` ex-migrations — only a legacy log string at `bookings/services.py:223`), so bugs 1/2 cannot be masked by a computed serializer field. Refinements recorded inline below.
+
 ## Scope
 
 - Frontend: BookButton → cart (RTK Query) → `/checkout` → order creation → Omise payment → order pages.
@@ -15,13 +17,15 @@ Full-flow audit (frontend booking/cart + checkout + payment, backend order/payme
 ### 1. MEDIUM — dead change-detection in cart sync
 `smartenplus-frontend/hooks/checkout/useCartSync.js:41-42` compares `i.stable_id` only, but backend dropped the column (migration `carts/0012_remove_cartitem_stable_id`, 2026-02-13). Maps are always `[null, null, …]`, so a same-length cart change (delete item A + add item B) is treated as "no change" and passenger-assignment sync is skipped.
 **Fix:** compare by `item.id`.
+**Falsification notes (2nd pass):** Effect 2 cannot rescue — assignments object unchanged when cart swaps same-length, so `JSON.stringify` equals `lastValidatedAssignmentsRef.current` and Effect 2 early-returns (`useCartSync.js:201-203`); sync fully skipped. Precondition: manifests only when ONE refetch delivers a same-length changed `cart_item` array (item replacement or batched delete+add); sequential ops with separate refetches escape via length difference. Side effect: early return also skips the `previousCartItemsRef` update (line 144 unreached), so the next comparison runs against a stale baseline.
 
 ### 2. MEDIUM — dead removed-item cleanup
 `useCartSync.js:147-177` builds `previousStableIds`/`currentStableIds` from `String(i.stable_id)` → every entry is `"undefined"` → `removedItemIds` always empty → `clearTripInfo` never dispatched and stale trips never pruned from formData when an item is deleted. Effect 3 only covers cart→empty, not partial removal.
 **Fix:** key both sets by `item.id`.
+**Falsification note (2nd pass):** `useCartSync.js:155` is the SOLE `clearTripInfo` dispatch site in source (grep ex-`.next`, ex-tests) — no alternate pruning path exists; dead path means stale trips are never pruned anywhere.
 
 ### 3. LOW — stable_id remnants (tech debt)
-9 source files still reference `stable_id`; the `String(item.stable_id || item.id)` fallback works but is dead code, and useCartSync Effect 6 (id→stable_id migration, lines 317-357) can never migrate anything. Files: `PassengerAssignment.js`, `Passengers.js`, `Confirmation.js`, `useCartSync.js`, `useStepValidation.js`, `pages/checkout/index.js`, `checkoutPersistence.js`, `savePassengerAssignmentsToCart.js`, `checkout-slice.js`.
+9 source files still reference `stable_id`; the `String(item.stable_id || item.id)` fallback works but is dead code, and useCartSync Effect 6 (id→stable_id migration, lines 317-357) can never migrate anything. Files: `PassengerAssignment.js`, `Passengers.js`, `Confirmation.js`, `useCartSync.js`, `useStepValidation.js`, `pages/checkout/index.js`, `checkoutPersistence.js`, `savePassengerAssignmentsToCart.js`, `checkout-slice.js`. Plus 3 test files needing same sweep (verified 2026-06-11 audit-of-audit): `__tests__/hooks/useCheckoutAutoSave.test.js`, `__tests__/helpers/savePassengerAssignmentsToCart.test.js`, `__tests__/helpers/checkoutPersistence.test.js`.
 **Fix:** sweep to `item.id`; delete Effect 6.
 
 ### 4. LOW — misused lazy query hook in BookButton
@@ -34,6 +38,7 @@ Full-flow audit (frontend booking/cart + checkout + payment, backend order/payme
 `pages/checkout/index.js:187-201` vs `107-124`. Key fact: `_app.js:90-97` — **PersistGate wraps only RefreshTokenHandler/DevTools, NOT `<Component>`** → checkout mounts before Redux-persist rehydration. Mount sequence: restore effect skips (`isCheckoutRehydrated=false`, `cartId=null`); mixed-counts clear effect runs anyway (`hasMixedPassengerTypes([])=false`, `passengerTypeHelper.js:34`) → `setFormData(prev => ({...prev, passengerAssignments:{}}))` turns `undefined` into `{passengerAssignments:{}}` → restore effect permanently blocked by `formData !== undefined` guard (line 108) → after rehydration the inline saver (lines 127-135) overwrites `checkout_formData` with the gutted object. Redux checkout-slice restore may mask part of the loss — needs runtime confirmation.
 **Repro:** mixed cart (2 items, different passenger counts) → fill passengers + customize assignments → hard refresh `/checkout` → form data / assignments gone = confirmed.
 **Fix if confirmed:** skip clear effect until cart data loaded (`if (!data) return;` before line 188); consider also guarding with `isCheckoutRehydrated`.
+**Falsification note (2nd pass):** mount-state assumptions confirmed — `cart-slice.js:7` initial `cartId: null`; `isCheckoutRehydrated = state._persist?.rehydrated ?? false` (`checkout/index.js:51`). Both falsy at mount → restore skips, clear effect guts formData. Mechanism intact; runtime repro remains the gate.
 
 ### C2. MEDIUM — transient error nukes cartId
 `components/HOC/check-and-createcart.js:67-72`: catch on cart validation clears `cartId` for ANY failure (network blip, 429 — CartThrottle exists, 500). Only 404 means the cart is actually invalid. Code-trace confirmed; runtime repro pending.
