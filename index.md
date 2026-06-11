@@ -224,6 +224,9 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-checkout-architecture-audit]] — 20/20 audit, getPrimaryCharge fix, cancelState guards, qrState clear
 - [[payment-checkout-e2e-testing]] — MSW intercept bug, 5 bugs fixed, session structure rule, manual test guide
 - [[adaptive-header-route-type-pattern]] — Type A/B split (transactional/discovery), dynamic offset 80/96px, HeaderRowsContext
+- [[next-seo-v6-robots-prop-broken]] — robots={{}} silent no-op, correct API noindex={true}/nofollow={true}, SSR constraint false
+- [[canonicalization-audit-checklist]] — domain + per-page checks, parallel URL handling, known gotchas
+- [[site-url-config-pattern]] — baseURL vs NEXT_PUBLIC_DOMAIN, module const pattern, deploy default fix
 - [[structured-data-schema-patterns]] — TravelAgency schema accuracy, WebSite+SearchAction, server-sitemap.xml 404 crawl budget
 - [[mui-dropdown-preserve-strategy]] — ARIA test compatibility, item reduction framework (11→6), Drawer bottom-sheet pattern
 - [[section-contentcard-wrapper-pattern]] — Section/ContentCard absent = full-bleed root cause; reuse across pages
