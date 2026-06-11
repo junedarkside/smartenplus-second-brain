@@ -29,7 +29,21 @@ event/attraction only   → skip query entirely
 
 ## Non-transport cart anchor
 
-For DAY_TOUR/SPA-only carts, `type='activity'` is used. But `find_activity_contracts` requires a transport source contract (uses `trip.route.arrival_station`). When cart has no transport, there is no location anchor → query skips. Engine doesn't support activity→activity recommendations yet.
+For DAY_TOUR/SPA-only carts, `type='activity'` is used. Dispatch branches on source contract type:
+- Has `trip.route.arrival_station` → `find_activity_contracts()` (transport→activity)
+- No arrival_station → `find_nearby_activities()` (activity→activity via `primary_location`)
+
+See [[activity-to-activity-cross-sell]] for full dispatch logic + scoring.
+
+## Type → function mapping (updated 2026-06-11)
+
+| type | function | returns |
+|---|---|---|
+| `packages` | `find_package_contracts` | Return trip + onward connections |
+| `activity` (transport source) | `find_activity_contracts` | DAY_TOUR/SPA/etc at arrival_station location |
+| `activity` (activity source) | `find_nearby_activities` | DAY_TOUR/SPA/etc at primary_location |
+| `similar` | `find_similar_contracts` | Same arrival, any departure (transport only) |
+| `hybrid` | all combined | Mix — used by post-booking only |
 
 ## Context
-SmartEnPlus checkout cross-sell, 2026-06-10.
+SmartEnPlus checkout cross-sell, 2026-06-10. Updated 2026-06-11.

@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-11] session-end #96 | activity cross-sell: 3-layer bug fixed (viewset valid_types + global trip guard + arrival_station dispatch); find_nearby_activities() added; booking widget blank error fixed (advanceHourPassed + nonOperatingDay messages); cache-clearing WARNING silenced for non-transport contracts. 2 atoms extracted.
+
 ## [2026-06-11] session-end #94 | booking-to-payment flow audit: 4 bugs fixed (stable_id cart sync, clearTripInfo, dead lazy query), 53 tests pass, SM-1–4 smoke passed, merged fix/checkout-stable-id-cleanup → develop (f271aef). C1/C2 deferred pending repro.
 
 ## [2026-06-11] session-end #93 | Two-pass falsification audit of booking-payment e2e doc — all root causes survived disproof, doc amended (test files + falsification notes), 2 atoms extracted (rtk-lazy-query-tuple-misuse, redux-persist-gate-scope-gap). Next: BOOKING-PAY-FIX-1 (implement bugs 1-4).

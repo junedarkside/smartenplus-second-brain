@@ -4,21 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-11 (session #95)
+**Updated:** 2026-06-11 (session #96)
 
-**Achieved this session (#95):**
-- **Frontend architecture audit full implementation**: 3-agent team `frontend-audit-fix` resolved all 9 audit items from [[frontend-architecture-audit-2026-06-11]] across 3 PRs:
-  - **PR1** `fix/audit-checkout-passengers-hooks` (e5261ab → 1e46314): Formik render-prop useEffect extracted to new `FormikValuesSync.js` (105 lines). Latent crash trap closed.
-  - **PR2** `fix/audit-rtk-query-cleanup` (ecc76a9 → b6b956e): 4 RTK Query cleanups — `getSession()` pattern in tripsApi+dayTripsApi, `activities` Redux key in dayTripsApi, `bumpCartVersion` extracted to `store/cart-version.js` (3 sources of truth → 1), `createCart` single invalidation.
-  - **PR3** `chore/audit-deadcode-and-hygiene` (d69b473 → fbe9aab): 5 dead-code items removed, 5 .backup + 2 logs deleted, backend material removed (db/, data/, *.diff, *.sh), 4 stale design docs archived to docs/archive/, .gitignore: *.log + *.backup added.
-- **Process lessons documented**: 1 cross-branch contamination incident from parallel agents in shared worktree (recovered via `git reset --hard` + stash); 1 unresponsive implementer (lead took over + amended incomplete commit). Sequential pattern adopted post-incident. No `gh` CLI in environment — 3 manual PR opens pending.
+**Achieved this session (#96):**
+- **Activity cross-sell 3-layer bug fixed** (debug-mantra + DB mockup):
+  - Layer 1: `views.py:1755` — `'activity'` added to `valid_types` → unblocked 400
+  - Layer 2: `services.py` — global trip guard removed (ValueError blocked all tripless contracts)
+  - Layer 3: `services.py` — dispatch condition tightened to require `arrival_station` (contracts have `trip+route` but `arrival_station=None`); `find_nearby_activities()` added for activity→activity via `primary_location`/`service_areas`. Scoring: location base 50 + same category +30 + quality 0–20 + exact location +10.
+  - Verified: `GET /api/v1/recommendations/118/?type=activity&limit=3` → 200, contract 123 score 90.0.
+- **Cache WARNING silenced**: `clear_trip_cache` early-return for non-transport `service_category`. `logger.warning` → `logger.debug` for incomplete transport data.
+- **Booking widget blank error fixed**: `advanceHourPassed` + `nonOperatingDay` added to Alert. `ADVANCE_HOUR_PASSED` constant added to `dayTripConstants.js`. Root cause: 2-day advance window passed for 06/13 on contract 123 — blocked correctly but no message shown.
+- **2 atoms extracted**: [[activity-to-activity-cross-sell]], [[booking-widget-availability-error-display]]. [[recommendation-type-selection-by-service-category]] updated (was stale — said activity→activity unsupported).
 
 **Resume point (EXACT):**
-1. **FRONTEND-AUDIT-MANUAL-PRS** — open 3 PRs on GitHub manually (no `gh` CLI): fix/audit-checkout-passengers-hooks, fix/audit-rtk-query-cleanup, chore/audit-deadcode-and-hygiene. All 3 branches already merged to develop locally; PR open is for audit record. See [[frontend-audit-implementation-2026-06-11]].
-2. **FRONTEND-AUDIT-FOLLOWUP-1** — 2 `exhaustive-deps` warnings in `FormikValuesSync.js:61:6` are pre-existing condition now visible (was masked by old eslint-disable). Add explicit deps + suppression comment, or accept. Low priority.
-3. **BOOKING-PAY-REPRO-1** — runtime repro C1 + C2 (from #94). Unchanged.
-4. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. Unchanged.
-5. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Unchanged.
+1. **COMMIT-PUSH** — both repos uncommitted: `smartenplus-backend` (products/services.py + products/views.py), `smartenplus-frontend` (DayTripBookingWidget.js + dayTripConstants.js). Commit + push + merge → develop.
+2. **FRONTEND-AUDIT-MANUAL-PRS** — open 3 PRs on GitHub manually: fix/audit-checkout-passengers-hooks, fix/audit-rtk-query-cleanup, chore/audit-deadcode-and-hygiene. All merged locally; PR open for audit record.
+3. **FRONTEND-AUDIT-FOLLOWUP-1** — 2 `exhaustive-deps` warnings in `FormikValuesSync.js:61:6`. Low priority.
+4. **BOOKING-PAY-REPRO-1** — runtime repro C1 + C2. Unchanged.
+5. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. Unchanged.
+6. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Unchanged.
 
 ---
 

@@ -78,6 +78,8 @@ Global navigation catalog. Updated on every ingest.
 - [[recommendation-anchor-first-transport-rule]] — Anchor = first transport (not last). Last transport causes circular recommendations when cross-sell transports added. `CheckoutRelatedTrips.js:27`.
 - [[django-400-vs-409-duplicate-cart-item]] — Backend raises 400 (not 409) for duplicate cart items. Frontend must catch 400 + check `includes('already exists')`. 409 = payment_pending only.
 - [[rtk-lazy-query-tuple-misuse]] — **NEW 2026-06-11.** `useLazyXQuery` returns `[trigger, result]` tuple, takes no args — passing args + object-destructuring = silent dead code, no request fired. Detection grep: `} = useLazy`. Found live in `BookButton.js:41-43`.
+- [[activity-to-activity-cross-sell]] — **NEW 2026-06-11.** `find_nearby_activities()` pivots on `primary_location`/`service_areas`. Dispatch requires `arrival_station` check (not just trip+route). 3-signal scoring: location base 50 + same category +30 + quality score 0–20 + exact location +10.
+- [[booking-widget-availability-error-display]] — **NEW 2026-06-11.** DayTripBookingWidget Alert must render all 6 error flags. `advanceHourPassed` + `nonOperatingDay` were missing → blank red box. `ADVANCE_HOUR_PASSED` constant added to `dayTripConstants.js`.
 - [[redux-persist-gate-scope-gap]] — **NEW 2026-06-11.** PersistGate doesn't wrap `<Component>` (`_app.js:90-97`) — pages mount pre-rehydration. Restore effects need `state._persist?.rehydrated` guard; clearing effects must also wait for API data or they gut state a later restore needed (C1 chain).
 - [[tickets|Tickets]] — Ticket model, GenericForeignKey attachable to any model, HistoricalRecords audit
 - [[admin-dashboard|Admin Dashboard]] — Admin interface for SmartEnPlus platform
