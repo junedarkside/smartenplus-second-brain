@@ -51,3 +51,4 @@ DB-level serialization for charge creation. Frontend reconciliation for state dr
 - [[payment-gateway-charge-architecture]]
 - [[payment-integration]]
 - [[checkout-flow]]
+- [[payment-finalize-deep-dive]] — GAP-4 snapshot validation detail + cross-order pending lock

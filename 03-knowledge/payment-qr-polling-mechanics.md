@@ -25,7 +25,7 @@ headers: { Authorization: `Bearer ${token}` }
 // No auth header
 params: { email: guestEmail }
 ```
-Condition: `!token && guestEmail` (not `!!guestEmail` — prevents leaking auth context if token somehow absent). See [[CLAUDE.md gotchas]] for `expirePendingCharge` auth rule.
+Condition: `!token && guestEmail` (not `!!guestEmail` — prevents leaking auth context if token somehow absent). See [[nextauth-session-shape]] for `expirePendingCharge` auth rule.
 
 ## Response Fallback Chain (useQRPolling.js:140-175)
 4 formats handled in priority order:

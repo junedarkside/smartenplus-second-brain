@@ -22,25 +22,24 @@ Old code checked `error.error` — only works for raw fetch path.
 Fix: Added `pendingChargeIdRef` + RTK error detection.
 
 ### Bug 4: session.user guard wrong
-Session structure: `{ id, email, accessToken }` — no `user` wrapper.
 `!session?.user` always true → auth check broken.
 Fix: Changed to `!session?.id`
 
-### Bug 5: session?.user?.email in checkout
-`session?.user` always `undefined` → `email` always `null` for all auth users.
-Null propagated to: RTK cart query, Itineraries cancel handler, savePassengerAssignmentsToCart dead code.
-Fix: `session?.user?.email` → `session?.email`
+### Bug 5: session email access in checkout
+Wrong pattern used (`session?.email` always undefined).
+Fix: `session?.email` → `session?.user?.email`
 
 ## Session Structure Rule
 ```javascript
+// Correct shape: { id, accessToken, user: { email, name, image } }
 // Auth check
 session?.id
 // Email
-session?.email
-// Never
 session?.user?.email
-session?.user
+// Never
+session?.email   // always undefined
 ```
+See [[nextauth-session-shape]] for full shape + guest email sources.
 
 ## Expected Behavior (NOT bugs)
 - 409 PAYMENT_PENDING on step 2 Next while cart locked = correct backend behavior

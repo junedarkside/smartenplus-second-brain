@@ -26,4 +26,4 @@ In smartenplus-frontend, `PersistGate` does NOT wrap `<Component>` (`pages/_app.
 
 ## Related
 
-[[booking-payment-e2e-audit-2026-06-11]] · [[checkout-flow]] · [[session-storage-restoration]]
+[[booking-payment-e2e-audit-2026-06-11]] · [[checkout-flow]] · [[checkout-formdata-persist-guard-pattern]]
