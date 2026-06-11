@@ -35,3 +35,8 @@ const shouldDisableNext = currentStep >= paymentStep ||
 - `is_actived !== true` (null/undefined passes strict `=== false` check)
 - Null `traveling_date` silent pass
 - QR active forward nav parity
+
+## Related
+- [[payment-checkout-5-principles]] — checkout architecture overview
+- [[checkout-flow]] — multi-step workflow
+- [[payment-integration]] — payment lock state

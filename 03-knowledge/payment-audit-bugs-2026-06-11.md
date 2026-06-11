@@ -4,7 +4,7 @@
 Full E2E audit (booking → checkout → payment, backend order → charge → webhook) uncovered 4 confirmed bugs: 2 MEDIUM (cart sync dead code), 2 LOW (stable_id cleanup, lazy query). All fixes straightforward. 2 open candidates pending runtime repro.
 
 ## Context
-Second audit pass with debug-mantra falsification on root causes. Every root cause verified surviving active disproof. Backend confirmed zero `stable_id` emission (legacy removed 2026-02-13). See [[booking-payment-e2e-audit-2026-06-11]] for full scope, design confirmations, and overturned findings.
+Second audit pass with debug-mantra falsification on root causes. Every root cause verified surviving active disproof. Backend confirmed zero `stable_id` emission (legacy removed 2026-02-13). Full E2E audit report: `/01-projects/booking-payment-e2e-audit-2026-06-11.md` (includes scope, design confirmations, overturned findings).
 
 ## Confirmed Bugs
 
@@ -34,16 +34,17 @@ Second audit pass with debug-mantra falsification on root causes. Every root cau
 **Problem:** `useLazyCheckCartIdQuery({ cartId, email }, { refetchOnMountOrArgChange: true })` — lazy queries take no args. Object-destructuring yields `data`/`checkCartLoading` = undefined. Harmless (trigger never fires) but dead. Line 44 is correct usage.
 **Fix:** Delete lines 41-43.
 
-## Open Candidates — Require Runtime Repro
+## Candidates — Status
 
-**C1: Checkout formData restore broken on hard refresh**
-`pages/checkout/index.js:187-201` + `107-124`. PersistGate wraps only RefreshTokenHandler, NOT `<Component>` → checkout mounts before Redux-persist rehydration. Mount: restore effect skips (isCheckoutRehydrated=false, cartId=null); clear effect runs on mixed cart (hasMixedPassengerTypes([])=false) → sets formData={{passengerAssignments:{}}} → restore permanently blocked by `formData !== undefined` guard → after rehydration the inline saver overwrites with gutted object.
-**Repro:** mixed cart (2 items, different passenger counts) → fill passengers + customize assignments → hard refresh `/checkout` → form data / assignments gone.
-**Fix if confirmed:** Skip clear effect until cart loaded (`if (!data) return;`); consider guarding with `isCheckoutRehydrated`.
+**C1: Checkout formData restore broken on hard refresh — FIXED**
+`pages/checkout/index.js:187-201` + `107-124`. Root cause: PersistGate doesn't wrap `<Component>` → checkout mounts before Redux-persist rehydration. Mount: restore effect skips, clear effect guts formData, restore permanently blocked.
+**Fixed:** `cb817d9` on develop. Added `isCartLoaded` gate (`!!data`) to prevent clear effect on mount.
+**Source:** `[[checkout-formdata-persist-guard-pattern]]`
 
-**C2: Transient errors incorrectly clear cartId**
-`components/HOC/check-and-createcart.js:67-72`. Catch on cart validation clears `cartId` for ANY failure (network blip, 429, 500). Only 404 means cart invalid.
-**Fix:** Clear only on `error.status === 404`.
+**C2: Transient errors incorrectly clear cartId — FIXED**
+`components/HOC/check-and-createcart.js:67-72`. Root cause: catch on cart validation clears `cartId` for ANY failure (network blip, 429, 500). Only 404 means cart invalid.
+**Fixed:** `cb817d9` on develop. Added `error?.status === 404` guard.
+**Source:** `[[checkout-formdata-persist-guard-pattern]]`
 
 ## Related
 - [[booking-payment-e2e-audit-2026-06-11]] — full audit report, design confirmations, overturned findings

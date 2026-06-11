@@ -136,9 +136,13 @@ Global navigation catalog. Updated on every ingest.
 - [[smartenplus-synopsis]] — Project-wide orientation: stack, repos, payment, auth, current state, open work
 - [[ai-workflows]] — LLM Wiki pattern, ingestion/query/lint operations
 - [[nextjs-patterns]] — ISR, dynamic SSR disable, RTK Query, date handling
-- [[payment-integration]] — Thai payment methods, Omise source types, webhook flows, checkout architecture principles (28 use cases), centralized payment error detection, expiry paths (Celery+view+mgmt), open C1/C2 candidates
-- [[payment-audit-bugs-2026-06-11]] — 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 open candidates (formData restore, transient error nuking cartId)
-- [[omise-api-reference-2026-06-12]] — Full Omise API catalog (21 sections): 7 active/partial core+account+financial, 3 not integrated dispute/schedule/search, 3 reference, status vocabulary mapping
+- [[payment-integration]] — Thai payment methods, Omise source types, webhook flows, checkout architecture principles (28 use cases), centralized payment error detection, expiry paths (Celery+view+mgmt), C1/C2 fixed in cb817d9
+- [[payment-audit-bugs-2026-06-11]] — 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 fixed candidates (formData restore, transient error nuking cartId, both cb817d9)
+- [[omise-api-reference-2026-06-12]] — Full Omise API catalog (21 sections): 7 active, 3 partial, 11 not integrated; status vocabulary + authorized charge handling
+- [[payment-status-enums]] — OmiseMethod constants, status machines, authorized mapping, METHOD_EXPIRY
+- [[payment-charge-service-layer]] — create/reconcile operations, idempotency, locked_amount rule, getPrimaryCharge post-fix
+- [[payment-gateway-charge-architecture]] — two-charge model, canonical rule, finalize_payment SSOT, ExpirePendingChargeView table
+- [[checkout-formdata-persist-guard-pattern]] — C1/C2 fixes (isCartLoaded gate, 404-only cart clear), PersistGate timing issue, RTK error shapes
 - [[celery-tasks|Celery Tasks]] — bind=True pattern, exponential backoff, high-risk task guards, beat schedule
 - [[refund-flow|Refund Flow]] — payments.Refund model, cards.Refund (legacy), RefundViewSet deprecation
 - [[journeys|Journeys]] — UserJourneyEvent analytics, event types, metadata, dedup guard pattern

@@ -22,6 +22,9 @@ paid → partial_refunded
 
 **Status Machine Guards:** `clean()` enforced in Django admin only. NOT runtime `.save()`. Runtime accepts any state transition.
 
+### Omise `authorized` Status (not-yet-captured)
+Omise can return `authorized` (charge approved but not yet captured). Maps to SmartEnPlus `paid` on webhook finalization (webhook triggers `finalize_payment()` which is oblivious to capture state). Same flow as `successful`. No local distinction needed — finalization is amount-based, not capture-based.
+
 ### OmiseMethod
 | Constant | Value | Category |
 |---------|-------|----------|

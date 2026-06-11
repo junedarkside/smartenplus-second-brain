@@ -28,6 +28,6 @@ order.save(update_fields=['payment_finalized_at'])
 - High-risk tasks (email, booking confirm) additionally guard via `UserJourneyEvent` dedup
 
 ## Related
-- [[payment-integration]]
-- [[payment-system]]
-- [[celery-tasks]]
+- [[payment-integration]] — payment flow overview
+- [[payment-gateway-charge-architecture]] — finalize_payment SSOT
+- [[celery-tasks]] — sync_pending_charges reconciliation

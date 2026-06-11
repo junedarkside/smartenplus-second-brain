@@ -23,15 +23,16 @@ def _to_minor_units(amount, currency='THB'):
 ```
 
 ### `create_charge(idempotency_key, payment_method, amount_thb, currency, token, return_uri)`
-1. Hash(method, amount, currency) → idempotency key
-2. Match → return cached. Mismatch → error (caller must use fresh key)
-3. Compute `expires_at` via `METHOD_EXPIRY` for source-based payments
-4. Create Omise source + charge per method:
+1. Check `locked_amount`: if set and new amount ≠ locked, raise 409 `amount_locked` error. Same amount allowed (idempotent).
+2. Hash(method, amount, currency) → idempotency key
+3. Match → return cached. Mismatch → error (caller must use fresh key)
+4. Compute `expires_at` via `METHOD_EXPIRY` for source-based payments
+5. Create Omise source + charge per method:
    - **PromptPay:** source(type='promptpay') → charge(source=id)
    - **Credit/Debit:** charge(card=token, return_uri=)
    - **Mobile banking:** source(type=method) → charge(source=id, return_uri=)
    - **E-wallets:** source with HTTPS return_uri check
-5. Store `GatewayCharge` + `IdempotencyKey`
+6. Store `GatewayCharge` + `IdempotencyKey`
 
 ### `reconcile_gateway_charge(gateway_charge)`
 Polling fallback. Queries Omise live → updates local status.

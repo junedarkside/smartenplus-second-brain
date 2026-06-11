@@ -183,8 +183,8 @@ Error response structure reference (4xx/5xx status codes).
 ## Integration Summary
 
 **Active:** Charges, Sources, Tokens, Refunds, Cards, Events, Errors
-**Partial:** Customers, Receipts, Search, Schedules, Occurrences
-**Not Integrated:** Account, Capability, Transfers, Schedules, Balance, Bank Account, Recipients, Disputes, Forex, Documents
+**Partial:** Customers, Receipts, Search
+**Not Integrated:** Account, Capability, Transfers, Transfer Schedules, Balance, Bank Account, Recipients, Disputes, Schedules, Occurrences, Forex, Documents
 
 ---
 

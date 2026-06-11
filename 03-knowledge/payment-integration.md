@@ -19,10 +19,11 @@ Thai payment via Omise. PromptPay, CC/debit, mobile banking, e-wallets. Canonica
 
 ## QR Polling Pattern (PromptPay)
 1. Create charge → get QR + `expires_at`
-2. Poll while `expires_at` in future
+2. Poll every 10s (backend-driven `polling_interval` field, default 10,000ms) while `expires_at` in future
 3. Check BOTH `status === 'successful' || status === 'paid'` (domain vocab differs)
 4. Success: redirect to order page (auth) or guest order page (guest)
 5. Never redirect to `authorizeUri` for QR (empty for PP)
+6. See [[promptpay-no-webhook-on-expiry]] for expiry handling (Celery sync + ExpirePendingChargeView + mgmt command)
 
 ## Canonical Charge Rule
 LATEST charge per order only. Historical charges must NOT trigger finalization or display. User may retry with different method — old failed charges ≠ current state.
@@ -31,13 +32,13 @@ LATEST charge per order only. Historical charges must NOT trigger finalization o
 `payment_failed` NOT terminal. `finalize_payment_failed()` does NOT set `payment_finalized_at` — only success sets sentinel. Don't count as lost revenue until cancelled/expired.
 
 ## Double-Click Protection
-Disable pay button + "Processing..." for 10s after click. `setPaymentTriggerEffect(true)`, not toggle. Prevents duplicate charges.
+Disable pay button + show "Processing..." state after click via `isProcessingPayment` flag. `setIsProcessingPayment(true)` prevents duplicate charges (UI-level guard; backend has 409 duplicate checks). `useOmisePayment.js`, `PaymentComponent.js`.
 
 ## Idempotency via Sentinel Fields
 Timestamp sentinels as exactly-once guards. Reusable beyond payments — any high-risk side effect (email, booking confirm). See [[payment-sentinel-idempotency]].
 
 ## Amount Locking for Deferred Payments
-`locked_amount` set on first QR, reset on expire/cancel. Prevents duplicate amounts completing.
+`locked_amount` set on first QR, reset on expire/cancel. Prevents retries with different amounts: if new charge amount ≠ `locked_amount`, backend raises 409 `amount_locked` error. Same amount allowed (idempotent).  `payments/services.py:305` checks on webhook finalization.
 
 ## Webhook Audit Outside Transaction
 Save audit/log records outside `transaction.atomic()` → survive rollbacks. Business logic fails (race, constraint) → raw event still available for debugging + manual reconciliation.
@@ -118,8 +119,10 @@ Omise Documents API (`/disputes/{id}/documents`) = dispute evidence upload only 
 **C2: Transient errors incorrectly clear cartId** — `check-and-createcart.js` catches ANY failure (network, 429, 500) and clears `cartId`. Only 404 means cart is actually invalid. Fix: `error.status === 404` guard. [[booking-payment-e2e-audit-2026-06-11]], candidate section.
 
 ## Related
-- [[payment-system]]
-- [[checkout-flow]]
-- [[orders]]
-- [[backend-architecture]]
-- [[booking-payment-e2e-audit-2026-06-11]]
+- [[payment-audit-bugs-2026-06-11]] — confirmed bugs + audit methodology
+- [[payment-checkout-5-principles]] — core architecture 5-point framework
+- [[promptpay-no-webhook-on-expiry]] — expiry notifications (3 paths)
+- [[nextauth-session-shape]] — guest vs auth email sourcing
+- [[checkout-formdata-persist-guard-pattern]] — C1/C2 form restoration fixes
+
+**See also:** Full booking→checkout→payment audit in `/01-projects/booking-payment-e2e-audit-2026-06-11.md`

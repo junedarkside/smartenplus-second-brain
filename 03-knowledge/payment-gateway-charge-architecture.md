@@ -15,7 +15,9 @@ Two charge models coexisted. Without selection rule, wrong charge triggers final
 1. **`payments.GatewayCharge`** — canonical. Statuses: `pending/processing/paid/failed/expired/refunded/partial_refunded`
 2. **`cards.Charge`** — legacy Omise. Statuses: `successful/pending/failed`
 
-`getPrimaryCharge()` — successful > pending > latest.
+### Charge Selection: `getPrimaryCharge(payment[])`
+Returns charge in priority order: successful > pending > latest (by created date).
+Implemented: sort ascending then `findLast()` per priority. [[payment-checkout-architecture-audit]] fix `a4158b0` corrected sort direction (was returning oldest, now returns latest in each category).
 
 ### Canonical Charge Rule
 LATEST `GatewayCharge` per order (`order_by('-created').first()`). Historical charges must NOT trigger finalization/display.
