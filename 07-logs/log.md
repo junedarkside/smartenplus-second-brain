@@ -1,5 +1,13 @@
 # Vault Log
 
+## [2026-06-11] session-end #97d | CROSS-SELL-MERGE CLOSED — branch already fully merged into develop (confirmed via git merge-base). CheckoutRelatedTrips mounted at checkout/index.js:1010. Renamed remaining work to CROSS-SELL-BD-INVENTORY (BD task: Koh Lipe return route + DAY_TOUR + SPA contracts). No eng work remaining on cross-sell.
+
+## [2026-06-11] session-end #97c | FRONTEND-AUDIT-FOLLOWUP-1 CLOSED — 2 exhaustive-deps suppressions added to FormikValuesSync.js. Effect 1: refs + useState setter stable, correctly excluded. Effect 2: `cartitems?.cart_item` kept (not `cartitems`) — tighter RTK trigger (scrutinize caught agent's wrong swap proposal). Lint clean `7107516`.
+
+## [2026-06-11] session-end #97b | FRONTEND-AUDIT-MANUAL-PRS DROPPED (all 3 branches confirmed merged into develop — retroactive PRs add no value). BRANCH-CLEANUP-REMOTE CLOSED — 42 stale `origin/2606*` branches deleted, 45 active remain. Vault count was stale (said 81, actual 42).
+
+## [2026-06-11] session-end #97 | BOOKING-PAY-REPRO-1 C1+C2 fixed. C1: `isCartLoaded &&` gate on clear-assignments effect in `checkout/index.js:188` — stops premature clear before RTK Query resolves on hard refresh. C2: `if (error?.status === 404)` guard in `check-and-createcart.js:67` — transient 500/503/timeouts no longer nuke cartId. Grill validation confirmed RTK Query error shapes + stable `!!data` bool. Commit `cb817d9` on develop. BOOKING-PAY-REPRO-1 CLOSED.
+
 ## [2026-06-11] session-end #96 | activity cross-sell: 3-layer bug fixed (viewset valid_types + global trip guard + arrival_station dispatch); find_nearby_activities() added; booking widget blank error fixed (advanceHourPassed + nonOperatingDay messages); cache-clearing WARNING silenced for non-transport contracts. 2 atoms extracted.
 
 ## [2026-06-11] session-end #94 | booking-to-payment flow audit: 4 bugs fixed (stable_id cart sync, clearTripInfo, dead lazy query), 53 tests pass, SM-1–4 smoke passed, merged fix/checkout-stable-id-cleanup → develop (f271aef). C1/C2 deferred pending repro.

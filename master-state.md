@@ -4,25 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-11 (session #96)
+**Updated:** 2026-06-11 (session #98)
 
-**Achieved this session (#96):**
-- **Activity cross-sell 3-layer bug fixed** (debug-mantra + DB mockup):
-  - Layer 1: `views.py:1755` — `'activity'` added to `valid_types` → unblocked 400
-  - Layer 2: `services.py` — global trip guard removed (ValueError blocked all tripless contracts)
-  - Layer 3: `services.py` — dispatch condition tightened to require `arrival_station` (contracts have `trip+route` but `arrival_station=None`); `find_nearby_activities()` added for activity→activity via `primary_location`/`service_areas`. Scoring: location base 50 + same category +30 + quality 0–20 + exact location +10.
-  - Verified: `GET /api/v1/recommendations/118/?type=activity&limit=3` → 200, contract 123 score 90.0.
-- **Cache WARNING silenced**: `clear_trip_cache` early-return for non-transport `service_category`. `logger.warning` → `logger.debug` for incomplete transport data.
-- **Booking widget blank error fixed**: `advanceHourPassed` + `nonOperatingDay` added to Alert. `ADVANCE_HOUR_PASSED` constant added to `dayTripConstants.js`. Root cause: 2-day advance window passed for 06/13 on contract 123 — blocked correctly but no message shown.
-- **2 atoms extracted**: [[activity-to-activity-cross-sell]], [[booking-widget-availability-error-display]]. [[recommendation-type-selection-by-service-category]] updated (was stale — said activity→activity unsupported).
+**Achieved this session (#98):**
+- **BOOKING-PAY-REPRO-1 C1+C2 fixed** — `isCartLoaded &&` gate (`checkout/index.js:188`) + `error?.status === 404` guard (`check-and-createcart.js:67`). Grill + scrutinize validated. Commit `cb817d9`.
+- **FRONTEND-AUDIT-MANUAL-PRS DROPPED** — all 3 branches confirmed merged via `git branch -r --merged develop`. Retroactive PRs = no value.
+- **BRANCH-CLEANUP-REMOTE CLOSED** — 42 stale `origin/2606*` branches deleted. 45 active remain.
+- **FRONTEND-AUDIT-FOLLOWUP-1 CLOSED** — 2 exhaustive-deps suppressions in `FormikValuesSync.js`. Scrutinize caught agent's wrong dep-swap proposal; kept `cartitems?.cart_item` (tighter RTK trigger). Commit `7107516`.
+- **CROSS-SELL-MERGE CLOSED** — branch already fully merged (confirmed `git merge-base`). Renamed remaining work → `CROSS-SELL-BD-INVENTORY` (BD task).
+- **1 atom extracted**: `checkout-formdata-persist-guard-pattern.md`
 
 **Resume point (EXACT):**
-1. **COMMIT-PUSH** — both repos uncommitted: `smartenplus-backend` (products/services.py + products/views.py), `smartenplus-frontend` (DayTripBookingWidget.js + dayTripConstants.js). Commit + push + merge → develop.
-2. **FRONTEND-AUDIT-MANUAL-PRS** — open 3 PRs on GitHub manually: fix/audit-checkout-passengers-hooks, fix/audit-rtk-query-cleanup, chore/audit-deadcode-and-hygiene. All merged locally; PR open for audit record.
-3. **FRONTEND-AUDIT-FOLLOWUP-1** — 2 `exhaustive-deps` warnings in `FormikValuesSync.js:61:6`. Low priority.
-4. **BOOKING-PAY-REPRO-1** — runtime repro C1 + C2. Unchanged.
-5. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. Unchanged.
-6. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Unchanged.
+1. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. BD creates: return route Koh Lipe→Hatyai Airport + DAY_TOUR contracts at Koh Lipe + SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`.
+2. **AT-1** — Airport Transfer redesign (P0 spec in vault). Awaits user direction.
+3. **GSC-1 Phase 3** — needs backend `route_exists` field.
 
 ---
 
@@ -31,14 +26,15 @@
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
-| **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | OPEN. Code-trace confirmed both; user ruling: repro before promotion. C1 repro: mixed cart → customize assignments → hard refresh `/checkout`. C2 fix if confirmed: clear only on `error.status === 404`. | `pages/checkout/index.js:107-201`, `components/HOC/check-and-createcart.js:67-72` |
-| **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop`; then BD creates inventory | OPEN. PR raised. After merge: BD creates (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Verify `checkout_recommendation_view` fires with `recommendation_count > 0`. | `feat/redesign-people-also-book-cards`, `checkout/index.js` |
-| **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | OPEN. Local cleanup (94) done in #84. Need: `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' \| sed 's\|^origin/\|\|' \| xargs -I {} git push origin --delete {}`. Verify `git branch -r \| wc -l` → 2. Run `git fetch --prune`. | `origin/2606*` (81 branches) |
+| **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
+| **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |
+| **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell | OPEN. BD task — no eng work. Needs: (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`. | BD action |
+| **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | CLOSED #97. 42 actual branches deleted (vault count was stale). `git branch -r \| grep origin/2606 \| wc -l` → 0. `git fetch --prune` run. 45 remote branches remain (all active). | done |
 | **FRONTEND-AUDIT-FIX-1** | Audit finding 3 (Formik render-prop useEffect) | CLOSED #95. PR1 `fix/audit-checkout-passengers-hooks` (e5261ab → 1e46314). New `FormikValuesSync.js` (105 lines) absorbs both effects via useFormikContext. Rules-of-hooks invariant restored. Lint clean. | `components/forms/checkout/FormikValuesSync.js`, `Passengers.js` |
 | **FRONTEND-AUDIT-FIX-2** | Audit findings 1+2+4+5 (RTK Query) | CLOSED #95. PR2 `fix/audit-rtk-query-cleanup` (ecc76a9 → b6b956e). getSession pattern, activities key, cart-version extract, createCart single invalidation. New `store/cart-version.js` (12 lines). 3 sources of truth → 1. Lint clean. | `store/cart-version.js`, `store/cart-slice.js`, `store/api/*`, `store/index.js` |
 | **FRONTEND-AUDIT-FIX-3** | Audit findings 6+7+8+9 (dead code + hygiene) | CLOSED #95. PR3 `chore/audit-deadcode-and-hygiene` (d69b473 → fbe9aab). 31 files, 4237 deletions, 7 insertions. Rebased onto develop post-PR1+PR2. | 5 dead-code paths, 5 .backup, 2 logs, db/ data/ *.diff *.sh, 4 archive, .gitignore |
-| **FRONTEND-AUDIT-FOLLOWUP-1** | 2 exhaustive-deps warnings in FormikValuesSync.js:61:6 | OPEN. Pre-existing condition now visible (was masked by old eslint-disable that design removed). Fix: add explicit deps + suppression comment, or accept. Low priority. | `FormikValuesSync.js:61:6` |
-| **FRONTEND-AUDIT-MANUAL-PRS** | Open 3 PRs on GitHub manually | OPEN. No `gh` CLI in environment. All 3 branches already merged to develop; opening PRs is for audit record. URLs in [[frontend-audit-implementation-2026-06-11]]. | 3 remote branches |
+| **FRONTEND-AUDIT-FOLLOWUP-1** | 2 exhaustive-deps warnings in FormikValuesSync.js:61:6 | CLOSED #97. Suppression comments added. Effect 1: refs + useState setter stable by definition. Effect 2: `cartitems?.cart_item` kept (not `cartitems`) — tighter RTK refetch trigger. Lint clean. Commit `7107516`. | `FormikValuesSync.js` |
+| **FRONTEND-AUDIT-MANUAL-PRS** | Open 3 PRs on GitHub manually | DROPPED #97. All 3 branches confirmed merged into develop (`git branch -r --merged develop`). Merge commits `e5261ab`, `b6b956e`, `fbe9aab` in git log are the audit record. Retroactive PRs add no value. | 3 remote branches |
 | **IMG-ALT-DEBUG-1** | Next.js HMR cross-module callback staleness | OPEN. Optional refactor: move mutation call INTO dialog component, drop parent `onSubmit` indirection. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Low priority. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:140-178` |
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |
