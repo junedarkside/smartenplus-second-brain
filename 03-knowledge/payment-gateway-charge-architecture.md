@@ -72,3 +72,5 @@ Webhook = sole payment finalization source. `finalize_payment()` idempotent via 
 - [[payment-status-enums]]
 - [[payment-integration]]
 - [[promptpay-no-webhook-on-expiry]]
+- [[payment-finalize-deep-dive]] — superseded charge guard + cross-order pending lock
+- [[omise-webhook-security]] — webhook verification before finalize_payment

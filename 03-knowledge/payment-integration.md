@@ -124,5 +124,8 @@ Omise Documents API (`/disputes/{id}/documents`) = dispute evidence upload only 
 - [[promptpay-no-webhook-on-expiry]] — expiry notifications (3 paths)
 - [[nextauth-session-shape]] — guest vs auth email sourcing
 - [[checkout-formdata-persist-guard-pattern]] — C1/C2 form restoration fixes
+- [[omise-webhook-security]] — Event.retrieve() verification pattern
+- [[payment-exception-catalog]] — exception→HTTP code mapping
+- [[payment-finalize-deep-dive]] — finalize_payment() 6 non-obvious behaviors
 
 **See also:** Full booking→checkout→payment audit in `/01-projects/booking-payment-e2e-audit-2026-06-11.md`

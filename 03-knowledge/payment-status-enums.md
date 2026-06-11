@@ -25,6 +25,8 @@ paid → partial_refunded
 ### Omise `authorized` Status (not-yet-captured)
 Omise can return `authorized` (charge approved but not yet captured). Maps to SmartEnPlus `paid` on webhook finalization (webhook triggers `finalize_payment()` which is oblivious to capture state). Same flow as `successful`. No local distinction needed — finalization is amount-based, not capture-based.
 
+`authorized` also appears as intermediate **Order.status** (set at charge initiation, before webhook arrives). Distinct from GatewayCharge.status — Order.authorized means "charge request sent", not "payment confirmed".
+
 ### OmiseMethod
 | Constant | Value | Category |
 |---------|-------|----------|
@@ -84,3 +86,4 @@ CURRENCY_MIN_AMOUNT = {
 - [[payment-charge-service-layer]]
 - [[payment-gateway-charge-architecture]]
 - [[payment-integration]]
+- [[payment-celery-expiry-strategy]] — METHOD_EXPIRY drives Celery expiry logic

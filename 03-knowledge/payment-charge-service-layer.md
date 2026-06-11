@@ -54,6 +54,8 @@ def _idempotency_hash(payment_method, amount_thb, currency):
 ```
 Hash match → reuse. Mismatch → error.
 
+**Staleness reuse:** If matching key found but linked charge is older than `METHOD_EXPIRY[method]`, treat key as stale. Delete old IdempotencyKey + GatewayCharge, create fresh. Prevents ghost charges from blocking retries after method expiry.
+
 ## Decision
 Canonical charge = LATEST `GatewayCharge` per order. Historical charges must NOT trigger finalization/display.
 
@@ -70,3 +72,4 @@ Canonical charge = LATEST `GatewayCharge` per order. Historical charges must NOT
 - [[payment-status-enums]]
 - [[payment-gateway-charge-architecture]]
 - [[payment-integration]]
+- [[payment-sentinel-idempotency]] — staleness detection + IdempotencyKey lifecycle
