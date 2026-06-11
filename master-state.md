@@ -4,19 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-11 (session #93)
+**Updated:** 2026-06-11 (session #95)
 
-**Achieved this session (#93):**
-- **Two-pass verification of [[booking-payment-e2e-audit-2026-06-11]]** — audit-of-audit, all claims hand-checked against code:
-  - Pass 1 (direct read): all 4 confirmed bugs + C1/C2 candidates + every backend claim exact. One omission fixed: 3 test files added to Bug 3 stable_id sweep (`useCheckoutAutoSave.test.js`, `savePassengerAssignmentsToCart.test.js`, `checkoutPersistence.test.js`).
-  - Pass 2 (debug-mantra falsification): all root causes survived active disproof. Backend emits zero `stable_id` anywhere (double-confirms bugs 1/2); Effect 2 cannot rescue bug 1 (ref-equality early return `useCartSync.js:201-203`); `useCartSync.js:155` is sole `clearTripInfo` site (bug 2 has no alternate pruning path); C1 mount-state assumptions confirmed (`cartId: null` initial, `_persist.rehydrated` selector).
-  - Doc amended with falsification notes — verified twice, safe to act on.
-- **2 atoms extracted**: [[rtk-lazy-query-tuple-misuse]], [[redux-persist-gate-scope-gap]]
+**Achieved this session (#95):**
+- **Frontend architecture audit full implementation**: 3-agent team `frontend-audit-fix` resolved all 9 audit items from [[frontend-architecture-audit-2026-06-11]] across 3 PRs:
+  - **PR1** `fix/audit-checkout-passengers-hooks` (e5261ab → 1e46314): Formik render-prop useEffect extracted to new `FormikValuesSync.js` (105 lines). Latent crash trap closed.
+  - **PR2** `fix/audit-rtk-query-cleanup` (ecc76a9 → b6b956e): 4 RTK Query cleanups — `getSession()` pattern in tripsApi+dayTripsApi, `activities` Redux key in dayTripsApi, `bumpCartVersion` extracted to `store/cart-version.js` (3 sources of truth → 1), `createCart` single invalidation.
+  - **PR3** `chore/audit-deadcode-and-hygiene` (d69b473 → fbe9aab): 5 dead-code items removed, 5 .backup + 2 logs deleted, backend material removed (db/, data/, *.diff, *.sh), 4 stale design docs archived to docs/archive/, .gitignore: *.log + *.backup added.
+- **Process lessons documented**: 1 cross-branch contamination incident from parallel agents in shared worktree (recovered via `git reset --hard` + stash); 1 unresponsive implementer (lead took over + amended incomplete commit). Sequential pattern adopted post-incident. No `gh` CLI in environment — 3 manual PR opens pending.
 
 **Resume point (EXACT):**
-1. **BOOKING-PAY-FIX-1** — implement bugs 1-4 from [[booking-payment-e2e-audit-2026-06-11]]: key cart sync by `item.id` (`useCartSync.js:41-42`, `147-177`), stable_id sweep (9 source + 3 test files, delete Effect 6), delete dead lazy query `BookButton.js:41-43`.
-2. **BOOKING-PAY-REPRO-1** — runtime repro C1 (mixed cart → fill passengers → hard refresh `/checkout` → data gone?) and C2 (transient error nukes cartId in `check-and-createcart.js:67-72`).
-3. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. After merge: BD creates return route Koh Lipe→Hatyai Airport + DAY_TOUR/SPA contracts at Koh Lipe. Verify `checkout_recommendation_view` fires in GTM.
+1. **FRONTEND-AUDIT-MANUAL-PRS** — open 3 PRs on GitHub manually (no `gh` CLI): fix/audit-checkout-passengers-hooks, fix/audit-rtk-query-cleanup, chore/audit-deadcode-and-hygiene. All 3 branches already merged to develop locally; PR open is for audit record. See [[frontend-audit-implementation-2026-06-11]].
+2. **FRONTEND-AUDIT-FOLLOWUP-1** — 2 `exhaustive-deps` warnings in `FormikValuesSync.js:61:6` are pre-existing condition now visible (was masked by old eslint-disable). Add explicit deps + suppression comment, or accept. Low priority.
+3. **BOOKING-PAY-REPRO-1** — runtime repro C1 + C2 (from #94). Unchanged.
+4. **CROSS-SELL-MERGE** — PR `feat/redesign-people-also-book-cards` → `develop` pending. Unchanged.
+5. **BRANCH-CLEANUP-REMOTE** — 81 merged remote `origin/2606*` branches pending deletion. Unchanged.
 
 ---
 
@@ -24,10 +26,15 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | OPEN. Doc verified twice (#93). Bugs: (1) MEDIUM dead change-detection cart sync, (2) MEDIUM dead removed-item cleanup, (3) LOW stable_id remnants 9 source + 3 test files, (4) LOW dead lazy query in BookButton. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43`, [[booking-payment-e2e-audit-2026-06-11]] |
+| **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | OPEN. Code-trace confirmed both; user ruling: repro before promotion. C1 repro: mixed cart → customize assignments → hard refresh `/checkout`. C2 fix if confirmed: clear only on `error.status === 404`. | `pages/checkout/index.js:107-201`, `components/HOC/check-and-createcart.js:67-72` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop`; then BD creates inventory | OPEN. PR raised. After merge: BD creates (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Verify `checkout_recommendation_view` fires with `recommendation_count > 0`. | `feat/redesign-people-also-book-cards`, `checkout/index.js` |
 | **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | OPEN. Local cleanup (94) done in #84. Need: `git for-each-ref refs/remotes/origin/260 --format='%(refname:short)' \| sed 's\|^origin/\|\|' \| xargs -I {} git push origin --delete {}`. Verify `git branch -r \| wc -l` → 2. Run `git fetch --prune`. | `origin/2606*` (81 branches) |
+| **FRONTEND-AUDIT-FIX-1** | Audit finding 3 (Formik render-prop useEffect) | CLOSED #95. PR1 `fix/audit-checkout-passengers-hooks` (e5261ab → 1e46314). New `FormikValuesSync.js` (105 lines) absorbs both effects via useFormikContext. Rules-of-hooks invariant restored. Lint clean. | `components/forms/checkout/FormikValuesSync.js`, `Passengers.js` |
+| **FRONTEND-AUDIT-FIX-2** | Audit findings 1+2+4+5 (RTK Query) | CLOSED #95. PR2 `fix/audit-rtk-query-cleanup` (ecc76a9 → b6b956e). getSession pattern, activities key, cart-version extract, createCart single invalidation. New `store/cart-version.js` (12 lines). 3 sources of truth → 1. Lint clean. | `store/cart-version.js`, `store/cart-slice.js`, `store/api/*`, `store/index.js` |
+| **FRONTEND-AUDIT-FIX-3** | Audit findings 6+7+8+9 (dead code + hygiene) | CLOSED #95. PR3 `chore/audit-deadcode-and-hygiene` (d69b473 → fbe9aab). 31 files, 4237 deletions, 7 insertions. Rebased onto develop post-PR1+PR2. | 5 dead-code paths, 5 .backup, 2 logs, db/ data/ *.diff *.sh, 4 archive, .gitignore |
+| **FRONTEND-AUDIT-FOLLOWUP-1** | 2 exhaustive-deps warnings in FormikValuesSync.js:61:6 | OPEN. Pre-existing condition now visible (was masked by old eslint-disable that design removed). Fix: add explicit deps + suppression comment, or accept. Low priority. | `FormikValuesSync.js:61:6` |
+| **FRONTEND-AUDIT-MANUAL-PRS** | Open 3 PRs on GitHub manually | OPEN. No `gh` CLI in environment. All 3 branches already merged to develop; opening PRs is for audit record. URLs in [[frontend-audit-implementation-2026-06-11]]. | 3 remote branches |
 | **IMG-ALT-DEBUG-1** | Next.js HMR cross-module callback staleness | OPEN. Optional refactor: move mutation call INTO dialog component, drop parent `onSubmit` indirection. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Low priority. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:140-178` |
 | F11-FOLLOWUP | B2B corporate CTA strip | DEFERRED. BD recommended. Awaits product decision on 280px slot. | TBD |
 | F11-FOLLOWUP | Shared `<Accordion>` / `<FAQAccordion>` atom | DEFERRED. UX flagged. | `components/UI/` (new file) |

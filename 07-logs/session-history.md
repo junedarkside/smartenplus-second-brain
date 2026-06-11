@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-11 (session #93)
+
+**Achieved this session (#93):**
+- **Two-pass verification of [[booking-payment-e2e-audit-2026-06-11]]** — audit-of-audit, all claims hand-checked against code:
+  - Pass 1 (direct read): all 4 confirmed bugs + C1/C2 candidates + every backend claim exact. One omission fixed: 3 test files added to Bug 3 stable_id sweep (`useCheckoutAutoSave.test.js`, `savePassengerAssignmentsToCart.test.js`, `checkoutPersistence.test.js`).
+  - Pass 2 (debug-mantra falsification): all root causes survived active disproof. Backend emits zero `stable_id` anywhere (double-confirms bugs 1/2); Effect 2 cannot rescue bug 1 (ref-equality early return `useCartSync.js:201-203`); `useCartSync.js:155` is sole `clearTripInfo` site (bug 2 has no alternate pruning path); C1 mount-state assumptions confirmed (`cartId: null` initial, `_persist.rehydrated` selector).
+  - Doc amended with falsification notes — verified twice, safe to act on.
+- **2 atoms extracted**: [[rtk-lazy-query-tuple-misuse]], [[redux-persist-gate-scope-gap]]
+
+---
+
 **Updated:** 2026-06-11 (session #92)
 
 **Achieved this session (#92):**

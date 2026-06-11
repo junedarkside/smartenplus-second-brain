@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-11] session-end #94 | booking-to-payment flow audit: 4 bugs fixed (stable_id cart sync, clearTripInfo, dead lazy query), 53 tests pass, SM-1–4 smoke passed, merged fix/checkout-stable-id-cleanup → develop (f271aef). C1/C2 deferred pending repro.
+
 ## [2026-06-11] session-end #93 | Two-pass falsification audit of booking-payment e2e doc — all root causes survived disproof, doc amended (test files + falsification notes), 2 atoms extracted (rtk-lazy-query-tuple-misuse, redux-persist-gate-scope-gap). Next: BOOKING-PAY-FIX-1 (implement bugs 1-4).
 
 ## [2026-06-10] session-end #90 | Checkout Next btn fix (advance booking + auth race) + backend advance_hr/stop_sale enforcement at booking creation. Both repos on develop.
@@ -53,3 +55,5 @@
 ## [2026-06-06] session-end | HEIC review upload implemented, local deps ready, test pending
 ## [2026-06-05] session-end | GYG-THUMB review images — full implementation across 2 repos (unmerged)
 ## [2026-06-05] ops | deploy+cache-clear confirmed, DOMAIN-1 closed
+## [2026-06-11] audit | frontend-architecture-audit-2026-06-11 — full FE architecture audit, 3 explorers + hand-verification. 3 confirmed latent bugs (Formik render-prop useEffect crash trap in Passengers.js, dead getState().session auth branch in tripsApi/dayTripsApi, dayTrip-vs-activities store key), bumpCartVersion duplication, 5 dead-code items, repo hygiene cluster. 4 explorer findings overturned. No critical issues — architecture verified sound. Oversized checkout files: refactor-on-touch ruling.
+## [2026-06-11] debug | finding-3 falsified — Formik render-prop useEffect (Passengers.js:629,706). Traced Formik 2.2.9 src:1097 — children(formikbag) is plain call in Formik() body → effects on Formik fiber. Disproved "crashes today": line-602 skeleton gate returns before <Formik> mounts; 2 unconditional effects, constant hook count per render. Refined Critical→Medium-latent. Real risk = future edit between 625–706 + misleading eslint-disable comment. No test guard (mui-tel-input ESM load fail). Fix scoped: extract <FormikValuesSync/> via useFormikContext. Vault audit note + index updated.
