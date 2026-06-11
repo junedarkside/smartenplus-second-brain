@@ -30,4 +30,6 @@ Implication: `RecommendationCard.js` not passing `onSuccess` to modal is **not a
 `recommendationsApi` is a **separate RTK slice** with zero tags. Cart mutation does NOT invalidate recommendations cache. Recommendations only update when query args change (`sourceContractId`, `recType`).
 
 ## Related
-[[people-also-book-checkout-audit]] [[cross-sell-placement-strategy]]
+- [[people-also-book-checkout-audit]]
+- [[cross-sell-placement-strategy]]
+- [[rtk-query-advanced-patterns]] — fixedCacheKey dedup, 'null' string guard, bookmark 409/404 suppression

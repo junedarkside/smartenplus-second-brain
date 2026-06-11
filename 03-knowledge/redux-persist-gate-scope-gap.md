@@ -26,4 +26,7 @@ In smartenplus-frontend, `PersistGate` does NOT wrap `<Component>` (`pages/_app.
 
 ## Related
 
-[[booking-payment-e2e-audit-2026-06-11]] · [[checkout-flow]] · [[checkout-formdata-persist-guard-pattern]]
+- [[booking-payment-e2e-audit-2026-06-11]]
+- [[checkout-flow]]
+- [[checkout-formdata-persist-guard-pattern]]
+- [[redux-store-architecture]] — SSR no-op storage, persist migration, dual reset mechanism

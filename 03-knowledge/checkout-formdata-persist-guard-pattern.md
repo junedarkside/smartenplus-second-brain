@@ -83,4 +83,5 @@ SmartEnPlus checkout. Fixed `cb817d9` on `develop` 2026-06-11. Session #97.
 - [[payment-audit-bugs-2026-06-11]] — confirmed bugs + C1/C2 fixes
 - [[redux-persist-gate-scope-gap]] — PersistGate SSR/mount timing issue
 - [[payment-checkout-5-principles]] — checkout architecture
-- [[checkout-formdata-persist-guard-pattern]] — sessionStorage restoration pattern
+- [[checkout-state-persistence]] — dual persistence strategy (guest vs logged-in), useCartSync ordering
+- [[checkout-hoc-architecture]] — withCartValidation 404-only cart clear (C2 fix location)

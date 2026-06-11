@@ -136,6 +136,13 @@ Global navigation catalog. Updated on every ingest.
 - [[smartenplus-synopsis]] — Project-wide orientation: stack, repos, payment, auth, current state, open work
 - [[ai-workflows]] — LLM Wiki pattern, ingestion/query/lint operations
 - [[nextjs-patterns]] — ISR, dynamic SSR disable, RTK Query, date handling
+- [[redux-store-architecture]] — 7-version persist migration, cross-tab cart invalidation, dual reset, SSR no-op storage, deprecated cart-slice, auth whitelist, 48hr TTL
+- [[rtk-query-advanced-patterns]] — child/children normalization, fixedCacheKey dedup, intentional missing invalidatesTags, bookmark 409/404 suppression, 'null' string guard
+- [[checkout-hoc-architecture]] — withCartValidation (ref dedup, 404-only clear), withCheckCartValidation, withComponent infinite-refetch risk
+- [[checkout-state-persistence]] — useCartSync 6-effect ordering, ghost trip detection, dual persistence strategy, guest→backend migration, debounced auto-save
+- [[checkout-formdata-time-fields]] — frontend lowercase-t vs backend capital-T time field boundary, HH:MM:SS format, 3 conversion helpers
+- [[checkout-step-flow]] — hasMixedPassengerCounts step branching (4 vs 5 steps), payment init idempotency key, CONTRACT_INACTIVE auto-redirect
+- [[frontend-debug-utilities]] — useRateLimitedQuery global singleton (5 types, jitter), DevToolsProvider disabled by default, useAuth 100ms redirect delay
 - [[payment-integration]] — Thai payment methods, Omise source types, webhook flows, checkout architecture principles (28 use cases), centralized payment error detection, expiry paths (Celery+view+mgmt), C1/C2 fixed in cb817d9
 - [[payment-audit-bugs-2026-06-11]] — 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 fixed candidates (formData restore, transient error nuking cartId, both cb817d9)
 - [[omise-api-reference-2026-06-12]] — Full Omise API catalog (21 sections): 7 active, 3 partial, 11 not integrated; status vocabulary + authorized charge handling
