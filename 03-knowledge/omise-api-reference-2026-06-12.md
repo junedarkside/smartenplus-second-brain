@@ -1,70 +1,169 @@
 # Omise API Reference — 2026-06-12
 
 ## Summary
-Omise capabilities relevant to SmartEnPlus payment flow. Charges API (active integration). Documents API (dispute-only, not applicable). Status vocabulary mapping.
+Complete Omise API catalog (21 sections). Integration status per SmartEnPlus. Status vocabulary mapping.
 
 ## Context
-Quarterly review of payment implementation against current Omise API. Goal: ensure no missed features, clarify API scope for future work.
+Full Omise API review to identify active integrations, gaps, and future opportunities.
 
-## Omise Charges API
+## Core Payment APIs (5)
 
-### Create Charge
-**Endpoint:** `POST https://api.omise.co/charges`
+### Charges
+Create/manage payment charges (cards, wallets, sources). QR code flow for PromptPay.
+**Key endpoints:** POST/GET/PATCH `/charges`, POST `/charges/{id}/capture`, `expire`, `reverse`
+**SmartEnPlus:** Active — core payment processing
+**Status values:** pending/processing/authorized/successful/failed/expired/reversed
 
-**Primary params:**
-- `amount` (required) — smallest currency unit
-- `currency` (required) — ISO 4217 code (THB, SGD, JPY, MYR, HKD)
-- `source[type]` — payment method (promptpay, credit_card, mobile_banking_scb, etc.)
-- `return_uri` — redirect target for redirect-based auth (card iframe, e-wallets, mobile banking)
-- `capture` (optional, default true) — auto-capture behavior
-- `metadata` (optional) — custom data up to 15,000 chars
-- `expires_at` — expiration (PromptPay, mobile banking 10 min)
-- `webhook_endpoints` (max 2 HTTPS URLs)
+### Sources
+Create payment sources for non-card methods (digital wallets, QR, installments).
+**Key endpoints:** POST `/sources`, GET `/sources/{id}`
+**SmartEnPlus:** Active — alternative payment method support (PromptPay, TrueMoney, Alipay, etc.)
+**Flow types:** redirect / offline / app_redirect
 
-**Response fields (subset):**
-- `status` — `pending / processing / authorized / successful / failed / expired / reversed`
-- `authorized` — boolean
-- `paid` — boolean
-- `refundable` — boolean
-- `failure_code` / `failure_message`
-- `return_uri`
+### Tokens
+Tokenize credit/debit cards for single-use or recurring charges.
+**Key endpoints:** POST `/tokens`, GET `/tokens/{id}`
+**SmartEnPlus:** Active — card tokenization via Omise.js iframe
+**Usage:** Create token in form, send to backend for charge
 
-### QR Code Payment Flow (PromptPay)
-1. Create charge with `source[type]=promptpay`
-2. Response includes QR code URI
-3. Customer scans QR, authorizes in banking app
-4. Webhook notifies merchant of payment completion
-5. `return_uri` redirects customer on completion
+### Refunds
+Create/manage refunds on captured charges (full or partial).
+**Key endpoints:** POST `/charges/{id}/refunds`, GET `/charges/{id}/refunds`, `[refund_id]`
+**SmartEnPlus:** Active — refund processing (backend-driven)
+**Void support:** uncaptured charges can be voided
 
-### Charge Expiry
-**Endpoint:** `POST /charges/{id}/expire`
+### Cards
+Retrieve/update/delete customer cards (created from tokens).
+**Key endpoints:** GET/PATCH/DELETE `/customers/{id}/cards`, `[card_id]`
+**SmartEnPlus:** Partial — not fully leveraged (no saved-card checkout)
+**Limits:** supports expiry_month/year, name, postal_code updates
 
-Proactively expires a pending charge. Returns 200 if successfully expired, 409 if charge already captured/failed/expired.
+---
 
-### Webhook Events
-Payment completion, refunds, disputes. Specify via `webhook_endpoints` on charge creation. Requires HTTPS. Max 2 endpoints per charge.
+## Account & Customer APIs (3)
 
-## Omise Documents API
+### Customers
+Create/manage customer profiles with attached cards for recurring payments.
+**Key endpoints:** POST/GET/PATCH/DELETE `/customers`, GET `/customers/{id}/cards`
+**SmartEnPlus:** Partial — not leveraged for recurring billing
+**Auto-save:** token attached to customer auto-creates card
 
-### Purpose
-Dispute evidence upload for chargeback/refund resolution. NOT payment receipts or invoices.
+### Account
+Retrieve/update merchant account settings, webhooks, API versions.
+**Key endpoints:** GET/PATCH `/account`, PATCH `/account/api_version`
+**SmartEnPlus:** Not integrated — admin-only, handled by Omise dashboard
+**Config:** livemode, location, country, currency, webhook URI, transfer config
 
-### Endpoints
-| Method | Path | Purpose |
-|--------|------|---------|
-| POST | `/disputes/{id}/documents` | Upload evidence file |
-| GET | `/disputes/{id}/documents` | List all documents for dispute |
-| GET | `/disputes/{id}/documents/{document_id}` | Fetch document metadata |
-| DELETE | `/disputes/{id}/documents/{document_id}` | Remove document (dispute must be open) |
+### Capability
+Retrieve account capabilities (supported banks, payment methods, limits, tokenization).
+**Key endpoints:** GET `/capability` (public key only)
+**SmartEnPlus:** Not integrated — informational only
+**Use case:** dynamic method availability per merchant
 
-### File Upload Details
-- **Formats:** PNG, JPG, PDF
-- **Max size:** 10 MB
-- **Kinds (classification):** `cardholder_details`, `details_of_purchase`, `proof_of_receipt`, `proof_of_acceptance`
-- **Response:** Document object with `id`, `filename`, `kind`, `download_uri`, `created_at` (ISO 8601 UTC), `deleted` status
+---
 
-### Authentication
-HTTP Basic. Secret API key as username, empty password.
+## Financial Operations APIs (7)
+
+### Transfers
+Create/manage transfers to bank accounts (fund withdrawals).
+**Key endpoints:** POST/GET/DELETE `/transfers`, POST `mark_as_sent`, `mark_as_paid`
+**SmartEnPlus:** Not integrated — payout system, backend-only
+**Recipient:** optional, defaults to primary bank account
+
+### Transfer Schedules
+Schedule recurring transfers at intervals (daily/weekly/monthly).
+**Key endpoints:** GET `/transfers/schedules`, filtering by from/to/order
+**SmartEnPlus:** Not integrated — subscription payout infrastructure
+**Dependency:** requires Transfers + Recipients APIs
+
+### Balance
+Retrieve current account balance (total, transferable, reserve).
+**Key endpoints:** GET `/balance`
+**SmartEnPlus:** Not integrated — accounting/reporting only
+**Amounts:** in smallest currency unit
+
+### Bank Account
+Define bank account for recipients (account number, bank code, name).
+**Key endpoints:** N/A — reference object used by Transfers/Recipients
+**SmartEnPlus:** Not integrated — backend account setup only
+**Type:** savings/checking/fixed
+
+### Recipients
+Manage recipients for transfers (individuals or corporations).
+**Key endpoints:** POST/GET/PATCH/DELETE `/recipients`, PATCH `verify`
+**SmartEnPlus:** Not integrated — payout network setup
+**Verification:** optional, manual or automated
+
+### Forex
+Retrieve real-time exchange rates (~2-4% above mid-market).
+**Key endpoints:** GET `/forex/{currency}`
+**SmartEnPlus:** Not integrated — multi-currency not enabled
+**Supported:** ISO 4217 codes (30+ currencies)
+
+### Recipient Email Addresses
+Recipient email used for transfer notifications.
+**SmartEnPlus:** Partial — stored with recipient object
+
+---
+
+## Dispute & Event APIs (2)
+
+### Disputes
+Manage chargebacks (open/won/lost) with documents (evidence).
+**Key endpoints:** GET/PATCH `/disputes`, POST `/charges/{id}/disputes`, PATCH `accept`, `close`
+**SmartEnPlus:** Not integrated — chargeback management backend-only
+**Reasons:** reason_code per card network (Visa, MC, Amex)
+
+### Events
+Retrieve account-generated events (audit trail, webhook delivery tracking).
+**Key endpoints:** GET `/events`, `/events/{id}`, `/charges/{id}/events`
+**SmartEnPlus:** Partial — webhooks used for payment updates, full event retrieval not exposed
+**Event types:** charge, customer, refund, transfer, dispute, payout, etc.
+
+---
+
+## Scheduling & Search APIs (3)
+
+### Schedules
+Create recurring charges/transfers (daily/weekly/monthly).
+**Key endpoints:** POST/GET/DELETE `/schedules`, GET `/customers/{id}/schedules`
+**SmartEnPlus:** Not integrated — subscription billing not implemented
+**Status:** active/expiring/expired/paused/suspended
+
+### Occurrences
+Retrieve scheduled charge/transfer execution details (retry dates, status).
+**Key endpoints:** GET `/occurrences/{id}`, GET `/schedules/{id}/occurrences`
+**SmartEnPlus:** Not integrated — dependency of Schedules API
+**Status:** skipped/failed/successful
+
+### Search
+Search charges/transfers/customers/disputes with reverse-chronological order.
+**Key endpoints:** GET `/search?scope={charge|transfer|customer|dispute}`
+**SmartEnPlus:** Partial — backend search likely used, not frontend-exposed
+**Filters:** per scope, pagination max=100
+
+---
+
+## Reference APIs (3)
+
+### Receipts
+Daily receipts accumulating transaction/transfer fees for reconciliation.
+**Key endpoints:** GET `/receipts`, `/receipts/{id}`
+**SmartEnPlus:** Not integrated — accounting/reporting, backend-only
+**Fields:** charge_fee, transfer_fee, voided_fee, vat, wht, issued_on
+
+### Documents
+Dispute evidence upload (PNG/JPG/PDF, max 10MB).
+**Key endpoints:** POST/GET/DELETE `/disputes/{id}/documents`, `[document_id]`
+**SmartEnPlus:** Not integrated — chargeback defense only
+**Kinds:** cardholder_details, details_of_purchase, proof_of_receipt, proof_of_acceptance
+
+### Errors
+Error response structure reference (4xx/5xx status codes).
+**Format:** `{object: "error", location, code, message}`
+**SmartEnPlus:** Active — all API error handling uses this
+
+---
 
 ## Status Vocabulary Mapping
 
@@ -79,23 +178,19 @@ HTTP Basic. Secret API key as username, empty password.
 
 **Frontend polling:** Check BOTH `status === 'successful' || status === 'paid'` (domains differ).
 
-## Integration Status
+---
 
-### Active (Charges API)
-- PromptPay QR (Thai markets)
-- Credit/debit cards
-- Mobile banking (5 Thai banks)
-- E-wallets (TrueMoney, Line Pay, Alipay, WeChat, KakaoPay)
-- Expiry via `POST /charges/{id}/expire`
-- Webhook notifications on completion
+## Integration Summary
 
-### NOT Integrated (Documents API)
-- Dispute evidence upload
-- Not applicable to booking receipts or invoices
-- Scope: chargebacks and refund disputes only
+**Active:** Charges, Sources, Tokens, Refunds, Cards, Events, Errors
+**Partial:** Customers, Receipts, Search, Schedules, Occurrences
+**Not Integrated:** Account, Capability, Transfers, Schedules, Balance, Bank Account, Recipients, Disputes, Forex, Documents
+
+---
 
 ## Related
 - [[payment-integration]] — Thai payment methods, QR polling
 - [[payment-status-enums]] — OmiseMethod constants, METHOD_EXPIRY
 - [[payment-gateway-charge-architecture]] — charge selection rule, finalization
+- [[payment-audit-bugs-2026-06-11]] — confirmed payment bugs
 - [[omise-api-docs]] (external: https://docs.omise.co/)

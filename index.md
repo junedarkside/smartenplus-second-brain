@@ -138,7 +138,7 @@ Global navigation catalog. Updated on every ingest.
 - [[nextjs-patterns]] — ISR, dynamic SSR disable, RTK Query, date handling
 - [[payment-integration]] — Thai payment methods, Omise source types, webhook flows, checkout architecture principles (28 use cases), centralized payment error detection, expiry paths (Celery+view+mgmt), open C1/C2 candidates
 - [[payment-audit-bugs-2026-06-11]] — 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 open candidates (formData restore, transient error nuking cartId)
-- [[omise-api-reference-2026-06-12]] — Omise Charges API (active: QR/cards/MB/e-wallets), Documents API (dispute-only, not applicable), status vocabulary mapping
+- [[omise-api-reference-2026-06-12]] — Full Omise API catalog (21 sections): 7 active/partial core+account+financial, 3 not integrated dispute/schedule/search, 3 reference, status vocabulary mapping
 - [[celery-tasks|Celery Tasks]] — bind=True pattern, exponential backoff, high-risk task guards, beat schedule
 - [[refund-flow|Refund Flow]] — payments.Refund model, cards.Refund (legacy), RefundViewSet deprecation
 - [[journeys|Journeys]] — UserJourneyEvent analytics, event types, metadata, dedup guard pattern

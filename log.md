@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-12] ingest | omise-api-catalog-full-21-apis — 3-agent parallel fetch (core payment, financial/account, dispute/schedule/reference APIs). Expanded [[omise-api-reference-2026-06-12]]: 2-API stub → 21-section catalog. Core (Charges/Sources/Tokens/Refunds/Cards) active, Customers/Receipts/Search/Schedules partial, Account/Capability/Transfers/Balance/Recipients/Disputes/Forex/Documents not integrated. Status vocab mapping + integration summary. 196 lines. index.md updated.
+
 ## [2026-06-12] ingest | payment audit + Omise API gap check — 3-agent parallel (frontend code scan + backend docs + Omise API fetch). Findings: 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 open candidates, Omise Documents API non-applicable (dispute-only). Vault: 2 new pages ([[payment-audit-bugs-2026-06-11]], [[omise-api-reference-2026-06-12]]), 3 updates (payment-integration +expiry paths +open issues, payment-status-enums +clean()-only clarification, payment-gateway-charge-architecture +lock order). index.md + log.md updated.
 
 ## [2026-06-11] lint | vault optimization — 21 missing index entries added (8 projects + 13 knowledge atoms), 3 stale inbox items archived, empty inbox dir removed, pdf-contract-import-research.md split into pdf-parsing-pipeline-pattern.md + pdf-import-pre-validation-rules.md (371→42 lines), index Stats updated (~237 active pages), CLAUDE.md log path clarified (root vs 07-logs)
