@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-11 (session #99)
+
+**Achieved this session (#99):**
+- **SEO + SITEMAP WHOLE-SITE AUDIT** — 3-agent team (sitemap infra / on-page meta+schema / technical rendering). Code + live (Cloudflare 403'd live fetches = P0-1 itself). 6 P0, 10 P1, ~16 P2 findings. Key: fabricated review schema ×3 sources (Google manual-action risk), broken `noindex` via nonexistent next-seo `robots` prop, activities canonical malformed, sitemap ships ~20 private URLs, ~480 lines dead JSON-LD pipeline in trip detail. Soft-404 recommendation overruled per [[gsc-crawled-not-indexed-investigation-2026-06-05]] 3-phase plan. Vault note: [[seo-sitemap-whole-site-audit-2026-06-11]]. Audit only — no code changed. Frontend `develop` clean @ `7107516`.
+
+---
+
 **Updated:** 2026-06-11 (session #98)
 
 **Achieved this session (#98):**

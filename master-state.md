@@ -4,15 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-11 (session #99)
+**Updated:** 2026-06-12 (session #100)
 
-**Achieved this session (#99):**
-- **SEO + SITEMAP WHOLE-SITE AUDIT** — 3-agent team (sitemap infra / on-page meta+schema / technical rendering). Code + live (Cloudflare 403'd live fetches = P0-1 itself). 6 P0, 10 P1, ~16 P2 findings. Key: fabricated review schema ×3 sources (Google manual-action risk), broken `noindex` via nonexistent next-seo `robots` prop, activities canonical malformed, sitemap ships ~20 private URLs, ~480 lines dead JSON-LD pipeline in trip detail. Soft-404 recommendation overruled per [[gsc-crawled-not-indexed-investigation-2026-06-05]] 3-phase plan. Vault note: [[seo-sitemap-whole-site-audit-2026-06-11]]. Audit only — no code changed. Frontend `develop` clean @ `7107516`.
+**Achieved this session (#100):**
+- **Payment KB complete (backend + Omise)** — 3-agent parallel scan (backend payments app + Omise SDK + vault gap analysis). 4 new notes: [[omise-client-integration]] (lazy module init, `_attributes` dict, LINE_PAY→rabbit_linepay, reversed→PENDING, PromptPay QR URI nested path), [[payment-backend-charge-flow]] (DB constraint, TOCTOU guard, 5-sec throttle, C3b proactive PP expiry, AllowAny+manual auth, satang conversion), [[manual-adjustment-model]] (PROTECT FK, no Omise, ExtraItemAction legacy), [[celery-beat-payment-scheduling]] (DatabaseScheduler, Django admin UI, retry uncalled bug). 3 updated: refund-flow + payment-charge-service-layer + payment-status-enums. 3 atoms extracted: [[omise-attributes-dict-extraction]], [[django-celery-beat-database-scheduler]], [[toctou-select-for-update-before-api-call]]. All wikilinks verified clean. Vault `125d56a` pushed.
 
 **Resume point (EXACT):**
-1. **SEO-SITEMAP-FIX** — implement fixes from [[seo-sitemap-whole-site-audit-2026-06-11]]. First: verify Googlebot in GSC (no code). Then: delete fabricated reviews (P0-2, `seoConfig.js:139`, `destinations/[slug].js:364`, `productProperties.js:100`). Then: fix noindex + activities canonical + sitemap exclude list.
-2. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work.
-3. **AT-1** — Airport Transfer redesign. Awaits user direction.
+1. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
+2. **AT-1** — Airport Transfer redesign. Awaits user direction.
+3. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
 
 ---
 

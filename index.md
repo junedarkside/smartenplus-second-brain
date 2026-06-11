@@ -240,6 +240,9 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-qr-polling-mechanics]] — 4-format response fallback chain, should_stop_polling, finalStatusCheck on expiry, guest vs auth request signatures, polling lifecycle
 - [[payment-celery-expiry-strategy]] — PromptPay deterministic TTL, mobile banking polls Omise, e-wallet 30min fallback, superseded charge guard, retry wired-but-uncalled bug
 - [[omise-client-integration]] — lazy init (module not instance), `_attributes` dict extraction, LINE_PAY→rabbit_linepay, reversed→PENDING, PromptPay QR URI nested path
+- [[omise-attributes-dict-extraction]] — `_attributes.get()` vs direct property access; silent None bug; fields affected
+- [[django-celery-beat-database-scheduler]] — DatabaseScheduler stores schedule in DB not settings.py; Django admin UI; max_retries dead without self.retry()
+- [[toctou-select-for-update-before-api-call]] — lock BEFORE external API call; blocks concurrent webhook; parent record lock pattern
 - [[payment-backend-charge-flow]] — DB constraint (one pending redirect/order), TOCTOU guard, 5-sec reconcile throttle, C3b proactive PP expiry, AllowAny+manual ownership, satang conversion
 - [[manual-adjustment-model]] — admin-recorded manual charges, no Omise, PROTECT FK, legacy ExtraItemAction replacement
 - [[celery-beat-payment-scheduling]] — DatabaseScheduler (not settings.py), Django admin UI for schedule, sync_pending_charges
