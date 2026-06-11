@@ -82,5 +82,29 @@ ISR cache volume cleared on deploy (`deploy-ghcr.sh:168`). notFound correct on t
 6. Rendering: `/activities` ISR (P1-9), destinations revalidate, dedupe homepage routes (P1-6)
 7. Dead-code sweep (P3) + server-sitemap Promise.all/escaping/fallback hardening
 
+## Implementation — 2026-06-12
+
+**Branch `fix/seo-audit-2026-06-11`, commit `1f3f7a2`** (26 files, +361/−756). NOT merged to develop yet.
+
+**Fixed:**
+- **P0-2** fake reviews deleted from **4 sources** — audit found 3; implementation grep found 4th: `components/SEO/AirportTransferJsonLd.js:75-93` (same TwoVit/Jim block as destinations). `productProperties.js` aggregateRating now conditional on `averageRating > 0 && reviews.length > 0`.
+- **P0-3** sitemap exclude expanded; result: **128 → 86 URLs**, 0 private. robots.txt +5 disallows (account/profile/bookings/guest-order/dev).
+- **P0-4** noindex fixed: `noindex={true} nofollow={true}` on checkout/orders/bookings (was no-op `robots` prop); ADDED to `orders/[orderid].js` + `account/profile.js` (had none). SSR constraint from [[seo-wave2-audit-2026-05-23]] was a false blocker — NextSeo already sits outside ProtectedComponent.
+- **P0-5** activities canonical → `NEXT_PUBLIC_DOMAIN`.
+- **P1-1** dead 480-line jsonLd pipeline deleted from `useTripSEO.js` (63% rewrite; hook now returns only `seoConfig`+`productProps`+`baseSEOData`+`ogImagePath`). Sole consumer `TripDetailSEO.js` unaffected.
+- **P1-2** schema URLs off API domain in useTripSEO + dayTripSEOUtils (module-level `siteUrl` const).
+- **P1-4** homepage canonical strips query. **P1-5** hreflang removed (_app + seoConfig). **P1-6** 301s for /homepagev1, /homepagev2, /trips/detail. **P1-7** xmlns http://. **P1-9** /activities ISR shell (`revalidate: 60`). **P1-10** brand stripped from 3 title strings.
+- **P2 batch:** server-sitemap Promise.all + escapeXml on all dynamic slugs; destinations/[slug] `revalidate: 3600` + dead `query` destructure removed (getStaticProps has no query); GTM out of `<Head>`; deploy `NEXT_PUBLIC_DOMAIN` default → `https://www.smartenplus.co.th`; 5 homepage StructuredData files → www; blog Organization/Person JSON-LD +`@context`.
+
+**Verified:** `npm run build` exit 0; postbuild sitemap regenerated clean; 8 regression greps all 0 hits; `next-sitemap.config.js` loads; lint warnings pre-existing only.
+
+**Remaining (not this branch):**
+- P0-1 WAF/Googlebot — GSC manual verify (no code)
+- P0-6 nginx HTTP→HTTPS/www 301s — infra
+- P1-3 route soft-404 — per [[gsc-crawled-not-indexed-investigation-2026-06-05]] 3-phase plan
+- P1-8 sitemap silent-shrink hardening — deferred
+- P3 dead-code sweep (helpers/seoConfig.js, helpers/seoHelpers.js, hooks/useDayTripSEO.js, BlogPostSEO.js) — separate chore
+- Merge branch → develop → deploy (NOTE: P0-3/P1-7 only take effect after rebuild+deploy; ISR cache volume cleared by deploy-ghcr.sh)
+
 ## Related
 [[gsc-crawled-not-indexed-investigation-2026-06-05]] · [[website-audit-full-2026-06-06-overview]] · [[seo-wave2-audit-2026-05-23]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[homepage-terminology-audit-2026-06-05]] · [[og-image-inferred-audit-2026-05-23]] · [[blog-canonical-url-wp-subdomain-bug]] · [[structured-data-schema-patterns]] · [[seo-homepage-specialist-team]] · [[persistgate-ssr-suppresses-head-component]]
