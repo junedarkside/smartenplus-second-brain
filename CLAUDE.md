@@ -100,7 +100,8 @@ Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplic
 |------|------|---------|
 | `CLAUDE.md` | This file. Vault schema + AI operating instructions. | When conventions evolve |
 | `index.md` | Global navigation catalog. One line per page with wikilink. | Every ingest |
-| `log.md` | Chronological journal. `grep "^## \[" log.md \| tail -5` | Every ingest |
+| `log.md` (root) | Main operational journal. `grep "^## \[" log.md \| tail -5` | Every ingest |
+| `07-logs/log.md` | Session-end log. Wrap-up protocol appends here. | Session wrap-up |
 | `master-state.md` | Live session state: branches, loose ends, API contract, guardrails. | S1: every session. S2: weekly. S3–4: monthly or less. |
 
 ## Session Initialization Protocol

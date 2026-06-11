@@ -91,6 +91,14 @@ Global navigation catalog. Updated on every ingest.
 - [[hero-banner-cms|Hero Banner CMS 2026-05-19]] — backend-controlled homepage hero, FileField+AVIF fix, admin dashboard CRUD, 5s slideshow
 - [[blog-seo-performance-2026-05-20|Blog SEO & Performance 2026-05-20]] — parallel fetches, image optimization, HMR fixes, patterns to reuse
 - [[hydration-infinite-refresh-fix-2026-05-20|Hydration Infinite Refresh Fix 2026-05-20]] — all-page HMR loop from 4 hydration issues; agent accuracy ~55%; PersistGate SSR pattern
+- [[activities-pagination-ux-audit-2026-06-05]] — **COMPLETED 2026-06-05.** 3-specialist pagination UX audit. Load more vs infinite scroll vs numbered pages.
+- [[gyg-card-rate-analysis-2026-06-05]] — **COMPLETED 2026-06-05.** GYG card rate display analysis. Display, trust badge, and pricing UX patterns.
+- [[cartitems-500-error-analysis-2026-06-02]] — **RESOLVED 2026-06-02.** Cart items 500 error root cause. 3 bugs: type mismatch, exception bubbling, PARSING_ERROR display.
+- [[experience-detail-ipad-mobile-redesign-2026-06-02]] — **PLANNED 2026-06-02.** iPad/mobile redesign spec for experience detail page.
+- [[cross-sell-debate-review-2026-06-09]] — **COMPLETED 2026-06-09.** 3-agent BD×ENG×PM debate. Cross-sell placement: post-booking #1, trip detail #2, checkout sidebar avoided.
+- [[next-priority-debate-2026-06-09]] — **COMPLETED 2026-06-09.** 3-agent next-priority debate. Decision: GTM + cross-sell mount now, journey builder gated.
+- [[implementation-plan-cross-sell-2026-06-09]] — **COMPLETED 2026-06-09.** 4-agent impl plan: GTM fix → mount CheckoutRelatedTrips → wire scored API → SEO content.
+- [[checkout-uxui-audit-2026-06-10]] — **OPEN 2026-06-10.** Checkout UX/UI review.
 
 ## Business Development (2026)
 
@@ -191,6 +199,21 @@ Global navigation catalog. Updated on every ingest.
 - [[icon-button-size-decision]] — **NEW 2026-06-06.** 40×40px (Material medium) is default for icon buttons in dense UI. 44×44 reserved for primary CTAs. F2 of website audit shipped 44; user feedback: too big. Reverted swap/currency/profile to 40 in `fbdca15`. Apply 40 to F3 WhatsApp for consistency.
 - [[mui-menu-paper-overflow-guard]] — **NEW 2026-06-06.** MUI Menu Paper has no implicit max-height. When content > viewport, rounded background ends mid-row. Fix: `MenuListProps` + `PaperProps` with `maxHeight: calc(100vh - 120px)` and `overflow: hidden/auto`. Triggered by F2 anchor re-position (ProfileImage 36→44).
 - [[expandable-menu-row-mui-collapse]] — **NEW 2026-06-06.** `ExpandableMenuRow` (parent with chevron + per-row `useState` + `<Collapse>` + `aria-expanded`) + `SubMenuRow` (indented child). 3 groups in ProfileMenu save −240px default height. Use for 4+ related actions sharing a theme.
+- [[rate-review-page-shell-pattern]] — Shell/skeleton pattern for rate-review pages (FeaturedImageHeader + grid + sticky sidebar).
+- [[gtm-impression-dedup-sessionstorage]] — GTM impression dedup via sessionStorage guard — prevents duplicate events on re-render.
+- [[django-m2m-location-join-recommendations]] — M2M location join query pattern for recommendations (`service_areas` + `primary_location`).
+- [[checkout-next-btn-disable-conditions]] — Checkout Next button disable logic: all conditions that block progression.
+- [[carousel-embla-align-start-mobile-snap]] — Embla carousel `align: 'start'` + mobile snap settings for consistent item alignment.
+- [[touch-target-44px-enforcement]] — 44px touch target pattern (WCAG 2.5.5). Token + Tailwind + MUI + Playwright spec.
+- [[ios-zoom-input-16px-rule]] — iOS auto-zoom prevention: inputs ≥16px font-size. `text-base` minimum.
+- [[django-booking-creation-validation-gate]] — Validation gate at booking creation: advance_hour + stop_sale + operational_day checks.
+- [[rate-review-css-audit-2026-06-06]] — CSS audit findings from rate-review pages: padding, spacing, pattern alignment with blog pages.
+- [[next-font-self-host-perf-pattern]] — Next.js self-hosted font performance: `next/font` + `display: swap` + preconnect elimination.
+- [[brand-name-constant-extraction]] — Extract brand name to `constants/brand.js` to prevent copy drift across SEO + UI.
+- [[recommendation-type-selection-by-service-category]] — Recommendation type selection: `find_nearby_activities` for DAY_TOUR/SPA, transport-anchor for routes.
+- [[star-aria-radiogroup-pattern]] — Star rating ARIA: use `role="radiogroup"` + `role="radio"` + `aria-checked`. Fixes `aria-pressed` misuse (multiple true simultaneously).
+- [[pdf-parsing-pipeline-pattern]] — **NEW 2026-06-11.** Django+NotebookLM pipeline for PDF contract imports. Full flow, invariants, backend components, rate card merge strategy.
+- [[pdf-import-pre-validation-rules]] — **NEW 2026-06-11.** 6 red flags + 3-screen UX for PDF import. All must resolve before first commit.
 
 - [[payment-gateway-charge-architecture]] — GatewayCharge model, finalize_payment() SSOT, locked_amount freeze, webhook sole finalization
 - [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling
@@ -266,8 +289,8 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: 112
-- Last updated: 2026-06-06 (rate-review UX/UI audit: 5 files created, 34 findings, 3 P0 confirmed)
+- Pages: ~237 (active; 357 total including 08-archive)
+- Last updated: 2026-06-11 (vault lint: 21 missing entries added, 3 inbox items archived, pdf-contract-import split into 2 atoms)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx
