@@ -25,7 +25,7 @@ LATEST `GatewayCharge` per order (`order_by('-created').first()`). Historical ch
 2. Webhook → `OmiseWebhookView` → sole payment finalization source
 
 ### `finalize_payment(order)` — Idempotent SSOT
-`select_for_update()` + `payment_finalized_at` guard. Inside atomic: CartItem.delete → coupon `times_used` F()+1 → `confirm_booking_items_for_order()` → Order → `paid` → `on_commit` notifications.
+`select_for_update()` + `payment_finalized_at` guard. Lock order: Coupon → Order → BookingItem → TimeSlot. Inside atomic: CartItem.delete → coupon `times_used` F()+1 → `confirm_booking_items_for_order()` → Order → `paid` → `on_commit` notifications.
 **Rule:** add payment success behavior here, not callers.
 
 ### `locked_amount` — Charge Amount Freezing

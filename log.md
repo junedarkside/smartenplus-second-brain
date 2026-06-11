@@ -2,6 +2,8 @@
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
 
+## [2026-06-12] ingest | payment audit + Omise API gap check — 3-agent parallel (frontend code scan + backend docs + Omise API fetch). Findings: 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 open candidates, Omise Documents API non-applicable (dispute-only). Vault: 2 new pages ([[payment-audit-bugs-2026-06-11]], [[omise-api-reference-2026-06-12]]), 3 updates (payment-integration +expiry paths +open issues, payment-status-enums +clean()-only clarification, payment-gateway-charge-architecture +lock order). index.md + log.md updated.
+
 ## [2026-06-11] lint | vault optimization — 21 missing index entries added (8 projects + 13 knowledge atoms), 3 stale inbox items archived, empty inbox dir removed, pdf-contract-import-research.md split into pdf-parsing-pipeline-pattern.md + pdf-import-pre-validation-rules.md (371→42 lines), index Stats updated (~237 active pages), CLAUDE.md log path clarified (root vs 07-logs)
 
 ## [2026-06-11] implementation | 3 PRs resolved 9 audit items from [[frontend-architecture-audit-2026-06-11]] — PR1 Formik render-prop extract (e5261ab → 1e46314), PR2 4 RTK Query cleanups (ecc76a9 → b6b956e), PR3 dead code + hygiene (d69b473 → fbe9aab). 1 contamination incident recovered (parallel agents in shared worktree). bug-fixer-2 went idle 3+ hours; lead took over + amended incomplete commit. Sequential pattern adopted post-incident. Lint + build clean; tests gated by harness classifier. [[frontend-audit-implementation-2026-06-11]]. master-state → session #95.

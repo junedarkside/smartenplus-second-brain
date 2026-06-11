@@ -49,7 +49,7 @@ Webhook SSOT, single active attempt, immutable snapshot, cart lock during pendin
 
 ## QR Expiry — Parent/Child State
 
-PP + MB expiry has NO Omise webhook. See [[promptpay-no-webhook-on-expiry]] for all 3 expiry paths.
+PP + MB expiry has NO Omise webhook. Expiry paths: backend Celery `sync_pending_charges`, `ExpirePendingChargeView` POST, management command `expire_stale_payments`. See [[promptpay-no-webhook-on-expiry]] for full details.
 
 `qrExpired` lives in `QRPaymentForm` via `useQRPolling`. Parent never learns unless told via callback. Pattern: child components with terminal states must emit upward via `onExpired` prop. Parent clears `qrState` + `onQRPaymentStateChange(false)`.
 
@@ -107,8 +107,19 @@ Never "above"/"below" — DOM position not guaranteed. Use element names: "Use t
 
 `session?.email` always undefined. See [[nextauth-session-shape]] for full shape + guest email sources.
 
+## Omise Documents API — Not Applicable
+
+Omise Documents API (`/disputes/{id}/documents`) = dispute evidence upload only (PNG/JPG/PDF, max 10MB). Used for chargeback resolution, not payment receipts/invoices. No integration needed.
+
+## Known Open Issues
+
+**C1: Checkout formData restore broken on hard refresh** — mixed carts lose passenger assignments on `/checkout` reload before Redux-persist rehydration. Repro: 2-item mixed cart → fill passengers + customize → hard refresh → data gone. [[booking-payment-e2e-audit-2026-06-11]], candidate section. Fix: guard clear effect with `!isCheckoutRehydrated`.
+
+**C2: Transient errors incorrectly clear cartId** — `check-and-createcart.js` catches ANY failure (network, 429, 500) and clears `cartId`. Only 404 means cart is actually invalid. Fix: `error.status === 404` guard. [[booking-payment-e2e-audit-2026-06-11]], candidate section.
+
 ## Related
 - [[payment-system]]
 - [[checkout-flow]]
 - [[orders]]
 - [[backend-architecture]]
+- [[booking-payment-e2e-audit-2026-06-11]]

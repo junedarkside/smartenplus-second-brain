@@ -20,6 +20,8 @@ paid → refunded
 paid → partial_refunded
 ```
 
+**Status Machine Guards:** `clean()` enforced in Django admin only. NOT runtime `.save()`. Runtime accepts any state transition.
+
 ### OmiseMethod
 | Constant | Value | Category |
 |---------|-------|----------|
