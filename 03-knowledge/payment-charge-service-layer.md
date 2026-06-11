@@ -68,8 +68,39 @@ Canonical charge = LATEST `GatewayCharge` per order. Historical charges must NOT
 - JPY overcharge risk eliminated
 - Polling fallback available for stuck charges
 
+## Omise Response Extraction
+All Omise SDK fields extracted via `_attributes` dict, NOT direct property access:
+```python
+# WRONG — silently returns None on missing keys
+omise_charge.expires_at
+
+# CORRECT
+raw_expires = omise_charge._attributes.get('expires_at')
+```
+Affects: `expires_at`, `failure_code`, `failure_message`, `net`, `status`. See [[omise-client-integration]].
+
+## 5-Second Reconciliation Throttle
+`reconcile_gateway_charge()` skips Omise API call if `gc.updated < 5 seconds ago`:
+```python
+if (now() - gc.updated).seconds < 5:
+    return gc  # already fresh
+```
+Called on every order-detail page load — throttle prevents 429 rate limit.
+
+## Stale Charge Expiry (TOCTOU Guard)
+`_handle_existing_charge()`: stale charge + new attempt → expire old first:
+```python
+with transaction.atomic():
+    order = Order.objects.select_for_update().get(pk=order.pk)
+    omise_charge.expire()  # lock BEFORE expire to block concurrent webhook finalization
+    order.payment_notification_sent_at = None  # re-enable notification on next success
+```
+See [[payment-backend-charge-flow]] for full C3b pattern.
+
 ## Related
 - [[payment-status-enums]]
 - [[payment-gateway-charge-architecture]]
 - [[payment-integration]]
 - [[payment-sentinel-idempotency]] — staleness detection + IdempotencyKey lifecycle
+- [[omise-client-integration]] — `_attributes` extraction, LINE_PAY rename, PromptPay QR URI
+- [[payment-backend-charge-flow]] — DB constraint, TOCTOU guard, satang conversion, AllowAny auth

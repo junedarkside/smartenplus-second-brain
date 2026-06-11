@@ -231,14 +231,18 @@ Global navigation catalog. Updated on every ingest.
 - [[pdf-import-pre-validation-rules]] — **NEW 2026-06-11.** 6 red flags + 3-screen UX for PDF import. All must resolve before first commit.
 
 - [[payment-gateway-charge-architecture]] — GatewayCharge model, finalize_payment() SSOT, locked_amount freeze, webhook sole finalization
-- [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling, staleness reuse
-- [[payment-status-enums]] — PaymentStatus machine, OmiseMethod constants, REDIRECT_METHODS, METHOD_EXPIRY TTLs, authorized Order.status
+- [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling, staleness reuse, 5-sec throttle, TOCTOU guard
+- [[payment-status-enums]] — PaymentStatus machine, OmiseMethod constants, REDIRECT_METHODS, METHOD_EXPIRY TTLs, authorized Order.status, OMISE_STATUS_MAP (reversed→PENDING), PAYMENT_METHOD_MAP frontend codes
 - [[omise-webhook-security]] — Event.retrieve() verification (not HMAC), double-layer dedup, WebhookEvent outside atomic
 - [[payment-exception-catalog]] — PendingChargeError/AlreadyPaidError/LockedAmountError→409, PaymentAmountMismatchError never re-raised
 - [[payment-finalize-deep-dive]] — 6 non-obvious behaviors: snapshot log-only, amount mismatch path-dependent, expired→success recovery, superseded guard, cross-order lock, CAS notification dedup
 - [[payment-frontend-flow-mechanics]] — Card vs Source flows, canContinue 3-condition gate, NO_CONTINUE_METHODS, amountLocked UX, QR retry sequence, JPY scaling, OmiseScriptLoader linear-not-exponential bug
 - [[payment-qr-polling-mechanics]] — 4-format response fallback chain, should_stop_polling, finalStatusCheck on expiry, guest vs auth request signatures, polling lifecycle
 - [[payment-celery-expiry-strategy]] — PromptPay deterministic TTL, mobile banking polls Omise, e-wallet 30min fallback, superseded charge guard, retry wired-but-uncalled bug
+- [[omise-client-integration]] — lazy init (module not instance), `_attributes` dict extraction, LINE_PAY→rabbit_linepay, reversed→PENDING, PromptPay QR URI nested path
+- [[payment-backend-charge-flow]] — DB constraint (one pending redirect/order), TOCTOU guard, 5-sec reconcile throttle, C3b proactive PP expiry, AllowAny+manual ownership, satang conversion
+- [[manual-adjustment-model]] — admin-recorded manual charges, no Omise, PROTECT FK, legacy ExtraItemAction replacement
+- [[celery-beat-payment-scheduling]] — DatabaseScheduler (not settings.py), Django admin UI for schedule, sync_pending_charges
 - [[multitab-payment-race-condition-fixes]] — 7 race conditions, select_for_update cart-wide lock, frontend reconciliation
 - [[payment-checkout-architecture-audit]] — 20/20 audit, getPrimaryCharge fix, cancelState guards, qrState clear
 - [[payment-checkout-e2e-testing]] — MSW intercept bug, 5 bugs fixed, session structure rule, manual test guide

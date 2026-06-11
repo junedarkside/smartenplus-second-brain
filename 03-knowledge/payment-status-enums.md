@@ -22,6 +22,39 @@ paid → partial_refunded
 
 **Status Machine Guards:** `clean()` enforced in Django admin only. NOT runtime `.save()`. Runtime accepts any state transition.
 
+### `OMISE_STATUS_MAP` — Omise → Local Status
+```python
+OMISE_STATUS_MAP = {
+    'successful': PaymentStatus.PAID,
+    'pending':    PaymentStatus.PENDING,
+    'failed':     PaymentStatus.FAILED,
+    'expired':    PaymentStatus.EXPIRED,
+    'reversed':   PaymentStatus.PENDING,   # NOT terminal — auth reversed, not captured
+    'authorized': PaymentStatus.PAID,      # no local capture distinction
+}
+# Unmapped → PENDING (safe default)
+```
+`reversed` = Omise "authorization reversed" (authorized but never captured). Maps to PENDING intentionally. System never distinguishes capture stage.
+
+### PAYMENT_METHOD_MAP (Frontend → Backend)
+Frontend uses short codes; backend expects `OmiseMethod` enum values:
+```
+PP  → promptpay
+WC  → wechat_pay
+APC → alipay
+KB  → kakao_pay
+TM  → truemoney
+LP  → line_pay
+CC  → credit_card
+DC  → debit_card
+SCB → mobile_banking_scb
+KTB → mobile_banking_ktb
+KBK → mobile_banking_kbank
+BBL → mobile_banking_bbl
+BAY → mobile_banking_bay
+```
+Frontend sends short code via payment form. `PAYMENT_METHOD_MAP` in `payments/enums.py` maps to full `OmiseMethod` value before Omise API call.
+
 ### Omise `authorized` Status (not-yet-captured)
 Omise can return `authorized` (charge approved but not yet captured). Maps to SmartEnPlus `paid` on webhook finalization (webhook triggers `finalize_payment()` which is oblivious to capture state). Same flow as `successful`. No local distinction needed — finalization is amount-based, not capture-based.
 
