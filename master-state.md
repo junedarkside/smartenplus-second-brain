@@ -4,20 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-11 (session #98)
+**Updated:** 2026-06-11 (session #99)
 
-**Achieved this session (#98):**
-- **BOOKING-PAY-REPRO-1 C1+C2 fixed** — `isCartLoaded &&` gate (`checkout/index.js:188`) + `error?.status === 404` guard (`check-and-createcart.js:67`). Grill + scrutinize validated. Commit `cb817d9`.
-- **FRONTEND-AUDIT-MANUAL-PRS DROPPED** — all 3 branches confirmed merged via `git branch -r --merged develop`. Retroactive PRs = no value.
-- **BRANCH-CLEANUP-REMOTE CLOSED** — 42 stale `origin/2606*` branches deleted. 45 active remain.
-- **FRONTEND-AUDIT-FOLLOWUP-1 CLOSED** — 2 exhaustive-deps suppressions in `FormikValuesSync.js`. Scrutinize caught agent's wrong dep-swap proposal; kept `cartitems?.cart_item` (tighter RTK trigger). Commit `7107516`.
-- **CROSS-SELL-MERGE CLOSED** — branch already fully merged (confirmed `git merge-base`). Renamed remaining work → `CROSS-SELL-BD-INVENTORY` (BD task).
-- **1 atom extracted**: `checkout-formdata-persist-guard-pattern.md`
+**Achieved this session (#99):**
+- **SEO + SITEMAP WHOLE-SITE AUDIT** — 3-agent team (sitemap infra / on-page meta+schema / technical rendering). Code + live (Cloudflare 403'd live fetches = P0-1 itself). 6 P0, 10 P1, ~16 P2 findings. Key: fabricated review schema ×3 sources (Google manual-action risk), broken `noindex` via nonexistent next-seo `robots` prop, activities canonical malformed, sitemap ships ~20 private URLs, ~480 lines dead JSON-LD pipeline in trip detail. Soft-404 recommendation overruled per [[gsc-crawled-not-indexed-investigation-2026-06-05]] 3-phase plan. Vault note: [[seo-sitemap-whole-site-audit-2026-06-11]]. Audit only — no code changed. Frontend `develop` clean @ `7107516`.
 
 **Resume point (EXACT):**
-1. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. BD creates: return route Koh Lipe→Hatyai Airport + DAY_TOUR contracts at Koh Lipe + SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`.
-2. **AT-1** — Airport Transfer redesign (P0 spec in vault). Awaits user direction.
-3. **GSC-1 Phase 3** — needs backend `route_exists` field.
+1. **SEO-SITEMAP-FIX** — implement fixes from [[seo-sitemap-whole-site-audit-2026-06-11]]. First: verify Googlebot in GSC (no code). Then: delete fabricated reviews (P0-2, `seoConfig.js:139`, `destinations/[slug].js:364`, `productProperties.js:100`). Then: fix noindex + activities canonical + sitemap exclude list.
+2. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work.
+3. **AT-1** — Airport Transfer redesign. Awaits user direction.
 
 ---
 
@@ -28,6 +23,7 @@
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |
+| **SEO-SITEMAP-FIX** | Implement fixes from whole-site SEO+sitemap audit | OPEN. 6 P0 (WAF/Googlebot verify, fake reviews ×3, private URLs in sitemap, broken noindex, activities canonical, origin 301s), 10 P1. See [[seo-sitemap-whole-site-audit-2026-06-11]] for ordered fix list. | `components/SEO/seoConfig.js:139`, `pages/destinations/[slug].js:364`, `components/review/productProperties.js:100`, `next-sitemap.config.js`, `pages/checkout/index.js`, `nginx/sites-available/smartenplus.conf` |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell | OPEN. BD task — no eng work. Needs: (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`. | BD action |
 | **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | CLOSED #97. 42 actual branches deleted (vault count was stale). `git branch -r \| grep origin/2606 \| wc -l` → 0. `git fetch --prune` run. 45 remote branches remain (all active). | done |
 | **FRONTEND-AUDIT-FIX-1** | Audit finding 3 (Formik render-prop useEffect) | CLOSED #95. PR1 `fix/audit-checkout-passengers-hooks` (e5261ab → 1e46314). New `FormikValuesSync.js` (105 lines) absorbs both effects via useFormikContext. Rules-of-hooks invariant restored. Lint clean. | `components/forms/checkout/FormikValuesSync.js`, `Passengers.js` |

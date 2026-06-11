@@ -4,6 +4,23 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-11 (session #98)
+
+**Achieved this session (#98):**
+- **BOOKING-PAY-REPRO-1 C1+C2 fixed** — `isCartLoaded &&` gate (`checkout/index.js:188`) + `error?.status === 404` guard (`check-and-createcart.js:67`). Grill + scrutinize validated. Commit `cb817d9`.
+- **FRONTEND-AUDIT-MANUAL-PRS DROPPED** — all 3 branches confirmed merged via `git branch -r --merged develop`. Retroactive PRs = no value.
+- **BRANCH-CLEANUP-REMOTE CLOSED** — 42 stale `origin/2606*` branches deleted. 45 active remain.
+- **FRONTEND-AUDIT-FOLLOWUP-1 CLOSED** — 2 exhaustive-deps suppressions in `FormikValuesSync.js`. Scrutinize caught agent's wrong dep-swap proposal; kept `cartitems?.cart_item` (tighter RTK trigger). Commit `7107516`.
+- **CROSS-SELL-MERGE CLOSED** — branch already fully merged (confirmed `git merge-base`). Renamed remaining work → `CROSS-SELL-BD-INVENTORY` (BD task).
+- **1 atom extracted**: `checkout-formdata-persist-guard-pattern.md`
+
+**Resume point (from #98):**
+1. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. BD creates: return route Koh Lipe→Hatyai Airport + DAY_TOUR contracts at Koh Lipe + SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`.
+2. **AT-1** — Airport Transfer redesign (P0 spec in vault). Awaits user direction.
+3. **GSC-1 Phase 3** — needs backend `route_exists` field.
+
+---
+
 **Updated:** 2026-06-11 (session #93)
 
 **Achieved this session (#93):**

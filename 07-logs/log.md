@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-11] session-end #99 | whole-site SEO+sitemap 3-agent audit — 6 P0 (WAF/Googlebot verify, fake reviews ×3, broken noindex, malformed activities canonical, sitemap ships private URLs, origin missing 301s), 10 P1 incl. 480-line dead JSON-LD pipeline. No code changed. Vault: [[seo-sitemap-whole-site-audit-2026-06-11]].
+
 ## [2026-06-11] session-end #97d | CROSS-SELL-MERGE CLOSED — branch already fully merged into develop (confirmed via git merge-base). CheckoutRelatedTrips mounted at checkout/index.js:1010. Renamed remaining work to CROSS-SELL-BD-INVENTORY (BD task: Koh Lipe return route + DAY_TOUR + SPA contracts). No eng work remaining on cross-sell.
 
 ## [2026-06-11] session-end #97c | FRONTEND-AUDIT-FOLLOWUP-1 CLOSED — 2 exhaustive-deps suppressions added to FormikValuesSync.js. Effect 1: refs + useState setter stable, correctly excluded. Effect 2: `cartitems?.cart_item` kept (not `cartitems`) — tighter RTK trigger (scrutinize caught agent's wrong swap proposal). Lint clean `7107516`.
