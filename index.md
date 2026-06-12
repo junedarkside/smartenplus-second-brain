@@ -245,6 +245,7 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-status-enums]] — PaymentStatus machine, OmiseMethod constants, REDIRECT_METHODS, METHOD_EXPIRY TTLs, authorized Order.status, OMISE_STATUS_MAP (reversed→PENDING), PAYMENT_METHOD_MAP frontend codes
 - [[omise-webhook-security]] — Event.retrieve() verification (not HMAC), double-layer dedup, WebhookEvent outside atomic
 - [[omise-webhook-tailscale-local-testing]] — **NEW 2026-06-12.** Tailscale funnel setup for real Omise webhook delivery to local BE :8000. Repro steps, all-5-steps PASS results, gotchas (auto-complete PP, quoted .env key). See also [[payment-auto-test-results-2026-06-12]].
+- [[payment-e2e-rerun-guide]] — **NEW 2026-06-12.** How to rerun all 8 payment E2E tests locally. One command, prerequisites checklist, per-test table, failure debug steps, manual cleanup.
 - [[payment-exception-catalog]] — PendingChargeError/AlreadyPaidError/LockedAmountError→409, PaymentAmountMismatchError never re-raised
 - [[payment-finalize-deep-dive]] — 6 non-obvious behaviors: snapshot log-only, amount mismatch path-dependent, expired→success recovery, superseded guard, cross-order lock, CAS notification dedup
 - [[payment-frontend-flow-mechanics]] — Card vs Source flows, canContinue 3-condition gate, NO_CONTINUE_METHODS, amountLocked UX, QR retry sequence, JPY scaling, OmiseScriptLoader linear-not-exponential bug
