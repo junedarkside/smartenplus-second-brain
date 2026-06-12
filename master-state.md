@@ -4,17 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-12 (session #101)
+**Updated:** 2026-06-12 (session #102)
 
-**Achieved this session (#101):**
-- **Payment deep review (FE+BE) — 4-pass audit** — 3-agent team (frontend / backend / contract) + leader hand-verification + debug-mantra + grill + scrutinize passes. Report: [[payment-deep-review-2026-06-12]] (`01-projects/`). 5 HIGH (all verified), ~18 MEDIUM, ~15 LOW, 10 test gaps, 4 doc drifts. No code changed — audit + report only.
-- **KB cross-check + corrections** — 3 KB notes corrected after scrutinize: [[payment-gateway-charge-architecture]] (wrong lock order claim fixed), [[payment-finalize-deep-dive]] (side-effect order corrected + M6 contention note), [[payment-exception-catalog]] (M13 silent declined-card pattern added).
+**Achieved this session (#102):**
+- **Payment deep review — KB verification + implement plan** — 3 Explore verifier agents cross-checked all 5 HIGHs + 18 MEDIUMs from [[payment-deep-review-2026-06-12]] against ~1700 lines of vault payment/omise KB + read-only code spot-checks. Report: [[payment-deep-review-verification-2026-06-12]] (`01-projects/`). **20 CONFIRMED · 2 REFINED (H1, M17) · 1 REFUTED (M4) · 1 KB inaccuracy (M8) · 12 KB gaps surfaced.** Material correction: M4's `{error:'payment_pending'}` claim is wrong — canonical code is `pending_charge_exists` and FE maps it (M4 subsumed by M1, recommend retraction). M8 KB inaccuracy: [[payment-backend-charge-flow]] §5 claims email validation in `ChargeOrderView`; code shows it's only in `ExpirePendingChargeView`. Implement plan written: [[payment-implement-plan-2026-06-12]] (5-batch sequence, file:line refs, verify commands, test gaps). No code changed.
 
 **Resume point (EXACT):**
-1. **PAYMENT-FIX** — implement fixes from [[payment-deep-review-2026-06-12]]. Suggested order: H3+H4 (trivial, kill two UX breakages) → H2+M10 (delete legacy routes) → H1+M8 (security pair) → H5+M5 (resilience pair) → M1–M4, M17, LOW sweep.
-2. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
-3. **AT-1** — Airport Transfer redesign. Awaits user direction.
-4. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
+1. **PAYMENT-FIX** — implement fixes from [[payment-deep-review-2026-06-12]] per [[payment-implement-plan-2026-06-12]]. Sequence: Batch 1 (H3+H4, ~6 lines, trivial) → Batch 2 (H2+M10, delete legacy routes, verify zero prod traffic first) → Batch 3 (H1+M8, security pair) → Batch 4 (H5+M5, resilience pair) → Batch 5 (M1–M4, M17, LOW sweep). **Before Batch 2:** grep nginx access logs for `webhook-legacy` + `placeorder` traffic. **M4 should be retracted (subsumed by M1).**
+2. **KB atomization** — 12 KB gaps from verification. Recommend batch with next `/lint-vault` (split into 2 sessions: gaps 1–6 first, 7–12 follow). Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
+3. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
+4. **AT-1** — Airport Transfer redesign. Awaits user direction.
+5. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
 
 ---
 
@@ -22,7 +22,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | OPEN. Audit done, no code changed. Fix order: H3+H4 → H2+M10 → H1+M8 → H5+M5 → M1–M4,M17. | [[payment-deep-review-2026-06-12]] |
+| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | OPEN. Audit done + KB verification done (session #102, 1 REFUTED, 1 KB inaccuracy, 12 KB gaps). Implement plan: [[payment-implement-plan-2026-06-12]]. Fix order: Batch 1 (H3+H4) → Batch 2 (H2+M10) → Batch 3 (H1+M8) → Batch 4 (H5+M5) → Batch 5 (M1–M4, M17, LOW). **M4 should be retracted (subsumed by M1).** | [[payment-deep-review-2026-06-12]], [[payment-deep-review-verification-2026-06-12]], [[payment-implement-plan-2026-06-12]] |
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |
