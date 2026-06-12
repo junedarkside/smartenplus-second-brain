@@ -4,15 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-12 (session #102)
+**Updated:** 2026-06-12 (session #102 wrap)
 
 **Achieved this session (#102):**
-- **Payment deep review — KB verification + implement plan + Batch 1 shipped** — 3 Explore verifier agents cross-checked all 5 HIGHs + 18 MEDIUMs from [[payment-deep-review-2026-06-12]] against ~1700 lines of vault payment/omise KB + read-only code spot-checks. **20 CONFIRMED · 2 REFINED (H1, M17) · 1 REFUTED (M4, retracted) · 1 KB inaccuracy (M8) · 12 KB gaps surfaced.** Reports: [[payment-deep-review-verification-2026-06-12]] + [[payment-implement-plan-2026-06-12]]. Verification pass appended to [[payment-deep-review-2026-06-12]] with M4 retraction detail + M8 KB inaccuracy in doc drifts. **Batch 1 (H3+H4) shipped** to local `fix/payment-deep-review-2026-06-12` branches: BE `d7af0e9` (H3, orders/views.py 8+/9-), FE `a3c8c80` (H4, useOmisePayment.js 6+/2-). No push (manual PRs pending). Tailscale dev webhooks noted for Batch 2 pre-flight.
+- **Payment deep review — KB verification + implement plan + all 5 batches shipped + pushed** — 3 Explore verifier agents cross-checked 5 HIGHs + 18 MEDIUMs from [[payment-deep-review-2026-06-12]] against ~1700 lines of vault payment/omise KB + read-only code spot-checks. **20 CONFIRMED · 2 REFINED (H1, M17) · 1 REFUTED (M4, retracted) · 1 KB inaccuracy (M8) · 12 KB gaps surfaced.** Reports: [[payment-deep-review-verification-2026-06-12]] + [[payment-implement-plan-2026-06-12]]. **All 5 batches shipped to `fix/payment-deep-review-2026-06-12` branches and PUSHED to origin:**
+  - **BE (7 commits):** `d7af0e9` H3 order-reuse wrap · `3be676b` H2+M10 410 legacy routes · `f1c17b5` H1+M8 amount validation + guest email · `6a481df` H5+M5+M9 reconcile + BaseError + orphan expire · `67b490a` M17 KakaoPay mapping · `e685fc8` BE unit tests · `6937f39` test path/constraint fixes
+  - **FE (4 commits):** `a3c8c80` H4 charge_id + charge_created_at · `294c8fc` M1+M2+M3+M17 FE branches + KakaoPay/Alipay contract · `478a2bf` FE jest tests (84/84 ✅) · `c7caaf3` Playwright E2E (5 API + 7 UI skip)
+  - **Tests:** 20 BE unit + 84 FE jest + 5 Playwright API + 7 Playwright UI (skip, need dev server) — 104 passing, 12 E2E written
+  - **gh CLI not installed** → PRs open manually via GitHub web UI. No PRs opened yet.
+  - **BE untracked noise:** `.next/`, `docs/agent-policy/`, `docs/api/PUBLIC_ENDPOINTS.md`, `docs/deployment/DOCKER.md`, `docs/operations/ENV.md`, `docs/technical/` — separate work, not part of this branch.
 
 **Resume point (EXACT):**
-1. **PAYMENT-FIX** — continue implementation per [[payment-implement-plan-2026-06-12]]. **Batch 1 DONE.** Sequence: Batch 2 (H2+M10, delete legacy routes, prod nginx log check first; Tailscale dev flow noted) → Batch 3 (H1+M8, security pair) → Batch 4 (H5+M5, resilience pair) → Batch 5 (M1–M3, M17, LOW sweep; **M4 retracted, dropped from order**).
-2. **KB atomization** — 12 KB gaps from verification. Recommend batch with next `/lint-vault` (split into 2 sessions: gaps 1–6 first, 7–12 follow). Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
-3. **PRs** — open PRs manually for Batch 1 commits when ready. 2 PRs (BE `d7af0e9` + FE `a3c8c80`).
+1. **PAYMENT-FIX PRs** — open 2 PRs manually via GitHub UI: BE `fix/payment-deep-review-2026-06-12` → `develop` (base: develop, head: fix/payment-deep-review-2026-06-12, BE 7 commits), FE same. gh CLI not installed in this environment.
+2. **PAYMENT-FIX staging QA** — deploy branches to staging, run smoke tests (cart → checkout → PP/QR → webhook → paid) + 7 Playwright UI tests. Mark PAYMENT-FIX CLOSED only after staging green.
+3. **KB atomization** — 12 KB gaps from verification. Recommend batch with next `/lint-vault` (split into 2 sessions: gaps 1–6 first, 7–12 follow). Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
 4. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
 5. **AT-1** — Airport Transfer redesign. Awaits user direction.
 6. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
@@ -23,7 +28,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | IN PROGRESS (session #102). **Batch 1 DONE** (BE `d7af0e9`, FE `a3c8c80`). Audit + KB verification done (1 REFUTED→retracted, 1 KB inaccuracy, 12 KB gaps). Implement plan: [[payment-implement-plan-2026-06-12]]. Remaining: Batch 2 (H2+M10) → Batch 3 (H1+M8) → Batch 4 (H5+M5) → Batch 5 (M1–M3, M17, LOW). **M4 retracted (subsumed by M1).** | [[payment-deep-review-2026-06-12]], [[payment-deep-review-verification-2026-06-12]], [[payment-implement-plan-2026-06-12]] |
+| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **ALL 5 BATCHES SHIPPED + PUSHED** to `fix/payment-deep-review-2026-06-12` (BE 7 commits `d7af0e9..6937f39`, FE 4 commits `a3c8c80..c7caaf3`). 20 BE unit + 84 FE jest + 5 Playwright API + 7 Playwright UI (skip) = 104 passing + 12 E2E written. **M4 retracted (subsumed by M1).** Remaining: (a) open 2 PRs manually via GitHub UI, (b) staging QA, (c) close item after staging green. KB gaps from verification: 12 (recommend batch with next `/lint-vault`). | [[payment-deep-review-2026-06-12]], [[payment-deep-review-verification-2026-06-12]], [[payment-implement-plan-2026-06-12]] |
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |

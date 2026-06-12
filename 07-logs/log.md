@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-12] session-end #102 | payment deep review — all 5 batches shipped + pushed (BE 7 commits `d7af0e9..6937f39`, FE 4 commits `a3c8c80..c7caaf3` on `fix/payment-deep-review-2026-06-12`). 20 BE unit + 84 FE jest + 5 Playwright API + 7 Playwright UI (skip) tests written, 104 passing. PRs + staging QA pending (gh CLI not installed → manual via GitHub UI).
+
 ## [2026-06-12] session-end #101 | payment deep review 4-pass audit complete — [[payment-deep-review-2026-06-12]] (5 HIGH all verified, ~18 MEDIUM, ~15 LOW, 10 test gaps). 3 KB corrections: payment-gateway-charge-architecture lock order, payment-finalize-deep-dive side-effect order, payment-exception-catalog M13 silent declined-card. No code changed. PAYMENT-FIX open item added to master-state.
 
 ## [2026-06-11] session-end #99 | whole-site SEO+sitemap 3-agent audit — 6 P0 (WAF/Googlebot verify, fake reviews ×3, broken noindex, malformed activities canonical, sitemap ships private URLs, origin missing 301s), 10 P1 incl. 480-line dead JSON-LD pipeline. No code changed. Vault: [[seo-sitemap-whole-site-audit-2026-06-11]].
