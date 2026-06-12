@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #104 (archived from master-state)
+
+**Updated:** 2026-06-12 (session #104 wrap — 8/8 E2E automated + webhook gap closed via Tailscale)
+
+**Achieved across #102–#104:**
+- **Payment deep review — FULLY AUTOMATED. All 8 previously-skipped UI tests now pass** via `e2e/checkout/payment-auto-qa.spec.ts` + fixture CLI `scripts/e2e_payment_fixtures.py`. No staging deploy needed.
+- **Webhook gap closed** — Tailscale funnel `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` registered in Omise test dashboard. Real webhook delivery verified locally: forged payload → 400, real PP charge auto-completes, webhook finalizes order with zero FE involvement, dedupe replay → `already_processed`. All 5 steps PASS.
+- **New atoms written:** [[omise-webhook-tailscale-local-testing]] (setup guide + repro steps + results)
+- **Branches (both `fix/payment-deep-review-2026-06-12`):**
+  - **BE (7 commits, PUSHED `6937f39`):** `d7af0e9` H3 · `3be676b` H2+M10 · `f1c17b5` H1+M8 · `6a481df` H5+M5+M9 · `67b490a` M17 · `e685fc8` unit tests · `6937f39` test fixes
+  - **FE (8 commits, PUSHED `8430805`):** all pushed — H4, M1-M3-M17, jest, E2E, parser fix, CSRF-aware assertions + 8/8 automated UI tests + fixture CLI
+- **Test totals (all green):** 20 BE unit + 84 FE jest + 7/7 Playwright API + **8/8 Playwright UI automated (all PASS)** = 119 passing
+
+---
+
 ## Session #100 (2026-06-12)
 
 **Achieved:**
