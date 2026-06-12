@@ -4,24 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-12 (session #102 wrap)
+**Updated:** 2026-06-12 (session #103 wrap — E2E smoke + manual QA runbook)
 
-**Achieved this session (#102):**
-- **Payment deep review — KB verification + implement plan + all 5 batches shipped + pushed + E2E green** — 3 Explore verifier agents cross-checked 5 HIGHs + 18 MEDIUMs from [[payment-deep-review-2026-06-12]] against ~1700 lines of vault payment/omise KB + read-only code spot-checks. **20 CONFIRMED · 2 REFINED (H1, M17) · 1 REFUTED (M4, retracted) · 1 KB inaccuracy (M8) · 12 KB gaps surfaced.** Reports: [[payment-deep-review-verification-2026-06-12]] + [[payment-implement-plan-2026-06-12]]. **All 5 batches shipped to `fix/payment-deep-review-2026-06-12` branches and PUSHED to origin:**
-  - **BE (7 commits, pushed):** `d7af0e9` H3 order-reuse wrap · `3be676b` H2+M10 410 legacy routes · `f1c17b5` H1+M8 amount validation + guest email · `6a481df` H5+M5+M9 reconcile + BaseError + orphan expire · `67b490a` M17 KakaoPay mapping · `e685fc8` BE unit tests · `6937f39` test path/constraint fixes
-  - **FE (4 commits, pushed):** `a3c8c80` H4 charge_id + charge_created_at · `294c8fc` M1+M2+M3+M17 FE branches + KakaoPay/Alipay contract · `478a2bf` FE jest tests (84/84 ✅) · `c7caaf3` Playwright E2E (5 API + 7 UI skip)
-  - **FE follow-up (2 commits, NOT pushed — same branch, awaiting PR):** `4f88093` fix unterminated-string in skipped smoke test comment (parser blocker) · `8430805` H2+M10 POST tests assert CSRF 403, 410 covered by GET — **7/7 Playwright API tests now PASS (was 5/7), 8 skip, 0 fail**.
-  - **Tests total:** 20 BE unit + 84 FE jest + 7 Playwright API (all passing) + 8 Playwright UI (skip) = 111 passing, 8 E2E skipped.
-  - **gh CLI not installed** → PRs open manually via GitHub web UI. No PRs opened yet.
-  - **BE untracked noise:** `.next/`, `docs/agent-policy/`, `docs/api/PUBLIC_ENDPOINTS.md`, `docs/deployment/DOCKER.md`, `docs/operations/ENV.md`, `docs/technical/` — separate work, not part of this branch.
+**Achieved across #102 + #103:**
+- **Payment deep review — KB verified, implemented, shipped, pushed, E2E green, manual runbook ready** — full lifecycle: [[payment-deep-review-2026-06-12]] audit → [[payment-deep-review-verification-2026-06-12]] (20 CONFIRMED, 2 REFINED, 1 REFUTED=M4 retracted, 1 KB inaccuracy=M8, 12 KB gaps) → [[payment-implement-plan-2026-06-12]] (5-batch sequence) → all 5 batches shipped → E2E smoke + 2 spec bugs fixed → manual QA runbook for 8 skipped UI tests.
+- **Branches (both `fix/payment-deep-review-2026-06-12`):**
+  - **BE (7 commits, PUSHED `6937f39`):** `d7af0e9` H3 · `3be676b` H2+M10 · `f1c17b5` H1+M8 · `6a481df` H5+M5+M9 · `67b490a` M17 · `e685fc8` unit tests · `6937f39` test fixes
+  - **FE (6 commits, PARTIALLY PUSHED `8430805`):** `a3c8c80..c7caaf3` PUSHED (H4, M1-M3-M17, jest, E2E) · `4f88093`+`8430805` UNPUSHED (parser fix + CSRF-aware test assertions)
+- **Test totals (all green where runnable):** 20 BE unit + 84 FE jest + **7/7 Playwright API PASS** + 8 Playwright UI (skip, blocked on staging data) = 111 passing + 8 E2E written
+- **Spec bugs found+fixed in #103 (2 commits):**
+  1. `4f88093` — `**/checkout**` inside `/* */` block comment had `*/` matched by substring, file failed to parse, 0 tests ran. Fix: convert to `//` line comments.
+  2. `8430805` — H2+M10 POST tests expected 410, got 403 (Django CSRF middleware blocks before view). Fix: POST tests assert CSRF 403; 410 contract covered by GET on same URL.
+- **Manual QA runbook:** [[payment-manual-test-skip-2026-06-12]] — 8 sections with Django shell fixture setup, step-by-step UI/API actions, pass criteria, results template. Ready for staging deploy.
+- **gh CLI not installed** → PRs manual via GitHub web UI.
 
 **Resume point (EXACT):**
-1. **PAYMENT-FIX PRs** — open 2 PRs manually via GitHub UI: BE `fix/payment-deep-review-2026-06-12` → `develop` (BE 7 commits, head = `6937f39`), FE same (FE 6 commits incl. 2 follow-ups, head = `8430805`). gh CLI not installed in this environment.
-2. **PAYMENT-FIX staging QA** — deploy branches to staging, run smoke tests (cart → checkout → PP/QR → webhook → paid) + 8 Playwright UI tests (unskip after staging data ready). Mark PAYMENT-FIX CLOSED only after staging green.
-3. **KB atomization** — 12 KB gaps from verification. Recommend batch with next `/lint-vault` (split into 2 sessions: gaps 1–6 first, 7–12 follow). Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
-4. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
+1. **PAYMENT-FIX — open PRs manually:**
+   - BE: `smartenplus-backend/fix/payment-deep-review-2026-06-12` → `develop` (7 commits, head `6937f39`)
+   - FE: `smartenplus-frontend/fix/payment-deep-review-2026-06-12` → `develop` (6 commits, head `8430805`) — **push 2 unpushed commits first**: `git push origin fix/payment-deep-review-2026-06-12` from FE worktree
+2. **PAYMENT-FIX — staging QA** — deploy branches, run [[payment-manual-test-skip-2026-06-12]] tests, unskip 8 UI tests after staging fixtures ready, close item after green.
+3. **KB atomization** — 12 KB gaps from verification report. Recommend batching with next `/lint-vault` (gaps 1-6 first, 7-12 follow). Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
+4. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Koh Lipe return route + DAY_TOUR + SPA contracts.
 5. **AT-1** — Airport Transfer redesign. Awaits user direction.
 6. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
+
+**Next session: starting state**
+- vault master-state: `master` @ `daa4ac7` (next commit will be #103 wrap)
+- BE branch: `fix/payment-deep-review-2026-06-12` @ `6937f39` (clean, pushed)
+- FE branch: `fix/payment-deep-review-2026-06-12` @ `8430805` (clean, 4 commits pushed + 2 unpushed follow-up)
+- BE untracked: `.next/`, `docs/agent-policy/`, `docs/api/PUBLIC_ENDPOINTS.md`, `docs/deployment/DOCKER.md`, `docs/operations/ENV.md`, `docs/technical/` (separate work, not part of payment branch)
+- admin-dashboard: `main` @ `4a6c03b` (untracked `docs/agent-policy/`, `docs/operations/`, `docs/technical/*` — separate work)
+- content: `master` @ `3756e5b` (clean)
 
 ---
 
@@ -29,7 +42,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **ALL 5 BATCHES SHIPPED + PUSHED + E2E GREEN.** BE 7 commits `d7af0e9..6937f39` pushed. FE 6 commits `a3c8c80..8430805` (last 2 NOT pushed — follow-up: 4f88093 parser fix, 8430805 CSRF-aware assertions). **7/7 runnable Playwright API tests pass** (was 5/7), 8 UI tests skip, 84 jest pass, 20 BE unit pass. **M4 retracted.** Remaining: (a) push FE follow-up commits + open 2 PRs via GitHub UI, (b) staging QA + unskip 8 UI tests, (c) close item after staging green. KB gaps: 12 (recommend batch with next `/lint-vault`). | [[payment-deep-review-2026-06-12]], [[payment-deep-review-verification-2026-06-12]], [[payment-implement-plan-2026-06-12]] |
+| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **ALL 5 BATCHES SHIPPED + PUSHED + E2E GREEN + MANUAL RUNBOOK READY.** BE 7 commits `d7af0e9..6937f39` pushed. FE 6 commits `a3c8c80..8430805` — 4 pushed, 2 unpushed (parser fix + CSRF assertions). **7/7 runnable Playwright API tests pass** (was 5/7), 8 UI tests skip, 84 jest pass, 20 BE unit pass. Manual QA runbook [[payment-manual-test-skip-2026-06-12]] for the 8 skipped tests. **M4 retracted.** Remaining: (a) push 2 FE follow-up commits, (b) open 2 PRs via GitHub UI, (c) staging QA + unskip 8 UI tests, (d) close item after staging green. KB gaps: 12 (recommend batch with next `/lint-vault`). | [[payment-deep-review-2026-06-12]], [[payment-deep-review-verification-2026-06-12]], [[payment-implement-plan-2026-06-12]], [[payment-manual-test-skip-2026-06-12]] |
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |

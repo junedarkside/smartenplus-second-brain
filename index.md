@@ -147,6 +147,7 @@ Global navigation catalog. Updated on every ingest.
 - [[redux-store-architecture]] — 7-version persist migration, cross-tab cart invalidation, dual reset, SSR no-op storage, deprecated cart-slice, auth whitelist, 48hr TTL
 - [[rtk-query-advanced-patterns]] — child/children normalization, fixedCacheKey dedup, intentional missing invalidatesTags, bookmark 409/404 suppression, 'null' string guard
 - [[checkout-hoc-architecture]] — withCartValidation (ref dedup, 404-only clear), withCheckCartValidation, withComponent infinite-refetch risk
+- [[e2e-csrf-blocks-410-legacy-post-tests]] — Django CSRF middleware returns 403 before 410 view runs in E2E. Pattern: split into GET (assert 410) + POST (assert 403 = CSRF protection). Used in [[payment-manual-test-skip-2026-06-12]].
 - [[checkout-state-persistence]] — useCartSync 6-effect ordering, ghost trip detection, dual persistence strategy, guest→backend migration, debounced auto-save
 - [[checkout-formdata-time-fields]] — frontend lowercase-t vs backend capital-T time field boundary, HH:MM:SS format, 3 conversion helpers
 - [[checkout-step-flow]] — hasMixedPassengerCounts step branching (4 vs 5 steps), payment init idempotency key, CONTRACT_INACTIVE auto-redirect
