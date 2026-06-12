@@ -169,6 +169,7 @@ Size (refactor-on-touch only): `checkout/index.js` 1201 · `PaymentComponent.js`
 - "Card = no expiry (synchronous)" false for 3DS redirect charges
 - State machine omits `payment_failed→payment_pending` and `canceled→ordering` transitions
 - Legacy webhook + `placeorder` routes undocumented, contradicting SSOT claim
+- **`payment-backend-charge-flow.md` §5** (added by verification pass 2026-06-12) — claims `ChargeOrderView` validates `email` for guest; code shows it's only in `ExpirePendingChargeView`. Edit §5 to clarify.
 
 ---
 
@@ -191,7 +192,7 @@ Size (refactor-on-touch only): `checkout/index.js` 1201 · `PaymentComponent.js`
 2. **H2 + M10** — delete/410 two legacy routes (pure removal; verify zero prod traffic in access logs first).
 3. **H1** (one server-side amount comparison in `initiate_order_charge`) + **M8** (guest email validation in `ChargeOrderView`) — security pair.
 4. **H5** (add `'payment_pending'` to reconcile gate at `orders/views.py:634`) + **M5** (try/except `omise.errors.BaseError` with status revert in `initiate_order_charge`) — resilience pair.
-5. M1–M4, M17 — small FE branches + KakaoPay/Alipay fixes; then LOW dead-code sweep batched with stable_id carry-over.
+5. M1–M3, M17 — small FE branches + KakaoPay/Alipay fixes; then LOW dead-code sweep batched with stable_id carry-over. **M4 RETRACTED (subsumed by M1)** per verification pass 2026-06-12.
 
 ---
 
@@ -227,5 +228,63 @@ End-to-end trace of every fix path + edge cases. Four corrections applied in-pla
 
 ---
 
+## Verification pass (2026-06-12) — 3-agent KB cross-check
+
+3 Explore verifier agents cross-checked all 5 HIGHs + 18 MEDIUMs against ~1700 lines of vault payment/omise KB + read-only code spot-checks. **Result: 20 CONFIRMED · 2 REFINED (H1, M17) · 1 REFUTED (M4) · 1 KB inaccuracy (M8) · 12 KB gaps surfaced.** Full report: [[payment-deep-review-verification-2026-06-12]].
+
+### M4 — RETRACTED (subsumed by M1)
+
+**Original claim:** "GAP-2 cross-order 409 body `{error:'payment_pending'}` (`services.py:660-664`) not in FE's 409-mapping table (`useOmisePayment.js:169-178` checks `pending_charge_exists` only) → generic toast, no cancel affordance despite `charge_id` supplied."
+
+**Why retracted:** KB ([[payment-exception-catalog]] "Exception Reference" row 1: `PendingChargeError` → 409 → `{error: 'pending_charge_exists', charge: {...}}`) and code (`useOmisePayment.js:170` maps `pending_charge_exists`) confirm the canonical error code is `pending_charge_exists`, **not** `payment_pending`. The 409 IS mapped by FE. The "no cancel affordance" concern is real but is the **same** UX surface as M1 (PromptPay QR path missing `pendingCharge` branch). M1 already covers it.
+
+**Action:** Drop M4 from Suggested fix order. M1 implementation is the only fix needed for the underlying UX concern.
+
+### M8 — KB inaccuracy discovered
+
+**Original M8:** Guest charge initiation requires no email match (CONFIRMED by verifier).
+
+**KB inaccuracy surfaced:** [[payment-backend-charge-flow]] §5 states `ChargeOrderView` validates `email` for guest requests ("Both must match the order record"). **Code contradicts this** — `payments/views.py:106-109` guest path uses `user__isnull=True` only; `email` never read. Email validation exists **only** in `ExpirePendingChargeView` (`payments/views.py:375-376`).
+
+**Action:** Edit [[payment-backend-charge-flow]] §5 to clarify guest email validation is **only** in `ExpirePendingChargeView`, **missing** in `ChargeOrderView`. Add to doc drift list below.
+
+### Refinement deltas
+
+- **H1** (REFINED): finding stands, fix spec correct (grill-correction). KB silent on server-side amount validation — flag for KB write `[[payment-amount-validation-rule]]`.
+- **M17** (REFINED): KakaoPay half stands. Alipay half may be overstated — `AP → ALIPAY` and `APC → ALIPAY_CN` both exist in `payments/views.py:38-39`. FE `OMISE_SOURCE_TYPES` gap is a separate, smaller issue.
+
+### KB gaps (atomization candidates)
+
+12 distinct KB gaps surfaced. Top 6 priority for next `/lint-vault`:
+1. `[[payment-amount-validation-rule]]` (H1)
+2. `[[payment-legacy-deprecation-map]]` (H2, M10)
+3. `[[payment-charge-service-layer]]` add IntegrityError cleanup pattern (M9)
+4. `[[order-creation-filter-rule]]` (M11)
+5. Self-heal coverage matrix add to `[[payment-status-enums]]` (M12)
+6. `[[payment-model-fields]]` (M18)
+
+Full list with all 12 in [[payment-deep-review-verification-2026-06-12]] "KB Gaps Surfaced" section.
+
+### Verdict tally
+
+| Verdict | Count | Findings |
+|---------|-------|----------|
+| CONFIRMED | 20 | H2, H4, H5, M1, M2, M3, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, M15, M16, M18 |
+| REFINED | 2 | H1, M17 |
+| REFUTED (→ RETRACTED) | 1 | M4 |
+| KB inaccuracy | 1 | M8 (in `[[payment-backend-charge-flow]]` §5) |
+| KB gaps surfaced | 12 | (see above) |
+
+### Implementation status (2026-06-12)
+
+**Batch 1 (H3 + H4) — SHIPPED to local branches:**
+- BE H3 committed: `d7af0e9` on `smartenplus-backend` `fix/payment-deep-review-2026-06-12`
+- FE H4 committed: `a3c8c80` on `smartenplus-frontend` `fix/payment-deep-review-2026-06-12`
+- No push (manual PRs pending).
+
+**Remaining:** Batch 2 (H2 + M10) → Batch 3 (H1 + M8) → Batch 4 (H5 + M5) → Batch 5 (M1–M3, M17, LOW sweep). See [[payment-implement-plan-2026-06-12]] for full sequence.
+
+---
+
 ## Related
-[[booking-payment-e2e-audit-2026-06-11]] · [[payment-integration]] · [[payment-gateway-charge-architecture]] · [[payment-charge-service-layer]] · [[payment-status-enums]] · [[omise-webhook-security]] · [[payment-finalize-deep-dive]] · [[payment-qr-polling-mechanics]] · [[payment-celery-expiry-strategy]] · [[omise-api-reference-2026-06-12]] · [[refund-flow]] · [[payment-checkout-5-principles]]
+[[booking-payment-e2e-audit-2026-06-11]] · [[payment-integration]] · [[payment-gateway-charge-architecture]] · [[payment-charge-service-layer]] · [[payment-status-enums]] · [[omise-webhook-security]] · [[payment-finalize-deep-dive]] · [[payment-qr-polling-mechanics]] · [[payment-celery-expiry-strategy]] · [[omise-api-reference-2026-06-12]] · [[refund-flow]] · [[payment-checkout-5-principles]] · [[payment-deep-review-verification-2026-06-12]] · [[payment-implement-plan-2026-06-12]]
