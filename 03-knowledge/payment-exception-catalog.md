@@ -42,6 +42,10 @@ except PaymentAmountMismatchError:
 ```
 **Why:** If Omise confirmed payment, money was collected. Amount mismatch is a data inconsistency to investigate, not a reason to mark the order failed. Customer would be stranded.
 
+## Silent Declined Card (M13 — FE bug, not BE exception)
+`create_charge` stores `GatewayCharge` with `status=map_omise_status('failed')=PaymentStatus.FAILED` for a declined card. View returns HTTP **201** with serialized charge including `status='failed'`. FE (`useOmisePayment.js`) never reads `data.status` — returns `{success:true}`. `PaymentComponent.js` `handleClick` sees success, sets no state → completely silent. User left on payment form with `payment_pending` order, no error message.
+**Fix:** read `data.status` after destructure; if `'failed'`, return `{success:false, errorMessage: data.failure_message}`.
+
 ## ValueError Overloading
 Same exception type used for two unrelated errors:
 - **Idempotency:** `"reused idempotency key with different parameters"` → 409

@@ -27,8 +27,9 @@ LATEST `GatewayCharge` per order (`order_by('-created').first()`). Historical ch
 2. Webhook → `OmiseWebhookView` → sole payment finalization source
 
 ### `finalize_payment(order)` — Idempotent SSOT
-`select_for_update()` + `payment_finalized_at` guard. Lock order: Coupon → Order → BookingItem → TimeSlot. Inside atomic: CartItem.delete → coupon `times_used` F()+1 → `confirm_booking_items_for_order()` → Order → `paid` → `on_commit` notifications.
+`select_for_update()` + `payment_finalized_at` guard. Inside atomic: lock Order only → CartItem.delete → coupon `times_used` F()+1 (implicit Coupon row lock, no explicit `select_for_update`) → `confirm_booking_items_for_order()` → Order → `paid` → `on_commit` notifications.
 **Rule:** add payment success behavior here, not callers.
+**Lock contention risk (M6):** `finalize_payment` holds Order lock then issues UPDATE on Coupon row (implicit lock). `ApplyCouponView` holds explicit Coupon lock then writes Order. If both run concurrently, `finalize_payment` blocks waiting for `ApplyCouponView` to release Coupon — not a deadlock (no circular wait) but a contention window. Fix: add `select_for_update()` on `order.coupon` inside `finalize_payment`'s Order lock scope.
 
 ### `locked_amount` — Charge Amount Freezing
 Set on first QR gen. Prevents double-charge on retry. Reset on expire + method switch. Enforced at charge creation: `locked_amount` set && ≠ new amount → 409 `amount_locked`.

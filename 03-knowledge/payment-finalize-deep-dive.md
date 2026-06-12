@@ -74,13 +74,16 @@ if updated == 1:
 Notifications fire in `on_commit()` — after transaction commits. CAS guard prevents duplication even with retried webhooks.
 
 ### Side Effect Order (lines 350-366)
+0. `select_for_update()` locks **Order only** (no explicit Coupon lock)
 1. Delete CartItems (clears cart)
-2. Increment `coupon.times_used` via `F()+1`
+2. Increment `coupon.times_used` via `F()+1` — PostgreSQL UPDATE acquires implicit Coupon row lock
 3. `confirm_booking_items_for_order()` (confirms all BookingItems)
 4. Order → `paid`, `payment_finalized_at=now()`, `locked_amount=None`
 5. `on_commit`: fire notifications (guarded by CAS)
 
 **Critical:** Cart cleared BEFORE order marked paid. If transaction rolls back after cart clear, retry will re-enter idempotency guard via `payment_finalized_at`.
+
+**Lock contention (M6):** step 2 implicit Coupon lock conflicts with `ApplyCouponView` which holds explicit `select_for_update()` Coupon lock. `finalize_payment` blocks until coupon apply commits. Not a deadlock — `ApplyCouponView` does not wait for Order lock. Risk: webhook timeout under high concurrency.
 
 ## Related
 - [[payment-gateway-charge-architecture]] — finalize_payment SSOT principle

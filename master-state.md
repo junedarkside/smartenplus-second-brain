@@ -4,15 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-12 (session #100)
+**Updated:** 2026-06-12 (session #101)
 
-**Achieved this session (#100):**
-- **Payment KB complete (backend + Omise)** — 3-agent parallel scan (backend payments app + Omise SDK + vault gap analysis). 4 new notes: [[omise-client-integration]] (lazy module init, `_attributes` dict, LINE_PAY→rabbit_linepay, reversed→PENDING, PromptPay QR URI nested path), [[payment-backend-charge-flow]] (DB constraint, TOCTOU guard, 5-sec throttle, C3b proactive PP expiry, AllowAny+manual auth, satang conversion), [[manual-adjustment-model]] (PROTECT FK, no Omise, ExtraItemAction legacy), [[celery-beat-payment-scheduling]] (DatabaseScheduler, Django admin UI, retry uncalled bug). 3 updated: refund-flow + payment-charge-service-layer + payment-status-enums. 3 atoms extracted: [[omise-attributes-dict-extraction]], [[django-celery-beat-database-scheduler]], [[toctou-select-for-update-before-api-call]]. All wikilinks verified clean. Vault `125d56a` pushed.
+**Achieved this session (#101):**
+- **Payment deep review (FE+BE) — 4-pass audit** — 3-agent team (frontend / backend / contract) + leader hand-verification + debug-mantra + grill + scrutinize passes. Report: [[payment-deep-review-2026-06-12]] (`01-projects/`). 5 HIGH (all verified), ~18 MEDIUM, ~15 LOW, 10 test gaps, 4 doc drifts. No code changed — audit + report only.
+- **KB cross-check + corrections** — 3 KB notes corrected after scrutinize: [[payment-gateway-charge-architecture]] (wrong lock order claim fixed), [[payment-finalize-deep-dive]] (side-effect order corrected + M6 contention note), [[payment-exception-catalog]] (M13 silent declined-card pattern added).
 
 **Resume point (EXACT):**
-1. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
-2. **AT-1** — Airport Transfer redesign. Awaits user direction.
-3. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
+1. **PAYMENT-FIX** — implement fixes from [[payment-deep-review-2026-06-12]]. Suggested order: H3+H4 (trivial, kill two UX breakages) → H2+M10 (delete legacy routes) → H1+M8 (security pair) → H5+M5 (resilience pair) → M1–M4, M17, LOW sweep.
+2. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Needs Koh Lipe return route + DAY_TOUR + SPA contracts.
+3. **AT-1** — Airport Transfer redesign. Awaits user direction.
+4. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
 
 ---
 
@@ -20,6 +22,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | OPEN. Audit done, no code changed. Fix order: H3+H4 → H2+M10 → H1+M8 → H5+M5 → M1–M4,M17. | [[payment-deep-review-2026-06-12]] |
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |

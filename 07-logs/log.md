@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-12] session-end #101 | payment deep review 4-pass audit complete — [[payment-deep-review-2026-06-12]] (5 HIGH all verified, ~18 MEDIUM, ~15 LOW, 10 test gaps). 3 KB corrections: payment-gateway-charge-architecture lock order, payment-finalize-deep-dive side-effect order, payment-exception-catalog M13 silent declined-card. No code changed. PAYMENT-FIX open item added to master-state.
+
 ## [2026-06-11] session-end #99 | whole-site SEO+sitemap 3-agent audit — 6 P0 (WAF/Googlebot verify, fake reviews ×3, broken noindex, malformed activities canonical, sitemap ships private URLs, origin missing 301s), 10 P1 incl. 480-line dead JSON-LD pipeline. No code changed. Vault: [[seo-sitemap-whole-site-audit-2026-06-11]].
 
 ## [2026-06-11] session-end #97d | CROSS-SELL-MERGE CLOSED — branch already fully merged into develop (confirmed via git merge-base). CheckoutRelatedTrips mounted at checkout/index.js:1010. Renamed remaining work to CROSS-SELL-BD-INVENTORY (BD task: Koh Lipe return route + DAY_TOUR + SPA contracts). No eng work remaining on cross-sell.
