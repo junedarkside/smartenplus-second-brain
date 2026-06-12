@@ -22,7 +22,8 @@ Global navigation catalog. Updated on every ingest.
 
 - [[payment-implement-plan-2026-06-12]] — **OPEN 2026-06-12.** 5-batch production-safe fix sequence derived from [[payment-deep-review-2026-06-12]] + [[payment-deep-review-verification-2026-06-12]]. Batch 1: H3+H4 (~6 lines, kill 2 UX breakages). Batch 2: H2+M10 (delete legacy routes, verify zero prod traffic first). Batch 3: H1+M8 (security pair). Batch 4: H5+M5 (resilience pair). Batch 5: M1–M4, M17, LOW sweep (refunds, dead code, doc drifts, test gaps). Per-batch: file:line, exact change, verify commands, test gaps to close. NO code changes yet — implementer session picks this up.
 - [[payment-deep-review-test-cases-2026-06-12]] — **OPEN 2026-06-12.** Test cases for payment deep review fixes: 8 smoke tests (curl), 7 manual UI tests (QA-run), 7 E2E unit test specs (developer-writes). Pre-flight: FE lint+build PASS, BE ruff+syntax PASS, BE unit tests SKIP (pre-existing migration error).
-- [[payment-manual-test-skip-2026-06-12]] — **OPEN 2026-06-12.** Runbook for 8 Playwright tests skipped due to missing test data + dev/staging env (H3, H4, H5, M1, M2×2, M3, full smoke). Per-test: prereqs, fixture setup (Django shell), step-by-step actions, expected result, pass criteria, results template. Use after staging deploy to unskip + validate all 5 batch fixes end-to-end.
+- [[payment-manual-test-skip-2026-06-12]] — **SUPERSEDED 2026-06-12.** Runbook for 8 Playwright tests skipped due to missing test data + dev/staging env. All 8 now automated — see [[payment-auto-test-results-2026-06-12]]. Kept as reference; SUPERSEDED notice at top of file.
+- [[payment-auto-test-results-2026-06-12]] — **NEW 2026-06-12.** All 8/8 payment E2E tests automated + PASS. Spec: `payment-auto-qa.spec.ts`, fixture CLI: `e2e_payment_fixtures.py`. Architecture, key gotchas (8 items), webhook delivery via Tailscale (all 5 steps PASS). Gaps remaining: card 3DS iframe + live-key prod smoke (deploy-time only).
 
 - [[booking-payment-e2e-audit-2026-06-11]] — **CLOSED 2026-06-11 (#97).** Full booking→checkout→payment audit, FE+BE. 4 confirmed bugs fixed across 2 sessions. C1/C2 both fixed `cb817d9`: C1 = `isCartLoaded &&` gate stops premature clear-assignments before RTK Query resolves; C2 = `error?.status === 404` guard stops transient errors from nuking cartId. All bugs resolved.
 
@@ -243,6 +244,7 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-charge-service-layer]] — create_charge, reconcile, idempotency hash, _to_minor_units, JPY handling, staleness reuse, 5-sec throttle, TOCTOU guard
 - [[payment-status-enums]] — PaymentStatus machine, OmiseMethod constants, REDIRECT_METHODS, METHOD_EXPIRY TTLs, authorized Order.status, OMISE_STATUS_MAP (reversed→PENDING), PAYMENT_METHOD_MAP frontend codes
 - [[omise-webhook-security]] — Event.retrieve() verification (not HMAC), double-layer dedup, WebhookEvent outside atomic
+- [[omise-webhook-tailscale-local-testing]] — **NEW 2026-06-12.** Tailscale funnel setup for real Omise webhook delivery to local BE :8000. Repro steps, all-5-steps PASS results, gotchas (auto-complete PP, quoted .env key). See also [[payment-auto-test-results-2026-06-12]].
 - [[payment-exception-catalog]] — PendingChargeError/AlreadyPaidError/LockedAmountError→409, PaymentAmountMismatchError never re-raised
 - [[payment-finalize-deep-dive]] — 6 non-obvious behaviors: snapshot log-only, amount mismatch path-dependent, expired→success recovery, superseded guard, cross-order lock, CAS notification dedup
 - [[payment-frontend-flow-mechanics]] — Card vs Source flows, canContinue 3-condition gate, NO_CONTINUE_METHODS, amountLocked UX, QR retry sequence, JPY scaling, OmiseScriptLoader linear-not-exponential bug
@@ -330,7 +332,7 @@ Global navigation catalog. Updated on every ingest.
 
 - Created: 2026-05-16
 - Pages: ~237 (active; 357 total including 08-archive)
-- Last updated: 2026-06-11 (vault lint: 21 missing entries added, 3 inbox items archived, pdf-contract-import split into 2 atoms)
+- Last updated: 2026-06-12 (session #104: payment E2E automated 8/8, webhook gap closed via Tailscale, new atom omise-webhook-tailscale-local-testing)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx

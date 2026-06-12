@@ -1,5 +1,9 @@
 # Manual QA Test Plan — Payment Deep Review Skipped Tests
 
+> **SUPERSEDED 2026-06-12:** all 8 tests automated and passing — see [[payment-auto-test-results-2026-06-12]].
+> Spec: `smartenplus-frontend/e2e/checkout/payment-auto-qa.spec.ts` + fixture CLI `smartenplus-backend/scripts/e2e_payment_fixtures.py`.
+> Note: fixture B below (pending **PP** charge) does not trigger M1 — BE only 409s on pending *redirect-method* charges; use a pending `kakao_pay` charge instead.
+
 ## Summary
 
 Runbook for the 8 Playwright tests skipped in [[payment-deep-review-2026-06-12]] due to missing test data + dev/staging environment. Each section = one skipped test converted to manual steps. Source spec: `smartenplus-frontend/e2e/checkout/payment-deep-review.spec.ts` lines 141-256.

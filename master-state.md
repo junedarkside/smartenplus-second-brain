@@ -4,34 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-12 (session #103 wrap — E2E smoke + manual QA runbook)
+**Updated:** 2026-06-12 (session #104 wrap — 8/8 E2E automated + webhook gap closed via Tailscale)
 
-**Achieved across #102 + #103:**
-- **Payment deep review — KB verified, implemented, shipped, pushed, E2E green, manual runbook ready** — full lifecycle: [[payment-deep-review-2026-06-12]] audit → [[payment-deep-review-verification-2026-06-12]] (20 CONFIRMED, 2 REFINED, 1 REFUTED=M4 retracted, 1 KB inaccuracy=M8, 12 KB gaps) → [[payment-implement-plan-2026-06-12]] (5-batch sequence) → all 5 batches shipped → E2E smoke + 2 spec bugs fixed → manual QA runbook for 8 skipped UI tests.
+**Achieved across #102–#104:**
+- **Payment deep review — FULLY AUTOMATED. All 8 previously-skipped UI tests now pass** via `e2e/checkout/payment-auto-qa.spec.ts` + fixture CLI `scripts/e2e_payment_fixtures.py`. No staging deploy needed.
+- **Webhook gap closed** — Tailscale funnel `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` registered in Omise test dashboard. Real webhook delivery verified locally: forged payload → 400, real PP charge auto-completes, webhook finalizes order with zero FE involvement, dedupe replay → `already_processed`. All 5 steps PASS.
+- **New atoms written:** [[omise-webhook-tailscale-local-testing]] (setup guide + repro steps + results)
 - **Branches (both `fix/payment-deep-review-2026-06-12`):**
   - **BE (7 commits, PUSHED `6937f39`):** `d7af0e9` H3 · `3be676b` H2+M10 · `f1c17b5` H1+M8 · `6a481df` H5+M5+M9 · `67b490a` M17 · `e685fc8` unit tests · `6937f39` test fixes
-  - **FE (6 commits, PARTIALLY PUSHED `8430805`):** `a3c8c80..c7caaf3` PUSHED (H4, M1-M3-M17, jest, E2E) · `4f88093`+`8430805` UNPUSHED (parser fix + CSRF-aware test assertions)
-- **Test totals (all green where runnable):** 20 BE unit + 84 FE jest + **7/7 Playwright API PASS** + 8 Playwright UI (skip, blocked on staging data) = 111 passing + 8 E2E written
-- **Spec bugs found+fixed in #103 (2 commits):**
-  1. `4f88093` — `**/checkout**` inside `/* */` block comment had `*/` matched by substring, file failed to parse, 0 tests ran. Fix: convert to `//` line comments.
-  2. `8430805` — H2+M10 POST tests expected 410, got 403 (Django CSRF middleware blocks before view). Fix: POST tests assert CSRF 403; 410 contract covered by GET on same URL.
-- **Manual QA runbook:** [[payment-manual-test-skip-2026-06-12]] — 8 sections with Django shell fixture setup, step-by-step UI/API actions, pass criteria, results template. Ready for staging deploy.
-- **gh CLI not installed** → PRs manual via GitHub web UI.
+  - **FE (8 commits, PUSHED `8430805`):** all pushed — H4, M1-M3-M17, jest, E2E, parser fix, CSRF-aware assertions + 8/8 automated UI tests + fixture CLI
+- **Test totals (all green):** 20 BE unit + 84 FE jest + 7/7 Playwright API + **8/8 Playwright UI automated (all PASS)** = 119 passing
+- **Manual runbook:** [[payment-manual-test-skip-2026-06-12]] — superseded by automation. SUPERSEDED notice added at top.
+- **Remaining untested surfaces (low risk, deploy-time only):** card 3DS iframe (manual Omise test cards) + live-key production smoke (real 100 THB + refund).
+- **gh CLI not installed** → PRs via GitHub web UI.
 
 **Resume point (EXACT):**
-1. **PAYMENT-FIX — open PRs manually:**
+1. **PAYMENT-FIX — open PRs via GitHub UI:**
    - BE: `smartenplus-backend/fix/payment-deep-review-2026-06-12` → `develop` (7 commits, head `6937f39`)
-   - FE: `smartenplus-frontend/fix/payment-deep-review-2026-06-12` → `develop` (6 commits, head `8430805`) — **push 2 unpushed commits first**: `git push origin fix/payment-deep-review-2026-06-12` from FE worktree
-2. **PAYMENT-FIX — staging QA** — deploy branches, run [[payment-manual-test-skip-2026-06-12]] tests, unskip 8 UI tests after staging fixtures ready, close item after green.
-3. **KB atomization** — 12 KB gaps from verification report. Recommend batching with next `/lint-vault` (gaps 1-6 first, 7-12 follow). Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
+   - FE: `smartenplus-frontend/fix/payment-deep-review-2026-06-12` → `develop` (8 commits, head `8430805`, all pushed)
+2. **PAYMENT-FIX — close item** after PRs merged (all automated tests green, no staging QA needed for the 8 E2E scenarios — they now run locally).
+3. **KB atomization** — 12 KB gaps from verification report. Batch with next `/lint-vault`. Fix M8 KB inaccuracy in [[payment-backend-charge-flow]] §5 first.
 4. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work. Koh Lipe return route + DAY_TOUR + SPA contracts.
 5. **AT-1** — Airport Transfer redesign. Awaits user direction.
 6. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
 
 **Next session: starting state**
-- vault master-state: `master` @ `daa4ac7` (next commit will be #103 wrap)
+- vault master-state: `master` @ (this commit)
 - BE branch: `fix/payment-deep-review-2026-06-12` @ `6937f39` (clean, pushed)
-- FE branch: `fix/payment-deep-review-2026-06-12` @ `8430805` (clean, 4 commits pushed + 2 unpushed follow-up)
+- FE branch: `fix/payment-deep-review-2026-06-12` @ `8430805` (clean, all pushed)
 - BE untracked: `.next/`, `docs/agent-policy/`, `docs/api/PUBLIC_ENDPOINTS.md`, `docs/deployment/DOCKER.md`, `docs/operations/ENV.md`, `docs/technical/` (separate work, not part of payment branch)
 - admin-dashboard: `main` @ `4a6c03b` (untracked `docs/agent-policy/`, `docs/operations/`, `docs/technical/*` — separate work)
 - content: `master` @ `3756e5b` (clean)
@@ -42,7 +42,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **ALL 5 BATCHES SHIPPED + PUSHED + E2E GREEN + MANUAL RUNBOOK READY.** BE 7 commits `d7af0e9..6937f39` pushed. FE 6 commits `a3c8c80..8430805` — 4 pushed, 2 unpushed (parser fix + CSRF assertions). **7/7 runnable Playwright API tests pass** (was 5/7), 8 UI tests skip, 84 jest pass, 20 BE unit pass. Manual QA runbook [[payment-manual-test-skip-2026-06-12]] for the 8 skipped tests. **M4 retracted.** Remaining: (a) push 2 FE follow-up commits, (b) open 2 PRs via GitHub UI, (c) staging QA + unskip 8 UI tests, (d) close item after staging green. KB gaps: 12 (recommend batch with next `/lint-vault`). | [[payment-deep-review-2026-06-12]], [[payment-deep-review-verification-2026-06-12]], [[payment-implement-plan-2026-06-12]], [[payment-manual-test-skip-2026-06-12]] |
+| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **ALL 5 BATCHES SHIPPED + PUSHED + 8/8 E2E AUTOMATED + WEBHOOK GAP CLOSED.** BE 7 commits `d7af0e9..6937f39` pushed. FE 8 commits `a3c8c80..8430805` all pushed. **8/8 UI E2E now automated** (prev: 8 skipped) via `payment-auto-qa.spec.ts` + fixture CLI `e2e_payment_fixtures.py`. **Webhook gap closed** via Tailscale funnel — see [[omise-webhook-tailscale-local-testing]]. 119 tests passing (84 jest + 20 BE unit + 7 Playwright API + 8 Playwright UI). **M4 retracted.** Remaining: (a) open 2 PRs via GitHub UI, (b) close item after merge. KB gaps: 12 (batch with next `/lint-vault`). | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[payment-manual-test-skip-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |
