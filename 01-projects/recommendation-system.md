@@ -52,3 +52,6 @@ Read-only analytics page. Route popularity by query count.
 - [[operators]]
 - [[celery-tasks]]
 - [[admin-dashboard]]
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[django-m2m-location-join-recommendations]] — M2M location JOIN for recommendations engine (backend detail)

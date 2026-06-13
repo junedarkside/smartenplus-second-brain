@@ -342,3 +342,9 @@ Frontend:
 - [[sidebar-sticky-2col-responsive-grid]] — 240px sidebar + 4-col 1440px card grid math
 - [[orm-annotation-aggregate-min-rate]] — DRF `avg_rating` + `min_rate` annotation pattern
 - [[wishlist-per-card-state-not-page]] — per-card `useState` for heart icon (avoid 80 re-renders/click)
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[carousel-embla-align-start-mobile-snap]] — Embla carousel align-start mobile-snap pattern
+- [[section-render-order-principles]] — section render order principles (eager vs lazy, mobile vs desktop)
+- [[experience-faq-architecture-review-2026-06-02]] — FAQ architecture review (sub-concern of marketplace redesign)
+- [[adr-activity-card-favorite-button]] — ADR for activity-card favorite button via bookmark API

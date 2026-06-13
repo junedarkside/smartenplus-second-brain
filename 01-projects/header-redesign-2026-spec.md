@@ -157,6 +157,10 @@ Day 5+ — separate PRs: hero height, custom font, designSystem tokens
 ## Related
 [[header-redesign-2026-team-review]] · [[smartenplus-glassmorphism-header]] · [[nav-header-redesign-2026-05-24]] · [[mobile-header-redesign-glassmorphism]]
 
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[adaptive-header-route-type-pattern]] — Type A/B header route-type pattern (umbrella spec anchors it)
+- [[hero-back-share-buttons-2row-header-fix]] — hero back/share buttons 2-row header fix (sibling fix)
+
 ## Related Atoms (Extracted 2026-06-13)
 - [[header-rows-context-dynamic-offset]] — Type A=80px / Type B=96px; StickySearchBar consumes `HeaderRowsContext`
 - [[header-glass-to-solid-migration]] — glass→solid migration recipe; MUI AppBar `color="inherit"` gotcha

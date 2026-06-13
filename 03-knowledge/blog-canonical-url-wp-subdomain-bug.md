@@ -50,3 +50,6 @@ canonical: `https://www.smartenplus.co.th${router.asPath}`,
 
 ## Related
 - [[master-state]]
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[canonicalization-audit-checklist]] — canonicalization audit checklist (cross-references WP subdomain bug)

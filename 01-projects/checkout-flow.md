@@ -49,3 +49,9 @@ Pass `isContractFetching` bool (from `useCheckContractQuery`) through component 
 - [[README]]
 - [[architecture]]
 - [[payment-system]]
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[checkout-step-flow]] — checkout step flow overview (canonical pattern)
+- [[booking-widget-availability-error-display]] — availability-error display pattern
+- [[check-your-booking-redesign-2026-05-29]] — check-your-booking redesign decision (15 days old)
+- [[checkout-uxui-audit-2026-06-10]] — UX/UI audit of checkout step (3 days old)

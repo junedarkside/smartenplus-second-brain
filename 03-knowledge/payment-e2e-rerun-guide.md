@@ -82,3 +82,6 @@ venv/bin/python scripts/e2e_payment_fixtures.py cleanup
 - [[payment-auto-test-results-2026-06-12]] — test results + architecture detail
 - [[omise-webhook-tailscale-local-testing]] — webhook delivery testing (separate, manual)
 - [[payment-deep-review-2026-06-12]] — source audit these tests validate
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[payment-checkout-e2e-testing]] — payment checkout E2E testing pattern (sibling E2E reference)

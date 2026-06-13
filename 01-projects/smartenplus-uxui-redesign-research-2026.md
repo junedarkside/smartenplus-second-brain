@@ -136,3 +136,6 @@ Combining: premium atmosphere, operational clarity, route intelligence, curated 
 Inside a: fast, calm, efficient, modern UX system
 
 This is MUCH stronger long-term than becoming: another Klook clone, another GetYourGuide clone, another tourism landing page
+
+## Related (Linked 2026-06-13)
+- [[design-system-phase1-migration]] — design system Phase 1 migration notes (implementation of this 2026 UX/UI redesign research)

@@ -37,3 +37,6 @@ Locations/destinations: separate products but distinct intent
 
 ## Related
 [[seo-sitemap-whole-site-audit-2026-06-11]] (P0-5, P0-6, P1-4 findings)
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[next-seo-v6-robots-prop-broken]] — next-seo v6 `robots` prop silent no-op gotcha (P0-4 root cause)

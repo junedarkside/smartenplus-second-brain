@@ -41,3 +41,6 @@ Software engineering practices, standards, and principles. Long-term area coveri
 - [[nextjs-patterns]]
 - [[payment-integration]]
 - [[design-systems]]
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[backend-n8n-resend-webhook]] — n8n webhook resend operator post-mortem (operational/integration knowledge)

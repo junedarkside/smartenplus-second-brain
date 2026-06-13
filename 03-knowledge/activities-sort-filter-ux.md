@@ -83,3 +83,6 @@ All modern travel platforms avoid double-solid-CTA. State = best signal.
 - [[experiences-2026-marketplace-redesign]] — sort/filter UX part of broader activities redesign
 - [[design-systems]] — button styling consistency across platform
 - [[nextjs-fixed-header-per-route]] — sticky bar positioning pattern
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[activities-location-search-backend-text-fallback]] — backend text-fallback for activity location search (companion pattern)

@@ -256,3 +256,6 @@ date: 2026-06-06
 ## Related Atoms (Extracted 2026-06-13)
 - [[seo-canonical-getsiteurl-pattern]] — `getSiteUrl()` → `https://www.smartenplus.co.th` (www mandatory)
 - [[homepage-section-render-order-conversion]] — trust-before-editorial review order
+
+## Sibling Sub-Files (Linked 2026-06-13)
+- [[../help-faqs-landing-2026-06-07/audit]] — F11 (Help & FAQs) rework audit (referenced from this audit's findings)

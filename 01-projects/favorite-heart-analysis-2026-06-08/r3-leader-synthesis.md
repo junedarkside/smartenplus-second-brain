@@ -399,3 +399,9 @@ Branch: **`260608-feat/fav-1-bookmark-extension`** from `develop` (per user expl
 - [[useauth-axios-hook-factory]] — `useAuthAxios()` `useMemo([token])`; pass relative paths to avoid 405 sync bug
 - [[sentinel-content-type-bookmark-blog]] — `Bookmark.objects.filter` MUST filter by `content_type=ContentType.objects.get_for_model(Bookmark)` (silent destructive bug)
 - [[iconbutton-keydown-stoppropagation-card]] — nested IconButton needs BOTH `onClick` + `onKeyDown` `stopPropagation`
+
+## Sibling Sub-Files (Linked 2026-06-13)
+- [[audit]] — executive summary
+- [[migration-0026-runbook]] — DB migration 0026 runbook
+- [[r1-backend]] — Phase 1 backend audit
+- [[r1-frontend]] — Phase 1 frontend audit

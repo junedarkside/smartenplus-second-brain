@@ -101,3 +101,6 @@ See `r3-leader-synthesis.md` for final 5 ranked.
 - [[gyg-card-rate-analysis-2026-06-05]] — sibling: card rate display audit (this session)
 - [[trip-detail-uxui-audit-2026-05-22]] — prior detail page audit pattern (3-specialist)
 - [[seo-homepage-auditor]] — SEO specialist team pattern
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[activities-sort-filter-ux]] — activities sort/filter UX pattern (sibling activity-search reference)

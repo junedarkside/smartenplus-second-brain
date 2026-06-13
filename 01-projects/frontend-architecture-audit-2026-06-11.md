@@ -92,3 +92,7 @@ No architecture change needed. Redux/RTK Query split is coherent, persistence mi
 ## Related
 
 [[booking-payment-e2e-audit-2026-06-11]] · [[architecture]] · [[frontend-test-infrastructure-audit-2026-06-03]] · [[payment-checkout-architecture-audit]] · [[people-also-book-checkout-audit]]
+
+## Orphan Link-Backlog (Linked 2026-06-13)
+- [[next-font-self-host-perf-pattern]] — `next/font/google` self-host migration (FE perf pattern)
+- [[frontend-audit-implementation-2026-06-11]] — implementation plan paired with this audit (audit + impl cross-link)

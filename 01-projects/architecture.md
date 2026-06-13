@@ -64,3 +64,33 @@ Important: `refetchOnMountOrArgChange: false` — prevents 429 errors. Use `skip
 - [[checkout-flow]]
 - [[nextjs-patterns]]
 - [[backend-architecture]]
+
+## Cross-Cutting Knowledge Atoms (Linked 2026-06-13)
+
+Architecture hub references for orphan knowledge notes consolidated here:
+
+### Backend
+- [[django-booking-creation-validation-gate]] — booking creation validation gate
+- [[django-celery-beat-database-scheduler]] — Celery Beat DatabaseScheduler pattern
+- [[toctou-select-for-update-before-api-call]] — TOCTOU guard: select_for_update before external API call
+- [[omise-attributes-dict-extraction]] — Omise SDK `_attributes` dict extraction
+- [[payment-idempotency-key-cart-total]] — H3: `X-Idempotency-Key: ${cartId}:${total}` + wrapped response shape
+- [[api-mirroring-pattern-new-features]] — cross-cutting API mirroring for new features
+- [[site-url-config-pattern]] — site URL config (`baseURL` vs `NEXT_PUBLIC_DOMAIN`)
+
+### Frontend
+- [[frontend-debug-utilities]] — dev-tooling utilities overview
+- [[next-font-self-host-perf-pattern]] — `next/font/google` self-host migration
+- [[react-hooks-rules-lowercase-component]] — React hooks rules: lowercase component name gotcha
+- [[two-surface-parity-shared-module]] — two-surface parity shared module pattern
+- [[usedayTripFilters-hydration-spurious-push]] — `useDayTripFilters` pre-hydration query read
+- [[touch-target-44px-enforcement]] — 44px touch target enforcement
+- [[star-aria-radiogroup-pattern]] — star rating ARIA radiogroup a11y
+- [[adaptive-header-route-type-pattern]] — Type A/B header route-type pattern
+- [[hero-back-share-buttons-2row-header-fix]] — hero back/share buttons 2-row header fix
+
+### Recommendations
+- [[django-m2m-location-join-recommendations]] — M2M location JOIN for recommendations engine
+
+### API Reference
+- [[api-endpoints]] — SmartEnPlus API endpoint reference (status codes, request/response shapes)
