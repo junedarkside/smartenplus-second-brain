@@ -1,42 +1,52 @@
 # React State No-Op Guard for Side-Effect Prevention
 
 ## Summary
-When a state write couples a primary value with a side effect (e.g. "set X, reset page"), guard the write inside the `setState` callback: if the new value equals the old, return `prev` to short-circuit React. Side effects never fire on no-op writes.
+Wrap setState in `prev === next ? return prev : set` guard when the next value is a derived object/array or has coupled side effects. Prevents unnecessary re-renders + side-effect cascades (URL push, page reset, refetch, scroll).
 
 ## Context
-React 18 functional setState `setState((prev) => next)`. Side effects coupled to state change include URL push, page reset, scroll, fetch trigger, refetch. All should be guarded by the setState callback, not by callers.
+React functional `setState((prev) => next)`. When the new value is the same reference as the old, React bails out of the re-render. But if the next value is a *new object* (even with identical contents), React proceeds — re-render fires, `useEffect` deps change, and any coupled side effects (URL sync, page reset, scroll, fetch) trigger.
 
 ## Problem
-`hooks/useDayTripFilters.js` original:
+Any `useState` that holds an object/array AND couples a side effect to its update is at risk. Example: filter hook that resets `page: 1` whenever any filter changes. If a caller passes the same value (e.g. user toggles a filter off then on without changing), the page reset still fires — wrong.
+
+This is a general React perf pattern. Recurs wherever object references change on every render (MUI Autocomplete inputValue, Redux selectors, derived state from props).
+
+## Details
+The guard:
+
 ```js
-const updateFilter = useCallback((key, value) => {
-  setFilters((prev) => ({
-    ...prev,
-    [key]: value,
-    page: key === 'page' ? value : 1,  // ← side effect: reset page
-  }));
-}, []);
+setState((prev) => {
+  if (Object.is(prev[key], value)) return prev;  // ← no-op short-circuit
+  return { ...prev, [key]: value, page: key === 'page' ? value : 1 };
+});
 ```
-Any caller doing `updateFilter('search', '')` when `filters.search === ''` already resets page to 1. Bug fires under StrictMode replay of `<ActivitySearch>` mount (see [[react-strictmode-useref-persistence]]).
+
+`Object.is` is the canonical React comparison (handles `NaN === NaN` correctly). For arrays, check `prev.length === next.length && prev.every((v, i) => Object.is(v, next[i]))`. For deep equality, use a small `shallowEqual` helper or library.
+
+The pattern applies to:
+- `useState` holding derived state from props
+- `useState` holding MUI Autocomplete `inputValue` (inputValue can drift from `value` on every keystroke)
+- `useState` holding URL-derived filters
 
 ## Decision
-```js
-const updateFilter = useCallback((key, value) => {
-  setFilters((prev) => {
-    if (prev[key] === value) return prev;  // ← no-op short-circuit
-    return { ...prev, [key]: value, page: key === 'page' ? value : 1 };
-  });
-}, []);
-```
-React bails out of re-render when `prev === next` (same reference). No state change, no URL sync effect, no page reset.
+Use the no-op guard pattern whenever:
+1. The new value is an object/array reference that may be `===` to the old
+2. The state write has a coupled side effect (URL, page, refetch)
+
+For primitive values (`useState<string>`), no guard needed — React's default `Object.is` bailout works.
 
 ## Tradeoffs
-- Pro: defense in depth — protects all current + future callers
-- Pro: works regardless of StrictMode state
-- Pro: smaller, more local change than guarding every caller
-- Con: ref equality on arrays/objects needs same-reference. Current `features` filter callers always build new arrays, so behavior unchanged. If a caller ever does `updateFilter('features', prev.features)` that would silently no-op — feature test catches it.
+- Pro: defense in depth — protects all current and future callers
+- Pro: React-idiomatic, no extra library
+- Pro: Smaller change than guarding every caller site
+- Con: Ref equality on arrays/objects needs same-reference. If a caller does `updateFilter('features', [...prev.features])` that creates a new array — guard would not no-op, would proceed (correct behavior).
+- Con: For derived state, the guard is "is the result === the input" which can mask upstream bugs (parent re-renders with new array reference but same contents)
+
+## Consequences
+Apply this pattern by default to any new `useState` holding object/array state. The codebase's existing `useDayTripFilters` hook already has a specific instance of this fix (see existing note). The general rule: when in doubt, guard.
+
+This also reduces `useEffect` dep churn. A guarded setState that returns the same reference doesn't update deps, doesn't fire downstream effects, doesn't cause the ripple of re-renders that perf-sensitive surfaces (checkout, payment) cannot afford.
 
 ## Related
-- [[react-strictmode-useref-persistence]] — bug origin
-- [[react-dual-hook-url-race]] — broader URL sync + filter hook patterns
-- [[nextjs-shallow-router-push-scroll-false]] — sibling fix in same hook
+- [[useeffect-cancellation-guard-pattern]] — sibling pattern for async effects
+- [[mui-autocomplete-inputvalue-sync]] — concrete instance of the inputValue drift problem

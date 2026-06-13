@@ -337,3 +337,8 @@ Frontend:
 - [[layout-spacing-consistency-audit-2026-06-01]] — LAY-1 + LAY-2 fixes (already shipped: `09e0db3`)
 - [[adr-experiences-nav-category-filtering-2026-05-25]] — URL param → API filter chain ADR
 - [[smartenplus-wireframe-architecture]] — full platform wireframe including Experiences section
+
+## Related Atoms (Extracted 2026-06-13)
+- [[sidebar-sticky-2col-responsive-grid]] — 240px sidebar + 4-col 1440px card grid math
+- [[orm-annotation-aggregate-min-rate]] — DRF `avg_rating` + `min_rate` annotation pattern
+- [[wishlist-per-card-state-not-page]] — per-card `useState` for heart icon (avoid 80 re-renders/click)

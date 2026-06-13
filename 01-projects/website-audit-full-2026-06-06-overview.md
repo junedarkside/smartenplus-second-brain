@@ -430,3 +430,8 @@ SmartEnPlus is a legitimate booking platform.
 ## Related
 
 [[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[carousel-design-standard]] · [[mobile-header-analysis-2026-05-26]]
+
+## Related Atoms (Extracted 2026-06-13)
+- [[seo-canonical-getsiteurl-pattern]] — `getSiteUrl()` → `https://www.smartenplus.co.th` (www mandatory)
+- [[og-image-1200x630-webp]] — F7: default OG = WebP 1200×630 at `public/og-image.webp`
+- [[brand-name-constant-extraction]] — `BRAND_NAME` constant + `smartenpus`→`smartenplus` filename typo fix

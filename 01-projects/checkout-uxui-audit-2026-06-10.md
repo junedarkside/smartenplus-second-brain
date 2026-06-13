@@ -192,3 +192,7 @@ Scrutinized: 2026-06-10 — 2 false positives corrected, 1 missing finding added
 - `pages/_app.js` — add `StyledEngineProvider injectFirst` for Tailwind↔MUI fix
 - `08-archive/homepage-uxui-audit-2026-05-31.md` — previous audit for pattern reference
 - MUI docs: https://mui.com/material-ui/guides/interoperability/#tailwind-css
+
+## Related Atoms (Extracted 2026-06-13)
+- [[mui-emotion-tailwind-injectfirst]] — `<StyledEngineProvider injectFirst>` + add `helpers/**/*` to tailwind content array
+- [[migrate-bootstrap-palette-to-ds-tokens]] — replace Bootstrap legacy palette with `COLORS.status.*` tokens

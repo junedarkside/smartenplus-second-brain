@@ -149,3 +149,6 @@ Add `@deprecated` comment block. Confirm no other imports with `grep -r "DayTrip
 
 - [[experience-detail-page-redesign-2026-06-02]] — parent redesign
 - [[experience-detail-ipad-mobile-redesign-2026-06-02]] — tablet/mobile layout
+
+## Related Atoms (Extracted 2026-06-13)
+- [[build-experience-faq-items-pure-function]] — pure `buildExperienceFAQItems(contract)` helper; derive cancellation text from structured data (legal liability pattern)

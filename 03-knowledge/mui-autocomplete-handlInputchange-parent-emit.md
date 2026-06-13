@@ -26,5 +26,11 @@ Freetext search works without blur or dropdown selection.
 
 See [[activities-location-search-bug-2026-06-01]] F-2.
 
+## Severity Escalation
+
+P1 per FQ-2 in [[activities-day-tour-page-review-2026-06-01]] — escalated from P2 due to interaction with `useDayTripFilters` hydration pattern. RTK Query dedup makes excess calls cheap, so always emit on every keystroke. Companion to [[mui-autocomplete-inputvalue-sync]].
+
 ## Related
 - [[activities-location-search-bug-2026-06-01]]
+- [[activities-day-tour-page-review-2026-06-01]] FQ-2
+- [[mui-autocomplete-inputvalue-sync]]

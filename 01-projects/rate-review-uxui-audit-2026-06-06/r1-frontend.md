@@ -362,3 +362,7 @@ The `/rate-review` flow is functional but carries several significant accessibil
 
 ---
 *Audit completed 2026-06-06 · Branch: 260606-fix/heic-review-upload*
+
+## Related Atoms (Extracted 2026-06-13)
+- [[parseiso-null-guard-date-sort-pattern]] — FE-03: `parseISO(null)` → Invalid Date → `compareAsc` NaN → page crash
+- [[dompurify-xss-prevention-pattern]] — FE-01: copy DOMPurify pattern from `ReviewList.js` into `[reviewSlug].js`

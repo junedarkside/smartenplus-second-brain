@@ -150,3 +150,9 @@ The single biggest reason for Fix-then-Ship (not Ship-as-is): **the synthesis's 
 5. **Two-tab UX:** Is the team OK with the heart "flips then reverts" behavior under multi-tab? If not, the fix is request deduplication on the client (use a Map of in-flight requests keyed by `(contentType, objectId, action)`) OR server-side `If-Match` semantics. Either is ~20 lines. Synthesis doesn't propose either.
 
 6. **Save-into-void (Q3 contradiction):** Synthesis recommends "clean defer" but the wishlist page is the ONLY discoverable surface for the heart. If the user-facing symptom is "I tapped save and it's gone," that's a churn risk on day 1. Leader should confirm with product that the deferred wishlist page has a target sprint, not a vague "later."
+
+## Related Atoms (Extracted 2026-06-13)
+- [[sentinel-content-type-bookmark-blog]] — Skeptic Finding 2 (silent destructive data loss on blog path)
+- [[iconbutton-keydown-stoppropagation-card]] — Skeptic Finding 3 (a11y blocker)
+- [[lru-cache-content-type-lookup]] — Skeptic Finding 6 (`@lru_cache(maxsize=2)` for CT lookups; 12 hits/page eliminated)
+- [[useauth-axios-hook-factory]] — Skeptic Finding 7 (relative vs absolute URL gotcha)

@@ -38,3 +38,7 @@
 ## Why P0
 
 WCAG 1.3.1 + 4.1.2. Screen reader announces radio group correctly: "Rating group, 1 star Poor, 2 stars Fair…" Tab navigation works. `aria-pressed` pattern causes each star to announce independently as a toggle with no group context.
+
+## Companion Pattern
+
+`IconButton` inside any click+keydown-handled card wrapper needs BOTH `onClick` and `onKeyDown` `stopPropagation` — see [[iconbutton-keydown-stoppropagation-card]]. The two patterns frequently co-occur in review cards (rate widget + favorite heart inside a clickable card).

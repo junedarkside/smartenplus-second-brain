@@ -22,6 +22,12 @@ URL-restored location now visible in input.
 
 See [[activities-location-search-bug-2026-06-01]] F-1.
 
+## Companion Pattern
+
+Pairs with [[mui-autocomplete-handlInputchange-parent-emit]] — together form the "URL-hydrated search bar" recipe. FQ-2 (activities-day-tour-page-review-2026-06-01) confirms both must be present; missing either yields blank field or unfiltered API calls.
+
 ## Related
 - [[activities-location-search-bug-2026-06-01]]
+- [[activities-day-tour-page-review-2026-06-01]] FQ-2
+- [[mui-autocomplete-handlInputchange-parent-emit]]
 - React: prop updates must trigger effect, not be ignored

@@ -176,3 +176,7 @@ Empty fields show toast only. No field highlight, no inline message. Direct aban
 - [[nav-header-redesign]] — header accessibility patterns from 2026-05-19 redesign
 - [[design-systems]] — token-based design system approach
 - [[blog-seo-performance-2026-05-20]] — blog section optimization patterns
+
+## Related Atoms (Extracted 2026-06-13)
+- [[defaultseo-fallback-pattern]] — `<DefaultSeo>` with full OG + Twitter config in `_app.js`
+- [[homepage-section-render-order-conversion]] — Hero+Search → Routes → Locations → Transfer → Reviews → Thailand → Guides → News+Activities → MyBookings → CS

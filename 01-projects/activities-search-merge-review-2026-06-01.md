@@ -148,3 +148,6 @@ Three options analyzed (keyword, location, both). All have tradeoffs. Backend cu
 - [[activities-day-tour-page-review-2026-06-01]] — UX-1 finding originally flagged dual unlabeled search as P0
 - [[activities-location-search-bug-2026-06-01]] — location search zero-results bug fix (RC-1 through RC-3)
 - [[adr-experiences-nav-category-filtering-2026-05-25]] — category URL param chain
+
+## Related Atoms (Extracted 2026-06-13)
+- [[contract-fk-icontains-or-fallback]] — M2M+FK icontains search with `.distinct()`; cache-clear on deploy

@@ -155,4 +155,16 @@ Image strategy locked: Option A (gallery method field, no migration). No longer 
 ---
 
 ## Related
-[[homepage-ux-review-2026-05-21]] [[smartenplus-uxui-redesign-research-2026]] [[airport-transfer-redesign-2026]] [[recommendation-system]] [[tour-system-status]]
+[[homepage-ux-review-2026-05-21]] [[smartenplus-uxui-redesign-research-2026]] [[airport-transfer-redesign-2026]] [[recommendation-system]] [[tour-system-status]] [[experiences-2026-marketplace-redesign]] [[experiences-section-canonical-categories]]
+
+---
+
+## Canonical Experience Categories (Confirmed 2026-06-13)
+
+The 6 `service_category` values for the activities/experiences surface, validated across homepage + activities + marketplace audits:
+
+**INCLUDE:** `DAY_TOUR`, `MULTI_DAY_TOUR`, `SPA_WELLNESS`, `EVENT_TICKET`, `ATTRACTION_TICKET`, `FOOD_DINING`
+
+**EXCLUDE:** `TRANSPORTATION`, `TRANSFER`, `ACCOMMODATION`, `OTHER`
+
+Filter at both backend (`service_category__in=EXPERIENCE_CATEGORIES`) and frontend chip display. Both surfaces must use the same constant — see `helpers/constants.js` `EXPERIENCE_CATEGORIES` export.

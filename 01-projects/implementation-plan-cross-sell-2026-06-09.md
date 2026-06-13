@@ -226,3 +226,9 @@ Activity detail page "You May Also Like" shows scored results, not random catego
 - [[business]] — roadmap: cross-sell = current step 3
 - [[business-development-thesis-2026]] — gate: multi-booking rate rising → journey builder
 - [[checkout-confirmation-payment-crash-2026-06-03]] — non-transport checkout now live
+
+## Related Atoms (Extracted 2026-06-13)
+- [[gtm-purchase-item-category-attribute]] — GTM `tripItems[].item_category` unlocks cross-sell measurement
+- [[multi-item-cart-anchor-last-transport]] — anchor selection tree for multi-item carts
+- [[cross-sell-suppress-during-payment]] — explicit "what NOT to do" rule during payment form
+- [[sidebar-sticky-2col-responsive-grid]] — checkout sidebar layout math

@@ -169,3 +169,14 @@ Engine returns 0 until BD creates:
 - [[recommendation-system]]
 - [[cross-sell-debate-review-2026-06-09]]
 - [[business-development-thesis-2026]]
+
+---
+
+## Marketplace Redesign Confirmation (2026-06-13)
+
+`experiences-2026-marketplace-redesign` re-affirms all four placements above. New additions documented in:
+- [[multi-item-cart-anchor-last-transport]] — anchor selection for multi-item carts (BD signal codification)
+- [[cross-sell-suppress-during-payment]] — explicit "what NOT to do" rule during payment form
+- [[gtm-purchase-item-category-attribute]] — GTM measurement unlock required before any cross-sell experiment can be evaluated
+
+Marketplace UI uses `sidebar-sticky-2col-responsive-grid` (240px sidebar + 4-col card grid at 1440px) — see [[sidebar-sticky-2col-responsive-grid]] for the layout math.

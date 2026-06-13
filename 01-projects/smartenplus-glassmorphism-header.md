@@ -169,3 +169,7 @@ No migration needed (admin UI only).
 - [[nav-config-research]] — prior nav UX research
 - [[hero-banner-cms]] — hero management
 - [[nextjs-fixed-header-per-route]] — atomic pattern: fixed header on homepage, sticky elsewhere
+
+## Related Atoms (Extracted 2026-06-13)
+- [[header-glass-to-solid-migration]] — glass→solid migration recipe; MUI AppBar `color="inherit"` gotcha
+- [[header-rows-context-dynamic-offset]] — Type A/B header height split with `HeaderRowsContext`

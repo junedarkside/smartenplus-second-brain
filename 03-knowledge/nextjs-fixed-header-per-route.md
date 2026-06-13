@@ -41,7 +41,15 @@ MUI `position` prop maps to CSS `position` AND controls internal MUI layout beha
 | No context/prop drilling | `isHomepage` computed in two places (main-header + layout) |
 | Works with MUI AppBar without fighting library | |
 
+## Type A / Type B Split (HeaderRowsContext)
+
+Header height varies by route: **Type A** (operational/transactional: `/checkout`, `/payment`, `/login`, `/register`, `/search`) = 80px single row. **Type B** (discovery/browse: homepage, `/blog`, most pages) = 96px two rows. `StickySearchBar` top offset + `main` padding must consume a `HeaderRowsContext` to stay in sync with the active type. The static `pt-[88px]` in the snippet above is a Type-B average; see [[header-rows-context-dynamic-offset]] for the full Context-based pattern.
+
+`FeaturedImageHeader` accepts `isCinematic` prop — when true, renders full-bleed, no back/share controls, `inset-0` positioning. Used on trip-detail cinematic hero.
+
 ## Related
 
 - [[smartenplus-glassmorphism-header]] — cinematic hero implementation context
+- [[header-rows-context-dynamic-offset]] — Type A/B split
+- [[header-glass-to-solid-migration]] — glass→solid migration recipe
 - [[mui-tailwind-css-specificity]] — why MUI props > Tailwind className

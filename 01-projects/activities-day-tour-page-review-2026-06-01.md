@@ -241,3 +241,6 @@ Removing `ACCOMMODATION`, `TRANSPORTATION`, `TRANSFER` means existing URLs with 
 - [[homepage-experiences-section-audit-2026-05-30]] — canonical experience category list, grill decisions
 - [[trip-detail-page-review-2026-05-20]] — 3-agent review template this follows
 - [[design-system-audit-2026-05-31]] — token expansion context
+
+## Related Atoms (Extracted 2026-06-13)
+- [[contract-fk-icontains-or-fallback]] — M2M+FK icontains search with `.distinct()`; cache-clear on deploy

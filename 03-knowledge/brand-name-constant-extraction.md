@@ -52,5 +52,9 @@ Standardize on "SmartEnPlus" wordmark for display. URL stays "smartenplus.co.th"
 ## Consequences
 Reference [[nav-label-url-slug-two-layer-strategy]] for URL/label split rationale. Reference [[production-url-rename-cost-framework]] for URL change cost analysis.
 
+## Broader Scope (2026-06-13 Audit)
+
+Design system audit `design-system-audit-2026-06-13` confirms 23 occurrences of brand string across `pages/_app.js` (DefaultSeo), `lib/homepage/components/*StructuredData.js` (provider.name), and the `public/smartenpus-*.webp` filename typo. The 5 files listed above are the highest-traffic subset; full list in the audit. The `BRAND_NAME` constant + rename is the only safe migration path.
+
 ## Related
 [[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-seo-ai]] · [[nav-label-url-slug-two-layer-strategy]]

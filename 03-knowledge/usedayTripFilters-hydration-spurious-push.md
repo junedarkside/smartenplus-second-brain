@@ -22,7 +22,13 @@ Prevent spurious push — check URL params changed before calling `router.push`.
 
 Part of [[activities-day-tour-page-review-2026-06-01]] findings. See [[nextjs-hydration-rules]] for hydration patterns.
 
+## FQ-2 Severity
+
+Confirmed in [[activities-day-tour-page-review-2026-06-01]] — interacts with [[mui-autocomplete-handlInputchange-parent-emit]] to amplify URL-overwrite bug. Specified fix: `useState(DEFAULT_FILTERS) + useEffect(() => { if (!router.isReady) return; setFilters(fromQuery(router.query)); }, [router.isReady])`.
+
 ## Related
-- [[activities-day-tour-page-review-2026-06-01]]
+- [[activities-day-tour-page-review-2026-06-01]] FQ-2
+- [[activities-location-search-bug-2026-06-01]]
 - [[nextjs-hydration-rules]]
+- [[mui-autocomplete-handlInputchange-parent-emit]]
 - CLAUDE.md: "useEffect chains forbidden"

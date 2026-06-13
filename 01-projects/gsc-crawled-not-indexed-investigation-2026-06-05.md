@@ -187,3 +187,8 @@ Allows instant rollback via env var without code deploy.
 - [[docker-standalone-isr-revalidate-gap]] — ISR Docker volume clear requirement
 - [[isr-csr-overlay-stale-fields]] — ISR caching behavior patterns
 - [[structured-data-schema-patterns]] — server-sitemap.xml crawl budget patterns
+
+## Related Atoms (Extracted 2026-06-13)
+- [[tiered-empty-page-noindex-strategy]] — 3-tier: notFound:300 / noindex:3600 / fully indexed
+- [[never-notfound-in-catch-block]] — ISR catch must never return `{notFound: true}`; serves stale props
+- [[sitemap-filter-by-inventory-or-recency]] — pre-flight filter: `available_routes_count>0 || updated_at>365d`

@@ -189,3 +189,7 @@ Not yet started. Create: `260523-fix/currency-context-infinite-fetch`
 - [[hydration-infinite-refresh-fix-2026-05-20]] — prior Fast Refresh loop, different root cause (hydration mismatch)
 - [[nextjs-patterns]] — useEffect dep rules, ISR dev behavior
 - [[isr-429-cold-start-fix-2026-05-23]] — /front-page/ 429 (separate issue, same endpoint)
+
+## Related Atoms (Extracted 2026-06-13)
+- [[useeffect-cancellation-guard-pattern]] — `let cancelled=false` + check after each await; the actual root cause was stale closure + race, not infinite loop
+- [[nextjs-fast-refresh-stale-hash-loop]] — N14.2.x framework gotcha; `webpack.watchOptions.ignored` is the only known fix

@@ -156,3 +156,8 @@ Day 5+ — separate PRs: hero height, custom font, designSystem tokens
 
 ## Related
 [[header-redesign-2026-team-review]] · [[smartenplus-glassmorphism-header]] · [[nav-header-redesign-2026-05-24]] · [[mobile-header-redesign-glassmorphism]]
+
+## Related Atoms (Extracted 2026-06-13)
+- [[header-rows-context-dynamic-offset]] — Type A=80px / Type B=96px; StickySearchBar consumes `HeaderRowsContext`
+- [[header-glass-to-solid-migration]] — glass→solid migration recipe; MUI AppBar `color="inherit"` gotcha
+- [[nextjs-fixed-header-per-route]] — atomic pattern: fixed header on homepage, sticky elsewhere

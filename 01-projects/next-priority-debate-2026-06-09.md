@@ -152,3 +152,8 @@ Add `item_category` to the GTM purchase event (`useOmisePayment.js:55`) this wee
 - [[business-development-thailand-bundle-architecture]] — bundle UX spec (gated)
 - [[business-development-zeitrip-mvp]] — journey builder spec (gated)
 - [[content-marketing-strategy-2026-06-03]] — Hat Yai-Lipe SEO strategy
+
+## Related Atoms (Extracted 2026-06-13)
+- [[gtm-purchase-item-category-attribute]] — `tripItems[].item_category: contract.service_category` unlocks revenue-by-category GA4 reporting
+- [[multi-item-cart-anchor-last-transport]] — anchor = last transport item; rec type logic tree
+- [[cross-sell-suppress-during-payment]] — DO NOT mount cross-sell during payment form interaction

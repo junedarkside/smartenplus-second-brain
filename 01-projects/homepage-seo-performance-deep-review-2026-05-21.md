@@ -157,3 +157,7 @@ Returns 85 SSR vs 75 on 3G = different image URL. Fix: fixed `quality={85}` for 
 
 ## Related
 [[homepage-ux-review-2026-05-21]] · [[blog-seo-performance-2026-05-20]] · [[seo-homepage-specialist-team]]
+
+## Related Atoms (Extracted 2026-06-13)
+- [[defaultseo-fallback-pattern]] — `<DefaultSeo>` config in `_app.js`
+- [[hero-cls-precise-sizes-attribute]] — `LocationGridComponent.js:59` `next/image` `sizes` per breakpoint

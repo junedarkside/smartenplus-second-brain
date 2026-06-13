@@ -47,12 +47,14 @@ if location_ids:
 
 Any Django filter using `_parse_int_list` must handle empty-list explicitly. Empty list = text input, not error. `.none()` always wrong unless input guaranteed integers only.
 
-## Cache Warning
+## Cache Warning (Deploy-Critical)
 
 `products.ContractViewSet` caches 1 hour (`contract_list_v1_{md5(params)}`). After deploy, clear cache:
 ```python
 cache.delete_pattern("contract_list_v1_*")  # or cache.clear()
 ```
+
+**Mandatory on every deploy that changes the filter shape** — stale cache will serve old text-fallback-broken responses for up to 1 hour. Add to CI deploy script or runbook. See [[contract-fk-icontains-or-fallback]] for the M2M+FK variant of the same pattern.
 
 ## SmartEnPlus Instance
 

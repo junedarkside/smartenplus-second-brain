@@ -88,7 +88,12 @@ Browser `focus-visible` uses `box-shadow`, NOT `outline`.
 
 Inline style required — Tailwind insufficient against browser defaults.
 
+## Mobile Snap (MOB-4)
+
+All Embla carousels in `lib/homepage/components/*Carousel.js` need `align: 'start'` option (already documented above) + container-level `overflow-x: auto` + `scroll-snap-type: x mandatory` for native mobile swipe fallback. Without these, mobile users lose scroll affordance on iOS Safari.
+
 ## Related
 
 - [[design-systems]]
 - [[popular-routes-carousel-fix-2026-05-28]]
+- [[website-audit-full-2026-06-06-overview]] MC3 / MOB-4

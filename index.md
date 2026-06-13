@@ -167,6 +167,7 @@ Global navigation catalog. Updated on every ingest.
 - [[journeys|Journeys]] — UserJourneyEvent analytics, event types, metadata, dedup guard pattern
 - [[design-systems]] — Token-based design system approach
 - [[design-system-audit-2026-05-31]] — Design system audit: brand color (#3b5998), token gaps, hardcoded values found across components
+- [[design-system-audit-2026-06-13]] — Full design system audit: token coverage, component violations, UX patterns, migration roadmap. 889 hardcoded colors, 386 inline styles, 5 debate outcomes, 5-phase migration plan.
 - [[carousel-design-standard]] — Embla carousel items-per-screen breakpoints, gap values, card widths, focus ring handling
 - [[admin-dashboard-contracts]] — Category registry, form flow, payload rules, helpers
 - [[pdf-contract-import-research]] — Team research + decision: Django+Claude tool_use pipeline for parsing non-standard operator PDFs to update contracts. Phase 1 scope + deferred Phase 2.
@@ -342,3 +343,45 @@ Global navigation catalog. Updated on every ingest.
 - [[activities-location-search-backend-text-fallback]] — RC-1: _parse_int_list text fallback for city name search
 - [[mui-autocomplete-inputvalue-sync]] — F-1: useEffect sync on value prop change to restore URL state
 - [[mui-autocomplete-handlInputchange-parent-emit]] — F-2: handleInputChange must call onChange to emit to parent
+- [[design-system-phase1-migration]] — Phase 1: 16 component files migrated from hardcoded hex to COLORS tokens. Exact-match only, zero visual changes.
+- [[payment-amount-validation-rule]] — H1: server `(amount_thb - fee) == order.get_total_cost_after_discount()` ±1.00 THB
+- [[payment-legacy-deprecation-map]] — 410-returning routes: `/api/payments/webhook-legacy/`, `/api/placeorder/`
+- [[payment-orphan-charge-expire-pattern]] — M9: IntegrityError catch → `omise_charge.expire()` before re-raising
+- [[payment-reconcile-gate-extension]] — H5: `finalize_payment` accepts `ordering`/`payment_failed`/`payment_pending` (guarded by `payment_finalized_at`)
+- [[payment-guest-email-guard-mirror]] — M8: every charge entry point validates `order.email == data['email']` for unauth
+- [[payment-cancel-state-prevmethod-guard]] — M3: `cancelState.success` reset guarded by `prevMethodRef`
+- [[payment-idempotency-key-cart-total]] — H3: `X-Idempotency-Key: ${cartId}:${total}`; wrapped `{"message","order"}` shape
+- [[payment-self-heal-coverage-matrix]] — M12: per-method self-heal coverage table (Card 3DS excluded)
+- [[payment-cancel-vs-expire-error-mapping]] — reuse `useCancelPayment` hook + `expirePendingCharge` helper
+- [[sidebar-sticky-2col-responsive-grid]] — 240px sidebar + 4-col 1440px card grid math
+- [[orm-annotation-aggregate-min-rate]] — DRF `avg_rating` + `min_rate` annotation pattern
+- [[wishlist-per-card-state-not-page]] — per-card `useState` for heart icon (avoid 80 re-renders/click)
+- [[useeffect-cancellation-guard-pattern]] — `let cancelled=false` + check after each await
+- [[useauth-axios-hook-factory]] — `useAuthAxios()` `useMemo([token])`; pass relative paths
+- [[iconbutton-keydown-stoppropagation-card]] — nested IconButton needs BOTH `onClick` + `onKeyDown` `stopPropagation`
+- [[lru-cache-content-type-lookup]] — `@lru_cache(maxsize=2)` for CT lookups; 12 hits/page eliminated
+- [[seo-canonical-getsiteurl-pattern]] — `getSiteUrl()` → `https://www.smartenplus.co.th` (www mandatory)
+- [[defaultseo-fallback-pattern]] — `<DefaultSeo>` with full OG + Twitter config in `_app.js`
+- [[hero-cls-precise-sizes-attribute]] — `LocationGridComponent.js:59` `next/image` `sizes` per breakpoint
+- [[getstaticprops-fetch-timeout-isr-blocking]] — 8s `fetchData()` timeout when `fallback:'blocking'` (else 500 cascade)
+- [[touristtrip-schema-iso8601-departure-time]] — full ISO8601 with date prefix (prefix-less is silently invalid)
+- [[og-image-1200x630-webp]] — default OG = WebP 1200×630 at `public/og-image.webp`
+- [[homepage-section-render-order-conversion]] — trust-before-editorial review order
+- [[tiered-empty-page-noindex-strategy]] — 3-tier: notFound:300 / noindex:3600 / fully indexed
+- [[never-notfound-in-catch-block]] — ISR catch must never return `{notFound: true}`; serves stale props
+- [[sitemap-filter-by-inventory-or-recency]] — pre-flight filter: `available_routes_count>0 || updated_at>365d`
+- [[wordpress-faqpage-deprecation-note]] — `FAQPage` schema deprecated Aug 2023; use `<details>/<summary>` only
+- [[gtm-purchase-item-category-attribute]] — `tripItems[].item_category: contract.service_category` unlocks revenue-by-category GA4
+- [[multi-item-cart-anchor-last-transport]] — anchor = last transport item; rec type logic tree
+- [[cross-sell-suppress-during-payment]] — DO NOT mount cross-sell during payment form interaction
+- [[react-state-no-op-guard-side-effect-prevention]] — `prev===next ? return : set` guard for object refs
+- [[sentinel-content-type-bookmark-blog]] — `Bookmark.objects.filter` MUST filter by `content_type=ContentType.objects.get_for_model(Bookmark)` (silent destructive bug)
+- [[contract-fk-icontains-or-fallback]] — M2M+FK icontains search with `.distinct()`; cache-clear on deploy
+- [[static-route-beats-catchall-priority]] — static `pages/help/faqs.js` wins over `pages/help/[...slug].js` automatically
+- [[nextjs-fast-refresh-stale-hash-loop]] — N14.2.x framework gotcha; `webpack.watchOptions.ignored` is the only known fix
+- [[mui-emotion-tailwind-injectfirst]] — `<StyledEngineProvider injectFirst>` + add `helpers/**/*` to tailwind content array
+- [[migrate-bootstrap-palette-to-ds-tokens]] — replace Bootstrap legacy palette with `COLORS.status.*` tokens
+- [[header-rows-context-dynamic-offset]] — Type A=80px / Type B=96px; StickySearchBar consumes `HeaderRowsContext`
+- [[header-glass-to-solid-migration]] — glass→solid migration recipe; MUI AppBar `color="inherit"` gotcha
+- [[build-experience-faq-items-pure-function]] — pure `buildExperienceFAQItems(contract)` helper; derive cancellation text from structured data (legal liability pattern)
+- [[parseiso-null-guard-date-sort-pattern]] — `parseISO(null)` → Invalid Date → `compareAsc` NaN → page crash

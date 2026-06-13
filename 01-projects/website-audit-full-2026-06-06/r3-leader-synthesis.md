@@ -252,3 +252,7 @@ date: 2026-06-06
 ## Related
 
 [[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[carousel-design-standard]] · [[mobile-header-analysis-2026-05-26]]
+
+## Related Atoms (Extracted 2026-06-13)
+- [[seo-canonical-getsiteurl-pattern]] — `getSiteUrl()` → `https://www.smartenplus.co.th` (www mandatory)
+- [[homepage-section-render-order-conversion]] — trust-before-editorial review order

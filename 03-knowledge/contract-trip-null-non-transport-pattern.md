@@ -35,5 +35,11 @@ item.contract?.trip && item.contract?.stop_sale_dates?.some(...)
 ## Existing Correct Usage
 `sortCartItems.js:72`, `EnhancedTripCard.js:93`, `TripsConfirmation.js:18` — all use `contract?.trip?.departure_time`
 
+## Multi-File Fix Evidence
+
+`checkout-confirmation-payment-crash-2026-06-03` root-caused 5 separate frontend crashes (Confirmation.js, TripsConfirmation.js, OrderDetail.js, BookingInfoDialog, ServiceDetail) all from `contract.trip.X` without optional chaining. Single null-guard pattern in `helpers/contractDisplay.js` would have prevented all 5.
+
 ## Related
-[[cartitems-500-error-analysis-2026-06-02]] — backend null guard (`carts/utils.py:591`)
+- [[cartitems-500-error-analysis-2026-06-02]] — backend null guard (`carts/utils.py:591`)
+- [[checkout-confirmation-payment-crash-2026-06-03]] — multi-file evidence
+- [[build-experience-faq-items-pure-function]] — same `contract?.trip` guard pattern in FAQ builder

@@ -72,6 +72,11 @@ Travel reviews need: `b`, `i`, `em`, `strong`, `a`, `p`, `br`, `ul`, `ol`, `li`.
 - `isomorphic-dompurify` adds ~15KB gzipped — acceptable for review pages
 - Backend should still sanitize at API boundary regardless of frontend approach
 
+## Additional Sites
+
+Same pattern confirmed in `RateAndReviewForm.js` (rate review submission) and any future `dangerouslySetInnerHTML` over `contract.description` (long-form rich text from operators). Backend `sanitize_category_fields` does NOT touch description field — frontend sanitization remains the last line of defense.
+
 ## Related
-- [[homepage-ux-review-2026-05-21]] — XSS issue details
+- [[homepage-ux-review-2026-05-21]] — XSS issue details (ReviewFirstPage.js:185)
+- [[rate-review-uxui-audit-2026-06-06]] r1-frontend — additional review-render sites
 - [[security-best-practices]] — security patterns

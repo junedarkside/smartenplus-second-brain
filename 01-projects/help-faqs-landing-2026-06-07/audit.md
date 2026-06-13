@@ -239,3 +239,7 @@ Sequential, not parallel:
 - `components/layout/footer.js:33` — Footer `Help & FAQs` link (broken since #72)
 - `pages/help/index.js:143` — FAQs filter (correct, leave as-is)
 - `pages/homepagev2.js:451` — Homepage FAQs filter (correct, leave as-is)
+
+## Related Atoms (Extracted 2026-06-13)
+- [[wordpress-faqpage-deprecation-note]] — `FAQPage` schema deprecated Aug 2023; use `<details>/<summary>` only
+- [[static-route-beats-catchall-priority]] — static `pages/help/faqs.js` wins over `pages/help/[...slug].js` automatically

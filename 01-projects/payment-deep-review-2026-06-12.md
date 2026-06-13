@@ -288,3 +288,14 @@ Full list with all 12 in [[payment-deep-review-verification-2026-06-12]] "KB Gap
 
 ## Related
 [[booking-payment-e2e-audit-2026-06-11]] · [[payment-integration]] · [[payment-gateway-charge-architecture]] · [[payment-charge-service-layer]] · [[payment-status-enums]] · [[omise-webhook-security]] · [[payment-finalize-deep-dive]] · [[payment-qr-polling-mechanics]] · [[payment-celery-expiry-strategy]] · [[omise-api-reference-2026-06-12]] · [[refund-flow]] · [[payment-checkout-5-principles]] · [[payment-deep-review-verification-2026-06-12]] · [[payment-implement-plan-2026-06-12]]
+
+## Related Atoms (Extracted 2026-06-13)
+- [[payment-amount-validation-rule]] — H1: `(amount_thb - fee) == order.get_total_cost_after_discount()` ±1.00 THB
+- [[payment-legacy-deprecation-map]] — 410-returning routes: `/api/payments/webhook-legacy/`, `/api/placeorder/`
+- [[payment-orphan-charge-expire-pattern]] — M9: IntegrityError catch → `omise_charge.expire()` before re-raising
+- [[payment-reconcile-gate-extension]] — H5: `finalize_payment` accepts `ordering`/`payment_failed`/`payment_pending` (guarded by `payment_finalized_at`)
+- [[payment-guest-email-guard-mirror]] — M8: every charge entry point validates `order.email == data['email']` for unauth
+- [[payment-cancel-state-prevmethod-guard]] — M3: `cancelState.success` reset guarded by `prevMethodRef`
+- [[payment-idempotency-key-cart-total.md]] — H3: `X-Idempotency-Key: ${cartId}:${total}`; wrapped `{"message","order"}` shape
+- [[payment-self-heal-coverage-matrix]] — M12: per-method self-heal coverage table (Card 3DS excluded)
+- [[payment-cancel-vs-expire-error-mapping]] — reuse `useCancelPayment` hook + `expirePendingCharge` helper
