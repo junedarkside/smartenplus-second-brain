@@ -4,16 +4,11 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-13 (session #106 — payment pending deadlock diagnosed + fixed)
+**Updated:** 2026-06-13 (session #107 — checkout payment step width fix)
 
-**Achieved this session (#105–#106):**
-- **Payment pending deadlock — diagnosed + FIXED.** Live prod bug order `PLB0229785`: charge PAID at Omise, order stuck `payment_pending` forever. Root cause: `finalize_payment` throws `PaymentAmountMismatchError` on webhook → swallowed → no recovery path (expire=400, reconcile skips non-PENDING, celery ignores PAID, retry=AlreadyPaidError without finalize).
-- **3 backend fixes shipped** (`482cfc6` on BE `develop`, pushed):
-  1. `ExpirePendingChargeView` — terminal charge + stuck order recovers instead of 400. PAID→verify Omise→finalize (no amount check). FAILED/REFUNDED→unlock to ordering. New `_recover_paid_stuck_order()`.
-  2. `reconcile_gateway_charge` — PAID+stuck order retries `finalize_payment` on every order-detail read (auto-heals webhook-lost route).
-  3. `_handle_existing_charge` — finalize before `AlreadyPaidError` on locally-PAID charge.
-- **16 new tests** (test_expire_view, test_reconciliation, test_handle_existing_charge). **278 total payment tests pass.**
-- **Vault atom created + updated:** [[payment-pending-deadlock-2026-06-12]] — full root cause, reproduction steps, fix docs, status=FIXED.
+**Achieved this session (#107):**
+- **Checkout payment step width inconsistency — FIXED.** `PaymentMethodSelector`, `QRPaymentForm`, `PendingChargeNotice` all used `md:m-2` (8px horizontal margin on desktop) while every other checkout step used `my-2` (vertical only). Result: payment section visibly narrower/indented vs itineraries/passengers/confirmation steps. Also standardized `md:rounded-md` → `rounded` to match Coupon component.
+- **FE commit shipped** (`c55f6a1` on `develop`, pushed): 3 files, 6 changes. All 4 QRPaymentForm instances + PaymentMethodSelector + PendingChargeNotice fixed.
 
 **Resume point (EXACT):**
 1. **PAYMENT-PENDING-DEADLOCK — production recovery for PLB0229785:**
@@ -28,8 +23,8 @@
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- BE `develop` @ `482cfc6` (clean, pushed) — deadlock fix live
-- FE `develop` @ `dae26da` (clean)
+- BE `develop` @ `482cfc6` (clean, pushed)
+- FE `develop` @ `c55f6a1` (clean, pushed)
 - BE untracked: `.next/`, `docs/agent-policy/`, `docs/api/PUBLIC_ENDPOINTS.md`, `docs/deployment/DOCKER.md`, `docs/operations/ENV.md`, `docs/technical/` (separate work)
 - admin-dashboard: `main` @ `4a6c03b` (untracked docs — separate work)
 - content: `master` @ `3756e5b` (clean)

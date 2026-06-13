@@ -1,5 +1,8 @@
 # Vault Log
 
+## [2026-06-13] session-end #107 | checkout payment step width fix — `md:m-2` caused 16px horizontal indent on PaymentMethodSelector/QRPaymentForm/PendingChargeNotice vs `my-2` on all other steps. Fixed in `c55f6a1` (3 files, pushed to FE `develop`). Also standardized `md:rounded-md` → `rounded`.
+
+
 ## [2026-06-13] session-end #106 | payment pending deadlock fixed — 3 BE fixes on `develop` `482cfc6`: ExpirePendingChargeView recovery branch, reconcile_gateway_charge PAID+stuck retry, _handle_existing_charge local-PAID finalize parity. 16 new tests, 278 pass. Vault atom [[payment-pending-deadlock-2026-06-12]] updated with repro steps + fix status. Production recovery: POST expire on chrg_test_67zrcauou19uk2t655l.
 
 ## [2026-06-12] session-end #105 | payment pending deadlock diagnosed — live prod bug order `PLB0229785` stuck `payment_pending` despite charge PAID at Omise (`chrg_test_67zrcauou19uk2t655l`, 1,012.71 THB PromptPay). Debug Mantra 4-step applied: repro from logs, fail path traced to `ExpirePendingChargeView:389` returning 400 for non-pending charges, hypothesis falsified across 4 scenarios, all breadcrumbs cross-checked. Root cause: `finalize_payment` throws `PaymentAmountMismatchError` (or webhook lost) → order intentionally left `payment_pending` → no recovery path. Two backend fixes proposed: (1) expire endpoint recovery for paid/failed charges, (2) reconcile retry for paid+unfinalized. Atom: [[payment-pending-deadlock-2026-06-12]]. Plan at `.claude/plans/check-frontend-and-backend-enchanted-rocket.md`. Next session: implement fixes.

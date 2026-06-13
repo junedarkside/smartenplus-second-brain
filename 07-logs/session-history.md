@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #106 (archived from master-state)
+
+**Updated:** 2026-06-13 (session #106 — payment pending deadlock diagnosed + fixed)
+
+**Achieved (#105–#106):**
+- **Payment pending deadlock — diagnosed + FIXED.** Live prod bug order `PLB0229785`: charge PAID at Omise, order stuck `payment_pending` forever. Root cause: `finalize_payment` throws `PaymentAmountMismatchError` on webhook → swallowed → no recovery path.
+- **3 BE fixes shipped** (`482cfc6` on `develop`): ExpirePendingChargeView recovery, reconcile_gateway_charge PAID+stuck retry, _handle_existing_charge local-PAID finalize.
+- **16 new tests, 278 total pass.** Vault atom [[payment-pending-deadlock-2026-06-12]] updated.
+
+---
+
 ## Session #104 (archived from master-state)
 
 **Updated:** 2026-06-12 (session #104 wrap — 8/8 E2E automated + webhook gap closed via Tailscale)
