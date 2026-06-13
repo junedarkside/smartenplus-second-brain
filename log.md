@@ -617,3 +617,13 @@ Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tai
 ## [2026-06-12] ingest | payment test results — BE 20/20 pass, FE 84/84 jest pass. Full coverage: paymentMethods, useOmisePayment, useQRPolling, useCancelPayment, PaymentComponent. Vault test-cases doc updated.
 ## [2026-06-13] audit | design-system-audit-2026-06-13 — Full design system audit: 10 token dimensions (5 missing), 889 hardcoded colors, 386 inline styles, 13 violation categories, 12 UX dimensions, 5 debate outcomes, 5-phase migration roadmap, 10 quick wins.
 ## [2026-06-13] lint | /lint-vault protocol: 41 new atoms extracted from 53 notes >150 lines in 01-projects/ + 03-knowledge/; 13 existing notes updated with new file:line evidence; 20 source notes received `## Related Atoms (Extracted 2026-06-13)` sections. Domains: payment (9), frontend (7), SEO (11), cross-sell (3), React (1), DRF/Django (2), Next.js (2), design system (4), misc (2). All atoms <200 lines (max 97, avg 62). Index + log updated.
+
+## [2026-06-13] session-start | #108 — design-system token migration (18 files) + test fix; master-state updated
+
+## [2026-06-13] audit | cross-sell-integration-status-2026-06-13 — live code verification all 4 surfaces mounted; vault stale atoms flagged (checkout debate + placement strategy + impl plan); GTM item_category quick win identified; BD inventory only gate
+
+## [2026-06-13] session-end | #108 — cross-sell audit + vault closures: all 4 surfaces live, GTM+activity shipped (vault stale corrected), PAYMENT-FIX/DEADLOCK/design-Phase1 closed, KB atomization deferred, AT-1 next P0
+
+## [2026-06-13] close | carried items verified complete — PAYMENT-FIX (both PRs merged: FE `dae26da`, BE `5653b04`, branches deleted), PAYMENT-DEADLOCK (`482cfc6` head of BE main), DESIGN-SYSTEM-PHASE-1 (tokens `designSystem.js:149-210`). KB-ATOMIZATION-PAYMENT deferred to next `/lint-vault` (M8 in payment-backend-charge-flow §5 verified accurate). master-state §1 resume list pruned; next: AT-1 airport transfer P0.
+
+## [2026-06-13] correct | cross-sell note self-stale fix — re-verified live code: GTM `item_category` already shipped (`hooks/useOmisePayment.js:59`+`:144` purchase event) and activity-detail accuracy already migrated to recommendations API (`RelatedExperiences.js:7`). Both were wrongly listed as open eng work in [[cross-sell-integration-status-2026-06-13]] (note went stale day-of). Corrected: note (Already Shipped section), [[gtm-purchase-item-category-attribute]] (SHIPPED banner), master-state §1+§2. Sole open eng item now = multi-item post-booking (`bookingContext.js:33`, Sprint 2).

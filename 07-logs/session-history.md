@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #108 (archived 2026-06-13)
+
+**Updated:** 2026-06-13 (cross-sell audit + carried-item closure verification)
+
+**Achieved:**
+- Cross-sell audit COMPLETE — all 4 surfaces live (checkout `index.js:1008`, trip detail `[...slug].js:367`, activity detail `DayTripDetailPage.js:231`, post-booking `BookingDetailMain.js:161`). GTM `item_category` + activity-detail accuracy already shipped (vault was stale). Stale atoms corrected: `cross-sell-integration-status-2026-06-13`, `gtm-purchase-item-category-attribute`, `cross-sell-placement-strategy`.
+- Carried items VERIFIED CLOSED: PAYMENT-FIX (both PRs merged — FE `dae26da`, BE `5653b04`), PAYMENT-DEADLOCK (`482cfc6`), DESIGN-SYSTEM-PHASE-1 (`designSystem.js:149-210`). KB-ATOMIZATION-PAYMENT deferred.
+- Design system token migration shipped (prev session end): `489de5f`+`b5ce878`+`4b65756`.
+
+**Resume (at session end):**
+1. AT-1 — Airport Transfer redesign (P0). Spec: `03-knowledge/transportation-category-audit`.
+2. KB atomization — 12 KB gaps, batch with next `/lint-vault`.
+3. IMG-ALT-DEBUG-1 — HMR cross-module callback. Low priority.
+
+---
+
 ## Session #106 (archived from master-state)
 
 **Updated:** 2026-06-13 (session #106 — payment pending deadlock diagnosed + fixed)

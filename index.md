@@ -108,7 +108,8 @@ Global navigation catalog. Updated on every ingest.
 - [[gyg-card-rate-analysis-2026-06-05]] — **COMPLETED 2026-06-05.** GYG card rate display analysis. Display, trust badge, and pricing UX patterns.
 - [[cartitems-500-error-analysis-2026-06-02]] — **RESOLVED 2026-06-02.** Cart items 500 error root cause. 3 bugs: type mismatch, exception bubbling, PARSING_ERROR display.
 - [[experience-detail-ipad-mobile-redesign-2026-06-02]] — **PLANNED 2026-06-02.** iPad/mobile redesign spec for experience detail page.
-- [[cross-sell-debate-review-2026-06-09]] — **COMPLETED 2026-06-09.** 3-agent BD×ENG×PM debate. Cross-sell placement: post-booking #1, trip detail #2, checkout sidebar avoided.
+- [[cross-sell-integration-status-2026-06-13]] — **NEW 2026-06-13.** Live code audit: all 4 surfaces mounted (checkout `index.js:1008`, trip detail `[...slug].js:367`, activity detail `DayTripDetailPage.js:231`, post-booking `BookingDetailMain.js:161`). Vault stale atoms flagged. GTM `item_category` (`useOmisePayment.js:56`) = quick eng win. BD inventory = only gate.
+- [[cross-sell-debate-review-2026-06-09]] — **COMPLETED 2026-06-09. PARTIALLY STALE** (checkout blockers resolved). 3-agent BD×ENG×PM debate. Cross-sell placement: post-booking #1, trip detail #2. Checkout IS live — see [[cross-sell-integration-status-2026-06-13]].
 - [[next-priority-debate-2026-06-09]] — **COMPLETED 2026-06-09.** 3-agent next-priority debate. Decision: GTM + cross-sell mount now, journey builder gated.
 - [[implementation-plan-cross-sell-2026-06-09]] — **COMPLETED 2026-06-09.** 4-agent impl plan: GTM fix → mount CheckoutRelatedTrips → wire scored API → SEO content.
 - [[checkout-uxui-audit-2026-06-10]] — **OPEN 2026-06-10.** Checkout UX/UI review.

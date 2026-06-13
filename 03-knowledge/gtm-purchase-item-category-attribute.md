@@ -1,5 +1,7 @@
 # GTM Purchase Item Category Attribute
 
+> **STATUS: SHIPPED (verified 2026-06-13 live read).** `hooks/useOmisePayment.js:59` builds `item_category: contract.service_category` in `tripItems`; `hooks/useOmisePayment.js:144` pushes it in the `purchase` event (`ecommerce.items: tripItems`). The pattern guidance below stands as precedent for future events (`add_to_cart`, `refund`, `view_item`).
+
 ## Summary
 GTM `purchase` event `tripItems[]` map must include `item_category: contract.service_category` — without it, GA4 cannot break revenue by product type (DAY_TOUR vs transport), making any cross-sell experiment unmeasurable.
 

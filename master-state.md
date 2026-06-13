@@ -4,28 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-13 (session #107 — checkout payment step width fix)
+**Updated:** 2026-06-13 (session #109 starts here)
 
-**Achieved this session (#107):**
-- **Checkout payment step width inconsistency — FIXED.** `PaymentMethodSelector`, `QRPaymentForm`, `PendingChargeNotice` all used `md:m-2` (8px horizontal margin on desktop) while every other checkout step used `my-2` (vertical only). Result: payment section visibly narrower/indented vs itineraries/passengers/confirmation steps. Also standardized `md:rounded-md` → `rounded` to match Coupon component.
-- **FE commit shipped** (`c55f6a1` on `develop`, pushed): 3 files, 6 changes. All 4 QRPaymentForm instances + PaymentMethodSelector + PendingChargeNotice fixed.
+**Achieved last session (#108):**
+- Cross-sell audit COMPLETE — all 4 surfaces live + verified. GTM `item_category` + activity-detail accuracy already shipped (vault was stale). Stale atoms corrected. See [[cross-sell-integration-status-2026-06-13]].
+- Carried items VERIFIED CLOSED: PAYMENT-FIX (FE `dae26da`, BE `5653b04`), PAYMENT-DEADLOCK (`482cfc6`), DESIGN-SYSTEM-PHASE-1 (`designSystem.js:149-210`).
+- Design system token migration shipped: `489de5f`+`b5ce878`+`4b65756`.
+- KB atomization deferred to next `/lint-vault`.
 
 **Resume point (EXACT):**
-1. **PAYMENT-PENDING-DEADLOCK — production recovery for PLB0229785:**
-   `POST /payments/order-charge/chrg_test_67zrcauou19uk2t655l/expire/` with owner email → Fix 1 path finalizes order. Or Django shell: `finalize_payment(Order.objects.get(order_id='PLB0229785'))`.
-2. **PAYMENT-FIX — open PRs via GitHub UI** (still open from prev session):
-   - BE: `smartenplus-backend/fix/payment-deep-review-2026-06-12` → `develop` (head `6937f39`)
-   - FE: `smartenplus-frontend/fix/payment-deep-review-2026-06-12` → `develop` (head `8430805`)
-3. **KB atomization** — 12 KB gaps from verification report. Fix M8 inaccuracy in [[payment-backend-charge-flow]] §5 first.
-4. **CROSS-SELL-BD-INVENTORY** — BD task. No eng work.
-5. **AT-1** — Airport Transfer redesign. Awaits user direction.
-6. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
+1. **AT-1 — Airport Transfer redesign (P0)** — only P0 open eng item. Spec: `03-knowledge/transportation-category-audit`. Primary file `AirportTransferRouteCard.js`. **Start here.**
+2. **KB atomization (DEFERRED)** — 12 KB gaps from payment deep-review. Batch with next `/lint-vault`. M8 in [[payment-backend-charge-flow]] §5 accurate.
+3. **IMG-ALT-DEBUG-1** — HMR cross-module callback staleness. Low priority. Atom: [[nextjs-hmr-cross-module-callback-staleness]].
+4. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
+5. **CROSS-SELL-BD-INVENTORY** — BD task, no eng work. Multi-item post-booking = Sprint 2.
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- BE `develop` @ `482cfc6` (clean, pushed)
-- FE `develop` @ `c55f6a1` (clean, pushed)
-- BE untracked: `.next/`, `docs/agent-policy/`, `docs/api/PUBLIC_ENDPOINTS.md`, `docs/deployment/DOCKER.md`, `docs/operations/ENV.md`, `docs/technical/` (separate work)
+- BE `main` @ `482cfc6` (untracked docs only — separate work)
+- FE `main` @ `4b65756` (clean)
 - admin-dashboard: `main` @ `4a6c03b` (untracked docs — separate work)
 - content: `master` @ `3756e5b` (clean)
 
@@ -35,12 +32,15 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **ALL 5 BATCHES SHIPPED + PUSHED + 8/8 E2E AUTOMATED + WEBHOOK GAP CLOSED.** BE 7 commits `d7af0e9..6937f39` pushed. FE 8 commits `a3c8c80..8430805` all pushed. **8/8 UI E2E now automated** via `payment-auto-qa.spec.ts` + fixture CLI. **Webhook gap closed** via Tailscale. 119 tests pass. **M4 retracted.** **BONUS: deadlock fix `482cfc6` shipped directly to BE `develop`** (278 BE tests pass). Remaining: (a) open 2 PRs via GitHub UI for original deep-review branches, (b) close item after merge. KB gaps: 12 (batch with next `/lint-vault`). | [[payment-deep-review-2026-06-12]], [[payment-pending-deadlock-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
+| **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
+| **PAYMENT-DEADLOCK** | Recover paid-but-unfinalized order PLB0229785 from payment_pending deadlock | **CLOSED 2026-06-13.** Fix `482cfc6` "recover paid-but-unfinalized order from payment_pending deadlock" is head of BE `main`. 278 BE tests pass. | [[payment-pending-deadlock-2026-06-12]] |
+| **DESIGN-SYSTEM-PHASE-1** | Token completion (audit 2026-06-13) | **CLOSED 2026-06-13.** OPACITY, Z_INDEX, TRANSITIONS, LAYOUT, SIDEBAR_CONFIG added (`helpers/designSystem.js:149-210`); token migration FE `489de5f`+`b5ce878` (18 files). Residual gaps (typography line-height/letter-spacing, 4 stray `#fff` in globals.css) trivial — untracked. | [[design-system-audit-2026-06-13]] |
+| **KB-ATOMIZATION-PAYMENT** | 12 KB gaps from payment deep-review verification report | **DEFERRED.** Batch with next `/lint-vault`. M8 in `payment-backend-charge-flow.md` §5 verified accurate (email-guard ownership check present). | [[payment-deep-review-2026-06-12]] |
 | **BOOKING-PAY-FIX-1** | Fix 4 verified bugs from booking-payment e2e audit | CLOSED #94. Merged `fix/checkout-stable-id-cleanup` → `develop` (`f271aef`). 53/53 tests, SM-1–SM-4 passed. | `hooks/checkout/useCartSync.js`, `components/UI/BookButton.js:41-43` |
 | **BOOKING-PAY-REPRO-1** | Runtime repro C1 (formData lost on hard refresh) + C2 (transient error nukes cartId) | CLOSED #97. C1: `isCartLoaded &&` guard in clear-assignments effect (`checkout/index.js:188`). C2: `if (error?.status === 404)` in catch (`check-and-createcart.js:67`). Commit `cb817d9` on `develop`. | `pages/checkout/index.js:188`, `components/HOC/check-and-createcart.js:67` |
 | **CROSS-SELL-MERGE** | Merge `feat/redesign-people-also-book-cards` → `develop` | CLOSED #97. Branch confirmed fully merged (`git merge-base --is-ancestor` → FULLY MERGED). `CheckoutRelatedTrips` mounted at `checkout/index.js:1010`. All recommendation components present. Remaining work is BD inventory only → see CROSS-SELL-BD-INVENTORY. | done |
 | **SEO-SITEMAP-FIX** | Implement fixes from whole-site SEO+sitemap audit | MERGED 2026-06-12. P0+P1+P2 `1f3f7a2` merged → develop `d88f50b`, pushed. Fake reviews ×4 deleted, sitemap 128→86 URLs, noindex fixed ×5 pages, dead JSON-LD pipeline removed. Build exit 0, greps clean. **Remaining:** deploy to prod, GSC Googlebot/WAF verify (manual), nginx 301s (infra), P3 dead-code sweep. Soft-404 stays with GSC-1. | develop `d88f50b`, [[seo-sitemap-whole-site-audit-2026-06-11]] |
-| **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell | OPEN. BD task — no eng work. Needs: (1) return route Koh Lipe→Hatyai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`. | BD action |
+| **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell | OPEN. BD task — no eng work. Needs: (1) return route Koh Lipe→Hat Yai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`. **All 4 FE surfaces already live and verified 2026-06-13. GTM `item_category` + activity-detail accuracy ALSO already shipped (`hooks/useOmisePayment.js:59`+`:144`, `RelatedExperiences.js:7`) — were wrongly listed as open eng work.** Only BD inventory blocks value. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2, not urgent). See [[cross-sell-integration-status-2026-06-13]]. | BD action |
 | **BRANCH-CLEANUP-REMOTE** | 81 merged remote `origin/2606*` branches pending deletion | CLOSED #97. 42 actual branches deleted (vault count was stale). `git branch -r \| grep origin/2606 \| wc -l` → 0. `git fetch --prune` run. 45 remote branches remain (all active). | done |
 | **FRONTEND-AUDIT-FIX-1** | Audit finding 3 (Formik render-prop useEffect) | CLOSED #95. PR1 `fix/audit-checkout-passengers-hooks` (e5261ab → 1e46314). New `FormikValuesSync.js` (105 lines) absorbs both effects via useFormikContext. Rules-of-hooks invariant restored. Lint clean. | `components/forms/checkout/FormikValuesSync.js`, `Passengers.js` |
 | **FRONTEND-AUDIT-FIX-2** | Audit findings 1+2+4+5 (RTK Query) | CLOSED #95. PR2 `fix/audit-rtk-query-cleanup` (ecc76a9 → b6b956e). getSession pattern, activities key, cart-version extract, createCart single invalidation. New `store/cart-version.js` (12 lines). 3 sources of truth → 1. Lint clean. | `store/cart-version.js`, `store/cart-slice.js`, `store/api/*`, `store/index.js` |
