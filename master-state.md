@@ -4,29 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-14 (session #111 END)
+**Updated:** 2026-06-14 (session #112 END)
 
-**Achieved this session (#111) — HERO + FILTER redesign (NOT merged, on branch):**
-- **Hero search-edit redesign** (`SearchCover.js`): mobile = single OTA-style search-summary bar (`🔍 1 passenger · One Way ... Edit` → opens SearchDialog), desktop = passenger + Edit Search unified on design-system `secondary` token. "One Way" demoted from false-button pill → label. Title responsive ramp + `→` arrow (was "To"). Both buttons via `getButtonClasses('secondary')`.
-- **Merged ResultsPageHeader into hero:** "N departures" count line (no date — calendar shows it) + trust signals line (`✓ Instant Confirmation · ...` desktop-only) added to hero. Extended `hero-top-gradient` (globals.css:773) for mid-photo legibility. REMOVED `ResultsPageHeader` block from page (info now in hero).
-- **Desktop filter entry FIX** (sidebar removal left desktop with NO filter access): added "Filters" button in `TripSearchFilters` bar (Tune icon + active-count badge, brand-blue when active, divider from QuickSortPills). Filter dialog → `fullScreen={!isSmallScreen} maxWidth=sm` (centered modal desktop / fullscreen mobile). **DELETED auto-close-on-desktop effect** (was the bug killing desktop dialog).
-- **Sort dedup:** removed redundant `SortDropdown` from FilterTrip dialog + mobile bar (QuickSortPills cover all sizes). Sort = ONE component everywhere.
-- 3-agent + 2-agent design reviews ran throughout (hero spec, mobile buttons, filter entry). Many design iterations (gradient/no-gradient, photo/no-photo, top/bottom content) — landed on: keep photo, keep existing top-gradient overlay extended, content in editorial layout.
-- **Branch `feat/route-intelligence-hero`** @ `7e34d49`, PUSHED to origin. 2 commits: `9685104` (hero) + `7e34d49` (filters). NOT merged to develop.
+**Achieved this session (#112) — FILTER UX audit + transport combo card redesign:**
+- **3-agent filter UX audit** (UX + frontend arch + design systems): confirmed fare badges already live in SlideCalendar2, QuickSortPills already has all 5 sort options, dual sort system conflict (pills vs SortDropDown vocab), transport filter label mismatch ("Speedboat (Express) + Van (Standard)" not traveler-intent). Key findings: "Instant Confirmation"/"Free Cancellation" not in tripsFilterSet (backend gap), "Direct Journey" must be derived client-side, transport appears twice with different data sources.
+- **Design decision (user):** Keep top-level transport combo filter (Speedboat+Van / Ferry+Bus / Private Transfer). Hide vehicle-level mode checkboxes inside More Filters. Move transport COMBO inside More Filters only when evidence warrants.
+- **Transport combo filter redesign** (`TransportationOptionsFilter.js`): full rewrite. Pills → MUI icon mini-cards. Icons derived from type_class (DirectionsBoatFilled/AirportShuttle/DirectionsBus/DirectionsCar/Commute). Human labels drop `(Express)`/`(Standard)` suffixes. Active = brand-blue border + bg-blue-50 + checkmark badge. Hidden in prod when ≤1 combo; always shown in dev (NODE_ENV guard). "Available Transport" section header. Drag-scroll + props interface unchanged. Commit `496c74a`.
+- **Branch `feat/route-intelligence-hero`** @ `496c74a`, PUSHED. 3 commits total: `9685104` (hero) + `7e34d49` (filters) + `496c74a` (transport cards). NOT merged to develop.
 
 **Resume point (EXACT):**
-1. **TRIP-SEARCH-HERO-R2** — branch `feat/route-intelligence-hero` pushed, needs final user QA pass (mobile + desktop + round-trip legs) → merge to `develop`. Remaining R2 phases (confidence score on card, route timeline, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available) NOT started — see [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11.
-2. **Deploy to production** — R1 still unreleased: FE `develop` @ `933b1b6` / BE `develop` @ `64a2fce`, both ahead of `main`.
+1. **TRIP-SEARCH-HERO-R2** — branch `feat/route-intelligence-hero` @ `496c74a`, needs user QA (mobile + desktop + round-trip) → merge to `develop`. Remaining R2 phases (confidence score on card, route timeline, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available) NOT started — see [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11.
+2. **Deploy to production** — R1 unreleased: FE `develop` @ `933b1b6` / BE `develop` @ `64a2fce`, both ahead of `main`.
 3. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 4. KB atomization (deferred), IMG-ALT-DEBUG-1 (low), CROSS-SELL-BD-INVENTORY (BD).
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
-- Hero trust signals UNGATED — "Instant Confirmation"/"Guaranteed Connection" are contract-level, shown route-wide (minor mislead risk, accepted for now; gate later if needed).
+- Hero trust signals UNGATED — "Instant Confirmation"/"Guaranteed Connection" contract-level, shown route-wide (accepted for now).
+- Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` strings — reconcile before next sort work.
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- FE branch `feat/route-intelligence-hero` @ `7e34d49` (pushed, NOT merged) | FE `develop` @ `933b1b6` | FE `main` @ `4b65756`
+- FE branch `feat/route-intelligence-hero` @ `496c74a` (pushed, NOT merged) | FE `develop` @ `933b1b6` | FE `main` @ `4b65756`
 - BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (R1 not deployed)
 - admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
@@ -38,7 +37,7 @@
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **TRIP-SEARCH-REDESIGN (R1)** | Travel Decision Engine redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-14.** Phases 3-7 shipped + merged. FE `develop` @ `933b1b6`. BE `develop` @ `64a2fce`. Not yet on `main` — deploy pending. | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-results-redesign-2026-06-14]], [[adr-trip-confidence-score-algorithm-2026-06-14]] |
-| **TRIP-SEARCH-REDESIGN-R2** | Finish remaining ~60% of spec | **HERO+FILTER DONE on branch (#111), NOT merged.** Branch `feat/route-intelligence-hero` @ `7e34d49` pushed. DONE: hero search-edit redesign (mobile single search-bar / desktop unified secondary buttons), ResultsPageHeader merged into hero (N departures + desktop trust line, extended gradient, old block removed), desktop filter entry fix (Filters button + count badge + centered-modal dialog + deleted auto-close bug), sort dedup. Final spec evolved from original P1 (KEPT photo + existing gradient, not the gradient-shell). **NOT STARTED:** card-level phases — ConfidenceScore, RouteTimeline, TripItem upgrade, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available (P10 GATE). On-time % CUT. **Next: user QA branch (mobile+desktop+round-trip) → merge to develop → then card phases.** | [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11 |
+| **TRIP-SEARCH-REDESIGN-R2** | Finish remaining ~60% of spec | **HERO+FILTER+TRANSPORT-CARDS DONE on branch (#111+#112), NOT merged.** Branch `feat/route-intelligence-hero` @ `496c74a`. DONE: hero search-edit redesign, ResultsPageHeader merged into hero, desktop filter entry fix, sort dedup, transport combo filter → MUI icon mini-cards (human labels, prod-hidden when ≤1 combo, dev-always-visible). **NOT STARTED:** card-level phases — ConfidenceScore, RouteTimeline, TripItem upgrade, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available (P10 GATE). **Next: user QA branch → merge to develop → card phases.** | [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11 |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
 | **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
 | **PAYMENT-DEADLOCK** | Recover paid-but-unfinalized order PLB0229785 from payment_pending deadlock | **CLOSED 2026-06-13.** Fix `482cfc6` "recover paid-but-unfinalized order from payment_pending deadlock" is head of BE `main`. 278 BE tests pass. | [[payment-pending-deadlock-2026-06-12]] |
