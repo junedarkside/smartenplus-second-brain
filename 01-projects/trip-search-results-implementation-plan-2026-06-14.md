@@ -6,10 +6,11 @@
 ## Summary
 7-phase frontend implementation of the Travel Decision Engine redesign. 1 file per phase. Phase 0 (analysis) complete. Backend work required before Phase 5 + 6.
 
-## Status: Round 1 SHIPPED · Round 2 PLANNED (see below)
+## Status: Round 1 SHIPPED · Round 2 PLANNED · Round Trip UX SHIPPED (2026-06-15)
 - Phase 0: COMPLETE — vault design doc + ADR written + audited
 - Round 1 (phases 3-7): SHIPPED + MERGED to `develop` 2026-06-14
 - Round 2 (11 small phases): PLANNED, backend-verified — awaiting execution
+- **Round Trip UX fixes: SHIPPED to `develop` 2026-06-15** — see section below
 
 ---
 
@@ -83,6 +84,69 @@ Live screenshot confirmed photo hero eats entire first screen (~540px before res
 **Files:** new `components/trips/RouteIntelligenceHero.js`; `FilterTripsPage.js` (swap `DynamicSearchCover`→hero, pass trips-derived stats); `ResultsPageHeader.js` (→chips only, Phase 2). Keep `SearchCover`/`FeaturedImageHeader` untouched (homepage/other pages).
 
 **3-agent review record (2026-06-14):** FE-arch + UX + BE-data. Consensus: route viz blocked (per-contract timeline), confidence/trust/insight cut (no data / per-contract / fake), real route-level data = price + count + duration-range. New component not edits (SearchCover at 220-line limit, FeaturedImageHeader carries dead image machinery).
+
+---
+
+---
+
+## Round Trip UX Fixes — SHIPPED 2026-06-15
+
+4 commits on `develop`. FE `develop` @ `a3c328a`.
+
+### Problems fixed
+
+**1. `TripProgressIndicator` caused vertical stack bloat**
+- Was a full card (`bg-white border shadow rounded-lg p-3`) = 44px of vertical space for 3 dots + label
+- Grill+scrutinize debate: collapse into breadcrumb row (same horizontal line, right-aligned)
+- Result: −44px before calendar on both desktop and mobile
+- Files: `FilterTripsPage.js` + `TripProgressIndicator.js`
+- Commits: `51dd135` (width fix) · `da00290` (collapse into breadcrumb row) · `53a85cc` (restore mobile icons)
+
+**2. Hero showed wrong route during return step**
+- `SearchCover` always received `fromSearch`/`toSearch` (URL slug, never reversed)
+- During return step, trips fetched were `Koh Lipe → Hatyai` but hero showed `Hatyai → Koh Lipe`
+- Fix: pass `activeFrom`/`activeTo` — swap props when `isReturnJourneyActive`
+- `SearchCover` sets display state from props (not Redux) → Redux untouched, edit-search works correctly
+- File: `FilterTripsPage.js:211-212`
+- Commit: `a3c328a`
+
+**3. Width inconsistency on `TripProgressIndicator`**
+- Old: `md:mx-3` only — missing `mx-2` (mobile) and `xl:mx-0` (wide desktop)
+- Sibling pattern: `mx-2 md:mx-3 xl:mx-0` (from `SlideCalendar2`, `QuickSortPills` row)
+- Also: conflicting `px-2 md:px-0` wrapper div in `FilterTripsPage` fighting component's own margin
+- Fix: align to sibling pattern, remove wrapper div
+- Commit: `51dd135`
+
+**4. Review label visible on desktop + mobile simultaneously**
+- `"Review & Pay"` span missing `md:hidden` — showed alongside `"Review Booking & Proceed to Payment"` on desktop
+- Fix: add `md:hidden` to match outbound/return label pattern
+- Commit: `51dd135`
+
+### New `TripProgressIndicator` design
+
+Mobile: icon (arrow/grid/cart) + step counter `1/3` — inline right side of breadcrumb row  
+Desktop: filled dots `●●○` + label text — inline right side of breadcrumb row  
+No card chrome. No separate section. Zero added vertical space.
+
+### Decisions NOT implemented (debated + rejected)
+
+| Proposal | Rejected reason |
+|---|---|
+| `SelectedOutboundSummary` card (outbound trip details during return step) | Reverted — user requested redesign first. Data source confirmed: `useCheckCartIdQuery → cart_item[0].contract.trip.{route_route,departure_time,traveling_date}`. Ready to implement when UX direction confirmed. |
+| "RETURN DATE" label on `SlideCalendar2` | Deferred with summary card — both are return-step context improvements |
+| Airline-style stepper rebuild (`✓────●`) | Cut — cosmetic only, current dots already communicate progress |
+| Hero "Step 2 of 2" | Cut — codebase is 3-step model. "2 of 2" would break review step |
+
+### Open: `SelectedOutboundSummary`
+
+When ready to implement:
+- Gate: `routeParams.isReturnJourneyActive && routeParams.isReady`
+- Insert: `FilterTripsPage.js` between `TripProgressIndicator` row and `TripSearchFilters`
+- Data: `useCheckCartIdQuery({ cartId })` → `cart_item.find(i => i.contract?.trip?.departure_time)`
+- Fields: `item.contract.trip.route_route`, `item.traveling_date`, `item.contract.trip.departure_time`
+- Formatters: `formatDate` from `helpers/formatDate.js`
+- States: `!cartId` → null | loading → skeleton `h-16 animate-pulse` | no item → null | success → green card
+- Same component mobile + desktop (no separate layout)
 
 ---
 
