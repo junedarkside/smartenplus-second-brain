@@ -6,10 +6,10 @@
 ## Summary
 7-phase frontend implementation of the Travel Decision Engine redesign. 1 file per phase. Phase 0 (analysis) complete. Backend work required before Phase 5 + 6.
 
-## Status: Round 1 SHIPPED · Round 2 PLANNED · Round Trip UX SHIPPED (2026-06-15)
+## Status: Round 1 SHIPPED · Round 2 IN PROGRESS · Round Trip UX SHIPPED (2026-06-15)
 - Phase 0: COMPLETE — vault design doc + ADR written + audited
 - Round 1 (phases 3-7): SHIPPED + MERGED to `develop` 2026-06-14
-- Round 2 (11 small phases): PLANNED, backend-verified — awaiting execution
+- Round 2: IN PROGRESS — P2 DONE, P1/P7/P8 CUT, P3-6/P9-11 pending
 - **Round Trip UX fixes: SHIPPED to `develop` 2026-06-15** — see section below
 
 ---
@@ -34,27 +34,27 @@ Proper model+serializer read changed the feasibility map:
 - **Seats-available — 1 small BE method, real data.** `vehicle_seat` − confirmed `BookingItem` for `traveling_date`. Exact pattern exists: `TimeSlot.get_current_bookings(date)` (`operators/models.py:898`). Gated on passing `date` into serializer context cleanly.
 - **On-time % — CUT.** No field/signal anywhere in models. Would be fake.
 
-### Round 2 — 11 small phases (top→bottom of page)
-Ordered by visual position. One section per phase, commit + browser-verify each. Builds shared components (P2/P4/P5) before consumers (P6/P8).
+### Round 2 — Status updated 2026-06-15
 
-| # | Phase | Position | BE? |
-|---|-------|----------|-----|
-| 1 | **RouteIntelligenceHero** (replace photo hero) — FINAL SPEC below | top | no — **GATE: user visual check** |
-| 2 | Extract `TrustChipRow.js` from `ResultsPageHeader` + reduce header to chips only | header | no |
-| 3 | Trip-count on active date tab ("32 trips") | calendar | no (optional/quick) |
-| 4 | `ConfidenceScore.js` component | shared | no |
-| 5 | `RouteTimeline.js` (reuse detail-page one if exists) | shared | no |
-| 6 | Trip card upgrade: score+route+trust+price typography | results | no |
-| 7 | Fix `BookedCounter` `/10` → real counts | card | no |
-| 8 | `RecommendedTripCard.js` hero above list | above results | no |
-| 9 | `TravelInsight.js` + `getRouteInsight.js` (monsoon/hour rules) | above results | no |
-| 10 | `seats_available` BE method + "N seats left" FE | card | **yes — GATE: date-context** |
-| 11 | SEO content order check (likely no-op) | bottom | no |
+| # | Phase | Status | Note |
+|---|-------|--------|------|
+| 1 | **RouteIntelligenceHero** | ~~NO NEED~~ — CUT | Photo hero (`SearchCover`) kept. Not replacing. |
+| 2 | Remove desktop sidebar from `TripsPageLayout` | ✅ DONE | Confirmed in code — single-column, no `aside`. |
+| 3 | Trip-count on active date tab | pending | Optional/quick |
+| 4 | `ConfidenceScore.js` component | pending | |
+| 5 | `RouteTimeline.js` | pending | |
+| 6 | Trip card upgrade: score+route+trust+price typography | pending | |
+| 7 | Fix `BookedCounter` `/10` → real counts | ~~NO NEED~~ — CUT | `/10` hack accepted as-is. `booked_count` default=10 seed makes real counts misleading anyway. |
+| 8 | `RecommendedTripCard.js` | ~~NO NEED~~ — CUT | Scope reduced. Top Pick badge (Round 1) sufficient. |
+| 9 | `TravelInsight.js` + `getRouteInsight.js` | pending | |
+| 10 | `seats_available` BE + "N seats left" FE | pending | BE gate |
+| 11 | SEO content order check | pending | Likely no-op |
 
-**Dropped:** on-time % (no data), comparison tabs (pills cover it), full hero removal (gated).
+**Remaining unblocked:** P3, P4, P5, P6, P9, P11
+**BE gate:** P10 only
+**Cut:** P1 (hero), P7 (BookedCounter), P8 (RecommendedCard)
+
 **Principles:** reuse-first, no tech debt, no fake metrics, small components.
-**Branches:** FE **`feat/route-intelligence-hero`** (active, P1a), BE `feat/seats-available` (only if P10).
-**Workflow:** commit at each phase as checkpoint; USER VISUAL-CHECKS before any gate passes.
 
 ---
 
