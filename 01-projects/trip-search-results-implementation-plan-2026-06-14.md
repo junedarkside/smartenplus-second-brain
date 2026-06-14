@@ -6,10 +6,10 @@
 ## Summary
 7-phase frontend implementation of the Travel Decision Engine redesign. 1 file per phase. Phase 0 (analysis) complete. Backend work required before Phase 5 + 6.
 
-## Status: Round 1 SHIPPED · Round 2 IN PROGRESS · Round Trip UX SHIPPED (2026-06-15)
+## Status: Round 1 SHIPPED · Round 2 NEARLY DONE · Round Trip UX SHIPPED (2026-06-15)
 - Phase 0: COMPLETE — vault design doc + ADR written + audited
 - Round 1 (phases 3-7): SHIPPED + MERGED to `develop` 2026-06-14
-- Round 2: IN PROGRESS — P2 DONE, P1/P7/P8 CUT, P3-6/P9-11 pending
+- Round 2: P2 DONE · P1/P3/P4/P5/P7/P8/P9/P10 CUT · **P6 + P11 remaining**
 - **Round Trip UX fixes: SHIPPED to `develop` 2026-06-15** — see section below
 
 ---
@@ -41,18 +41,17 @@ Proper model+serializer read changed the feasibility map:
 | 1 | **RouteIntelligenceHero** | ~~NO NEED~~ — CUT | Photo hero (`SearchCover`) kept. Not replacing. |
 | 2 | Remove desktop sidebar from `TripsPageLayout` | ✅ DONE | Confirmed in code — single-column, no `aside`. |
 | 3 | Trip-count on active date tab | ~~NO NEED~~ — CUT | `N departures` already shown in `SearchCover` hero. Duplicate. |
-| 4 | `ConfidenceScore.js` component | pending | |
-| 5 | `RouteTimeline.js` | pending | |
-| 6 | Trip card upgrade: score+route+trust+price typography | pending | |
-| 7 | Fix `BookedCounter` `/10` → real counts | ~~NO NEED~~ — CUT | `/10` hack accepted as-is. `booked_count` default=10 seed makes real counts misleading anyway. |
-| 8 | `RecommendedTripCard.js` | ~~NO NEED~~ — CUT | Scope reduced. Top Pick badge (Round 1) sufficient. |
-| 9 | `TravelInsight.js` + `getRouteInsight.js` | pending | |
-| 10 | `seats_available` BE + "N seats left" FE | pending | BE gate |
-| 11 | SEO content order check | pending | Likely no-op |
+| 4 | `ConfidenceScore.js` component | ~~NO NEED~~ — CUT | No consumer (P8 cut). If ever needed, inline 6 lines in `TripItem`. No new file. |
+| 5 | `RouteTimeline.js` | ~~NO NEED~~ — CUT | `JourneyTimeline` exists but booking-detail scale. `TripItem` already has `TransportItems`. Third route repr = over-engineering. |
+| 6 | Trip card upgrade: score+route+trust+price typography | pending | Needs scoping — most already in `TripItem` |
+| 7 | Fix `BookedCounter` `/10` → real counts | ~~NO NEED~~ — CUT | `booked_count` default=10 seed makes real counts misleading. |
+| 8 | `RecommendedTripCard.js` | ~~NO NEED~~ — CUT | Top Pick badge (Round 1) sufficient. |
+| 9 | `TravelInsight.js` + `getRouteInsight.js` | ~~NO NEED~~ — CUT | No API field backs this. Fake data / hardcoded strings = no fake metrics rule. |
+| 10 | `seats_available` BE + "N seats left" FE | ~~NO NEED~~ — CUT | Deferred indefinitely. BE complexity not justified now. |
+| 11 | SEO content order check | pending | Quick grep, non-destructive |
 
-**Remaining unblocked:** P4, P5, P6, P9, P11
-**BE gate:** P10 only
-**Cut:** P1 (hero), P3 (trip-count duplicate), P7 (BookedCounter), P8 (RecommendedCard)
+**Remaining:** P6 (needs scoping), P11 (quick check)
+**Cut:** P1, P3, P4, P5, P7, P8, P9, P10
 
 **Principles:** reuse-first, no tech debt, no fake metrics, small components.
 
