@@ -4,26 +4,43 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-13 (session #109 starts here)
+**Updated:** 2026-06-14 (session #110 END)
 
-**Achieved last session (#108):**
-- Cross-sell audit COMPLETE — all 4 surfaces live + verified. GTM `item_category` + activity-detail accuracy already shipped (vault was stale). Stale atoms corrected. See [[cross-sell-integration-status-2026-06-13]].
-- Carried items VERIFIED CLOSED: PAYMENT-FIX (FE `dae26da`, BE `5653b04`), PAYMENT-DEADLOCK (`482cfc6`), DESIGN-SYSTEM-PHASE-1 (`designSystem.js:149-210`).
-- Design system token migration shipped: `489de5f`+`b5ce878`+`4b65756`.
-- KB atomization deferred to next `/lint-vault`.
+**Achieved this session (#110):**
+- **TRIP-SEARCH-REDESIGN — Phases 3-7 COMPLETE + MERGED.**
+  - Phase 3: `ResultsPageHeader` — route title + departure count + trust chips
+  - Phase 4: Fare calendar price badges on all 7 date tabs (±7 day range, skeleton loading, advance_hr-aware)
+  - Phase 5: `QuickSortPills` — horizontal sort shortcuts (Recommended/Cheapest/Fastest/EarlyDeparture/TopRated)
+  - Phase 6: Top Pick badge on #1 recommended card (green BadgeChip + emerald border)
+  - Phase 7: Design polish — outlined icon trust chips, brand-blue sort pills, badge inside card
+- **Bugs fixed this session:**
+  - `FareCalendarViewSet` ignoring `advance_hr` booking cutoff → fixed (`products/views.py`)
+  - Operator dedup first-wins → cheapest-wins per operator
+  - `min_display_rate`: JOIN=ADULT rate, PRIVATE/CHARTER=VEHICLE rate
+  - Calendar `selectHandler`: debug console.logs removed, `updateCurrentDate` outside `updateRedux` guard
+  - Hydration error: `getOptimalImageQuality()` server=85 vs client=75 → replaced with constant `quality={75}`
+  - Top Pick badge: `computeConfidenceScore > 0` guard too strict for dev data → removed
+  - TRUST-BADGE-BUG: `refund_percentage === 0` → `=== 100` in `getTrustBadges.js:19` ✅ CLOSED
+- **Both repos merged to `develop`:**
+  - FE `develop` @ `933b1b6` (Merge feat/trip-search-redesign)
+  - BE `develop` @ `64a2fce` (Merge fix/dev-throttle-limits)
+- **Both `develop` branches ahead of `main`** — not yet deployed to production.
 
 **Resume point (EXACT):**
-1. **AT-1 — Airport Transfer redesign (P0)** — only P0 open eng item. Spec: `03-knowledge/transportation-category-audit`. Primary file `AirportTransferRouteCard.js`. **Start here.**
-2. **KB atomization (DEFERRED)** — 12 KB gaps from payment deep-review. Batch with next `/lint-vault`. M8 in [[payment-backend-charge-flow]] §5 accurate.
-3. **IMG-ALT-DEBUG-1** — HMR cross-module callback staleness. Low priority. Atom: [[nextjs-hmr-cross-module-callback-staleness]].
-4. **Item 2** (Delete RefundViewSet) — waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs.
-5. **CROSS-SELL-BD-INVENTORY** — BD task, no eng work. Multi-item post-booking = Sprint 2.
+1. **Deploy to production** — merge both `develop` → `main`, trigger deploy. FE has 14+ commits unreleased. BE has 4 commits unreleased (FareCalendar, advance_hr, throttle fix).
+2. **AT-1 — Airport Transfer redesign (P0)** — next eng track. Spec: `03-knowledge/transportation-category-audit`. File `AirportTransferRouteCard.js`.
+3. **KB atomization (DEFERRED)** — 12 KB gaps from payment deep-review. Batch with next `/lint-vault`.
+4. **IMG-ALT-DEBUG-1** — HMR cross-module callback staleness. Low priority.
+5. **CROSS-SELL-BD-INVENTORY** — BD task, no eng work.
+
+**Carry-forward bugs (open):**
+- `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- BE `main` @ `482cfc6` (untracked docs only — separate work)
-- FE `main` @ `4b65756` (clean)
-- admin-dashboard: `main` @ `4a6c03b` (untracked docs — separate work)
+- FE `develop` @ `933b1b6` | FE `main` @ `4b65756` (not yet deployed)
+- BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (not yet deployed)
+- admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
 
 ---
@@ -32,6 +49,8 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **TRIP-SEARCH-REDESIGN** | Travel Decision Engine redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-14.** Phases 3-7 shipped + merged. FE `develop` @ `933b1b6`. BE `develop` @ `64a2fce`. Not yet on `main` — deploy pending. | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-results-redesign-2026-06-14]], [[adr-trip-confidence-score-algorithm-2026-06-14]] |
+| **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
 | **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
 | **PAYMENT-DEADLOCK** | Recover paid-but-unfinalized order PLB0229785 from payment_pending deadlock | **CLOSED 2026-06-13.** Fix `482cfc6` "recover paid-but-unfinalized order from payment_pending deadlock" is head of BE `main`. 278 BE tests pass. | [[payment-pending-deadlock-2026-06-12]] |
 | **DESIGN-SYSTEM-PHASE-1** | Token completion (audit 2026-06-13) | **CLOSED 2026-06-13.** OPACITY, Z_INDEX, TRANSITIONS, LAYOUT, SIDEBAR_CONFIG added (`helpers/designSystem.js:149-210`); token migration FE `489de5f`+`b5ce878` (18 files). Residual gaps (typography line-height/letter-spacing, 4 stray `#fff` in globals.css) trivial — untracked. | [[design-system-audit-2026-06-13]] |

@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-14] session-end #110 | trip-search-redesign phases 3-7 shipped + merged — ResultsPageHeader, fare calendar price badges (±7d), QuickSortPills, Top Pick badge, design polish. 5 bugs fixed (advance_hr, operator dedup, min_display_rate, hydration quality, computeConfidenceScore guard). TRUST-BADGE-BUG closed. FE+BE both on `develop`, not yet deployed.
+
 ## [2026-06-13] session-end #107 | checkout payment step width fix — `md:m-2` caused 16px horizontal indent on PaymentMethodSelector/QRPaymentForm/PendingChargeNotice vs `my-2` on all other steps. Fixed in `c55f6a1` (3 files, pushed to FE `develop`). Also standardized `md:rounded-md` → `rounded`.
 
 
