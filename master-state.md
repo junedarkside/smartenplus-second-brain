@@ -4,21 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-14 (session #113 END)
+**Updated:** 2026-06-15 (session #114 END)
 
-**Achieved this session (#113) — Calendar strip redesign + skeleton mobile width fix:**
-- **3-agent calendar UX review** (UX + designer + frontend): audit of `SlideCalendar2.js` date strip. Confirmed 4-row tab label (day / date / price / badge) too dense/ugly. Redesign spec: 2-row (merged day+date as `EEE d`, price below), selected = filled card, cheapest = green price, no separate badge row.
-- **Calendar strip redesign** (`SlideCalendar2.js`): 4-row tab → 2-row. `format(day, 'EEE d')` merges day+date. Price row `text-[13px] font-semibold`. MUI indicator hidden. Selected tab sx: bg `#EFF6FF`, border `1.5px solid #3b5998`, `margin: 4px 2px`. Price color: selected=brand blue, cheapest=green `#059669`, default=gray. `isCheapest` via `Math.min(...visibleFares)`, hidden when all same price. Commit `ce4a934`.
-- **Transport card focus ring fix**: removed `focus:ring-2 focus:ring-offset-2` (double-ring AI CSS). Kept `focus:outline-none` only. Scroll container `py-1` (was `pb-1`) to prevent top border clip. Commit `ce4a934`.
-- **Skeleton width mismatch fix** (`TripSearchResults.js`): inline `DynamicTripsPageLayout` loading fallback was full-viewport-width on mobile (no side margins). Added `mx-2 md:mx-3 xl:mx-0` to outer loading div, removed `max-w-[880px] mx-auto` from individual card + gallery divs. Now matches `TripsPageLayout` + real card margins. Commit `3d33ba6`.
-- **SkeletonSection margins** (`SkeletonSection.js`): removed `ml-1 mr-1 md:mr-3` from skeleton card divs. **TripsPageLayout** skeleton container: `gap-1` → `gap-3` to match real card list gap.
-- **Branch `feat/route-intelligence-hero`** @ `3d33ba6`, PUSHED. 5 commits total. NOT merged to develop.
+**Achieved this session (#114) — Round-trip UX fixes + TripProgressIndicator collapse:**
+- **TripProgressIndicator collapse** (`TripProgressIndicator.js` + `FilterTripsPage.js`): removed standalone 44px card section. Merged inline into breadcrumb row (flex justify-between). All card chrome stripped. Desktop: dot progress + label text. Mobile: step icon (arrow/grid/cart SVG) + counter `1/3`. Commits `53a85cc`, `51dd135`.
+- **Width consistency fix**: `TripProgressIndicator` now matches standard sibling pattern `mx-2 md:mx-3 xl:mx-0`. Removed conflicting `px-2 md:px-0` wrapper. Commit `51dd135`.
+- **Hero route fix during return step** (`FilterTripsPage.js:211-212`): `SearchCover` now receives swapped `initialFromLocation`/`initialToLocation` when `isReturnJourneyActive`. Commit `a3c328a`. Merged to `develop`.
+- **Round 2 scope audit** (grill+scrutinize): P1 hero ✓, P2 sidebar ✓, P3/P4/P5/P7/P8/P9/P10 CUT. P6 (trip card upgrade) needs scoping. P11 (SEO content order) quick grep.
+- **SelectedOutboundSummary** debated + data path confirmed → reverted at user request. Plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Gate: `isReturnJourneyActive`. Data: `useCheckCartIdQuery → cart_item[0].contract.trip.{route_route, departure_time, traveling_date}`.
+- **Branch `feat/route-intelligence-hero`** merged → `develop` @ `a3c328a`.
 
 **Resume point (EXACT):**
-1. **TRIP-SEARCH-HERO-R2** — branch `feat/route-intelligence-hero` @ `3d33ba6`, needs user QA (mobile + desktop + round-trip) → merge to `develop`. Remaining R2 phases (confidence score on card, route timeline, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available) NOT started — see [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11.
-2. **Deploy to production** — R1 unreleased: FE `develop` @ `933b1b6` / BE `develop` @ `64a2fce`, both ahead of `main`.
-3. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
-4. KB atomization (deferred), IMG-ALT-DEBUG-1 (low), CROSS-SELL-BD-INVENTORY (BD).
+1. **P6 — Trip card upgrade**: scope what's actually missing in `TripItem` vs spec. Most already present: `BadgeChip`, `BookedCounter`, `getMainPrice`, `TransportItems`, `TripCard`. Investigate before implementing.
+2. **P11 — SEO content order**: quick grep, likely no-op.
+3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Implement when user confirms.
+4. **Deploy to production** — FE `develop` @ `a3c328a` / BE `develop` @ `64a2fce`, both ahead of `main`.
+5. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -27,7 +28,7 @@
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- FE branch `feat/route-intelligence-hero` @ `3d33ba6` (pushed, NOT merged) | FE `develop` @ `933b1b6` | FE `main` @ `4b65756`
+- FE `develop` @ `a3c328a` | FE `main` @ `4b65756`
 - BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (R1 not deployed)
 - admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
