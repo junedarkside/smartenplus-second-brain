@@ -40,7 +40,7 @@ Proper model+serializer read changed the feasibility map:
 |---|-------|--------|------|
 | 1 | **RouteIntelligenceHero** | ~~NO NEED~~ — CUT | Photo hero (`SearchCover`) kept. Not replacing. |
 | 2 | Remove desktop sidebar from `TripsPageLayout` | ✅ DONE | Confirmed in code — single-column, no `aside`. |
-| 3 | Trip-count on active date tab | pending | Optional/quick |
+| 3 | Trip-count on active date tab | ~~NO NEED~~ — CUT | `N departures` already shown in `SearchCover` hero. Duplicate. |
 | 4 | `ConfidenceScore.js` component | pending | |
 | 5 | `RouteTimeline.js` | pending | |
 | 6 | Trip card upgrade: score+route+trust+price typography | pending | |
@@ -50,9 +50,9 @@ Proper model+serializer read changed the feasibility map:
 | 10 | `seats_available` BE + "N seats left" FE | pending | BE gate |
 | 11 | SEO content order check | pending | Likely no-op |
 
-**Remaining unblocked:** P3, P4, P5, P6, P9, P11
+**Remaining unblocked:** P4, P5, P6, P9, P11
 **BE gate:** P10 only
-**Cut:** P1 (hero), P7 (BookedCounter), P8 (RecommendedCard)
+**Cut:** P1 (hero), P3 (trip-count duplicate), P7 (BookedCounter), P8 (RecommendedCard)
 
 **Principles:** reuse-first, no tech debt, no fake metrics, small components.
 
