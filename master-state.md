@@ -4,16 +4,18 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-14 (session #112 END)
+**Updated:** 2026-06-14 (session #113 END)
 
-**Achieved this session (#112) — FILTER UX audit + transport combo card redesign:**
-- **3-agent filter UX audit** (UX + frontend arch + design systems): confirmed fare badges already live in SlideCalendar2, QuickSortPills already has all 5 sort options, dual sort system conflict (pills vs SortDropDown vocab), transport filter label mismatch ("Speedboat (Express) + Van (Standard)" not traveler-intent). Key findings: "Instant Confirmation"/"Free Cancellation" not in tripsFilterSet (backend gap), "Direct Journey" must be derived client-side, transport appears twice with different data sources.
-- **Design decision (user):** Keep top-level transport combo filter (Speedboat+Van / Ferry+Bus / Private Transfer). Hide vehicle-level mode checkboxes inside More Filters. Move transport COMBO inside More Filters only when evidence warrants.
-- **Transport combo filter redesign** (`TransportationOptionsFilter.js`): full rewrite. Pills → MUI icon mini-cards. Icons derived from type_class (DirectionsBoatFilled/AirportShuttle/DirectionsBus/DirectionsCar/Commute). Human labels drop `(Express)`/`(Standard)` suffixes. Active = brand-blue border + bg-blue-50 + checkmark badge. Hidden in prod when ≤1 combo; always shown in dev (NODE_ENV guard). "Available Transport" section header. Drag-scroll + props interface unchanged. Commit `496c74a`.
-- **Branch `feat/route-intelligence-hero`** @ `496c74a`, PUSHED. 3 commits total: `9685104` (hero) + `7e34d49` (filters) + `496c74a` (transport cards). NOT merged to develop.
+**Achieved this session (#113) — Calendar strip redesign + skeleton mobile width fix:**
+- **3-agent calendar UX review** (UX + designer + frontend): audit of `SlideCalendar2.js` date strip. Confirmed 4-row tab label (day / date / price / badge) too dense/ugly. Redesign spec: 2-row (merged day+date as `EEE d`, price below), selected = filled card, cheapest = green price, no separate badge row.
+- **Calendar strip redesign** (`SlideCalendar2.js`): 4-row tab → 2-row. `format(day, 'EEE d')` merges day+date. Price row `text-[13px] font-semibold`. MUI indicator hidden. Selected tab sx: bg `#EFF6FF`, border `1.5px solid #3b5998`, `margin: 4px 2px`. Price color: selected=brand blue, cheapest=green `#059669`, default=gray. `isCheapest` via `Math.min(...visibleFares)`, hidden when all same price. Commit `ce4a934`.
+- **Transport card focus ring fix**: removed `focus:ring-2 focus:ring-offset-2` (double-ring AI CSS). Kept `focus:outline-none` only. Scroll container `py-1` (was `pb-1`) to prevent top border clip. Commit `ce4a934`.
+- **Skeleton width mismatch fix** (`TripSearchResults.js`): inline `DynamicTripsPageLayout` loading fallback was full-viewport-width on mobile (no side margins). Added `mx-2 md:mx-3 xl:mx-0` to outer loading div, removed `max-w-[880px] mx-auto` from individual card + gallery divs. Now matches `TripsPageLayout` + real card margins. Commit `3d33ba6`.
+- **SkeletonSection margins** (`SkeletonSection.js`): removed `ml-1 mr-1 md:mr-3` from skeleton card divs. **TripsPageLayout** skeleton container: `gap-1` → `gap-3` to match real card list gap.
+- **Branch `feat/route-intelligence-hero`** @ `3d33ba6`, PUSHED. 5 commits total. NOT merged to develop.
 
 **Resume point (EXACT):**
-1. **TRIP-SEARCH-HERO-R2** — branch `feat/route-intelligence-hero` @ `496c74a`, needs user QA (mobile + desktop + round-trip) → merge to `develop`. Remaining R2 phases (confidence score on card, route timeline, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available) NOT started — see [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11.
+1. **TRIP-SEARCH-HERO-R2** — branch `feat/route-intelligence-hero` @ `3d33ba6`, needs user QA (mobile + desktop + round-trip) → merge to `develop`. Remaining R2 phases (confidence score on card, route timeline, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available) NOT started — see [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11.
 2. **Deploy to production** — R1 unreleased: FE `develop` @ `933b1b6` / BE `develop` @ `64a2fce`, both ahead of `main`.
 3. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 4. KB atomization (deferred), IMG-ALT-DEBUG-1 (low), CROSS-SELL-BD-INVENTORY (BD).
@@ -25,7 +27,7 @@
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- FE branch `feat/route-intelligence-hero` @ `496c74a` (pushed, NOT merged) | FE `develop` @ `933b1b6` | FE `main` @ `4b65756`
+- FE branch `feat/route-intelligence-hero` @ `3d33ba6` (pushed, NOT merged) | FE `develop` @ `933b1b6` | FE `main` @ `4b65756`
 - BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (R1 not deployed)
 - admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
@@ -37,7 +39,7 @@
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **TRIP-SEARCH-REDESIGN (R1)** | Travel Decision Engine redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-14.** Phases 3-7 shipped + merged. FE `develop` @ `933b1b6`. BE `develop` @ `64a2fce`. Not yet on `main` — deploy pending. | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-results-redesign-2026-06-14]], [[adr-trip-confidence-score-algorithm-2026-06-14]] |
-| **TRIP-SEARCH-REDESIGN-R2** | Finish remaining ~60% of spec | **HERO+FILTER+TRANSPORT-CARDS DONE on branch (#111+#112), NOT merged.** Branch `feat/route-intelligence-hero` @ `496c74a`. DONE: hero search-edit redesign, ResultsPageHeader merged into hero, desktop filter entry fix, sort dedup, transport combo filter → MUI icon mini-cards (human labels, prod-hidden when ≤1 combo, dev-always-visible). **NOT STARTED:** card-level phases — ConfidenceScore, RouteTimeline, TripItem upgrade, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available (P10 GATE). **Next: user QA branch → merge to develop → card phases.** | [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11 |
+| **TRIP-SEARCH-REDESIGN-R2** | Finish remaining ~60% of spec | **HERO+FILTER+TRANSPORT-CARDS+CALENDAR+SKELETON DONE on branch (#111-#113), NOT merged.** Branch `feat/route-intelligence-hero` @ `3d33ba6`. DONE: hero search-edit redesign, ResultsPageHeader merged into hero, desktop filter entry fix, sort dedup, transport combo filter → MUI icon mini-cards (human labels, prod-hidden when ≤1 combo, dev-always-visible), calendar strip 4→2 row (merged day+date, cheapest=green, filled selected card), skeleton mobile width fix (both skeletons now match real card mx). **NOT STARTED:** card-level phases — ConfidenceScore, RouteTimeline, TripItem upgrade, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available (P10 GATE). **Next: user QA branch → merge to develop → card phases.** | [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11 |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
 | **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
 | **PAYMENT-DEADLOCK** | Recover paid-but-unfinalized order PLB0229785 from payment_pending deadlock | **CLOSED 2026-06-13.** Fix `482cfc6` "recover paid-but-unfinalized order from payment_pending deadlock" is head of BE `main`. 278 BE tests pass. | [[payment-pending-deadlock-2026-06-12]] |
