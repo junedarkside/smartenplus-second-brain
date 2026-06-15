@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #118 — 2026-06-15 — Min-rate bug investigation + fixes FE+BE:**
+- **FE `fix/min-rate-bugs`** merged → `develop` @ `a95a241`. 4 fixes: stale fareCalendar on calendar scroll, off-by-one minFare threshold, allSame false-positive, homepage route filter.
+- **BE `fix/popular-routes-lowest-price`** pushed @ `4da0b81`. Root cause: single `lowest_price` subquery had no type/ratecard filter → PRIVATE/CHARTER VEHICLE rates leaked in. Fix: two subqueries + `Least()` + sentinel. **NOT YET MERGED to develop.**
+- New atom: [[popular-routes-lowest-price-farecalendar-parity]].
+
+---
+
 ## Session #116 (archived 2026-06-15)
 
 **Updated:** 2026-06-15 (trip-page currency-context fix addendum)

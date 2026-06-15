@@ -4,42 +4,36 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-15 (session #118 END)
+**Updated:** 2026-06-16 (session #119 END)
 
-**Achieved this session (#118) — Min-rate bug investigation + fixes FE+BE:**
-- **FE `fix/min-rate-bugs`** merged → `develop` @ `a95a241`. 4 fixes: stale fareCalendar on calendar scroll (`onCenterDateChange` prop in `SlideCalendar2` + `calendarCenterDate` state in `TripSearchFilters`), off-by-one minFare threshold (`>= 1`), allSame false-positive (`visibleFares.length > 1` guard), homepage route filter (`lowest_price > 0`).
-- **BE `fix/popular-routes-lowest-price`** pushed @ `4da0b81`. Root cause: single `lowest_price` subquery had no type/ratecard filter → PRIVATE/CHARTER VEHICLE rates leaked in. Fix: two subqueries (JOIN/ADULT + PRIVATE/CHARTER/VEHICLE) + `Least()` + sentinel 999999999. Mirrors `FareCalendarViewSet.list` display_rates logic exactly. **NOT YET MERGED to develop.**
-- New atom: [[popular-routes-lowest-price-farecalendar-parity]].
+**Achieved this session (#119) — Trip-detail SEO/AEO/GEO audit + full implementation:**
+- **3-specialist audit** of `/trips/detail/[...slug]` (transport). 25 raw → 18 unique findings, 7 HIGH. Cross-cut root cause: `TripDetailSEO.js` docstring claimed schema it never rendered (Product only). Scrutiny pass corrected malformed-offers HIGH→MED. Vault: `r1-seo`, `r1-aeo`, `r1-geo`, `r2-leader-synthesis`.
+- **Grill + implementation plan** locked: mirror day-trip server-side SEO pattern, 7 HIGH only, GEO signal-only, ISR schema price. Plan: `r3-implementation-plan`.
+- **3-agent implementation team** (parallel A+B → sequential C): new `helpers/seo/tripDetailSEOUtils.js` (126 lines, 5 exports), `TripDetailContent.js` prose fix, `TripDetailSEO.js` rewritten (67→35 lines), `getStaticProps` wired, `useTripSEO.js` deleted (244 lines). 5 files, +185/-347 net.
+- **Merged** `feat/trip-detail-seo-aeo-geo-fix` → develop `ca490ee`, pushed.
+- **Re-audit** (3 specialists): 7/7 HIGH PASS. 1 PARTIAL (TouristTrip `@context`/`@type` duplicate key). Fixed immediately → `bddb1c0`.
+- **Vault closed**: `r4-re-audit-post-impl`, index CLOSED, log updated. New atom: [[trip-detail-server-side-seo-pattern]].
 
-**Achieved prior session (#117) — Trip page audit + currency fix merged to develop:**
-- **`fix/trip-page-audit-2026-06-15`** merged → `develop` @ `f018e02`. 4 commits landed: crash guards/XSS/dead code/perf, SEO/AEO/GEO audit fixes, checkbox filter fix (operators/conditions/amenities), hardcoded THB/฿ → `useFormatPrice()` currency-aware.
-- Dead files deleted: `tripItemv2.js` (277 lines), `TripList.js` (58 lines), `RouteFaqs.js` (31 lines). 15 files changed, 420 deletions.
-- FE `develop` pushed @ `f018e02`. Branch `fix/trip-page-audit-2026-06-15` pushed @ `c37437a`.
-
-**Achieved prior session (#116) — Trip-page currency-context fix (addendum to #115 audit):**
-- **CC1 `SlideCalendar2.js:977`** — hardcoded `฿{dayFare.toLocaleString()}` → `useFormatPrice()`. Calendar now converts with `CurrencyContext` matching trip cards + booking bar.
-- **CC2 `TripSummary.js:35`** — hardcoded `from THB {minPrice.toLocaleString()}` → `useFormatPrice()`. "Departures by Operator" rows now currency-aware.
-- **CC3 `TripSummary.js:91` JSON-LD** — `priceCurrency: 'THB'` intentionally unchanged. Schema describes merchant offer, not viewer display. See [[currency-context-price-rendering-rule]] Rule 2.
-- **CC4 TripDetailSchedule** — deferred. Fix recipe in [[slidecalendar2-farecalendar-prop-pattern]].
-- **Vault updates:** 2 new atoms ([[currency-context-price-rendering-rule]], [[slidecalendar2-farecalendar-prop-pattern]]), audit docs, index.md + log.md.
+**Achieved prior session (#118) — Min-rate bug fixes FE+BE:**
+- FE `fix/min-rate-bugs` → develop `a95a241`. BE `fix/popular-routes-lowest-price` pushed `4da0b81` (NOT merged). Atom: [[popular-routes-lowest-price-farecalendar-parity]].
 
 **Resume point (EXACT):**
-0. **BE `fix/popular-routes-lowest-price` → merge to develop** — branch pushed @ `4da0b81`, not merged. Also need to verify `/front-page/` API response for Hatyai→Koh Lipe shows correct rate after backend restart.
-1. **Deploy to prod** — FE `develop` @ `f018e02` ahead of `main`. BE `develop` @ `c24e73d` ahead of `main`. Both need prod deploy.
+0. **BE `fix/popular-routes-lowest-price` → merge to develop** — branch @ `4da0b81`, not merged. Verify `/front-page/` Hatyai→Koh Lipe `lowest_price` after backend restart.
+1. **Deploy to prod** — FE `develop` @ `bddb1c0` ahead of `main`. BE `develop` @ `c24e73d` ahead of `main`.
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
-3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Implement when user confirms.
-4. **TripDetailSchedule fareCalendar fix** (deferred): copy `useGetFareCalendarQuery` + `skipToken` from `TripSearchFilters.js:80-99` into `TripDetailSchedule.js`. See [[slidecalendar2-farecalendar-prop-pattern]]. Bundle with AT-1.
+3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`.
+4. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken` pattern from `TripSearchFilters.js:80-99`. See [[slidecalendar2-farecalendar-prop-pattern]].
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
-- Hero trust signals UNGATED — "Instant Confirmation"/"Guaranteed Connection" contract-level, shown route-wide (accepted for now).
-- Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` strings — reconcile before next sort work.
+- Hero trust signals UNGATED — accepted for now.
+- Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
 
 **Next session: starting state**
-- vault: `master` @ (this commit)
-- FE `develop` @ `a95a241` | FE `main` @ `4b65756` (not deployed)
+- vault: `audit/trip-detail-seo-aeo-geo` @ (this commit)
+- FE `develop` @ `bddb1c0` | FE `main` @ `4b65756` (not deployed)
 - BE `develop` @ `c24e73d` | BE `fix/popular-routes-lowest-price` @ `4da0b81` (NOT merged) | BE `main` @ `482cfc6` (not deployed)
-- admin-dashboard: `main` @ `4a6c03b`
+- admin-dashboard: `main` @ `4a6c03b` (untracked docs/)
 - content: `master` @ `3756e5b` (clean)
 
 ---

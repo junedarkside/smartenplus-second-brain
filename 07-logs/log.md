@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-16] session-end #119 | trip-detail SEO/AEO/GEO: 3-specialist audit + 3-agent implementation + re-audit, 7/7 HIGH fixed, merged develop `bddb1c0` — Audit: 25→18 findings, 7 HIGH (canonical, BreadcrumbList, FAQPage, TouristTrip, route-facts, og:locale:alternate, hreflang). Impl: new `tripDetailSEOUtils.js`, `TripDetailSEO.js` rewritten, `useTripSEO.js` deleted (-244 lines), `getStaticProps` wired. Re-audit 7/7 PASS. 1 PARTIAL (TouristTrip @context/@type) fixed immediately `bddb1c0`. Vault closed. Atom: [[trip-detail-server-side-seo-pattern]].
+
 ## [2026-06-15] session-end #118 | min-rate bugs: FE 4 fixes merged to develop, BE lowest_price two-subquery fix pushed (not merged) — FE: `fix/min-rate-bugs` merged → `develop` (`a95a241`): stale fareCalendar on scroll (onCenterDateChange prop), off-by-one minFare (>= 1), allSame false-positive (length > 1 guard), homepage route filter (lowest_price > 0). BE: `fix/popular-routes-lowest-price` pushed @ `4da0b81`: two subqueries (JOIN/ADULT + PRIVATE/CHARTER/VEHICLE) + `Least()` + sentinel 999999999 — mirrors FareCalendar display_rates logic exactly. New atom: [[popular-routes-lowest-price-farecalendar-parity]].
 
 ## [2026-06-15] session-end #117 | trip page audit + currency fix merged to develop — `fix/trip-page-audit-2026-06-15` merged → `develop` @ `f018e02`. 4 commits: crash guards/XSS/dead code, SEO audit, checkbox filter fix, THB/฿ → `useFormatPrice()`. Deleted 366 lines of dead code (tripItemv2/TripList/RouteFaqs). FE `develop` pushed, ready for prod deploy.

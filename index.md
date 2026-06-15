@@ -8,6 +8,10 @@ Global navigation catalog. Updated on every ingest.
 
 - [[master-state|Master State]] — Live session state: branches, loose ends, API contract, architecture guardrails
 
+## Knowledge — SEO/AEO
+
+- [[trip-detail-server-side-seo-pattern]] — Pattern for moving client-side SEO hook to server-side `getStaticProps` on transport product pages. 5 pure util functions, thin renderer component, no hooks. Fixes AEO root cause (schema in SSR HTML). Key rule: JSON-LD payload functions return fields only — `CustomJsonLd` owns `@context`/`@type`.
+
 ## Knowledge — UX/Design
 
 - [[mobile-search-bar-ux-competitor-research-2026]] — Mobile sticky search bar competitor research + redesign direction. Chip pattern, brand-blue CTA, drop "One Way" label. Branch: `feat/mobile-search-bar-redesign`.
