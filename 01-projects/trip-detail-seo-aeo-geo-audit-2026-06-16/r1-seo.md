@@ -3,7 +3,7 @@
 > Raw specialist output. Page: `/trips/detail/[...slug]` (transport). Synthesis → [[r2-leader-synthesis]].
 > Caveat: WebFetch can't reach localhost; findings source-derived from the deterministic SEO emitter chain, file:line verified.
 
-**11 findings — 3 HIGH, 5 MED, 3 LOW.**
+**11 findings — 2 HIGH, 6 MED, 3 LOW.** (Post-scrutiny 2026-06-16: malformed-offers downgraded HIGH→MED — see corrected entry below. Hand-verified against source: canonical chain, docstring lie, BreadcrumbList gap, offer logic, description=title, aggregateRating gate all confirmed.)
 
 ## HIGH
 
@@ -17,9 +17,9 @@ Visible breadcrumb renders but emits no structured data → loses breadcrumb ric
 - Evidence: `components/UI/NextBreadcrumbs.js` (no script tag); `components/trips/detail/TripDetailSEO.js:59-64` renders only NextSeo+ProductJsonLd; false docstring `:11-15`.
 - Fix: reuse `components/SEO/JsonLd.js`, build BreadcrumbList from `customBreadcrumbPath` (`[...slug].js:116-119`), absolute URLs via `getSiteUrl()`.
 
-### Product `offers` malformed in fallback path (empty `shippingDetails`/`hasMerchantReturnPolicy`)
-Fallback offer shape emits empty `{}` objects → Google "invalid object" warnings. (Mitigated: page `noindex` when `lowestRate===null`, so fallback is non-indexable — dead but risky shape.) The `lowestRate` single-Offer override is valid.
-- Evidence: `components/review/formattedRateData.js:25-26`; override `useTripSEO.js:197-209`; noindex guard `[...slug].js:312-314`.
+### [CORRECTED → MED, was HIGH] Product `offers` malformed (empty `shippingDetails`/`hasMerchantReturnPolicy`)
+**Scrutiny correction (2026-06-16):** original framing wrong. Base `offers` is ALWAYS `generateFormattedRateData` (`productProperties.js:88,107`) — NOT a fallback; the valid single-Offer is the *conditional override* (`useTripSEO.js:197` — `lowestRate ? validOffer : baseProps.offers`). And `lowestRate===null` early-returns a noindex page **before `TripDetailSEO` renders** (`[...slug].js:309-327`), so the malformed offer never ships on the null path. Real exposure window = `lowestRate` falsy-but-not-null (`0`/`NaN`/`undefined`) → empty `{}` reaches a crawlable page. Narrow edge → downgraded HIGH→MED. Empty keys still dead weight worth removing.
+- Evidence: `components/review/formattedRateData.js:25-26`; base assignment `productProperties.js:88,107`; override `useTripSEO.js:197-209`; noindex early-return (renders no SEO) `[...slug].js:309-327`.
 - Fix: drop the two empty keys in `formattedRateData.js`.
 
 ## MED
