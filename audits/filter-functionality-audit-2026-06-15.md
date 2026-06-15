@@ -1,0 +1,326 @@
+# Filter Functionality Audit — /trips/hatyai/koh-lipe
+**Date:** 2026-06-15
+**Branch:** fix/trip-page-audit-2026-06-15
+**Route:** Hat Yai → Koh Lipe
+**Live data:** 7 contracts, 3 operators (1 ghost), tested at localhost:3000 / 127.0.0.1:8000
+
+---
+
+## Summary Table
+
+| Filter | Status | Notes |
+|--------|--------|-------|
+| Price Range | PASS (minor) | NaN label if API returns null min/max rate |
+| Mode of Transport | PASS | String items, all operations work correctly |
+| Departure Stations | PASS (logic) / UNVERIFIED (data) | Backend guard bug may omit stations |
+| Arrival Stations | PASS (logic) / UNVERIFIED (data) | Same backend guard bug |
+| Operators | PARTIAL — BROKEN | Multi-select blocked; deselect removes all; ghost operator shown |
+| Departure Times | PASS | String values, all operations correct |
+| Arrival Times | PASS | String values, all operations correct |
+| Conditions | PARTIAL — BROKEN | Multi-select blocked; deselect removes all; same root cause as Operators |
+| Amenities | PARTIAL — BROKEN | 1 option visible ("A/C aircondition"); object-stringify bug applies; isChecked always false |
+| Cross-filter AND logic | PASS (when single items work) | AND logic in filterContracts is correct; compound filters work if individual selections register |
+
+---
+
+## Critical Bugs (fix before ship)
+
+### BUG-001: createCheckboxHandler Object Stringify
+**File:** `components/trips/FilterTrip.js` lines 264–293
+**Affects:** Operators, Conditions, Amenities (all filters that use objects as items)
+
+**Root cause:** `createCheckboxHandler` uses `String(item).trim()` for duplicate detection and removal:
+
+```js
+const normalizedItem = String(item).trim();            // "[object Object]" for objects
+const normalizedArray = currentArray.map(i => String(i).trim()); // all "[object Object]"
+if (!normalizedArray.includes(normalizedItem)) { ... } // Second object always appears as duplicate → blocked
+```
+
+And in the remove branch:
+```js
+currentArray.filter((existingItem) => {
+    return String(existingItem).trim() !== String(item).trim();  // "[object Object]" !== "[object Object]" is false
+    // So ALL object items are removed, not just the one unchecked
+});
+```
+
+**Symptoms:**
+- First checkbox selection works (array was empty, no duplicate)
+- Second selection: `"[object Object]" === "[object Object]"` → rejected as duplicate → **no-op**
+- Deselection: all items removed instead of just the clicked one → **clears the entire filter array**
+
+**Fix:** Use a stable key (e.g., `JSON.stringify`) for object comparison:
+```js
+const key = (i) => typeof i === 'object' ? JSON.stringify(i) : String(i).trim();
+const normalizedItem = key(item);
+const normalizedArray = currentArray.map(key);
+// remove: currentArray.filter(i => key(i) !== key(item))
+```
+
+---
+
+### BUG-002: DynamicCheckboxItem onClick vs onChange (Inverted Checked State)
+**File:** `components/UI/DynamicCheckboxItem.js` line 12
+**Affects:** ALL filter categories (every checkbox in the filter panel)
+
+**Root cause:** MUI `<Checkbox>` uses `onClick` instead of `onChange`:
+
+```jsx
+<Checkbox
+    checked={isChecked}
+    onClick={(event) => handleCheckboxChange(event, item)}
+```
+
+`onClick` fires **before** the browser flips the native `checked` value. This means:
+- User clicks an **unchecked** box → `event.target.checked === false` → handler receives `checked: false` → remove branch executes (no-op, item wasn't in array)
+- User clicks again (now visually checked) → `event.target.checked === true` → add branch executes → item finally added
+
+**Net effect: every checkbox requires a double-click to register.** The visual state (controlled by `isChecked` prop via `filterData`) is also delayed by one click cycle.
+
+**Fix:** Replace `onClick` with `onChange`:
+```jsx
+<Checkbox
+    checked={isChecked}
+    onChange={(event) => handleCheckboxChange(event, item)}
+```
+
+`onChange` fires after the value flips, so `event.target.checked` is correct.
+
+---
+
+### BUG-003: isChecked Always False for Object Items (Amenities / Conditions / Operators)
+**File:** `components/UI/DynamicFilterList.js` line 49
+**Affects:** Operators, Conditions, Amenities
+
+**Root cause:**
+```js
+isChecked={(filterData[filterKey] || []).includes(item)}
+```
+
+`Array.prototype.includes` uses reference equality (`===`) for objects. Each render creates a new object reference from `tripsFilterSet.amenities`, so even after a successful add the `item` reference in the list no longer matches the one stored in `filterData`. Checkbox never shows as checked.
+
+**Secondary effect:** Combined with BUG-001, even if an item were added (first selection), the visual check state would not reflect it. Users see unchecked boxes even for active filters.
+
+**Fix options:**
+1. Compare by serialized key: `(filterData[filterKey] || []).some(i => JSON.stringify(i) === JSON.stringify(item))`
+2. Or normalize all object items to string keys at the point of storage and comparison.
+
+---
+
+## Minor Issues
+
+### ISSUE-001: minMaxPriceDisplay NaN When API Returns Null Rate
+**File:** `components/trips/FilterTrip.js` lines 161–164
+
+```js
+const minMaxPriceDisplay = useMemo(() => ({
+    min: formatCurrency(tripsFilterSet?.min_rate / (currentRate?.rate || 1), ...),
+    max: formatCurrency(tripsFilterSet?.max_rate / (currentRate?.rate || 1), ...),
+}), [...]);
+```
+
+If `tripsFilterSet.min_rate` or `max_rate` is `null` (e.g., no contracts on a route), the division produces `NaN` and the label renders `"THB NaN"`.
+
+**Fix:** Guard: `(tripsFilterSet?.min_rate ?? 0) / (currentRate?.rate || 1)`
+
+---
+
+### ISSUE-002: Filter Dialog Gate on operator_list
+**File:** `components/trips/FilterTripsPage.js` line 170
+
+```js
+if (tripsFilterSet?.operator_list?.length) setFilterDialogOpen(true);
+```
+
+If `operator_list` is empty (route with no contracts or single-operator route with all contracts hidden), the entire filter dialog is inaccessible, even though other filter categories (price, time, amenities) may still have options.
+
+**Fix:** Gate on any filter data being available, or unconditionally show the Filter button.
+
+---
+
+### ISSUE-003: Ghost Operator in Filter List
+**Observed live:** "Silaphat" appears in the operator filter with 0 matching contracts. Selecting it produces an empty results list with no user feedback ("No results" or similar).
+
+**Root cause:** Backend `operator_list` is built from `unique_contracts` which may include operators from contracts that are active but produce no serialized results (date mismatches, deactivation race). No count validation before inclusion.
+
+---
+
+### ISSUE-004: Amenities — Silent Hide When Empty
+The `Amenities` component returns `null` when `tripsFilterSet?.amenities?.length === 0`. This is correct behavior, but there is no "Show more" expand needed (only 1 amenity on this route). Confirmed the `limitNumberDefault=10` is set correctly in the `Amenities` component — no truncation issue on this route.
+
+---
+
+### ISSUE-005: Departure Station Backend Guard Bug (Double arrival check)
+**File:** `smartenplus-backend/products/views.py` lines 1637–1642 (see BACKEND-001 below)
+**Frontend impact:** `departure_stations` filter list may be incomplete or empty — departure station filter category would silently hide.
+
+---
+
+## Backend Bugs
+
+### BACKEND-001: departure_station Guard Checks arrival_station Twice
+**File:** `smartenplus-backend/products/views.py` lines 1637–1642
+
+```python
+if contract.trip.route.arrival_station.station_name:     # <- checks arrival, not departure
+    departure_stations.add(
+        contract.trip.route.departure_station.station_name)
+if contract.trip.route.arrival_station.station_name:     # <- same check again
+    arrival_stations.add(
+        contract.trip.route.arrival_station.station_name)
+```
+
+Line 1637 should be:
+```python
+if contract.trip.route.departure_station.station_name:
+```
+
+**Impact:** Departure stations are only added to the filter set when the route has an arrival station. For routes where `departure_station` has a name but `arrival_station` is null, the departure station is silently omitted. This does not affect Hat Yai → Koh Lipe (all stations populated) but may affect other routes.
+
+---
+
+### BACKEND-002: amenity_list Uses "AMENITY" (Singular) — Confirmed Consistent
+Backend filters on `extra['extra_type'] == 'AMENITY'` (singular) and the `ExtraSerializer` returns `type` from the `Extra` model. Both sides use `"AMENITY"`. The frontend filter logic (`extra.type === condition.extra_type`) matches correctly. No mismatch.
+
+---
+
+## Agent 1 Findings — Price, Transport, Stations
+
+### Price Range — PASS with minor edge-case risk
+- Default range initialized from `tripsFilterSet.min_rate` / `max_rate` in `useTripFilters` hook
+- Currency: THB (or converted via `useCurrency`)
+- MUI Slider with dual thumbs; immediate client-side filtering via `useMemo` in `FilteredTripList`
+- Clickable min/max labels call `handleMinClick` / `handleMaxClick` — reset one bound to the absolute min/max
+- **Minor bug (ISSUE-001):** `minMaxPriceDisplay` divides `tripsFilterSet?.min_rate / (currentRate?.rate || 1)` with no null guard. If API returns `null` for min/max rate, renders `"THB NaN"` label
+- Filter logic: `contract.rate >= minPrice && contract.rate <= maxPrice` — correct
+
+### Mode of Transport — PASS
+- Options sourced from `tripsFilterSet.unique_contract_types` (array of strings)
+- "Show more/less" expand works via `DynamicFilterList` with `limit=5`
+- Selection, deselection, multi-select all work — items are strings, no stringify bug
+- `filterContracts` checks `filterData.transportationMode.includes(contract.type)` — correct
+
+### Departure Stations — PASS (logic) / UNVERIFIED (data)
+- Options from `tripsFilterSet.departure_stations` (strings)
+- String matching: `filterData.departureStations.includes(contract.route?.departure_station)` — correct
+- Silent hide when `departure_stations` array is empty (no user feedback)
+- **Backend bug (BACKEND-001):** guard in `products/views.py` checks `arrival_station.station_name` twice; departure stations may be missing from filter set on some routes
+
+### Arrival Stations — PASS (logic) / shares same issues
+- Same architecture as departure stations
+- Same backend guard bug applies (though the second `if` check is correct for arrivals, the first is wrong for departures — arrival set itself is populated correctly)
+
+### Cross-cutting — Filter Dialog Gate
+- Filter dialog open gate checks `tripsFilterSet?.operator_list?.length` (ISSUE-002)
+- Operator checkbox visual state bug from object reference equality — visual only, filtering still works
+- **CRITICAL: `onClick` vs `onChange` on MUI Checkbox** — `onClick` fires before native `checked` flips, so `event.target.checked` is inverted. First click on unchecked box yields `checked=false` → remove (no-op). Second click yields `checked=true` → add. Filter appears to require double-click. Affects all checkbox categories (BUG-002).
+
+---
+
+## Agent 2 Findings — Operators, Times, Conditions
+
+### Live data confirmed (7 contracts on hatyai → koh-lipe route)
+- 3 operators: "Smart EN Plus Co., LTD" (6 contracts), "Smart EN Plus Co., LTDeddd" (1 contract), "Silaphat" (0 contracts — ghost)
+- Departure times: 08:30:00 (3), 10:00:00 (2), 11:00:00 (1), 11:30:00 (1)
+- Arrival times: 13:30:00 (5), 15:30:00 (2)
+- Features: "Instant Confirmation" (all 7), "Free Cancellation" (all 7), "Hotel Pickup" (1)
+
+### Operators — PARTIAL (BROKEN for multi-select and deselect)
+- 3 options visible, all below 5-item limit
+- Single selection works (first selection into empty array bypasses duplicate check)
+- **CRITICAL BUG — Multi-select blocked:** `createCheckboxHandler` uses `String(item).trim()` → all operator objects stringify to `"[object Object]"` → second operator rejected as duplicate (BUG-001)
+- **BUG — Deselection removes all:** Same coercion in remove branch removes every object (BUG-001)
+- **Ghost operator:** "Silaphat" shows with 0 contracts → empty list, no feedback (ISSUE-003)
+
+### Departure Times — PASS
+- 4 options (string values "08:30:00", "10:00:00", "11:00:00", "11:30:00")
+- Multi-select OR logic correct
+- No issues (string items bypass BUG-001)
+
+### Arrival Times — PASS
+- 2 options (string values "13:30:00", "15:30:00")
+- Correct behavior
+- No issues
+
+### Conditions — PARTIAL (BROKEN for multi-select and deselect)
+- 3 options: "Instant Confirmation", "Free Cancellation", "Hotel Pickup" — all as objects `{extra_name, extra_type}`
+- **CRITICAL BUG — Multi-select blocked:** Same `String()` object coercion as Operators (BUG-001)
+- **BUG — Deselection removes all conditions:** Same (BUG-001)
+- Semantic note: Only "Hotel Pickup" produces meaningful reduction (1/7 contracts); other two match all 7
+- `isChecked` always false for object items (BUG-003)
+
+---
+
+## Agent 3 Findings — Amenities + Cross-filter
+
+### Amenities — PARTIAL (BROKEN)
+
+**Live data:** 1 amenity option found via `GET /api/v1/tripfilter/hatyai/koh-lipe/`:
+```json
+[{ "extra_name": "A/C aircondition", "extra_type": "AMENITY" }]
+```
+
+**Visibility:** The Amenities section is rendered — `tripsFilterSet.amenities.length === 1`, so the `Amenities` component does not early-return. One option is shown: "A/C Aircondition" (displayed via `capitalizeWords`). No "Show more" needed (1 item, `limitNumberDefault=10`).
+
+**Single selection — BROKEN (due to BUG-002):**
+The checkbox uses `onClick` instead of `onChange`. Clicking the unchecked "A/C Aircondition" box fires with `event.target.checked === false` (pre-flip state). The handler enters the **remove** branch (no-op since array is empty). The amenity is NOT added to `filterData.amenities`.
+
+A second click fires with `event.target.checked === true` → item IS added. Requires double-click to register, same as all other filters (BUG-002).
+
+**isChecked always false (BUG-003):**
+Even after the amenity object is added to `filterData.amenities`, the checkbox visual state does not reflect it. `(filterData.amenities || []).includes(item)` uses reference equality; the `item` from `tripsFilterSet.amenities` and the stored copy are different object references. The checkbox always renders unchecked regardless of filter state.
+
+**Multi-select — N/A (only 1 option):**
+Only one amenity exists on this route, so multi-select cannot be tested directly. However, the same `String(item).trim()` bug (BUG-001) would block multi-select if a second amenity were added.
+
+**Deselection — BROKEN:**
+Attempting to deselect via a second click triggers the `onClick` with `checked=false` (again inverted by BUG-002). But because `isChecked` prop is always false (BUG-003), the controlled checkbox does not visually toggle. The remove branch in `createCheckboxHandler` uses `String(existingItem).trim() !== String(item).trim()` → both stringify to `"[object Object]"` → ALL items removed (BUG-001).
+
+**Filter logic — CORRECT (when items are in state):**
+`filterContracts` lines 75–78:
+```js
+if (filterData.amenities && filterData.amenities.length > 0) {
+    isMatch = isMatch && filterData.amenities.some(condition => {
+        return contract.extra?.some(extra => extra.type === condition.extra_type && extra.item === condition.extra_name);
+    });
+}
+```
+This is logically correct. If `filterData.amenities` contains `{extra_type: "AMENITY", extra_name: "A/C aircondition"}`, it correctly matches contracts whose `extra` array contains `{type: "AMENITY", item: "A/C aircondition"}`. The type string `"AMENITY"` is consistent end-to-end.
+
+**Type key consistency check:**
+- Backend `amenity_list` (filter set): `extra_type: "AMENITY"`
+- Backend `ExtraSerializer` (contract data): `type` field from `Extra` model
+- Frontend filter logic: `extra.type === condition.extra_type` — matches correctly
+- No type-string mismatch bug here.
+
+### Cross-filter AND Logic — PASS (in theory)
+
+**Architecture:** `filterContracts` in `FilteredTripList.js` applies filters sequentially using `isMatch = isMatch && <condition>`. This correctly implements AND logic across all filter categories.
+
+**Observed behavior:**
+- Applying Mode of Transport (string, works on first click) AND one Amenity (object, requires double-click via BUG-002, and visual state is broken via BUG-003) — the AND logic itself is architecturally sound
+- If both conditions are registered in `filterData`, the resulting filter correctly returns only contracts matching both
+- Clearing one filter (setting its array to `[]`) correctly leaves the other active — the `if (filterData.X && filterData.X.length > 0)` guards ensure empty arrays are treated as "no filter"
+
+**Caveat:** Cross-filter reliability is undermined by BUG-002 (double-click required) and BUG-003 (no visual feedback on active filters). Users cannot reliably apply or verify combined filters until these are fixed.
+
+---
+
+## Recommendations
+
+| Priority | Fix | File | Effort |
+|----------|-----|------|--------|
+| P0 | Replace `onClick` with `onChange` on MUI Checkbox (BUG-002) | `components/UI/DynamicCheckboxItem.js:12` | 1 line |
+| P0 | Fix `createCheckboxHandler` to use JSON key for objects (BUG-001) | `components/trips/FilterTrip.js:270-282` | ~10 lines |
+| P0 | Fix `isChecked` to use JSON key comparison for objects (BUG-003) | `components/UI/DynamicFilterList.js:49` | 1 line |
+| P1 | Add null guard to `minMaxPriceDisplay` (ISSUE-001) | `components/trips/FilterTrip.js:161-164` | 2 lines |
+| P1 | Fix filter dialog gate to not depend solely on `operator_list` (ISSUE-002) | `components/trips/FilterTripsPage.js:170` | 1 line |
+| P1 | Fix backend departure_station guard (BACKEND-001) | `smartenplus-backend/products/views.py:1637` | 1 line |
+| P2 | Add "No results" message when ghost operator returns empty list (ISSUE-003) | `components/trips/FilteredTripList.js` | ~5 lines |
+
+---
+
+## Overall Verdict
+
+**3 P0 bugs share a single root cause — all checkbox-based filters (Operators, Conditions, Amenities) are functionally broken for multi-select, deselection, and visual feedback.** String-based filters (Transport, Times) work correctly. The filter architecture and AND logic are sound; fixing the three P0 issues would restore full filter functionality. Estimated fix time: 30–60 minutes in `DynamicCheckboxItem.js`, `DynamicFilterList.js`, and `FilterTrip.js`.

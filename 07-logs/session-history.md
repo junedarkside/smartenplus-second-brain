@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #116 (archived 2026-06-15)
+
+**Updated:** 2026-06-15 (trip-page currency-context fix addendum)
+
+**Achieved:**
+- CC1 `SlideCalendar2.js:977` hardcoded `฿` → `useFormatPrice()`. CC2 `TripSummary.js:35` `from THB` → `useFormatPrice()`. CC3 JSON-LD priceCurrency intentionally unchanged (merchant offer). CC4 TripDetailSchedule deferred.
+- 2 new atoms: [[currency-context-price-rendering-rule]], [[slidecalendar2-farecalendar-prop-pattern]].
+- Vault audit docs, index.md, log.md updated. Branch `fix/trip-page-audit-2026-06-15` @ `3a04231` ready for merge.
+
+---
+
 ## Session #108 (archived 2026-06-13)
 
 **Updated:** 2026-06-13 (cross-sell audit + carried-item closure verification)

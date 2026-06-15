@@ -4,27 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-15 (session #115 END)
+**Updated:** 2026-06-15 (session #117 END)
 
-**Achieved this session (#115) — P6 RecommendedTripCard + full below-fold redesign:**
-- **P6 RecommendedTripCard** (`feat/trip-search-redesign-r2-p6` merged to develop `8d8bbd7`):
-  22-line thin wrapper reusing `DynamicTripItem` with `isTopPick=true`. Fixed: fake custom card,
-  duplicate Top Pick badge, Trip Score "57/100" exposed. `FilteredTripList` mainList `isTopPick={false}`.
-- **RouteFAQ.js** (NEW `components/trips/RouteFAQ.js`): 6 dynamic FAQ Q&A from `tripsFilterSet` +
-  `contracts[]`. FAQPage JSON-LD schema. `<details>/<summary>` native accordion. Cheapest operator
-  name, transport types, operator list. Dynamic-only — no WordPress, no backend changes.
-- **RouteSummary.js** (REWRITE): removed 5-row client-side stats table (zero SEO value). ISR-rendered
-  transport type chips + operator name list from `contracts[]`. All MUI icons + currency/time helpers removed.
-- **TripSummary.js**: min price per TripItem from `avaliable_routes[].ratecard[]` (default rates only:
-  `rate_date=null` + ADULT/VEHICLE). JSON-LD ItemList schema. Fixed: `ExteaContractSerializer` has no
-  `ratecard` → must use `avaliable_routes[]` matched by slug.
-- **FilterTripsPage.js**: wired `contracts` + `data` to DynamicRouteFAQ, DynamicTripOverview, DynamicTripSummary.
-- **Branch `feat/trip-page-below-fold-redesign`** merged → `develop` @ `6f2ada9`.
+**Achieved this session (#117) — Trip page audit + currency fix merged to develop:**
+- **`fix/trip-page-audit-2026-06-15`** merged → `develop` @ `f018e02`. 4 commits landed: crash guards/XSS/dead code/perf, SEO/AEO/GEO audit fixes, checkbox filter fix (operators/conditions/amenities), hardcoded THB/฿ → `useFormatPrice()` currency-aware.
+- Dead files deleted: `tripItemv2.js` (277 lines), `TripList.js` (58 lines), `RouteFaqs.js` (31 lines). 15 files changed, 420 deletions.
+- FE `develop` pushed @ `f018e02`. Branch `fix/trip-page-audit-2026-06-15` pushed @ `c37437a`.
+
+**Achieved prior session (#116) — Trip-page currency-context fix (addendum to #115 audit):**
+- **CC1 `SlideCalendar2.js:977`** — hardcoded `฿{dayFare.toLocaleString()}` → `useFormatPrice()`. Calendar now converts with `CurrencyContext` matching trip cards + booking bar.
+- **CC2 `TripSummary.js:35`** — hardcoded `from THB {minPrice.toLocaleString()}` → `useFormatPrice()`. "Departures by Operator" rows now currency-aware.
+- **CC3 `TripSummary.js:91` JSON-LD** — `priceCurrency: 'THB'` intentionally unchanged. Schema describes merchant offer, not viewer display. See [[currency-context-price-rendering-rule]] Rule 2.
+- **CC4 TripDetailSchedule** — deferred. Fix recipe in [[slidecalendar2-farecalendar-prop-pattern]].
+- **Vault updates:** 2 new atoms ([[currency-context-price-rendering-rule]], [[slidecalendar2-farecalendar-prop-pattern]]), audit docs, index.md + log.md.
 
 **Resume point (EXACT):**
-1. **Deploy to prod** — FE `develop` @ `6f2ada9` / BE `develop` @ `64a2fce`, both ahead of `main`.
+1. **Deploy to prod** — FE `develop` @ `f018e02` ahead of `main`. BE `develop` @ `c24e73d` ahead of `main`. Both need prod deploy.
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Implement when user confirms.
+4. **TripDetailSchedule fareCalendar fix** (deferred): copy `useGetFareCalendarQuery` + `skipToken` from `TripSearchFilters.js:80-99` into `TripDetailSchedule.js`. See [[slidecalendar2-farecalendar-prop-pattern]]. Bundle with AT-1.
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -33,8 +31,8 @@
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- FE `develop` @ `6f2ada9` | FE `main` @ `4b65756`
-- BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (not deployed)
+- FE `develop` @ `f018e02` | FE `main` @ `4b65756` (not deployed)
+- BE `develop` @ `c24e73d` | BE `main` @ `482cfc6` (not deployed)
 - admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
 
