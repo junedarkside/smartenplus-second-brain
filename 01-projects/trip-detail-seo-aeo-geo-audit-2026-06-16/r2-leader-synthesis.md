@@ -1,5 +1,7 @@
 # Trip Detail — SEO / AEO / GEO Audit (Synthesis)
 
+> **STATUS: CLOSED 2026-06-16.** 7/7 HIGH fixed, merged to develop `ca490ee`. 1 PARTIAL (TouristTrip `@context`/`@type` duplicate key — MED cleanup, deferred). See [[r4-re-audit-post-impl]].
+
 ## Summary
 3-specialist audit of the transport trip-detail page (`/trips/detail/[...slug]`). **25 raw findings → 18 unique** after dedup. The page has solid Product JSON-LD + OpenGraph foundations but: (1) canonical can ship wrong in non-prod, (2) most claimed schema is never rendered, (3) it is hardcoded Thailand-only against Europe/USA/Asia targets, (4) route facts are trapped in UI widgets answer engines can't read.
 
