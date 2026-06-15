@@ -4,9 +4,14 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-15 (session #117 END)
+**Updated:** 2026-06-15 (session #118 END)
 
-**Achieved this session (#117) — Trip page audit + currency fix merged to develop:**
+**Achieved this session (#118) — Min-rate bug investigation + fixes FE+BE:**
+- **FE `fix/min-rate-bugs`** merged → `develop` @ `a95a241`. 4 fixes: stale fareCalendar on calendar scroll (`onCenterDateChange` prop in `SlideCalendar2` + `calendarCenterDate` state in `TripSearchFilters`), off-by-one minFare threshold (`>= 1`), allSame false-positive (`visibleFares.length > 1` guard), homepage route filter (`lowest_price > 0`).
+- **BE `fix/popular-routes-lowest-price`** pushed @ `4da0b81`. Root cause: single `lowest_price` subquery had no type/ratecard filter → PRIVATE/CHARTER VEHICLE rates leaked in. Fix: two subqueries (JOIN/ADULT + PRIVATE/CHARTER/VEHICLE) + `Least()` + sentinel 999999999. Mirrors `FareCalendarViewSet.list` display_rates logic exactly. **NOT YET MERGED to develop.**
+- New atom: [[popular-routes-lowest-price-farecalendar-parity]].
+
+**Achieved prior session (#117) — Trip page audit + currency fix merged to develop:**
 - **`fix/trip-page-audit-2026-06-15`** merged → `develop` @ `f018e02`. 4 commits landed: crash guards/XSS/dead code/perf, SEO/AEO/GEO audit fixes, checkbox filter fix (operators/conditions/amenities), hardcoded THB/฿ → `useFormatPrice()` currency-aware.
 - Dead files deleted: `tripItemv2.js` (277 lines), `TripList.js` (58 lines), `RouteFaqs.js` (31 lines). 15 files changed, 420 deletions.
 - FE `develop` pushed @ `f018e02`. Branch `fix/trip-page-audit-2026-06-15` pushed @ `c37437a`.
@@ -19,6 +24,7 @@
 - **Vault updates:** 2 new atoms ([[currency-context-price-rendering-rule]], [[slidecalendar2-farecalendar-prop-pattern]]), audit docs, index.md + log.md.
 
 **Resume point (EXACT):**
+0. **BE `fix/popular-routes-lowest-price` → merge to develop** — branch pushed @ `4da0b81`, not merged. Also need to verify `/front-page/` API response for Hatyai→Koh Lipe shows correct rate after backend restart.
 1. **Deploy to prod** — FE `develop` @ `f018e02` ahead of `main`. BE `develop` @ `c24e73d` ahead of `main`. Both need prod deploy.
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Implement when user confirms.
@@ -31,8 +37,8 @@
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- FE `develop` @ `f018e02` | FE `main` @ `4b65756` (not deployed)
-- BE `develop` @ `c24e73d` | BE `main` @ `482cfc6` (not deployed)
+- FE `develop` @ `a95a241` | FE `main` @ `4b65756` (not deployed)
+- BE `develop` @ `c24e73d` | BE `fix/popular-routes-lowest-price` @ `4da0b81` (NOT merged) | BE `main` @ `482cfc6` (not deployed)
 - admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
 
@@ -42,6 +48,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **MIN-RATE-BE-MERGE** | BE `fix/popular-routes-lowest-price` @ `4da0b81` — merge to develop + verify `/front-page/` Hatyai→Koh Lipe `lowest_price` matches SlideCalendar rate | **OPEN 2026-06-15** | `smartenplus-backend/products/views.py:1197` |
 | **TRIP-SEARCH-REDESIGN** | Travel Decision Engine + below-fold redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-15.** R1+R2 fully shipped. FE `develop` @ `6f2ada9`. Deploy to prod pending (ops task). → `07-logs/closed-items.md` | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-below-fold-redesign-2026-06-15]] |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
 | **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
