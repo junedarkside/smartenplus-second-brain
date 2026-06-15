@@ -66,5 +66,17 @@ Sequence: 1-5 first (each ≤S effort, high impact, all reuse existing helpers),
 - Confirm `server-sitemap.xml` lists transport `/trips/detail/<slug>` URLs.
 - Re-run this audit's file:line cites post-fix to confirm no regression in the emitter chain.
 
+## Implementation decisions (grill, 2026-06-16)
+Locked before writing the fix plan ([[r3-implementation-plan]]):
+
+1. **Architecture = mirror the day-trip server-side pattern.** Move SEO generation into `getStaticProps` via a new `helpers/seo/tripDetailSEOUtils.js` modeled on `helpers/seo/dayTripSEOUtils.js`; render schema in `TripDetailSEO.js` the way `DayTripDetailSEO.js:25-39` does (`NextSeo` + `ProductJsonLd` + `BreadcrumbJsonLd` + `CustomJsonLd`). Rationale: fixes the AEO "schema not in crawled HTML" root cause (current `useTripSEO` runs client-side on hydrated data) AND every gap reuses a proven helper. `getStaticProps` already fetches full `productData` (route, stations, operator, ratecard, reviews) from `/product-detail/${slug}` (`[...slug].js:478`) — **no new fetch needed**.
+2. **Scope = 7 HIGH only** this pass. MED/LOW → follow-up.
+3. **GEO = signal-only.** hreflang + `og:locale:alternate` (`en_US,en_GB,de_DE,fr_FR,en_SG`) pointing at the same URL. No i18n routing / FX / translation (none exists yet).
+4. **Schema price = ISR price**, accept ≤5min staleness (`revalidate:300` bounds it). Compute `lowestRate` server-side from `productData.ratecard` via `findLowestSellingRate` (`helpers/tripSorting.js:74`). The CSR merge (`liveProductData`) only refreshes volatile fare *dates*, not the floor price meaningfully — mismatch risk negligible.
+5. **FAQ facts from the same server `productData`** (route_name, stations, duration, departure/arrival times, operator, ISR lowestRate). Do NOT reuse `RouteFAQ` as-is — it's shaped for the listing aggregate (`contracts[]`), not a single product.
+6. **Canonical caveat (honest):** `getSiteUrl()` (`utils/blog/seoHelper.js:3`) = `NEXT_PUBLIC_DOMAIN || fallback` — it does NOT force HTTPS/www and still returns `localhost` in dev. Its value is consistency + the missing-env fallback. The HIGH "wrong canonical" risk is fully closed only if prod env is correct (it is, per `.env.production.sample`); routing through `getSiteUrl()` removes the raw-env duplication and gives a safe default. Flag in plan, don't oversell.
+
+Verified-present helpers (next-seo 6.1.0): `FAQPageJsonLd`, `BreadcrumbJsonLd` (both functions); `CustomJsonLd` (`helpers/JsonLd.js:1`); `findLowestSellingRate` (`helpers/tripSorting.js:74`); `getSiteUrl` (`utils/blog/seoHelper.js:3`).
+
 ## Related
-[[r1-seo]] · [[r1-aeo]] · [[r1-geo]] · [[index]]
+[[r1-seo]] · [[r1-aeo]] · [[r1-geo]] · [[r3-implementation-plan]] · [[index]]
