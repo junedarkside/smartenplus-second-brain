@@ -6,11 +6,12 @@
 ## Summary
 7-phase frontend implementation of the Travel Decision Engine redesign. 1 file per phase. Phase 0 (analysis) complete. Backend work required before Phase 5 + 6.
 
-## Status: Round 1 SHIPPED · Round 2 NEARLY DONE · Round Trip UX SHIPPED (2026-06-15)
+## Status: **CLOSED 2026-06-15** — All shipped. Deploy to prod pending.
 - Phase 0: COMPLETE — vault design doc + ADR written + audited
-- Round 1 (phases 3-7): SHIPPED + MERGED to `develop` 2026-06-14
-- Round 2: P2 DONE · P1/P3/P4/P5/P7/P8/P9/P10 CUT · **P6 + P11 remaining**
-- **Round Trip UX fixes: SHIPPED to `develop` 2026-06-15** — see section below
+- Round 1 (phases 3-7): SHIPPED + MERGED to `develop` `933b1b6` 2026-06-14
+- Round 2: P6 + below-fold DONE. P1/P3/P4/P5/P7/P8/P9/P10 CUT (scope audit). P11 no-op.
+- Round Trip UX fixes: SHIPPED to `develop` `a3c328a` 2026-06-15
+- Below-fold redesign: SHIPPED to `develop` `6f2ada9` 2026-06-15
 
 ---
 
