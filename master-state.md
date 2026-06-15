@@ -18,8 +18,7 @@
 - FE `fix/min-rate-bugs` → develop `a95a241`. BE `fix/popular-routes-lowest-price` pushed `4da0b81` (NOT merged). Atom: [[popular-routes-lowest-price-farecalendar-parity]].
 
 **Resume point (EXACT):**
-0. **BE `fix/popular-routes-lowest-price` → merge to develop** — branch @ `4da0b81`, not merged. Verify `/front-page/` Hatyai→Koh Lipe `lowest_price` after backend restart.
-1. **Deploy to prod** — FE `develop` @ `bddb1c0` ahead of `main`. BE `develop` @ `c24e73d` ahead of `main`.
+0. **Deploy to prod** — FE `develop` @ `bddb1c0` ahead of `main`. BE `develop` @ `21fbdcf` ahead of `main`.
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`.
 4. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken` pattern from `TripSearchFilters.js:80-99`. See [[slidecalendar2-farecalendar-prop-pattern]].
@@ -32,7 +31,7 @@
 **Next session: starting state**
 - vault: `audit/trip-detail-seo-aeo-geo` @ (this commit)
 - FE `develop` @ `bddb1c0` | FE `main` @ `4b65756` (not deployed)
-- BE `develop` @ `c24e73d` | BE `fix/popular-routes-lowest-price` @ `4da0b81` (NOT merged) | BE `main` @ `482cfc6` (not deployed)
+- BE `develop` @ `21fbdcf` | BE `main` @ `482cfc6` (not deployed)
 - admin-dashboard: `main` @ `4a6c03b` (untracked docs/)
 - content: `master` @ `3756e5b` (clean)
 
@@ -42,7 +41,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **MIN-RATE-BE-MERGE** | BE `fix/popular-routes-lowest-price` @ `4da0b81` — merge to develop + verify `/front-page/` Hatyai→Koh Lipe `lowest_price` matches SlideCalendar rate | **OPEN 2026-06-15** | `smartenplus-backend/products/views.py:1197` |
+| **MIN-RATE-BE-MERGE** | BE `fix/popular-routes-lowest-price` @ `4da0b81` — merge to develop + verify `/front-page/` Hatyai→Koh Lipe `lowest_price` matches SlideCalendar rate | **CLOSED 2026-06-16** — merged at `37387c8`, BE develop now `21fbdcf` | `smartenplus-backend/products/views.py:1197` |
 | **TRIP-SEARCH-REDESIGN** | Travel Decision Engine + below-fold redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-15.** R1+R2 fully shipped. FE `develop` @ `6f2ada9`. Deploy to prod pending (ops task). → `07-logs/closed-items.md` | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-below-fold-redesign-2026-06-15]] |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
 | **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
