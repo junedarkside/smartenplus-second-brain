@@ -4,22 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-15 (session #114 END)
+**Updated:** 2026-06-15 (session #115 END)
 
-**Achieved this session (#114) — Round-trip UX fixes + TripProgressIndicator collapse:**
-- **TripProgressIndicator collapse** (`TripProgressIndicator.js` + `FilterTripsPage.js`): removed standalone 44px card section. Merged inline into breadcrumb row (flex justify-between). All card chrome stripped. Desktop: dot progress + label text. Mobile: step icon (arrow/grid/cart SVG) + counter `1/3`. Commits `53a85cc`, `51dd135`.
-- **Width consistency fix**: `TripProgressIndicator` now matches standard sibling pattern `mx-2 md:mx-3 xl:mx-0`. Removed conflicting `px-2 md:px-0` wrapper. Commit `51dd135`.
-- **Hero route fix during return step** (`FilterTripsPage.js:211-212`): `SearchCover` now receives swapped `initialFromLocation`/`initialToLocation` when `isReturnJourneyActive`. Commit `a3c328a`. Merged to `develop`.
-- **Round 2 scope audit** (grill+scrutinize): P1 hero ✓, P2 sidebar ✓, P3/P4/P5/P7/P8/P9/P10 CUT. P6 (trip card upgrade) needs scoping. P11 (SEO content order) quick grep.
-- **SelectedOutboundSummary** debated + data path confirmed → reverted at user request. Plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Gate: `isReturnJourneyActive`. Data: `useCheckCartIdQuery → cart_item[0].contract.trip.{route_route, departure_time, traveling_date}`.
-- **Branch `feat/route-intelligence-hero`** merged → `develop` @ `a3c328a`.
+**Achieved this session (#115) — P6 RecommendedTripCard + full below-fold redesign:**
+- **P6 RecommendedTripCard** (`feat/trip-search-redesign-r2-p6` merged to develop `8d8bbd7`):
+  22-line thin wrapper reusing `DynamicTripItem` with `isTopPick=true`. Fixed: fake custom card,
+  duplicate Top Pick badge, Trip Score "57/100" exposed. `FilteredTripList` mainList `isTopPick={false}`.
+- **RouteFAQ.js** (NEW `components/trips/RouteFAQ.js`): 6 dynamic FAQ Q&A from `tripsFilterSet` +
+  `contracts[]`. FAQPage JSON-LD schema. `<details>/<summary>` native accordion. Cheapest operator
+  name, transport types, operator list. Dynamic-only — no WordPress, no backend changes.
+- **RouteSummary.js** (REWRITE): removed 5-row client-side stats table (zero SEO value). ISR-rendered
+  transport type chips + operator name list from `contracts[]`. All MUI icons + currency/time helpers removed.
+- **TripSummary.js**: min price per TripItem from `avaliable_routes[].ratecard[]` (default rates only:
+  `rate_date=null` + ADULT/VEHICLE). JSON-LD ItemList schema. Fixed: `ExteaContractSerializer` has no
+  `ratecard` → must use `avaliable_routes[]` matched by slug.
+- **FilterTripsPage.js**: wired `contracts` + `data` to DynamicRouteFAQ, DynamicTripOverview, DynamicTripSummary.
+- **Branch `feat/trip-page-below-fold-redesign`** merged → `develop` @ `6f2ada9`.
 
 **Resume point (EXACT):**
-1. **P6 — Trip card upgrade**: scope what's actually missing in `TripItem` vs spec. Most already present: `BadgeChip`, `BookedCounter`, `getMainPrice`, `TransportItems`, `TripCard`. Investigate before implementing.
-2. **P11 — SEO content order**: quick grep, likely no-op.
+1. **Deploy to prod** — FE `develop` @ `6f2ada9` / BE `develop` @ `64a2fce`, both ahead of `main`.
+2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`. Implement when user confirms.
-4. **Deploy to production** — FE `develop` @ `a3c328a` / BE `develop` @ `64a2fce`, both ahead of `main`.
-5. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -28,8 +33,8 @@
 
 **Next session: starting state**
 - vault: `master` @ (this commit)
-- FE `develop` @ `a3c328a` | FE `main` @ `4b65756`
-- BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (R1 not deployed)
+- FE `develop` @ `6f2ada9` | FE `main` @ `4b65756`
+- BE `develop` @ `64a2fce` | BE `main` @ `482cfc6` (not deployed)
 - admin-dashboard: `main` @ `4a6c03b`
 - content: `master` @ `3756e5b` (clean)
 
@@ -40,7 +45,7 @@
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **TRIP-SEARCH-REDESIGN (R1)** | Travel Decision Engine redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-14.** Phases 3-7 shipped + merged. FE `develop` @ `933b1b6`. BE `develop` @ `64a2fce`. Not yet on `main` — deploy pending. | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-results-redesign-2026-06-14]], [[adr-trip-confidence-score-algorithm-2026-06-14]] |
-| **TRIP-SEARCH-REDESIGN-R2** | Finish remaining ~60% of spec | **HERO+FILTER+TRANSPORT-CARDS+CALENDAR+SKELETON DONE on branch (#111-#113), NOT merged.** Branch `feat/route-intelligence-hero` @ `3d33ba6`. DONE: hero search-edit redesign, ResultsPageHeader merged into hero, desktop filter entry fix, sort dedup, transport combo filter → MUI icon mini-cards (human labels, prod-hidden when ≤1 combo, dev-always-visible), calendar strip 4→2 row (merged day+date, cheapest=green, filled selected card), skeleton mobile width fix (both skeletons now match real card mx). **NOT STARTED:** card-level phases — ConfidenceScore, RouteTimeline, TripItem upgrade, BookedCounter `/10` fix, RecommendedTripCard, TravelInsight, seats-available (P10 GATE). **Next: user QA branch → merge to develop → card phases.** | [[trip-search-results-implementation-plan-2026-06-14]] Phase 4-11 |
+| **TRIP-SEARCH-REDESIGN-R2** | Finish remaining spec | **P6 + below-fold DONE. FE develop @ `6f2ada9`.** DONE: hero, filter, transport cards, calendar, skeleton, RecommendedTripCard (P6), below-fold (RouteFAQ new, RouteSummary ISR rewrite, TripSummary price+schema). **Remaining: deploy to prod.** AT-1 is next eng priority. | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-below-fold-redesign-2026-06-15]] |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
 | **PAYMENT-FIX** | Implement 5 HIGHs + priority MEDIUMs from payment deep review | **CLOSED 2026-06-13.** All 5 batches shipped + 8/8 E2E automated + webhook gap closed. **Both PRs MERGED:** FE merge `dae26da` (`main`), BE merge `5653b04` (`main`) — feature branches deleted. 119 tests pass. M4 retracted. | [[payment-deep-review-2026-06-12]], [[payment-auto-test-results-2026-06-12]], [[omise-webhook-tailscale-local-testing]] |
 | **PAYMENT-DEADLOCK** | Recover paid-but-unfinalized order PLB0229785 from payment_pending deadlock | **CLOSED 2026-06-13.** Fix `482cfc6` "recover paid-but-unfinalized order from payment_pending deadlock" is head of BE `main`. 278 BE tests pass. | [[payment-pending-deadlock-2026-06-12]] |
