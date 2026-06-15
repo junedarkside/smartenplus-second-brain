@@ -8,6 +8,10 @@ Global navigation catalog. Updated on every ingest.
 
 - [[master-state|Master State]] — Live session state: branches, loose ends, API contract, architecture guardrails
 
+## Knowledge — UX/Design
+
+- [[mobile-search-bar-ux-competitor-research-2026]] — Mobile sticky search bar competitor research + redesign direction. Chip pattern, brand-blue CTA, drop "One Way" label. Branch: `feat/mobile-search-bar-redesign`.
+
 ## Active Projects
 
 - [[seo-sitemap-whole-site-audit-2026-06-11]] — **MERGED 2026-06-12** (`1f3f7a2` → develop `d88f50b`, pushed). 3-agent whole-site SEO+sitemap audit → P0+P1+P2 implemented: fake reviews deleted ×**4** sources (impl found 4th in AirportTransferJsonLd.js), sitemap 128→86 URLs + robots disallows, noindex fixed/added on 5 private pages, activities canonical → NEXT_PUBLIC_DOMAIN, 480-line dead JSON-LD pipeline deleted, hreflang removed, xmlns http://, 301s for homepagev1/v2 + trips/detail, Promise.all + escapeXml in server-sitemap, GTM out of Head. Build exit 0, 8 regression greps clean. Remaining: deploy to prod, P0-1 GSC/WAF verify (manual), P0-6 nginx 301s (infra), P1-3 soft-404 per [[gsc-crawled-not-indexed-investigation-2026-06-05]], P3 dead-code sweep.
@@ -116,6 +120,9 @@ Global navigation catalog. Updated on every ingest.
 - [[trip-search-results-redesign-2026-06-14]] — **CLOSED 2026-06-15.** 3-agent design analysis for Travel Decision Engine redesign of `/trips/[from]/[to]`. R1+R2 fully shipped to `develop`. See [[trip-search-results-implementation-plan-2026-06-14]] + [[trip-search-below-fold-redesign-2026-06-15]].
 - [[trip-search-results-implementation-plan-2026-06-14]] — **CLOSED 2026-06-15.** R1 `933b1b6` + R2 `6f2ada9` + round-trip UX `a3c328a` all merged to develop. P1-P5/P7-P10 CUT. P11 no-op. Deploy to prod pending (ops).
 - [[adr-trip-confidence-score-algorithm-2026-06-14]] — **DECISION 2026-06-14.** Confidence score = backend-computed `SerializerMethodField`. Reweighted: rating 45 / reviews 25 / popularity 20 / score-bonus 10 (raw `score` is null on most contracts). Rejected Alt B corrected (RecommendationViewSet exists but is cross-sell).
+- [[contract-confidence-score-algorithm]] — Atom (extracted 2026-06-15). Formula spec + cold-start handling + N+1 fix (`_get_review_stats`) + tiebreaker chain. Use when implementing confidence score sort or explaining weight choices.
+- [[route-intelligence-hero-spec]] — Atom (extracted 2026-06-15). Locked Phase 1 hero spec: gradient (no photo), 180/140px, leg badge, route title with return-swap, 4-stat row, 3 screenshot refinements, CUT/BLOCKED items.
+- [[core-web-vitals-budget-2026-06-06]] — Atom (extracted 2026-06-15). Site-wide performance budget: HTML <100KB, all WebP+AVIF, async scripts, no inline `<style>`, font preload, explicit image dimensions. C1-C3 + H1-H5 + M1-M4 from 2026-06-06 audit.
 - [[cross-sell-integration-status-2026-06-13]] — **NEW 2026-06-13.** Live code audit: all 4 surfaces mounted (checkout `index.js:1008`, trip detail `[...slug].js:367`, activity detail `DayTripDetailPage.js:231`, post-booking `BookingDetailMain.js:161`). Vault stale atoms flagged. GTM `item_category` (`useOmisePayment.js:56`) = quick eng win. BD inventory = only gate.
 - [[cross-sell-debate-review-2026-06-09]] — **COMPLETED 2026-06-09. PARTIALLY STALE** (checkout blockers resolved). 3-agent BD×ENG×PM debate. Cross-sell placement: post-booking #1, trip detail #2. Checkout IS live — see [[cross-sell-integration-status-2026-06-13]].
 - [[next-priority-debate-2026-06-09]] — **COMPLETED 2026-06-09.** 3-agent next-priority debate. Decision: GTM + cross-sell mount now, journey builder gated.

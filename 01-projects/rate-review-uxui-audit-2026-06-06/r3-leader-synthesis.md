@@ -39,18 +39,7 @@ The guest flow is nearly invisible with no affordance or guidance:
 ## P0 — Must Fix Before Next Release
 
 ### P0-1 — Stored XSS in review detail page
-- **Finding:** FE-01 (confirmed P0 by skeptic)
-- **File:** `pages/rate-review/[reviewSlug].js:455`
-- **Fix:** Import DOMPurify using the SSR-safe pattern already established in `ReviewList.js`, `ReviewDetailModal.js`, and `ReviewFirstPage.js`. Add at top of file:
-  ```js
-  let DOMPurify = null;
-  if (typeof window !== 'undefined') { DOMPurify = require('dompurify'); }
-  ```
-  Change render to:
-  ```js
-  dangerouslySetInnerHTML={{ __html: DOMPurify ? DOMPurify.sanitize(formattedText) : formattedText }}
-  ```
-- **Effort:** XS (1–2 lines, pattern copy from existing codebase)
+→ See [[dompurify-xss-prevention-pattern]] (SSR-safe pattern, 3 options, why `isomorphic-dompurify` over raw `dompurify`). File: `pages/rate-review/[reviewSlug].js:455`. Effort: XS. Pattern copy from 3 sibling files.
 
 ---
 

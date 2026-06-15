@@ -22,23 +22,7 @@
 
 ### 1. [BLOCKER — Skeptic #2] Cross-CT data loss on blog path
 
-- **Severity:** silent destructive data corruption (worst-class bug — no error to user)
-- **File:** `smartenplus-backend/dialogue/views.py:882, 903, 947`
-- **Defect:** Blog path queries `Bookmark.objects.filter(user=request.user, object_id=oid)` with NO `content_type` filter. A user with contract bookmark `(user=U, CT=operators.contract, object_id=42)` who visits a blog with `databaseId=42` hits the blog path: `check` returns `bookmarked=true` (matches the contract row), tap "remove" runs `delete` which calls `Bookmark.objects.filter(user, object_id=42).first().delete()` → contract row destroyed.
-- **Fix shape:** Add sentinel CT filter to ALL 3 blog-path queries.
-  ```python
-  # views.py:882 (check)
-  bookmark = Bookmark.objects.filter(
-      user=request.user,
-      content_type=ContentType.objects.get_for_model(Bookmark),
-      object_id=oid
-  ).first()
-  # Same shape at :903 (.exists()) and :947 (.first()).
-  ```
-  Cache the sentinel CT at module-level (see Task 12) so it doesn't re-query 3× per request.
-- **Effort:** 20 min
-- **Risk:** LOW. Existing blog rows ALL have sentinel CT set (per ADR Bug 1 fix — `views.py:910`), so the added filter is a no-op for the intended row set but blocks the cross-CT collision. Validate with: `SELECT COUNT(*) FROM dialogue_bookmark WHERE content_type_id = (SELECT id FROM django_content_type WHERE app_label='dialogue' AND model='bookmark');` should equal blog-bookmark count.
-- **Deps:** None.
+→ See [[sentinel-content-type-bookmark-blog]] (silent destructive bug, sentinel `content_type=ContentType.objects.get_for_model(Bookmark)` filter required, `views.py:882/903/947` fix shape, validation SQL). Effort: 20 min. Risk: LOW.
 
 ### 2. [BLOCKER — Skeptic #1] LikeViewSet.delete 405
 

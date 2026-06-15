@@ -16,53 +16,7 @@ Redesign `/trips/[from]/[to]` from sidebar-filter marketplace into decision engi
 
 ## Feature 1: Confidence Score Algorithm
 
-### What is `contract.score`?
-
-`score = models.FloatField(null=True, blank=True)` — `operators/models.py` line 265.
-
-Manually set by admins. No signal, no auto-compute, no management command. `null` on any contract never touched by admin. **40% weight in proposed formula = dead weight for most contracts.**
-
-### `booked_count`
-
-`booked_count = models.PositiveIntegerField(default=10, blank=True)` — line 268.
-
-Cumulative running total. `default=10` is a cold-start seed, not real bookings. New contract contributes `min(10/500, 1) * 0.15 = 0.003` — essentially zero.
-
-### `average_rating` + `review_count`
-
-Both are `SerializerMethodField` — N+1 DB query per contract per serialization (lines 323-340). Return `None` for zero-review contracts. JavaScript `|| 0` handles nulls correctly.
-
-### Formula Verdict — Reweight Required
-
-Proposed formula cold-start result for new operator: `round((0 + 0 + 0 + 0.003) * 100) = 0`.
-
-**Validated replacement weights:**
-```
-rating_component = (average_rating / 5)          × 0.45
-review_trust     = min(review_count / 50, 1)     × 0.25
-popularity       = min(booked_count / 500, 1)    × 0.20
-score_bonus      = (score / 100)                 × 0.10  # admin override only
-```
-
-Established operator (30 reviews @ avg 4.2, 200 bookings, score=null):
-`0 + (4.2/5 * 0.45) + (30/50 * 0.25) + (200/500 * 0.20) = 0 + 0.378 + 0.15 + 0.08 = 61/100`
-
-### Backend vs Client-Side
-
-**Decision: add `confidence_score` as `SerializerMethodField` on `ContractSerializer`.**
-
-- Single source of truth — no formula drift across clients
-- Raw signals already serialized — no extra DB hits from model fields
-- Enables server-side sort by `confidence_score` in future
-- Refactor `get_average_rating`, `get_review_count`, `get_confidence_score` to share `_get_review_stats(obj)` internal method — avoids 3 separate N+1 queries
-
-### Cold-Start Handling
-
-New operator: `confidence_score ≈ 0`. Options:
-1. **Exclude from Recommended picks** when `confidence_score < 10` — show in default list only
-2. **Admin-set `score` as boost lever** — document `score` as admin visibility lever, set to 50 on onboarding (zero code changes)
-
-**Recommendation: Option 2 immediate, Option 1 as guard in frontend.**
+→ Extracted to [[contract-confidence-score-algorithm]] (formula + cold-start + N+1 fix + tiebreakers). Decision: backend `SerializerMethodField` on `ContractSerializer` with reweighted formula (rating 0.45 / review-trust 0.25 / popularity 0.20 / admin-override 0.10).
 
 ---
 

@@ -20,66 +20,7 @@ Prior code-level audit: [[homepage-seo-performance-deep-review-2026-05-21]] (30 
 
 ## SEO & Speed
 
-### Scores
-| Category | Score | Status |
-|---|---|---|
-| SEO | 75/100 | Moderate |
-| Speed | 40/100 | Poor |
-| Accessibility | 85/100 | Good |
-
-### Critical — Speed
-
-**C1: HTML Page Size 308 KB (should be <100 KB)**
-3x recommended size. 66 inline style blocks, 34 JS chunks.
-Fix: Enable Next.js compress, maximize SSG. Fragment page if needed.
-
-**C2: 10 Synchronous Scripts Blocking First Paint**
-10 of 34 chunks are synchronous — block FCP and LCP.
-Fix: Mark non-critical scripts `defer`/`async`. Use `next/script strategy="lazyOnload"`.
-
-**C3: 66 Inline `<style>` Blocks**
-Every carousel card/section injects CSS inline. Blocks rendering, kills caching.
-Fix: Use CSS modules or global stylesheets instead of Tailwind arbitrary inline classes.
-
-### High — Speed
-
-**H1: 18 Non-WebP Images** (11 WebP ✅, 18 PNG/JPG ❌, 35/36 lazy-loaded ✅)
-Fix: Convert all destination/carousel images to WebP. Target `<picture>` with AVIF fallback.
-
-**H2: No Font Preload for Inter**
-Only preconnect to Google Fonts — no preload for the Inter woff2 file. Causes FOIT.
-Fix: `<link rel="preload" as="font" href="/_next/static/media/...inter.woff2" crossorigin>`
-
-**H3: No width/height on Images — CLS Risk**
-None of 36 images have explicit `width`/`height`. Causes Cumulative Layout Shift.
-Fix: Add `width={X} height={Y}` to all `<Image>` components.
-
-**H4: 1 Deferred Stylesheet (data-href)**
-Lazy-loaded stylesheet via `data-href` pattern. Can cause FOUC.
-Fix: Investigate which component defers its stylesheet. Load inline or preload.
-
-**H5: Cloudflare Insights Beacon (~50ms overhead)**
-`https://static.cloudflareinsights.com/beacon.min.js` adds DNS lookup + latency per page.
-Fix: Remove if not actively monitored. If needed, defer.
-
-### Moderate — SEO
-
-**M1: Missing `<meta name="keywords">` tag**
-Bing + Thai-local search engines may still use it.
-Fix: Add `bus, ferry, train, Thailand, booking, travel, Phuket, Krabi, Koh Phi Phi, airport transfer`
-
-**M2: Duplicate H2 "Routes" in navigation**
-Two nav links both labeled "Routes" — config bug.
-Fix: Deduplicate nav items.
-
-**M3: OG Image — Local WebP May Not Render in Social Sharing**
-`/_next/static/media/smartenpus-transportation-booking-online.9ae7d65f.webp`
-Social crawlers (Facebook, LINE) may not reliably render Next.js-served WebP.
-Fix: Test in Facebook Debugger + LINE debugger. Serve OG image from CDN with cache headers.
-
-**M4: GTM Not Preloaded**
-Preconnect exists but GTM script not preloaded. ~100ms overhead.
-Fix: Audit GTM container. If 1-2 tags, inline them. Otherwise preload the GTM script.
+→ Extracted to [[core-web-vitals-budget-2026-06-06]] (HTML <100KB, all WebP+AVIF, async scripts, no inline `<style>`, font preload, explicit image dimensions). Scores: SEO 75/100, Speed 40/100, A11y 85/100. Speed: C1 HTML 308KB, C2 10 sync scripts, C3 66 inline style blocks. H1-H5 + M1-M4.
 
 ### Good — SEO ✅
 Title, meta description, H1, heading hierarchy (H1×1, H2×9, H3×19), canonical URL, all OG tags, Twitter Card, robots meta, viewport, charset, all 36 images have alt text, skip links (×2), font-display swap, 35/36 images lazy-loaded, 6 external URLs only, Google site verification, semantic HTML (article×13, section×7, nav×2, main×2).

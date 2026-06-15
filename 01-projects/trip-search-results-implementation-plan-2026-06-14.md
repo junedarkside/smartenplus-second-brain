@@ -60,30 +60,7 @@ Proper model+serializer read changed the feasibility map:
 
 ### PHASE 1 — RouteIntelligenceHero FINAL SPEC (screenshot-validated 2026-06-14)
 
-Live screenshot confirmed photo hero eats entire first screen (~540px before results). Spec accepted with 3 refinements + overlap resolution.
-
-**New `components/trips/RouteIntelligenceHero.js`** — gradient (ocean-blue→seafoam), NO photo, 180px desktop / 140px mobile (max 220px):
-- Back + Share row (reuse existing).
-- **Leg badge** (round trip): `[OUTBOUND JOURNEY]` blue / `[RETURN JOURNEY]` green; none for one-way. From `isReturnJourneyActive` + `tripModeDisplay`.
-- **Route title** active direction — return SWAPS to `Koh Lipe → Hat Yai` (like `activeFrom/activeTo`).
-- **Stats:** `From ฿N` · duration RANGE `4h30m–6h` (never average) · `N departures` · `First HH:MM · Last HH:MM`.
-- **Edit Search** trigger + passenger chip (reuse `SearchDialogTrigger` + passenger modal; NO inline form).
-- < 200 lines.
-
-**3 refinements from screenshot review:**
-1. **ADD First/Last departure** — `Math.min/max(trip.departure_time)`. Real, cheap, genuine route intelligence.
-2. **"From ฿N" must match bookable cards** — use advance_hr-filtered `min_display_rate` (same set as cards). Screenshot: cards ฿1,000 / strip ฿990 while a ฿700 contract was advance_hr-excluded → hero must NOT advertise unbookable ฿700.
-3. **DROP "today"** — show `N departures` or `N departures on 16 Jun` (date-scoped, not literal today).
-
-**Overlap resolution:** Hero owns route identity + stats. `ResultsPageHeader` reduces to **trust-chip row only** (drop duplicate "Hatyai → Koh Lipe · N departures"). Folded into Phase 2.
-
-**CUT from hero (3-agent review consensus):** confidence score (no on-time/transfer data), trust badges (per-contract → card-level), travel insight (fake data), most-popular-departure (cold query, deferred).
-
-**BLOCKED (separate track):** hero route viz — `Contract.timeline` per-contract, no canonical route path. Needs product/BE selection-rule decision.
-
-**Files:** new `components/trips/RouteIntelligenceHero.js`; `FilterTripsPage.js` (swap `DynamicSearchCover`→hero, pass trips-derived stats); `ResultsPageHeader.js` (→chips only, Phase 2). Keep `SearchCover`/`FeaturedImageHeader` untouched (homepage/other pages).
-
-**3-agent review record (2026-06-14):** FE-arch + UX + BE-data. Consensus: route viz blocked (per-contract timeline), confidence/trust/insight cut (no data / per-contract / fake), real route-level data = price + count + duration-range. New component not edits (SearchCover at 220-line limit, FeaturedImageHeader carries dead image machinery).
+→ Extracted to [[route-intelligence-hero-spec]] (gradient hero spec, 3 screenshot refinements, overlap resolution, CUT/BLOCKED items, 3-agent review record). Files: new `components/trips/RouteIntelligenceHero.js`; `FilterTripsPage.js` swap; `ResultsPageHeader.js` reduce to chips (Phase 2).
 
 ---
 
