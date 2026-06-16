@@ -17,11 +17,12 @@
 **Achieved prior session (#119) — Trip-detail SEO/AEO/GEO audit + full implementation:**
 - 3-specialist audit + grill + 3-agent impl team. Merged `feat/trip-detail-seo-aeo-geo-fix` → develop `ca490ee`. Re-audit 7/7 HIGH PASS, 1 fixed (`bddb1c0`). Atom: [[trip-detail-server-side-seo-pattern]].
 
+**DEPLOYED 2026-06-16:** FE `main` @ `19984f2` live in prod. BE `main` @ `21fbdcf` live in prod. Both synced with `develop` — no pending-deploy gap.
+
 **Resume point (EXACT):**
-1. **Deploy to prod** — FE `main`/`develop` now both @ `19984f2` (synced, this session's fix included). BE `develop` @ `21fbdcf` ahead of `main`.
-2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
-3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`.
-4. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken` pattern from `TripSearchFilters.js:80-99`. See [[slidecalendar2-farecalendar-prop-pattern]].
+1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
+2. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`.
+3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken` pattern from `TripSearchFilters.js:80-99`. See [[slidecalendar2-farecalendar-prop-pattern]].
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -29,9 +30,9 @@
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
 
 **Next session: starting state**
-- vault: this commit
-- FE `main`/`develop` @ `19984f2` (synced, not deployed)
-- BE `develop` @ `21fbdcf` | BE `main` @ `482cfc6` (not deployed)
+- vault: `master` @ `1259f5b`
+- FE `main`/`develop` @ `19984f2` — **deployed, live**
+- BE `main`/`develop` @ `21fbdcf` — **deployed, live**
 - admin-dashboard: `main` @ `4a6c03b` (untracked docs/)
 - content: `master` @ `3756e5b` (clean)
 
