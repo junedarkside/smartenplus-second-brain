@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #123 — 2026-06-16 — Soft-delete SHIPPED + contract dashboard cards:**
+- **Shipped soft-delete**: pushed `feat/contract-soft-delete` on BE + admin, merged `--no-ff` → `develop` both repos, branch pruned local+remote. BE develop `0e52782`, admin develop `f75d721`.
+- **Summary counts bug** (BE `ContractViewSet.list`): cards collapsed when a status card clicked (`status=active` scoped the summary). Fixed — summary computed with `apply_status_filter=False`, Total/Active/Inactive/Deleted stay global. Test pins summary identical across `status=active|inactive|deleted`.
+- **`is_deleted` ROOT FIX** (BE `ContractSerializer.Meta.fields`): list payload omitted `is_deleted`+`deleted_at` → grid badge fell back to red "Inactive" for deleted rows AND Restore dead (selected-deleted count always 0). Added both fields. Root cause behind "can't activate 182 / shows inactive".
+- **Status-aware Restore** (admin `ContractsActionBar`): bulk-button visibility follows SELECTED rows' `is_deleted` (`getSelectedContracts()` live/deleted split), not active filter.
+- **Deleted badge** (`StatusBadgeCell`): id-only label, "Deleted" → hover tooltip. **Dashboard cards** (BE `accounts/views.py` + admin `Main.js`): Contracts status card + Expiry card.
+- Deploy develop → prod DONE: BE `0e52782` + admin `f75d721`, migration `0061` run.
+- Atoms: [[serializer-field-omission-starves-ui]], [[summary-must-not-scope-by-its-own-selector]].
+
+---
+
 **Session #122 — 2026-06-16 — Contract soft-delete (BE + admin) BUILT:**
 - **Feature**: real soft-delete for Contract. New `is_deleted/deleted_at/deleted_by` + `Contract.soft_delete()`/`restore()` methods holding the invariant `is_deleted ⇒ is_actived=False`. `ContractViewSet.destroy()` soft-deletes, new `restore` action, admin `status=deleted` filter + `deleted_contracts` summary, `update_activation` guards `is_deleted=False`. Migration `0061`. BE commit `ce77943` on `feat/contract-soft-delete`.
 - **Admin UI**: Deleted chip (`StatusBadgeCell`), Deleted filter card (`ContractsSummaryStrip`), Delete/Restore bulk actions, `deleteContract`/`restoreContract` mutations. Plus responsive labeled bulk-action buttons + tooltips. admin commits `7e3c5a9` + `5915231` on `feat/contract-soft-delete`.

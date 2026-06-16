@@ -14,9 +14,16 @@ Global navigation catalog. Updated on every ingest.
 
 ## Knowledge — UX/Design
 
+- [[unified-badge-system-pattern]] — Multi-badge card rows: one geometry, differentiate axes (status/category/type) by fill+icon NOT clashing hue; non-ordinal sets get one color + distinct icons; colors from tokens. Twin-component over fork/premature-primitive. From operators card fix #124.
 - [[mobile-search-bar-ux-competitor-research-2026]] — Mobile sticky search bar competitor research + redesign direction. Chip pattern, brand-blue CTA, drop "One Way" label. Branch: `feat/mobile-search-bar-redesign`.
 
 ## Active Projects
+
+- [[operator-card-badge-consistency-2026-06-16]] — **SPEC 2026-06-16.** 2-agent (design+frontend) fix for "AI slop" contract-card badges on `/operators/[slug]`. Root cause: 3 badge systems/row (3 radii, 2 heights, MUI-Chip vs raw-span) + JOIN renders success-green next to status badge. Fix: canonical Chip geometry, one neutral indigo for all contract types (icon+label differentiate, not hue), new scoped `ContractTypeBadge`, friendly `CONTRACT_TYPE_NAMES` labels. Verified: delete only `tourTypeSoft` (operators-only); KEEP `tourTypePrivate/Charter` (used by BadgeChip). No `BadgeChip` touch, no MetaBadge abstraction. Spec only.
+
+- [[operator-detail-seo-aeo-geo-audit-2026-06-16]] — **AUDIT 2026-06-16.** 3-specialist SEO/AEO/GEO audit of `/operators/[slug]` post-redesign. Zero JSON-LD (top finding all 3 lenses), `<title>` double brand-suffix bug (hand-verified vs `_app.js:37` titleTemplate), canonical relative-URL risk (fix via `getSiteUrl()`). GEO thin until backend `description` field. Policy gate: `aggregateRating` only on bookable items (Product/TouristTrip), NEVER operator Org node — provenance confirmed first-party (`dialogue.Review is_approved` on Contract) but Google bans self-serving Org review markup. Most fixes frontend-only, reuse trip-detail SEO helpers. Read-only, leader hand-verified title bug + rating provenance.
+
+- [[operator-detail-page-redesign-2026-06-16]] — **SPEC 2026-06-16.** 3-agent debate (UX→Design→Frontend) redesign of `/operators/[slug]`. Converged: hero-weighted header + operator-specific stat trio (rating/reviews/route count), type-filter pills→MUI tabs, dead `KeyHighlights`/`FeaturedImageHeader` imports removed, filter bar extracted (`OperatorFilterBar.js`, 200-line guideline). Tab per-type counts blocked on backend `by_type` aggregation. No code shipped — spec only.
 
 - [[seo-sitemap-whole-site-audit-2026-06-11]] — **MERGED 2026-06-12** (`1f3f7a2` → develop `d88f50b`, pushed). 3-agent whole-site SEO+sitemap audit → P0+P1+P2 implemented: fake reviews deleted ×**4** sources (impl found 4th in AirportTransferJsonLd.js), sitemap 128→86 URLs + robots disallows, noindex fixed/added on 5 private pages, activities canonical → NEXT_PUBLIC_DOMAIN, 480-line dead JSON-LD pipeline deleted, hreflang removed, xmlns http://, 301s for homepagev1/v2 + trips/detail, Promise.all + escapeXml in server-sitemap, GTM out of Head. Build exit 0, 8 regression greps clean. Remaining: deploy to prod, P0-1 GSC/WAF verify (manual), P0-6 nginx 301s (infra), P1-3 soft-404 per [[gsc-crawled-not-indexed-investigation-2026-06-05]], P3 dead-code sweep.
 
@@ -297,7 +304,7 @@ Global navigation catalog. Updated on every ingest.
 - [[next-seo-v6-robots-prop-broken]] — robots={{}} silent no-op, correct API noindex={true}/nofollow={true}, SSR constraint false
 - [[canonicalization-audit-checklist]] — domain + per-page checks, parallel URL handling, known gotchas
 - [[site-url-config-pattern]] — baseURL vs NEXT_PUBLIC_DOMAIN, module const pattern, deploy default fix
-- [[structured-data-schema-patterns]] — TravelAgency schema accuracy, WebSite+SearchAction, server-sitemap.xml 404 crawl budget
+- [[structured-data-schema-patterns]] — TravelAgency schema accuracy, WebSite+SearchAction, server-sitemap.xml 404 crawl budget. **+ aggregateRating-placement RULE (#124): never on Org/TravelAgency node — bookable Product/Offer only; flags a contradiction in this note's own homepage fix-list item 4.**
 - [[mui-dropdown-preserve-strategy]] — ARIA test compatibility, item reduction framework (11→6), Drawer bottom-sheet pattern
 - [[section-contentcard-wrapper-pattern]] — Section/ContentCard absent = full-bleed root cause; reuse across pages
 - [[editorial-grid-layout-pattern]] — Asymmetric 2fr 1fr CSS grid, CardCarouselContainer, rounded-xl imageCard token

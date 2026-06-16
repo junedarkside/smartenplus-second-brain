@@ -179,6 +179,7 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "03-knowledge/unified-badge-system-pattern.md",
     "01-projects/trip-search-results-redesign-2026-06-14.md",
     "log.md.tmp.56014.560eacef4920",
     "master-state.md.tmp.53315.c652bb08cf58",
@@ -211,7 +212,6 @@
     "03-knowledge/payment-idempotency-key-cart-total.md",
     "03-knowledge/homepage-section-render-order-conversion.md",
     "03-knowledge/og-image-1200x630-webp.md",
-    "03-knowledge/payment-cancel-state-prevmethod-guard.md",
     "03-knowledge/design-system-audit-2026-06-13.md.tmp.96743.5855b963fba0",
     "master-state.md.tmp.53313.bbbca733d224",
     "master-state.md.tmp.53313.e3788c6edd7c",

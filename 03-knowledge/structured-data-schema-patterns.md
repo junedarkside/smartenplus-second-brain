@@ -89,7 +89,15 @@ export const COMPANY_ADDRESS = {
 - server-sitemap.xml 404 = Google can't discover dynamic trip routes, suppresses crawl budget
 - AggregateRating wired to live data refreshes with ISR (60s)
 
+## RULE — `aggregateRating` placement (Google self-serving policy)
+**Never attach `aggregateRating` to a `TravelAgency`/`Organization`/`LocalBusiness` node representing your own (or a partner operator's) business.** Google prohibits self-serving review markup on the org entity — it's ineligible at best, manual-action risk at worst. Attach `aggregateRating` ONLY to the **bookable item** (`Product`/`TouristTrip`/`Offer`), where it's eligible. (Established via operator-detail SEO/AEO/GEO audit 2026-06-16; the trip-detail page does this correctly — rating on the `Product`/`TouristTrip`, not the operator `TravelAgency`.)
+
+**⚠ Contradiction flag:** this note's older "Details → TravelAgency full fix list" item 4 ("Wire `aggregateRating` to `lastTopReviewData`" on the homepage TravelAgency node) is the exact anti-pattern above. Re-evaluate before implementing item 4 — either drop the org-level aggregateRating, or move it to a Product/Offer node. First-party-vs-self-reported provenance doesn't rescue org-node placement; the *node type* is the problem.
+
+On `/operators/[slug]` (shipped #124) the rating is deliberately rendered in **FAQ prose only**, with the operator emitted as a bare `TravelAgency` (name/url/logo, no rating). Reusable utils: `helpers/seo/operatorDetailSEOUtils.js`, renderer `components/operators/OperatorDetailSEO.js`.
+
 ## Related
 - [[blog-seo-performance-2026-05-20]] — server-sitemap.xml pattern
 - [[homepage-ux-review-2026-05-21]] — review section render order
 - [[nextjs-patterns]] — ISR patterns
+- [[operator-detail-seo-aeo-geo-audit-2026-06-16]] — source of the aggregateRating-placement rule + operator schema pattern

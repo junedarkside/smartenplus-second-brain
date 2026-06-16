@@ -4,21 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-16 (session #123 END)
+**Updated:** 2026-06-16 (session #124 END)
 
-**Achieved this session (#123) — Soft-delete SHIPPED + contract dashboard cards:**
-- **Shipped soft-delete**: pushed `feat/contract-soft-delete` on BE + admin, merged `--no-ff` → `develop` both repos, branch pruned local+remote. BE develop `0e52782`, admin develop `f75d721`.
-- **Summary counts bug** (BE `ContractViewSet.list`): cards collapsed when a status card clicked (`status=active` filter scoped the summary). Fixed — summary computed on queryset with `apply_status_filter=False`, so Total/Active/Inactive/Deleted stay global tallies. Test pins summary identical across `status=active|inactive|deleted`.
-- **`is_deleted` ROOT FIX** (BE `ContractSerializer.Meta.fields`): list payload omitted `is_deleted`+`deleted_at`. Grid badge fell back to red "Inactive" for deleted rows AND Restore path was dead (selected-deleted count always 0). Added both fields → badge + restore now work. This was the data root cause behind the "can't activate 182 / shows inactive" report.
-- **Status-aware Restore** (admin `ContractsActionBar`): bulk-button visibility now follows the SELECTED rows' `is_deleted` (via `getSelectedContracts()` split into live/deleted counts), not the active filter. Restore reachable in any view; mixed selections show both groups (backend scopes each op).
-- **Deleted badge** (`StatusBadgeCell`): id-only label; "Deleted" moved to hover tooltip.
-- **Dashboard cards** (BE `accounts/views.py` list-users + admin `Main.js`): Contracts status card (Active/Inactive/Deleted + Total, deep-links to filtered list) and Expiry card (Expired / ≤30d / ≤90d / No end date — active, non-deleted, by `end_date`).
-- Atoms: [[serializer-field-omission-starves-ui]], [[summary-must-not-scope-by-its-own-selector]].
+**Achieved this session (#124) — Operators page FE overhaul SHIPPED to prod:**
+- **Operators detail-page redesign** (`8853cb2`): design-token consistency (typography/colors/border-radius), `LAYOUT.pageContentClasses` width fix (operators matched homepage/trips `px-4 xl:px-0`), hero-weighted header, stat trio (rating·reviews·routes from existing `summaryData`/`pagination.count`), type-filter pills → MUI tabs via new `components/operators/OperatorFilterBar.js`. Key fix: "All" tab omits `type` param (non-transport service-category contracts no longer hidden).
+- **Operators SEO/AEO/GEO** (`21a4d4a`): new `helpers/seo/operatorDetailSEOUtils.js` (pure fns) + `components/operators/OperatorDetailSEO.js`, mirroring trip-detail pattern. Fixed `<title>` double-brand-suffix, canonical via `getSiteUrl()`. JSON-LD: TravelAgency + BreadcrumbList + ItemList + FAQPage. og:locale/geo meta. `aggregateRating` deliberately NOT on operator Org (Google self-serving policy) — ratings in FAQ prose only.
+- **Contract-card badge unification** (`a3c1d88`): new `components/UI/ContractTypeBadge.js` (Chip twin of ServiceCategoryBadge, `COLORS.badge.primary` token, Groups/Lock/AirportShuttle icons, `CONTRACT_TYPE_NAMES` friendly labels). Killed `tourTypeSoft` JOIN-green-collides-with-status bug. Aligned 3 badge systems → one geometry. Fixed pre-existing `dayTripApi.js:364` missing-arrow syntax error (dormant, surfaced by new import).
+- All merged `--no-ff` → FE develop `6fff946`, branches pruned local+remote. **DEPLOYED to prod (user-confirmed).**
+- Vault docs: [[operator-detail-page-redesign-2026-06-16]], [[operator-detail-seo-aeo-geo-audit-2026-06-16]], [[operator-card-badge-consistency-2026-06-16]]. Feedback memory: design audits must cover layout/width, not just color/type tokens.
+
+_(Session #123 soft-delete block archived → `07-logs/session-history.md`.)_
 
 **Resume point (EXACT):**
 1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 2. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
-3. ~~Deploy develop → prod~~ **DONE #123** — BE `0e52782` + admin `f75d721` deployed, migration `0061` run on prod. Soft-delete + dashboard cards live.
+3. **Operators backend follow-ups** (from #124 SEO/redesign): OPERATOR-DESC + OPERATOR-TAB-COUNTS — see Section 2.
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -27,10 +27,10 @@
 - Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled — shows `total_contracts`, not bookings. Untracked, low priority.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #123)
-- FE `main`/`develop` @ `19984f2` — **deployed, live** (untouched this session)
-- BE: `develop` @ `0e52782` — **DEPLOYED to prod, migration `0061` run, live**
-- admin-dashboard: `develop` @ `f75d721` — **DEPLOYED to prod, live**
+- vault: `master` @ new commit (this adds #124)
+- FE `develop` @ `6fff946` — **DEPLOYED to prod, live** (operators redesign + SEO + badges shipped #124). Confirm `main` fast-forwarded to match if prod deploys from `main`.
+- BE: `develop` @ `0e52782` — DEPLOYED to prod, migration `0061` run, live (unchanged #124)
+- admin-dashboard: `develop` @ `f75d721` — DEPLOYED to prod, live (unchanged #124)
 - content: `master` @ `3756e5b` (clean)
 
 ---
@@ -39,6 +39,8 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **OPERATOR-DESC** | Operator `description` field (backend) → unblocks GEO "about operator" prose on `/operators/[slug]` (flagged in SEO/AEO/GEO audit, the one truly backend-blocked item). | OPEN #124 — backend task. | `smartenplus-backend` operators model + serializer; FE placeholder comment in `pages/operators/[slug].js` |
+| **OPERATOR-TAB-COUNTS** | `by_type` aggregation (TRANSPORT-type only, computed pre-type-filter) on `OperatorContractsViewSet.list` summary → enables per-type counts in the operators page MUI tabs ("Join Tour (12)"). Frontend tabs already shipped without counts. | OPEN #124 — backend task. | `smartenplus-backend/operators/views.py` `OperatorContractsViewSet.list` |
 | **MIN-RATE-BE-MERGE** | BE `fix/popular-routes-lowest-price` @ `4da0b81` — merge to develop + verify `/front-page/` Hatyai→Koh Lipe `lowest_price` matches SlideCalendar rate | **CLOSED 2026-06-16** — merged at `37387c8`, BE develop now `21fbdcf` | `smartenplus-backend/products/views.py:1197` |
 | **TRIP-SEARCH-REDESIGN** | Travel Decision Engine + below-fold redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-15.** R1+R2 fully shipped. FE `develop` @ `6f2ada9`. Deploy to prod pending (ops task). → `07-logs/closed-items.md` | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-below-fold-redesign-2026-06-15]] |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
