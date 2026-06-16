@@ -15,7 +15,7 @@ Architecture Decision Record template. Copy this when making a new architectural
 # ADR: [Decision Title]
 
 ## Status
-[proposed | accepted | deprecated | superseded by [[adr-xxx]]]
+[proposed | accepted | deprecated | superseded by <!-- [[adr-xxx]] -->]
 
 ## Context
 What force or situation prompted this decision.

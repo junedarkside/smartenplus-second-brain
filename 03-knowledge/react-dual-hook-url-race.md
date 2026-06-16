@@ -79,4 +79,4 @@ Never use early-return or top-level `setPendingSearch('')` before the string bra
 
 ## Related
 
-[[activities-browse-architecture]] | [[nextjs-hydration-rules]]
+[[activities-browse-filter-inactive-contracts]] | [[nextjs-hydration-rules]]

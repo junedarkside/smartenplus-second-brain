@@ -149,7 +149,7 @@ metadata:
 - [[r1-ia]] — IA specialist section diff
 - [[r1-ux]] — UX specialist scoring
 - [[experience-detail-page-redesign-2026-06-02]] — predecessor doc
-- [[seo-homepage-auditor]] — SEO specialist team pattern
+- [[seo-homepage-specialist-team]] — SEO specialist team pattern
 - [[homepage-seo-performance-deep-review-2026-05-21]] — prior SEO audit
 - [[seo-homepage-audit-2026-05-31]] — FAQPageJsonLd precedent (not wired)
 - [[seo-wave2-audit-2026-05-23]] — prior SEO wave

@@ -31,4 +31,4 @@ confidence_score = round((rating_component + review_trust + popularity + score_b
 ## Related
 - [[trip-search-results-redesign-2026-06-14]] (parent)
 - [[trip-search-results-implementation-plan-2026-06-14]] (Phase 1 spec)
-- [[quick-filter-pills-direct-refundable]] (related sort/filter logic)
+- [[activities-sort-filter-ux]] (related sort/filter logic)

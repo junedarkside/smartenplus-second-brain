@@ -97,7 +97,7 @@ Reviewed: `round1-backend.md` (B-1..B-9), `round1-domain.md` (D-1..D-10)
 - **Refined claim:** the contradiction exists in the documentation trail; from the customer frontend side, the practical effect is zero (the field isn't rendered). R3 skeptic should sample-verify the admin-dashboard file directly.
 
 ### D-3: Intent is unstable across three docs ("upselling" / "display" / "search-discoverability")
-**Confirm with refinement.** Confirmed at the docs level (Round 1 R-domain already cited `[[08-archive/activities-location-search-bug-2026-06-01.original]]` Debate 3, `ContractFormFields.js:184`, `operators/models.py:402-415` as three sources). From the customer frontend: zero evidence the "upselling" intent is realized. Zero evidence the "display" intent is realized. Only the "search-discoverability" intent is realized (the autocomplete dropdown).
+**Confirm with refinement.** Confirmed at the docs level (Round 1 R-domain already cited `[[08-archive/.originals/activities-location-search-bug-2026-06-01.original]]` Debate 3, `ContractFormFields.js:184`, `operators/models.py:402-415` as three sources). From the customer frontend: zero evidence the "upselling" intent is realized. Zero evidence the "display" intent is realized. Only the "search-discoverability" intent is realized (the autocomplete dropdown).
 
 ### D-4: Admin form gives both fields the same UI affordance with no hierarchy
 **Out of scope (admin-dashboard not in checkout).** Cannot refute from customer frontend. R3 skeptic should verify.

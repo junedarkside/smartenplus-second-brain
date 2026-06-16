@@ -95,5 +95,5 @@ All Embla carousels in `lib/homepage/components/*Carousel.js` need `align: 'star
 ## Related
 
 - [[design-systems]]
-- [[popular-routes-carousel-fix-2026-05-28]]
+- [[carousel-design-standard]]
 - [[website-audit-full-2026-06-06-overview]] MC3 / MOB-4

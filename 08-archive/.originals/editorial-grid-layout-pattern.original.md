@@ -97,4 +97,4 @@ const DESTINATION_COPY = {
 ## Related
 - [[design-systems]] — token-based design system
 - [[section-contentcard-wrapper-pattern]] — when to skip ContentCard
-- [[card-carousel-container-pattern]] — Embla carousel usage
+- [[carousel-design-standard]] — Embla carousel usage

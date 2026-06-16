@@ -259,9 +259,9 @@ End-to-end trace of every fix path + edge cases. Four corrections applied in-pla
 1. `[[payment-amount-validation-rule]]` (H1)
 2. `[[payment-legacy-deprecation-map]]` (H2, M10)
 3. `[[payment-charge-service-layer]]` add IntegrityError cleanup pattern (M9)
-4. `[[order-creation-filter-rule]]` (M11)
+4. `[[django-booking-creation-validation-gate]]` (M11)
 5. Self-heal coverage matrix add to `[[payment-status-enums]]` (M12)
-6. `[[payment-model-fields]]` (M18)
+6. `[[payment-charge-service-layer]]` (M18)
 
 Full list with all 12 in [[payment-deep-review-verification-2026-06-12]] "KB Gaps Surfaced" section.
 
@@ -296,6 +296,6 @@ Full list with all 12 in [[payment-deep-review-verification-2026-06-12]] "KB Gap
 - [[payment-reconcile-gate-extension]] — H5: `finalize_payment` accepts `ordering`/`payment_failed`/`payment_pending` (guarded by `payment_finalized_at`)
 - [[payment-guest-email-guard-mirror]] — M8: every charge entry point validates `order.email == data['email']` for unauth
 - [[payment-cancel-state-prevmethod-guard]] — M3: `cancelState.success` reset guarded by `prevMethodRef`
-- [[payment-idempotency-key-cart-total.md]] — H3: `X-Idempotency-Key: ${cartId}:${total}`; wrapped `{"message","order"}` shape
+- [[payment-idempotency-key-cart-total]] — H3: `X-Idempotency-Key: ${cartId}:${total}`; wrapped `{"message","order"}` shape
 - [[payment-self-heal-coverage-matrix]] — M12: per-method self-heal coverage table (Card 3DS excluded)
 - [[payment-cancel-vs-expire-error-mapping]] — reuse `useCancelPayment` hook + `expirePendingCharge` helper

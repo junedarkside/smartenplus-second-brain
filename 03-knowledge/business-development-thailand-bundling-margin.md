@@ -56,6 +56,6 @@ Build bundles with explicit margin tiers. Use Required Core (transport) as acqui
 
 ## Related
 
-- [[thailand-bundle-architecture]] — bundle structure and supply model
-- [[unified-travel-wellness-thesis]] — wellness as high-margin differentiator
-- [[thailand-platform-analysis]] — Klook/GetYourGuide promotional mechanics
+- [[business-development-thailand-bundle-architecture]] — bundle structure and supply model
+- [[business-development-unified-travel-wellness-thesis]] — wellness as high-margin differentiator
+- [[business-development-thailand-platform-analysis]] — Klook/GetYourGuide promotional mechanics

@@ -50,4 +50,4 @@ Reusable for: currency, locale, user-pref, theme, auth-context, feature-flag con
 
 ## Related
 - [[react-state-no-op-guard-side-effect-prevention]] — same family of state-hygiene patterns; pairs with the cancellation guard.
-- [[useAuthRedirect patterns elsewhere]] — `useAuthRedirect` is one of the largest consumers of this pattern; the auth context is the canonical example.
+- `useAuthRedirect` patterns elsewhere — `useAuthRedirect` is one of the largest consumers of this pattern; the auth context is the canonical example.

@@ -69,6 +69,6 @@ Compete on "better trip composition"—transport+activity matching, schedule-awa
 
 ## Related
 
-- [[thailand-bundle-architecture]] — how to structure bundles with this competitive landscape
+- [[business-development-thailand-bundle-architecture]] — how to structure bundles with this competitive landscape
 - [[business-development-thesis-2026-2029]] — SmartEnPlus competitive position
-- [[zeitrip-mvp-product-spec]] — MVP targeting this gap
+- [[business-development-zeitrip-mvp]] — MVP targeting this gap

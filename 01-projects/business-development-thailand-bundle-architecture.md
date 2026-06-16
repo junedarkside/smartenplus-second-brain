@@ -73,7 +73,7 @@ Build end-to-end itinerary product with MaaS-style transport skeleton decorated 
 
 ## Related
 
-- [[thailand-platform-analysis]] — where 12Go/Klook/GYG fit in supply
-- [[thailand-bundling-margin-strategy]] — margin tier mechanics
-- [[zeitrip-mvp-product-spec]] — MVP flow
-- [[unified-travel-wellness-thesis]] — wellness as differentiator
+- [[business-development-thailand-platform-analysis]] — where 12Go/Klook/GYG fit in supply
+- [[business-development-thailand-bundling-margin]] — margin tier mechanics
+- [[business-development-zeitrip-mvp]] — MVP flow
+- [[business-development-unified-travel-wellness-thesis]] — wellness as differentiator

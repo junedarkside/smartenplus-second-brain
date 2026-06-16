@@ -59,15 +59,15 @@ One material correction: **M4 is REFUTED** — the deep-review claim that BE emi
 | 1 | Server-side amount validation rule | H1 | `[[payment-amount-validation-rule]]` — client `amount_thb` must equal `(order_total + fee - discount)` within 1.00 THB tolerance |
 | 2 | Legacy webhook/route inventory | H2, M10 | `[[payment-legacy-deprecation-map]]` — `webhook-legacy/`, `placeorder/`, deprecation status |
 | 3 | IntegrityError → orphaned Omise charge cleanup | M9 | Add to `[[payment-charge-service-layer]]` `create_charge` step 6: `omise_charge.expire()` in `except IntegrityError` |
-| 4 | Order creation filter rule | M11 | `[[order-creation-filter-rule]]` — guest orders must be cart-scoped, not global `user=None, status='ordering'` |
+| 4 | Order creation filter rule | M11 | `[[django-booking-creation-validation-gate]]` — guest orders must be cart-scoped, not global `user=None, status='ordering'` |
 | 5 | Self-heal coverage matrix | M12 | Add to `[[payment-status-enums]]` — per-method sweep coverage (PP/MB yes, Card 3DS no) |
-| 6 | `Payment` model field semantics | M18 | `[[payment-model-fields]]` — `amount_paid` lifecycle, `amount_precise`, ownership of updates |
-| 7 | FE→BE payment-method name contract | M17 | `[[payment-method-name-contract]]` — short codes (`'PP'`/`'KP'`) vs full names (`'kakao_pay'`) vs OmiseMethod values |
+| 6 | `Payment` model field semantics | M18 | `[[payment-charge-service-layer]]` — `amount_paid` lifecycle, `amount_precise`, ownership of updates |
+| 7 | FE→BE payment-method name contract | M17 | `[[payment-checkout-architecture-audit]]` — short codes (`'PP'`/`'KP'`) vs full names (`'kakao_pay'`) vs OmiseMethod values |
 | 8 | `useQRPolling` 4xx API_ERROR branch | M15 | Add to `[[payment-qr-polling-mechanics]]` lifecycle diagram — API_ERROR silent stop is a bug |
-| 9 | `usePaymentInitialization` init lifecycle | M16 | `[[use-payment-initialization-lifecycle]]` — `initialized.current` reset semantics, cleanup closure |
-| 10 | `usePaymentCouponManager` state machine | M14 | `[[use-payment-coupon-manager-state]]` — `isProcessing` reset paths, error handling |
+| 9 | `usePaymentInitialization` init lifecycle | M16 | `[[payment-frontend-flow-mechanics]]` — `initialized.current` reset semantics, cleanup closure |
+| 10 | `usePaymentCouponManager` state machine | M14 | `[[payment-frontend-flow-mechanics]]` — `isProcessing` reset paths, error handling |
 | 11 | Refund validation rule | M7 | Add "Validation" subsection to `[[refund-flow]]` — cumulative sum guard, multi-booking dimension |
-| 12 | Order-create response envelope contract | H3 | `[[order-create-response-shape]]` — `{"message": "...", "order": serializer.data}` consistency between create + reuse paths |
+| 12 | Order-create response envelope contract | H3 | `[[django-400-vs-409-duplicate-cart-item]]` — `{"message": "...", "order": serializer.data}` consistency between create + reuse paths |
 
 **Atomization note:** Per vault CLAUDE.md, 12 is high — recommend batching with next `/lint-vault` or splitting into 2 sessions (gap #1–6 first, #7–12 in following).
 
@@ -78,8 +78,8 @@ One material correction: **M4 is REFUTED** — the deep-review claim that BE emi
 **Deep-review M4 claim:** "GAP-2 cross-order 409 body `{error:'payment_pending'}` (`services.py:660-664`) not in FE's 409-mapping table (`useOmisePayment.js:169-178` checks `pending_charge_exists` only) → generic toast, no cancel affordance despite `charge_id` supplied."
 
 **Verification finding:**
-- `[[payment-exception-catalog.md]]` "Exception Reference" table row 1: `PendingChargeError` → 409 → `{error: 'pending_charge_exists', charge: {...}}`.
-- `[[payment-frontend-flow-mechanics.md]]` 409 Mapping: `pending_charge_exists` (mapped), `amount_locked` (mapped), `Order already paid` (mapped).
+- `[[payment-exception-catalog]]` "Exception Reference" table row 1: `PendingChargeError` → 409 → `{error: 'pending_charge_exists', charge: {...}}`.
+- `[[payment-frontend-flow-mechanics]]` 409 Mapping: `pending_charge_exists` (mapped), `amount_locked` (mapped), `Order already paid` (mapped).
 - `useOmisePayment.js:169-178` code reads `error === 'pending_charge_exists'` — this is the first branch.
 
 **What is actually true:** The 409 IS mapped. The "no cancel affordance" concern may still be valid — it could be that the `pendingCharge` branch is missing in the QR path (M1) or the cancel UX surface needs work. **M4 as written misidentifies the error code.**

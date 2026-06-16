@@ -155,7 +155,7 @@ Day 5+ — separate PRs: hero height, custom font, designSystem tokens
 - Gains: WCAG contrast, operational clarity, discovery nav continuity
 
 ## Related
-[[header-redesign-2026-team-review]] · [[smartenplus-glassmorphism-header]] · [[nav-header-redesign-2026-05-24]] · [[mobile-header-redesign-glassmorphism]]
+[[header-redesign-2026-team-review]] · [[smartenplus-glassmorphism-header]] · [[nav-header-redesign]] · [[mobile-header-redesign-glassmorphism]]
 
 ## Orphan Link-Backlog (Linked 2026-06-13)
 - [[adaptive-header-route-type-pattern]] — Type A/B header route-type pattern (umbrella spec anchors it)

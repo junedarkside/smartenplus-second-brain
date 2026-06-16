@@ -51,4 +51,4 @@ Multiple tabs on same checkout → duplicate QR codes, stale banners, silent car
 
 [[payment-system]] — GatewayCharge lifecycle
 [[checkout-flow]] — checkout payment flow
-[[session-structure]] — session?.user?.email (not session?.email)
+[[nextauth-session-shape]] — session?.user?.email (not session?.email)

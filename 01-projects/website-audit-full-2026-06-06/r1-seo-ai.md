@@ -135,7 +135,7 @@ date: 2026-06-06
   ```
   `InArticleCTA` has `'route' | 'newsletter' | 'booking' | 'social'` types. Already used in 2 places in BlogPostDisplay.
 - **Verdict:** DONE. Audit claim is outdated. The booking CTAs exist.
-- **Note:** Skeptical pre-objection ("does codebase have reusable `<BookingCTA>` component?") is FALSE. Component exists. Cross-link to [[in-article-cta-pattern]] in knowledge base.
+- **Note:** Skeptical pre-objection ("does codebase have reusable `<BookingCTA>` component?") is FALSE. Component exists. Cross-link to [[section-contentcard-wrapper-pattern]] in knowledge base.
 - **Effort:** 0 (skip)
 - **Risk:** n/a
 

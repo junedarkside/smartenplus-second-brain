@@ -136,5 +136,5 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 - [[business-development-thailand-platform-analysis]] — 12Go vs Klook vs GYG competitive positioning
 - [[trip-detail-page-review-2026-05-20]] — prior detail page audit
 - [[trip-detail-uxui-audit-2026-05-22]] — 3-specialist audit: 32 issues
-- [[seo-homepage-auditor]] — SEO specialist team pattern
+- [[seo-homepage-specialist-team]] — SEO specialist team pattern
 - [[homepage-seo-performance-deep-review-2026-05-21]] — prior SEO deep review

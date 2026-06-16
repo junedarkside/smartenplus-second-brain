@@ -52,7 +52,7 @@ Build platform that integrates 12Go-style transport + curated activities + welln
 
 ## Related
 
-- [[thailand-platform-analysis]] — where 12Go/Klook/GYG sit in the funnel
-- [[thailand-bundle-architecture]] — bundle structure and UX
-- [[thailand-bundling-margin-strategy]] — margin tier mechanics
+- [[business-development-thailand-platform-analysis]] — where 12Go/Klook/GYG sit in the funnel
+- [[business-development-thailand-bundle-architecture]] — bundle structure and UX
+- [[business-development-thailand-bundling-margin]] — margin tier mechanics
 - [[business-development-thesis-2026-2029]] — overall SmartEnPlus strategic position

@@ -93,5 +93,5 @@ When `NavigationSection` + `NavigationItem` table is populated in Django admin, 
 
 ## Related
 
-- [[nav-header-redesign-2026-05-24]] — nav phases + implementation history
+- [[nav-header-redesign]] — nav phases + implementation history
 - [[daytrips-to-activities-rename-2026-05-23]] — URL rename history, category param confirmed working

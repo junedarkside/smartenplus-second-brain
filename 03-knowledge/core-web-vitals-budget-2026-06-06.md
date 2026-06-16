@@ -36,5 +36,5 @@ Current page: 308KB HTML (3× budget), 10 sync scripts blocking FCP, 18 non-WebP
 
 ## Related
 - [[website-audit-full-2026-06-06-overview]] (parent)
-- [[nextjs-image-component-cls-prevention]] (width/height requirement)
-- [[tailwind-arbitrary-values-inline-style-bloat]] (66 inline styles root cause)
+- [[hero-cls-precise-sizes-attribute]] (width/height requirement)
+- [[mui-emotion-tailwind-injectfirst]] (66 inline styles root cause)

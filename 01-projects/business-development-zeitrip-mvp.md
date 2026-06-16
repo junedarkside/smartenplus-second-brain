@@ -59,6 +59,6 @@ Build MVP as single timeline itinerary planner on 3 key corridors. Differentiate
 
 ## Related
 
-- [[thailand-bundle-architecture]] — bundle design, UX principles, supply model
-- [[thailand-platform-analysis]] — competitive positioning
+- [[business-development-thailand-bundle-architecture]] — bundle design, UX principles, supply model
+- [[business-development-thailand-platform-analysis]] — competitive positioning
 - [[business-development-thesis-2026-2029]] — strategic alignment

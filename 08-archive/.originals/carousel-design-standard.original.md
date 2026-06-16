@@ -91,4 +91,4 @@ Inline style required — Tailwind classes insufficient against browser defaults
 ## Related
 
 - [[design-systems]]
-- [[popular-routes-carousel-fix-2026-05-28]]
+- [[carousel-design-standard]]

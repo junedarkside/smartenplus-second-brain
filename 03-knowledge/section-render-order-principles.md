@@ -77,4 +77,4 @@ Users miss non-first panels in carousels. Feature/trust content should use flat 
 
 ## Related
 - [[homepage-ux-review-2026-05-21]] — full audit findings
-- [[homepage-seo-performance-deep-review]] — SEO structured data
+- [[homepage-seo-performance-deep-review-2026-05-21]] — SEO structured data

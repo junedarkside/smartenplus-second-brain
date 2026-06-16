@@ -149,5 +149,5 @@ Or Django shell: `finalize_payment(Order.objects.get(order_id='PLB0229785'))`
 
 - [[payment-deep-review-2026-06-12]] — H5: paid-but-unfinalized order invisible
 - [[payment-backend-charge-flow]] — charge lifecycle
-- [[payment-frontend-checkout-flow]] — frontend expire flow
+- [[payment-frontend-flow-mechanics]] — frontend expire flow
 - [[payment-implement-plan-2026-06-12]] — batch 4: H5+M5 resilience pair

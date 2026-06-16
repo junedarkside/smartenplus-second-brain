@@ -193,4 +193,4 @@ Error response structure reference (4xx/5xx status codes).
 - [[payment-status-enums]] — OmiseMethod constants, METHOD_EXPIRY
 - [[payment-gateway-charge-architecture]] — charge selection rule, finalization
 - [[payment-audit-bugs-2026-06-11]] — confirmed payment bugs
-- [[omise-api-docs]] (external: https://docs.omise.co/)
+- [[omise-api-reference-2026-06-12]] (external: https://docs.omise.co/)

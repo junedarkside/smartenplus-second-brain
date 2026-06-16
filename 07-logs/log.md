@@ -118,3 +118,11 @@
 ## [2026-06-15] session-end #115 | trip-page below-fold redesign — RouteFAQ new, RouteSummary ISR rewrite, TripSummary price+ItemList schema, ExteaContractSerializer ratecard bug fixed. FE develop 6f2ada9
 ## [2026-06-15] close | TRIP-SEARCH-REDESIGN R1+R2 closed — FE develop 6f2ada9, deploy to prod pending
 ## [2026-06-15] audit | trip route page SEO/AEO/GEO deep audit — hatyai/koh-lipe. GEO 5.7/10 AEO 4.7/10. P0: FAQ not in SSR (RTK-gated), wrong blog/overview data, ItemList relative URLs. P1: H1 empty SSR, BusStation→island type wrong, transport_type missing from ISR serializer.
+
+## [2026-06-16] structure | vault structure+links optimization — 8 folder MOCs (02-areas, 03-knowledge, 04-decisions, 05-templates, 06-systems, 07-logs, 08-archive, 01-projects), 8 project subfolder READMEs, contract-ambiguity-audit MOC. Broken wikilinks 68→20. Orphans 78→66 (most remaining are hidden .original files). 5 reusable Python scripts in scripts/.
+## [2026-06-16] structure | created 8 missing project subfolder READMEs (activities-pagination, favorite-heart, gyg-card, gyg-page, help-faqs, rate-review, trip-detail-seo, website-audit) — schema compliance restored
+## [2026-06-16] links | injected inbound links for orphans via MOC + README — wired 7 round*.md files via contract-ambiguity-audit README, filter-functionality-audit via 01-projects MOC
+## [2026-06-16] links | fixed broken wikilinks (68→20) — 100+ replacements across 56 files: cross-vault redirects, code-symbol→inline-code, ALL_CAPS, PascalCase, relative paths, .md suffix, folder→README paths
+## [2026-06-16] template | masked [[adr-xxx]] in 05-templates/architecture-review.md and 04-decisions/adr-template.md with HTML comments — placeholders preserved
+## [2026-06-16] archive | moved 65 .original.md to 08-archive/.originals/ (leading-dot hidden from Obsidian default graph) — 2 contract-ambiguity-audit references updated to new path
+## [2026-06-16] stub | created docs/README.md deprecating cross-vault docs/testing/ redirects to vault-internal payment pages

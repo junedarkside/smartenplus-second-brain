@@ -46,7 +46,7 @@ Replace `text-sm` → `text-base` in all form inputs. Update `INPUT_CONFIG.base`
 - **Con:** Larger inputs may overflow small viewports (320px)
 
 ## Consequences
-Test at iOS Safari 17+ before merge. Reference [[form-layout]] for input sizing patterns.
+Test at iOS Safari 17+ before merge. Reference [[checkout-formdata-persist-guard-pattern]] for input sizing patterns.
 
 ## Related
 [[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r1-mobile-ux]] · [[r3-leader-synthesis]]

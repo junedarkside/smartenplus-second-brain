@@ -31,4 +31,4 @@ Photo hero dominated first viewport, hid bookable results. Real route-level data
 ## Related
 - [[trip-search-results-implementation-plan-2026-06-14]] (parent — Phase 1)
 - [[contract-confidence-score-algorithm]] (related but CUT from hero)
-- [[search-cover-ssr-data-fallback]] (data source pattern)
+- [[nextjs-patterns]] (data source pattern)

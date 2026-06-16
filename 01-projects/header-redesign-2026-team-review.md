@@ -191,4 +191,4 @@ Day 5+ (separate PRs)
 ```
 
 ## Related
-[[header-redesign-2026-spec]] · [[smartenplus-glassmorphism-header]] · [[nav-header-redesign-2026-05-24]]
+[[header-redesign-2026-spec]] · [[smartenplus-glassmorphism-header]] · [[nav-header-redesign]]

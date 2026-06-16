@@ -166,7 +166,7 @@ No migration needed (admin UI only).
 ## Related Docs
 
 - [[smartenplus-header-ux-v1]] — prior header-ux-v1 (white bg, 2-row layout) — superseded by this
-- [[nav-config-research]] — prior nav UX research
+- [[adaptive-header-route-type-pattern]] — prior nav UX research
 - [[hero-banner-cms]] — hero management
 - [[nextjs-fixed-header-per-route]] — atomic pattern: fixed header on homepage, sticky elsewhere
 

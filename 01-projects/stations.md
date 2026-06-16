@@ -65,4 +65,4 @@ Blog-style route pages. `departure_location` + `arrival_location` FK to `Locatio
 
 ## Related
 - [[operators]] (Contract uses Place, Timeline, Station)
-- [[products-routes]] (Route/Trip relationship)
+- [[api-endpoints]] (Route/Trip relationship)

@@ -192,7 +192,7 @@ MUI `Drawer anchor="bottom"`, `PaperProps: { borderRadius: '16px 16px 0 0' }`, d
 ---
 
 ## Related
-- [[ProfileButton.js]] — `components/auth/ProfileButton.js` (current implementation)
+- `ProfileButton.js` — `components/auth/ProfileButton.js` (current implementation)
 - [[header-redesign-2026-implementation]] — parent branch context
 - [[smartenplus-2026-ux-direction]] — strategic UX direction ("operational" over "cinematic")
 - [[mui-tailwind-css-specificity]] — MUI sx vs Tailwind specificity rules

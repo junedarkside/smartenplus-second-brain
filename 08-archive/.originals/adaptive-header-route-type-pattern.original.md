@@ -69,4 +69,4 @@ All 5 items from `constants/navConfig.js` stay. "Explore Thailand" NOT removed (
 
 ## Related
 - [[header-redesign-2026-spec]] — full spec with locked decisions
-- [[sticky-sidebar-debugger]] — sticky positioning patterns
+- [[sidebar-sticky-2col-responsive-grid]] — sticky positioning patterns

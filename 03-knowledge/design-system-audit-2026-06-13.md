@@ -304,9 +304,9 @@ Previous audit (`[[design-system-audit-2026-05-31]]`) covered brand color (#3b59
 
 ## Related
 
-- [[designSystem.js]] — Token definitions (helpers/designSystem.js:1)
-- [[tailwind-config]] — Tailwind configuration (tailwind.config.js:1)
-- [[theme.js]] — MUI theme configuration (theme.js:1)
-- [[CODE_PATTERNS]] — Component patterns (docs/development/CODE_PATTERNS.md)
-- [[DESIGN_SYSTEM]] — Design system documentation (docs/design/DESIGN_SYSTEM.md)
+- `designSystem.js` — Token definitions (helpers/designSystem.js:1)
+- `tailwind.config.js` — Tailwind configuration (tailwind.config.js:1)
+- `theme.js` — MUI theme configuration (theme.js:1)
+- [[nextjs-patterns]] — Component patterns (docs/development/CODE_PATTERNS.md)
+- [[design-systems]] — Design system documentation (docs/design/DESIGN_SYSTEM.md)
 - [[design-systems]] — Vault design system knowledge (03-knowledge/design-systems.md)

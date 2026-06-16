@@ -74,4 +74,4 @@ Travel reviews typically need: `b`, `i`, `em`, `strong`, `a`, `p`, `br`, `ul`, `
 
 ## Related
 - [[homepage-ux-review-2026-05-21]] — XSS issue details
-- [[security-best-practices]] — security patterns
+- [[dompurify-xss-prevention-pattern]] — security patterns

@@ -4,7 +4,7 @@
 
 **Audited by:** Domain / Business Analyst
 **Date:** 2026-06-03
-**Inputs read:** `[[admin-dashboard-contracts]]`, `[[08-archive/activities-location-search-bug-2026-06-01.original]]`, `[[contract-trip-null-non-transport-pattern]]`, `[[contract-serializer-non-transport-fields-2026-06-03]]`, `[[01-projects/operators]]`, `[[transportation-category-audit-2026-05-30]]`, `[[activities-search-merge-review-2026-06-01]]`, `[[stations]]`, `smartenplus-backend/operators/models.py:402-415`, `smartenplus-backend/operators/admin.py:1038-1102`, `smartenplus-backend/operators/migrations/0045_add_tour_fields.py`, `admin-dashboard/components/contracts/ContractFormFields.js:176-261`, `admin-dashboard/hooks/useContractFormData.js:127-128`, `admin-dashboard/components/utils/contractUtils.js:88-89`.
+**Inputs read:** `[[admin-dashboard-contracts]]`, `[[08-archive/.originals/activities-location-search-bug-2026-06-01.original]]`, `[[contract-trip-null-non-transport-pattern]]`, `[[contract-serializer-non-transport-fields-2026-06-03]]`, `[[01-projects/operators]]`, `[[transportation-category-audit-2026-05-30]]`, `[[activities-search-merge-review-2026-06-01]]`, `[[stations]]`, `smartenplus-backend/operators/models.py:402-415`, `smartenplus-backend/operators/admin.py:1038-1102`, `smartenplus-backend/operators/migrations/0045_add_tour_fields.py`, `admin-dashboard/components/contracts/ContractFormFields.js:176-261`, `admin-dashboard/hooks/useContractFormData.js:127-128`, `admin-dashboard/components/utils/contractUtils.js:88-89`.
 
 ---
 
@@ -14,7 +14,7 @@
 |----|-----|--------|---------|
 | **D-1** | **P0** | `[[contract-trip-null-non-transport-pattern]]` + `ContractFormFields.js:184` | The two fields have **opposite, documented intents** but the codebase mixes them. Admin help text (lines 184, 227) says: `primary_location` = "display and branding" / "Not used for customer location search"; `service_areas` = "All locations where customers can find and book". Backend public filter (`products/views.py`) until 2026-06-01 only consulted `service_areas` — matching the docs. The 2026-06-01 fix added `primary_location` to the filter with `Q \| Q`, **silently overriding the documented contract**. A staff member who set `primary_location=Phuket` for "display only" is now surprised when the contract appears in "Phuket" searches. |
 | **D-2** | **P1** | `operators/models.py:402-415` + `ContractFormFields.js:178-188` | The **Django model `help_text` says "for upselling"** (`'Location-based fields for upselling'`). The **admin form help text says "for display and branding"**. Two different product framings in two files owned by the same team. Upselling implies algorithmic matching (e.g. "you viewed Phuket → Phuket contracts first"); display/branding implies a label on the PDP. The "upselling" intent is not implemented anywhere in the public API we audited. |
-| **D-3** | **P0** | `[[08-archive/activities-location-search-bug-2026-06-01.original]]` Debate 3 (line 110) | The 2026-06-01 audit labelled `primary_location` as "**single FK for upselling**". This is asserted as the canonical intent in the most recent domain write-up, but no code path implements upselling on this field. The most recent customer-facing decision (the OR-fix) **uses `primary_location` for filter, not upsell** — yet another framing. The intent is unstable across three different write-ups. |
+| **D-3** | **P0** | `[[08-archive/.originals/activities-location-search-bug-2026-06-01.original]]` Debate 3 (line 110) | The 2026-06-01 audit labelled `primary_location` as "**single FK for upselling**". This is asserted as the canonical intent in the most recent domain write-up, but no code path implements upselling on this field. The most recent customer-facing decision (the OR-fix) **uses `primary_location` for filter, not upsell** — yet another framing. The intent is unstable across three different write-ups. |
 | **D-4** | **P1** | `ContractFormFields.js:191,235` + `admin-dashboard-contracts.md:23-24` | The admin form gives both fields the **same UI affordance** — a `LocationSelector` with the same `locationOptions` list. No visual hierarchy, no "required" marker on `primary_location` (the doc `tours-vs-transportation.md` says it's "Required" for tours, but the model is `null=True, blank=True`). Staff cannot tell from the form that the two fields serve different purposes. |
 | **D-5** | **P1** | `operators/models.py:402` + `ContractFormFields.js:176,219` | Both fields are nullable and both shown for ALL non-transport categories including `OTHER`. The form is identical for `SPA_WELLNESS`, `EVENT_TICKET`, `ATTRACTION_TICKET`, `FOOD_DINING`, `ACCOMMODATION`. There is no per-category UX distinction even though the semantic differs (e.g. `ACCOMMODATION` "primary location" is the hotel's address — directly true; `EVENT_TICKET` "primary location" is the venue's city — likely true; `SPA_WELLNESS` "service areas" *plural* may indicate pickup radius vs multiple branches). |
 | **D-6** | **P1** | `ContractFormFields.js:184` + `activities-search-merge-review-2026-06-01.md:114` | The autocomplete endpoint `GET /api/v1/contract/locations/` is built from `primary_location` FK + `service_areas` M2M. So the **dropdown the customer sees in the search bar mixes the two fields with no distinction**. Same dropdown entry for a Phuket-spa whose only `service_areas` is Phuket vs a Phuket-spa whose `primary_location` is Phuket but `service_areas` is empty. The recent fix made both filter; both feed the dropdown; both show as equal. |
@@ -29,7 +29,7 @@
 
 | # | Surface | Field(s) fed | What customer sees | Source of evidence |
 |---|---------|---------------|--------------------|--------------------|
-| 1 | `/activities` browse filter chip | `service_areas` (post-2026-06-01: also `primary_location`) | Location pills / dropdown | `[[08-archive/activities-location-search-bug-2026-06-01.original]]` Fix 1 |
+| 1 | `/activities` browse filter chip | `service_areas` (post-2026-06-01: also `primary_location`) | Location pills / dropdown | `[[08-archive/.originals/activities-location-search-bug-2026-06-01.original]]` Fix 1 |
 | 2 | `/activities` "Day Trips in **Phuket**" H1 | `service_areas[0]` (first match) or `primary_location` | City name in heading | `useDayTripFilters` — not directly documented in vault but inferred from `ActivitySearch` flow |
 | 3 | ActivitySearch dropdown suggestions | `primary_location` ∪ `service_areas` (distinct) | Auto-suggest city names | `activities-search-merge-review-2026-06-01.md:114` — `getActivityLocations` endpoint |
 | 4 | Homepage card (`DayTripCard`) | likely `primary_location` | City label below title | inferred from `homepage-uxui-redesign-research-2026.md` patterns; not directly evidenced for location field |
@@ -66,7 +66,7 @@
 
 - **Admin form has the right help text.** `ContractFormFields.js:184` and `:227` clearly differentiate the two fields. A staff member who reads the help text understands the intent.
 - **Visibility matrix is correct.** `admin-dashboard-contracts.md:24` correctly hides both fields from TRANSPORTATION. The category gating at the form level is sound.
-- **The 2026-06-01 fix closed the customer-side hole.** `products/views.py` now ORs `primary_location` into the search filter, so customers typing "Phuket" do find Phuket contracts whether the operator set `primary_location` or `service_areas`. `[[08-archive/activities-location-search-bug-2026-06-01.original]]` Fix 1.
+- **The 2026-06-01 fix closed the customer-side hole.** `products/views.py` now ORs `primary_location` into the search filter, so customers typing "Phuket" do find Phuket contracts whether the operator set `primary_location` or `service_areas`. `[[08-archive/.originals/activities-location-search-bug-2026-06-01.original]]` Fix 1.
 - **Migration history is clean.** `0045_add_tour_fields.py` adds both fields in one operation with consistent `related_name` choices (`contracts` vs `tours_in_area`). No "we bolted on service_areas later" tech debt.
 - **The auto-suggest endpoint correctly aggregates both.** `activities-search-merge-review-2026-06-01.md:114` — `getActivityLocations` distinct-unions both fields, so the dropdown is complete.
 
@@ -96,7 +96,7 @@
 ## Related
 
 - [[admin-dashboard-contracts]] — visibility matrix source
-- [[08-archive/activities-location-search-bug-2026-06-01.original]] — Debate 3 (prior unresolved framing)
+- [[08-archive/.originals/activities-location-search-bug-2026-06-01.original]] — Debate 3 (prior unresolved framing)
 - [[contract-trip-null-non-transport-pattern]] — companion null-guard
 - [[contract-serializer-non-transport-fields-2026-06-03]] — serializer gap, related to D-8
 - [[transportation-category-audit-2026-05-30]] — Level-1 / Level-2 classification

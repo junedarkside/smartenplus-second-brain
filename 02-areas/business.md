@@ -105,7 +105,7 @@ No social features. No gamification. Operational utility only.
 ## Related
 
 - [[business-development-thesis-2026]] — **NEW 2026-06-03.** Strategic thesis: "Thailand's Travel Commerce Platform." Four-phase growth model, competitive position on "travel connectivity" not inventory. Growth via bookings per traveler.
-- [[southeast_asia_transport_platform_direction]] — Full validated strategy document
+- [[southeast-asia-transport-platform-direction]] — Full validated strategy document
 - [[operators]] — Contract, TimeSlot, ContractAddon
 - [[README]] — Platform overview
 - [[tour-system-status]] — Phase 2 gaps, trust signal fields

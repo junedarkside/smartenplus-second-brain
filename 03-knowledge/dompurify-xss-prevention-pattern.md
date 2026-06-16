@@ -78,5 +78,5 @@ Same pattern confirmed in `RateAndReviewForm.js` (rate review submission) and an
 
 ## Related
 - [[homepage-ux-review-2026-05-21]] — XSS issue details (ReviewFirstPage.js:185)
-- [[rate-review-uxui-audit-2026-06-06]] r1-frontend — additional review-render sites
-- [[security-best-practices]] — security patterns
+- [[rate-review-uxui-audit-2026-06-06-overview]] r1-frontend — additional review-render sites
+- [[dompurify-xss-prevention-pattern]] — security patterns

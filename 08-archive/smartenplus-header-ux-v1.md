@@ -105,6 +105,6 @@ Hidden on mobile (`hidden md:block`). Nav items use `hidden md:flex`.
 
 # Related Docs
 
-- [[nav-config-research]] — prior nav UX research
-- [[navigation-api]] — backend NavigationSection API
+- [[adaptive-header-route-type-pattern]] — prior nav UX research
+- [[adaptive-header-route-type-pattern]] — backend NavigationSection API
 - [[smartenplus-header-ux-v1]] — original research doc (superseded by this)

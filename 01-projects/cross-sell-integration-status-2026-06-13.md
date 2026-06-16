@@ -83,7 +83,7 @@ Cross-sell auto-hides when backend returns 0 results. 60-day gate clock won't st
 No new engineering work needed to activate cross-sell. It is live on all 4 surfaces, and GTM `item_category` + activity-detail accuracy are already shipped (verified live). BD inventory is the primary and only gate. The single open eng item (multi-item post-booking) does not block activation.
 
 ## Related
-- [[CheckoutRelatedTrips]] — `components/recommendations/CheckoutRelatedTrips.js`
+- `CheckoutRelatedTrips` — `components/recommendations/CheckoutRelatedTrips.js`
 - [[cross-sell-debate-review-2026-06-09]] — debate (stale re: blockers)
 - [[implementation-plan-cross-sell-2026-06-09]] — impl plan (stale re: mount status)
 - [[cross-sell-placement-strategy]] — placement strategy (stale re: checkout)

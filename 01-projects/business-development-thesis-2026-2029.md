@@ -50,7 +50,7 @@ Position SmartEnPlus as Thailand's Travel Commerce Platform. Focus on bookings-p
 
 ## Related
 
-- [[thailand-platform-analysis]] — competitive landscape (12Go, Klook, GetYourGuide)
-- [[thailand-bundle-architecture]] — bundle design and itinerary UX
-- [[thailand-bundling-margin-strategy]] — pricing and margin mechanics
-- [[zeitrip-mvp-product-spec]] — MVP product shape for time-based planning
+- [[business-development-thailand-platform-analysis]] — competitive landscape (12Go, Klook, GetYourGuide)
+- [[business-development-thailand-bundle-architecture]] — bundle design and itinerary UX
+- [[business-development-thailand-bundling-margin]] — pricing and margin mechanics
+- [[business-development-zeitrip-mvp]] — MVP product shape for time-based planning

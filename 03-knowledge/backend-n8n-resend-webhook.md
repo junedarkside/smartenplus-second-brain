@@ -126,5 +126,5 @@ Auth: none. Not set → task logs warning, returns cleanly.
 ## Related
 
 [[master-state]] — updates: n8n webhook implementation tracked
-[[send_booking_data]] — Celery task location history (was carts/tasks.py, now bookings/tasks.py)
-[[decouple-env-pattern]] — all optional env vars must use `default=None`
+[[payment-checkout-architecture-audit]] — Celery task location history (was carts/tasks.py, now bookings/tasks.py)
+[[site-url-config-pattern]] — all optional env vars must use `default=None`
