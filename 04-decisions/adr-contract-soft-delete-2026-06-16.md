@@ -1,7 +1,7 @@
 # ADR: Contract Soft-Delete via Separate `is_deleted` Flag
 
 ## Status
-proposed — design approved 2026-06-16, not yet built.
+accepted — built session #122 (2026-06-16). BE+admin on `feat/contract-soft-delete`, tests pass, not yet pushed. See `## Audit 2026-06-16` below.
 
 ## Context
 
@@ -16,10 +16,10 @@ Need: a real soft-delete that keeps the row (audit + recoverability), shows in a
 
 Add **separate** soft-delete fields to `Contract`, mirroring the proven `ImageGallery` pattern already in the backend:
 
-- Fields on `operators/models.py` Contract: `is_deleted` (BooleanField, db_index=True, default=False), `deleted_at` (DateTimeField null/blank), `deleted_by` (FK `accounts.Account`, SET_NULL, `related_name='deleted_contracts'`). Copy from ImageGallery `operators/models.py:526-535`.
-- `ContractViewSet.destroy()` override soft-deletes instead of hard-deleting — copy the working override already in the same file at `operators/views.py:1954-1977`. Use `.save()` (not bulk `.update()`) so the `post_save` cache-invalidation signal (`operators/signals.py:17-37`) fires.
+- Fields on `operators/models.py` Contract: `is_deleted` (BooleanField, db_index=True, default=False), `deleted_at` (DateTimeField null/blank), `deleted_by` (FK `accounts.Account`, SET_NULL, `related_name='deleted_contracts'`). Mirrors ImageGallery `operators/models.py:526-528` (OperatorImageGallery `:600-602` is a 2nd precedent). **As built:** the invariant lives in a `Contract.soft_delete(user)` / `Contract.restore()` model method, not copied across call sites.
+- `ContractViewSet.destroy()` override soft-deletes via `Contract.soft_delete()`. Pattern copied from `OperatorImageGalleryViewSet.destroy()` (`operators/views.py:1954`) — but **drop its `Asset.usage_count` decrement** (Contract has no Asset FK). Uses `.save()` so the `post_save` cache-invalidation signal (`operators/signals.py:17-37`) fires.
 - New `restore` DRF action (mirror `update_activation` at `operators/views.py:330-348`).
-- **Public queryset filters `is_deleted=False`** — the load-bearing change: list `products/views.py:430`, detail `ProductDetailViewSet.queryset :845` (deleted slug → existing 404 path `:894-895`).
+- **Public queryset filters `is_deleted=False`** — list `products/views.py:431`, detail `ProductDetailViewSet.queryset :845` (deleted slug → existing 404 path). Plus the pre-existing public leak fix in `stations/views.py` (see Consequences).
 
 `is_deleted` is the source of truth for "deleted". `is_actived` stays the source of truth for "paused".
 
@@ -31,9 +31,9 @@ Add **separate** soft-delete fields to `Contract`, mirroring the proven `ImageGa
 
 ## Tradeoffs
 
-**Core debate — does `is_deleted=True` also set `is_actived=False`? → YES (belt-and-suspenders).**
+**Core rule — `is_deleted=True` MUST also set `is_actived=False`. REQUIRED, not optional.**
 
-Every existing public/booking guard keys off `is_actived`: public list (`products/views.py:430`), availability (`:666`), frontend `useDayTripAvailability`, `DayTripBookingWidget` (`CONTRACT_INACTIVE`), checkout `Itineraries`/`EnhancedTripCard`. Forcing `is_actived=False` on delete means **every one of those guards catches a deleted contract even if a new `is_deleted=False` filter is missed somewhere** (recommendations, sitemap, future endpoints). Defense in depth.
+(Audit corrected the original "recommended belt-and-suspenders" framing.) ~14 public/booking querysets key off `is_actived` — public list (`products/views.py:431`), availability (`:666`), **the booking guard `carts/utils.py:62` which checks ONLY `is_actived`, no `is_deleted`**, frontend `useDayTripAvailability`, `DayTripBookingWidget` (`CONTRACT_INACTIVE`), checkout `Itineraries`/`EnhancedTripCard`. A contract sitting in a cart, then deleted, is still bookable unless `is_actived` flips. So the invariant is load-bearing, not redundancy. It is enforced in one place: `Contract.soft_delete()`.
 
 **Restore does NOT auto-reactivate.** Restore clears `is_deleted/deleted_at/deleted_by` only, leaves `is_actived=False`. Admin explicitly re-activates via existing `update_activation` after review — prevents a restored contract going live/bookable before a human checks it. (Intentionally differs from ImageGallery `restore_selected`, which has no "active" concept.)
 
@@ -51,6 +51,15 @@ Rule:
 - **`update_activation` must guard `is_deleted=False`** (`operators/views.py:339`) so a deleted contract can't be re-activated onto the public site via the bulk-activate path.
 - **Frontend unchanged.** Verified: browse sends `status=active`, detail returns `notFound:true` on 404, booking guards catch via `is_actived`/`CONTRACT_INACTIVE`.
 - **Slug stable** — `pre_save_slug_field` only runs when slug empty, so soft-delete keeps slug and `product_detail_v1_{slug}_*` cache key.
+- **Public leak fixed** — `ListProductsByArrivalStationViewSet` (`stations/views.py`) is public+unauthenticated and filtered NEITHER `is_actived` NOR `is_deleted`. It already leaked inactive contracts (pre-existing bug); now filters both. The `is_actived` invariant alone could not have saved this path because it never read `is_actived`.
+
+## Audit 2026-06-16
+
+Design verified against the live backend before/while building. Three defects caught + fixed:
+1. **Booking-guard invariant** — `carts/utils.py:62` checks only `is_actived`; the `is_actived=False`-on-delete rule is REQUIRED (elevated from "recommended"). Enforced in `Contract.soft_delete()`.
+2. **Public leak** — `stations/views.py` arrival-station viewset filtered neither flag; fixed (also closes a pre-existing inactive leak).
+3. **Citations** — field range `:526-528` (not `:526-535`); destroy template is `OperatorImageGalleryViewSet` and its `Asset.usage_count` block must be dropped for Contract; public list filter is `:431`.
+Tests: 7 new (`operators/tests/test_contract_soft_delete.py`) + 46 existing pass. See [[contract-soft-delete-is-actived-invariant]], [[stations-arrival-viewset-public-leak]].
 
 ## Related
 - [[django-soft-delete-s3-file-preserve]] — the ImageGallery soft-delete pattern this mirrors (file-bearing concern; contract is the non-file analog).

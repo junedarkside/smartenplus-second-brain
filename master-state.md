@@ -4,20 +4,20 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-16 (session #121 END)
+**Updated:** 2026-06-16 (session #122 END)
 
-**Achieved this session (#121) — Prod deploy confirm + admin-dashboard hygiene:**
-- **Deploy confirmed**: FE `main` @ `19984f2` + BE `main` @ `21fbdcf` live in prod, both synced with `develop` — no pending-deploy gap.
-- **admin-dashboard untracked docs** (5 files: `docs/agent-policy/SYNC.md`, `docs/operations/ENV.md`, `docs/technical/{CATEGORY_MATRIX,IMAGE_FLOW,KEY_FILES}.md`) — verified real, all already linked from `CLAUDE.md`. Committed (`5e5b984`) + pushed, fixing broken refs.
-- **admin-dashboard branch cleanup**: found 33 local + 31 remote branches, every single one (besides `main`) merged into both `main` and `develop` (verified via `branch --merged` both ways, not just ancestor check). Same pattern as prior `BRANCH-CLEANUP-REMOTE` (#97). Deleted all 32 local + 29 remote stale branches. Only `main`/`develop` remain (local+remote). Zero unmerged work confirmed before delete.
-
-**Achieved prior session (#120) — Build fix + dead-code cleanup + branch hygiene:**
-- Debug-mantra root cause: `getOptimalImageQuality is not a function` broke build on 13 activity-detail pages. Re-added missing export, deleted 4 dead exports, fixed unrelated `fetcher` named-import bug. Committed `19984f2` → develop, pushed. Atom: [[dangling-export-import-bug-pattern]].
+**Achieved this session (#122) — Contract soft-delete (BE + admin) shipped:**
+- **Feature**: real soft-delete for Contract. New `is_deleted/deleted_at/deleted_by` + `Contract.soft_delete()`/`restore()` methods holding the invariant `is_deleted ⇒ is_actived=False`. `ContractViewSet.destroy()` soft-deletes, new `restore` action, admin `status=deleted` filter + `deleted_contracts` summary, `update_activation` guards `is_deleted=False`. Migration `0061`. BE commit `ce77943` on `feat/contract-soft-delete`.
+- **Admin UI**: Deleted chip (`StatusBadgeCell`), Deleted filter card (`ContractsSummaryStrip`), Delete/Restore bulk actions, `deleteContract`/`restoreContract` mutations. Plus responsive labeled bulk-action buttons + tooltips (icon-only mobile, labeled desktop). admin commits `7e3c5a9` + `5915231` on `feat/contract-soft-delete`.
+- **Audit caught 3 defects, all fixed**: (1) `is_actived=False`-on-delete is REQUIRED not optional — booking guard `carts/utils.py:62` checks only `is_actived`; (2) `stations/views.py` arrival-station viewset (public+unauth) leaked inactive AND would leak deleted — filtered neither flag, fixed (also closes pre-existing inactive leak); (3) ADR citations corrected.
+- **Tests**: 7 new (`operators/tests/test_contract_soft_delete.py`) + 46 existing pass. admin builds clean.
+- **Frontend**: ZERO code change by design — backend public-queryset filter + invariant hide deleted.
+- Atoms: [[contract-soft-delete-is-actived-invariant]], [[stations-arrival-viewset-public-leak]]. ADR [[adr-contract-soft-delete-2026-06-16]] → accepted.
 
 **Resume point (EXACT):**
-1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
-2. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`.
-3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken` pattern from `TripSearchFilters.js:80-99`. See [[slidecalendar2-farecalendar-prop-pattern]].
+1. **SOFT-DELETE-SHIP** — `feat/contract-soft-delete` on BE (`ce77943`) + admin (`5915231`) NOT pushed. Push + open PRs. Browser-verify (soft-delete a contract → Deleted chip + Restore work). Frontend-verify (deleted contract gone from listing/detail-404/booking).
+2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
+3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -25,10 +25,10 @@
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
 
 **Next session: starting state**
-- vault: `master` @ `2381f30` (this commit adds #121)
-- FE `main`/`develop` @ `19984f2` — **deployed, live**
-- BE `main`/`develop` @ `21fbdcf` — **deployed, live**
-- admin-dashboard: `main` @ `5e5b984` (clean, only main+develop branches)
+- vault: `master` @ new commit (this adds #122)
+- FE `main`/`develop` @ `19984f2` — **deployed, live** (untouched this session)
+- BE: `feat/contract-soft-delete` @ `ce77943` (NOT pushed); `main` unchanged
+- admin-dashboard: `feat/contract-soft-delete` @ `5915231` (NOT pushed); `main` @ `5e5b984`
 - content: `master` @ `3756e5b` (clean)
 
 ---
@@ -37,6 +37,7 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **SOFT-DELETE-SHIP** | Push `feat/contract-soft-delete` (BE+admin) + open PRs + browser/frontend verify | **OPEN #122.** Built + tested (7+46 pass), NOT pushed. Verify: Deleted chip/filter/Restore in admin; deleted contract gone from FE listing/detail-404/booking. | BE `ce77943`, admin `5915231`; [[adr-contract-soft-delete-2026-06-16]] |
 | **MIN-RATE-BE-MERGE** | BE `fix/popular-routes-lowest-price` @ `4da0b81` — merge to develop + verify `/front-page/` Hatyai→Koh Lipe `lowest_price` matches SlideCalendar rate | **CLOSED 2026-06-16** — merged at `37387c8`, BE develop now `21fbdcf` | `smartenplus-backend/products/views.py:1197` |
 | **TRIP-SEARCH-REDESIGN** | Travel Decision Engine + below-fold redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-15.** R1+R2 fully shipped. FE `develop` @ `6f2ada9`. Deploy to prod pending (ops task). → `07-logs/closed-items.md` | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-below-fold-redesign-2026-06-15]] |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |

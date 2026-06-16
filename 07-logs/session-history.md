@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #121 — 2026-06-16 — Prod deploy confirm + admin-dashboard hygiene:**
+- **Deploy confirmed**: FE `main` @ `19984f2` + BE `main` @ `21fbdcf` live in prod, both synced with `develop` — no pending-deploy gap.
+- **admin-dashboard untracked docs** (5 files: `docs/agent-policy/SYNC.md`, `docs/operations/ENV.md`, `docs/technical/{CATEGORY_MATRIX,IMAGE_FLOW,KEY_FILES}.md`) — verified real, all already linked from `CLAUDE.md`. Committed (`5e5b984`) + pushed.
+- **admin-dashboard branch cleanup**: 33 local + 31 remote branches, every one (besides `main`) merged into both `main` and `develop`. Deleted all 32 local + 29 remote stale branches. Only `main`/`develop` remain.
+
 **Session #120 — 2026-06-16 — Build fix + dead-code cleanup + branch hygiene:**
 - Debug-mantra root cause: `getOptimalImageQuality is not a function` broke build on 13 activity-detail pages. `helpers/imageOptimization.js` missing export, only existed in 3 stale agent worktrees. Re-added export, grilled module — deleted 4 dead exports (zero callers).
 - 2-agent audit (code-reviewer + build-verifier) PASS, surfaced unrelated same-class bug: `pages/help/faqs.js` named-import `{ fetcher }` vs `helpers/fetcher.js` default export. Fixed.
