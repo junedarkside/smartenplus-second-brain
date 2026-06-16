@@ -1,7 +1,19 @@
+---
+name: r1-visual
+description: Specialist B — Visual Designer. 13 VIS findings on /rate-review with token violation table.
+metadata:
+  type: specialist-r1
+  role: visual-designer
+  page: rate-review
+  smartenplus_route: /rate-review
+  date: 2026-06-06
+  parent: rate-review-uxui-audit-2026-06-06
+---
+
 # r1-visual — Visual Design & Typography Audit
 **Specialist:** Visual Design & Typography
 **Date:** 2026-06-06
-**Reference:** `helpers/designSystem.js`
+**Reference:** `[[designSystem]]`
 **Scope:** `/rate-review` flow — index, detail, submit-review pages + BookingReviewList, RateAndReviewForm components
 
 ---

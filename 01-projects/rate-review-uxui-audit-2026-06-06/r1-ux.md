@@ -1,3 +1,15 @@
+---
+name: r1-ux
+description: Specialist A — UX/Conversion Designer. 18 findings on /rate-review flow with P0-P3 prioritization.
+metadata:
+  type: specialist-r1
+  role: ux-conversion-designer
+  page: rate-review
+  smartenplus_route: /rate-review
+  date: 2026-06-06
+  parent: rate-review-uxui-audit-2026-06-06
+---
+
 # r1-ux — UX & Conversion Audit
 **Specialist:** UX & Conversion
 **Date:** 2026-06-06

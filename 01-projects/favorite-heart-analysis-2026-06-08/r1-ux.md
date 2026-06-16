@@ -1,3 +1,15 @@
+---
+name: r1-ux
+description: Specialist A — UX/Conversion Designer. Heart/save UX analysis with industry comparison + 4 recs.
+metadata:
+  type: specialist-r1
+  role: ux-conversion-designer
+  page: favorite-heart
+  smartenplus_route: /activities
+  date: 2026-06-08
+  parent: favorite-heart-analysis-2026-06-08
+---
+
 ## UX Analysis
 
 ### Current State

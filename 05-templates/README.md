@@ -9,6 +9,8 @@ Note skeletons for consistent authoring. Copy, do not link.
 - [[atomic-note]] — single-concept knowledge note
 - [[bug-report]] — bug write-up structure
 - [[research-summary]] — research output structure
+- [[r1-specialist]] — Round-1 specialist audit (UX/Visual/SEO/Perf/Mobile)
+- [[r2-skeptic]] — Round-2 Skeptic challenge (auto-DROP rules + cap enforcement)
 
 ## Conventions for this folder
 - Templates are copy-paste, not destinations for inbound links
