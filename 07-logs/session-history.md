@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #119 — 2026-06-16 — Trip-detail SEO/AEO/GEO audit + full implementation:**
+- **3-specialist audit** of `/trips/detail/[...slug]` (transport). 25 raw → 18 unique findings, 7 HIGH. Cross-cut root cause: `TripDetailSEO.js` docstring claimed schema it never rendered (Product only). Scrutiny pass corrected malformed-offers HIGH→MED. Vault: `r1-seo`, `r1-aeo`, `r1-geo`, `r2-leader-synthesis`.
+- **Grill + implementation plan** locked: mirror day-trip server-side SEO pattern, 7 HIGH only, GEO signal-only, ISR schema price. Plan: `r3-implementation-plan`.
+- **3-agent implementation team** (parallel A+B → sequential C): new `helpers/seo/tripDetailSEOUtils.js` (126 lines, 5 exports), `TripDetailContent.js` prose fix, `TripDetailSEO.js` rewritten (67→35 lines), `getStaticProps` wired, `useTripSEO.js` deleted (244 lines). 5 files, +185/-347 net.
+- **Merged** `feat/trip-detail-seo-aeo-geo-fix` → develop `ca490ee`, pushed.
+- **Re-audit** (3 specialists): 7/7 HIGH PASS. 1 PARTIAL (TouristTrip `@context`/`@type` duplicate key). Fixed immediately → `bddb1c0`.
+- **Vault closed**: `r4-re-audit-post-impl`, index CLOSED, log updated. New atom: [[trip-detail-server-side-seo-pattern]].
+
+---
+
 **Session #118 — 2026-06-15 — Min-rate bug investigation + fixes FE+BE:**
 - **FE `fix/min-rate-bugs`** merged → `develop` @ `a95a241`. 4 fixes: stale fareCalendar on calendar scroll, off-by-one minFare threshold, allSame false-positive, homepage route filter.
 - **BE `fix/popular-routes-lowest-price`** pushed @ `4da0b81`. Root cause: single `lowest_price` subquery had no type/ratecard filter → PRIVATE/CHARTER VEHICLE rates leaked in. Fix: two subqueries + `Least()` + sentinel. **NOT YET MERGED to develop.**

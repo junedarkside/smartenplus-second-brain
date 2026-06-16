@@ -4,21 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-16 (session #119 END)
+**Updated:** 2026-06-16 (session #120 END)
 
-**Achieved this session (#119) — Trip-detail SEO/AEO/GEO audit + full implementation:**
-- **3-specialist audit** of `/trips/detail/[...slug]` (transport). 25 raw → 18 unique findings, 7 HIGH. Cross-cut root cause: `TripDetailSEO.js` docstring claimed schema it never rendered (Product only). Scrutiny pass corrected malformed-offers HIGH→MED. Vault: `r1-seo`, `r1-aeo`, `r1-geo`, `r2-leader-synthesis`.
-- **Grill + implementation plan** locked: mirror day-trip server-side SEO pattern, 7 HIGH only, GEO signal-only, ISR schema price. Plan: `r3-implementation-plan`.
-- **3-agent implementation team** (parallel A+B → sequential C): new `helpers/seo/tripDetailSEOUtils.js` (126 lines, 5 exports), `TripDetailContent.js` prose fix, `TripDetailSEO.js` rewritten (67→35 lines), `getStaticProps` wired, `useTripSEO.js` deleted (244 lines). 5 files, +185/-347 net.
-- **Merged** `feat/trip-detail-seo-aeo-geo-fix` → develop `ca490ee`, pushed.
-- **Re-audit** (3 specialists): 7/7 HIGH PASS. 1 PARTIAL (TouristTrip `@context`/`@type` duplicate key). Fixed immediately → `bddb1c0`.
-- **Vault closed**: `r4-re-audit-post-impl`, index CLOSED, log updated. New atom: [[trip-detail-server-side-seo-pattern]].
+**Achieved this session (#120) — Build fix + dead-code cleanup + branch hygiene:**
+- **Debug-mantra root cause**: `npm run build` broke on `TypeError: getOptimalImageQuality is not a function` across 13 activity-detail SSG pages. `AirbnbPhotoGrid.js` called it but `helpers/imageOptimization.js` never had the export — only existed in 3 stale, uncommitted agent worktrees, never landed on main. Re-added export (SSR-safe, network-aware quality).
+- **Grill pass** on whole module: 4/7 exports had zero callers anywhere in repo (`convertToWebP`, `calculateResponsiveImageDimensions`, `preloadHeroImage`, `isImageCached`). Deleted all 4 — no tech debt.
+- **2-agent audit team** (code-reviewer + build-verifier) independently re-verified both changes PASS. Build-verifier surfaced unrelated pre-existing bug of same class: `pages/help/faqs.js` imported `{ fetcher }` named when `helpers/fetcher.js` only has `default` export. Fixed (1-line).
+- Committed `19984f2` to `develop`, pushed (set upstream).
+- **Branch/worktree cleanup**: confirmed `feat/trip-detail-seo-aeo-geo-fix` + 3 `worktree-agent-*` branches all merged/superseded in develop (content-diff verified, not just ancestor check). Removed 3 worktrees, deleted 4 local branches + 1 remote branch.
+- New atom: [[dangling-export-import-bug-pattern]] (the getOptimalImageQuality + fetcher bug class — same shape, two files).
 
-**Achieved prior session (#118) — Min-rate bug fixes FE+BE:**
-- FE `fix/min-rate-bugs` → develop `a95a241`. BE `fix/popular-routes-lowest-price` pushed `4da0b81` (NOT merged). Atom: [[popular-routes-lowest-price-farecalendar-parity]].
+**Achieved prior session (#119) — Trip-detail SEO/AEO/GEO audit + full implementation:**
+- 3-specialist audit + grill + 3-agent impl team. Merged `feat/trip-detail-seo-aeo-geo-fix` → develop `ca490ee`. Re-audit 7/7 HIGH PASS, 1 fixed (`bddb1c0`). Atom: [[trip-detail-server-side-seo-pattern]].
 
 **Resume point (EXACT):**
-0. **Deploy to prod** — FE `develop` @ `bddb1c0` ahead of `main`. BE `develop` @ `21fbdcf` ahead of `main`.
+1. **Deploy to prod** — FE `main`/`develop` now both @ `19984f2` (synced, this session's fix included). BE `develop` @ `21fbdcf` ahead of `main`.
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 3. **SelectedOutboundSummary**: plan at `.claude/plans/check-outbound-selecting-outbound-encapsulated-tower.md`.
 4. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken` pattern from `TripSearchFilters.js:80-99`. See [[slidecalendar2-farecalendar-prop-pattern]].
@@ -29,8 +29,8 @@
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
 
 **Next session: starting state**
-- vault: `audit/trip-detail-seo-aeo-geo` @ (this commit)
-- FE `develop` @ `bddb1c0` | FE `main` @ `4b65756` (not deployed)
+- vault: this commit
+- FE `main`/`develop` @ `19984f2` (synced, not deployed)
 - BE `develop` @ `21fbdcf` | BE `main` @ `482cfc6` (not deployed)
 - admin-dashboard: `main` @ `4a6c03b` (untracked docs/)
 - content: `master` @ `3756e5b` (clean)
