@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #120 — 2026-06-16 — Build fix + dead-code cleanup + branch hygiene:**
+- Debug-mantra root cause: `getOptimalImageQuality is not a function` broke build on 13 activity-detail pages. `helpers/imageOptimization.js` missing export, only existed in 3 stale agent worktrees. Re-added export, grilled module — deleted 4 dead exports (zero callers).
+- 2-agent audit (code-reviewer + build-verifier) PASS, surfaced unrelated same-class bug: `pages/help/faqs.js` named-import `{ fetcher }` vs `helpers/fetcher.js` default export. Fixed.
+- Committed `19984f2` → develop, pushed. Cleaned up 3 worktrees + 4 branches (1 remote).
+- Atom: [[dangling-export-import-bug-pattern]].
+
+---
+
 **Session #119 — 2026-06-16 — Trip-detail SEO/AEO/GEO audit + full implementation:**
 - **3-specialist audit** of `/trips/detail/[...slug]` (transport). 25 raw → 18 unique findings, 7 HIGH. Cross-cut root cause: `TripDetailSEO.js` docstring claimed schema it never rendered (Product only). Scrutiny pass corrected malformed-offers HIGH→MED. Vault: `r1-seo`, `r1-aeo`, `r1-geo`, `r2-leader-synthesis`.
 - **Grill + implementation plan** locked: mirror day-trip server-side SEO pattern, 7 HIGH only, GEO signal-only, ISR schema price. Plan: `r3-implementation-plan`.

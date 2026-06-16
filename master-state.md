@@ -4,20 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-16 (session #120 END)
+**Updated:** 2026-06-16 (session #121 END)
 
-**Achieved this session (#120) — Build fix + dead-code cleanup + branch hygiene:**
-- **Debug-mantra root cause**: `npm run build` broke on `TypeError: getOptimalImageQuality is not a function` across 13 activity-detail SSG pages. `AirbnbPhotoGrid.js` called it but `helpers/imageOptimization.js` never had the export — only existed in 3 stale, uncommitted agent worktrees, never landed on main. Re-added export (SSR-safe, network-aware quality).
-- **Grill pass** on whole module: 4/7 exports had zero callers anywhere in repo (`convertToWebP`, `calculateResponsiveImageDimensions`, `preloadHeroImage`, `isImageCached`). Deleted all 4 — no tech debt.
-- **2-agent audit team** (code-reviewer + build-verifier) independently re-verified both changes PASS. Build-verifier surfaced unrelated pre-existing bug of same class: `pages/help/faqs.js` imported `{ fetcher }` named when `helpers/fetcher.js` only has `default` export. Fixed (1-line).
-- Committed `19984f2` to `develop`, pushed (set upstream).
-- **Branch/worktree cleanup**: confirmed `feat/trip-detail-seo-aeo-geo-fix` + 3 `worktree-agent-*` branches all merged/superseded in develop (content-diff verified, not just ancestor check). Removed 3 worktrees, deleted 4 local branches + 1 remote branch.
-- New atom: [[dangling-export-import-bug-pattern]] (the getOptimalImageQuality + fetcher bug class — same shape, two files).
+**Achieved this session (#121) — Prod deploy confirm + admin-dashboard hygiene:**
+- **Deploy confirmed**: FE `main` @ `19984f2` + BE `main` @ `21fbdcf` live in prod, both synced with `develop` — no pending-deploy gap.
+- **admin-dashboard untracked docs** (5 files: `docs/agent-policy/SYNC.md`, `docs/operations/ENV.md`, `docs/technical/{CATEGORY_MATRIX,IMAGE_FLOW,KEY_FILES}.md`) — verified real, all already linked from `CLAUDE.md`. Committed (`5e5b984`) + pushed, fixing broken refs.
+- **admin-dashboard branch cleanup**: found 33 local + 31 remote branches, every single one (besides `main`) merged into both `main` and `develop` (verified via `branch --merged` both ways, not just ancestor check). Same pattern as prior `BRANCH-CLEANUP-REMOTE` (#97). Deleted all 32 local + 29 remote stale branches. Only `main`/`develop` remain (local+remote). Zero unmerged work confirmed before delete.
 
-**Achieved prior session (#119) — Trip-detail SEO/AEO/GEO audit + full implementation:**
-- 3-specialist audit + grill + 3-agent impl team. Merged `feat/trip-detail-seo-aeo-geo-fix` → develop `ca490ee`. Re-audit 7/7 HIGH PASS, 1 fixed (`bddb1c0`). Atom: [[trip-detail-server-side-seo-pattern]].
-
-**DEPLOYED 2026-06-16:** FE `main` @ `19984f2` live in prod. BE `main` @ `21fbdcf` live in prod. Both synced with `develop` — no pending-deploy gap.
+**Achieved prior session (#120) — Build fix + dead-code cleanup + branch hygiene:**
+- Debug-mantra root cause: `getOptimalImageQuality is not a function` broke build on 13 activity-detail pages. Re-added missing export, deleted 4 dead exports, fixed unrelated `fetcher` named-import bug. Committed `19984f2` → develop, pushed. Atom: [[dangling-export-import-bug-pattern]].
 
 **Resume point (EXACT):**
 1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
@@ -30,10 +25,10 @@
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
 
 **Next session: starting state**
-- vault: `master` @ `1259f5b`
+- vault: `master` @ `2381f30` (this commit adds #121)
 - FE `main`/`develop` @ `19984f2` — **deployed, live**
 - BE `main`/`develop` @ `21fbdcf` — **deployed, live**
-- admin-dashboard: `main` @ `4a6c03b` (untracked docs/)
+- admin-dashboard: `main` @ `5e5b984` (clean, only main+develop branches)
 - content: `master` @ `3756e5b` (clean)
 
 ---

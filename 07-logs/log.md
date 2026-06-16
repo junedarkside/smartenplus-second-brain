@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-16] session-end #121 | prod deploy confirmed + admin-dashboard hygiene — FE `19984f2`+BE `21fbdcf` confirmed live in prod, synced w/ develop. admin-dashboard: 5 untracked-but-linked docs committed+pushed (`5e5b984`). Branch cleanup: 33 local + 31 remote branches, all merged into main+develop, deleted 32 local + 29 remote (kept main/develop only). Same pattern as prior BRANCH-CLEANUP-REMOTE.
+
 ## [2026-06-16] deploy | FE `main` @ `19984f2` + BE `main` @ `21fbdcf` deployed to prod, both synced with develop — no pending-deploy gap.
 
 ## [2026-06-16] session-end #120 | build fix + dead-code cleanup + branch hygiene — Debug-mantra root cause: `getOptimalImageQuality is not a function` broke build on 13 activity-detail pages. `helpers/imageOptimization.js` missing export, only existed in 3 stale agent worktrees. Re-added export, grilled module — deleted 4 dead exports (zero callers: `convertToWebP`, `calculateResponsiveImageDimensions`, `preloadHeroImage`, `isImageCached`). 2-agent audit (code-reviewer + build-verifier) PASS, surfaced unrelated bug same class: `pages/help/faqs.js` named-import `{ fetcher }` vs `helpers/fetcher.js` default export. Fixed. Committed `19984f2` → develop, pushed. Cleaned up 3 worktrees + 4 branches (1 remote) — all confirmed merged/superseded by content-diff, not just ancestor check. Atom: [[dangling-export-import-bug-pattern]].
