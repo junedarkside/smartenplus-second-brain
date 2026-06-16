@@ -62,6 +62,11 @@ Formik imageSelection [{id, image}]
 - `DateInputGroup.js` — Start/end dates
 - `SettingsInputGroup.js` — Contract type, active toggle
 
+## Soft-Delete
+
+Separate `is_deleted` flag (NOT reuse `is_actived`), mirrors ImageGallery pattern. Admin list shows deleted rows with red **Deleted** chip + filter card + Restore. `is_deleted=True` also sets `is_actived=False` (belt-and-suspenders); restore does NOT auto-reactivate. Frontend ZERO changes — backend public-queryset filter hides deleted. Full decision + tradeoffs: [[adr-contract-soft-delete-2026-06-16]].
+
 ## Related
 - [[operators]] — Operator model, TimeSlot, ContractAddon
 - [[admin-dashboard-image-pipeline]] — Image error reset, dedup helpers
+- [[adr-contract-soft-delete-2026-06-16]] — Contract soft-delete decision

@@ -1,5 +1,7 @@
 # Second Brain — Operational Log
 
+## [2026-06-16] decision | contract soft-delete ADR — separate `is_deleted` flag (mirror ImageGallery), is_actived=False on delete (belt-and-suspenders), restore no auto-reactivate, frontend ZERO changes via public-queryset filter. Status proposed (design approved, not built). → [[adr-contract-soft-delete-2026-06-16]].
+
 ## [2026-06-15] optimize | atomized 3 concepts from 5 oversized project files — slimmed 5 source files (481/469/433/378/391 lines from 527/492/444/437/407), extracted 3 atoms: [[contract-confidence-score-algorithm]] (formula + N+1 fix), [[route-intelligence-hero-spec]] (Phase 1 locked spec), [[core-web-vitals-budget-2026-06-06]] (site-wide perf budget). 2 candidates deleted as duplicates of existing [[sentinel-content-type-bookmark-blog]] + [[dompurify-xss-prevention-pattern]] (anti-duplication check caught both). Skipped caveman:compress (skill targets memory files, not technical vault notes — 0.7% savings on test file). Skipped full wikilink orphan sweep (49 orphans; most are "worth writing later" stubs per vault protocol). Deferred: PDF topic finalization (4 files, 36 markers), MOC creation for payment/nextjs clusters, payment-2026-06-12 burst merge. index.md updated.
 
 Chronological record of vault operations. Parseable: `grep "^## \[" log.md | tail -5`
