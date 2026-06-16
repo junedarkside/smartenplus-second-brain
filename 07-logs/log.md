@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-16] session-end #123 | contract soft-delete SHIPPED + dashboard status/expiry cards — pushed+merged `feat/contract-soft-delete` → develop both repos (BE `0e52782`, admin `f75d721`), branch pruned. Fixed: global summary counts under status filter, `is_deleted` list-payload omission (badge+restore root fix), status-aware Restore buttons, id-only deleted badge. Added dashboard Contracts status card + Expiry card (BE list-users stats + admin Main.js). Atoms: serializer-field-omission-starves-ui, summary-must-not-scope-by-its-own-selector. SOFT-DELETE-SHIP closed.
+
 ## [2026-06-16] session-end #121 | prod deploy confirmed + admin-dashboard hygiene — FE `19984f2`+BE `21fbdcf` confirmed live in prod, synced w/ develop. admin-dashboard: 5 untracked-but-linked docs committed+pushed (`5e5b984`). Branch cleanup: 33 local + 31 remote branches, all merged into main+develop, deleted 32 local + 29 remote (kept main/develop only). Same pattern as prior BRANCH-CLEANUP-REMOTE.
 
 ## [2026-06-16] deploy | FE `main` @ `19984f2` + BE `main` @ `21fbdcf` deployed to prod, both synced with develop — no pending-deploy gap.

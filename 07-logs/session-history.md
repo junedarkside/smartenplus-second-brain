@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #122 — 2026-06-16 — Contract soft-delete (BE + admin) BUILT:**
+- **Feature**: real soft-delete for Contract. New `is_deleted/deleted_at/deleted_by` + `Contract.soft_delete()`/`restore()` methods holding the invariant `is_deleted ⇒ is_actived=False`. `ContractViewSet.destroy()` soft-deletes, new `restore` action, admin `status=deleted` filter + `deleted_contracts` summary, `update_activation` guards `is_deleted=False`. Migration `0061`. BE commit `ce77943` on `feat/contract-soft-delete`.
+- **Admin UI**: Deleted chip (`StatusBadgeCell`), Deleted filter card (`ContractsSummaryStrip`), Delete/Restore bulk actions, `deleteContract`/`restoreContract` mutations. Plus responsive labeled bulk-action buttons + tooltips. admin commits `7e3c5a9` + `5915231` on `feat/contract-soft-delete`.
+- **Audit caught 3 defects, all fixed**: (1) `is_actived=False`-on-delete REQUIRED — booking guard `carts/utils.py:62` checks only `is_actived`; (2) `stations/views.py` arrival-station viewset (public+unauth) leaked inactive AND would leak deleted — fixed (closes pre-existing inactive leak); (3) ADR citations corrected.
+- **Tests**: 7 new (`operators/tests/test_contract_soft_delete.py`) + 46 existing pass.
+- **Frontend**: ZERO code change by design — backend public-queryset filter + invariant hide deleted.
+- Atoms: [[contract-soft-delete-is-actived-invariant]], [[stations-arrival-viewset-public-leak]]. ADR [[adr-contract-soft-delete-2026-06-16]] → accepted.
+- **NOT shipped this session** — branches built+tested but not pushed. (Shipped in #123.)
+
 **Session #121 — 2026-06-16 — Prod deploy confirm + admin-dashboard hygiene:**
 - **Deploy confirmed**: FE `main` @ `19984f2` + BE `main` @ `21fbdcf` live in prod, both synced with `develop` — no pending-deploy gap.
 - **admin-dashboard untracked docs** (5 files: `docs/agent-policy/SYNC.md`, `docs/operations/ENV.md`, `docs/technical/{CATEGORY_MATRIX,IMAGE_FLOW,KEY_FILES}.md`) — verified real, all already linked from `CLAUDE.md`. Committed (`5e5b984`) + pushed.

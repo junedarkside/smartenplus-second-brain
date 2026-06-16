@@ -4,6 +4,7 @@ Archived from master-state.md Section 2. Audit trail only.
 
 | # | Issue | Resolved |
 |---|-------|----------|
+| **SOFT-DELETE-SHIP** | Push `feat/contract-soft-delete` (BE+admin) + verify | **CLOSED #123.** Pushed + merged `--no-ff` → develop both repos, branch pruned local+remote. BE develop `0e52782`, admin develop `f75d721`. Also fixed in-flight: global summary counts, `is_deleted` list-payload omission (badge/restore root fix), status-aware Restore, id-only deleted badge. [[adr-contract-soft-delete-2026-06-16]] |
 | WA-1 | Website audit Sprint 1 (F1-F3) | 2026-06-06 #60. F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. |
 | DOMAIN-1 | NEXT_PUBLIC_DOMAIN leading space | 2026-06-05. GitHub Secret + deploy confirmed. |
 | TL-1 | Timeline stop deletion bug | 2026-06-04. Migration 0028. 3 atoms. |

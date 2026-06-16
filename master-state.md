@@ -4,31 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-16 (session #122 END)
+**Updated:** 2026-06-16 (session #123 END)
 
-**Achieved this session (#122) — Contract soft-delete (BE + admin) shipped:**
-- **Feature**: real soft-delete for Contract. New `is_deleted/deleted_at/deleted_by` + `Contract.soft_delete()`/`restore()` methods holding the invariant `is_deleted ⇒ is_actived=False`. `ContractViewSet.destroy()` soft-deletes, new `restore` action, admin `status=deleted` filter + `deleted_contracts` summary, `update_activation` guards `is_deleted=False`. Migration `0061`. BE commit `ce77943` on `feat/contract-soft-delete`.
-- **Admin UI**: Deleted chip (`StatusBadgeCell`), Deleted filter card (`ContractsSummaryStrip`), Delete/Restore bulk actions, `deleteContract`/`restoreContract` mutations. Plus responsive labeled bulk-action buttons + tooltips (icon-only mobile, labeled desktop). admin commits `7e3c5a9` + `5915231` on `feat/contract-soft-delete`.
-- **Audit caught 3 defects, all fixed**: (1) `is_actived=False`-on-delete is REQUIRED not optional — booking guard `carts/utils.py:62` checks only `is_actived`; (2) `stations/views.py` arrival-station viewset (public+unauth) leaked inactive AND would leak deleted — filtered neither flag, fixed (also closes pre-existing inactive leak); (3) ADR citations corrected.
-- **Tests**: 7 new (`operators/tests/test_contract_soft_delete.py`) + 46 existing pass. admin builds clean.
-- **Frontend**: ZERO code change by design — backend public-queryset filter + invariant hide deleted.
-- Atoms: [[contract-soft-delete-is-actived-invariant]], [[stations-arrival-viewset-public-leak]]. ADR [[adr-contract-soft-delete-2026-06-16]] → accepted.
+**Achieved this session (#123) — Soft-delete SHIPPED + contract dashboard cards:**
+- **Shipped soft-delete**: pushed `feat/contract-soft-delete` on BE + admin, merged `--no-ff` → `develop` both repos, branch pruned local+remote. BE develop `0e52782`, admin develop `f75d721`.
+- **Summary counts bug** (BE `ContractViewSet.list`): cards collapsed when a status card clicked (`status=active` filter scoped the summary). Fixed — summary computed on queryset with `apply_status_filter=False`, so Total/Active/Inactive/Deleted stay global tallies. Test pins summary identical across `status=active|inactive|deleted`.
+- **`is_deleted` ROOT FIX** (BE `ContractSerializer.Meta.fields`): list payload omitted `is_deleted`+`deleted_at`. Grid badge fell back to red "Inactive" for deleted rows AND Restore path was dead (selected-deleted count always 0). Added both fields → badge + restore now work. This was the data root cause behind the "can't activate 182 / shows inactive" report.
+- **Status-aware Restore** (admin `ContractsActionBar`): bulk-button visibility now follows the SELECTED rows' `is_deleted` (via `getSelectedContracts()` split into live/deleted counts), not the active filter. Restore reachable in any view; mixed selections show both groups (backend scopes each op).
+- **Deleted badge** (`StatusBadgeCell`): id-only label; "Deleted" moved to hover tooltip.
+- **Dashboard cards** (BE `accounts/views.py` list-users + admin `Main.js`): Contracts status card (Active/Inactive/Deleted + Total, deep-links to filtered list) and Expiry card (Expired / ≤30d / ≤90d / No end date — active, non-deleted, by `end_date`).
+- Atoms: [[serializer-field-omission-starves-ui]], [[summary-must-not-scope-by-its-own-selector]].
 
 **Resume point (EXACT):**
-1. **SOFT-DELETE-SHIP** — `feat/contract-soft-delete` on BE (`ce77943`) + admin (`5915231`) NOT pushed. Push + open PRs. Browser-verify (soft-delete a contract → Deleted chip + Restore work). Frontend-verify (deleted contract gone from listing/detail-404/booking).
-2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
-3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
+1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
+2. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
+3. **Deploy develop → prod** when ready: BE `0e52782` + admin `f75d721` carry soft-delete + dashboard cards (incl. BE migration `0061` — run `migrate`).
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
 - Hero trust signals UNGATED — accepted for now.
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
+- Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled — shows `total_contracts`, not bookings. Untracked, low priority.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #122)
+- vault: `master` @ new commit (this adds #123)
 - FE `main`/`develop` @ `19984f2` — **deployed, live** (untouched this session)
-- BE: `feat/contract-soft-delete` @ `ce77943` (NOT pushed); `main` unchanged
-- admin-dashboard: `feat/contract-soft-delete` @ `5915231` (NOT pushed); `main` @ `5e5b984`
+- BE: `develop` @ `0e52782` (soft-delete + dashboard stats merged, NOT deployed); `main` unchanged
+- admin-dashboard: `develop` @ `f75d721` (soft-delete + dashboard cards merged, NOT deployed); `main` @ `5e5b984`
 - content: `master` @ `3756e5b` (clean)
 
 ---
@@ -37,7 +39,6 @@
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **SOFT-DELETE-SHIP** | Push `feat/contract-soft-delete` (BE+admin) + open PRs + browser/frontend verify | **OPEN #122.** Built + tested (7+46 pass), NOT pushed. Verify: Deleted chip/filter/Restore in admin; deleted contract gone from FE listing/detail-404/booking. | BE `ce77943`, admin `5915231`; [[adr-contract-soft-delete-2026-06-16]] |
 | **MIN-RATE-BE-MERGE** | BE `fix/popular-routes-lowest-price` @ `4da0b81` — merge to develop + verify `/front-page/` Hatyai→Koh Lipe `lowest_price` matches SlideCalendar rate | **CLOSED 2026-06-16** — merged at `37387c8`, BE develop now `21fbdcf` | `smartenplus-backend/products/views.py:1197` |
 | **TRIP-SEARCH-REDESIGN** | Travel Decision Engine + below-fold redesign of `/trips/[from]/[to]` | **CLOSED 2026-06-15.** R1+R2 fully shipped. FE `develop` @ `6f2ada9`. Deploy to prod pending (ops task). → `07-logs/closed-items.md` | [[trip-search-results-implementation-plan-2026-06-14]], [[trip-search-below-fold-redesign-2026-06-15]] |
 | **TRUST-BADGE-BUG** | `getTrustBadges` Free-Cancellation inverted | **CLOSED 2026-06-14.** Fixed in Phase 0.5 — `refund_percentage === 0` → `=== 100`. Shipped in `feat/trip-search-redesign`, now on `develop`. | `helpers/getTrustBadges.js:19` |
