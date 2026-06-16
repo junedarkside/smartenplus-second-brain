@@ -18,7 +18,7 @@
 **Resume point (EXACT):**
 1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/transportation-category-audit`. `AirportTransferRouteCard.js`.
 2. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
-3. **Deploy develop → prod** when ready: BE `0e52782` + admin `f75d721` carry soft-delete + dashboard cards (incl. BE migration `0061` — run `migrate`).
+3. ~~Deploy develop → prod~~ **DONE #123** — BE `0e52782` + admin `f75d721` deployed, migration `0061` run on prod. Soft-delete + dashboard cards live.
 
 **Carry-forward bugs (open):**
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
@@ -29,8 +29,8 @@
 **Next session: starting state**
 - vault: `master` @ new commit (this adds #123)
 - FE `main`/`develop` @ `19984f2` — **deployed, live** (untouched this session)
-- BE: `develop` @ `0e52782` (soft-delete + dashboard stats merged, NOT deployed); `main` unchanged
-- admin-dashboard: `develop` @ `f75d721` (soft-delete + dashboard cards merged, NOT deployed); `main` @ `5e5b984`
+- BE: `develop` @ `0e52782` — **DEPLOYED to prod, migration `0061` run, live**
+- admin-dashboard: `develop` @ `f75d721` — **DEPLOYED to prod, live**
 - content: `master` @ `3756e5b` (clean)
 
 ---
