@@ -166,7 +166,10 @@ Global navigation catalog. Updated on every ingest.
 - [[homepage-uxui-audit-2026-05-31]] — **COMPLETED 2026-05-31.** 6-phase UX/UI audit. Commit `ade94ee`. Layout, card differentiation, destination flow fixes.
 
 - [[docker-standalone-isr-revalidate-gap]] — ISR timer gap in Docker standalone, deploy volume clear workaround. **+2026-06-17:** confirmed on `/activities/detail` (revalidate 3600, admin contract edit never reaches prod); full chain traced (save→signal→Redis bust real, ISR HTML never notified = the gap). Side finding: `daily_counter` self-save (`views.py:882`) busts backend Redis on every read.
-- [[on-demand-revalidation-api-route]] — pages/api/revalidate.js pattern, auth, 207 Multi-Status. **+2026-06-17:** flagged — documented code is App Router but repo is Pages Router; use `res.revalidate(path)` not `request.revalidatePath`. Corrected snippet added.
+- [[on-demand-revalidation-api-route]] — pages/api/revalidate.js pattern, auth, 207 Multi-Status. **+2026-06-17:** flagged — documented code is App Router but repo is Pages Router; use `res.revalidate(path)` not `request.revalidatePath`. Corrected snippet added. **+2026-06-18: IMPLEMENTED #129** — shipped to develop both repos.
+- [[isr-revalidate-csr-vs-isr-field-matrix]] — which detail-page fields need ISR/on-demand vs CSR vs timer; on-demand = content+SEO only, counter/rate deliberately excluded. Why lazy timer insufficient (request-triggered, quiet pages never regen).
+- [[django-update-bypasses-post-save-signal]] — `.update()` skips post_save (no signal); used so per-view counter writes don't storm ISR revalidate. Use `.save()` when you WANT the signal.
+- [[frontend-url-canonical-www-not-apex]] — backend FRONTEND_URL must be www not apex; apex→www 301 drops requests POST body/auth → revalidate silently failed. The #129 prod root cause.
 - [[celery-task-over-bare-thread-django-signals]] — why Celery over threads for signal side effects, slug dedup, retry
 - [[isr-csr-overlay-stale-fields]] — CSR covers ratecard/dates; stale: name/description/images/JSON-LD/meta
 - [[persistgate-ssr-suppresses-head-component]] — PersistGate null SSR blocks DefaultSeo/Head; hoisting fix

@@ -179,6 +179,10 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "03-knowledge/isr-revalidate-csr-vs-isr-field-matrix.md",
+    "03-knowledge/isr-revalidate-csr-vs-isr-field-matrix.md.tmp.7949.ee77082cc43d",
+    "03-knowledge/frontend-url-canonical-www-not-apex.md",
+    "03-knowledge/django-update-bypasses-post-save-signal.md",
     "01-projects/homepage-search-transportation-experiences-tabs-2026-06-17.md",
     "04-decisions/adr-homepage-search-transportation-experiences-tabs-2026-06-17.md.tmp.7949.e89fb7d78b3d",
     "log.md.tmp.7949.76611aff8bc1",
@@ -206,15 +210,11 @@
     "06-systems/README.md",
     "05-templates/README.md",
     "04-decisions/README.md",
-    "03-knowledge/README.md",
-    "02-areas/README.md",
-    "07-logs/vault-optimization-snapshot-2026-06-16.md",
     "scripts/vault-stats.py",
     "scripts",
     "log.md.tmp.56014.560eacef4920",
     "master-state.md.tmp.53315.c652bb08cf58",
     "03-knowledge/canonicalization-audit-checklist.md.tmp.10631.6a90086dbfd5",
-    "01-projects/smartenplus-uxui-redesign-research-2026.md.tmp.10631.230bb1884479",
     "Untitled.canvas",
     "Untitled 1.canvas"
   ]

@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #128 (2026-06-17) — ISR-REVALIDATE-GAP diagnosis + plan (NO code)
+Root-caused admin contract edit not reaching prod activities+trips detail pages. Backend Redis bust works; Next.js Pages-Router ISR HTML never regenerated + no `/api/revalidate` route = the gap. 4-step fix plan approved. Vault ISR notes (`docker-standalone-isr-revalidate-gap`, `on-demand-revalidation-api-route`) extended/corrected. Implemented in #129.
+
+## Session #127 (2026-06-17) — Operator cover_image pipeline upgrade + orphan cleanup, SHIPPED + DEPLOYED
+- COVER-PIPELINE (BE `7040f8d`): cover upload runs through parametrized `process_operator_image`; 300KB/1920 hero budget → WebP, HEIC/HEIF/AVIF server-side.
+- ADMIN HEIC (admin `874d74d`): shared `isHeic`/`convertHeicToJpeg` in `imageHelpers.js`; OperatorForm decodes iPhone HEIC→JPEG preview.
+- ORPHAN CLEANUP (BE `dbbbe97`): `OperatorViewSet.update` deletes replaced logo/cover from S3 via `_safe_delete_storage_file`.
+- Deployed to prod (`dcbcd76`). Carry-forward `precompute_contract_on_create` warning → **fixed #129**.
+
+---
+
 **Session #126 — 2026-06-17 — Operator cover-image hero SHIPPED + DEPLOYED (all 3 repos):**
 - **OPERATOR-COVER** new feature end-to-end. BE (`28e584a`): `cover_image` ImageField + migration `0062` + serializer + `OperatorViewSet.update` upload. admin-dashboard (`285e83b`): cover upload box in `OperatorForm.js`. FE (`b3ed243`+`1609c38`): hero on `FeaturedImageHeader` w/ `bgDefault` fallback, floating back/share pills, white-on-image, token padding, mobile responsive (logo `w-16 sm:w-20 md:w-28`, `flex-wrap` stats, `hidden sm:block` + `line-clamp-2` description).
 - **Bug fixed**: `getServerSideProps` omitted `description` → hero About never rendered. Added `description: operatorData.description`.

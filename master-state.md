@@ -4,43 +4,40 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-17 (session #128 END)
+**Updated:** 2026-06-18 (session #129 END)
 
-**Session #128 (diagnosis + plan only, NO code):** ISR-REVALIDATE-GAP root-caused (admin contract edit not reaching prod activities+trips detail pages). Backend Redis bust works; Next.js Pages-Router ISR HTML never regenerated + no `/api/revalidate` route = the gap. 4-step fix plan APPROVED at `~/.claude/plans/create-team-to-check-jaunty-goblet.md` (not implemented). Vault ISR notes extended/corrected. See Section 2 **ISR-REVALIDATE-GAP**. _(#127 block below retained — its prod-restart verify still open.)_
+**Achieved this session (#129) — ISR on-demand revalidation IMPLEMENTED + merged to develop both repos. Prod root cause found (www vs apex).**
+- **What it fixes:** admin contract content edit (description, tour_highlights, inclusions, route_info, timeline, images, policies + SEO/JSON-LD) now pushes a Next.js ISR regen in seconds. Native `res.revalidate()`, not a workaround. Chosen over lazy-timer because Next 14.2.5 standalone regen is request-triggered → quiet/zero-traffic pages never self-heal (the actual bug). rate stays CSR (buyer-live); counter stays ISR-timer (stale-OK).
+- **Backend (`feat/isr-on-demand-revalidate` → develop `b68d201`, commit `0f2d108`):** `revalidate_frontend_isr` Celery task (`operators/tasks.py`, POSTs `{slug}` to `{FRONTEND_URL}/api/revalidate`, no-ops if secret unset); `_trigger_revalidate(slug)` helper called from 2 cache-bust signals (Contract save `signals.py:46`, RateCard change `:95`); `REVALIDATION_SECRET` setting; `.env-sample`. **Enabler:** `products/views.py:884` daily_counter `+=1;save()` → `.update(F+1)` so per-view + nightly counter writes fire NO post_save → NO revalidate storm (verified on deployed code). Admin update confirmed uses `instance.save()` (`views.py:946`) → revalidate fires correctly.
+- **Frontend (`feat/isr-on-demand-revalidate` → develop `66d896e`, commit `898159e`):** new Pages-Router `pages/api/revalidate.js` (secret-guarded, maps slug→both /trips/detail + /activities/detail, 207 partial); env templates; `deploy.yml` + `deploy-ghcr.sh` runtime-secret wiring (NOT build-arg); `next_cache` volume-clear hardening (was silent `|| true`).
+- **2 latent bugs fixed in same BE commit:** `clear_trip_cache` Trip branch null-guard (`views.py:1729`); `precompute_contract_on_create` missing `self` (bind=True) — **closes #127 carry-forward**.
+- **PROD ROOT CAUSE (`fix/frontend-url-www` → develop `4eaaf8d`, commit `d37dee3`):** prod `FRONTEND_URL` resolved to apex `https://smartenplus.co.th`; site is canonical `www`. Backend POSTed revalidate to apex → 301→www → `requests` drops POST body/auth → revalidation never landed → page stayed stale. Fixed default to www in `settings.py:373`.
+- **Verified:** `manage.py check` clean, 29 BE tests OK (noise gone after latent fixes), ESLint clean, import chain OK, no-storm proof on deployed branch. Secret `72ed6...e32e88` set both sides in prod (user).
+
+**Resume point (EXACT):**
+1. **PROD ACTIVATION — not yet live.** Develop ≠ deployed; prod still resolves apex. On backend host: set `FRONTEND_URL=https://www.smartenplus.co.th` in prod env + `docker restart smartenplus-backend_celery-worker_1 smartenplus-backend_celery-beat_1` (OR redeploy `4eaaf8d`). Verify: `echo "from django.conf import settings;print(repr(settings.FRONTEND_URL))" | docker exec -i smartenplus-backend_celery-worker_1 python manage.py shell` → must print `www`. Then deploy develop→main both repos (prod deploys from main).
+2. **Smoke test:** edit a contract `tour_highlights` in admin → `docker logs -f smartenplus-backend_celery-worker_1 | grep -i revalidat` → expect `ISR revalidated slug=... status=200` → reload page fresh in seconds.
+3. AT-1 Airport Transfer (P0) still queued.
+
+_(Sessions #127 + #128 blocks archived → `07-logs/session-history.md`.)_
 
 ---
 
 
-**Achieved this session (#127) — Operator cover_image pipeline upgrade + orphan cleanup, SHIPPED + DEPLOYED:**
-- **COVER-PIPELINE** (BE `7040f8d`): cover upload now runs through `process_operator_image` (was raw store). Parametrized the function — `process_operator_image(image_file, max_output_size=100*1024, max_dimensions=(1200,800,600))`, defaults reproduce old gallery behavior (gallery caller at `views.py` untouched). Cover calls it with `max_output_size=300*1024, max_dimensions=(1920,1600,1200)` → WebP, crisp hero budget, HEIC/HEIF/AVIF accepted server-side (pillow-heif).
-- **ADMIN HEIC** (admin `874d74d`): extracted `isHeic`/`convertHeicToJpeg` from `DropFilesInput.js` to shared `components/utils/imageHelpers.js` (DropFilesInput now imports them — gallery unchanged). `OperatorForm.handleCoverFileChange` async: decodes iPhone HEIC→JPEG for preview, widened whitelist + `accept` to HEIC/HEIF. Server re-encodes to WebP regardless.
-- **ORPHAN CLEANUP** (BE `dbbbe97`): `OperatorViewSet.update` now deletes the replaced logo/cover file from S3 (Django doesn't auto-delete; no django-cleanup). New `_safe_delete_storage_file` helper (mirrors `signals.py` post_delete pattern), runs AFTER save, guarded on name change, non-fatal (logged, never 500s). Gallery path untouched (cover/logo are bare ImageFields, NOT Asset-tracked, unique uuid names → zero gallery side-effect).
-- **Impact analysis done** (user-requested): confirmed gallery upload, smartenplus-frontend review component, and `dialogue.process_review_image` all UNAFFECTED — separate stacks/functions. Only cover behavior changed.
-- **DEPLOYED to prod**: backend merged develop→main (`dbbbe97`), prod server `git pull` landed it (merge `dcbcd76` on prod). All 3 repos on `main`.
-
-_(Session #126 cover-hero block archived → `07-logs/session-history.md`.)_
-
-**Resume point (EXACT):**
-1. **Confirm prod apps restarted after pull** — `git pull` updates files but running gunicorn/Next keeps old code until restart. Verify cover WebP + HEIC actually live (upload test, check returned `cover_image` ends `.webp`).
-2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/airport-transfer-at1-redesign-spec.md`. `AirportTransferRouteCard.js` + BE `products/serializers.py` (additive serializer expansion only).
-3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
-
-**Carry-forward bugs (open):**
-- **BE-IMAGE-DEDUP** tech debt tracked in Section 2 — `process_operator_image` vs `process_review_image` dup + upload-validation copy-pasted ×5 files.
-- silaphat `Operator.description` holds route notes, not real about-copy — data quality. Edit via admin form when desired.
-- `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
-- Hero trust signals UNGATED — accepted.
+**Carry-forward bugs (open, from #127):**
+- **BE-IMAGE-DEDUP** tech debt (Section 2) — `process_operator_image` vs `process_review_image` dup + upload-validation copy-pasted ×5 files.
+- silaphat `Operator.description` holds route notes, not real about-copy — data quality.
+- `booking_count_yesterday` (`products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count`.
-- Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled. Untracked, low priority.
-- `precompute_contract_on_create()` Celery signal warning in test logs. Pre-existing. Untracked.
-- Prod backend git history diverged from origin (259 merge-noise commits ahead, content = same) — pulls always merge, not FF. Set `core.mergeoptions --no-edit` on prod to skip vim. Cosmetic.
+- Prod backend git history diverged from origin (merge-noise) — pulls always merge, not FF. Cosmetic.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #127)
-- BE: `main == develop` @ `dbbbe97` — **DEPLOYED** (prod merge `dcbcd76`). Cover WebP pipeline + HEIC + orphan cleanup (#127). ⚠️ confirm prod app restarted.
-- FE: `main` @ `1609c38` — DEPLOYED (#126, unchanged this session).
-- admin-dashboard: `main` @ `874d74d` — DEPLOYED. HEIC cover upload (#127).
+- vault: `master` @ new commit (this adds #129)
+- BE: `develop` @ `4eaaf8d` — ISR revalidate + FRONTEND_URL www fix. **NOT deployed to main/prod yet.** `main` still `dbbbe97`.
+- FE: `develop` @ `66d896e` — ISR revalidate route + deploy wiring. **NOT deployed to main/prod yet.** `main` still `3b5f1a6`.
+- admin-dashboard: `main` @ `874d74d` (unchanged)
 - content: `master` @ `3756e5b` (clean)
+- ⚠️ Prod activation pending: deploy develop→main both repos + set prod `FRONTEND_URL=www` + restart worker.
 
 ---
 
@@ -48,7 +45,7 @@ _(Session #126 cover-hero block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **OPEN #128** — plan APPROVED, not yet implemented. debug-mantra+scrutinize verified, backend innocent. | plan: `~/.claude/plans/create-team-to-check-jaunty-goblet.md` · `operators/signals.py`, `products/views.py:882`, FE `pages/api/` |
+| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **ACTIVATION PENDING:** deploy develop→main both repos + set prod `FRONTEND_URL=www` + restart worker, then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate, pre-existing). Cluster 1: WebP resize/compress algorithm duplicated ~2-3× — `operators/utils.py:process_operator_image` (now parametrized #126b), `dialogue/utils.py:process_review_image` (120KB hardcoded), plus WebP/thumbnail code in `operators/admin.py`. Cluster 2: upload validation (ext whitelist + size) copy-pasted across 5 files (`stations/views.py`, `operators/utils.py`, `operators/views.py`, `pages_info/models.py`, `dialogue/utils.py`) each with own constants → drift risk. Consolidate → one `core/image_utils.py`: `process_image_to_webp(file, *, max_output_size, max_dimensions)` + `validate_upload(file, *, allowed_ext, max_size)`, migrate all callers. | OPEN #126 — dedicated refactor session. High blast radius (operators/dialogue/stations/pages_info), zero user value, all spots work. Do NOT bolt onto feature work. | `operators/utils.py`, `dialogue/utils.py` |
 | **VAULT-DATE-RENAMES** | 105 files embed dates in filenames (violates "no dates in filenames" rule). Rename breaks every inbound wikilink. Needs separate planning round: `git mv` + atomic search-replace of all `[[old-name]]` → `[[new-name]]`. | OPEN #125 — next-wave vault work. | [[vault-optimization-snapshot-2026-06-16]] |
 | **OPERATOR-DESC** | Operator `description` field (backend) → unblocks GEO "about operator" prose on `/operators/[slug]` (flagged in SEO/AEO/GEO audit, the one truly backend-blocked item). | **CLOSED #125** — verify-only: backend was already complete (`Operator.description = TextField()`, `OperatorDetailSerializer fields='__all__'`). Live curl confirmed populated text returned. FE wired About-{operator} section at `pages/operators/[slug].js:151` (FE `f75b411`). | done |
