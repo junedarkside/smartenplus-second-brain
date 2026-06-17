@@ -13,12 +13,12 @@
   - **FE** (`b3ed243` + `1609c38`): `pages/operators/[slug].js` hero rebuilt on existing `FeaturedImageHeader` (same shell as homepage `SearchCover`). Local `HeroWrapper` always renders `FeaturedImageHeader` with `imgUrl={cover_image || bgDefault}` (no flat-gradient branch — matches site pattern). Floating back/share pill row (`ArrowBackIosNewOutlinedIcon`, `bg-white/80 backdrop-blur`). White-on-image text throughout. Hero content `px-2 md:px-3` to align with content below. Section rhythm: content container `pt-4`, breadcrumb `mb-4`.
 - **Mobile responsive** (`1609c38`): `customMinHeight="min-h-[240px] sm:min-h-[250px] md:min-h-[460px]"`, logo `w-16 sm:w-20 md:w-28`, stats row `flex-wrap`, description `hidden sm:block` + `line-clamp-2`.
 - **Bug fixed**: hero description never rendered — `getServerSideProps` operator object omitted `description`. Added `description: operatorData.description` to both success + error-fallback constructions. (`Operator.description` was never null; it was just not passed through SSR.)
-- All 3 repos committed + pushed to develop. **Not yet deployed to prod.**
+- All 3 repos committed + pushed to develop, then **DEPLOYED to prod by user** — `main == develop` on all three (BE `28e584a`, FE `1609c38`, admin `285e83b`), 0 ahead. Cover-image hero + tab-counts (#125) now live.
 
 _(Session #125 operators-tab-counts block archived → `07-logs/session-history.md`.)_
 
 **Resume point (EXACT):**
-1. **Deploy session #126 + #125 to prod** when ops greenlights — BE/FE/admin all on `develop` ahead of `main`. Migration `0062_operator_cover_image` must run on BE deploy.
+1. **VERIFY migration `0062_operator_cover_image` ran on prod DB.** If not run, `cover_image` column missing → 500 on any operator endpoint touching the field (same error seen locally before migrate). Confirm before trusting the deploy.
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/airport-transfer-at1-redesign-spec.md`. `AirportTransferRouteCard.js` + BE `products/serializers.py` (additive serializer expansion only).
 3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
 
@@ -32,9 +32,9 @@ _(Session #125 operators-tab-counts block archived → `07-logs/session-history.
 
 **Next session: starting state**
 - vault: `master` @ new commit (this adds #126)
-- BE: `develop` @ `28e584a` — **NOT deployed to prod**. cover_image + migration `0062` (#126), tab-counts (#125).
-- FE: `develop` @ `1609c38` — **NOT deployed to prod**. cover-image hero + mobile (#126), tab-counts/about (#125).
-- admin-dashboard: `develop` @ `285e83b` — **NOT deployed to prod**. cover-image upload box (#126). (Was on `main` before #126; now on develop.)
+- BE: `main == develop` @ `28e584a` — **DEPLOYED to prod**. cover_image + migration `0062` (#126), tab-counts (#125). ⚠️ confirm `0062` ran on prod DB.
+- FE: `main == develop` @ `1609c38` — **DEPLOYED to prod**. cover-image hero + mobile (#126), tab-counts/about (#125).
+- admin-dashboard: `main == develop` @ `285e83b` — **DEPLOYED to prod**. cover-image upload box (#126).
 - content: `master` @ `3756e5b` (clean)
 
 ---

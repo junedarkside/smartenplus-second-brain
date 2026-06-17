@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-17] deploy #126 | All 3 repos deployed to prod by user — `main == develop` (BE `28e584a`, FE `1609c38`, admin `285e83b`). Operator cover-image hero + admin upload + tab-counts now live. ⚠️ verify migration `0062_operator_cover_image` ran on prod DB.
+
 ## [2026-06-17] session-end #126 | Operator cover-image hero shipped to develop (BE `28e584a` + migration 0062, admin `285e83b`, FE `1609c38`) — FeaturedImageHeader reuse, bgDefault fallback, floating back/share pills, mobile responsive, description SSR pass-through fix. Not deployed to prod.
 
 ## [2026-06-16] deploy #123 | BE develop `0e52782` + admin develop `f75d721` deployed to prod, migration `0061` run — contract soft-delete + dashboard status/expiry cards live.
