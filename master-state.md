@@ -4,33 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-16 (session #125 END)
+**Updated:** 2026-06-17 (session #126 END)
 
-**Achieved this session (#125) — Operators backend follow-ups SHIPPED to develop:**
-- **OPERATOR-TAB-COUNTS** (BE `0d6a3cf`): `OperatorContractsViewSet.list` now emits `summary.by_type = {ALL, PRIVATE, JOIN, CHARTER}` for FE tab badges. Counts computed pre-`?type=` filter (invariance test confirms) and restricted to TRANSPORT service categories (`TRANSPORTATION`+`TRANSFER`) so non-transport contracts don't inflate badges. **Bug caught + fixed during test:** initial impl reused `self.get_queryset(apply_type_filter=False)` whose `select_related(trip→route→station)` INNER JOIN drops contracts with any NULL FK in the chain — collapsing live `ALL` from real 15 → bogus 3. Fix: aggregate from `Contract.objects` directly. 4 tests added (`operators/tests/test_operator_contracts_viewset.py`).
-- **OPERATOR-DESC** (verify-only — backend was already complete): live `curl` confirmed `Operator.description` returns populated text on `/admin-dashboard-operators/operators/<slug>/`. Field exists since pre-#125, `OperatorDetailSerializer fields='__all__'` already exposes it. No BE change needed.
-- **FE wiring** (FE `f75b411`): `OperatorFilterBar` accepts `byType` prop, renders `"Join (10)"`-style badges with graceful degrade. `pages/operators/[slug].js:151` placeholder replaced with conditional `About {operator.name}` section (renders only when `description` present, hides cleanly otherwise). Build green, lint clean.
-- Both feature branches merged `--no-ff` → develop, pushed. **Not yet deployed to prod** — pending ops deploy.
+**Achieved this session (#126) — Operator cover-image hero SHIPPED to develop (all 3 repos):**
+- **OPERATOR-COVER** new feature. Per-operator hero cover image, end-to-end:
+  - **BE** (`28e584a`): added `cover_image = ImageField(null, blank)` to `Operator` (`operators/models.py:77`), migration `0062_operator_cover_image` applied. `OperatorSerializer.Meta.fields` += `'cover_image'`; `OperatorDetailSerializer` already `__all__`. `OperatorViewSet.update` handles `cover_image` upload mirroring existing `image`/logo pattern. No admin.py change (no fieldsets restrict fields).
+  - **admin-dashboard** (`285e83b`): `components/operator/OperatorForm.js` — second upload box (full-width banner style, h140) below logo. `coverFile`/`coverPreviewUrl` state, Yup validation + FormData append `cover_image`, mirrors logo. `updateOperator` RTK mutation already forwards arbitrary FormData — no api change.
+  - **FE** (`b3ed243` + `1609c38`): `pages/operators/[slug].js` hero rebuilt on existing `FeaturedImageHeader` (same shell as homepage `SearchCover`). Local `HeroWrapper` always renders `FeaturedImageHeader` with `imgUrl={cover_image || bgDefault}` (no flat-gradient branch — matches site pattern). Floating back/share pill row (`ArrowBackIosNewOutlinedIcon`, `bg-white/80 backdrop-blur`). White-on-image text throughout. Hero content `px-2 md:px-3` to align with content below. Section rhythm: content container `pt-4`, breadcrumb `mb-4`.
+- **Mobile responsive** (`1609c38`): `customMinHeight="min-h-[240px] sm:min-h-[250px] md:min-h-[460px]"`, logo `w-16 sm:w-20 md:w-28`, stats row `flex-wrap`, description `hidden sm:block` + `line-clamp-2`.
+- **Bug fixed**: hero description never rendered — `getServerSideProps` operator object omitted `description`. Added `description: operatorData.description` to both success + error-fallback constructions. (`Operator.description` was never null; it was just not passed through SSR.)
+- All 3 repos committed + pushed to develop. **Not yet deployed to prod.**
 
-_(Session #124 operators-redesign block archived → `07-logs/session-history.md`.)_
+_(Session #125 operators-tab-counts block archived → `07-logs/session-history.md`.)_
 
 **Resume point (EXACT):**
-1. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/airport-transfer-at1-redesign-spec.md`. `AirportTransferRouteCard.js` + BE `products/serializers.py` (additive serializer expansion only).
-2. **Deploy session #125 to prod** when ops greenlights — both repos sitting on `develop` ahead of `main`.
+1. **Deploy session #126 + #125 to prod** when ops greenlights — BE/FE/admin all on `develop` ahead of `main`. Migration `0062_operator_cover_image` must run on BE deploy.
+2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/airport-transfer-at1-redesign-spec.md`. `AirportTransferRouteCard.js` + BE `products/serializers.py` (additive serializer expansion only).
 3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
 
 **Carry-forward bugs (open):**
+- silaphat `Operator.description` holds route notes (`hatyai -> lipe / lipe -> hatyai`), not real about-copy — data quality, not code. Edit via admin operator form when desired.
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
 - Hero trust signals UNGATED — accepted for now.
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
-- Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled — shows `total_contracts`, not bookings. Untracked, low priority.
-- `precompute_contract_on_create() takes 1 positional argument but 2 were given` — Celery signal warning surfaces in test logs every time a contract is created. Not a regression from #125 (pre-existing). Untracked.
+- Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled — shows `total_contracts`. Untracked, low priority.
+- `precompute_contract_on_create() takes 1 positional argument but 2 were given` — Celery signal warning in test logs. Pre-existing. Untracked.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #125)
-- BE: `develop` @ `0d6a3cf` — **NOT yet deployed to prod**. Tab-counts shipped this session.
-- FE: `develop` @ `f75b411` — **NOT yet deployed to prod**. Tab-counts + About-operator description shipped this session.
-- admin-dashboard: `main` @ `f75d721` — DEPLOYED to prod, live (unchanged #125)
+- vault: `master` @ new commit (this adds #126)
+- BE: `develop` @ `28e584a` — **NOT deployed to prod**. cover_image + migration `0062` (#126), tab-counts (#125).
+- FE: `develop` @ `1609c38` — **NOT deployed to prod**. cover-image hero + mobile (#126), tab-counts/about (#125).
+- admin-dashboard: `develop` @ `285e83b` — **NOT deployed to prod**. cover-image upload box (#126). (Was on `main` before #126; now on develop.)
 - content: `master` @ `3756e5b` (clean)
 
 ---

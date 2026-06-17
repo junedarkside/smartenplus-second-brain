@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-17] session-end #126 | Operator cover-image hero shipped to develop (BE `28e584a` + migration 0062, admin `285e83b`, FE `1609c38`) — FeaturedImageHeader reuse, bgDefault fallback, floating back/share pills, mobile responsive, description SSR pass-through fix. Not deployed to prod.
+
 ## [2026-06-16] deploy #123 | BE develop `0e52782` + admin develop `f75d721` deployed to prod, migration `0061` run — contract soft-delete + dashboard status/expiry cards live.
 
 ## [2026-06-16] session-end #123 | contract soft-delete SHIPPED + dashboard status/expiry cards — pushed+merged `feat/contract-soft-delete` → develop both repos (BE `0e52782`, admin `f75d721`), branch pruned. Fixed: global summary counts under status filter, `is_deleted` list-payload omission (badge+restore root fix), status-aware Restore buttons, id-only deleted badge. Added dashboard Contracts status card + Expiry card (BE list-users stats + admin Main.js). Atoms: serializer-field-omission-starves-ui, summary-must-not-scope-by-its-own-selector. SOFT-DELETE-SHIP closed.

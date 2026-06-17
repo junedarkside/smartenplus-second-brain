@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #125 — 2026-06-16 — Operators backend follow-ups SHIPPED to develop:**
+- **OPERATOR-TAB-COUNTS** (BE `0d6a3cf`): `OperatorContractsViewSet.list` emits `summary.by_type = {ALL, PRIVATE, JOIN, CHARTER}` for FE tab badges. Counts pre-`?type=` filter, TRANSPORT categories only. Bug caught: `select_related` INNER JOIN under-counted 15→3; fix = aggregate from `Contract.objects` directly. 4 tests added.
+- **OPERATOR-DESC** (verify-only): live curl confirmed `Operator.description` returns populated text. No BE change.
+- **FE wiring** (FE `f75b411`): `OperatorFilterBar` `byType` prop renders `"Join (10)"` badges. About-operator section wired.
+- Both feature branches merged `--no-ff` → develop, pushed. Not deployed to prod.
+
+---
+
 **Session #123 — 2026-06-16 — Soft-delete SHIPPED + contract dashboard cards:**
 - **Shipped soft-delete**: pushed `feat/contract-soft-delete` on BE + admin, merged `--no-ff` → `develop` both repos, branch pruned local+remote. BE develop `0e52782`, admin develop `f75d721`.
 - **Summary counts bug** (BE `ContractViewSet.list`): cards collapsed when a status card clicked (`status=active` scoped the summary). Fixed — summary computed with `apply_status_filter=False`, Total/Active/Inactive/Deleted stay global. Test pins summary identical across `status=active|inactive|deleted`.
