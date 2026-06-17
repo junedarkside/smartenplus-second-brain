@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #126 — 2026-06-17 — Operator cover-image hero SHIPPED + DEPLOYED (all 3 repos):**
+- **OPERATOR-COVER** new feature end-to-end. BE (`28e584a`): `cover_image` ImageField + migration `0062` + serializer + `OperatorViewSet.update` upload. admin-dashboard (`285e83b`): cover upload box in `OperatorForm.js`. FE (`b3ed243`+`1609c38`): hero on `FeaturedImageHeader` w/ `bgDefault` fallback, floating back/share pills, white-on-image, token padding, mobile responsive (logo `w-16 sm:w-20 md:w-28`, `flex-wrap` stats, `hidden sm:block` + `line-clamp-2` description).
+- **Bug fixed**: `getServerSideProps` omitted `description` → hero About never rendered. Added `description: operatorData.description`.
+- Deployed to prod: `main == develop` all 3 repos.
+
+---
+
 **Session #125 — 2026-06-16 — Operators backend follow-ups SHIPPED to develop:**
 - **OPERATOR-TAB-COUNTS** (BE `0d6a3cf`): `OperatorContractsViewSet.list` emits `summary.by_type = {ALL, PRIVATE, JOIN, CHARTER}` for FE tab badges. Counts pre-`?type=` filter, TRANSPORT categories only. Bug caught: `select_related` INNER JOIN under-counted 15→3; fix = aggregate from `Contract.objects` directly. 4 tests added.
 - **OPERATOR-DESC** (verify-only): live curl confirmed `Operator.description` returns populated text. No BE change.

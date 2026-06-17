@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-17] session-end #127 | Operator cover_image pipeline upgrade + orphan cleanup, shipped + deployed. BE `dbbbe97`: cover → process_operator_image (parametrized, WebP 300KB/1920 hero budget, HEIC server-side) + replaced-file S3 delete in OperatorViewSet.update (_safe_delete_storage_file). admin `874d74d`: shared isHeic/convertHeicToJpeg in imageHelpers, cover handler decodes iPhone HEIC. Impact-checked: gallery + review unaffected. Tracked BE-IMAGE-DEDUP debt.
+
 ## [2026-06-17] deploy #126 | All 3 repos deployed to prod by user — `main == develop` (BE `28e584a`, FE `1609c38`, admin `285e83b`). Operator cover-image hero + admin upload + tab-counts now live. ⚠️ verify migration `0062_operator_cover_image` ran on prod DB.
 
 ## [2026-06-17] session-end #126 | Operator cover-image hero shipped to develop (BE `28e584a` + migration 0062, admin `285e83b`, FE `1609c38`) — FeaturedImageHeader reuse, bgDefault fallback, floating back/share pills, mobile responsive, description SSR pass-through fix. Not deployed to prod.

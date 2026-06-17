@@ -4,37 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-17 (session #126 END)
+**Updated:** 2026-06-17 (session #127 END)
 
-**Achieved this session (#126) — Operator cover-image hero SHIPPED to develop (all 3 repos):**
-- **OPERATOR-COVER** new feature. Per-operator hero cover image, end-to-end:
-  - **BE** (`28e584a`): added `cover_image = ImageField(null, blank)` to `Operator` (`operators/models.py:77`), migration `0062_operator_cover_image` applied. `OperatorSerializer.Meta.fields` += `'cover_image'`; `OperatorDetailSerializer` already `__all__`. `OperatorViewSet.update` handles `cover_image` upload mirroring existing `image`/logo pattern. No admin.py change (no fieldsets restrict fields).
-  - **admin-dashboard** (`285e83b`): `components/operator/OperatorForm.js` — second upload box (full-width banner style, h140) below logo. `coverFile`/`coverPreviewUrl` state, Yup validation + FormData append `cover_image`, mirrors logo. `updateOperator` RTK mutation already forwards arbitrary FormData — no api change.
-  - **FE** (`b3ed243` + `1609c38`): `pages/operators/[slug].js` hero rebuilt on existing `FeaturedImageHeader` (same shell as homepage `SearchCover`). Local `HeroWrapper` always renders `FeaturedImageHeader` with `imgUrl={cover_image || bgDefault}` (no flat-gradient branch — matches site pattern). Floating back/share pill row (`ArrowBackIosNewOutlinedIcon`, `bg-white/80 backdrop-blur`). White-on-image text throughout. Hero content `px-2 md:px-3` to align with content below. Section rhythm: content container `pt-4`, breadcrumb `mb-4`.
-- **Mobile responsive** (`1609c38`): `customMinHeight="min-h-[240px] sm:min-h-[250px] md:min-h-[460px]"`, logo `w-16 sm:w-20 md:w-28`, stats row `flex-wrap`, description `hidden sm:block` + `line-clamp-2`.
-- **Bug fixed**: hero description never rendered — `getServerSideProps` operator object omitted `description`. Added `description: operatorData.description` to both success + error-fallback constructions. (`Operator.description` was never null; it was just not passed through SSR.)
-- All 3 repos committed + pushed to develop, then **DEPLOYED to prod by user** — `main == develop` on all three (BE `28e584a`, FE `1609c38`, admin `285e83b`), 0 ahead. Cover-image hero + tab-counts (#125) now live.
+**Achieved this session (#127) — Operator cover_image pipeline upgrade + orphan cleanup, SHIPPED + DEPLOYED:**
+- **COVER-PIPELINE** (BE `7040f8d`): cover upload now runs through `process_operator_image` (was raw store). Parametrized the function — `process_operator_image(image_file, max_output_size=100*1024, max_dimensions=(1200,800,600))`, defaults reproduce old gallery behavior (gallery caller at `views.py` untouched). Cover calls it with `max_output_size=300*1024, max_dimensions=(1920,1600,1200)` → WebP, crisp hero budget, HEIC/HEIF/AVIF accepted server-side (pillow-heif).
+- **ADMIN HEIC** (admin `874d74d`): extracted `isHeic`/`convertHeicToJpeg` from `DropFilesInput.js` to shared `components/utils/imageHelpers.js` (DropFilesInput now imports them — gallery unchanged). `OperatorForm.handleCoverFileChange` async: decodes iPhone HEIC→JPEG for preview, widened whitelist + `accept` to HEIC/HEIF. Server re-encodes to WebP regardless.
+- **ORPHAN CLEANUP** (BE `dbbbe97`): `OperatorViewSet.update` now deletes the replaced logo/cover file from S3 (Django doesn't auto-delete; no django-cleanup). New `_safe_delete_storage_file` helper (mirrors `signals.py` post_delete pattern), runs AFTER save, guarded on name change, non-fatal (logged, never 500s). Gallery path untouched (cover/logo are bare ImageFields, NOT Asset-tracked, unique uuid names → zero gallery side-effect).
+- **Impact analysis done** (user-requested): confirmed gallery upload, smartenplus-frontend review component, and `dialogue.process_review_image` all UNAFFECTED — separate stacks/functions. Only cover behavior changed.
+- **DEPLOYED to prod**: backend merged develop→main (`dbbbe97`), prod server `git pull` landed it (merge `dcbcd76` on prod). All 3 repos on `main`.
 
-_(Session #125 operators-tab-counts block archived → `07-logs/session-history.md`.)_
+_(Session #126 cover-hero block archived → `07-logs/session-history.md`.)_
 
 **Resume point (EXACT):**
-1. **VERIFY migration `0062_operator_cover_image` ran on prod DB.** If not run, `cover_image` column missing → 500 on any operator endpoint touching the field (same error seen locally before migrate). Confirm before trusting the deploy.
+1. **Confirm prod apps restarted after pull** — `git pull` updates files but running gunicorn/Next keeps old code until restart. Verify cover WebP + HEIC actually live (upload test, check returned `cover_image` ends `.webp`).
 2. **AT-1 — Airport Transfer redesign (P0).** Spec: `03-knowledge/airport-transfer-at1-redesign-spec.md`. `AirportTransferRouteCard.js` + BE `products/serializers.py` (additive serializer expansion only).
 3. **TripDetailSchedule fareCalendar fix** (deferred): `useGetFareCalendarQuery` + `skipToken`. See [[slidecalendar2-farecalendar-prop-pattern]].
 
 **Carry-forward bugs (open):**
-- silaphat `Operator.description` holds route notes (`hatyai -> lipe / lipe -> hatyai`), not real about-copy — data quality, not code. Edit via admin operator form when desired.
+- **BE-IMAGE-DEDUP** tech debt tracked in Section 2 — `process_operator_image` vs `process_review_image` dup + upload-validation copy-pasted ×5 files.
+- silaphat `Operator.description` holds route notes, not real about-copy — data quality. Edit via admin form when desired.
 - `booking_count_yesterday` (BE `products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
-- Hero trust signals UNGATED — accepted for now.
-- Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` — reconcile before next sort work.
-- Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled — shows `total_contracts`. Untracked, low priority.
-- `precompute_contract_on_create() takes 1 positional argument but 2 were given` — Celery signal warning in test logs. Pre-existing. Untracked.
+- Hero trust signals UNGATED — accepted.
+- Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count`.
+- Dashboard "Total Bookings" InfoCard (admin `Main.js:155`) mislabeled. Untracked, low priority.
+- `precompute_contract_on_create()` Celery signal warning in test logs. Pre-existing. Untracked.
+- Prod backend git history diverged from origin (259 merge-noise commits ahead, content = same) — pulls always merge, not FF. Set `core.mergeoptions --no-edit` on prod to skip vim. Cosmetic.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #126)
-- BE: `main == develop` @ `28e584a` — **DEPLOYED to prod**. cover_image + migration `0062` (#126), tab-counts (#125). ⚠️ confirm `0062` ran on prod DB.
-- FE: `main == develop` @ `1609c38` — **DEPLOYED to prod**. cover-image hero + mobile (#126), tab-counts/about (#125).
-- admin-dashboard: `main == develop` @ `285e83b` — **DEPLOYED to prod**. cover-image upload box (#126).
+- vault: `master` @ new commit (this adds #127)
+- BE: `main == develop` @ `dbbbe97` — **DEPLOYED** (prod merge `dcbcd76`). Cover WebP pipeline + HEIC + orphan cleanup (#127). ⚠️ confirm prod app restarted.
+- FE: `main` @ `1609c38` — DEPLOYED (#126, unchanged this session).
+- admin-dashboard: `main` @ `874d74d` — DEPLOYED. HEIC cover upload (#127).
 - content: `master` @ `3756e5b` (clean)
 
 ---
