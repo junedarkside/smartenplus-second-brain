@@ -297,6 +297,7 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-celery-expiry-strategy]] — PromptPay deterministic TTL, mobile banking polls Omise, e-wallet 30min fallback, superseded charge guard, retry wired-but-uncalled bug
 - [[omise-client-integration]] — lazy init (module not instance), `_attributes` dict extraction, LINE_PAY→rabbit_linepay, reversed→PENDING, PromptPay QR URI nested path
 - [[omise-attributes-dict-extraction]] — `_attributes.get()` vs direct property access; silent None bug; fields affected
+- [[category-aware-duration-formatter]] — **NEW 2026-06-18.** One helper `formatContractDuration(contract)` formats duration per `service_category` (gated by `SERVICE_CATEGORY_CONFIG.showDuration` + new `durationUnit`). Spa/dining → hours from `duration`, tickets/OTHER hidden, accommodation → nights, tours → days. Kills "spa shows 1 Day" bug. `duration` is colon string `"2:30:00"` not ISO8601 → reuse `customFormatDuration`. FE-only fix, shipped #130.
 - [[django-celery-beat-database-scheduler]] — DatabaseScheduler stores schedule in DB not settings.py; Django admin UI; max_retries dead without self.retry()
 - [[toctou-select-for-update-before-api-call]] — lock BEFORE external API call; blocks concurrent webhook; parent record lock pattern
 - [[payment-backend-charge-flow]] — DB constraint (one pending redirect/order), TOCTOU guard, 5-sec reconcile throttle, C3b proactive PP expiry, AllowAny+manual ownership, satang conversion

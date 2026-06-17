@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #129 — 2026-06-18 — ISR on-demand revalidation IMPLEMENTED + merged to develop both repos. Prod root cause found (www vs apex).
+- **What it fixes:** admin contract content edit (description, tour_highlights, inclusions, route_info, timeline, images, policies + SEO/JSON-LD) now pushes a Next.js ISR regen in seconds. Native `res.revalidate()`, not a workaround. Chosen over lazy-timer because Next 14.2.5 standalone regen is request-triggered → quiet/zero-traffic pages never self-heal. rate stays CSR; counter stays ISR-timer.
+- **Backend (`feat/isr-on-demand-revalidate` → develop `b68d201`, commit `0f2d108`):** `revalidate_frontend_isr` Celery task (`operators/tasks.py`); `_trigger_revalidate(slug)` from 2 cache-bust signals (`signals.py:46`, `:95`); `REVALIDATION_SECRET`. Enabler: `products/views.py:884` daily_counter `.update(F+1)` → no post_save storm. Admin update uses `instance.save()` (`views.py:946`).
+- **Frontend (`feat/isr-on-demand-revalidate` → develop `66d896e`, commit `898159e`):** new `pages/api/revalidate.js` (secret-guarded, slug→/trips/detail + /activities/detail, 207 partial); deploy runtime-secret wiring; next_cache volume-clear hardening.
+- **2 latent bugs fixed same BE commit:** `clear_trip_cache` Trip null-guard (`views.py:1729`); `precompute_contract_on_create` missing `self` — closed #127 carry.
+- **PROD ROOT CAUSE (`fix/frontend-url-www` → develop `4eaaf8d`, `d37dee3`):** prod `FRONTEND_URL` = apex; site is canonical www. BE POSTed to apex → 301→www → `requests` drops POST body/auth → revalidation never landed. Fixed default→www (`settings.py:373`).
+- **Verified:** `manage.py check`, 29 BE tests, ESLint, no-storm proof. New atoms: [[isr-revalidate-csr-vs-isr-field-matrix]], [[django-update-bypasses-post-save-signal]], [[frontend-url-canonical-www-not-apex]].
+- **Carried into #130:** prod activation (deploy develop→main + set prod FRONTEND_URL=www + restart worker).
+
 ## Session #128 (2026-06-17) — ISR-REVALIDATE-GAP diagnosis + plan (NO code)
 Root-caused admin contract edit not reaching prod activities+trips detail pages. Backend Redis bust works; Next.js Pages-Router ISR HTML never regenerated + no `/api/revalidate` route = the gap. 4-step fix plan approved. Vault ISR notes (`docker-standalone-isr-revalidate-gap`, `on-demand-revalidation-api-route`) extended/corrected. Implemented in #129.
 

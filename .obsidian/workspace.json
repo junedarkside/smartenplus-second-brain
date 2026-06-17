@@ -179,6 +179,7 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "03-knowledge/category-aware-duration-formatter.md",
     "03-knowledge/isr-revalidate-csr-vs-isr-field-matrix.md",
     "03-knowledge/isr-revalidate-csr-vs-isr-field-matrix.md.tmp.7949.ee77082cc43d",
     "03-knowledge/frontend-url-canonical-www-not-apex.md",
@@ -209,7 +210,6 @@
     "07-logs/README.md",
     "06-systems/README.md",
     "05-templates/README.md",
-    "04-decisions/README.md",
     "scripts/vault-stats.py",
     "scripts",
     "log.md.tmp.56014.560eacef4920",

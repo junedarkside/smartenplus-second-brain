@@ -4,22 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-18 (session #129 END)
+**Updated:** 2026-06-18 (session #130 END)
 
-**Achieved this session (#129) — ISR on-demand revalidation IMPLEMENTED + merged to develop both repos. Prod root cause found (www vs apex).**
-- **What it fixes:** admin contract content edit (description, tour_highlights, inclusions, route_info, timeline, images, policies + SEO/JSON-LD) now pushes a Next.js ISR regen in seconds. Native `res.revalidate()`, not a workaround. Chosen over lazy-timer because Next 14.2.5 standalone regen is request-triggered → quiet/zero-traffic pages never self-heal (the actual bug). rate stays CSR (buyer-live); counter stays ISR-timer (stale-OK).
-- **Backend (`feat/isr-on-demand-revalidate` → develop `b68d201`, commit `0f2d108`):** `revalidate_frontend_isr` Celery task (`operators/tasks.py`, POSTs `{slug}` to `{FRONTEND_URL}/api/revalidate`, no-ops if secret unset); `_trigger_revalidate(slug)` helper called from 2 cache-bust signals (Contract save `signals.py:46`, RateCard change `:95`); `REVALIDATION_SECRET` setting; `.env-sample`. **Enabler:** `products/views.py:884` daily_counter `+=1;save()` → `.update(F+1)` so per-view + nightly counter writes fire NO post_save → NO revalidate storm (verified on deployed code). Admin update confirmed uses `instance.save()` (`views.py:946`) → revalidate fires correctly.
-- **Frontend (`feat/isr-on-demand-revalidate` → develop `66d896e`, commit `898159e`):** new Pages-Router `pages/api/revalidate.js` (secret-guarded, maps slug→both /trips/detail + /activities/detail, 207 partial); env templates; `deploy.yml` + `deploy-ghcr.sh` runtime-secret wiring (NOT build-arg); `next_cache` volume-clear hardening (was silent `|| true`).
-- **2 latent bugs fixed in same BE commit:** `clear_trip_cache` Trip branch null-guard (`views.py:1729`); `precompute_contract_on_create` missing `self` (bind=True) — **closes #127 carry-forward**.
-- **PROD ROOT CAUSE (`fix/frontend-url-www` → develop `4eaaf8d`, commit `d37dee3`):** prod `FRONTEND_URL` resolved to apex `https://smartenplus.co.th`; site is canonical `www`. Backend POSTed revalidate to apex → 301→www → `requests` drops POST body/auth → revalidation never landed → page stayed stale. Fixed default to www in `settings.py:373`.
-- **Verified:** `manage.py check` clean, 29 BE tests OK (noise gone after latent fixes), ESLint clean, import chain OK, no-storm proof on deployed branch. Secret `72ed6...e32e88` set both sides in prod (user).
+**Achieved this session (#130) — category-aware duration fix SHIPPED TO PROD (FE main). Spa "1 Day" bug killed.**
+- **Bug (user-reported):** spa product showed duration "1 Day" — impossible. Root cause was category-wide: all activities components read `contract.tour_duration_days` (BE `PositiveIntegerField`, **default 1**, days) and rendered "X Day(s)" regardless of `service_category`. Public LIST serializer omits the field → cards saw `undefined` → ternary always yielded "1 Day". Same inline ternary copy-pasted in **5 sites** (3 components + 2 SEO JSON-LD builders).
+- **Fix (FE-only, commit `35c524d` → develop → main):** new `helpers/formatContractDuration.js` single source of truth, returns `string|null`. Gated by existing `SERVICE_CATEGORY_CONFIG.showDuration` + new additive `durationUnit` ('days'|'time'|'nights'). Per-category: spa/dining → "2h 30m" from `duration` (colon string, parsed by reused `customFormatDuration`); event/attraction/OTHER → hidden; accommodation → "N nights"; tours → days (null if absent, no false "1 Day"). Only behavior change: `OTHER.showDuration` true→false. Replaced all 5 ternaries.
+- **Verified:** ESLint clean (7 files), 36 serviceCategoryHelper tests pass, BE confirmed `duration` serializes as colon string `"2:30:00"` not ISO8601 → no parser needed.
+- **PROD:** FE `main` = `develop` = `35c524d`. Pushed + shipped by user. **Side effect: FE main now also carries ISR route (66d896e) — FE half of #129 ISR-REVALIDATE-GAP is now deployed.**
+- New atom: [[category-aware-duration-formatter]].
 
 **Resume point (EXACT):**
-1. **PROD ACTIVATION — not yet live.** Develop ≠ deployed; prod still resolves apex. On backend host: set `FRONTEND_URL=https://www.smartenplus.co.th` in prod env + `docker restart smartenplus-backend_celery-worker_1 smartenplus-backend_celery-beat_1` (OR redeploy `4eaaf8d`). Verify: `echo "from django.conf import settings;print(repr(settings.FRONTEND_URL))" | docker exec -i smartenplus-backend_celery-worker_1 python manage.py shell` → must print `www`. Then deploy develop→main both repos (prod deploys from main).
-2. **Smoke test:** edit a contract `tour_highlights` in admin → `docker logs -f smartenplus-backend_celery-worker_1 | grep -i revalidat` → expect `ISR revalidated slug=... status=200` → reload page fresh in seconds.
-3. AT-1 Airport Transfer (P0) still queued.
+1. **#129 ISR PROD ACTIVATION — BACKEND still pending.** FE shipped (main `35c524d` carries ISR route). BE develop `4eaaf8d` NOT yet on main/prod. On backend host: deploy develop→main + set prod `FRONTEND_URL=https://www.smartenplus.co.th` + `docker restart smartenplus-backend_celery-worker_1 smartenplus-backend_celery-beat_1`. Verify: `echo "from django.conf import settings;print(repr(settings.FRONTEND_URL))" | docker exec -i smartenplus-backend_celery-worker_1 python manage.py shell` → must print `www`.
+2. **ISR smoke test:** edit a contract `tour_highlights` in admin → `docker logs -f smartenplus-backend_celery-worker_1 | grep -i revalidat` → expect `ISR revalidated slug=... status=200` → page fresh in seconds.
+3. **Duration follow-up (optional):** backend Option B — add `tour_duration_days` to public `ContractSerializer` (list) so day-tour browse cards show "N Days". One-line; needs BE deploy + ISR cache clear.
+4. AT-1 Airport Transfer (P0) still queued.
 
-_(Sessions #127 + #128 blocks archived → `07-logs/session-history.md`.)_
+_(Session #129 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -32,12 +32,12 @@ _(Sessions #127 + #128 blocks archived → `07-logs/session-history.md`.)_
 - Prod backend git history diverged from origin (merge-noise) — pulls always merge, not FF. Cosmetic.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #129)
+- vault: `master` @ new commit (this adds #130)
 - BE: `develop` @ `4eaaf8d` — ISR revalidate + FRONTEND_URL www fix. **NOT deployed to main/prod yet.** `main` still `dbbbe97`.
-- FE: `develop` @ `66d896e` — ISR revalidate route + deploy wiring. **NOT deployed to main/prod yet.** `main` still `3b5f1a6`.
+- FE: `main` = `develop` @ `35c524d` — duration fix + ISR route, **SHIPPED TO PROD.**
 - admin-dashboard: `main` @ `874d74d` (unchanged)
 - content: `master` @ `3756e5b` (clean)
-- ⚠️ Prod activation pending: deploy develop→main both repos + set prod `FRONTEND_URL=www` + restart worker.
+- ⚠️ #129 ISR activation: BE-only remaining — deploy BE develop→main + set prod `FRONTEND_URL=www` + restart worker.
 
 ---
 
@@ -45,7 +45,8 @@ _(Sessions #127 + #128 blocks archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **ACTIVATION PENDING:** deploy develop→main both repos + set prod `FRONTEND_URL=www` + restart worker, then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
+| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **FE SHIPPED #130** (main `35c524d` carries ISR route). **BE ACTIVATION PENDING:** deploy BE develop→main + set prod `FRONTEND_URL=www` + restart worker, then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
+| **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: public LIST `ContractSerializer` doesn't expose `tour_duration_days`, so cards can't show "N Days" (detail page works, uses `__all__`). FE-only fix #130 chose omission over false "1 Day". Option B: add `tour_duration_days` to list serializer `fields`. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional follow-up, low priority. FE helper unchanged either way. | `smartenplus-backend/operators/serializers.py` (ContractSerializer), [[category-aware-duration-formatter]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate, pre-existing). Cluster 1: WebP resize/compress algorithm duplicated ~2-3× — `operators/utils.py:process_operator_image` (now parametrized #126b), `dialogue/utils.py:process_review_image` (120KB hardcoded), plus WebP/thumbnail code in `operators/admin.py`. Cluster 2: upload validation (ext whitelist + size) copy-pasted across 5 files (`stations/views.py`, `operators/utils.py`, `operators/views.py`, `pages_info/models.py`, `dialogue/utils.py`) each with own constants → drift risk. Consolidate → one `core/image_utils.py`: `process_image_to_webp(file, *, max_output_size, max_dimensions)` + `validate_upload(file, *, allowed_ext, max_size)`, migrate all callers. | OPEN #126 — dedicated refactor session. High blast radius (operators/dialogue/stations/pages_info), zero user value, all spots work. Do NOT bolt onto feature work. | `operators/utils.py`, `dialogue/utils.py` |
 | **VAULT-DATE-RENAMES** | 105 files embed dates in filenames (violates "no dates in filenames" rule). Rename breaks every inbound wikilink. Needs separate planning round: `git mv` + atomic search-replace of all `[[old-name]]` → `[[new-name]]`. | OPEN #125 — next-wave vault work. | [[vault-optimization-snapshot-2026-06-16]] |
 | **OPERATOR-DESC** | Operator `description` field (backend) → unblocks GEO "about operator" prose on `/operators/[slug]` (flagged in SEO/AEO/GEO audit, the one truly backend-blocked item). | **CLOSED #125** — verify-only: backend was already complete (`Operator.description = TextField()`, `OperatorDetailSerializer fields='__all__'`). Live curl confirmed populated text returned. FE wired About-{operator} section at `pages/operators/[slug].js:151` (FE `f75b411`). | done |
