@@ -4,7 +4,39 @@
 
 `pages/api/revalidate.js` — Next.js API route that triggers ISR revalidation on-demand. Called by backend Celery task after admin saves.
 
-## Implementation
+## ⚠️ Router Mismatch — Code Below Is App Router, Repo Is Pages Router (verified 2026-06-17)
+
+The implementation block below uses **App Router** APIs (`NextResponse`, `request.revalidatePath`, `export async function POST`). The frontend is **Pages Router** (`next ^14.2.5`, no `app/` dir — `getStaticProps` + `pages/activities/detail/[...slug].js`). The App-Router code **will not run as written**. The route does not yet exist in the repo (`pages/api/revalidate*` absent as of 2026-06-17).
+
+Correct Pages-Router form:
+
+```javascript
+// pages/api/revalidate.js
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).end();
+  const secret = req.headers.authorization?.replace('Bearer ', '') || req.query.secret;
+  if (secret !== process.env.REVALIDATION_SECRET) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+  const paths = Array.isArray(req.body?.paths) ? req.body.paths
+    : req.body?.path ? [req.body.path]
+    : req.query.path ? [req.query.path] : [];
+  if (paths.length === 0) return res.status(400).json({ error: 'No paths provided' });
+
+  const results = [];
+  for (const p of paths) {
+    const path = '/' + String(p).replace(/^\/+|\/+$/g, '');
+    try { await res.revalidate(path); results.push({ path, status: 'revalidated' }); }
+    catch (err) { results.push({ path, status: 'error', message: err.message }); }
+  }
+  const hasErrors = results.some(r => r.status === 'error');
+  return res.status(hasErrors ? 207 : 200).json({ revalidated: !hasErrors, paths: results });
+}
+```
+
+Key API: Pages Router uses **`res.revalidate(path)`** (the unstable on-demand ISR API on the response object), NOT `request.revalidatePath` (App Router). Path for the activity bug: `/activities/detail/${slug}`.
+
+## Implementation (App Router — NOT this repo, kept for reference)
 
 ```javascript
 import { NextResponse } from 'next/server';

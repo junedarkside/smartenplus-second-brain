@@ -4,7 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-17 (session #127 END)
+**Updated:** 2026-06-17 (session #128 END)
+
+**Session #128 (diagnosis + plan only, NO code):** ISR-REVALIDATE-GAP root-caused (admin contract edit not reaching prod activities+trips detail pages). Backend Redis bust works; Next.js Pages-Router ISR HTML never regenerated + no `/api/revalidate` route = the gap. 4-step fix plan APPROVED at `~/.claude/plans/create-team-to-check-jaunty-goblet.md` (not implemented). Vault ISR notes extended/corrected. See Section 2 **ISR-REVALIDATE-GAP**. _(#127 block below retained — its prod-restart verify still open.)_
+
+---
+
 
 **Achieved this session (#127) — Operator cover_image pipeline upgrade + orphan cleanup, SHIPPED + DEPLOYED:**
 - **COVER-PIPELINE** (BE `7040f8d`): cover upload now runs through `process_operator_image` (was raw store). Parametrized the function — `process_operator_image(image_file, max_output_size=100*1024, max_dimensions=(1200,800,600))`, defaults reproduce old gallery behavior (gallery caller at `views.py` untouched). Cover calls it with `max_output_size=300*1024, max_dimensions=(1920,1600,1200)` → WebP, crisp hero budget, HEIC/HEIF/AVIF accepted server-side (pillow-heif).
@@ -43,6 +48,7 @@ _(Session #126 cover-hero block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **OPEN #128** — plan APPROVED, not yet implemented. debug-mantra+scrutinize verified, backend innocent. | plan: `~/.claude/plans/create-team-to-check-jaunty-goblet.md` · `operators/signals.py`, `products/views.py:882`, FE `pages/api/` |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate, pre-existing). Cluster 1: WebP resize/compress algorithm duplicated ~2-3× — `operators/utils.py:process_operator_image` (now parametrized #126b), `dialogue/utils.py:process_review_image` (120KB hardcoded), plus WebP/thumbnail code in `operators/admin.py`. Cluster 2: upload validation (ext whitelist + size) copy-pasted across 5 files (`stations/views.py`, `operators/utils.py`, `operators/views.py`, `pages_info/models.py`, `dialogue/utils.py`) each with own constants → drift risk. Consolidate → one `core/image_utils.py`: `process_image_to_webp(file, *, max_output_size, max_dimensions)` + `validate_upload(file, *, allowed_ext, max_size)`, migrate all callers. | OPEN #126 — dedicated refactor session. High blast radius (operators/dialogue/stations/pages_info), zero user value, all spots work. Do NOT bolt onto feature work. | `operators/utils.py`, `dialogue/utils.py` |
 | **VAULT-DATE-RENAMES** | 105 files embed dates in filenames (violates "no dates in filenames" rule). Rename breaks every inbound wikilink. Needs separate planning round: `git mv` + atomic search-replace of all `[[old-name]]` → `[[new-name]]`. | OPEN #125 — next-wave vault work. | [[vault-optimization-snapshot-2026-06-16]] |
 | **OPERATOR-DESC** | Operator `description` field (backend) → unblocks GEO "about operator" prose on `/operators/[slug]` (flagged in SEO/AEO/GEO audit, the one truly backend-blocked item). | **CLOSED #125** — verify-only: backend was already complete (`Operator.description = TextField()`, `OperatorDetailSerializer fields='__all__'`). Live curl confirmed populated text returned. FE wired About-{operator} section at `pages/operators/[slug].js:151` (FE `f75b411`). | done |
