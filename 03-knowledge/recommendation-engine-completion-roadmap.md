@@ -120,5 +120,50 @@ else:
 
 **Analytics tagging infrastructure first.** Without impression→CTR→add_cart→revenue attribution, no widget performance is knowable, no A/B test is defensible, no % lift claim is provable, and BD can't make the ROI case for closing the Koh Lipe blocker. ~2-3 days eng + 1 day BD curation for fallback SKUs delivers week-1 baseline.
 
+---
+
+## Addendum 2026-06-18 — "Travel Completion" strategy doc review (2-agent: BD/UX + BE engine)
+
+Second external doc proposes the **anchor→matrix** model: each `service_category` maps to PRIMARY/SECONDARY target categories, intent taxonomy ESSENTIAL/POPULAR/UPGRADE/DISCOVERY, 3 ordered zones, cap SIMILAR at 0-1. Explicitly says the rule *"a day tour should NOT recommend transport"* is **too restrictive**.
+
+### Verdict correction (mine was too absolute)
+Earlier session verdict "day tour should NOT recommend transport" → **corrected**. The doc is directionally right. Right rule for our catalog:
+
+> Day-tour anchor prioritizes COMPLEMENTARY first (transfer/upgrade), then nearby experiences, then 0-1 similar. Transport qualifies as ESSENTIAL **only when** (a) same destination, (b) it serves a return/onward leg the traveler still needs, (c) not the anchor category. NOT blanket transport, NOT "5 more day tours."
+
+The prior **seed-data fix** (detach dummy trip from 17 activity contracts → `find_nearby_activities`) solved the *data bug* (geographically-wrong Phi Phi/Samui recs for a Chiang Mai tour). It did NOT implement this strategy — it just makes recs same-destination activities. Strategy layer still unbuilt.
+
+### Where the doc assumes inventory/schema we don't have
+- **No tour-transfer product type.** Our 26 TRANSPORTATION contracts are point-to-point routes (ferries/vans), NOT "airport/hotel pickup for tour guests." Doc's PRIMARY "hotel/airport transfer" for a day tour = **0 buildable SKUs today**. BD must create them.
+- **No JOIN↔PRIVATE upgrade link.** `Contract.type` has `PRIVATE` but there is **no `upgrade_of`/`variant_group` FK**. e.g. "Chiang Mai Elephant (Join)" id119 and "...(Private)" id124 are unrelated rows. UPGRADE zone = heuristic (same category+location+`type=PRIVATE`) with false-positive risk, OR needs a schema migration for reliability.
+- **No `SUNSET_CRUISE`/`CRUISE` category.** Doc product labels must normalize to real enum (`DAY_TOUR`/`ATTRACTION_TICKET`).
+- Catalog is THIN: SPA 3, FOOD_DINING 3, EVENT 3, ATTRACTION 3, ACCOMMODATION 2. Per-destination complementary hit rate ≈ 0-1.
+
+### Engine capability gaps (services.py)
+| Doc item | Current | Gap | Migration? |
+|---|---|---|---|
+| Intent taxonomy + zone orchestration | dispatch on string `rec_type` only | needs zone-aware orchestrator (call N finders, label by zone, dedupe) | no |
+| Category MATRIX (anchor→targets) | `find_nearby_activities` does location cross-category, but `ACTIVITY_CATEGORIES` is **hardcoded + excludes TRANSPORTATION/TRANSFER** | replace static list with `CATEGORY_MATRIX` lookup keyed by anchor category | no |
+| ⚠️ same-category +30 score | `find_nearby_activities:594` adds +30 when target category == source | **contradicts matrix intent** (rewards similar, not complementary) — must flip to matrix-priority score | no |
+| ESSENTIAL transport-for-activity | excluded by the hardcoded list | matrix adds TRANSFER/TRANSPORTATION to primary targets for DAY_TOUR/SPA etc | no |
+| UPGRADE (private twin) | no finder; no variant FK | heuristic finder (type=PRIVATE+same cat+loc) OR `upgrade_of` FK for reliability | **yes for reliable** |
+| POPULAR (booked_count rank) | `booked_count` exists, **not wired into any finder** | add `.order_by('-booked_count')` or score boost | no |
+| SIMILAR cap 0-1 | `limit` param already works | trivial | no |
+
+### Empty-zone trap (BD flagged — critical)
+Cap-similar-at-0-1 + thin complementary inventory ⇒ most checkouts render 1-2 cards or empty zones with headers. **Worse than today.** Required guardrails:
+1. **Conditional zone render** — never show a zone header with 0 cards.
+2. **3-card floor** — 0-1 similar cap is a *preference*, not a *floor*; backfill with SIMILAR up to 3 total when ESSENTIAL+POPULAR+UPGRADE < 3. Revisit hard cap when complementary ≥5 SKUs/destination.
+
+### Highest-ROI move (both agents converge)
+**Conditional POPULAR zone using the existing 9 non-tour complementary SKUs (SPA+FOOD_DINING+EVENT), destination-matched via populated `primary_location`, render-only-if-nonempty.** Zero BD work, zero schema change, no new product type — first genuine cross-category lift the platform ships. Plus flip the `+30` same-category bonus and add `booked_count` ordering.
+
+### Sequencing for us (supersedes generic doc P1/P2/P3)
+- **Now (eng only):** adopt taxonomy labels + zone orchestrator w/ conditional render + 3-card floor; matrix config (incl. flip +30 bonus, add booked_count); enable existing SPA/FOOD/EVENT as POPULAR for tour+transport anchors; narrow transport-as-ESSENTIAL rule.
+- **BD sprint (4-6wk):** create tour-adjacent transfer SKUs per major destination (Chiang Mai/Samui/Krabi); wire upgrade twins for top-5 tours; close Koh Lipe `CROSS-SELL-BD-INVENTORY`.
+- **Schema:** `upgrade_of` FK for reliable UPGRADE zone.
+
+**Net:** doc is the right philosophy applied to a more mature catalog than ours. Adopt philosophy + the one zero-inventory win now; gate matrix rows that assume missing inventory on BD.
+
 ## Related
 [[people-also-book-checkout-audit]] [[cross-sell-placement-strategy]] [[recommendation-type-selection-by-service-category]] [[recommendation-anchor-first-transport-rule]] [[activity-to-activity-cross-sell]] [[django-m2m-location-join-recommendations]]
