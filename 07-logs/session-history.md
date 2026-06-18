@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #132 (2026-06-18) — Checkout recommendation ENGINE built (committed, branches)
+
+P0 hybrid regression fixed (`841e59f`: non-transport → 0 recs; fallthrough to find_nearby_activities). Seed root cause fixed (17 activities shared dummy trip → cross-destination wrong recs; detached + fixed create_day_tours/create_all_service_tours + new idempotent seed_demo_destination, Phuket anchor 185). Zone system shipped (`feat/checkout-recommendation-zones`): find_transport_at_location (ESSENTIAL via route-station→location bridge) + CATEGORY_MATRIX + find_nearby_activities split POPULAR/SIMILAR; dropped +30 same-cat bonus; ZONE_LIMITS {2/3/1}; FE conditional labeled zones. Price bug: Min(selling_rate) picked free INFANT 0.00 → filtered >0 ×7 finders. Card-count items: add_cart GTM, mobile cap, POPULAR 4→3, render-path empty bug→useEffect. 4 vault review addenda. UPGRADE deferred (needs upgrade_of FK). End #132: branches committed NOT pushed.
+
+---
+
 ## Session #131 (2026-06-18) — "People also book" 3 bugs + spec analysis
 
 - 3 prod bugs fixed: title `"to"` (null-route truthy guard), image (BE serializer missing `image` field → `get_image()` reusing `ImageGallerySerializer`), price ("Price on request" — `_lowest_price=0.0`→`None`). + `OperatorSerializer.logo_url`, broken-image `onError`→`CATEGORY_CONFIG` icon fallback.

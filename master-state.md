@@ -4,31 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-18 (session #132 END)
+**Updated:** 2026-06-18 (session #133 END)
 
-**Achieved this session (#132) — Checkout "Complete your trip" recommendation ENGINE built end-to-end: P0 regression fix, zone system, seed data, price bugs, card-count tuning. All on feature branches (committed, NOT pushed/merged).**
+**Achieved this session (#133) — Recommendation zones MERGED to develop (both repos) + 2 product-review fixes + branches pruned. The whole #132 engine arc is now on `develop`, ready to deploy.**
 
-- **P0 hybrid regression FIXED** (`841e59f`): non-transport carts (spa/tour) got ZERO recs — backend `hybrid` ran only route-based finders (all `[]` with no `trip.route`). Fix: `hybrid`+no-route → `find_nearby_activities`. Test added. Found by /grill audit.
-- **Seed-data root cause fixed:** 17 activity contracts shared a dummy NULL-station trip → cross-destination wrong recs (Chiang Mai tour → Phi Phi/Samui). Detached trips (local DB). Fixed `create_day_tours.py` + `create_all_service_tours.py` to stop attaching dummy trips. New idempotent `seed_demo_destination` command (anchor id 185 = Phuket demo, all zones).
-- **Zone system shipped** (`feat/checkout-recommendation-zones`, BE+FE):
-  - `find_transport_at_location` (ESSENTIAL, route-station→location bridge) + `CATEGORY_MATRIX` config + `find_nearby_activities` split into POPULAR (cross-category) / SIMILAR (same-category, cap 1).
-  - Dropped `+30` same-category bonus (rewarded "more tours"). `booked_count` tiebreak. Per-zone caps `ZONE_LIMITS {essential:2, popular:3, similar:1}`.
-  - FE: groups by `type`, renders conditional labeled zones (Getting there / Popular in <dest> / You might also like), reuses `RecommendationCard`.
-- **Price bug:** `Min(selling_rate)` picked free INFANT 0.00 → "Price on request". Filtered `selling_rate__gt=0` across 7 finders.
-- **Card-count review items shipped:** `recommendation_add_cart` GTM (BookingModal), mobile POPULAR cap 2 (`useMediaQuery`), POPULAR cap 4→3, fixed render-path `empty`-event bug (→useEffect).
-- **4 vault review addenda** in [[recommendation-engine-completion-roadmap]]: strategy doc, card-count proposal, zones best-practice verdict, gap roadmap.
-- UPGRADE zone deliberately NOT built (needs `upgrade_of` FK — no heuristic debt).
-
-- **⚠️ NOT PUSHED:** BE+FE `feat/checkout-recommendation-zones` committed locally, sits on top of P0 branch `fix/recommendation-serializer-fields`. Nothing merged/deployed.
+- **Anchor priority FLIPPED (experience-first)** — `ANCHOR_PRIORITY` now DAY_TOUR/activities 100 down to TRANSPORTATION 30 / TRANSFER 20 (was transport-first). Tour anchors → rich cross-sell; transport only anchors a transport-only cart. Retires the obsolete [[recommendation-anchor-first-transport-rule]]. From multi-cart review.
+- **Removed `minCartPrice` floor** — it hid recs cheaper than the cheapest cart item, suppressing cheap complementary add-ons (THB 300 ferry). Now only cart-item exclusion. From multi-cart review.
+- **recType-follows-anchor fix** (debug-mantra + /grill) — mixed cart (tour+ferry) showed NO recs: anchor was the tour but `recType` still keyed off "any transport in cart" → picked `packages` → needs anchor route → tour has none → empty. Fixed `recType = anchorIsTransport ? 'packages' : 'hybrid'`. Verified tour anchor → 6 recs.
+- **MERGED to develop** (no-ff, both repos): BE `ae31f1f`, FE `0877d23`. Brought the full #132 stack (P0 hybrid fix, serializer image/price/logo_url, zones, matrix, seed command, price-bug, card-count tuning). Pre-merge: 15 BE tests (1 pre-existing unrelated fail), `check` clean, FE ESLint 0 errors.
+- **Pruned 4 merged branches** (local+remote): BE `feat/checkout-recommendation-zones` + `fix/recommendation-serializer-fields`; FE `feat/checkout-recommendation-zones` + `fix/people-also-book-title-image-price`.
+- **3 more vault review addenda** in [[recommendation-engine-completion-roadmap]]: zones best-practice verdict, card-count proposal, multi-cart strategy.
 
 **Resume point (EXACT):**
-1. **Push + PR chain (order matters):** `fix/recommendation-serializer-fields` (P0 + image/price/logo_url) → develop FIRST, then `feat/checkout-recommendation-zones` → develop (sits on top). Both BE+FE.
-2. **Deploy BE** after merge → image/price/zone fixes reach prod. Then run `seed_demo_destination` / seed detach on prod if testing there.
-3. **Highest-value next (from review):** add_cart/purchase analytics already partly done — finish `recommendation_purchase` + measure zone conversion before more zones.
-4. **Deferred (documented):** UPGRADE zone (`upgrade_of` FK), EDITOR'S PICKS (needs curation flag + ops), mobile carousel, weekly trending counter.
-5. **#129 ISR PROD ACTIVATION still pending** (BE develop→main + `FRONTEND_URL=www` + restart worker).
+1. **Deploy BE develop→main** → recommendation engine (zones, P0, image/price/logo_url) reaches prod. Run prod seed cleanup (detach dummy trips) / `seed_demo_destination` if testing on prod data.
+2. **Deploy FE develop→main** → zone UI + anchor/recType fixes to prod.
+3. **Vault hygiene:** mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]] (now contradicts shipped code).
+4. **Next eng (deferred, tracked):** slot-waste `exclude_ids` API (ESSENTIAL renders short when a cart item overlaps a rec), `recommendation_purchase` GTM (then measure zone conversion), UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
+5. **#129 ISR PROD ACTIVATION still pending** (BE develop→main + `FRONTEND_URL=www` + restart worker — folds into step 1 deploy).
 
-_(Session #131 block archived → `07-logs/session-history.md`.)_
+_(Session #132 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -41,14 +35,13 @@ _(Session #131 block archived → `07-logs/session-history.md`.)_
 - Prod backend git history diverged from origin (merge-noise) — pulls always merge, not FF. Cosmetic.
 
 **Next session: starting state**
-- vault: `master` @ new commit (this adds #132)
-- BE: `feat/checkout-recommendation-zones` @ `90707a3` (clean, NOT pushed) — sits on top of `fix/recommendation-serializer-fields` (P0+serializer, pushed end #131).
-- FE: `feat/checkout-recommendation-zones` @ `1c829f2` (clean, NOT pushed) — on top of `fix/people-also-book-title-image-price` (pushed end #131).
-- FE `main` = `develop` @ `35c524d` — duration fix + ISR route, **SHIPPED TO PROD.**
+- vault: `master` @ new commit (this adds #133)
+- BE: `develop` @ `ae31f1f` (clean) — recommendation engine MERGED. `main` NOT yet updated → **deploy pending**. Feature branches pruned.
+- FE: `develop` @ `0877d23` (clean) — zones MERGED. `main` = older `35c524d` (duration+ISR, prod) → **deploy pending**. Feature branches pruned.
 - admin-dashboard: `main` @ `874d74d` (unchanged)
 - content: `master` @ `3756e5b` (clean)
-- ⚠️ Push order: serializer/title-image branches → develop FIRST, then zones branches (stacked on top).
-- ⚠️ #129 ISR activation: BE-only remaining — deploy BE develop→main + set prod `FRONTEND_URL=www` + restart worker.
+- ⚠️ Both repos: deploy develop→main to ship recommendation engine to prod.
+- ⚠️ #129 ISR activation folds into BE deploy (+ prod `FRONTEND_URL=www` + restart worker).
 
 ---
 
@@ -56,7 +49,8 @@ _(Session #131 block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **REC-CHECKOUT-ZONES** | Checkout "Complete your trip" recommendation engine: P0 hybrid regression fix + zone system (ESSENTIAL/POPULAR/SIMILAR) + matrix + transport finder + per-zone caps + price-bug fixes + card-count tuning + add_cart GTM + mobile cap. Built #132. **2 branches, committed NOT pushed:** BE+FE `feat/checkout-recommendation-zones` sits on top of BE `fix/recommendation-serializer-fields` (P0+image/price/logo_url). Tests pass (1 pre-existing unrelated fail). | OPEN #132 — push + PR chain (serializer branch FIRST, then zones) → develop → BE deploy. | `products/services.py`, `components/recommendations/*`, [[recommendation-engine-completion-roadmap]] |
+| **REC-CHECKOUT-ZONES** | Checkout "Complete your trip" recommendation engine: P0 hybrid fix + zones (ESSENTIAL/POPULAR/SIMILAR) + matrix + transport finder + per-zone caps + price-bug + experience-first anchor + recType-follows-anchor + card-count tuning + add_cart GTM + mobile cap + seed command. **MERGED to develop #133** (BE `ae31f1f`, FE `0877d23`), branches pruned. | **MERGED, NEEDS DEPLOY** develop→main both repos. Then prod seed cleanup. | `products/services.py`, `components/recommendations/*`, [[recommendation-engine-completion-roadmap]] |
+| **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when a cart item overlaps a backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. Medium. | OPEN #133 — deferred, tracked. | `smartenplus-backend/products/services.py` get_recommendations, [[recommendation-engine-completion-roadmap]] |
 | **REC-PRECOMPUTE-CACHEKEY** | Low. `products/tasks.py:67` precompute builds cache key `recommendations:{id}:{type}:{limit}` (4-part) but `get_recommendations:667` runtime key is 5-part (`:{rate_date or 'none'}`). Precompute writes never hit at runtime → wasted warm. Pre-existing, found in #132 verify. | OPEN #132 — out of scope of P0 fix. | `smartenplus-backend/products/tasks.py:67` |
 | **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **FE SHIPPED #130** (main `35c524d` carries ISR route). **BE ACTIVATION PENDING:** deploy BE develop→main + set prod `FRONTEND_URL=www` + restart worker, then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: public LIST `ContractSerializer` doesn't expose `tour_duration_days`, so cards can't show "N Days" (detail page works, uses `__all__`). FE-only fix #130 chose omission over false "1 Day". Option B: add `tour_duration_days` to list serializer `fields`. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional follow-up, low priority. FE helper unchanged either way. | `smartenplus-backend/operators/serializers.py` (ContractSerializer), [[category-aware-duration-formatter]] |
