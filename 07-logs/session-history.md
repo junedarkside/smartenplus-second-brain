@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #131 (2026-06-18) — "People also book" 3 bugs + spec analysis
+
+- 3 prod bugs fixed: title `"to"` (null-route truthy guard), image (BE serializer missing `image` field → `get_image()` reusing `ImageGallerySerializer`), price ("Price on request" — `_lowest_price=0.0`→`None`). + `OperatorSerializer.logo_url`, broken-image `onError`→`CATEGORY_CONFIG` icon fallback.
+- Anchor: `SKIP_CATS`→`ANCHOR_PRIORITY` (all 9 cats scored). `recType` `'activity'`→`'hybrid'` for non-transport — later found to be a regression (#132 grill, fixed).
+- GTM `checkout_recommendation_empty` added. Context-aware title.
+- Spec analysis: ~47% vs 10/10 spec. Gap report → [[recommendation-engine-completion-roadmap]].
+- Branches: FE `fix/people-also-book-title-image-price`, BE `fix/recommendation-serializer-fields` (committed + pushed end of #131).
+
+---
+
 ## Session #130 (archived from master-state.md)
 
 **Updated:** 2026-06-18 (session #130 END)
