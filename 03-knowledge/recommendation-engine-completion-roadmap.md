@@ -204,5 +204,36 @@ Verified (Phuket demo anchor 185): ESSENTIAL 2 + POPULAR 4 + SIMILAR 1 = 7 cards
 
 **Net:** algorithm is correct and best-practice for current catalog at 3 zones. 4th zone (UPGRADE) is correctly gated on a schema change, not shipped as a guess. Next highest-value: add_cart/purchase GTM (measure), then upgrade_of FK (true UPGRADE zone).
 
+---
+
+## Addendum 2026-06-18 — Card-count proposal review (2-agent: UX + FE)
+
+External doc proposes card counts: ESSENTIAL 1-2/max2, POPULAR 2-3/max4, SIMILAR 0-1/max1, + EDITOR'S PICKS fallback 0-2; ideal total 4-6 / max 7; mobile max 5 (responsive caps); "checkout is not a browsing page."
+
+**Current:** `ZONE_LIMITS` ESSENTIAL 2 / POPULAR 4 / SIMILAR 1 = max 7, one cap for both devices, no EDITOR'S PICKS (empty zones hide).
+
+### Verdict per item
+| Item | Current | Proposal | Verdict |
+|---|---|---|---|
+| POPULAR cap | 4 | 2-3 ideal / 4 max | **Moot** — thin catalog rarely exceeds 3-4 organically. Optional 1-line BE: `ZONE_LIMITS['popular']` 4→3 if a high-inventory destination (Phuket) over-shows. |
+| Total max | 7 | 4-6 ideal | **Keep ceiling; adopt framing.** 7 is a ceiling not a floor; most sessions render 3-5. Audit ACTUAL rendered counts by destination via analytics before changing. |
+| Mobile max 5 (responsive caps) | one cap both | mobile 5 | **Skip.** BE already caps ESSENTIAL 2 + SIMILAR 1; only trim is POPULAR 4→2 = 2 cards inside a collapsed accordion. Two cap systems to maintain = over-engineering. Real mobile fix = layout: sticky "Continue to payment" CTA + compact cards + horizontal carousel for POPULAR, not data truncation. |
+| EDITOR'S PICKS fallback | conditional-hide | 0-2 curated | **Skip (revisit ~6mo).** No `is_editor_pick`/`featured` flag on Contract → needs migration + finder + curation workflow + admin tooling. At 3 SKUs/category globally, a fake "pick" (spa in Samui after a Koh Lipe ferry) is a relevance failure worse than blank. Conditional-hide is defensible. **Zero-cost interim:** when ESSENTIAL empty + POPULAR thin, relabel POPULAR "Popular activities" and let it fill to 4 — real relevance, no curation. |
+| Ordering + "not browsing page" thesis | ESSENTIAL→POPULAR→SIMILAR | same | **Adopt thesis, not mechanic.** Ordering already correct. Higher-leverage than count tuning: task-framed headers ("You'll also need" > "Popular in <dest>"), confirmation-style card signals (duration/"book together"), keep "Add to trip" visually subordinate to "Continue to payment". |
+
+### Feasibility (FE)
+- POPULAR cap change = 1-line BE (`ZONE_LIMITS`). FE renders what it gets.
+- Mobile caps feasible FE-only via `useMediaQuery` (already used in `ProfileButton.js`) + slice in the `zones` useMemo — but marginal value, flagged over-engineering.
+- EDITOR'S PICKS: FE is 2 lines (add to `ZONE_ORDER`/`ZONE_LABELS`; render loop is generic). BE is the gating cost (migration + finder + ops). Defer until content-ops workflow exists.
+
+### Net recommendation (ranked by lift/cost)
+1. **Analytics first** — instrument actual rendered card count per destination; the whole count debate may be academic (median likely already 3-5). Also unblocks add_cart/purchase measurement (already-open gap).
+2. **Mobile layout, not caps** — sticky payment CTA + compact cards + POPULAR horizontal carousel. This is the real 80%-mobile win.
+3. **Copy/framing** — task-framed zone headers + confirmation signals.
+4. Optional 1-line POPULAR 4→3 only if Phuket-class destinations confirm over-showing.
+5. Defer EDITOR'S PICKS + mobile responsive caps.
+
+**Bottom line:** proposal's card numbers are largely already satisfied by catalog reality; the genuine wins are mobile layout + measurement + copy, NOT cap arithmetic. No code shipped from this review.
+
 ## Related
 [[people-also-book-checkout-audit]] [[cross-sell-placement-strategy]] [[recommendation-type-selection-by-service-category]] [[recommendation-anchor-first-transport-rule]] [[activity-to-activity-cross-sell]] [[django-m2m-location-join-recommendations]]
