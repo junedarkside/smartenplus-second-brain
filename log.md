@@ -1,5 +1,7 @@
 # Second Brain — Operational Log
 
+## [2026-06-19] prune | admin-dashboard `feat/contract-not-suitable-for` deleted local (`a70630b`) + remote — merged to develop `bdf85ff`, verified fully-merged.
+
 ## [2026-06-19] session-end | #134 — diagnosed local Celery `unregistered task 'revalidate_frontend_isr'` = stale worker (booted before #129); benign in dev (stale + empty secret + frontend down), prod safe with `up -d --build`. New atom [[celery-unregistered-task-stale-worker]], cross-linked. No code change. Master-state #133→history, resume = ISR prod activation now includes worker restart + non-empty `REVALIDATION_SECRET`.
 
 ## [2026-06-18] knowledge | celery unregistered-task = stale worker — diagnosed local `Received unregistered task 'operators.tasks.revalidate_frontend_isr'` / `KeyError`. Root: worker booted before #129 (`0f2d108`) shipped the task; `autodiscover_tasks()` runs once at boot, web reload ≠ worker reload, messages discarded not retried. Benign in dev (stale worker + empty `REVALIDATION_SECRET` default + frontend down during admin-dashboard testing). Prod safe with `up -d --build`, at-risk on partial `restart web`. New atom [[celery-unregistered-task-stale-worker]]; cross-linked from [[celery-task-over-bare-thread-django-signals]]. No code change — fix is ops (restart worker). Side item: worker/beat lack `restart: always`.

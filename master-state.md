@@ -13,6 +13,7 @@
 - **Prod exposure clarified:** container worker (`docker-compose-deploy.yml:34`) → `docker compose up -d --build` auto-recreates = safe; at-risk only on partial `restart web`. Reinforces the #129 deploy checklist (restart worker + non-empty `REVALIDATION_SECRET`).
 - **Filed atom** [[celery-unregistered-task-stale-worker]] (symptom signature, why, silent-loss, local/prod, not-confused-with, side hardening), cross-linked from [[celery-task-over-bare-thread-django-signals]]; updated `index.md` + `log.md`.
 - **Side item flagged:** `celery-worker` + `celery-beat` lack `restart: always` in `docker-compose-deploy.yml` — crash won't auto-recover.
+- **Pruned** admin-dashboard `feat/contract-not-suitable-for` (local `a70630b` + remote) — merged to develop `bdf85ff`, verified fully-merged before delete.
 
 **Resume point (EXACT):**
 1. **Deploy BE develop→main** → recommendation engine (zones, P0, image/price/logo_url) reaches prod. Run prod seed cleanup (detach dummy trips) / `seed_demo_destination` if testing on prod data.
@@ -37,7 +38,7 @@ _(Session #133 block archived → `07-logs/session-history.md`. Note: BE `main` 
 - vault: `master` @ new commit (this adds #134)
 - BE: `main` @ `bb5c199` (clean) — `feat(operators): add not_suitable_for field to Contract`. ⚠️ moved since #133's `ae31f1f` — re-verify recommendation-engine deploy state against current `main`.
 - FE: `main` @ `4c9354b` (clean) — `fix(activities): make category chip visibly clickable`.
-- admin-dashboard: `develop` @ `bdf85ff` (Not Suitable For multi-select merged)
+- admin-dashboard: `main` @ `bdf85ff` (Not Suitable For multi-select merged; `feat/contract-not-suitable-for` pruned local+remote)
 - content: `master` @ `3756e5b` (clean)
 - ⚠️ #129 ISR activation: prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (else `unregistered task` — [[celery-unregistered-task-stale-worker]]).
 
