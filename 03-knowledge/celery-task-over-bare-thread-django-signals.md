@@ -66,6 +66,7 @@ if instance.slug:
 Backend (separate Docker compose) → public URL `https://smartenplus.co.th`. Same pattern as `bookings/tasks.py:37`.
 
 ## Related
+- [[celery-unregistered-task-stale-worker]] — operational twin: deploying this task without restarting the worker = `unregistered task` error
 - [[docker-standalone-isr-revalidate-gap]]
 - [[on-demand-revalidation-api-route]]
 - [[celery-tasks]]

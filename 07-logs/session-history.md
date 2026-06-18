@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #133 — 2026-06-18
+
+**Achieved — Recommendation zones MERGED to develop (both repos) + 2 product-review fixes + branches pruned. The whole #132 engine arc is now on `develop`, ready to deploy.**
+
+- **Anchor priority FLIPPED (experience-first)** — `ANCHOR_PRIORITY` now DAY_TOUR/activities 100 down to TRANSPORTATION 30 / TRANSFER 20 (was transport-first). Tour anchors → rich cross-sell; transport only anchors a transport-only cart. Retires the obsolete [[recommendation-anchor-first-transport-rule]]. From multi-cart review.
+- **Removed `minCartPrice` floor** — it hid recs cheaper than the cheapest cart item, suppressing cheap complementary add-ons (THB 300 ferry). Now only cart-item exclusion. From multi-cart review.
+- **recType-follows-anchor fix** (debug-mantra + /grill) — mixed cart (tour+ferry) showed NO recs: anchor was the tour but `recType` still keyed off "any transport in cart" → picked `packages` → needs anchor route → tour has none → empty. Fixed `recType = anchorIsTransport ? 'packages' : 'hybrid'`. Verified tour anchor → 6 recs.
+- **MERGED to develop** (no-ff, both repos): BE `ae31f1f`, FE `0877d23`. Brought the full #132 stack (P0 hybrid fix, serializer image/price/logo_url, zones, matrix, seed command, price-bug, card-count tuning). Pre-merge: 15 BE tests (1 pre-existing unrelated fail), `check` clean, FE ESLint 0 errors.
+- **Pruned 4 merged branches** (local+remote): BE `feat/checkout-recommendation-zones` + `fix/recommendation-serializer-fields`; FE `feat/checkout-recommendation-zones` + `fix/people-also-book-title-image-price`.
+- **3 more vault review addenda** in [[recommendation-engine-completion-roadmap]]: zones best-practice verdict, card-count proposal, multi-cart strategy.
+
+---
+
 ## Session #132 (2026-06-18) — Checkout recommendation ENGINE built (committed, branches)
 
 P0 hybrid regression fixed (`841e59f`: non-transport → 0 recs; fallthrough to find_nearby_activities). Seed root cause fixed (17 activities shared dummy trip → cross-destination wrong recs; detached + fixed create_day_tours/create_all_service_tours + new idempotent seed_demo_destination, Phuket anchor 185). Zone system shipped (`feat/checkout-recommendation-zones`): find_transport_at_location (ESSENTIAL via route-station→location bridge) + CATEGORY_MATRIX + find_nearby_activities split POPULAR/SIMILAR; dropped +30 same-cat bonus; ZONE_LIMITS {2/3/1}; FE conditional labeled zones. Price bug: Min(selling_rate) picked free INFANT 0.00 → filtered >0 ×7 finders. Card-count items: add_cart GTM, mobile cap, POPULAR 4→3, render-path empty bug→useEffect. 4 vault review addenda. UPGRADE deferred (needs upgrade_of FK). End #132: branches committed NOT pushed.

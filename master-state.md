@@ -4,25 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-18 (session #133 END)
+**Updated:** 2026-06-19 (session #134 END)
 
-**Achieved this session (#133) — Recommendation zones MERGED to develop (both repos) + 2 product-review fixes + branches pruned. The whole #132 engine arc is now on `develop`, ready to deploy.**
+**Achieved this session (#134) — Diagnosed local Celery `unregistered task` error, filed operational atom. No code change.**
 
-- **Anchor priority FLIPPED (experience-first)** — `ANCHOR_PRIORITY` now DAY_TOUR/activities 100 down to TRANSPORTATION 30 / TRANSFER 20 (was transport-first). Tour anchors → rich cross-sell; transport only anchors a transport-only cart. Retires the obsolete [[recommendation-anchor-first-transport-rule]]. From multi-cart review.
-- **Removed `minCartPrice` floor** — it hid recs cheaper than the cheapest cart item, suppressing cheap complementary add-ons (THB 300 ferry). Now only cart-item exclusion. From multi-cart review.
-- **recType-follows-anchor fix** (debug-mantra + /grill) — mixed cart (tour+ferry) showed NO recs: anchor was the tour but `recType` still keyed off "any transport in cart" → picked `packages` → needs anchor route → tour has none → empty. Fixed `recType = anchorIsTransport ? 'packages' : 'hybrid'`. Verified tour anchor → 6 recs.
-- **MERGED to develop** (no-ff, both repos): BE `ae31f1f`, FE `0877d23`. Brought the full #132 stack (P0 hybrid fix, serializer image/price/logo_url, zones, matrix, seed command, price-bug, card-count tuning). Pre-merge: 15 BE tests (1 pre-existing unrelated fail), `check` clean, FE ESLint 0 errors.
-- **Pruned 4 merged branches** (local+remote): BE `feat/checkout-recommendation-zones` + `fix/recommendation-serializer-fields`; FE `feat/checkout-recommendation-zones` + `fix/people-also-book-title-image-price`.
-- **3 more vault review addenda** in [[recommendation-engine-completion-roadmap]]: zones best-practice verdict, card-count proposal, multi-cart strategy.
+- **Diagnosed** local worker error `Received unregistered task 'operators.tasks.revalidate_frontend_isr'` / `KeyError`. Root cause: worker process booted **before** #129 (`0f2d108`) added the task; `autodiscover_tasks()` runs once at boot, so the registry is stale. Web reload ≠ worker reload. Unregistered messages are **discarded, not retried**.
+- **Confirmed benign in dev** (triple-guard): (1) stale worker discards, (2) local `.env` has empty `REVALIDATION_SECRET` → task no-ops at `tasks.py:70`, (3) frontend routinely down during admin-dashboard testing → POST would fail anyway. Error = log spam; fix = restart worker.
+- **Prod exposure clarified:** container worker (`docker-compose-deploy.yml:34`) → `docker compose up -d --build` auto-recreates = safe; at-risk only on partial `restart web`. Reinforces the #129 deploy checklist (restart worker + non-empty `REVALIDATION_SECRET`).
+- **Filed atom** [[celery-unregistered-task-stale-worker]] (symptom signature, why, silent-loss, local/prod, not-confused-with, side hardening), cross-linked from [[celery-task-over-bare-thread-django-signals]]; updated `index.md` + `log.md`.
+- **Side item flagged:** `celery-worker` + `celery-beat` lack `restart: always` in `docker-compose-deploy.yml` — crash won't auto-recover.
 
 **Resume point (EXACT):**
 1. **Deploy BE develop→main** → recommendation engine (zones, P0, image/price/logo_url) reaches prod. Run prod seed cleanup (detach dummy trips) / `seed_demo_destination` if testing on prod data.
 2. **Deploy FE develop→main** → zone UI + anchor/recType fixes to prod.
-3. **Vault hygiene:** mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]] (now contradicts shipped code).
-4. **Next eng (deferred, tracked):** slot-waste `exclude_ids` API (ESSENTIAL renders short when a cart item overlaps a rec), `recommendation_purchase` GTM (then measure zone conversion), UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
-5. **#129 ISR PROD ACTIVATION still pending** (BE develop→main + `FRONTEND_URL=www` + restart worker — folds into step 1 deploy).
+3. **#129 ISR PROD ACTIVATION** (folds into step 1): BE develop→main + prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (this session's lesson — else `unregistered task`, see [[celery-unregistered-task-stale-worker]]). Then smoke-test: edit a contract, confirm worker log shows `ISR revalidated slug=... status=200`.
+4. **Vault hygiene:** mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]] (now contradicts shipped code).
+5. **Next eng (deferred, tracked):** slot-waste `exclude_ids` API (ESSENTIAL renders short when a cart item overlaps a rec), `recommendation_purchase` GTM (then measure zone conversion), UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
 
-_(Session #132 block archived → `07-logs/session-history.md`.)_
+_(Session #133 block archived → `07-logs/session-history.md`. Note: BE `main` is now `bb5c199`, FE `main` `4c9354b` — both repos moved since #133; recommendation-engine deploy state should be re-verified against current `main` before step 1.)_
 
 ---
 
@@ -34,14 +33,13 @@ _(Session #132 block archived → `07-logs/session-history.md`.)_
 - Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count`.
 - Prod backend git history diverged from origin (merge-noise) — pulls always merge, not FF. Cosmetic.
 
-**Next session: starting state**
-- vault: `master` @ new commit (this adds #133)
-- BE: `develop` @ `ae31f1f` (clean) — recommendation engine MERGED. `main` NOT yet updated → **deploy pending**. Feature branches pruned.
-- FE: `develop` @ `0877d23` (clean) — zones MERGED. `main` = older `35c524d` (duration+ISR, prod) → **deploy pending**. Feature branches pruned.
-- admin-dashboard: `main` @ `874d74d` (unchanged)
+**Next session: starting state** (live git 2026-06-19, all clean)
+- vault: `master` @ new commit (this adds #134)
+- BE: `main` @ `bb5c199` (clean) — `feat(operators): add not_suitable_for field to Contract`. ⚠️ moved since #133's `ae31f1f` — re-verify recommendation-engine deploy state against current `main`.
+- FE: `main` @ `4c9354b` (clean) — `fix(activities): make category chip visibly clickable`.
+- admin-dashboard: `develop` @ `bdf85ff` (Not Suitable For multi-select merged)
 - content: `master` @ `3756e5b` (clean)
-- ⚠️ Both repos: deploy develop→main to ship recommendation engine to prod.
-- ⚠️ #129 ISR activation folds into BE deploy (+ prod `FRONTEND_URL=www` + restart worker).
+- ⚠️ #129 ISR activation: prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (else `unregistered task` — [[celery-unregistered-task-stale-worker]]).
 
 ---
 
@@ -52,7 +50,7 @@ _(Session #132 block archived → `07-logs/session-history.md`.)_
 | **REC-CHECKOUT-ZONES** | Checkout "Complete your trip" recommendation engine: P0 hybrid fix + zones (ESSENTIAL/POPULAR/SIMILAR) + matrix + transport finder + per-zone caps + price-bug + experience-first anchor + recType-follows-anchor + card-count tuning + add_cart GTM + mobile cap + seed command. **MERGED to develop #133** (BE `ae31f1f`, FE `0877d23`), branches pruned. | **MERGED, NEEDS DEPLOY** develop→main both repos. Then prod seed cleanup. | `products/services.py`, `components/recommendations/*`, [[recommendation-engine-completion-roadmap]] |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when a cart item overlaps a backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. Medium. | OPEN #133 — deferred, tracked. | `smartenplus-backend/products/services.py` get_recommendations, [[recommendation-engine-completion-roadmap]] |
 | **REC-PRECOMPUTE-CACHEKEY** | Low. `products/tasks.py:67` precompute builds cache key `recommendations:{id}:{type}:{limit}` (4-part) but `get_recommendations:667` runtime key is 5-part (`:{rate_date or 'none'}`). Precompute writes never hit at runtime → wasted warm. Pre-existing, found in #132 verify. | OPEN #132 — out of scope of P0 fix. | `smartenplus-backend/products/tasks.py:67` |
-| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **FE SHIPPED #130** (main `35c524d` carries ISR route). **BE ACTIVATION PENDING:** deploy BE develop→main + set prod `FRONTEND_URL=www` + restart worker, then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
+| **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **FE SHIPPED #130** (main `35c524d` carries ISR route). **BE ACTIVATION PENDING:** deploy BE develop→main + set prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (#134: stale worker = `unregistered task`, msgs discarded — [[celery-unregistered-task-stale-worker]]), then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: public LIST `ContractSerializer` doesn't expose `tour_duration_days`, so cards can't show "N Days" (detail page works, uses `__all__`). FE-only fix #130 chose omission over false "1 Day". Option B: add `tour_duration_days` to list serializer `fields`. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional follow-up, low priority. FE helper unchanged either way. | `smartenplus-backend/operators/serializers.py` (ContractSerializer), [[category-aware-duration-formatter]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate, pre-existing). Cluster 1: WebP resize/compress algorithm duplicated ~2-3× — `operators/utils.py:process_operator_image` (now parametrized #126b), `dialogue/utils.py:process_review_image` (120KB hardcoded), plus WebP/thumbnail code in `operators/admin.py`. Cluster 2: upload validation (ext whitelist + size) copy-pasted across 5 files (`stations/views.py`, `operators/utils.py`, `operators/views.py`, `pages_info/models.py`, `dialogue/utils.py`) each with own constants → drift risk. Consolidate → one `core/image_utils.py`: `process_image_to_webp(file, *, max_output_size, max_dimensions)` + `validate_upload(file, *, allowed_ext, max_size)`, migrate all callers. | OPEN #126 — dedicated refactor session. High blast radius (operators/dialogue/stations/pages_info), zero user value, all spots work. Do NOT bolt onto feature work. | `operators/utils.py`, `dialogue/utils.py` |
 | **VAULT-DATE-RENAMES** | 105 files embed dates in filenames (violates "no dates in filenames" rule). Rename breaks every inbound wikilink. Needs separate planning round: `git mv` + atomic search-replace of all `[[old-name]]` → `[[new-name]]`. | OPEN #125 — next-wave vault work. | [[vault-optimization-snapshot-2026-06-16]] |

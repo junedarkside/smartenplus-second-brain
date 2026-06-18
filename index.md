@@ -171,6 +171,7 @@ Global navigation catalog. Updated on every ingest.
 - [[django-update-bypasses-post-save-signal]] — `.update()` skips post_save (no signal); used so per-view counter writes don't storm ISR revalidate. Use `.save()` when you WANT the signal.
 - [[frontend-url-canonical-www-not-apex]] — backend FRONTEND_URL must be www not apex; apex→www 301 drops requests POST body/auth → revalidate silently failed. The #129 prod root cause.
 - [[celery-task-over-bare-thread-django-signals]] — why Celery over threads for signal side effects, slug dedup, retry
+- [[celery-unregistered-task-stale-worker]] — **NEW 2026-06-18.** `Received unregistered task` / `KeyError <task>` = worker started before task existed; restart worker (web reload ≠ worker reload). Messages discarded, not retried. Local bare process = manual restart (high risk); prod container = `up -d --build` auto-recreates (safe). This incident: #129 `revalidate_frontend_isr`; benign in dev (stale worker + empty `REVALIDATION_SECRET` + frontend down).
 - [[isr-csr-overlay-stale-fields]] — CSR covers ratecard/dates; stale: name/description/images/JSON-LD/meta
 - [[persistgate-ssr-suppresses-head-component]] — PersistGate null SSR blocks DefaultSeo/Head; hoisting fix
 - [[webpack-image-src-og-absolute-url-rule]] — webpack .src relative → absolute for OG images
