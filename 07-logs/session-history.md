@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #130 (archived from master-state.md)
+
+**Updated:** 2026-06-18 (session #130 END)
+
+**Achieved this session (#130) — category-aware duration fix SHIPPED TO PROD (FE main). Spa "1 Day" bug killed.**
+- **Bug (user-reported):** spa product showed duration "1 Day" — impossible. Root cause was category-wide: all activities components read `contract.tour_duration_days` (BE `PositiveIntegerField`, **default 1**, days) and rendered "X Day(s)" regardless of `service_category`. Public LIST serializer omits the field → cards saw `undefined` → ternary always yielded "1 Day". Same inline ternary copy-pasted in **5 sites** (3 components + 2 SEO JSON-LD builders).
+- **Fix (FE-only, commit `35c524d` → develop → main):** new `helpers/formatContractDuration.js` single source of truth, returns `string|null`. Gated by existing `SERVICE_CATEGORY_CONFIG.showDuration` + new additive `durationUnit` ('days'|'time'|'nights'). Per-category: spa/dining → "2h 30m" from `duration` (colon string, parsed by reused `customFormatDuration`); event/attraction/OTHER → hidden; accommodation → "N nights"; tours → days (null if absent, no false "1 Day"). Only behavior change: `OTHER.showDuration` true→false. Replaced all 5 ternaries.
+- **Verified:** ESLint clean (7 files), 36 serviceCategoryHelper tests pass, BE confirmed `duration` serializes as colon string `"2:30:00"` not ISO8601 → no parser needed.
+- **PROD:** FE `main` = `develop` = `35c524d`. Pushed + shipped by user. **Side effect: FE main now also carries ISR route (66d896e) — FE half of #129 ISR-REVALIDATE-GAP is now deployed.**
+- New atom: [[category-aware-duration-formatter]].
+
+---
+
 ## Session #129 — 2026-06-18 — ISR on-demand revalidation IMPLEMENTED + merged to develop both repos. Prod root cause found (www vs apex).
 - **What it fixes:** admin contract content edit (description, tour_highlights, inclusions, route_info, timeline, images, policies + SEO/JSON-LD) now pushes a Next.js ISR regen in seconds. Native `res.revalidate()`, not a workaround. Chosen over lazy-timer because Next 14.2.5 standalone regen is request-triggered → quiet/zero-traffic pages never self-heal. rate stays CSR; counter stays ISR-timer.
 - **Backend (`feat/isr-on-demand-revalidate` → develop `b68d201`, commit `0f2d108`):** `revalidate_frontend_isr` Celery task (`operators/tasks.py`); `_trigger_revalidate(slug)` from 2 cache-bust signals (`signals.py:46`, `:95`); `REVALIDATION_SECRET`. Enabler: `products/views.py:884` daily_counter `.update(F+1)` → no post_save storm. Admin update uses `instance.save()` (`views.py:946`).
