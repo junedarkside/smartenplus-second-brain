@@ -165,5 +165,44 @@ Cap-similar-at-0-1 + thin complementary inventory ⇒ most checkouts render 1-2 
 
 **Net:** doc is the right philosophy applied to a more mature catalog than ours. Adopt philosophy + the one zero-inventory win now; gate matrix rows that assume missing inventory on BD.
 
+---
+
+## Addendum 2026-06-18 — Zones SHIPPED + algorithm best-practice review
+
+Built on branch `feat/checkout-recommendation-zones` (BE+FE). Activity-anchor checkout now renders labeled conditional zones.
+
+### What the algorithm does now (activity anchor, no trip.route)
+```
+get_recommendations(hybrid):
+  ESSENTIAL = find_transport_at_location  (transport whose ROUTE station
+              location == anchor.primary_location; score 95-100; cap 2)
+  POPULAR   = find_nearby_activities, cross-category items
+              (matrix priority + booked_count + location + score; cap 4)
+  SIMILAR   = find_nearby_activities, SAME-category items (cap 1)
+  → dedupe by contract id, per-zone caps (ZONE_LIMITS 2/4/1), no global cut
+FE groups by item.type, renders each non-empty zone:
+  Getting there → Popular in <dest> → You might also like
+```
+Scoring fixes shipped: dropped the `+30 same-category` bonus (it rewarded "more day tours"); excluded zero/free-infant rates from `lowest_price` Min (was showing "Price on request").
+
+Verified (Phuket demo anchor 185): ESSENTIAL 2 + POPULAR 4 + SIMILAR 1 = 7 cards, all priced.
+
+### Best-practice verdict
+**Correct / aligned with travel cross-sell norms:**
+- Complementary-over-similar ranking — POPULAR (spa/food/transfer) scores above SIMILAR (more tours). Matches "complete the trip" > "show alternatives." ✓
+- SIMILAR capped at 1 — avoids cannibalizing the anchor purchase (showing 5 rival tours lowers checkout confidence). ✓
+- ESSENTIAL first + highest score — transport is genuinely trip-completing; right priority. ✓
+- Conditional zone render (no empty headers) + per-zone caps — prevents the empty-section UX failure BD flagged. ✓
+- Destination-scoped via `primary_location` / route-station bridge — location relevance is the strongest travel signal. ✓
+
+**Gaps vs best practice (known, deferred — NOT debt-shipped):**
+- **No UPGRADE zone** — would need a real `upgrade_of` variant FK. A `type=PRIVATE`+same-cat+loc heuristic guesses the twin (false positives) → deliberately NOT built. 3 zones, not 4.
+- **No weekly/trending social proof** — uses lifetime `booked_count`. Real "booked X this week" needs a counter + reset task; faking it = dark-pattern (EU/US trust risk).
+- **Mobile scroll** — 3 sections before payment CTA is the practical max for mobile checkout; do NOT add a 4th zone above the fold. If UPGRADE lands later, consider collapsing or limiting to 2 visible zones on mobile.
+- **No add_cart→purchase analytics** — can't yet measure which zone converts. Add GTM events before claiming any lift.
+- **`booked_count` default=10** still inflates new contracts in the popularity tiebreak.
+
+**Net:** algorithm is correct and best-practice for current catalog at 3 zones. 4th zone (UPGRADE) is correctly gated on a schema change, not shipped as a guess. Next highest-value: add_cart/purchase GTM (measure), then upgrade_of FK (true UPGRADE zone).
+
 ## Related
 [[people-also-book-checkout-audit]] [[cross-sell-placement-strategy]] [[recommendation-type-selection-by-service-category]] [[recommendation-anchor-first-transport-rule]] [[activity-to-activity-cross-sell]] [[django-m2m-location-join-recommendations]]
