@@ -235,5 +235,35 @@ External doc proposes card counts: ESSENTIAL 1-2/max2, POPULAR 2-3/max4, SIMILAR
 
 **Bottom line:** proposal's card numbers are largely already satisfied by catalog reality; the genuine wins are mobile layout + measurement + copy, NOT cap arithmetic. No code shipped from this review.
 
+---
+
+## Addendum 2026-06-18 — Multi-cart-items strategy review (4-agent: Business/UX/FE/BE)
+
+External doc: when cart has multiple items, use ONE primary-intent anchor + ONE section + exclude purchased items (NOT per-item sections). Exception: multi-destination cart → up to 2 anchors.
+
+**Finding: ~80% ALREADY implemented.** `CheckoutRelatedTrips.js` picks ONE `anchorItem` via `ANCHOR_PRIORITY`, one `useGetRecommendationsQuery`, one section; `visibleRecommendations` excludes `cartContractIds`. The doc's anti-pattern (per-item sections) is already avoided. Backend enforces single anchor at API level (`get_recommendations(contract_id)` — no multi-contract endpoint).
+
+### 3 actionable findings (4-agent consensus)
+1. **Anchor priority INVERTED (highest value, ~1 line).** Current `ANCHOR_PRIORITY` ranks TRANSPORTATION 100 / TRANSFER 90 ABOVE DAY_TOUR 80. Doc + Business + UX all say the EXPERIENCE (tour) should anchor; transport is supporting. Tour anchor → rich cross-sell (transfer + spa + similar); transfer anchor → thin/dead surface. The old [[recommendation-anchor-first-transport-rule]] rationale (avoid recommending rival transfers) is now **obsolete** — handled by cart exclusion. **Fix: flip so DAY_TOUR/activities > TRANSPORT/TRANSFER; transport anchors only when cart is transport-only. Retire the stale vault rule to prevent regression.**
+2. **`minCartPrice` floor = BUG** (`CheckoutRelatedTrips.js:80-85`). Hides any rec cheaper than the cheapest cart item → suppresses exactly the cheap complementary add-ons (THB 300 ferry) the "complete your trip" intent wants. Disproportionately kills transport/transfer recs. **Fix: remove the floor (or replace with a ceiling: don't show items pricier than cart total).**
+3. **Slot-waste (medium).** FE excludes cart items AFTER backend applied per-zone caps → zones render short (ESSENTIAL cap 2, losing 1 = 50%). **Fix: API `exclude_ids` param threaded into finders BEFORE the cap slice; cache key must include sorted exclude set.** Lighter alt: FE over-fetch by cart length.
+
+### UX extras
+- Min 3-card threshold — suppress a sparse section rather than render 1 lonely card.
+- Exclude by `product_id` not just `contract_id` — same product different date = near-duplicate; null-contract cart items leak into recs ("Add" on an item already in cart).
+
+### Defer (consensus)
+- **Multi-destination 2-anchor** — premature; most carts single-destination; 2 stacked blocks = mobile scroll cost. Revisit if analytics show >15% of multi-item carts span 2 destinations; post-checkout page is the better surface than pre-payment.
+- **Editor's Picks fallback** — no curation flag/ops; conditional-hide suffices (reaffirmed 3rd time).
+
+### Ranked actionable delta
+1. Flip anchor priority (HIGH/LOW) — only change with direct AOV impact.
+2. Remove `minCartPrice` floor (HIGH/LOW) — unblocks complementary add-ons.
+3. `exclude_ids` API param (MED/MED) — fixes short zones.
+4. Analytics `anchor_type` dimension — prereq to A/B the priority flip.
+5. Retire stale transport-first rule doc.
+
+**Bottom line:** doc largely describes what's already built. The one genuinely-wrong thing is the inverted anchor priority — flipping it + removing the price floor are two tiny high-value changes. Everything else is defer or already done. No code shipped this review.
+
 ## Related
 [[people-also-book-checkout-audit]] [[cross-sell-placement-strategy]] [[recommendation-type-selection-by-service-category]] [[recommendation-anchor-first-transport-rule]] [[activity-to-activity-cross-sell]] [[django-m2m-location-join-recommendations]]
