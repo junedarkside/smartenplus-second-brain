@@ -8,6 +8,38 @@
 
 No code changed this review.
 
+> **Audit update 2026-06-18 (/grill):** the original report wrongly listed the FE change `recType 'activity'→'hybrid'` as a *done improvement*. Code verification proved it is a **P0 regression** for non-transport carts. See section below. The combined gap table's optimistic framing of "hybrid is more resilient" is **wrong** and corrected here.
+
+---
+
+## P0 REGRESSION — `hybrid` kills non-transport recommendations
+
+**Symptom:** spa/tour/ticket-only cart → recommendation widget shows nothing (hides).
+
+**Root cause (verified `services.py:692-709`):**
+- FE `CheckoutRelatedTrips.js:37` sends `recType='hybrid'` for every non-transport cart.
+- Backend `hybrid` runs ONLY `find_similar_contracts` + `find_alternative_contracts` + `find_package_contracts`.
+- All three early-return `[]` when `source_contract.trip.route` is null (`services.py:235-237`, `421-423`, route-keyed query). **Every non-transport contract has no trip/route.**
+- The ONLY branch that reaches location-based cross-sell (`find_activity_contracts` / `find_nearby_activities`) is `rec_type == 'activity'` (`services.py:704-709`) — which `hybrid` never enters.
+- Net: non-transport `hybrid` = three empty lists = `[]` = widget hides. The old `'activity'` value was the only working path.
+
+**Chosen fix — backend `hybrid` fallthrough (DECISION):**
+In `get_recommendations`, before the route-based branches: if `rec_type == 'hybrid'` AND source has no `trip.route`, route to `find_nearby_activities(source, limit)` (location-based) instead. One backend edit, fixes ALL callers, keeps FE `'hybrid'` honest. Needs BE deploy.
+
+```python
+# get_recommendations, ~line 692
+if rec_type == 'hybrid' and not (source_contract.trip and source_contract.trip.route):
+    recommendations.extend(find_nearby_activities(source_contract, limit))
+else:
+    # existing similar + alternatives + packages branches
+```
+
+**Still data-gated:** `find_nearby_activities` needs `source.primary_location` or `service_areas.first()`, else `[]` (`services.py:562-566`). So the fix unblocks recs only for non-transport contracts that have a location populated — ties back to the `primary_location` data-ops gap + Koh Lipe blocker. Fix removes the *code* dead-end; data population removes the *empty result*.
+
+**Why not FE revert to `'activity'`:** rejected — `'activity'` branch's first call (`find_activity_contracts`) also needs `trip.route` (`services.py:705`), only falling through to `find_nearby_activities`; backend fix is the single honest place and helps every caller.
+
+---
+
 ## Catalog reality (constrains everything)
 
 - Small SKU depth; cross-sell chains (spa→ferry→transfer) not built.
@@ -62,6 +94,8 @@ No code changed this review.
 ---
 
 ## Corrected roadmap (re-sequenced for thin catalog)
+
+**P0 — Regression fix (DO FIRST):** backend `hybrid` fallthrough to `find_nearby_activities` when source has no `trip.route` (see P0 section). Restores non-transport recs. ~5-line BE edit + deploy.
 
 **P1 — Measure & Survive (week 1-2):**
 1. Analytics tagging: add `recommendation_modal_open`, `recommendation_add_cart`, `recommendation_purchase`; fix render-path `empty` bug. *(FE only, no deps.)*
