@@ -4,6 +4,7 @@ Archived from master-state.md Section 2. Audit trail only.
 
 | # | Issue | Resolved |
 |---|-------|----------|
+| **VAULT-DATE-RENAMES** (#125) | All 62 active dated filenames stripped of `-YYYY-MM-DD`; ~795 wikilinks rewritten via sed. 2 collision pairs resolved semantically (design-system-audit; content-marketing-strategy vs -review). 0 dated filenames outside `08-archive/`, 0 broken wikilinks. | **CLOSED #137** (2026-06-19). Vault commit `d235870`. [[vault-optimization-snapshot]] |
 | **SOFT-DELETE-SHIP** | Push `feat/contract-soft-delete` (BE+admin) + verify | **CLOSED #123.** Pushed + merged `--no-ff` → develop both repos, branch pruned local+remote. BE develop `0e52782`, admin develop `f75d721`. Also fixed in-flight: global summary counts, `is_deleted` list-payload omission (badge/restore root fix), status-aware Restore, id-only deleted badge. [[adr-contract-soft-delete]] |
 | WA-1 | Website audit Sprint 1 (F1-F3) | 2026-06-06 #60. F1 (`40c01e2`) + F2 (`0f9df12`) + F2-followups (`1e4c549` + `fbdca15` + `e782c41`) + F3 (`9472df5`) all shipped. Atom: [[icon-button-size-decision]]. |
 | DOMAIN-1 | NEXT_PUBLIC_DOMAIN leading space | 2026-06-05. GitHub Secret + deploy confirmed. |

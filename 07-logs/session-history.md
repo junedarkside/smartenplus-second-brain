@@ -4,6 +4,24 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #136 — 2026-06-19 (END)
+
+**Achieved (#136) — BE homepage "From" price type-filter fix + branch hygiene. No deploy.**
+
+- **BE-HOMEPAGE-PRICE fix (experiences + airport routes)**: homepage "From" prices computed BE-side, shipped pre-baked via `/api/pages-info/front-page/`. Two paths picked lowest `selling_rate` across ALL ratecard types → cheapest CHILD/INFANT surfaced as "From":
+  - `PopularExperienceSerializer.get_min_price()` (`products/serializers.py:755`) — now filters ADULT (per-person), falls back to any type if no ADULT rate; added `selling_rate__gt=0`.
+  - `_fetch_airport_routes_data` `lowest_price` (`pages_info/views.py:355`) — was unfiltered; now type-aware (JOIN→ADULT, PRIVATE/CHARTER→VEHICLE) + sentinel strip.
+- **Shared helper extracted**: `route_lowest_price_annotation(today)` + `ROUTE_PRICE_SENTINEL` in `products/services.py`. HomeViewSet + airport-routes share one source (dedup). Dropped orphan imports from `products/views.py`.
+- **Tests**: `PopularExperienceMinPriceTestCase` (3) pass. `manage.py check` clean. Suite 29 tests, 2 pre-existing Redis-dependent fails.
+- Merged BE develop (`cff26b3`, no-ff), branch pruned.
+- FE branch hygiene: pruned 7 merged `fix/activities-*` branches.
+
+**Carry-forward (NOT done in #136):** deploy FE+BE develop→main (REC engine + ISR + from-price fix), #129 ISR prod activation, REC-engine min-price bug (same class), vault hygiene.
+
+_(BE develop `cff26b3`, FE develop `143f9a2`, FE main `143f9a2`, BE main `bb5c199`.)_
+
+---
+
 ## Session #135 — 2026-06-19
 
 **Achieved — Activity detail + browse page bug fixes. No deploy. FE-only.**
