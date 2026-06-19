@@ -1,5 +1,7 @@
 # Second Brain — Operational Log
 
+## [2026-06-19] lint | Phase 1 vault health pass — archived 8 audit subfolder bundles (47 files) + 15 verified-complete projects → `08-archive/`. `01-projects/` 91→71 md, flat structure restored (0 subfolders). 0 broken wikilinks (slash-aware scan; the 3 `trip-detail-seo-aeo-geo-audit-2026-06-16/r2|r3|r4` "broken" refs were false positives → resolve to archive). Companion overviews collapsed into bundle folders. Verified done before archive: rate-review (Release 1 shipped 06-06), operator-detail (#124 prod), seo-sitemap (merged d88f50b), homepage-terminology (DONE), trip-search-results (CLOSED 06-15), cross-sell integration (live 06-13, BD-gated), favorite-heart (BE migration 0026+0027 applied). HELD as active/ambiguous: `not-suitable-for-section` (active SPEC), `frontend-audit-implementation` (open PRs), `profile-dropdown-redesign` (unverified). index.md Stats + Active-Projects header note updated. → vault-optimization plan Phase 1 of 4.
+
 ## [2026-06-19] optimize | vault optimizer round 2 — master-state dedup (carry-forward block → Section 2 rows), classified orphan `audits/filter-functionality-audit-2026-06-15.md` → `01-projects/`, removed empty `audits/` folder, appended report.
 ## [2026-06-19] prune | admin-dashboard `feat/contract-not-suitable-for` deleted local (`a70630b`) + remote — merged to develop `bdf85ff`, verified fully-merged.
 

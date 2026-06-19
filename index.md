@@ -20,6 +20,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+> **Note (2026-06-19):** Items marked **CLOSED / COMPLETED / MERGED** below were archived to `08-archive/` this session. Their `[[wikilinks]]` still resolve (Obsidian finds them in the archive folder). Pending a future pass to relocate these lines into `## Archive`.
+
 - [[homepage-search-transportation-experiences-tabs-2026-06-17]] — **PLAN 2026-06-17.** File-by-file impl plan for homepage Transportation|Experiences search tabs (from [[adr-homepage-search-transportation-experiences-tabs-2026-06-17]], audited). Split 379-line ProductSearchForm2 into shared fields + 2 mode forms + segmented control (local useState). Hero → reuse FeaturedImageHeader (isCinematic). Experiences = Destination+Category → /activities?location=&category=. Key audit fix: do NOT reuse ActivitySearch (forces dayTripsApi RTK + locations API onto homepage); use AutoCompleteSearch. Tokens via helpers/designSystem.js.
 - [[not-suitable-for-section-2026-06-18]] — **SPEC 2026-06-18.** 5-agent team debate (business/UX/design/backend/frontend+admin) on operator-authored "Not suitable for" section. Converged: JSONField enum array on Contract, frontend-mapped labels, replace "Good to know" badges with icon+text list, admin multi-select on BookingConfig.js. Plan file `not-suitable-for-full-build.md` ready. No code shipped.
 - [[operator-card-badge-consistency-2026-06-16]] — **SPEC 2026-06-16.** 2-agent (design+frontend) fix for "AI slop" contract-card badges on `/operators/[slug]`. Root cause: 3 badge systems/row (3 radii, 2 heights, MUI-Chip vs raw-span) + JOIN renders success-green next to status badge. Fix: canonical Chip geometry, one neutral indigo for all contract types (icon+label differentiate, not hue), new scoped `ContractTypeBadge`, friendly `CONTRACT_TYPE_NAMES` labels. Verified: delete only `tourTypeSoft` (operators-only); KEEP `tourTypePrivate/Charter` (used by BadgeChip). No `BadgeChip` touch, no MetaBadge abstraction. Spec only.
@@ -380,8 +382,8 @@ Global navigation catalog. Updated on every ingest.
 ## Stats
 
 - Created: 2026-05-16
-- Pages: ~237 (active; 357 total including 08-archive)
-- Last updated: 2026-06-12 (session #104: payment E2E automated 8/8, webhook gap closed via Tailscale, new atom omise-webhook-tailscale-local-testing)
+- Pages: ~335 (active; ~497 total including 08-archive)
+- Last updated: 2026-06-19 (vault optimization pass: 8 audit bundles + 15 completed projects archived → 08-archive; 01-projects 91→71 md; flat structure restored; 0 broken links)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
 - [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx
