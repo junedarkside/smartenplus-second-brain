@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #135 — 2026-06-19
+
+**Achieved — Activity detail + browse page bug fixes. No deploy. FE-only.**
+
+- **P3 design tokens** (4 components): BookedCounter, IncludedExcluded, MeetingPointCard migrated Tailwind color classes → COLORS token inline styles. DayTripHero same fix but file is dead code (not imported anywhere).
+- **AirbnbPhotoGrid image ordering**: `buildImageList()` now trusts backend `contract.image[]` array (already sorted by admin `order` field). `featured_image` is fallback only when gallery empty. `totalCount` fixed to not double-count.
+- **Double "From" label**: `DayTripMobileBookingBar` + `PremiumBookingPanel` were prepending own "From" before `PricingDisplay size="compact"` (which renders its own). Removed caller-side duplicates.
+- **PricingDisplay `align` prop**: added `align='end'` default (zero callers break). Mobile bar + premium panel pass `align="start"`.
+- **`getFromPrice` type-aware**: filters ratecards JOIN→ADULT / other→VEHICLE (fallback: all). Matches `findLowestSellingRate()`.
+- **DayTripCard**: replaced inline Math.min block with `getFromPrice(workingContract) ?? 0`.
+
+_(FE develop `143f9a2`, FE main `4c9354b`, BE main `bb5c199`.)_
+
+---
+
 ## Session #133 — 2026-06-18
 
 **Achieved — Recommendation zones MERGED to develop (both repos) + 2 product-review fixes + branches pruned. The whole #132 engine arc is now on `develop`, ready to deploy.**

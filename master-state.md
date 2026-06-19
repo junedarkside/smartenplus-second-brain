@@ -4,25 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-19 (session #135 END)
+**Updated:** 2026-06-19 (session #136 END)
 
-**Achieved this session (#135) — Activity detail + browse page bug fixes. No deploy.**
+**Achieved this session (#136) — BE homepage "From" price type-filter fix + branch hygiene. No deploy.**
 
-- **P3 design tokens** (4 components): BookedCounter, IncludedExcluded, MeetingPointCard migrated Tailwind color classes → COLORS token inline styles. DayTripHero same fix but file is dead code (not imported anywhere).
-- **AirbnbPhotoGrid image ordering**: `buildImageList()` now trusts backend `contract.image[]` array (already sorted by admin `order` field). `featured_image` is fallback only when gallery empty. `totalCount` fixed to not double-count.
-- **Double "From" label**: `DayTripMobileBookingBar` + `PremiumBookingPanel` were prepending own "From" before `PricingDisplay size="compact"` (which renders its own). Removed caller-side duplicates.
-- **PricingDisplay `align` prop**: added `align='end'` default (zero callers break). Mobile bar + premium panel pass `align="start"` for left-align.
-- **`getFromPrice` type-aware**: filters ratecards JOIN→ADULT / other→VEHICLE (fallback: all). Now matches `findLowestSellingRate()` in `helpers/tripSorting.js`. Prevents CHILD/INFANT rate surfacing as "From".
-- **DayTripCard**: replaced 15-line inline Math.min block with `getFromPrice(workingContract) ?? 0`.
+- **BE-HOMEPAGE-PRICE fix (experiences + airport routes)**: homepage "From" prices are computed BE-side, shipped pre-baked via `/api/pages-info/front-page/`. Two paths picked lowest `selling_rate` across ALL ratecard types → cheapest CHILD/INFANT surfaced as "From":
+  - `PopularExperienceSerializer.get_min_price()` (`products/serializers.py:755`, Explore Experiences) — now filters ADULT (per-person), falls back to any type if no ADULT rate; added `selling_rate__gt=0`.
+  - `_fetch_airport_routes_data` `lowest_price` (`pages_info/views.py:355`, airport routes section) — was unfiltered; now type-aware (JOIN→ADULT, PRIVATE/CHARTER→VEHICLE) + sentinel strip.
+- **Shared helper extracted**: `route_lowest_price_annotation(today)` + `ROUTE_PRICE_SENTINEL` in `products/services.py`. Lift-and-extract of HomeViewSet's already-correct inline logic → HomeViewSet + airport-routes now share one source (dedup, no behavior change to home_routes). Dropped now-orphan imports from `products/views.py`.
+- **Tests**: `PopularExperienceMinPriceTestCase` (3) — ADULT over cheaper CHILD / fallback-to-any / None when empty. All pass. `manage.py check` clean. Suite 29 tests, only 2 failures (both pre-existing, Redis-dependent recommendation tests — confirmed by stash+rerun on clean tree).
+- **Merged BE develop** (`cff26b3`, no-ff), feature branch pruned local+remote.
+- **FE branch hygiene**: pruned 7 merged `fix/activities-*` branches (local+remote) from #135 work. _(Stray remote `origin/fix/activities-detail-show-rates-on-load` left untouched — no local copy, not reviewed.)_
 
 **Resume point (EXACT):**
-1. **Deploy FE + BE develop→main** — recommendation engine (zones, P0, image/price/logo_url), ISR activation, duration fix all reach prod. See #133/#129 notes below.
+1. **Deploy FE + BE develop→main** — recommendation engine (zones, P0, image/price/logo_url), ISR activation, duration fix, **+ this session's homepage from-price fix** all reach prod. **After BE deploy: bust front-page cache** (`cache.set` timeout 3600 in `pages_info/views.py:326`) else corrected prices stale 1h. See #133/#129 notes below.
 2. **#129 ISR PROD ACTIVATION** (folds into step 1): BE develop→main + prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (#134: stale worker = `unregistered task`, msgs discarded — [[celery-unregistered-task-stale-worker]]). Smoke-test: edit contract, confirm worker log shows `ISR revalidated slug=... status=200`.
-3. **Backend price fix**: `PopularExperienceSerializer.get_min_price()` in `smartenplus-backend/products/serializers.py:~755` — add type filter (JOIN→ADULT, other→VEHICLE) so homepage Explore Experiences cards show correct "From" price. Same pattern fix in `pages_info/views.py` `lowest_price` subquery for Popular Routes (lower priority).
+3. **REC-engine min-price bug** (same class, OUT OF SCOPE #136): `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder annotations in `services.py` all lack type filter. Reuse `route_lowest_price_annotation` pattern or add a per-contract typed helper.
 4. **Vault hygiene**: mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]].
 5. **Next eng (deferred, tracked)**: slot-waste `exclude_ids` API, `recommendation_purchase` GTM, UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
 
-_(Session #134 block archived → `07-logs/session-history.md`. FE develop `143f9a2`, FE main `4c9354b`, BE main `bb5c199`.)_
+_(Session #135 block archived → `07-logs/session-history.md`. BE develop `cff26b3`, FE develop `143f9a2`, FE main `143f9a2`, BE main `bb5c199`.)_
 
 ---
 
@@ -35,7 +36,7 @@ _(Session-end cleanup + carry-forward state archived to `07-logs/session-history
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **BE-HOMEPAGE-PRICE** | `PopularExperienceSerializer.get_min_price()` (`products/serializers.py:~755`) has no type filter — picks lowest `selling_rate` across all ratecard types. JOIN contracts: should pick ADULT rate only; private/charter: VEHICLE. Symptom: homepage Explore Experiences card may show CHILD/INFANT rate as "From". Same bug in `pages_info/views.py` `lowest_price` subquery for Popular Routes (lower priority — transport contracts naturally only have VEHICLE rates). Frontend `getFromPrice()` already correct after #135 fix. | OPEN #135 | `smartenplus-backend/products/serializers.py:~755`, `pages_info/views.py` |
+| **BE-HOMEPAGE-PRICE** | Homepage "From" prices computed BE-side. **Experiences + airport-routes FIXED #136** (`get_min_price` ADULT+fallback; airport `lowest_price` type-aware via new `route_lowest_price_annotation` helper shared with HomeViewSet). Merged BE develop `cff26b3`. **NEEDS DEPLOY + front-page cache bust.** Remaining OPEN (same bug class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **PARTIAL-CLOSE #136** — homepage DONE (needs deploy); REC-engine OPEN | `products/services.py` (REC), `products/serializers.py:~1105` |
 | **REC-CHECKOUT-ZONES** | Checkout "Complete your trip" recommendation engine: P0 hybrid fix + zones (ESSENTIAL/POPULAR/SIMILAR) + matrix + transport finder + per-zone caps + price-bug + experience-first anchor + recType-follows-anchor + card-count tuning + add_cart GTM + mobile cap + seed command. **MERGED to develop #133** (BE `ae31f1f`, FE `0877d23`), branches pruned. | **MERGED, NEEDS DEPLOY** develop→main both repos. Then prod seed cleanup. | `products/services.py`, `components/recommendations/*`, [[recommendation-engine-completion-roadmap]] |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when a cart item overlaps a backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. Medium. | OPEN #133 — deferred, tracked. | `smartenplus-backend/products/services.py` get_recommendations, [[recommendation-engine-completion-roadmap]] |
 | **REC-PRECOMPUTE-CACHEKEY** | Low. `products/tasks.py:67` precompute builds cache key `recommendations:{id}:{type}:{limit}` (4-part) but `get_recommendations:667` runtime key is 5-part (`:{rate_date or 'none'}`). Precompute writes never hit at runtime → wasted warm. Pre-existing, found in #132 verify. | OPEN #132 — out of scope of P0 fix. | `smartenplus-backend/products/tasks.py:67` |
