@@ -12,7 +12,7 @@
   2. `5873403` — `components/forms/checkout/Passengers.js:259,501` — `info_fields.forEach` null guard (crash on Next click, lazy useState + useMemo)
   3. `05fc0aa` — `components/forms/checkout/Passengers.js:1097` — trip header label `tripWrapper.trip.contract.trip.route_route` → full optional chain + fallback (found by 3-agent full scan)
   4. `c89a702` — `components/forms/FormCard.js` — Back/Next/PayNow height unified to `h-12` (48px), removes `h-10`/`p-2` mismatch
-- **Full checkout null-contract scan** completed — vault report at [[checkout-null-contract-scan-2026-06-03]]. All other flagged sites verified safe (JSX `&&` short-circuit guards). 1 real bug found + fixed (`05fc0aa`).
+- **Full checkout null-contract scan** completed — vault report at [[checkout-null-contract-scan]]. All other flagged sites verified safe (JSX `&&` short-circuit guards). 1 real bug found + fixed (`05fc0aa`).
 - **Atomic note created** — [[contract-trip-null-non-transport-pattern]]
 
 **Next session resume point (EXACT):**
@@ -48,10 +48,10 @@
 | ~~BW-3~~ | ~~BlogCard `rounded-lg` + no mx- margins~~ | ✓ Already fixed | — |
 | ~~EXP-DETAIL-1~~ | ~~Experience Detail Page premium redesign + tablet/mobile~~ | ✓ DONE (#33) — FAQ, carousel, filter all shipped and merged | — |
 | CART-1 | **Fix PARSING_ERROR catch** | `DayTripBookingWidget.js:338` — `error.status >= 500` fails silently when RTK sets string `'PARSING_ERROR'`. Fix: `error.status === 'PARSING_ERROR' \|\| error.originalStatus >= 500`. Deferred from session #34. | `components/activities/detail/DayTripBookingWidget.js:338` |
-| FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review-2026-06-02]] | `admin-dashboard/DayTripDetails.js` (deferred) |
+| FAQ-1 | **ExperienceFAQ single source of truth** | P0+P1+P2 DONE (#33). **DEFERRED:** P1 admin-dashboard `ageRestriction` field (4 files, separate repo). Vault: [[experience-faq-architecture-review]] | `admin-dashboard/DayTripDetails.js` (deferred) |
 | FAV-1 | **Favorite heart on DayTripCard** | ADR fully designed + scrutinized. 4 files: migration + views.py + BookmarkButton.js + DayTripCard.js. See [[adr-activity-card-favorite-button]] | `dialogue/views.py`, `BookmarkButton.js`, `DayTripCard.js` |
 | AT-2 | Airport-transfer post-calendar width mismatch | Root cause: inner margins on StationInformation + GuidesSection + ProductCardContainer. | `components/destinations/StationInformation.js` etc. |
-| AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit-2026-05-30.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |
+| AT-1 | **Airport Transfer professional redesign** | P0. Spec: vault `03-knowledge/transportation-category-audit.md`. | `products/serializers.py`, `components/airport-transfer/AirportTransferRouteCard.js` |
 | 15 | `refetchOnMountOrArgChange: 300→true` in useTripData | Separate justification needed | `hooks/useTripData.js:16,24` |
 | 1 | `AdminBookingSummaryViewSet` unauthenticated | Needs frontend sign-off | `orders/views.py` |
 | 2 | Delete `RefundViewSet` (legacy step 7) | Waiting on zero `DEPRECATED_ENDPOINT_USED` in prod logs | `cards/views.py` |

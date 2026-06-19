@@ -93,8 +93,8 @@ All fixes applied ONE AT A TIME on `ade94ee` clean state:
 
 - [[seo-homepage-specialist-team]]
 - [[structured-data-schema-patterns]]
-- [[homepage-ux-review-2026-05-21]]
-- [[blog-seo-performance-2026-05-20]]
+- [[homepage-ux-review]]
+- [[blog-seo-performance]]
 
 ## Audit Metadata
 

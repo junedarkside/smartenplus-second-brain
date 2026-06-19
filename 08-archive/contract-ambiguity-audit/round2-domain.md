@@ -14,8 +14,8 @@
 **However, operationally this is dormant for the Thailand market.** Evidence:
 - The admin form has a single English-only `meetingPointDetails` textarea (`admin-dashboard/components/forms/contract/DayTripDetails.js:67-77`). There is no UI to populate per-language translations.
 - 12 languages are registered per `[[operators]]` line 44, but no operator flows to translate.
-- The `[[contract-serializer-non-transport-fields-2026-06-03]]` audit (which read the same serializer) flagged `meeting_point_details` as a flat field — it never mentioned translations.
-- The frontend fallback `translated_X || X` pattern is also used for `name`, `description`, `tour_highlights`, `inclusions`, `exclusions`, `what_to_bring` (per `[[experience-detail-page-redesign-2026-06-02]]` line 219-227). If B-1 was a P0 bug, all 7 fields would be broken. None of those are reported as broken by customers.
+- The `[[contract-serializer-non-transport-fields]]` audit (which read the same serializer) flagged `meeting_point_details` as a flat field — it never mentioned translations.
+- The frontend fallback `translated_X || X` pattern is also used for `name`, `description`, `tour_highlights`, `inclusions`, `exclusions`, `what_to_bring` (per `[[experience-detail-page-redesign]]` line 219-227). If B-1 was a P0 bug, all 7 fields would be broken. None of those are reported as broken by customers.
 - Resolution: P2 dormant/aspirational. Will become P0 the moment a translation management UI ships.
 
 ### B-2: list serializer omits `primary_location` and `service_areas` (was P1)
@@ -27,7 +27,7 @@
 - Resolution: stays P1 because it IS a contract-quality gap (clients cannot introspect match source), but the customer-facing impact is **the staff-debugging story** (an operator complaining "why does my Phuket contract appear in Krabi results" cannot be answered from the list response), not customer UX. Reclassify as "internal-tooling gap" rather than "customer-facing bug."
 
 ### B-3: no category enforcement on `service_areas`/`meeting_point_*` (was P0)
-**Refute (P0 → P2).** Technical claim correct: `operators/models.py:225-415` has no `clean()`, no signal, no DB constraint linking `service_category` to field presence. The 2026-05-30 transport audit (`[[transportation-category-audit-2026-05-30]]` line 158) literally says: *"Whether meaningful inventory exists in non-transport categories: unknown without DB access."*
+**Refute (P0 → P2).** Technical claim correct: `operators/models.py:225-415` has no `clean()`, no signal, no DB constraint linking `service_category` to field presence. The 2026-05-30 transport audit (`[[transportation-category-audit]]` line 158) literally says: *"Whether meaningful inventory exists in non-transport categories: unknown without DB access."*
 **Operational reality:**
 - The admin form **does** gate by category. `ContractFormFields.js:177, 220` wraps both `primary_location` and `service_areas` in `{!isTransport && (...)}` — only the form hides them. Form gating is the actual enforcement layer.
 - The form is the only path to populate these fields. The PdfContractImport flow (`[[pdf-contract-import-research]]`) goes through the same admin form, so it inherits the same gating.
@@ -35,7 +35,7 @@
 - Related: `[[contract-trip-null-non-transport-pattern]]` confirms `sanitize_category_fields()` runs on the create flow (`operators/views.py:1067-1102`) which DOES enforce the `trip=None` invariant for non-transport. The pattern for "category enforcement" exists — it just doesn't extend to location fields.
 
 ### B-4: public location filter unions both fields (was P1) — **Confirm.**
-The 2026-06-01 OR-fix is the right call. `[[activities-location-search-bug-2026-06-01]]` Fix 1 (line 116-151) explicitly chose OR. Operationally correct.
+The 2026-06-01 OR-fix is the right call. `[[activities-location-search-bug]]` Fix 1 (line 116-151) explicitly chose OR. Operationally correct.
 
 ### B-5: admin `ContractViewSet` has different filter surface (was P2) — **Confirm.**
 Two viewsets, two semantics. Staff viewing admin sees transport routes + location; public sees only location. This is intentional (admin needs to find a contract by route number) and the divergence is documented in `[[backend-architecture]]` (products=public, operators=admin).

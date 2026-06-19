@@ -113,7 +113,7 @@ Root-caused admin contract edit not reaching prod activities+trips detail pages.
 - **Audit caught 3 defects, all fixed**: (1) `is_actived=False`-on-delete REQUIRED — booking guard `carts/utils.py:62` checks only `is_actived`; (2) `stations/views.py` arrival-station viewset (public+unauth) leaked inactive AND would leak deleted — fixed (closes pre-existing inactive leak); (3) ADR citations corrected.
 - **Tests**: 7 new (`operators/tests/test_contract_soft_delete.py`) + 46 existing pass.
 - **Frontend**: ZERO code change by design — backend public-queryset filter + invariant hide deleted.
-- Atoms: [[contract-soft-delete-is-actived-invariant]], [[stations-arrival-viewset-public-leak]]. ADR [[adr-contract-soft-delete-2026-06-16]] → accepted.
+- Atoms: [[contract-soft-delete-is-actived-invariant]], [[stations-arrival-viewset-public-leak]]. ADR [[adr-contract-soft-delete]] → accepted.
 - **NOT shipped this session** — branches built+tested but not pushed. (Shipped in #123.)
 
 **Session #121 — 2026-06-16 — Prod deploy confirm + admin-dashboard hygiene:**
@@ -180,7 +180,7 @@ Root-caused admin contract edit not reaching prod activities+trips detail pages.
 **Achieved (#105–#106):**
 - **Payment pending deadlock — diagnosed + FIXED.** Live prod bug order `PLB0229785`: charge PAID at Omise, order stuck `payment_pending` forever. Root cause: `finalize_payment` throws `PaymentAmountMismatchError` on webhook → swallowed → no recovery path.
 - **3 BE fixes shipped** (`482cfc6` on `develop`): ExpirePendingChargeView recovery, reconcile_gateway_charge PAID+stuck retry, _handle_existing_charge local-PAID finalize.
-- **16 new tests, 278 total pass.** Vault atom [[payment-pending-deadlock-2026-06-12]] updated.
+- **16 new tests, 278 total pass.** Vault atom [[payment-pending-deadlock]] updated.
 
 ---
 
@@ -192,7 +192,7 @@ Root-caused admin contract edit not reaching prod activities+trips detail pages.
 - **Payment deep review — FULLY AUTOMATED. All 8 previously-skipped UI tests now pass** via `e2e/checkout/payment-auto-qa.spec.ts` + fixture CLI `scripts/e2e_payment_fixtures.py`. No staging deploy needed.
 - **Webhook gap closed** — Tailscale funnel `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` registered in Omise test dashboard. Real webhook delivery verified locally: forged payload → 400, real PP charge auto-completes, webhook finalizes order with zero FE involvement, dedupe replay → `already_processed`. All 5 steps PASS.
 - **New atoms written:** [[omise-webhook-tailscale-local-testing]] (setup guide + repro steps + results)
-- **Branches (both `fix/payment-deep-review-2026-06-12`):**
+- **Branches (both `fix/payment-deep-review`):**
   - **BE (7 commits, PUSHED `6937f39`):** `d7af0e9` H3 · `3be676b` H2+M10 · `f1c17b5` H1+M8 · `6a481df` H5+M5+M9 · `67b490a` M17 · `e685fc8` unit tests · `6937f39` test fixes
   - **FE (8 commits, PUSHED `8430805`):** all pushed — H4, M1-M3-M17, jest, E2E, parser fix, CSRF-aware assertions + 8/8 automated UI tests + fixture CLI
 - **Test totals (all green):** 20 BE unit + 84 FE jest + 7/7 Playwright API + **8/8 Playwright UI automated (all PASS)** = 119 passing
@@ -569,9 +569,9 @@ Root-caused admin contract edit not reaching prod activities+trips detail pages.
 - **Timeline stop deletion bug — FIXED + SHIPPED** — 5 changes across 3 repos. Migration 0028.
 
 ## Session #39 (2026-06-03)
-- **Contract model ambiguity audit** — 4-round debate. 6 overlaps confirmed. Vault: [[contract-model-ambiguity-audit-2026-06-03]]
+- **Contract model ambiguity audit** — 4-round debate. 6 overlaps confirmed. Vault: [[contract-model-ambiguity-audit]]
 - **Contract location help text fix (P0)** — admin form 4 strings. Commit `fa2f16a` → main.
 
 ## Session #38 (2026-06-03)
 - **booking-summary 500 fix** — trip=None guard. Commit `4bec691` → backend main.
-- **Frontend test infrastructure audit** — 54% pass rate, 6 CRITICAL. Vault: [[frontend-test-infrastructure-audit-2026-06-03]]
+- **Frontend test infrastructure audit** — 54% pass rate, 6 CRITICAL. Vault: [[frontend-test-infrastructure-audit]]

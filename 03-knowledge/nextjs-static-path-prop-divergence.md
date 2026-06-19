@@ -4,7 +4,7 @@
 Sharing a category/type constant between `getStaticPaths` and `getStaticProps` is mandatory — not optional. Divergence is a silent routing failure: pages pre-built but redirected at runtime, no build error, no 404.
 
 ## Context
-Extracted from [[trip-detail-deep-review-2026-05-20]] (H8 finding). Discovered in `TRANSPORTATION_CATEGORIES` constant in trip detail page. Applies to any Next.js page using type/category filtering at both build-time path generation and runtime redirect logic.
+Extracted from [[trip-detail-deep-review]] (H8 finding). Discovered in `TRANSPORTATION_CATEGORIES` constant in trip detail page. Applies to any Next.js page using type/category filtering at both build-time path generation and runtime redirect logic.
 
 ## Problem
 
@@ -45,5 +45,5 @@ export async function getStaticProps({ params }) {
 
 ## Related
 - [[nextjs-patterns]] — Next.js patterns home
-- [[trip-detail-deep-review-2026-05-20]] — source finding (H8)
+- [[trip-detail-deep-review]] — source finding (H8)
 - [[nextjs-307-vs-301-product-reclassify]] — related redirect correctness pattern

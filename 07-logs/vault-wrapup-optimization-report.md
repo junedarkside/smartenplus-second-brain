@@ -148,7 +148,7 @@ See also: vault-protocol.md, vault-guardrails.md, session-history.md
 
 **Actions:**
 1. master-state.md — replaced carry-forward + next-session blocks with single pointer line; promoted 4 #127 items to Section 2 rows (silaphat, booking_count_yesterday, sort vocab, BE git diverge).
-2. Moved `audits/filter-functionality-audit-2026-06-15.md` → `01-projects/filter-functionality-audit-2026-06-15.md`; removed empty `audits/` folder.
+2. Moved `audits/filter-functionality-audit.md` → `01-projects/filter-functionality-audit.md`; removed empty `audits/` folder.
 3. Appended `## [2026-06-19] optimize | ...` entry to `log.md`.
 
 **Metrics:**

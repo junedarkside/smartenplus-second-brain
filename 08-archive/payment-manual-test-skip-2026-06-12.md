@@ -1,12 +1,12 @@
 # Manual QA Test Plan — Payment Deep Review Skipped Tests
 
-> **SUPERSEDED 2026-06-12:** all 8 tests automated and passing — see [[payment-auto-test-results-2026-06-12]].
+> **SUPERSEDED 2026-06-12:** all 8 tests automated and passing — see [[payment-auto-test-results]].
 > Spec: `smartenplus-frontend/e2e/checkout/payment-auto-qa.spec.ts` + fixture CLI `smartenplus-backend/scripts/e2e_payment_fixtures.py`.
 > Note: fixture B below (pending **PP** charge) does not trigger M1 — BE only 409s on pending *redirect-method* charges; use a pending `kakao_pay` charge instead.
 
 ## Summary
 
-Runbook for the 8 Playwright tests skipped in [[payment-deep-review-2026-06-12]] due to missing test data + dev/staging environment. Each section = one skipped test converted to manual steps. Source spec: `smartenplus-frontend/e2e/checkout/payment-deep-review.spec.ts` lines 141-256.
+Runbook for the 8 Playwright tests skipped in [[payment-deep-review]] due to missing test data + dev/staging environment. Each section = one skipped test converted to manual steps. Source spec: `smartenplus-frontend/e2e/checkout/payment-deep-review.spec.ts` lines 141-256.
 
 **Coverage by fix:**
 - H3 — orders/views.py response shape (BE `d7af0e9`)
@@ -20,7 +20,7 @@ Runbook for the 8 Playwright tests skipped in [[payment-deep-review-2026-06-12]]
 ## Prerequisites
 
 **Environment:**
-- Staging deploy of `fix/payment-deep-review-2026-06-12` (BE + FE)
+- Staging deploy of `fix/payment-deep-review` (BE + FE)
 - Staging admin access + Django shell
 - Test user account (email + password)
 - Active trip with inventory (use a Koh Lipe or Bangkok tour trip)
@@ -346,8 +346,8 @@ PAYMENT-FIX: [ READY TO CLOSE / NEEDS FIX ]
 
 ## Related
 
-- [[payment-deep-review-2026-06-12]] — source review
-- [[payment-implement-plan-2026-06-12]] — fix sequence
-- [[payment-deep-review-verification-2026-06-12]] — KB verification pass
-- [[payment-deep-review-test-cases-2026-06-12]] — test case doc
+- [[payment-deep-review]] — source review
+- [[payment-implement-plan]] — fix sequence
+- [[payment-deep-review-verification]] — KB verification pass
+- [[payment-deep-review-test-cases]] — test case doc
 - `smartenplus-frontend/e2e/checkout/payment-deep-review.spec.ts` — source spec (skipped tests at lines 141-256)

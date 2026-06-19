@@ -77,6 +77,6 @@ See `r3-leader-synthesis.md` for final 5 ranked P0 → P2.
 ## Related
 
 - [[gyg-page-analysis-2026-06-04-overview|gyg-page-analysis-2026-06-04]] — sibling: detail page analysis
-- [[experience-detail-page-redesign-2026-06-02]] — 9 components shipped, includes detail rate display
+- [[experience-detail-page-redesign]] — 9 components shipped, includes detail rate display
 - [[business-development-thailand-platform-analysis]] — GYG competitive positioning
 - [[trip-detail-uxui-audit-2026-05-22]] — prior detail page audit pattern

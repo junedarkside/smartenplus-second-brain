@@ -20,8 +20,8 @@ Now URL-restored location visible in input field.
 
 **Rule:** Never initialize state from prop unless prop is static. Use `useEffect` for prop→state sync.
 
-See [[activities-location-search-bug-2026-06-01]] F-1.
+See [[activities-location-search-bug]] F-1.
 
 ## Related
-- [[activities-location-search-bug-2026-06-01]]
+- [[activities-location-search-bug]]
 - React: prop updates must trigger effect, not be ignored

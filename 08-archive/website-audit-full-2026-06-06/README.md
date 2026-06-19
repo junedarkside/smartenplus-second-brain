@@ -32,6 +32,6 @@ Full-site = SSR home + ISR trip pages + client checkout. See [[architecture]] an
 - [[website-audit-full-2026-06-06-overview]] — top-level overview note
 
 ## Related
-- [[homepage-ux-review-2026-05-21]]
-- [[homepage-seo-performance-deep-review-2026-05-21]]
-- [[core-web-vitals-budget-2026-06-06]]
+- [[homepage-ux-review]]
+- [[homepage-seo-performance-deep-review]]
+- [[core-web-vitals-budget]]

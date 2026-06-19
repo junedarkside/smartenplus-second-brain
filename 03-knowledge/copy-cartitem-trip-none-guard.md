@@ -33,5 +33,5 @@ All 5 BookingItem fields are already `null=True, blank=True` — no migration ne
 
 ## Related
 [[contract-trip-null-non-transport-pattern]]
-[[checkout-confirmation-payment-crash-2026-06-03]]
-[[checkout-null-contract-scan-2026-06-03]]
+[[checkout-confirmation-payment-crash]]
+[[checkout-null-contract-scan]]

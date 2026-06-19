@@ -143,7 +143,7 @@ These are SmartEnPlus-specific design choices, NOT gaps. Keep.
 
 - Rows classified: 30 (11 already-have + 9 partial + 6 missing + 3 off-brand + 1 deferred = 30; 2 P3 sub-elements additional)
 - Silent drops: 0
-- Cross-referenced against `[[experience-detail-page-redesign-2026-06-02]]`: yes
+- Cross-referenced against `[[experience-detail-page-redesign]]`: yes
 - Backend debt flagged: 3 items (2 sub-elements + 1 standalone)
 - Out-of-scope called out: 3 (newsletter, lang/currency selector, cherry-picked 5-star)
 - Math reconciles: 11+9+6+3+1 = 30 (rows) + 2 (sub-elements)
@@ -154,6 +154,6 @@ These are SmartEnPlus-specific design choices, NOT gaps. Keep.
 
 ## Related
 
-- [[experience-detail-page-redesign-2026-06-02]] — predecessor doc, 9 components already implemented
+- [[experience-detail-page-redesign]] — predecessor doc, 9 components already implemented
 - [[business-development-thailand-platform-analysis]] — GYG competitive positioning
-- [[trip-detail-page-review-2026-05-20]] — prior detail page audit
+- [[trip-detail-page-review]] — prior detail page audit

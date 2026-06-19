@@ -71,6 +71,6 @@ Commit `c55f6a1` fixed `md:m-2` -> `my-2` on QRPaymentForm. Token changes only t
 
 ## Related
 - [[design-systems]] — Token architecture
-- [[design-system-audit-2026-06-13]] — Full audit, migration roadmap
+- [[design-system-audit]] — Full audit, migration roadmap
 - [[design-token-caption-tailwind-gotcha]] — Tailwind strings vs MUI sx
 - [[designsystem-shadow-border-tokens]] — Shadow/border tokens

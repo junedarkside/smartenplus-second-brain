@@ -36,6 +36,6 @@ Rate-review flow = card preview → full review form → submission. See [[check
 - [[rate-review-uxui-audit-2026-06-06-overview]] — top-level overview note
 
 ## Related
-- [[rate-review-css-audit-2026-06-06]]
+- [[rate-review-css-audit]]
 - [[rate-review-page-shell-pattern]]
 - [[finding-submit-review-auth-2026-06-07]]

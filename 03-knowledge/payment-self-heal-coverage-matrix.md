@@ -13,7 +13,7 @@ Three self-heal paths exist in the payment system:
 Card 3DS charges are excluded from all three. The exclusion is a side effect of the original design (cards were "synchronous, no expiry") and was never revisited when 3DS redirect was added.
 
 ## Problem
-M12 in [[payment-deep-review-2026-06-12]]. Specific exclusions:
+M12 in [[payment-deep-review]]. Specific exclusions:
 - `sync_pending_charges` skips cards (`tasks.py:76-80` filter is `source_type != CARD`)
 - No `METHOD_EXPIRY` entry for cards (only PromptPay and TrueMoney have TTLs in `billings/models.py:103-127`)
 - `expire_stale_payments` not in beat schedule for card expiry
@@ -88,10 +88,10 @@ Update `docs/technical/PAYMENT_SYSTEM.md` to:
 - `docs/technical/PAYMENT_SYSTEM.md` must be updated to remove the "Card = no expiry (synchronous)" claim and add a section per method with self-heal coverage
 - Each `METHOD_EXPIRY` entry needs a corresponding Celery beat schedule wire-up. Future entries MUST wire both.
 - The 5-minute sweep cutoff is a magic number. Document inline.
-- Test gap: "expire_stale_payments command (no test file)" in [[payment-deep-review-2026-06-12]]. Add tests for both the new `sync_pending_card_3ds` task and the new `card_3ds` expiry entry.
+- Test gap: "expire_stale_payments command (no test file)" in [[payment-deep-review]]. Add tests for both the new `sync_pending_card_3ds` task and the new `card_3ds` expiry entry.
 
 ## Related
 - [[payment-celery-expiry-strategy]] — `METHOD_EXPIRY` model and beat schedule
 - [[payment-status-enums]] — charge status vocabulary
-- [[omise-api-reference-2026-06-12]] — Omise 3DS charge lifecycle
+- [[omise-api-reference]] — Omise 3DS charge lifecycle
 - [[payment-reconcile-gate-extension]] — the polling self-heal side of the matrix

@@ -4,7 +4,7 @@
 Trust signals must precede editorial content. Mobile scroll depth rules: most users never reach position 8. Reviews (highest-leverage trust signal) should be at position 5, not 8.
 
 ## Context
-`homepage-ux-review-2026-05-21.md`. 3-agent review (UX Research x2 + UI Component Engineer). 11 homepage sections audited.
+`homepage-ux-review.md`. 3-agent review (UX Research x2 + UI Component Engineer). 11 homepage sections audited.
 
 ## Problem
 Current render order buries trust signals:
@@ -76,5 +76,5 @@ Users miss non-first panels in carousels. Feature/trust content should use flat 
 - Section grouping creates clear user journey mental model
 
 ## Related
-- [[homepage-ux-review-2026-05-21]] — full audit findings
-- [[homepage-seo-performance-deep-review-2026-05-21]] — SEO structured data
+- [[homepage-ux-review]] — full audit findings
+- [[homepage-seo-performance-deep-review]] — SEO structured data

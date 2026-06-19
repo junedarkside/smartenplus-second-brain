@@ -9,7 +9,7 @@ The polling endpoint `GET /orders/{id}/orderdetails/` has a self-heal path that 
 This is the most important user-facing resilience fix in the payment system. The "I paid but it says pending" complaint that triggers support tickets at 1am is exactly this bug.
 
 ## Problem
-H5 in [[payment-deep-review-2026-06-12]]. Two fail paths converge:
+H5 in [[payment-deep-review]]. Two fail paths converge:
 
 - **Path A — Amount mismatch swallowed.** Webhook `_handle_order_paid` (`payments/views.py:271-285`) catches `PaymentAmountMismatchError` and swallows it. Re-raising would rollback the `GatewayCharge.status=PAID` row, leaving the order and the charge in inconsistent states. Charge = `paid` at Omise + in DB. Order stays `payment_pending`. No recovery path is triggered.
 - **Path B — Lost/delayed webhook.** Polling stops being a recovery path because the gate excludes `payment_pending`. The order is permanently in `payment_pending` until manual intervention.
@@ -51,7 +51,7 @@ The simpler-looking form (two statuses) is the trap. The atom exists specificall
 - Entire paid-but-unfinalized dead-end class is now self-healing via polling
 - Without this atom, next audit reverts the gate back to two statuses (the simpler-looking form is the trap)
 - The `payment_finalized_at` invariant is now doubly important — any code that clears it manually re-opens the double-finalize window. Add a test: "calling `finalize_payment` twice in a row results in exactly one `payment_finalized_at` write".
-- Test gap: "webhook EXPIRED→successful recovery" and "reconcile throttle + superseded skip" are missing tests in [[payment-deep-review-2026-06-12]]; add both.
+- Test gap: "webhook EXPIRED→successful recovery" and "reconcile throttle + superseded skip" are missing tests in [[payment-deep-review]]; add both.
 - The "self-heal via polling" pattern is now the standard for any new charge-recovery path. Document in `docs/technical/PAYMENT_SYSTEM.md`.
 - M5 (Omise `BaseError` → order stuck `payment_pending`) is partially mitigated by this fix — once Omise recovers and the next charge attempt completes, polling can finalize. But M5 needs its own status-revert fix; this is not a substitute.
 
@@ -84,5 +84,5 @@ The simpler-looking form (two statuses) is the trap. The atom exists specificall
 ## Related
 - [[payment-status-enums]] — order status vocabulary
 - [[payment-finalize-deep-dive]] — `finalize_payment` SSOT
-- [[payment-pending-deadlock-2026-06-12]] — related H-class issue from same audit
+- [[payment-pending-deadlock]] — related H-class issue from same audit
 - [[payment-self-heal-coverage-matrix]] — what this gate does and doesn't cover across charge types

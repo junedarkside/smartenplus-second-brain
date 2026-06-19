@@ -164,6 +164,6 @@ Options once root cause confirmed:
 
 ## Related
 
-- [[hydration-infinite-refresh-fix-2026-05-20]] — prior Fast Refresh loop, different root cause
-- [[currency-context-infinite-fetch-2026-05-23]] — CurrencyContext race condition (separate fix, applied)
-- [[isr-429-cold-start-fix-2026-05-23]] — /front-page/ 429 (separate issue)
+- [[hydration-infinite-refresh-fix]] — prior Fast Refresh loop, different root cause
+- [[currency-context-infinite-fetch]] — CurrencyContext race condition (separate fix, applied)
+- [[isr-429-cold-start-fix]] — /front-page/ 429 (separate issue)

@@ -60,5 +60,5 @@ cache.delete_pattern("contract_list_v1_*")  # or cache.clear()
 
 ## Related
 
-- [[activities-location-search-bug-2026-06-01]] — RC-1 root cause chain
+- [[activities-location-search-bug]] — RC-1 root cause chain
 - [[backend-architecture]] — `products` app = public API; this is different from `operators` viewset

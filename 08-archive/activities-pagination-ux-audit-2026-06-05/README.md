@@ -32,5 +32,5 @@ Activities browse → server-rendered list with client-side pagination. See [[ar
 - [[activities-pagination-ux-audit-2026-06-05]] — top-level overview note
 
 ## Related
-- [[activities-day-tour-page-review-2026-06-01]]
+- [[activities-day-tour-page-review]]
 - [[activities-sort-filter-ux]]

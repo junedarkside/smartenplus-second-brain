@@ -38,5 +38,5 @@ on that status-less queryset.
 - Pin it with a test: summary identical across `?status=active|inactive|deleted`.
 
 ## Related
-- [[adr-contract-soft-delete-2026-06-16]]
+- [[adr-contract-soft-delete]]
 - [[serializer-field-omission-starves-ui]]

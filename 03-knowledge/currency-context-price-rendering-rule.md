@@ -3,7 +3,7 @@ name: currency-context-price-rendering-rule
 description: User-facing prices go through useFormatPrice() hook (CurrencyContext-driven, SSR-safe, JPY/KRW aware). Schema.org JSON-LD Offer.price + priceCurrency stays in merchant base currency (THB) regardless of viewer preference.
 type: knowledge-atom
 date: 2026-06-15
-parent: trip-page-full-audit-2026-06-15
+parent: trip-page-full-audit
 ---
 
 # Currency Context Price Rendering Rule
@@ -136,8 +136,8 @@ Newly-fixed (this session):
 - `TripSummary.js:35` only fixes the visible "from THB" label. The `<Head>` JSON-LD `priceCurrency: 'THB'` is intentional (Rule 2).
 
 ## Related
-- [[trip-page-full-audit-2026-06-15]] — parent audit; C2-C4 crash fixes also from this session
+- [[trip-page-full-audit]] — parent audit; C2-C4 crash fixes also from this session
 - [[slidecalendar2-farecalendar-prop-pattern]] — companion atom for the calendar's data wiring
 - [[trip-search-below-fold-redesign-2026-06-15]] — sibling work that shipped RouteFAQ/RouteSummary; both consume `useFormatPrice`
 - [[structured-data-schema-patterns]] — JSON-LD integrity rules (companion to Rule 2)
-- [[currency-context-infinite-fetch-2026-05-23]] — historical bug in `CurrencyContext` itself (race + ref stability), separate issue
+- [[currency-context-infinite-fetch]] — historical bug in `CurrencyContext` itself (race + ref stability), separate issue

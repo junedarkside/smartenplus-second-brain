@@ -9,7 +9,7 @@
 params.append('status', 'active');  // filters is_actived=True on backend
 ```
 
-No backend change needed. Part of [[activities-day-tour-page-review-2026-06-01]] P0 findings.
+No backend change needed. Part of [[activities-day-tour-page-review]] P0 findings.
 
 ## Related
-- [[activities-day-tour-page-review-2026-06-01]] — full 14-finding audit
+- [[activities-day-tour-page-review]] — full 14-finding audit

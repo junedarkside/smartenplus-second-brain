@@ -80,4 +80,4 @@ bg-white/90 backdrop-blur-md rounded-full px-4 py-2 shadow-md text-gray-800 text
 ## Related
 
 - [[header-redesign-2026-implementation]]
-- [[mobile-header-analysis-2026-05-26]]
+- [[mobile-header-analysis]]

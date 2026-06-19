@@ -9,7 +9,7 @@ When a DB `IntegrityError` races in `create_charge`, call `omise_charge.expire()
 The `omise_charge` object is still in scope at the catch site. This is non-obvious but architecturally guaranteed by code order: the `client.Charge.create(...)` result is bound to a local variable, and the `try/except` block is in the same function scope. A refactor that moves the Omise call into a helper would break this invariant.
 
 ## Problem
-M9 (narrowed) in [[payment-deep-review-2026-06-12]]. Original concern: 500 + stuck order. **Corrected:** `create_charge` catches `IntegrityError` internally and re-raises as `ValueError` (`:192-194`) → view returns 409. The stuck-state is the orphaned Omise charge, not the order. If the user pays that orphaned charge, webhook returns `not_found` → money captured, order never finalized, no recovery path.
+M9 (narrowed) in [[payment-deep-review]]. Original concern: 500 + stuck order. **Corrected:** `create_charge` catches `IntegrityError` internally and re-raises as `ValueError` (`:192-194`) → view returns 409. The stuck-state is the orphaned Omise charge, not the order. If the user pays that orphaned charge, webhook returns `not_found` → money captured, order never finalized, no recovery path.
 
 Repro window: Omise API latency ~200ms. Two near-simultaneous charge requests must both complete Omise call before either DB insert. Low but non-zero probability — measured on a smoke test as ~1 in 5,000 attempts under burst load.
 
@@ -45,7 +45,7 @@ The `getattr(omise_charge, 'id', None)` guard is paranoia — `client.Charge.cre
 - **Best-effort expire** means orphan charges can still leak if Omise's expire API fails. Mitigated by: (a) the failure window is small (Omise API is reliable), (b) the orphaned charge has no DB row linking it to an order, so FE never displays a QR/redirect for it — the user cannot initiate payment on it through our system. The leak is theoretical until someone replays an old QR URL or a third-party integration points at the orphaned charge_id.
 - **Re-raise as `ValueError`** preserves the existing 409 mapping in the view. Alternative: a new `DuplicateChargeError` class. Rejected — adds an exception type for one call site.
 - **Not wrapping `transaction.atomic()` around the Omise call.** Could solve the race entirely, but the Omise API call is slow (200ms+) and holding a DB transaction across an external API call is a known anti-pattern (connection pool starvation, deadlock with concurrent webhooks). The orphan-expire pattern is the right trade.
-- **No test added in the original fix.** [[payment-deep-review-2026-06-12]] lists "concurrent `create_charge` IntegrityError + orphaned Omise charge (M9)" as a test gap. Add a test that mocks `omise_charge.expire()` and asserts it's called on `IntegrityError`.
+- **No test added in the original fix.** [[payment-deep-review]] lists "concurrent `create_charge` IntegrityError + orphaned Omise charge (M9)" as a test gap. Add a test that mocks `omise_charge.expire()` and asserts it's called on `IntegrityError`.
 - **Doesn't cover `omise.errors.BaseError` path (M5).** M5 is a separate concern: Omise API down during `create_charge` leaves the order in `payment_pending` with no `GatewayCharge` row. Fix is in `initiate_order_charge` (try/except + status revert), not `create_charge`.
 
 ## Operational notes
@@ -72,7 +72,7 @@ The `getattr(omise_charge, 'id', None)` guard is paranoia — `client.Charge.cre
 
 **Why `omise_charge.expire()` is safe to call on any state.** Omise's `expire()` is idempotent and state-agnostic — calling it on a `pending` charge expires it; calling it on an already-`expired` charge returns the same state; calling it on a `failed` charge is a no-op. The Omise API doesn't reject re-expiration. This is why the best-effort pattern works — even if the charge has been touched by another process, the expire call is safe.
 
-**The test gap in [[payment-deep-review-2026-06-12]].** "Concurrent `create_charge` IntegrityError + orphaned Omise charge (M9)" is listed as a missing test. The test would:
+**The test gap in [[payment-deep-review]].** "Concurrent `create_charge` IntegrityError + orphaned Omise charge (M9)" is listed as a missing test. The test would:
 1. Mock `client.Charge.create` to return a mock charge object
 2. Mock `GatewayCharge.objects.create` to raise `IntegrityError`
 3. Assert that `omise_charge.expire()` was called

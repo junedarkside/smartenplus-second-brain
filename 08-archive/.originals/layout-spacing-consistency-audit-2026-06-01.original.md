@@ -118,7 +118,7 @@ Change `p-2` → `px-4 xl:px-0`. Keep vertical padding as-is.
 
 ## Related
 
-- [[activities-day-tour-page-review-2026-06-01]] — Full functional audit this layout check follows
-- [[featured-image-header-width-bug-2026-05-30]] — Prior width bug: `w-[1200px]` hardcoded broke mobile. Rule: never `w-[Npx]` on layout elements.
-- [[airport-transfer-width-audit-2026-05-30]] — Unresolved inner padding issue on AT post-calendar sections
+- [[activities-day-tour-page-review]] — Full functional audit this layout check follows
+- [[featured-image-header-width-bug]] — Prior width bug: `w-[1200px]` hardcoded broke mobile. Rule: never `w-[Npx]` on layout elements.
+- [[airport-transfer-width-audit]] — Unresolved inner padding issue on AT post-calendar sections
 - [[design-system-tokens-expansion]] — SPACING tokens defined but not yet applied to layout containers

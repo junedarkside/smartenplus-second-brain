@@ -4,7 +4,7 @@
 When a card row shows multiple metadata badges, they must share ONE geometry and differentiate semantic axes by fill + icon — NOT by clashing hue. Mixing build methods (MUI Chip vs raw span), radii, and ad-hoc per-value colors reads as "AI slop / inconsistent".
 
 ## Context
-Operator contract-card on `/operators/[slug]` (audit + fix #124, [[operator-card-badge-consistency-2026-06-16]]). One row had 3 badges from 3 systems: Inactive (raw span, 4px rect, gray), ServiceCategory (MUI Chip, 6px, soft per-category fill), ContractType (raw span, full pill, `tourTypeSoft` token). 3 radii, 2 heights, 2 build methods.
+Operator contract-card on `/operators/[slug]` (audit + fix #124, [[operator-card-badge-consistency]]). One row had 3 badges from 3 systems: Inactive (raw span, 4px rect, gray), ServiceCategory (MUI Chip, 6px, soft per-category fill), ContractType (raw span, full pill, `tourTypeSoft` token). 3 radii, 2 heights, 2 build methods.
 
 ## Problem — two failure modes
 1. **Geometry drift**: different radius/height/build per badge in the same cluster. Fix: one canonical primitive (here: the MUI `Chip` render — 28px / 6px / 13px / 16px icon / `marginLeft:4px`). New badge = a thin twin component with its own config map, NOT a fork of the JSX and NOT a premature generic `<MetaBadge>` (only 2 callers → twin is fine; extract a shared primitive only at the 3rd caller).
@@ -21,6 +21,6 @@ Operator contract-card on `/operators/[slug]` (audit + fix #124, [[operator-card
 `components/UI/ContractTypeBadge.js` — twin of `components/UI/ServiceCategoryBadge.js`, 3-entry `TYPE_CONFIG` keyed by `CONTRACT_TYPE`, single `COLORS.badge.primary`, null-on-unknown. Did NOT touch shared `BadgeChip.js` (14 consumers). Deleted dead `tourTypeSoft` token (kept `tourTypePrivate/Charter` — used by BadgeChip).
 
 ## Related
-- [[operator-card-badge-consistency-2026-06-16]] — full audit/spec
+- [[operator-card-badge-consistency]] — full audit/spec
 - [[design-token-caption-tailwind-gotcha]] — token-layer separation (Tailwind vs MUI vs JS hex)
 - [[design-systems]]

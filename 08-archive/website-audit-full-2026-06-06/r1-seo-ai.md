@@ -182,7 +182,7 @@ date: 2026-06-06
 ### SEO-10 — FAQPage content matching schema (Audit AI Gap 4)
 - **Severity:** Low
 - **Audit ID:** AI Gap 4
-- **File:line:** `pages/homepagev2.js:493-495` per `homepage-seo-performance-deep-review-2026-05-21.md` SD10 — `helpSubcategories` fetched, FAQPage not generated
+- **File:line:** `pages/homepagev2.js:493-495` per `homepage-seo-performance-deep-review.md` SD10 — `helpSubcategories` fetched, FAQPage not generated
 - **Evidence:** Prior audit noted `helpSubcategories` exists in getStaticProps but no FAQPage schema generated.
 - **Fix:** Add FAQPage schema generation using `helpSubcategories` data. Visible FAQ section should be added to homepage OR FAQ data converted to `<details>` blocks in a `/faq` page.
 - **Impact:** Featured snippet eligibility
@@ -208,4 +208,4 @@ date: 2026-06-06
 
 ## Related
 
-[[homepage-seo-performance-deep-review-2026-05-21]] (30 findings, most already fixed) · [[blog-seo-performance-2026-05-20]] · [[structured-data-schema-patterns]]
+[[homepage-seo-performance-deep-review]] (30 findings, most already fixed) · [[blog-seo-performance]] · [[structured-data-schema-patterns]]

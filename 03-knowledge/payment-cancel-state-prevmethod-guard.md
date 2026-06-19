@@ -15,7 +15,7 @@ The actual bug: `selectedPayment` is a Redux selector or a derived value, and on
 Falsification: maybe the reset is intentional on every render? — No, the alert would flash on every keystroke in unrelated inputs. The user-visible bug is the flash on cancel → navigate.
 
 ## Problem
-M3 in [[payment-deep-review-2026-06-12]]. Effect at `PaymentComponent.js:523-527` clears `cancelState.success` instantly. On any re-render that touches `selectedPayment` (e.g. a parent state update that re-references the same string, or a selector that re-derives an object), the effect re-runs, the cancel alert disappears for one frame, then a re-render restores it. User sees a flash of "Payment Cancelled" alert after the order page has already navigated away. Looks like a glitch; erodes trust in the cancel affordance.
+M3 in [[payment-deep-review]]. Effect at `PaymentComponent.js:523-527` clears `cancelState.success` instantly. On any re-render that touches `selectedPayment` (e.g. a parent state update that re-references the same string, or a selector that re-derives an object), the effect re-runs, the cancel alert disappears for one frame, then a re-render restores it. User sees a flash of "Payment Cancelled" alert after the order page has already navigated away. Looks like a glitch; erodes trust in the cancel affordance.
 
 The flash is intermittent — only when the right re-render sequence happens. Hard to reproduce in isolation, easy to reproduce in production where many state updates happen per second.
 

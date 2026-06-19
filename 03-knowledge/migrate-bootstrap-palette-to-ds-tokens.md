@@ -53,4 +53,4 @@ After migration, the design system has one source of truth. The legacy Bootstrap
 A grep for hardcoded hex codes in `styles/globals.css` should return zero matches after migration. CI check enforces.
 
 ## Related
-- [[design-system-audit-2026-06-13]] — broader design system audit
+- [[design-system-audit]] — broader design system audit

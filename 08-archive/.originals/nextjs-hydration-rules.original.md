@@ -4,7 +4,7 @@
 6 rules preventing hydration mismatches in Next.js 14 + PersistGate SSR blocker pattern. Mismatch in `_app.js` triggers HMR infinite refresh across all pages.
 
 ## Context
-Extracted from [[nextjs-patterns]]. Discovered during [[hydration-infinite-refresh-fix-2026-05-20]] + [[og-image-ssr-fix-2026-05-23]].
+Extracted from [[nextjs-patterns]]. Discovered during [[hydration-infinite-refresh-fix]] + [[og-image-ssr-fix-2026-05-23]].
 
 ## Details
 
@@ -64,6 +64,6 @@ Fixed in `_app.js` commit `ac6f8aa` — verified `next-head-count="14"` after fi
 
 ## Related
 - [[nextjs-patterns]] — parent note
-- [[hydration-infinite-refresh-fix-2026-05-20]]
+- [[hydration-infinite-refresh-fix]]
 - [[og-image-ssr-fix-2026-05-23]]
 - [[persistgate-ssr-suppresses-head-component]]

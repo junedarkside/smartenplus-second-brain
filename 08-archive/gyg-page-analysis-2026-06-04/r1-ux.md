@@ -231,5 +231,5 @@ Will let R2 Skeptic adjudicate.
 ## Related
 
 - [[r1-ia]] — IA specialist section diff
-- [[experience-detail-page-redesign-2026-06-02]] — predecessor doc
+- [[experience-detail-page-redesign]] — predecessor doc
 - [[business-development-thailand-platform-analysis]] — GYG competitive positioning

@@ -4,7 +4,7 @@
 Cancel/expire logic is 2× implemented 3×. `useCancelPayment` hook and `expirePendingCharge` helper are the canonical implementations. `handleCancelPendingPayment` in `PaymentComponent.js:146-160` re-implements the hook; two inline fetches in `PaymentComponent.js:362-367` and `:388-391` re-implement the helper. Use the existing helpers.
 
 ## Context
-[[payment-deep-review-2026-06-12]] identified the duplication in the "Duplication / reuse (FE)" section. The Batch 1 of the implement plan established the reuse contract:
+[[payment-deep-review]] identified the duplication in the "Duplication / reuse (FE)" section. The Batch 1 of the implement plan established the reuse contract:
 
 - `useCancelPayment.js` — React hook for cancel-payment flows. Returns `{ cancelPayment, isCancelling, error }`. Handles loading state, error normalization, optimistic UI revert.
 - `expirePendingCharge` in `getBillingAndOrder.js:201-231` — plain async function for expire-pending-charge flows. Takes `{ order_id, email }`. Posts to `/api/payments/expire-pending-charge/`. Returns `Promise<void>`.

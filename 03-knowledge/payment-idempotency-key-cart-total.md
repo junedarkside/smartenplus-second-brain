@@ -15,7 +15,7 @@ The reuse branches return bare `OrderSerializer(order).data` — a different sha
 This assumption was implicit, not documented. It broke twice (coupon apply, cancel-pending recovery) before the pattern was made explicit.
 
 ## Problem
-H3 in [[payment-deep-review-2026-06-12]]. Two distinct breakages:
+H3 in [[payment-deep-review]]. Two distinct breakages:
 
 - **Shape mismatch.** FE reads `orderData?.order?.billing_profile_slug` (`usePaymentInitialization.js:58`) and **unguarded** `orderData.order.order_id` (`:74`) → `TypeError: Cannot read properties of undefined (reading 'order_id')` → caught at `:83` → `GENERIC_ERROR` → "Payment processing failed" toast. Triggered on every coupon apply (`usePaymentCouponManager.js:26`) and cancel-pending recovery (`PaymentComponent.js:157`).
 - **NameError.** Keyless branch `views.py:278-289` uses `cart` in `Order.objects.filter(cart=cart,...)`. `cart` first assigned at `views.py:326` (after billing profile steps). Any client omitting `X-Idempotency-Key` header with an existing order → `NameError: name 'cart' is not defined` → 500. Latent — FE always sends the key, so it doesn't trigger in production. But: any FE bug that drops the header exposes it.

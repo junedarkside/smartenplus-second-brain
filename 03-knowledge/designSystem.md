@@ -25,7 +25,7 @@ Token-based design system consumed by MUI + Tailwind. Defines:
 - [[design-system-tokens-expansion]] — token expansion history
 - [[design-system-phase1-migration]] — Phase 1 migration plan
 - [[design-system-audit-2026-05-31]] — first audit
-- [[design-system-audit-2026-06-13]] — second audit (post-Phase 1)
+- [[design-system-audit]] — second audit (post-Phase 1)
 - [[designsystem-shadow-border-tokens]] — shadow/border token rationale
 - [[migrate-bootstrap-palette-to-ds-tokens]] — palette migration pattern
 - [[design-token-caption-tailwind-gotcha]] — caption token gotcha

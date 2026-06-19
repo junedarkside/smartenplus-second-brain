@@ -265,8 +265,8 @@ All from `GET /product-detail/{slug}/`:
 ## Related
 
 - [[experiences-2026-marketplace-redesign]] — browse page redesign (Phase 1 shipped)
-- [[trip-detail-deep-review-2026-05-20]] — prior detail page audit
-- [[trip-detail-page-review-2026-05-20]] — prior design review
+- [[trip-detail-deep-review]] — prior detail page audit
+- [[trip-detail-page-review]] — prior design review
 - [[design-system-audit-2026-05-31]] — design tokens in use
 - [[smartenplus-2026-ux-direction]] — overall UX direction
 

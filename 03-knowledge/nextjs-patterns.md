@@ -6,7 +6,7 @@ SmartEnPlus Next.js 14 patterns. Pages Router, Redux Toolkit, RTK Query, ISR, dy
 ## ISR Cache
 Trip detail: `revalidate: 300` (5 min). Deploy clears `smartenplus_next_cache` Docker volume. Without volume cleanup, ISR persists stale across deploys.
 
-**`revalidate` is ignored in `next dev`:** `getStaticProps` runs on every request in dev mode regardless of `revalidate` value. ISR only activates in production (`next build` + `next start`). Changing `revalidate` to fix local dev 429s is ineffective. Fix 429s in dev at the backend layer (response cache, throttle rate). See [[isr-429-cold-start-fix-2026-05-23]].
+**`revalidate` is ignored in `next dev`:** `getStaticProps` runs on every request in dev mode regardless of `revalidate` value. ISR only activates in production (`next build` + `next start`). Changing `revalidate` to fix local dev 429s is ineffective. Fix 429s in dev at the backend layer (response cache, throttle rate). See [[isr-429-cold-start-fix]].
 
 **`getStaticPaths` is build-time only:** Never runs during ISR revalidation at runtime. Only `getStaticProps` runs on ISR revalidation. A dynamic route's `getStaticPaths` hitting an API endpoint is a build concern, not a runtime 429 concern.
 
@@ -65,6 +65,6 @@ Applies to: `generateBlogSEO()` fallback images, `trips/index.js`, any page usin
 ## Related
 - [[architecture]]
 - [[payment-integration]]
-- [[hydration-infinite-refresh-fix-2026-05-20]]
-- [[isr-429-cold-start-fix-2026-05-23]]
+- [[hydration-infinite-refresh-fix]]
+- [[isr-429-cold-start-fix]]
 - [[og-image-ssr-fix-2026-05-23]]

@@ -56,14 +56,14 @@ Files exceeding 200-line guideline. Exempt: `log.md`, `master-state.md`, `CLAUDE
 | `01-projects/trip-detail-uxui-audit-2026-05-22.md` | 311 | Compress + extract 1-2 notes |
 | `01-projects/header-redesign-2026-team-review.md` | 294 | Compress + extract 1-2 notes |
 | `01-projects/header-redesign-2026-spec.md` | 286 | Compress + extract 1-2 notes |
-| `01-projects/homepage-seo-performance-deep-review-2026-05-21.md` | 264 | Compress, likely fits under 200 |
+| `01-projects/homepage-seo-performance-deep-review.md` | 264 | Compress, likely fits under 200 |
 
 **Borderline (compress first, split only if still over):**
 | File | Lines | Action |
 |------|-------|--------|
-| `03-knowledge/transportation-category-audit-2026-05-30.md` | 228 | Compress |
+| `03-knowledge/transportation-category-audit.md` | 228 | Compress |
 | `02-areas/southeast_asia_transport_platform_direction.md` | 221 | Compress + rename |
-| `03-knowledge/trip-detail-deep-review-2026-05-20.md` | 209 | Compress |
+| `03-knowledge/trip-detail-deep-review.md` | 209 | Compress |
 
 **Compression techniques (preserve WHY/tradeoffs/gotchas):**
 - `trim-filler` — remove redundant explanations, tighten prose
@@ -91,7 +91,7 @@ Files exceeding 200-line guideline. Exempt: `log.md`, `master-state.md`, `CLAUDE
 ### Move to `03-knowledge/` (reusable patterns):
 | File | Reason |
 |------|--------|
-| `01-projects/smartenplus/content-marketing-strategy-2026-05-24.md` | Reusable strategy doc |
+| `01-projects/smartenplus/content-marketing-strategy-review.md` | Reusable strategy doc |
 
 ---
 
@@ -109,7 +109,7 @@ Files exceeding 200-line guideline. Exempt: `log.md`, `master-state.md`, `CLAUDE
 
 | Current | Proposed | Reason |
 |---------|----------|--------|
-| `01-projects/smartenplus/content-marketing-strategy-2026-05-24.md` | `03-knowledge/content-marketing-strategy.md` | Flat structure + correct category |
+| `01-projects/smartenplus/content-marketing-strategy-review.md` | `03-knowledge/content-marketing-strategy.md` | Flat structure + correct category |
 
 ---
 
@@ -127,7 +127,7 @@ Execute in this order:
 
 ### Phase B: Reclassification (medium risk)
 - [ ] **B1.** Move 9 COMPLETED files from `01-projects/` → `08-archive/`
-- [ ] **B2.** Move `content-marketing-strategy-2026-05-24.md` from `01-projects/smartenplus/` → `03-knowledge/content-marketing-strategy.md`
+- [ ] **B2.** Move `content-marketing-strategy-review.md` from `01-projects/smartenplus/` → `03-knowledge/content-marketing-strategy.md`
 - [ ] **B3.** Remove empty `01-projects/smartenplus/` subfolder
 - [ ] **B4.** Update all wikilinks referencing moved files
 

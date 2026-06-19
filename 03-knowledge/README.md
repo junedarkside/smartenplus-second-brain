@@ -90,7 +90,7 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[hero-back-share-buttons-2row-header-fix]] — hero back/share
 - [[editorial-grid-layout-pattern]] — editorial grid
 - [[featured-image-header-usage-matrix]] — featured image matrix
-- [[featured-image-header-width-bug-2026-05-30]] — width bug
+- [[featured-image-header-width-bug]] — width bug
 - [[transport-combo-card-pattern]] — combo card
 - [[section-contentcard-wrapper-pattern]] — in-article CTA
 - [[currency-context-price-rendering-rule]] — price render
@@ -99,11 +99,11 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[brand-name-constant-extraction]] — brand constant
 - [[wishlist-per-card-state-not-page]] — wishlist state
 - [[add-flow-metadata-helper-pattern]] — metadata helper
-- [[core-web-vitals-budget-2026-06-06]] — CWV budget
-- [[layout-spacing-consistency-audit-2026-06-01]] — spacing audit
+- [[core-web-vitals-budget]] — CWV budget
+- [[layout-spacing-consistency-audit]] — spacing audit
 - [[homepage-section-render-order-conversion]] — homepage order
-- [[homepage-experiences-section-audit-2026-05-30]] — homepage audit
-- [[transportation-category-audit-2026-05-30]] — transport category
+- [[homepage-experiences-section-audit]] — homepage audit
+- [[transportation-category-audit]] — transport category
 - [[mobile-search-bar-ux-competitor-research-2026]] — search bar
 - [[admin-dashboard-component-patterns]] — admin components
 - [[admin-dashboard-contracts]] — admin contracts
@@ -136,7 +136,7 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[contract-confidence-score-algorithm]] — confidence score
 - [[contract-fk-icontains-or-fallback]] — FK icontains
 - [[contract-trip-null-non-transport-pattern]] — trip null
-- [[contract-serializer-non-transport-fields-2026-06-03]] — serializer fields
+- [[contract-serializer-non-transport-fields]] — serializer fields
 - [[extea-contract-serializer-no-ratecard]] — EXTEA serializer
 - [[manual-adjustment-model]] — adjustment model
 - [[copy-cartitem-trip-none-guard]] — cartitem guard
@@ -184,7 +184,7 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[payment-cancel-vs-expire-error-mapping]] — error mapping
 - [[payment-celery-expiry-strategy]] — expiry strategy
 - [[payment-orphan-charge-expire-pattern]] — orphan expire
-- [[payment-pending-deadlock-2026-06-12]] — pending deadlock
+- [[payment-pending-deadlock]] — pending deadlock
 - [[payment-reconcile-gate-extension]] — reconcile gate
 - [[payment-sentinel-idempotency]] — sentinel idempotency
 - [[payment-idempotency-key-cart-total]] — idempotency key
@@ -192,7 +192,7 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[promptpay-no-webhook-on-expiry]] — promptpay expiry
 - [[payment-guest-email-guard-mirror]] — guest email guard
 - [[payment-amount-validation-rule]] — amount validation
-- [[payment-audit-bugs-2026-06-11]] — audit bugs
+- [[payment-audit-bugs]] — audit bugs
 - [[payment-exception-catalog]] — exception catalog
 - [[payment-finalize-deep-dive]] — finalize deep dive
 - [[payment-legacy-deprecation-map]] — legacy deprecation
@@ -200,7 +200,7 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[multitab-payment-race-condition-fixes]] — race fixes
 - [[refund-flow]] — refund flow
 - [[omise-client-integration]] — Omise client
-- [[omise-api-reference-2026-06-12]] — Omise API ref
+- [[omise-api-reference]] — Omise API ref
 - [[omise-attributes-dict-extraction]] — Omise attributes
 - [[omise-webhook-security]] — webhook security
 - [[omise-webhook-tailscale-local-testing]] — tailscale testing
@@ -228,16 +228,16 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[omise-webhook-security]] — Omise security
 
 ### Audit / Research
-- [[contract-model-ambiguity-audit-2026-06-03]] — contract audit
+- [[contract-model-ambiguity-audit]] — contract audit
 - [[design-system-audit-2026-05-31]] — DS audit
-- [[design-system-audit-2026-06-13]] — DS audit 06-13
-- [[rate-review-css-audit-2026-06-06]] — rate review CSS
+- [[design-system-audit]] — DS audit 06-13
+- [[rate-review-css-audit]] — rate review CSS
 - [[rate-review-page-shell-pattern]] — rate review shell
-- [[trip-detail-deep-review-2026-05-20]] — trip deep
-- [[trip-detail-page-review-2026-05-20]] — trip page
-- [[trip-page-full-audit-2026-06-15]] — trip full
-- [[trip-filter-modal-audit-2026-06-15]] — trip filter
-- [[airport-transfer-width-audit-2026-05-30]] — width audit
+- [[trip-detail-deep-review]] — trip deep
+- [[trip-detail-page-review]] — trip page
+- [[trip-page-full-audit]] — trip full
+- [[trip-filter-modal-audit]] — trip filter
+- [[airport-transfer-width-audit]] — width audit
 - [[airport-transfer-at1-redesign-spec]] — AT1 spec
 - [[booking-widget-availability-error-display]] — widget error
 - [[gtm-impression-dedup-sessionstorage]] — GTM dedup
@@ -247,7 +247,7 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[smartenplus-2026-ux-direction]] — 2026 UX
 - [[smartenplus-product-positioning]] — positioning
 - [[smartenplus-synopsis]] — synopsis
-- [[content-marketing-strategy-2026-05-24]] — content strategy
+- [[content-marketing-strategy-review]] — content strategy
 - [[experiences-2026-marketplace-redesign]] — canonical categories (see [[experiences-2026-marketplace-redesign]])
 - [[activities-browse-filter-inactive-contracts]] — filter inactive
 - [[activities-sort-filter-ux]] — sort filter

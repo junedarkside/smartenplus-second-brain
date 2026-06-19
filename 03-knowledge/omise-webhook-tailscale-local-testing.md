@@ -110,7 +110,7 @@ All 5 steps PASS:
 ## Related
 
 - [[omise-webhook-security]] — Event.retrieve() verification, double-layer dedupe, WebhookEvent outside atomic
-- [[payment-auto-test-results-2026-06-12]] — full automated test results including webhook gap
+- [[payment-auto-test-results]] — full automated test results including webhook gap
 - `smartenplus-backend/payments/views.py:176` — `OmiseWebhookView`
 - `smartenplus-backend/orders/urls.py:26` — route mount
 - `smartenplus-backend/scripts/e2e_payment_fixtures.py` — fixture CLI for charge creation + cleanup

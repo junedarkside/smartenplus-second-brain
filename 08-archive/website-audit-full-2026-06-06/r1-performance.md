@@ -143,4 +143,4 @@ date: 2026-06-06
 
 ## Related
 
-[[homepage-seo-performance-deep-review-2026-05-21]] (prior SEO+perf audit, 30 findings — most already fixed)
+[[homepage-seo-performance-deep-review]] (prior SEO+perf audit, 30 findings — most already fixed)

@@ -6,7 +6,7 @@ Ongoing responsibilities and standards we maintain. Folder structure IS the tag;
 ## Contents
 - [[business]] — business unit overview
 - [[business-development-thesis-2026]] — 3-year BD thesis
-- [[content-marketing-strategy-2026-06-03]] — content marketing direction
+- [[content-marketing-strategy]] — content marketing direction
 - [[engineering]] — engineering function overview
 - [[southeast-asia-transport-platform-direction]] — SEA platform direction memo
 

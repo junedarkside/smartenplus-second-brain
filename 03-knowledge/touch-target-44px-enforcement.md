@@ -57,4 +57,4 @@ Batch-fix all 13 sites in Sprint 1 (F2 + F3). Test at 320px (iPhone SE) before m
 Mitigation: test at 320px before merge. If overflow, use `flex-shrink: 0` on parent + reduce padding.
 
 ## Related
-[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-mobile-ux]] · [[mobile-header-analysis-2026-05-26]]
+[[website-audit-full-2026-06-06-overview|website-audit-full-2026-06-06]] · [[r3-leader-synthesis]] · [[r1-mobile-ux]] · [[mobile-header-analysis]]

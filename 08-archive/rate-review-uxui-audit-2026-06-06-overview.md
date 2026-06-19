@@ -30,5 +30,5 @@ IN PROGRESS — Release 1 shipped (P0-1/P0-2/P0-3 + P1-1/P1-2). Sprint 1 (P1-3 t
 - [[homepage-uxui-audit-2026-05-31]]
 
 ## Orphan Link-Backlog (Linked 2026-06-13)
-- [[rate-review-css-audit-2026-06-06]] — Rate-review CSS consistency audit (sibling audit; overview is umbrella)
+- [[rate-review-css-audit]] — Rate-review CSS consistency audit (sibling audit; overview is umbrella)
 - [[rate-review-page-shell-pattern]] — Rate-review page shell pattern (sibling atomic pattern)

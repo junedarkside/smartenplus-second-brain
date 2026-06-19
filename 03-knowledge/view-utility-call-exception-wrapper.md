@@ -26,9 +26,9 @@ The wrapper is *not* a fix to `check_advance_hour` itself (that needs internal n
 - The wrapper is **not** a substitute for fixing the utility's own null guards. Internal guards at `carts/utils.py:591` (`contract.trip.departure_time if contract.trip else None`) are the primary fix; the wrapper is a backstop.
 - Use `except Exception`, not `except` (bare). Bare catches `BaseException` including `KeyboardInterrupt` and `SystemExit` — wrong.
 - Re-raise as `ValidationError`, not return a JSON response. The view's serializer context handles the response shape.
-- Frontend may still mis-handle `PARSING_ERROR` (string `status` from RTK Query) when the response is HTML — fix `error.status >= 500` checks separately. See [[cartitems-500-error-analysis-2026-06-02]] Bug 3.
+- Frontend may still mis-handle `PARSING_ERROR` (string `status` from RTK Query) when the response is HTML — fix `error.status >= 500` checks separately. See [[cartitems-500-error-analysis]] Bug 3.
 
 ## Related
-- [[cartitems-500-error-analysis-2026-06-02]] — origin story (production 500 on `/carts/{id}/cartitems/`)
+- [[cartitems-500-error-analysis]] — origin story (production 500 on `/carts/{id}/cartitems/`)
 - [[contract-trip-null-non-transport-pattern]] — internal null-guard fix at `carts/utils.py:591`
 - [[payment-checkout-architecture-audit]] — broader error handling patterns

@@ -66,4 +66,4 @@ Every new project in this stack starts with both fixes. Codify in the project bo
 Framework upgrades: MUI v6 / Tailwind v4 may change this. Re-validate on upgrade.
 
 ## Related
-- [[design-system-audit-2026-06-13]] — broader design system audit
+- [[design-system-audit]] — broader design system audit

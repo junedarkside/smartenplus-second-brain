@@ -100,4 +100,4 @@ Test on smallest target viewport (1280×720 or 1024×768). Open menu, verify:
 ## Related
 - [[mui-dropdown-preserve-strategy]] — MUI Menu core for ARIA test compat
 - [[expandable-menu-row-mui-collapse]] — companion pattern for tall content
-- [[profile-dropdown-redesign-2026-05-29]] — original Bottom Sheet pattern
+- [[profile-dropdown-redesign]] — original Bottom Sheet pattern

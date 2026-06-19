@@ -9,7 +9,7 @@
 
 Page route: `pages/activities/index.js` → `FilterDayTripsPage.js`  
 Branch reviewed: `main` (commit `efb59d7`)  
-Category filter chain confirmed working per [[adr-experiences-nav-category-filtering-2026-05-25]].  
+Category filter chain confirmed working per [[adr-experiences-nav-category-filtering]].  
 DAY_TOUR is the default category in `useDayTripFilters.js:18`.
 
 ---
@@ -64,7 +64,7 @@ Scoped fix: `CategoryFilter.js:55,80` + `FilterDayTripsPage.js:142` → `TOUCH_T
 **UX-2 [P1] — Category chips include non-experience categories**
 - `CategoryFilter.js:42` iterates ALL `SERVICE_CATEGORIES` — frontend has 9 keys: `DAY_TOUR, MULTI_DAY_TOUR, SPA_WELLNESS, EVENT_TICKET, ATTRACTION_TICKET, FOOD_DINING, ACCOMMODATION, TRANSPORTATION, OTHER`
 - ~~TRANSFER~~ — REFUTED by scrutinize. `dayTripConstants.js` has no `TRANSFER` key (backend enum has it; frontend constants don't expose it). Exclude: `ACCOMMODATION`, `TRANSPORTATION`, `OTHER`.
-- Vault canonical experience subset: `DAY_TOUR, MULTI_DAY_TOUR, SPA_WELLNESS, EVENT_TICKET, ATTRACTION_TICKET, FOOD_DINING` per [[homepage-experiences-section-audit-2026-05-30]]
+- Vault canonical experience subset: `DAY_TOUR, MULTI_DAY_TOUR, SPA_WELLNESS, EVENT_TICKET, ATTRACTION_TICKET, FOOD_DINING` per [[homepage-experiences-section-audit]]
 - **Fix:** Add `EXPERIENCE_CATEGORIES` array to `dayTripConstants.js` with the 6 valid values. Replace `Object.keys(SERVICE_CATEGORIES)` in `CategoryFilter.js:42`.
 
 **UX-3 [P1] — Empty state gives no actionable path**
@@ -133,7 +133,7 @@ Scoped fix: `CategoryFilter.js:55,80` + `FilterDayTripsPage.js:142` → `TOUCH_T
 
 **FQ-3 [P1] — SEO meta missing structured data (ItemList schema)**
 - `pages/activities/index.js` — has `<title>`, `description`, `og:title`, `og:description`. No structured data.
-- OTA category pages benefit from `ItemList` schema listing top 3–5 results. Established pattern from [[trip-detail-page-review-2026-05-20]] and [[homepage-seo-performance-deep-review-2026-05-21]].
+- OTA category pages benefit from `ItemList` schema listing top 3–5 results. Established pattern from [[trip-detail-page-review]] and [[homepage-seo-performance-deep-review]].
 - `og:url` hardcodes `https://smartenplus.co.th` — `NEXT_PUBLIC_SITE_URL` should be used (ISR pattern from [[og-image-ssr-fix-2026-05-23]]).
 - **Fix (P1):** Replace hardcoded domain with `process.env.NEXT_PUBLIC_SITE_URL`. Add `ItemList` JSON-LD with top N contracts once SSR/ISR is available for this page.
 
@@ -237,7 +237,7 @@ Removing `ACCOMMODATION`, `TRANSPORTATION`, `TRANSFER` from chip row means exist
 
 ## Related
 
-- [[adr-experiences-nav-category-filtering-2026-05-25]] — URL→API chain, category enum, nav decisions
-- [[homepage-experiences-section-audit-2026-05-30]] — canonical experience category list, grill decisions
-- [[trip-detail-page-review-2026-05-20]] — 3-agent review template this follows
+- [[adr-experiences-nav-category-filtering]] — URL→API chain, category enum, nav decisions
+- [[homepage-experiences-section-audit]] — canonical experience category list, grill decisions
+- [[trip-detail-page-review]] — 3-agent review template this follows
 - [[design-system-audit-2026-05-31]] — token expansion context

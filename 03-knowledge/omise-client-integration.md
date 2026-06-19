@@ -79,4 +79,4 @@ PromptPay creates a Source, then a Charge. The QR image URL lives at `charge.sou
 - [[payment-status-enums]] — OmiseMethod constants, OMISE_STATUS_MAP
 - [[payment-backend-charge-flow]] — full charge creation flow including DB constraint
 - [[omise-webhook-security]] — Event.retrieve() verification pattern
-- [[omise-api-reference-2026-06-12]] — full Omise API catalog
+- [[omise-api-reference]] — full Omise API catalog

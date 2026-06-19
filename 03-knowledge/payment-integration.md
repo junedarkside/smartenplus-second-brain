@@ -119,7 +119,7 @@ Omise Documents API (`/disputes/{id}/documents`) = dispute evidence upload only 
 **C2: Transient errors incorrectly clear cartId** — `check-and-createcart.js` catches ANY failure (network, 429, 500) and clears `cartId`. Only 404 means cart is actually invalid. Fix: `error.status === 404` guard. [[booking-payment-e2e-audit-2026-06-11]], candidate section.
 
 ## Related
-- [[payment-audit-bugs-2026-06-11]] — confirmed bugs + audit methodology
+- [[payment-audit-bugs]] — confirmed bugs + audit methodology
 - [[payment-checkout-5-principles]] — core architecture 5-point framework
 - [[promptpay-no-webhook-on-expiry]] — expiry notifications (3 paths)
 - [[nextauth-session-shape]] — guest vs auth email sourcing

@@ -60,7 +60,7 @@ Audited against live code (verified, see inline **Grilled** notes above) and `he
 
 ## Related
 - This session's token-consistency fix on the same page: branch `fix/operators-design-tokens` (typography, badge colors, border-radius, `LAYOUT.pageContentClasses` width fix).
-- Closest precedent in this vault: [[experience-detail-page-redesign-2026-06-02]] — same shape (detail-page premium redesign spec, component-reuse-first, no code yet).
+- Closest precedent in this vault: [[experience-detail-page-redesign]] — same shape (detail-page premium redesign spec, component-reuse-first, no code yet).
 - Token source: `helpers/designSystem.js` (`LAYOUT.pageContentClasses` added this session, `COLORS.badge.tourTypeSoft` also added this session).
 
 ## Files referenced

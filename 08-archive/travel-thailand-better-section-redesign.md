@@ -104,5 +104,5 @@ Branch: `260528-feat/header-redesign-2026` (pushed, not yet merged to main)
 - [[header-redesign-2026-implementation]]
 - [[smartenplus-2026-ux-direction]]
 - [[smartenplus-product-positioning]]
-- [[homepage-ux-review-2026-05-21]]
+- [[homepage-ux-review]]
 - [[carousel-design-standard]]

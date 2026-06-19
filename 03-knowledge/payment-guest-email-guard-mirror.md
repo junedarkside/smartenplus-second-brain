@@ -14,7 +14,7 @@ This asymmetry is the M8 attack surface. Any user who knows a guest `order_id` c
 The KB (`docs/operations/CHECKOUT.md` and the historical comments at `views.py:374-377`) implies email is checked everywhere. Code shows it isn't. This drift between docs and code is the bug.
 
 ## Problem
-M8 in [[payment-deep-review-2026-06-12]]. The fix is to mirror the existing `ExpirePendingChargeView` pattern to all charge entry points. The mirror is small (4 lines) and the contract is clear.
+M8 in [[payment-deep-review]]. The fix is to mirror the existing `ExpirePendingChargeView` pattern to all charge entry points. The mirror is small (4 lines) and the contract is clear.
 
 Specifics:
 - The `order_id` is exposed in URLs like `/ordersummary/{id}/`, in email links, in user-facing pages. Not a secret.
@@ -61,7 +61,7 @@ The `not request.user.is_authenticated` guard is critical. For authenticated req
 - KB (`docs/operations/CHECKOUT.md` and inline comments) is now consistent with code
 - Future charge entry points (refund-initiate, capture, void, re-charge) MUST copy this pattern. Add to PR-review checklist.
 - A new guest-flow view (e.g. guest order history, guest re-book) inherits the same email-guard responsibility
-- Test gap: "guest cross-user charge initiation (M8)" is missing test in [[payment-deep-review-2026-06-12]]; add one. Test cases: (a) guest tries to charge another guest's order → 403, (b) guest charges own order → success, (c) authenticated user charges own order without email in body → success, (d) authenticated user charges another user's order → 403 (existing `user__isnull=False` check).
+- Test gap: "guest cross-user charge initiation (M8)" is missing test in [[payment-deep-review]]; add one. Test cases: (a) guest tries to charge another guest's order → 403, (b) guest charges own order → success, (c) authenticated user charges own order without email in body → success, (d) authenticated user charges another user's order → 403 (existing `user__isnull=False` check).
 - The `request.data.get('email')` shape is now part of the contract for guest order endpoints. Document in `docs/api/PAYMENT_API.md`.
 
 ## Operational notes
@@ -88,7 +88,7 @@ The `not request.user.is_authenticated` guard is critical. For authenticated req
 
 **The 4-site threshold for extraction.** With `ChargeOrderView` and `ExpirePendingChargeView` both having the check, that's 2 sites. Add a 3rd (e.g. guest refund-initiate) and extract a helper: `def assert_guest_email_match(request, order): ...`. Until then, inline duplication of 4 lines is fine. Premature abstraction is worse than duplication.
 
-**Test cases to add (per [[payment-deep-review-2026-06-12]] M8 gap).**
+**Test cases to add (per [[payment-deep-review]] M8 gap).**
 - Guest A tries to charge Guest B's order → 403
 - Guest A charges own order with correct email → 200
 - Guest A charges own order with wrong email → 403

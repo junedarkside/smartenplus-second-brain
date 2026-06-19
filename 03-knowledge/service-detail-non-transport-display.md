@@ -34,7 +34,7 @@ Three field contracts the frontend reads:
 - `meeting_point_type` + `meeting_point_details` are new flat fields; both `null=True`.
 
 ## Related
-- [[contract-serializer-non-transport-fields-2026-06-03]] — backend serializer fix
+- [[contract-serializer-non-transport-fields]] — backend serializer fix
 - [[contract-trip-null-non-transport-pattern]] — companion null-guard pattern
 - [[copy-cartitem-trip-none-guard]] — backend write-path guard
-- [[checkout-confirmation-payment-crash-2026-06-03]] — full flow audit source
+- [[checkout-confirmation-payment-crash]] — full flow audit source

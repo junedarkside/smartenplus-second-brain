@@ -34,5 +34,5 @@ consumers already expected the field; they were starved, not wrong.
   that branches on them.
 
 ## Related
-- [[adr-contract-soft-delete-2026-06-16]]
+- [[adr-contract-soft-delete]]
 - [[summary-must-not-scope-by-its-own-selector]]

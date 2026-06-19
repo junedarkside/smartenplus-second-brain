@@ -11,10 +11,10 @@ The verification block at `orders/views.py:766-772` is commented out:
 # if not verify_omise_event(...):
 #     return HttpResponse(status=400)
 ```
-The view is `AllowAny`. The legacy webhook acts on `cards.Charge` rows, and `PlaceOrderViewSet` (M10 in [[payment-deep-review-2026-06-12]], `apis/urls.py:37` → `carts/views.py:281-413`) is the only remaining writer of those rows. Killing the writer narrows the attack surface; killing the reader eliminates it.
+The view is `AllowAny`. The legacy webhook acts on `cards.Charge` rows, and `PlaceOrderViewSet` (M10 in [[payment-deep-review]], `apis/urls.py:37` → `carts/views.py:281-413`) is the only remaining writer of those rows. Killing the writer narrows the attack surface; killing the reader eliminates it.
 
 ## Problem
-H2 in [[payment-deep-review-2026-06-12]]. The deprecation must be coordinated — killing the webhook but not the writer (or vice versa) leaves one half of the attack surface intact. Without a deprecation map, the next payment audit re-discovers these routes and re-writes the same risk analysis from scratch.
+H2 in [[payment-deep-review]]. The deprecation must be coordinated — killing the webhook but not the writer (or vice versa) leaves one half of the attack surface intact. Without a deprecation map, the next payment audit re-discovers these routes and re-writes the same risk analysis from scratch.
 
 The 410 pattern is already established in the codebase: the stripe-webhook route at `orders/urls.py:30` returns `HttpResponse("Deprecated", status=410)`. Use the same pattern for both legacy routes.
 
@@ -88,7 +88,7 @@ zgrep -h 'POST /api/placeorder/' /var/log/nginx/access.log*.gz | wc -l
 
 **Admin-dashboard may have legacy integrations.** The admin-dashboard repo has its own frontend that talks to the backend. It may have a legacy `/placeorder/` integration for historical order views or refund flows. Notify the admin-dashboard team before deploying the 410. They may need a parallel deprecation in their repo.
 
-**Webhook signature verification — the missing line.** `orders/views.py:766-772` is the commented-out `if not verify_omise_event(...)` block. The deprecation removes the route entirely, so the verification never needs to be written. But: if any future webhook route is added, the verification MUST be uncommented (or copied from a working pattern). The pattern: verify signature, return 400 on failure, return 200 on success. See [[omise-api-reference-2026-06-12]] for the signature construction.
+**Webhook signature verification — the missing line.** `orders/views.py:766-772` is the commented-out `if not verify_omise_event(...)` block. The deprecation removes the route entirely, so the verification never needs to be written. But: if any future webhook route is added, the verification MUST be uncommented (or copied from a working pattern). The pattern: verify signature, return 400 on failure, return 200 on success. See [[omise-api-reference]] for the signature construction.
 
 **Cleanup after deprecation.** Once both routes return 410 and 7+ days pass:
 1. Remove the route from `urls.py` entirely (not just the lambda stub)
@@ -103,4 +103,4 @@ The two-stage process (410 stub → removal) lets you detect callers in the wild
 ## Related
 - [[payment-integration]] — overall gateway architecture
 - [[payment-backend-charge-flow]] — modern finalize path that these bypass
-- [[omise-api-reference-2026-06-12]] — webhook signature verification pattern that should have been here
+- [[omise-api-reference]] — webhook signature verification pattern that should have been here

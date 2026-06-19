@@ -177,7 +177,7 @@ Main doc `## Verification Matrix` tracks all 4. This keeps the synthesis actiona
 - [[r1-ux]] — UX specialist
 - [[r1-seo]] — SEO specialist
 - [[r2-skeptic]] — Skeptic challenges
-- [[experience-detail-page-redesign-2026-06-02]] — predecessor doc
+- [[experience-detail-page-redesign]] — predecessor doc
 - [[business-development-thailand-platform-analysis]] — GYG positioning
 
 ## Sibling Sub-Files (Linked 2026-06-13)

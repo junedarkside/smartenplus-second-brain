@@ -28,7 +28,7 @@ Original header (`main-header.js` at git HEAD before redesign) had dynamic mobil
 4. **Missing spacer compensation** — `position="fixed"` on mobile + no spacer in layout.js = first content element obscured by header on load.
 
 ## Related
-- [[hero-section-comprehensive-audit-2026-05-26]] — Contains mobile header analysis section
+- [[hero-section-comprehensive-audit]] — Contains mobile header analysis section
 - [[mobile-header-redesign-glassmorphism]] — Glassmorphism redesign spec (SUPERSEDED)
 - [[smartenplus-header-ux-v1]] — Desktop 2-row header implementation v1
 - [[header-redesign-2026-spec]] — Current header redesign spec

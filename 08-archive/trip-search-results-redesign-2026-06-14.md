@@ -475,7 +475,7 @@ All design tokens (`#10B981`, `#F59E0B`, `#EFF6FF`, `#3b5998`), `TOUCH_TARGET.mi
 ## Related
 - [[activities-sort-filter-ux]]
 - [[sidebar-sticky-2col-responsive-grid]]
-- [[adr-trip-confidence-score-algorithm-2026-06-14]]
+- [[adr-trip-confidence-score-algorithm]]
 - [[trip-search-results-implementation-plan-2026-06-14]]
 - [[tour-system-status]]
 - [[operators]]

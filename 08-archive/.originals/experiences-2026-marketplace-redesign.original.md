@@ -328,8 +328,8 @@ Summary of 4-agent (UX, Frontend, Backend, Design) debate findings — all resol
 
 ## Related
 
-- [[activities-day-tour-page-review-2026-06-01]] — prior code audit, P0/P1 fixes
-- [[activities-search-merge-review-2026-06-01]] — unified ActivitySearch (already shipped: `02f9adf`)
-- [[layout-spacing-consistency-audit-2026-06-01]] — LAY-1 + LAY-2 fixes (already shipped: `09e0db3`)
-- [[adr-experiences-nav-category-filtering-2026-05-25]] — URL param → API filter chain ADR
+- [[activities-day-tour-page-review]] — prior code audit, P0/P1 fixes
+- [[activities-search-merge-review]] — unified ActivitySearch (already shipped: `02f9adf`)
+- [[layout-spacing-consistency-audit]] — LAY-1 + LAY-2 fixes (already shipped: `09e0db3`)
+- [[adr-experiences-nav-category-filtering]] — URL param → API filter chain ADR
 - [[smartenplus-wireframe-architecture]] — full platform wireframe including Experiences section

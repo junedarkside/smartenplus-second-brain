@@ -1,5 +1,5 @@
 ---
-name: trip-detail-page-review-2026-05-20
+name: trip-detail-page-review
 description: 3-agent review of pages/trips/detail/[...slug].js — perf, SEO, code quality findings with verified line numbers
 metadata:
   type: project
@@ -162,4 +162,4 @@ Identical in `getStaticPaths` and `getStaticProps`.
 | 10 | S5 remove `ssr: false` from reviews | 1 char |
 
 ## Related
-[[nextjs-patterns]] · [[blog-seo-performance-2026-05-20]] · [[hydration-infinite-refresh-fix-2026-05-20]] · [[recommendation-system]]
+[[nextjs-patterns]] · [[blog-seo-performance]] · [[hydration-infinite-refresh-fix]] · [[recommendation-system]]

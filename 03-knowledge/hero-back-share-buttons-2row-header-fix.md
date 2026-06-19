@@ -82,4 +82,4 @@ NOT verified in browser. Server running as `next-server` (production), not `npm 
 ## Related
 
 - [[header-redesign-2026-implementation]]
-- [[mobile-header-analysis-2026-05-26]]
+- [[mobile-header-analysis]]

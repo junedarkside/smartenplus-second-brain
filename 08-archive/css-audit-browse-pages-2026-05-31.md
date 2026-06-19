@@ -96,7 +96,7 @@ designSystem.js has two valid border-radius tokens:
 **Decision:** Browse grid cards (destinations/locations/trips/activities) = image-forward → use `rounded-xl` (12px). Blog editorial cards = text-heavy → `rounded-md` (6px). Update designSystem.js to document this.
 
 ## Related
-[[blog-seo-performance-2026-05-20]] — blog consistency commit 315cc2e
+[[blog-seo-performance]] — blog consistency commit 315cc2e
 [[design-systems]] — token-based design system
 [[section-contentcard-wrapper-pattern]] — Section component usage
 [[carousel-design-standard]] — card styling rules

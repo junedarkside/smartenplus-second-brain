@@ -28,4 +28,4 @@ return {
 
 ## Related
 - [[nextjs-patterns]]
-- [[trip-detail-deep-review-2026-05-20]]
+- [[trip-detail-deep-review]]

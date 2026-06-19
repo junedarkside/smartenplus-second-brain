@@ -101,8 +101,8 @@ R1-frontend F-10 ("stops is not directly observable in customer frontend") was t
 **The 12-language table is aspirational, not active.** Evidence from vault:
 - `[[operators]]` line 44: 12 languages registered (en/th/zh/ja/ko/es/fr/de/ru/ar/ms/vi)
 - `[[tour-system-status]]` (2026-03-03 snapshot): "57 active contracts" — but no mention of translation population
-- `[[contract-serializer-non-transport-fields-2026-06-03]]` flagged `meeting_point_details` as a flat field — never mentioned translations
-- `[[content-marketing-strategy-2026-05-24]]` is a marketing-strategy file, not content-in-other-languages
+- `[[contract-serializer-non-transport-fields]]` flagged `meeting_point_details` as a flat field — never mentioned translations
+- `[[content-marketing-strategy-review]]` is a marketing-strategy file, not content-in-other-languages
 
 The R2-domain verdict is correct: **B-1 is P2 dormant**, not P0 customer-visible. The bug becomes real the day:
 - An admin translation UI ships

@@ -48,4 +48,4 @@ Future card-grid + sidebar pages (search results, category browse) must reuse th
 ## Related
 - [[carousel-design-standard]] — same 1440px container width; sibling pattern.
 - [[section-contentcard-wrapper-pattern]] — card sizing inside the 4-col grid.
-- [[layout-spacing-consistency-audit-2026-06-01]] — caught the misplaced `overflow-y-auto` and the hardcoded 240.
+- [[layout-spacing-consistency-audit]] — caught the misplaced `overflow-y-auto` and the hardcoded 240.

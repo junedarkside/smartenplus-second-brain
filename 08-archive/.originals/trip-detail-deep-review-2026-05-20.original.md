@@ -1,5 +1,5 @@
 ---
-name: trip-detail-deep-review-2026-05-20
+name: trip-detail-deep-review
 description: 4-agent adversarial deep review of trip detail page — overturned findings, hidden issues, production failure scenarios
 metadata:
   type: project
@@ -11,7 +11,7 @@ metadata:
 4-specialist second-pass team (Adversarial · Blast-Radius · Hidden Issues · Production Risk) reviewed original 24-finding report. 3 overturned, 2 downgraded to conditional. 8 new hidden issues. 4 production failure scenarios.
 
 ## Context
-Follows [[trip-detail-page-review-2026-05-20]]. Branch: `260520-update/recommend-route`.
+Follows [[trip-detail-page-review]]. Branch: `260520-update/recommend-route`.
 
 ## SECTION 0 — ORIGINAL REPORT CORRECTIONS
 
@@ -158,4 +158,4 @@ Exchange rate hardcoded. Current ~33–36 THB/USD. Google indexes → incorrect 
 3. **H2** — Invalid ISO8601 in TouristTrip schema → all rich results rejected by Google Search Console. Silent.
 
 ## Related
-[[trip-detail-page-review-2026-05-20]] · [[nextjs-patterns]] · [[hydration-infinite-refresh-fix-2026-05-20]] · [[blog-seo-performance-2026-05-20]]
+[[trip-detail-page-review]] · [[nextjs-patterns]] · [[hydration-infinite-refresh-fix]] · [[blog-seo-performance]]

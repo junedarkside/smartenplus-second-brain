@@ -186,6 +186,6 @@ Not yet started. Create: `260523-fix/currency-context-infinite-fetch`
 
 ## Related
 
-- [[hydration-infinite-refresh-fix-2026-05-20]] — prior Fast Refresh loop, different root cause (hydration mismatch)
+- [[hydration-infinite-refresh-fix]] — prior Fast Refresh loop, different root cause (hydration mismatch)
 - [[nextjs-patterns]] — useEffect dep rules, ISR dev behavior
-- [[isr-429-cold-start-fix-2026-05-23]] — /front-page/ 429 (separate issue, same endpoint)
+- [[isr-429-cold-start-fix]] — /front-page/ 429 (separate issue, same endpoint)

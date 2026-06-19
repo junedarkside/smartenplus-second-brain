@@ -175,4 +175,4 @@ Empty fields show toast only. No field highlight, no inline message. Direct aban
 ## Related
 - [[nav-header-redesign]] — header accessibility patterns from 2026-05-19 redesign
 - [[design-systems]] — token-based design system approach
-- [[blog-seo-performance-2026-05-20]] — blog section optimization patterns
+- [[blog-seo-performance]] — blog section optimization patterns

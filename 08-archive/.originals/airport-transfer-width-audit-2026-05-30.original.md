@@ -146,5 +146,5 @@ The sections ARE inside `max-w-[1200px]`. The issue is not the outer container �
 
 ## Related Vault Pages
 
-- `03-knowledge/transportation-category-audit-2026-05-30.md` — AT-1 redesign spec (separate issue)
+- `03-knowledge/transportation-category-audit.md` — AT-1 redesign spec (separate issue)
 - `docs/width-inconsistency-audit-2026-05-30.md` — earlier audit report (partial)

@@ -4,7 +4,7 @@
 User-generated content via `dangerouslySetInnerHTML` must be sanitized server-side or with SSR-safe client library. Plain `DOMPurify` throws `window is not defined` on SSR (Next.js).
 
 ## Context
-`homepage-ux-review-2026-05-21.md`. Critical issue C1. `ReviewFirstPage.js:185` renders `reviewText` via `dangerouslySetInnerHTML` with no sanitization.
+`homepage-ux-review.md`. Critical issue C1. `ReviewFirstPage.js:185` renders `reviewText` via `dangerouslySetInnerHTML` with no sanitization.
 
 ## Problem
 ```jsx
@@ -77,6 +77,6 @@ Travel reviews need: `b`, `i`, `em`, `strong`, `a`, `p`, `br`, `ul`, `ol`, `li`.
 Same pattern confirmed in `RateAndReviewForm.js` (rate review submission) and any future `dangerouslySetInnerHTML` over `contract.description` (long-form rich text from operators). Backend `sanitize_category_fields` does NOT touch description field — frontend sanitization remains the last line of defense.
 
 ## Related
-- [[homepage-ux-review-2026-05-21]] — XSS issue details (ReviewFirstPage.js:185)
+- [[homepage-ux-review]] — XSS issue details (ReviewFirstPage.js:185)
 - [[rate-review-uxui-audit-2026-06-06-overview]] r1-frontend — additional review-render sites
 - [[dompurify-xss-prevention-pattern]] — security patterns

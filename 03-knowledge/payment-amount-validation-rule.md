@@ -14,7 +14,7 @@ The payment flow has a fee-inclusive / fee-exclusive asymmetry between FE submis
 The original H1 fix proposed comparing `amount_thb` directly to the order total. Falsification: this would false-positive on every legitimate payment. The corrected formula subtracts `fee` first to convert fee-inclusive → fee-exclusive before comparison.
 
 ## Problem
-H1 in [[payment-deep-review-2026-06-12]] — client-controlled charge amount never validated against order total. Self-validating closed loop: `initiate_order_charge` derives `amount_thb` from the request body; `locked_amount` (`services.py:683`) and the finalize mismatch check (`services.py:304-315`) both derive from the same client value. The "validation" is the value validating itself. Floor check at `views.py:122-124` is per-currency minimum, not order total — irrelevant to this attack.
+H1 in [[payment-deep-review]] — client-controlled charge amount never validated against order total. Self-validating closed loop: `initiate_order_charge` derives `amount_thb` from the request body; `locked_amount` (`services.py:683`) and the finalize mismatch check (`services.py:304-315`) both derive from the same client value. The "validation" is the value validating itself. Floor check at `views.py:122-124` is per-currency minimum, not order total — irrelevant to this attack.
 
 Repro: `POST /payments/order-charge/` with `grandTotal: 2000` (20 THB) against a 5,000 THB order. View accepts it, `initiate_order_charge` transitions to `payment_pending`, Omise charged 20 THB, webhook fires, `finalize_payment` called with `gc.amount=20` → `locked_amount=20` so mismatch check passes → order finalized as paid. The user paid 20 THB for a 5,000 THB order. Our system marked it paid.
 
@@ -88,5 +88,5 @@ The 1.00 THB tolerance is a deliberate trade. It absorbs FX-rate rounding (negli
 ## Related
 - [[payment-charge-service-layer]] — `initiate_order_charge` location and full flow
 - [[payment-integration]] — overall gateway charge architecture
-- [[payment-pending-deadlock-2026-06-12]] — related H-class issue from same audit
+- [[payment-pending-deadlock]] — related H-class issue from same audit
 - [[payment-frontend-flow-mechanics]] — FE submission formula and the round-trip

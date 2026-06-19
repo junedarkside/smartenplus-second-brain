@@ -36,4 +36,4 @@ item.contract?.trip && item.contract?.stop_sale_dates?.some(...)
 `sortCartItems.js:72`, `EnhancedTripCard.js:93`, `TripsConfirmation.js:18` — all use `contract?.trip?.departure_time`
 
 ## Related
-[[cartitems-500-error-analysis-2026-06-02]] — backend null guard (`carts/utils.py:591`)
+[[cartitems-500-error-analysis]] — backend null guard (`carts/utils.py:591`)

@@ -7,7 +7,7 @@
 JSON-LD's `schema.org/TouristTrip` (and the broader `Trip` family) defines `departureTime` as `DateTime` per schema.org. A `DateTime` MUST include the date. A time-only string starting with `T` is a `Time`, not a `DateTime`. Google's Rich Results Test passes the syntactic check but fails the semantic one, and the result is "no rich result" with no warning visible in normal devtools.
 
 ## Problem
-In `trip-detail-deep-review-2026-05-20` (finding H2), the schema was emitting `"departureTime": "T08:00:00+07:00"` — time-only. Google accepted the JSON-LD parse, accepted the field, but silently disabled rich result eligibility. No `error` in Search Console, no `warning` in the Rich Results Test (it shows green), but trip carousel eligibility was 0% for months.
+In `trip-detail-deep-review` (finding H2), the schema was emitting `"departureTime": "T08:00:00+07:00"` — time-only. Google accepted the JSON-LD parse, accepted the field, but silently disabled rich result eligibility. No `error` in Search Console, no `warning` in the Rich Results Test (it shows green), but trip carousel eligibility was 0% for months.
 
 ## Details
 The fix is one line, but the rule is strict:

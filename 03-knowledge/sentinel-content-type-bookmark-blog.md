@@ -50,8 +50,8 @@ All blog-path bookmark queries MUST include the sentinel `content_type=ContentTy
 ## Consequences
 This is a known silent data loss path. The fix must be enforced at the model or manager level, not just in views. Consider adding a custom manager `Bookmark.objects.for_blog()` that hard-codes the content_type filter — any view that uses the raw manager on the blog path will be a code review red flag.
 
-The audit in `01-projects/contract-model-ambiguity-audit-2026-06-03.md` identifies the broader pattern: generic FKs + cross-content-type lookups = silent data loss risk. The sentinel filter is the immediate mitigation.
+The audit in `01-projects/contract-model-ambiguity-audit.md` identifies the broader pattern: generic FKs + cross-content-type lookups = silent data loss risk. The sentinel filter is the immediate mitigation.
 
 ## Related
-- [[contract-model-ambiguity-audit-2026-06-03]] — broader generic FK ambiguity audit
+- [[contract-model-ambiguity-audit]] — broader generic FK ambiguity audit
 - [[django-serializer-shadowing-pattern]] — related DRF serializer pattern that can mask these bugs

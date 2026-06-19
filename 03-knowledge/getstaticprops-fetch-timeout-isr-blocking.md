@@ -7,7 +7,7 @@
 `fallback: 'blocking'` is the standard ISR pattern for dynamic routes (`pages/trip/[slug].js`). The first request for an unseen slug blocks while `getStaticProps` runs. If the upstream API is slow, the Lambda hits its hard timeout and returns 500 — and the failure mode is worse than a normal 500 because the page never enters the cache.
 
 ## Problem
-Production incident PROD-3 in `trip-detail-deep-review-2026-05-20`: the upstream `/api/trips/{slug}/` service had a 25-second p99 during a traffic spike. `getStaticProps` had no internal timeout, so Vercel returned 500, the page never cached, and every visitor for the next hour triggered a fresh blocking render. Cache miss storm, not a 500 storm — much harder to detect.
+Production incident PROD-3 in `trip-detail-deep-review`: the upstream `/api/trips/{slug}/` service had a 25-second p99 during a traffic spike. `getStaticProps` had no internal timeout, so Vercel returned 500, the page never cached, and every visitor for the next hour triggered a fresh blocking render. Cache miss storm, not a 500 storm — much harder to detect.
 
 ## Details
 Wrap every upstream `fetch` in `getStaticProps` with an explicit timeout:

@@ -178,4 +178,4 @@ Pulled from Open Questions above. Each must clear before commit. If verify fails
 - [[r1-ia]] — IA specialist
 - [[r1-ux]] — UX specialist
 - [[r1-seo]] — SEO specialist
-- [[experience-detail-page-redesign-2026-06-02]] — predecessor
+- [[experience-detail-page-redesign]] — predecessor

@@ -1,6 +1,6 @@
 ---
 name: gyg-page-analysis-2026-06-04-overview
-description: 3-specialist GYG Chiang Rai tour analysis vs SmartEnPlus /activities/detail/[slug]. 11 candidates surfaced, 5 adopted (P0/P1/P2), 4 backend debt flagged, AI summary deferred. Supplements [[experience-detail-page-redesign-2026-06-02]] (additive gap analysis; not a replacement).
+description: 3-specialist GYG Chiang Rai tour analysis vs SmartEnPlus /activities/detail/[slug]. 11 candidates surfaced, 5 adopted (P0/P1/P2), 4 backend debt flagged, AI summary deferred. Supplements [[experience-detail-page-redesign]] (additive gap analysis; not a replacement).
 metadata:
   type: project
   reviewed_by: gyg-vs-smartenplus-orchestrator
@@ -16,7 +16,7 @@ metadata:
 
 GYG Chiang Rai tour (product 846675) analyzed section-by-section vs SmartEnPlus `/activities/detail/[slug]`. 22 GYG sections mapped, 11 candidates surfaced, 5 adopted (1 P0, 2 P1, 2 P2), 4 P3 backend debt flagged, 1 user-deferred (AI summary). Top impact: P0 footer meta strip — trivial effort, dual-purpose (visual + JSON-LD provider field).
 
-**Follow-up:** [[not-suitable-for-section-2026-06-18]] builds on the P1 not-suitable-for badges (shipped `0746b2c`) — replaces derived badges with operator-authored exclusion list.
+**Follow-up:** [[not-suitable-for-section]] builds on the P1 not-suitable-for badges (shipped `0746b2c`) — replaces derived badges with operator-authored exclusion list.
 
 ## Context
 
@@ -134,9 +134,9 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 
 ## Related
 
-- [[experience-detail-page-redesign-2026-06-02]] — predecessor doc, 9 components already implemented
+- [[experience-detail-page-redesign]] — predecessor doc, 9 components already implemented
 - [[business-development-thailand-platform-analysis]] — 12Go vs Klook vs GYG competitive positioning
-- [[trip-detail-page-review-2026-05-20]] — prior detail page audit
+- [[trip-detail-page-review]] — prior detail page audit
 - [[trip-detail-uxui-audit-2026-05-22]] — 3-specialist audit: 32 issues
 - [[seo-homepage-specialist-team]] — SEO specialist team pattern
-- [[homepage-seo-performance-deep-review-2026-05-21]] — prior SEO deep review
+- [[homepage-seo-performance-deep-review]] — prior SEO deep review

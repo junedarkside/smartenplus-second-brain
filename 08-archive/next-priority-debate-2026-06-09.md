@@ -151,7 +151,7 @@ Add `item_category` to the GTM purchase event (`useOmisePayment.js:55`) this wee
 - [[business-development-thesis-2026]] — four-phase growth model, cross-sell gate
 - [[business-development-thailand-bundle-architecture]] — bundle UX spec (gated)
 - [[business-development-zeitrip-mvp]] — journey builder spec (gated)
-- [[content-marketing-strategy-2026-06-03]] — Hat Yai-Lipe SEO strategy
+- [[content-marketing-strategy]] — Hat Yai-Lipe SEO strategy
 
 ## Related Atoms (Extracted 2026-06-13)
 - [[gtm-purchase-item-category-attribute]] — `tripItems[].item_category: contract.service_category` unlocks revenue-by-category GA4 reporting

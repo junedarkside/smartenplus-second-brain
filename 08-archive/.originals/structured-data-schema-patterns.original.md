@@ -4,7 +4,7 @@
 Homepage uses7 schema types. Critical gaps: fake TravelAgency phone/address, missing WebSite+SearchAction, server-sitemap.xml 404. Live data should replace hardcoded literals.
 
 ## Context
-`homepage-seo-performance-deep-review-2026-05-21.md`.3-specialist audit (Structured Data + Technical SEO + Performance).11 SD findings.
+`homepage-seo-performance-deep-review.md`.3-specialist audit (Structured Data + Technical SEO + Performance).11 SD findings.
 
 ## Problem
 
@@ -61,7 +61,7 @@ export const COMPANY_ADDRESS = {
 ### server-sitemap.xml hotfix + proper fix
 **Hotfix (5 min):** Remove from `next-sitemap.config.js` + `robots.txt`.
 
-**Proper fix:** Create `pages/server-sitemap.xml.js` using `getServerSideSitemap` fetching live trip routes. Pattern documented in `[[blog-seo-performance-2026-05-20]]`.
+**Proper fix:** Create `pages/server-sitemap.xml.js` using `getServerSideSitemap` fetching live trip routes. Pattern documented in `[[blog-seo-performance]]`.
 
 ## Details
 
@@ -90,6 +90,6 @@ export const COMPANY_ADDRESS = {
 - AggregateRating wired to live data — schema refreshes with ISR (60s)
 
 ## Related
-- [[blog-seo-performance-2026-05-20]] — server-sitemap.xml pattern
-- [[homepage-ux-review-2026-05-21]] — review section render order
+- [[blog-seo-performance]] — server-sitemap.xml pattern
+- [[homepage-ux-review]] — review section render order
 - [[nextjs-patterns]] — ISR patterns

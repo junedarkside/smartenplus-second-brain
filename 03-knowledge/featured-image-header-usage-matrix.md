@@ -37,7 +37,7 @@ Cross-page comparison of `FeaturedImageHeader` component usage. 12 pages audited
 Per [[smartenplus-2026-ux-direction]]: reduce homepage to 55-60vh, standardize `font-bold` + `text-3xl` H1 everywhere, add heroes to Activities Browse and Trip Detail by ID.
 
 ## Related
-- [[hero-section-comprehensive-audit-2026-05-26]] — Full audit with fix recommendations
+- [[hero-section-comprehensive-audit]] — Full audit with fix recommendations
 - [[hero-88px-gap-root-cause]] — 88px gap between header and hero on non-homepage pages
 - [[smartenplus-2026-ux-direction]] — Strategic hero height direction (45-60vh)
 - [[design-systems]] — Design token reference

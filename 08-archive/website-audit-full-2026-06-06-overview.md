@@ -16,11 +16,11 @@ External audit of smartenplus.co.th. SEO 75/100, Speed 40/100, Accessibility 85/
 ## Context
 Platform: Next.js 14, Thailand transport booking (bus, ferry, train, airport transfer, tours). Audit covers live production site. Scope: speed, SEO, mobile responsiveness, structured data, identity classification.
 
-Prior code-level audit: [[homepage-seo-performance-deep-review-2026-05-21]] (30 findings, file:line refs, structured data schema errors in code).
+Prior code-level audit: [[homepage-seo-performance-deep-review]] (30 findings, file:line refs, structured data schema errors in code).
 
 ## SEO & Speed
 
-→ Extracted to [[core-web-vitals-budget-2026-06-06]] (HTML <100KB, all WebP+AVIF, async scripts, no inline `<style>`, font preload, explicit image dimensions). Scores: SEO 75/100, Speed 40/100, A11y 85/100. Speed: C1 HTML 308KB, C2 10 sync scripts, C3 66 inline style blocks. H1-H5 + M1-M4.
+→ Extracted to [[core-web-vitals-budget]] (HTML <100KB, all WebP+AVIF, async scripts, no inline `<style>`, font preload, explicit image dimensions). Scores: SEO 75/100, Speed 40/100, A11y 85/100. Speed: C1 HTML 308KB, C2 10 sync scripts, C3 66 inline style blocks. H1-H5 + M1-M4.
 
 ### Good — SEO ✅
 Title, meta description, H1, heading hierarchy (H1×1, H2×9, H3×19), canonical URL, all OG tags, Twitter Card, robots meta, viewport, charset, all 36 images have alt text, skip links (×2), font-display swap, 35/36 images lazy-loaded, 6 external URLs only, Google site verification, semantic HTML (article×13, section×7, nav×2, main×2).
@@ -195,7 +195,7 @@ SmartEnPlus is a legitimate booking platform.
 - Priority order: Fix speed → fix mobile touch targets → add booking CTAs to blog → add Product schema to tours
 
 ## Related
-[[homepage-seo-performance-deep-review-2026-05-21]] · [[structured-data-schema-patterns]] · [[carousel-design-standard]] · [[nextjs-patterns]] · [[seo-homepage-specialist-team]] · [[blog-seo-performance-2026-05-20]]
+[[homepage-seo-performance-deep-review]] · [[structured-data-schema-patterns]] · [[carousel-design-standard]] · [[nextjs-patterns]] · [[seo-homepage-specialist-team]] · [[blog-seo-performance]]
 
 ---
 
@@ -370,7 +370,7 @@ SmartEnPlus is a legitimate booking platform.
 
 ## Related
 
-[[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[carousel-design-standard]] · [[mobile-header-analysis-2026-05-26]]
+[[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]] · [[homepage-seo-performance-deep-review]] · [[carousel-design-standard]] · [[mobile-header-analysis]]
 
 ## Related Atoms (Extracted 2026-06-13)
 - [[seo-canonical-getsiteurl-pattern]] — `getSiteUrl()` → `https://www.smartenplus.co.th` (www mandatory)

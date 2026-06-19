@@ -29,6 +29,6 @@ Do not add new `info_fields` access without following this pattern:
 - Load from sessionStorage: handle both `arrivalFlightTime` and `arrivalFlighttime` spellings
 
 ## Related
-- [[contract-model-ambiguity-audit-2026-06-03]] — D3 debate that surfaced this item
+- [[contract-model-ambiguity-audit]] — D3 debate that surfaced this item
 - `helpers/checkoutPersistence.js` — `normalizeTripData()` is the single conversion boundary
 - `components/forms/checkout/Passengers.js:531–537` — load-time normalization

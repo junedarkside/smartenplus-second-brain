@@ -14,4 +14,4 @@ Frontend does not call `trip-by-arrival-station` (grep of smartenplus-frontend s
 
 ## Related
 - [[contract-soft-delete-is-actived-invariant]]
-- [[adr-contract-soft-delete-2026-06-16]]
+- [[adr-contract-soft-delete]]

@@ -182,7 +182,7 @@ At the start of every session when working on SmartEnPlus vault:
   - See [[README]], [[admin-dashboard]]
 - **SmartEnPlus Content** — Content marketing strategy, keyword research, blog drafts.
   - `smartenplus-content` at `/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content/`
-  - See [[content-marketing-strategy-2026-05-24]]
+  - See [[content-marketing-strategy-review]]
 
 ## Active Knowledge Domains
 

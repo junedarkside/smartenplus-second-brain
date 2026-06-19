@@ -14,8 +14,8 @@ else:
     queryset = queryset.filter(service_areas__name__icontains=location_param)
 ```
 
-**Impact:** Users can type city names (e.g., "Phuket") instead of just integer IDs. See [[activities-location-search-bug-2026-06-01]] B-1.
+**Impact:** Users can type city names (e.g., "Phuket") instead of just integer IDs. See [[activities-location-search-bug]] B-1.
 
 ## Related
-- [[activities-location-search-bug-2026-06-01]] — full audit
+- [[activities-location-search-bug]] — full audit
 - [[django-parse-int-list-text-fallback]] — general pattern

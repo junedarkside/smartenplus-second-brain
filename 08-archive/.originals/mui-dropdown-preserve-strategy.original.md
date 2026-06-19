@@ -4,7 +4,7 @@
 Keep MUI Menu core for ARIA test compatibility. Mobile: MUI Drawer as bottom sheet. Item reduction 11→6.3-file split architecture.
 
 ## Context
-`profile-dropdown-redesign-2026-05-29.md`. 3-specialist review (UX + UI/Visual + Frontend). ProfileButton was generic MUI Menu with 11 items, no traveler mental model.
+`profile-dropdown-redesign.md`. 3-specialist review (UX + UI/Visual + Frontend). ProfileButton was generic MUI Menu with 11 items, no traveler mental model.
 
 ## Problem
 -200px width truncates labels like "Account Dashboard", "Family& Friends"

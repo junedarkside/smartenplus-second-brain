@@ -58,6 +58,6 @@ Spacing becomes component-local not global.
 
 ## Related
 - [[nextjs-fixed-header-per-route]] — The fixed vs sticky pattern that causes this
-- [[hero-section-comprehensive-audit-2026-05-26]] — Full hero audit including this gap
+- [[hero-section-comprehensive-audit]] — Full hero audit including this gap
 - [[header-redesign-2026-spec]] — Header redesign spec
 - [[smartenplus-header-ux-v1]] — Header implementation v1

@@ -3,7 +3,7 @@ name: slidecalendar2-farecalendar-prop-pattern
 description: SlideCalendar2 accepts optional fareCalendar (date-keyed rate map) + fareCalendarLoading (boolean) props. Caller MUST fetch via useGetFareCalendarQuery and pass both. Only TripSearchFilters.js wires them correctly; TripDetailSchedule.js:46 doesn't (out of scope for prior fix).
 type: knowledge-atom
 date: 2026-06-15
-parent: trip-page-full-audit-2026-06-15
+parent: trip-page-full-audit
 ---
 
 # SlideCalendar2 fareCalendar Prop Pattern
@@ -146,6 +146,6 @@ When auditing any page that uses `SlideCalendar2`:
 
 ## Related
 - [[currency-context-price-rendering-rule]] — companion atom; the currency fix
-- [[trip-page-full-audit-2026-06-15]] — parent audit context
+- [[trip-page-full-audit]] — parent audit context
 - [[trip-search-below-fold-redesign-2026-06-15]] — sibling work (`TripSearchFilters.js` is on the same route as `RouteFAQ`/`RouteSummary`/`TripSummary`)
 - [[isr-csr-overlay-stale-fields]] — pattern for ISR + CSR overlay price display (related: `fareCalendar` is RTK-gated, so on cold load the cells show Skeleton until the query resolves)

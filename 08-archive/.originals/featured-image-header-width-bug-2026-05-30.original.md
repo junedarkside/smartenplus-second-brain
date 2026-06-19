@@ -63,4 +63,4 @@ ALWAYS: w-full + max-w-[1200px] for constrained-but-responsive width
 `components/UI/FeaturedImageHeader.js:120–121`
 
 ## Related
-[[airport-transfer-width-audit-2026-05-30]] [[header-redesign-2026-spec]]
+[[airport-transfer-width-audit]] [[header-redesign-2026-spec]]

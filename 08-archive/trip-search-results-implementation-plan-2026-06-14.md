@@ -129,7 +129,7 @@ When ready to implement:
 
 ## Related Vault Docs
 - [[trip-search-results-redesign-2026-06-14]] — full 3-agent analysis (UX/UI + backend + frontend arch)
-- [[adr-trip-confidence-score-algorithm-2026-06-14]] — formula decision + rationale
+- [[adr-trip-confidence-score-algorithm]] — formula decision + rationale
 
 ---
 

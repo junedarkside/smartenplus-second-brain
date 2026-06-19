@@ -17,7 +17,7 @@ Soft-deleting a Contract MUST also set `is_actived=False`. The rule `is_deleted=
 - Auditing a new public Contract query path: filter `is_deleted=False` OR confirm it already filters `is_actived=True` (which the invariant covers).
 
 ## Related
-- [[adr-contract-soft-delete-2026-06-16]]
+- [[adr-contract-soft-delete]]
 - [[stations-arrival-viewset-public-leak]]
 - [[activities-browse-filter-inactive-contracts]]
 - [[django-soft-delete-s3-file-preserve]]

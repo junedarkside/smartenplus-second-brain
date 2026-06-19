@@ -95,5 +95,5 @@ images: [{
 
 ## Related
 
-- [[blog-seo-performance-2026-05-20]] — prior blog SEO work
-- [[homepage-seo-performance-deep-review-2026-05-21]] — original audit that caught og:locale and DefaultSeo gaps
+- [[blog-seo-performance]] — prior blog SEO work
+- [[homepage-seo-performance-deep-review]] — original audit that caught og:locale and DefaultSeo gaps

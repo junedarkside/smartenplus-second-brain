@@ -104,7 +104,7 @@ Only Experiences because `/activities` supports `?category=` via `useDayTripFilt
 | 4x DAY_TOUR duplicate hrefs | Replaced with 7 distinct backend categories | 2026-05-25 |
 | Dead `navLinks` export | Deleted from `main-header.js` | `3feafaa` |
 
-See [[adr-experiences-nav-category-filtering-2026-05-25]].
+See [[adr-experiences-nav-category-filtering]].
 
 ---
 
@@ -133,7 +133,7 @@ See [[adr-experiences-nav-category-filtering-2026-05-25]].
 
 - [[header-redesign-2026-spec]] — Redesign spec
 - [[header-redesign-2026-implementation]] — Implementation notes
-- [[adr-experiences-nav-category-filtering-2026-05-25]] — Category filtering ADR
+- [[adr-experiences-nav-category-filtering]] — Category filtering ADR
 - [[design-systems]] — Design tokens
 - [[smartenplus/architecture]] — System architecture
 - [[admin-dashboard-component-patterns]] — Admin patterns

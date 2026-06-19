@@ -80,7 +80,7 @@ Only numeric `404` warrants cart clear. String statuses = transient; preserve ca
 SmartEnPlus checkout. Fixed `cb817d9` on `develop` 2026-06-11. Session #97.
 
 ## Related
-- [[payment-audit-bugs-2026-06-11]] — confirmed bugs + C1/C2 fixes
+- [[payment-audit-bugs]] — confirmed bugs + C1/C2 fixes
 - [[redux-persist-gate-scope-gap]] — PersistGate SSR/mount timing issue
 - [[payment-checkout-5-principles]] — checkout architecture
 - [[checkout-state-persistence]] — dual persistence strategy (guest vs logged-in), useCartSync ordering

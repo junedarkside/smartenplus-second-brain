@@ -31,7 +31,7 @@ Trip-detail = ISR static page with structured data + OpenGraph. See [[trip-detai
 - [x] r4 post-impl re-audit
 
 ## Related
-- [[trip-page-full-audit-2026-06-15]]
-- [[trip-route-page-seo-aeo-geo-audit-2026-06-15]]
+- [[trip-page-full-audit]]
+- [[trip-route-page-seo-aeo-geo-audit]]
 - [[trip-detail-server-side-seo-pattern]]
 - [[seo-canonical-getsiteurl-pattern]]

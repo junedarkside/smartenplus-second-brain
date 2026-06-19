@@ -4,7 +4,7 @@
 Homepage uses 7 schema types. Critical gaps: fake TravelAgency phone/address, missing WebSite+SearchAction, server-sitemap.xml 404. Live data should replace hardcoded literals.
 
 ## Context
-`homepage-seo-performance-deep-review-2026-05-21.md`. 3-specialist audit (Structured Data + Technical SEO + Performance). 11 SD findings.
+`homepage-seo-performance-deep-review.md`. 3-specialist audit (Structured Data + Technical SEO + Performance). 11 SD findings.
 
 ## Problem
 
@@ -61,7 +61,7 @@ export const COMPANY_ADDRESS = {
 ### server-sitemap.xml hotfix + proper fix
 **Hotfix (5 min):** Remove from `next-sitemap.config.js` + `robots.txt`.
 
-**Proper fix:** Create `pages/server-sitemap.xml.js` using `getServerSideSitemap` fetching live trip routes. Pattern in `[[blog-seo-performance-2026-05-20]]`.
+**Proper fix:** Create `pages/server-sitemap.xml.js` using `getServerSideSitemap` fetching live trip routes. Pattern in `[[blog-seo-performance]]`.
 
 ## Details
 
@@ -97,7 +97,7 @@ export const COMPANY_ADDRESS = {
 On `/operators/[slug]` (shipped #124) the rating is deliberately rendered in **FAQ prose only**, with the operator emitted as a bare `TravelAgency` (name/url/logo, no rating). Reusable utils: `helpers/seo/operatorDetailSEOUtils.js`, renderer `components/operators/OperatorDetailSEO.js`.
 
 ## Related
-- [[blog-seo-performance-2026-05-20]] — server-sitemap.xml pattern
-- [[homepage-ux-review-2026-05-21]] — review section render order
+- [[blog-seo-performance]] — server-sitemap.xml pattern
+- [[homepage-ux-review]] — review section render order
 - [[nextjs-patterns]] — ISR patterns
-- [[operator-detail-seo-aeo-geo-audit-2026-06-16]] — source of the aggregateRating-placement rule + operator schema pattern
+- [[operator-detail-seo-aeo-geo-audit]] — source of the aggregateRating-placement rule + operator schema pattern

@@ -16,6 +16,6 @@ archived
 - [[round3-skeptic]] — adversarial skeptic review
 
 ## Related
-- [[contract-model-ambiguity-audit-2026-06-03]]
-- [[contract-serializer-non-transport-fields-2026-06-03]]
+- [[contract-model-ambiguity-audit]]
+- [[contract-serializer-non-transport-fields]]
 - [[contract-soft-delete-is-actived-invariant]]

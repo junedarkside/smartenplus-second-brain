@@ -90,4 +90,4 @@ Micro-feedback only: hover lift, opacity fade, subtle transitions. NOT scroll hi
 - [[smartenplus-wireframe-architecture]] — Full platform wireframes
 - [[featured-image-header-usage-matrix]] — Current hero component usage
 - [[design-systems]] — Design token system
-- [[hero-section-comprehensive-audit-2026-05-26]] — Current hero audit findings
+- [[hero-section-comprehensive-audit]] — Current hero audit findings

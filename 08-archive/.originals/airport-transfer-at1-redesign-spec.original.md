@@ -4,7 +4,7 @@
 Full spec for AT-1: professional homepage airport transfer section. Image card + IATA badge + carousel mobile + serializer expansion. Zero impact on other components.
 
 ## Context
-Extracted from [[transportation-category-audit-2026-05-30]]. Goal: match Grab/Klook/12Go level polish on homepage airport section. Backend adds `station_name` + `iata_code` to local serializer only.
+Extracted from [[transportation-category-audit]]. Goal: match Grab/Klook/12Go level polish on homepage airport section. Backend adds `station_name` + `iata_code` to local serializer only.
 
 ## Details
 
@@ -100,7 +100,7 @@ Props interface: `{ route, onClick }` — unchanged from today.
 7. `npm run build` passes
 
 ## Related
-- [[transportation-category-audit-2026-05-30]] — full category audit + architecture justification
+- [[transportation-category-audit]] — full category audit + architecture justification
 - [[django-serializer-shadowing-pattern]] — why local StationSerializer, not shared
 - [[carousel-design-standard]] — Embla carousel patterns
 - [[airport-transfer-redesign-2026]] — frontend implementation notes

@@ -138,4 +138,4 @@ Use this pattern when:
 ## Related
 - [[mui-menu-paper-overflow-guard]] — companion for viewport-edge menus
 - [[mui-dropdown-preserve-strategy]] — MUI Menu core + 3-file split
-- [[profile-dropdown-redesign-2026-05-29]] — original 11→6 item reduction
+- [[profile-dropdown-redesign]] — original 11→6 item reduction

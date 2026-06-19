@@ -2,7 +2,7 @@
 
 ## Summary
 
-Keyword data assets (4 CSVs) supporting [[content-marketing-strategy-2026-06-03]] SEO strategy. These are data files, not vault content — direct path references for operational use.
+Keyword data assets (4 CSVs) supporting [[content-marketing-strategy]] SEO strategy. These are data files, not vault content — direct path references for operational use.
 
 ## Routes Covered
 
@@ -23,9 +23,9 @@ CSVs are raw `all_categories` exports (Google Ads Keyword Planner format). 4 rou
 - Source language `en-th` on hat yai CSV signals Thai market — use for Thai-language blog posts + `hreflang="th"` SEO.
 - High-CPC transactional keywords route to `/trips/detail/[slug]` (booking pages).
 - High-volume informational keywords route to `/blog/[slug]` (WP headless).
-- For full keyword strategy + target URL mapping, see [[content-marketing-strategy-2026-06-03]] SEO Approach section.
+- For full keyword strategy + target URL mapping, see [[content-marketing-strategy]] SEO Approach section.
 
 ## Related
 
-[[content-marketing-strategy-2026-06-03]] — consumer of this data
-[[content-marketing-strategy-2026-05-24]] — prior review referencing these same CSVs
+[[content-marketing-strategy]] — consumer of this data
+[[content-marketing-strategy-review]] — prior review referencing these same CSVs

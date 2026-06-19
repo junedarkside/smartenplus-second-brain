@@ -176,7 +176,7 @@ Activity detail page "You May Also Like" shows scored results, not random catego
 - Start content this week — 3–6 month SEO lag
 - Target: "hat yai airport to koh lipe" ($54.11 CPC)
 - SmartEnPlus owns live cross-border Langkawi↔Lipe inventory — no other platform has this
-- Content strategy doc: `02-areas/content-marketing-strategy-2026-06-03.md`
+- Content strategy doc: `02-areas/content-marketing-strategy.md`
 
 ---
 
@@ -225,7 +225,7 @@ Activity detail page "You May Also Like" shows scored results, not random catego
 - [[next-priority-debate-2026-06-09]] — source priority list this plan implements
 - [[business]] — roadmap: cross-sell = current step 3
 - [[business-development-thesis-2026]] — gate: multi-booking rate rising → journey builder
-- [[checkout-confirmation-payment-crash-2026-06-03]] — non-transport checkout now live
+- [[checkout-confirmation-payment-crash]] — non-transport checkout now live
 
 ## Related Atoms (Extracted 2026-06-13)
 - [[gtm-purchase-item-category-attribute]] — GTM `tripItems[].item_category` unlocks cross-sell measurement

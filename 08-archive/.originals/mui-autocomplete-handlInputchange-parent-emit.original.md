@@ -24,7 +24,7 @@ Now freetext search works without requiring blur or dropdown selection.
 
 **File:** `components/activities/shared/DayTripLocationSearch.js:26-28` (RC-3).
 
-See [[activities-location-search-bug-2026-06-01]] F-2.
+See [[activities-location-search-bug]] F-2.
 
 ## Related
-- [[activities-location-search-bug-2026-06-01]]
+- [[activities-location-search-bug]]

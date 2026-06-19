@@ -168,4 +168,4 @@ date: 2026-06-06
 
 ## Related
 
-[[carousel-design-standard]] · [[mobile-header-analysis-2026-05-26]] · [[homepage-ux-review-2026-05-21]]
+[[carousel-design-standard]] · [[mobile-header-analysis]] · [[homepage-ux-review]]

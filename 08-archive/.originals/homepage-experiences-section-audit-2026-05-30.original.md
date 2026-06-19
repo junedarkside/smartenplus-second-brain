@@ -155,4 +155,4 @@ Image strategy locked: Option A (gallery method field, no migration). No longer 
 ---
 
 ## Related
-[[homepage-ux-review-2026-05-21]] [[smartenplus-uxui-redesign-research-2026]] [[airport-transfer-redesign-2026]] [[recommendation-system]] [[tour-system-status]]
+[[homepage-ux-review]] [[smartenplus-uxui-redesign-research-2026]] [[airport-transfer-redesign-2026]] [[recommendation-system]] [[tour-system-status]]
