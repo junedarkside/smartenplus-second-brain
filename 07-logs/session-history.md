@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #137 — 2026-06-19 (END)
+
+**Achieved (#137) — Vault optimization pass (4 phases). No code/deploy — vault-only.**
+
+- **Phase 0 (safety net)**: committed 3 loose #136 carry-forward session-end files (master-state, 07-logs/log, session-history). `77e47e5`.
+- **Phase 1 (health pass)**: archived 8 audit bundles (47 files) + 15 verified-complete projects + 5 overviews → `08-archive/`. `01-projects/` 91→70 md, flat restored (0 subfolders), 0 broken wikilinks. Held active/ambiguous: not-suitable-for-section, frontend-audit-implementation, profile-dropdown-redesign. `9a3eded`.
+- **Phase 2 (atomize)**: vault already well-atomized; 1 superseded archived (payment-manual-test-skip). Aggressive atomize skipped per user (15 >200L justified specs/ADRs/active-work). `a531694`.
+- **Phase 3 (#125 CLOSED)**: stripped `-YYYY-MM-DD` from 62 active filenames (61 renamed + 1 archived); ~795 wikilinks rewritten via sed across index/log/master-state + ~140 notes; 2 collision pairs resolved semantically; 0 dated filenames outside archive, 0 broken links. `d235870`.
+- 4 commits pushed vault master. All repos clean (BE/FE/admin main, content master).
+
+**Carry-forward (NOT done #137):** deploy FE+BE develop→main (REC engine + ISR + from-price fix), #129 ISR prod activation, REC-engine min-price bug (same class), vault hygiene.
+
 ## Session #136 — 2026-06-19 (END)
 
 **Achieved (#136) — BE homepage "From" price type-filter fix + branch hygiene. No deploy.**

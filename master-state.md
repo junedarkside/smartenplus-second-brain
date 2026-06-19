@@ -4,24 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-19 (session #137 END)
+**Updated:** 2026-06-20 (session #138 END)
 
-**Achieved this session (#137) — Vault optimization pass (4 phases). No code/deploy — vault-only.**
+**Achieved this session (#138) — Unified search dialog w/ homepage tabbed search (FE-only, no deploy).**
 
-- **Phase 0 (safety net)**: committed 3 loose session-end files (#136 carry-forward: master-state, 07-logs/log, session-history). `77e47e5`.
-- **Phase 1 (health pass)**: archived 8 audit subfolder bundles (47 files) + 15 verified-complete projects + 5 companion overviews → `08-archive/`. `01-projects/` 91→70 md, **flat structure restored** (0 subfolders), 0 broken wikilinks. Verified-done before archive (rate-review shipped, operator-detail #124 prod, seo-sitemap merged, trip-search CLOSED, cross-sell live, favorite-heart migration applied). Held active/ambiguous: not-suitable-for-section, frontend-audit-implementation, profile-dropdown-redesign. `9a3eded`.
-- **Phase 2 (atomize — assessment)**: vault already well-atomized (06-13/06-15 passes; Phase 1 archived worst offenders). 1 superseded archived (payment-manual-test-skip). Aggressive atomization **skipped per user** — 15 >200L remain (justified specs/ADRs/active-work). `a531694`.
-- **Phase 3 (#125 CLOSED)**: stripped `-YYYY-MM-DD` from all 62 active dated filenames (61 renamed + 1 superseded-archived); ~795 wikilinks rewritten via sed across index/log/master-state + ~140 notes. Collision pairs resolved semantically (design-system-audit; content-marketing-strategy vs -review). 0 dated filenames outside `08-archive/`, 0 broken links. `d235870`.
-- 4 commits pushed to vault master. All repos clean (BE/FE/admin main, content master).
+- **Extracted `TabbedSearchPanel`** (`components/search/TabbedSearchPanel.js`, NEW): shared shell — Transportation + Experiences tabs (`SearchModeTabs`), owns `mode` (UI-only local state, no Redux), dynamic-imports both forms (`ssr:false`). Surface-agnostic (no card wrapper).
+- **`SearchDialog`**: now renders panel → all 3 dialog hosts (`StickySearchBar`, `HeaderSearchSummary`, `SearchCover`) show both tabs. Static-imports panel (no nested dynamic). **Transport path unchanged** (`handleSearch` → host `handleFindTrips` → `/trips` + close). Experiences tab self-navigates `/activities?search=&category=` + `onNavigate={onClose}` closes dialog.
+- **`ExperiencesSearch`**: added optional `onNavigate` prop (post-nav close). `isSearching` reset fix — `if(isSearching) return` guard + `setTimeout(()=>setIsSearching(false),3000)` fallback, mirrors `TransportationSearch.js:86-89`. Guards stuck "SEARCHING…" on rejected/slow nav.
+- **`DiscoverySection`** (`lib/homepage/components/`): inner card delegates to `<TabbedSearchPanel>`; dropped `useState`/`dynamic`/`SearchModeTabs`/`Spinner` imports.
+- **2-agent review** (code-reviewer + react-specialist, report-only): zero regressions. Verified state isolation clean (no Redux contamination of transport fields), transport path intact, `ProductSearchForm2` alias still consumed by `AirportTransferHeader`+`destinations/[slug]`+`airport-transfer/[slug]` (left intact). Review's "double-divider" finding was a false alarm — `theme.js` has no `MuiDialog`/border override, `DialogTitle` borderless (MUI default).
+- Merged develop (`ceaa003`, --no-ff, no conflicts), feat branch pruned (local+remote). FE main @ `ceaa003`, clean.
 
-**Resume point (EXACT)** — eng work unchanged from #136 (this session was vault-only):
-1. **Deploy FE + BE develop→main** — REC engine (zones, P0, image/price/logo_url), ISR activation, duration fix, **+ #136 homepage from-price fix**. **After BE deploy: bust front-page cache** (`pages_info/views.py:326`, timeout 3600) else corrected prices stale 1h.
+**Resume point (EXACT)** — eng deploy queue unchanged; this feature joins it:
+1. **Deploy FE develop→main** — now carries search-dialog-tabbed (`ceaa003`) ON TOP of REC engine (zones, P0, image/price/logo_url), ISR activation, duration fix, + #136 homepage from-price fix. **Manual UI test FIRST** (see SEARCH-DIALOG-UI-TEST, Section 2). After BE deploy: bust front-page cache (`pages_info/views.py:326`, timeout 3600) else corrected prices stale 1h.
 2. **#129 ISR PROD ACTIVATION** (folds into step 1): BE develop→main + prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (#134 stale-worker = `unregistered task`, msgs discarded — [[celery-unregistered-task-stale-worker]]). Smoke-test: edit contract → worker log `ISR revalidated slug=... status=200`.
 3. **REC-engine min-price bug** (same class, OUT OF SCOPE #136): `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder annotations — all lack type filter. Reuse `route_lowest_price_annotation` pattern.
-4. **Vault hygiene (deferred from #136)**: mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]]. Optional: relocate closed items in index.md Active Projects → Archive section (left in place this session — links resolve).
+4. **Vault hygiene (deferred from #136)**: mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]].
 5. **Next eng (deferred, tracked)**: slot-waste `exclude_ids` API, `recommendation_purchase` GTM, UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
 
-_(Session #136 block archived → `07-logs/session-history.md`. All repos clean: BE `cff26b3`, FE `143f9a2`, admin `bdf85ff`, content `3756e5b`. Live git: `bash vault-wrapup.sh`.)_
+_(Session #137 block archived → `07-logs/session-history.md`. All repos clean: BE `cff26b3`, FE `ceaa003`, admin `bdf85ff`, content `3756e5b`. Live git: `bash vault-wrapup.sh`.)_
 
 ---
 
@@ -34,6 +35,8 @@ _(Session-end cleanup + carry-forward state archived to `07-logs/session-history
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **SEARCH-DIALOG-UI-TEST** | Unified search dialog now shows Transportation + Experiences tabs in all 3 hosts. MERGED develop `ceaa003` (#138). **NOT yet manually UI-tested** — verify PRE-DEPLOY: open each dialog (StickySearchBar / HeaderSearchSummary / SearchCover), transport tab unchanged (→ `/trips` + close), experiences tab → `/activities?search=&category=` + dialog closes, mobile full-screen Slide transition. Extracted `TabbedSearchPanel` (`components/search/`); `SearchDialog` static-imports it. | **PRE-DEPLOY verify** #138 | `components/search/TabbedSearchPanel.js`, `SearchDialog.js`, `ExperiencesSearch.js` |
+| **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **BE-HOMEPAGE-PRICE** | Homepage "From" prices computed BE-side. **Experiences + airport-routes FIXED #136** (`get_min_price` ADULT+fallback; airport `lowest_price` type-aware via new `route_lowest_price_annotation` helper shared with HomeViewSet). Merged BE develop `cff26b3`. **NEEDS DEPLOY + front-page cache bust.** Remaining OPEN (same bug class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **PARTIAL-CLOSE #136** — homepage DONE (needs deploy); REC-engine OPEN | `products/services.py` (REC), `products/serializers.py:~1105` |
 | **REC-CHECKOUT-ZONES** | Checkout "Complete your trip" recommendation engine: P0 hybrid fix + zones (ESSENTIAL/POPULAR/SIMILAR) + matrix + transport finder + per-zone caps + price-bug + experience-first anchor + recType-follows-anchor + card-count tuning + add_cart GTM + mobile cap + seed command. **MERGED to develop #133** (BE `ae31f1f`, FE `0877d23`), branches pruned. | **MERGED, NEEDS DEPLOY** develop→main both repos. Then prod seed cleanup. | `products/services.py`, `components/recommendations/*`, [[recommendation-engine-completion-roadmap]] |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when a cart item overlaps a backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. Medium. | OPEN #133 — deferred, tracked. | `smartenplus-backend/products/services.py` get_recommendations, [[recommendation-engine-completion-roadmap]] |
