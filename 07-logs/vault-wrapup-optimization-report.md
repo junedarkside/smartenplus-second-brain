@@ -133,3 +133,39 @@ See also: vault-protocol.md, vault-guardrails.md, session-history.md
 3. Update CLAUDE.md protocol
 4. Test with next session wrap-up
 5. Iterate based on actual savings
+
+---
+
+## Round 2 — 2026-06-19
+
+**Trigger:** user invoked `/caveman:caveman optimize vault` → vault-optimizer skill.
+
+**State at start:**
+- Round 1 (2026-06-05) had extracted `vault-protocol.md`, `vault-guardrails.md`, `session-history.md`, `closed-items.md`, `vault-wrapup.sh`. Skill steps 2–4 already done.
+- `master-state.md` = 86 lines (vs ~60 target). Remaining waste concentrated in `Carry-forward bugs (open, from #127)` block (5 items, 4 not yet in Section 2) + `Next session: starting state` subsection (git info, replaced by `vault-wrapup.sh` output).
+- `audits/` folder undocumented in CLAUDE.md, held 1 orphan file.
+- `session-history.md` = 562 lines (52KB). Out of scope this round (user picked minimal scope).
+
+**Actions:**
+1. master-state.md — replaced carry-forward + next-session blocks with single pointer line; promoted 4 #127 items to Section 2 rows (silaphat, booking_count_yesterday, sort vocab, BE git diverge).
+2. Moved `audits/filter-functionality-audit-2026-06-15.md` → `01-projects/filter-functionality-audit-2026-06-15.md`; removed empty `audits/` folder.
+3. Appended `## [2026-06-19] optimize | ...` entry to `log.md`.
+
+**Metrics:**
+
+| Metric | Before R2 | After R2 | Savings |
+|--------|-----------|----------|---------|
+| master-state.md lines | 86 | 80 | ~7% |
+| master-state carry-forward dup | 12 lines | 0 lines | 100% |
+| Section 2 tracked #127 items | 1 (BE-IMAGE-DEDUP only) | 5 | +4 visibility |
+| Orphan audits | 1 | 0 | 100% |
+| Undocumented folders | 1 (`audits/`) | 0 | 100% |
+| skill coverage | 4/5 (no recent report) | 5/5 | full |
+
+**Why smaller reduction than Round 1:** prior round already extracted main dead weight. Remaining bloat = historical accumulation (`session-history.md` 562 lines, `log.md` 689 lines) — future `/lint-vault` round can address.
+
+**Out of scope (deferred):**
+- `session-history.md` retention policy (562 lines, no trim policy in place)
+- `log.md` rotation (689 lines)
+- VAULT-DATE-RENAMES (#125) — 105 files with date-embedded names
+- 03-knowledge/ atomization (230 files, some >200 lines)

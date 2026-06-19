@@ -16,6 +16,8 @@ metadata:
 
 GYG Chiang Rai tour (product 846675) analyzed section-by-section vs SmartEnPlus `/activities/detail/[slug]`. 22 GYG sections mapped, 11 candidates surfaced, 5 adopted (1 P0, 2 P1, 2 P2), 4 P3 backend debt flagged, 1 user-deferred (AI summary). Top impact: P0 footer meta strip — trivial effort, dual-purpose (visual + JSON-LD provider field).
 
+**Follow-up:** [[not-suitable-for-section-2026-06-18]] builds on the P1 not-suitable-for badges (shipped `0746b2c`) — replaces derived badges with operator-authored exclusion list.
+
 ## Context
 
 **Why this analysis:** GYG = world-class activity detail page benchmark. SmartEnPlus already has 2026-06-02 redesign doc covering major GYG patterns (AirbnbPhotoGrid, ExperienceTitleArea, WhyTravelersLove, etc.). This round = incremental gap analysis on what 2026-06-02 missed.

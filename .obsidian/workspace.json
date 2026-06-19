@@ -179,6 +179,7 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "01-projects/filter-functionality-audit-2026-06-15.md",
     "03-knowledge/category-aware-duration-formatter.md",
     "03-knowledge/isr-revalidate-csr-vs-isr-field-matrix.md",
     "03-knowledge/isr-revalidate-csr-vs-isr-field-matrix.md.tmp.7949.ee77082cc43d",
@@ -209,7 +210,6 @@
     "08-archive/README.md",
     "07-logs/README.md",
     "06-systems/README.md",
-    "05-templates/README.md",
     "scripts/vault-stats.py",
     "scripts",
     "log.md.tmp.56014.560eacef4920",

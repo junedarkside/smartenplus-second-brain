@@ -11,6 +11,8 @@
 
 FAQ section on experience detail page is partially hardcoded. Two items always render regardless of operator data. One hardcoded item is factually incorrect for strict-policy operators (legal/trust risk). One assumed API field (`cancellation_policy.description`) does not exist. `age_restriction` is editable in Django admin but missing from the Next.js admin dashboard.
 
+**Follow-up:** [[not-suitable-for-section-2026-06-18]] surfaces these eligibility constraints as a dedicated operator-authored section (not buried in FAQ), adds admin multi-select, JSONField enum on Contract.
+
 ---
 
 ## Current State Cross-Repo Map

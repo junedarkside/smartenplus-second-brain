@@ -4,43 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-19 (session #134 END)
+**Updated:** 2026-06-19 (session #135 END)
 
-**Achieved this session (#134) — Diagnosed local Celery `unregistered task` error, filed operational atom. No code change.**
+**Achieved this session (#135) — Activity detail + browse page bug fixes. No deploy.**
 
-- **Diagnosed** local worker error `Received unregistered task 'operators.tasks.revalidate_frontend_isr'` / `KeyError`. Root cause: worker process booted **before** #129 (`0f2d108`) added the task; `autodiscover_tasks()` runs once at boot, so the registry is stale. Web reload ≠ worker reload. Unregistered messages are **discarded, not retried**.
-- **Confirmed benign in dev** (triple-guard): (1) stale worker discards, (2) local `.env` has empty `REVALIDATION_SECRET` → task no-ops at `tasks.py:70`, (3) frontend routinely down during admin-dashboard testing → POST would fail anyway. Error = log spam; fix = restart worker.
-- **Prod exposure clarified:** container worker (`docker-compose-deploy.yml:34`) → `docker compose up -d --build` auto-recreates = safe; at-risk only on partial `restart web`. Reinforces the #129 deploy checklist (restart worker + non-empty `REVALIDATION_SECRET`).
-- **Filed atom** [[celery-unregistered-task-stale-worker]] (symptom signature, why, silent-loss, local/prod, not-confused-with, side hardening), cross-linked from [[celery-task-over-bare-thread-django-signals]]; updated `index.md` + `log.md`.
-- **Side item flagged:** `celery-worker` + `celery-beat` lack `restart: always` in `docker-compose-deploy.yml` — crash won't auto-recover.
-- **Pruned** admin-dashboard `feat/contract-not-suitable-for` (local `a70630b` + remote) — merged to develop `bdf85ff`, verified fully-merged before delete.
+- **P3 design tokens** (4 components): BookedCounter, IncludedExcluded, MeetingPointCard migrated Tailwind color classes → COLORS token inline styles. DayTripHero same fix but file is dead code (not imported anywhere).
+- **AirbnbPhotoGrid image ordering**: `buildImageList()` now trusts backend `contract.image[]` array (already sorted by admin `order` field). `featured_image` is fallback only when gallery empty. `totalCount` fixed to not double-count.
+- **Double "From" label**: `DayTripMobileBookingBar` + `PremiumBookingPanel` were prepending own "From" before `PricingDisplay size="compact"` (which renders its own). Removed caller-side duplicates.
+- **PricingDisplay `align` prop**: added `align='end'` default (zero callers break). Mobile bar + premium panel pass `align="start"` for left-align.
+- **`getFromPrice` type-aware**: filters ratecards JOIN→ADULT / other→VEHICLE (fallback: all). Now matches `findLowestSellingRate()` in `helpers/tripSorting.js`. Prevents CHILD/INFANT rate surfacing as "From".
+- **DayTripCard**: replaced 15-line inline Math.min block with `getFromPrice(workingContract) ?? 0`.
 
 **Resume point (EXACT):**
-1. **Deploy BE develop→main** → recommendation engine (zones, P0, image/price/logo_url) reaches prod. Run prod seed cleanup (detach dummy trips) / `seed_demo_destination` if testing on prod data.
-2. **Deploy FE develop→main** → zone UI + anchor/recType fixes to prod.
-3. **#129 ISR PROD ACTIVATION** (folds into step 1): BE develop→main + prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (this session's lesson — else `unregistered task`, see [[celery-unregistered-task-stale-worker]]). Then smoke-test: edit a contract, confirm worker log shows `ISR revalidated slug=... status=200`.
-4. **Vault hygiene:** mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]] (now contradicts shipped code).
-5. **Next eng (deferred, tracked):** slot-waste `exclude_ids` API (ESSENTIAL renders short when a cart item overlaps a rec), `recommendation_purchase` GTM (then measure zone conversion), UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
+1. **Deploy FE + BE develop→main** — recommendation engine (zones, P0, image/price/logo_url), ISR activation, duration fix all reach prod. See #133/#129 notes below.
+2. **#129 ISR PROD ACTIVATION** (folds into step 1): BE develop→main + prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (#134: stale worker = `unregistered task`, msgs discarded — [[celery-unregistered-task-stale-worker]]). Smoke-test: edit contract, confirm worker log shows `ISR revalidated slug=... status=200`.
+3. **Backend price fix**: `PopularExperienceSerializer.get_min_price()` in `smartenplus-backend/products/serializers.py:~755` — add type filter (JOIN→ADULT, other→VEHICLE) so homepage Explore Experiences cards show correct "From" price. Same pattern fix in `pages_info/views.py` `lowest_price` subquery for Popular Routes (lower priority).
+4. **Vault hygiene**: mark anchor-flip + price-floor DONE in roadmap note; retire stale [[recommendation-anchor-first-transport-rule]].
+5. **Next eng (deferred, tracked)**: slot-waste `exclude_ids` API, `recommendation_purchase` GTM, UPGRADE zone (`upgrade_of` FK), multi-destination 2-anchor, weekly trending.
 
-_(Session #133 block archived → `07-logs/session-history.md`. Note: BE `main` is now `bb5c199`, FE `main` `4c9354b` — both repos moved since #133; recommendation-engine deploy state should be re-verified against current `main` before step 1.)_
+_(Session #134 block archived → `07-logs/session-history.md`. FE develop `143f9a2`, FE main `4c9354b`, BE main `bb5c199`.)_
 
 ---
 
 
-**Carry-forward bugs (open, from #127):**
-- **BE-IMAGE-DEDUP** tech debt (Section 2) — `process_operator_image` vs `process_review_image` dup + upload-validation copy-pasted ×5 files.
-- silaphat `Operator.description` holds route notes, not real about-copy — data quality.
-- `booking_count_yesterday` (`products/serializers.py:353-363`) — rolling 24h not calendar yesterday.
-- Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count`.
-- Prod backend git history diverged from origin (merge-noise) — pulls always merge, not FF. Cosmetic.
-
-**Next session: starting state** (live git 2026-06-19, all clean)
-- vault: `master` @ new commit (this adds #134)
-- BE: `main` @ `bb5c199` (clean) — `feat(operators): add not_suitable_for field to Contract`. ⚠️ moved since #133's `ae31f1f` — re-verify recommendation-engine deploy state against current `main`.
-- FE: `main` @ `4c9354b` (clean) — `fix(activities): make category chip visibly clickable`.
-- admin-dashboard: `main` @ `bdf85ff` (Not Suitable For multi-select merged; `feat/contract-not-suitable-for` pruned local+remote)
-- content: `master` @ `3756e5b` (clean)
-- ⚠️ #129 ISR activation: prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (else `unregistered task` — [[celery-unregistered-task-stale-worker]]).
+_(Session-end cleanup + carry-forward state archived to `07-logs/session-history.md`. Live git state for next session: run `bash vault-wrapup.sh`.)_
 
 ---
 
@@ -48,6 +35,7 @@ _(Session #133 block archived → `07-logs/session-history.md`. Note: BE `main` 
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **BE-HOMEPAGE-PRICE** | `PopularExperienceSerializer.get_min_price()` (`products/serializers.py:~755`) has no type filter — picks lowest `selling_rate` across all ratecard types. JOIN contracts: should pick ADULT rate only; private/charter: VEHICLE. Symptom: homepage Explore Experiences card may show CHILD/INFANT rate as "From". Same bug in `pages_info/views.py` `lowest_price` subquery for Popular Routes (lower priority — transport contracts naturally only have VEHICLE rates). Frontend `getFromPrice()` already correct after #135 fix. | OPEN #135 | `smartenplus-backend/products/serializers.py:~755`, `pages_info/views.py` |
 | **REC-CHECKOUT-ZONES** | Checkout "Complete your trip" recommendation engine: P0 hybrid fix + zones (ESSENTIAL/POPULAR/SIMILAR) + matrix + transport finder + per-zone caps + price-bug + experience-first anchor + recType-follows-anchor + card-count tuning + add_cart GTM + mobile cap + seed command. **MERGED to develop #133** (BE `ae31f1f`, FE `0877d23`), branches pruned. | **MERGED, NEEDS DEPLOY** develop→main both repos. Then prod seed cleanup. | `products/services.py`, `components/recommendations/*`, [[recommendation-engine-completion-roadmap]] |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when a cart item overlaps a backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. Medium. | OPEN #133 — deferred, tracked. | `smartenplus-backend/products/services.py` get_recommendations, [[recommendation-engine-completion-roadmap]] |
 | **REC-PRECOMPUTE-CACHEKEY** | Low. `products/tasks.py:67` precompute builds cache key `recommendations:{id}:{type}:{limit}` (4-part) but `get_recommendations:667` runtime key is 5-part (`:{rate_date or 'none'}`). Precompute writes never hit at runtime → wasted warm. Pre-existing, found in #132 verify. | OPEN #132 — out of scope of P0 fix. | `smartenplus-backend/products/tasks.py:67` |
@@ -80,6 +68,10 @@ _(Session #133 block archived → `07-logs/session-history.md`. Note: BE `main` 
 | GAP-5 | Nav hidden while searching | P2 — accepted. | `main-header.js:112` |
 | GAP-6 | threshold=0 abrupt snap | P3. | `useStickyVisibility.js:12` |
 | GAP-7 | Wordmark hidden md-xl | P3. | `main-header.js:95` |
+| SILAPHAT-DESC | `Operator.description` holds route notes, not real about-copy — data quality | OPEN #127 — BD/copy task | `operators/models.py` |
+| BOOKING-24H | `booking_count_yesterday` is rolling 24h not calendar yesterday (mislabeled) | OPEN #127 — rename or relabel | `products/serializers.py:353-363` |
+| SORT-VOCAB | Dual sort vocab: QuickSortPills PascalCase vs SortDropDown `-booked_count` | OPEN #127 — pick one, propagate | `components/UI/` |
+| BE-GIT-DIVERGE | Prod backend git history diverged from origin (merge-noise) — pulls merge not FF | OPEN #127 — cosmetic | `smartenplus-backend` |
 
 ---
 

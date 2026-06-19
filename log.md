@@ -1,5 +1,6 @@
 # Second Brain — Operational Log
 
+## [2026-06-19] optimize | vault optimizer round 2 — master-state dedup (carry-forward block → Section 2 rows), classified orphan `audits/filter-functionality-audit-2026-06-15.md` → `01-projects/`, removed empty `audits/` folder, appended report.
 ## [2026-06-19] prune | admin-dashboard `feat/contract-not-suitable-for` deleted local (`a70630b`) + remote — merged to develop `bdf85ff`, verified fully-merged.
 
 ## [2026-06-19] session-end | #134 — diagnosed local Celery `unregistered task 'revalidate_frontend_isr'` = stale worker (booted before #129); benign in dev (stale + empty secret + frontend down), prod safe with `up -d --build`. New atom [[celery-unregistered-task-stale-worker]], cross-linked. No code change. Master-state #133→history, resume = ISR prod activation now includes worker restart + non-empty `REVALIDATION_SECRET`.
