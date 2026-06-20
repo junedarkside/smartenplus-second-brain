@@ -25,6 +25,7 @@ Orientation note for any new session. Single-page snapshot of what this project 
 3. Remove Stripe 410 stub (waiting zero traffic)
 4. Forex endpoint naming debt (public on admin path)
 5. Deferred trip detail audit: CF1, CF9, VD2/VD3, VD9
+6. **CS Centralization** (decision accepted, not scheduled) — spine: P1a identity + Email-OTP (`pyotp`+SES), P2 My-Trip rebrand, P1b polling chat + CS Dashboard + SMS reminders; conversion thesis REOPENED (Supabase holds 80%+ OTA traveler contacts). Channel map: website widget (customer chat, long-polling) · AWS SNS SMS (trip reminders, same boto3/AWS) · SES email (confirmations, live) · Telegram (CS internal alert only). WhatsApp deferred to 500+ bookings/mo. Channels dormant. Net-new dep: `pyotp` only. → [[cs-centralization-stack]] · [[supabase-ota-booking-store]]
 
 ## Constraints / Gotchas
 - Cart item key: `item.id` (`stable_id` removed 2026-02-13)
@@ -41,3 +42,4 @@ Orientation note for any new session. Single-page snapshot of what this project 
 - [[payment-integration]] — payment patterns in depth
 - [[backend-architecture]] — Django app structure
 - [[nextjs-patterns]] — ISR, SSR, RTK Query patterns
+- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] — CS Centralization decision + stack

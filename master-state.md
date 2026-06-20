@@ -4,32 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-20 (session #139 END)
+**Updated:** 2026-06-20 (session #140 END)
 
-**Achieved this session (#139) — Prod incident fix: Celery recommendation + payment tasks crushing the 1-vCPU EC2. SHIPPED to develop + DEPLOYED + admin schedule updated.**
+**Achieved this session (#140) — CS Centralization vault: Supabase source-verified + channel architecture finalized. Vault-only, no code.**
 
-Triggered by CloudWatch alert (CPU spike + network burst at top-of-hour on smallest burstable EC2, CPU-credit limited). Audited every scheduled Celery task for server-down risk on a 1-vCPU box (concurrency=1, RDS external, all containers on one host via `docker-compose-rds.yml`).
+- 4-agent r2 red-team review written; r2 findings applied to thesis (rename, infra-gate deferred, realtime corrected)
+- Stack ADR created (`cs-centralization-stack.md`): long-polling + `pyotp`+SES + Telegram-internal + AWS SNS SMS; net-new dep = `pyotp` only
+- Supabase `gmail12go.Information` **source-verified** via live REST API: 58 records, 16 cols, 12Go only, ingestion 2025-10-30→2026-06-15 — overturns r2's "no traveler PII" blocker → conversion thesis REOPENED
+- Channel architecture finalized: website widget (customer chat) · AWS SNS SMS (trip reminders, same boto3/AWS) · SES (confirmations) · Telegram (CS internal only). WhatsApp deferred.
+- Supabase gaps documented for owner to add: `Source`, `marketing_consent`, `consent_date`, `smarten_order_id`
+- Vault propagated: r2-skeptic-review (annotated), supabase-ota-booking-store (new), cs-centralization-stack (new), thesis (multi-pass), accounts, tickets, synopsis, index, log, master-state
 
-- **Root cause found:** `precompute_popular_contracts` (hourly) wrote cache keys `recommendations:{id}:{type}:{limit}` but `get_recommendations` reads/writes 5-part keys `...:{rate_date or 'none'}`. **Zero cache hits system-wide** → every rec API call + every precompute hit RDS. With 1000+ prod contracts, 100 popular × 12 calls drained CPU credits every hour; the 2 AM `precompute_all_active_contracts` (12,000+ computations) was the bigger bomb.
-- **Debunked false leads:** earlier "list.count() TypeError" was wrong (Django sliced queryset stays a QuerySet — verified vs real DB). `update_route_query_counts` was NOT the cause (Mon-only, graph was Friday). Earlier "1,200 simultaneous queries" was wrong for concurrency=1 (tasks serialize; damage is total sequential CPU pin).
-- **Shipped fixes** (branch `fix/precompute-popular-contracts`, merged develop `e983c3e`, pushed, 4 commits):
-  - `7b6a9f8` cache-key `:none` align + cache `result['recommendations']` (list, not full dict — would've served `len()=4` corrupt data once keys matched)
-  - `a59b9b8` skip-if-fresh `cache.ttl()` guard (>22h remaining → skip recompute)
-  - `2c2c799` revert stagger (counterproductive at conc=1), hourly→every-6h, drop nightly all-contracts from beat
-  - `bf633ac` bound `sync_pending_charges`: worker-only `socket.setdefaulttimeout(10)` (NOT in shared `get_charge_status` — web is gunicorn --threads 2, global timeout unsafe there), shared batch cap 40 oldest-first, `time_limit=540`. All 15 `payments.tests.test_tasks` pass. No finalization logic touched.
-- **DEPLOYED** + **admin schedule updated** (prod uses `DatabaseScheduler` — `celery.py` only seeds; DB wins). Verified in `django_celery_beat` admin: `precompute-popular-contracts` = every 6h Enabled=True (last run 9am); `precompute-all-contracts-nightly` = Enabled=False.
+**Resume point (EXACT):**
+1. **Owner: add 4 gap fields to Supabase** — `Source` (OTA identifier), `marketing_consent` boolean, `consent_date`, `smarten_order_id` (nullable)
+2. **Owner: fix Supabase data quality** — `Operator` dirty values (`ensure plus`, trailing `\r\n`), `Date=5000-08-02` outlier
+3. **P0 test (no code):** message 20 Confirmed travelers from Supabase, send Smarten direct booking link, count rebookings in 30 days — this number decides the whole conversion thesis
+4. **Eng carry-forward (unchanged):** FE develop→main (SEARCH-DIALOG-UI-TEST manual verify); ISR prod activation (#129); REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch verify #139 fix)
 
-**Resume point (EXACT) — WAIT FOR TOMORROW'S CLOUDWATCH:**
-1. **Verify incident resolved (tomorrow AM):** CloudWatch CPU-credit balance should STOP draining; no `:00` spike (every-6h + skip-if-fresh now); no 2 AM spike (nightly disabled). On EC2: `redis-cli -n 0 --scan --pattern "recommendations:*:none" | wc -l` > 0; worker log shows "Skipping fresh cache" on 2nd+ runs.
-2. **If still spiking:** check worker actually restarted (new task code loaded) + admin schedule actually took (DatabaseScheduler can hold stale DB entry).
-3. **Carry-forward eng deploy queue (unchanged from #138):** FE develop→main (search-dialog-tabbed `ceaa003` + manual UI test SEARCH-DIALOG-UI-TEST); #129 ISR prod activation; REC-engine min-price bug (`services.py:74`, `serializers.py:~1105`, 6 finder annotations — reuse `route_lowest_price_annotation`).
-
-_(Session #138 block archived → `07-logs/session-history.md`. Reports written to vault: precompute-popular-contracts-audit, -fix-plan, update-route-query-counts-audit. Live git: `bash vault-wrapup.sh`.)_
-
----
-
-
-_(Session-end cleanup + carry-forward state archived to `07-logs/session-history.md`. Live git state for next session: run `bash vault-wrapup.sh`.)_
+_(Session #139 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -37,6 +29,7 @@ _(Session-end cleanup + carry-forward state archived to `07-logs/session-history
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (long-polling, reuse `useQRPolling`); trip reminders = AWS SNS SMS (`boto3`, same AWS acct); confirmations = SES email (live); CS team = Telegram internal alert only. WhatsApp deferred (500+ bookings/mo). P1b needs new `Conversation`+`Message` Django models. Email-OTP `pyotp`+SES. Channels dormant. Net-new dep `pyotp` only. **Supabase source-verified** (`gmail12go.Information`, 58 records, 12Go only, 16 cols). Gaps to add: `Source`, `marketing_consent`, `consent_date`, `smarten_order_id`. **Conversion thesis REOPENED** — 80%+ OTA traveler contacts confirmed in Supabase. P0 = measure rebooking, not capture. | **DECISION OPEN — channel arch settled, not scheduled for dev** | [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] · [[supabase-ota-booking-store]] |
 | **SEARCH-DIALOG-UI-TEST** | Unified search dialog now shows Transportation + Experiences tabs in all 3 hosts. MERGED develop `ceaa003` (#138). **NOT yet manually UI-tested** — verify PRE-DEPLOY: open each dialog (StickySearchBar / HeaderSearchSummary / SearchCover), transport tab unchanged (→ `/trips` + close), experiences tab → `/activities?search=&category=` + dialog closes, mobile full-screen Slide transition. Extracted `TabbedSearchPanel` (`components/search/`); `SearchDialog` static-imports it. | **PRE-DEPLOY verify** #138 | `components/search/TabbedSearchPanel.js`, `SearchDialog.js`, `ExperiencesSearch.js` |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **BE-HOMEPAGE-PRICE** | Homepage "From" prices computed BE-side. **Experiences + airport-routes FIXED #136** (`get_min_price` ADULT+fallback; airport `lowest_price` type-aware via new `route_lowest_price_annotation` helper shared with HomeViewSet). Merged BE develop `cff26b3`. **NEEDS DEPLOY + front-page cache bust.** Remaining OPEN (same bug class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **PARTIAL-CLOSE #136** — homepage DONE (needs deploy); REC-engine OPEN | `products/services.py` (REC), `products/serializers.py:~1105` |

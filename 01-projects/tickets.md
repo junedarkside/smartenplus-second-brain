@@ -35,8 +35,11 @@ Attaches to any Django model. `BookingItem` has GenericRelation via `ticket` fie
 - Any model can be ticket target via GenericForeignKey
 - Tickets created by users, assigned to support staff
 
+**Planned (CS Centralization — [[cs-centralization-stack]]):** Ticket is the extend target for CS tickets. ⚠️ r2 constraint: GenericFK `content_type`/`object_id` are **non-nullable** (`tickets/models.py:29-30`) → a booking-less account-help ticket cannot be created today; "extend" requires making the FK nullable first.
+
 ---
 
 ## Related
 - [[bookings]] (BookingItem GenericRelation noted)
 - [[accounts]] (User model for created_by/assigned_to)
+- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] (Ticket = CS extend asset)

@@ -1,0 +1,88 @@
+---
+name: grill-audit
+description: Adversarial audit of Smarten Customer OS thesis + 4-reviewer consensus — contradictions, fuzzy terms, edge cases the team normalized away
+metadata:
+  type: grill-audit
+  role: grill
+  date: 2026-06-20
+  parent: customer-os-thesis-review
+---
+
+# Grill Audit — Smarten Customer OS Thesis
+
+## Summary
+
+The 4-reviewer consensus (PROCEED-REVISED, DIRECT-first MVP, P0 gate) is defensible but rests on **two unexamined backend gaps** that materially weaken the plan. (1) The backend has **no `source`/`origin` field on `Order` or `BookingItem`** — so "service-only-by-default on OTA-sourced records," the strategy's survival-correct mitigation, **cannot be enforced** because no record is tagged OTA vs DIRECT. The entire channel-conflict mitigation is built on a field that does not exist. (2) `BookingPassengerDetail` (`bookings/models.py:183`) carries **only name + passport + DOB — no email, no phone**; the only contact PII lives on `Order.email` (the *booker*, frequently a travel agency, not the traveler). So an "OTA-sourced Customer shadow" is even thinner than the reviewers claimed: it has no usable contact key at all for a traveler, only for a booker who may not be the passenger. Beyond these, the thesis/review load **five fuzzy terms** (Customer, Ticket, Booking, Conversation, Source) onto different physical records without disambiguation, and the consensus politely skipped four hostile edge cases (merge-after-account-creation, cross-channel same-trip, expired-trip auto-ticket, payment_failed-mid-chat). Net: PROCEED-REVISED is still right, but the P1a scope the reviewers approved is **under-scoped by at least one deliverable** (the `source` migration + backfill) and one critical data-model decision (the booker-vs-passenger identity split).
+
+## Contradictions
+
+1. **Channel-conflict mitigation is unenforceable as written.** Strategy: "keep OTA-sourced customer records **service-only**… gate any retention outreach to explicit opt-in" ([[r1-strategy]] Finding 4). Leader: "OTA-sourced records are service-only by default" ([[r3-leader-synthesis]]; echoed [[smarten-customer-os-thesis]] Details). **Backend reality:** `orders/models.py:175` (`Order`) and `bookings/models.py:26` (`BookingItem`) have **no `source`/`origin`/`booking_source` field** (grep `source|ota|klook|direct|origin` returns only unrelated `total`/`subtotal` hits). A record cannot be "service-only-by-default" if nothing marks it as OTA-sourced.
+   *Recommended resolution:* Add `source`/`origin` enum (`DIRECT`/`KLOOK`/`12GO`/`BOOKAWAY`/`AGENCY`/`HOTEL`/`CORPORATE`) to `Order` + `BookingItem` as **P1a scope, before any Customer roll-up**. Backfill is a data-eng task (heuristic on order ref prefixes / OTA integration IDs) and must be counted in the 6-8wk estimate, not assumed free.
+
+2. **"`~70%` reuse" overstates the Customer reuse.** Tech + leader: Customer = "Extend `accounts.Account` + `billings.BillingProfile`" (~70% reuse). **Backend reality:** `accounts.Account` (`accounts/models.py`) is the auth user (email+name, `unique=True` email). `billings.BillingProfile` (`billings/models.py`) is keyed on `user` (nullable) **or** `slug=email` for guests, with `BillingProfileManager.get_or_new` that *intentionally creates a new profile per email string and deactivates prior ones* (`older_billing_profiles.update(active=False)`). This is a **billing/payments identity**, not a customer-relationship identity — it actively churns records, the opposite of "one customer." Reusing it as the Customer roll-up means inheriting a merge-hostile manager. Tech's "reuse, don't fork" framing papers over a real schema conflict.
+   *Recommended resolution:* Customer is a **new model** with FKs to `Account` (when authenticated) and a 1:N to `BillingProfile`/`Order` (for guest linkage), NOT an alias over BillingProfile. Adjust the reuse %: Customer is greenfield, not extend.
+
+3. **"Customer.email" vs CLAUDE.md session structure.** Decision doc Details treats email as the customer primary key. CLAUDE.md (Auth): *"Session structure: `{ id, accessToken, user: { email } }`. … Email: `session?.user?.email`. Never `session?.email`."* The thesis writes "Customer" as if email is a top-level stable attribute; in the auth layer it is nested and the canonical identity is `session.id` → `Account.email`. Email-as-key also breaks the documented OTA-shadow case (no email on passengers). No contradiction in *fact*, but the data-model assumes an email-key the auth/session layer does not guarantee post-merge.
+   *Recommended resolution:* Customer primary key = surrogate UUID; email/phone are *attributes* with a separate `identity_claims` provenance. Do not key Customer on email.
+
+4. **"Extend `tickets.Ticket`" vs the GenericFK contract.** Tech + leader: "extend `tickets.Ticket` — GenericFK to BookingItem, already wired." **Backend:** `tickets/models.py:34-37` — `content_type`/`object_id`/`content_object` are `null=False` required (`on_delete=CASCADE`, no `blank=True`). `bookings/models.py:70` — `ticket = GenericRelation(Ticket, ...)`. Every Ticket *must* attach to a content object. A CS support-ticket unrelated to any booking (general inquiry, account help) **cannot be created** under the current schema. "Extend" silently assumes making the GenericFK nullable, which is a contract change to every existing Ticket caller.
+   *Recommended resolution:* P1a must explicitly make `content_type`/`object_id` nullable (or add a separate `Conversation` FK) — call this out as a schema migration with caller review, not "extend."
+
+## Fuzzy Terms → Canonical
+
+1. **"Customer"** — used for: (a) `accounts.Account` (auth identity, email-unique), (b) `billings.BillingProfile` (paying party, churning per-email), (c) `Order.email` (booker, may be agency), (d) `BookingPassengerDetail` (traveler, **no contact PII**), (e) the proposed unified "Customer" roll-up. These are 5 different physical entities.
+   *Canonical:* **Customer** = the relationship subject (a person Smarten has a service/brand relationship with). Distinguish: **Booker** (`Order.email`/`Account` — who paid), **Passenger** (`BookingPassengerDetail` — who travels), **Account** (`Account` — authenticated identity). A Customer *resolves* 0..N of each. The OTA-acquisition gap is specifically: Passenger has no contact key, so a Customer cannot be built from a Passenger without a post-trip claim.
+
+2. **"Ticket"** — the thesis means *travel/boarding ticket*; the backend `tickets.Ticket` (`tickets/models.py:17`) is a **CS support-ticket** (`ticket_status` Active/Pending/Completed, `assigned_to`, `is_resolved`, `closed_date`). These are unrelated concepts sharing a word. Phase 4 "Auto Ticket" is ambiguous: auto-create a *support ticket*? or a *boarding ticket*?
+   *Canonical:* **SupportTicket** (`tickets.Ticket`, the existing model — rename in API/docs if feasible). **TravelTicket / BoardingPass** = the fulfillment artifact (currently `BookingItem.passenger_details` JSONField + voucher). Never call both "Ticket." P4 Auto Ticket = auto-create a SupportTicket from a trigger.
+
+3. **"Booking"** — `bookings.BookingItem` (a line item with status machine, `bookings/models.py:26`) vs an OTA booking reference (external string) vs `orders.Order` (the payable aggregate, `orders/models.py:175`). One `Order` has many `BookingItem`s; an OTA "booking ref" maps to neither cleanly.
+   *Canonical:* **Order** (payable, `orders.Order`), **BookingItem** (fulfillment line, `bookings.BookingItem`), **OTAReference** (external ID, needs a new field on Order). "Booking history" in My Trip = list of `BookingItem` joined to the Customer's Orders.
+
+4. **"Conversation" / "Channel" / "Source"** — "Source" means both *booking source* (OTA/DIRECT — a Customer attribute) and *message channel* (WhatsApp/LINE/Telegram — a transport). "Channel" (Django Channels, the ASGI lib) collides with "channel" (messaging channel). "Conversation" is proposed-greenfield with no shape.
+   *Canonical:* **booking_source** (enum on Order/BookingItem), **message_channel** (enum on Conversation/Message: WEB/TELEGRAM/WA/LINE), **Channels** (reserved for the Django library). Never overload "source"/"channel."
+
+## Edge-Case Stress Tests
+
+1. **OTA guest + later direct account, SAME email** — today `BillingProfileManager.get_or_new` (`billings/models.py:18`) keys guests on `slug=email` and **deactivates prior profiles** on each new checkout. So the guest's billing history is already being churned pre-Customer-OS. On account creation, the merge must (a) re-link deactivated BillingProfiles, (b) decide if the OTA booking rows (no `source` tag today) retroactively belong to this now-direct Customer. **Breaks:** "One Customer, One Booking History" silently re-parents OTA bookings to a newly-direct user the OTA still considers *their* customer — channel-conflict trigger fired by the merge itself. *Resolution:* merge never auto-reparents OTA-sourced rows to marketing-eligible; OTA rows stay service-only even after a direct account appears.
+
+2. **One physical trip booked across OTA + direct (2 records)** — same passenger name, two `BookingItem`s, two `Order`s, only the direct one has a real email. Without a `source` field (#Contradiction 1), the system cannot tell them apart. **Breaks:** dedup logic, "My Trip" aggregation, any per-source analytics. *Resolution:* `source` field is a hard prerequisite for even counting P0 conversion.
+
+3. **Auto Ticket (P4) on an EXPIRED/past trip** — `tickets.Ticket` has `ticket_status` but no `valid_until`/trip-date guard. An automation creating a SupportTicket on a past trip has no schema-level way to know the trip is over. **Breaks:** zombie tickets, CS noise. *Resolution:* Auto-ticket trigger must join `BookingItem` trip date, not just `Ticket.created_at`.
+
+4. **WhatsApp 24h window expires mid-conversation** — flagged by tech ([[r1-tech-feasibility]]) and deferred to P3, but the **website-chat + Telegram** path in P1b has the *same* class of problem if CS goes async: a customer messages at 23:59, CS replies at 24:01 over Telegram — Telegram has no 24h rule, so P1b dodges it, but the Conversation model must still record `window_expires_at` per message_channel or P3 becomes a schema migration, not an extension. *Resolution:* `Message` model carries `channel` + `external_id` + `channel_window_expires_at` (nullable) from day one (tech's own consequence note — enforce it in P1a, not P1b).
+
+5. **Telegram group reply attribution (2 CS staff, same group, same thread)** — leader upgraded this to **H** risk ([[r3-leader-synthesis]]). The existing notifier (`carts/utils.py:690 send_telegram_message`) is **fire-and-forget out-bound only** — it does not capture inbound replies, has no `message_id` storage, no staff identity mapping. Bidirectional attribution requires storing the outbound `message_id` (Telegram API returns it) and joining inbound `reply_to_message.message_id` → conversation → staff. **Breaks if skipped:** two staff reply to the same customer message; both map to the same website-chat thread; customer sees interleaved answers; no audit trail of who said what. *Resolution:* `Message` needs `external_message_id` + `sender_external_id` + `sender_type` (customer/staff/bot) before the bridge ships. This is a P1b schema gate, not an afterthought.
+
+6. **OTA contractual objection — what data is quarantined?** — strategy says "never sync OTA emails to a marketing list" but the thesis gives no field/mechanism. With no `source` tag (#1) and no `marketing_consent` field anywhere in the backend, "quarantine" is a policy with no enforcement point. **Breaks:** an OTA auditor asks "show us you're not marketing to our bookers" — Smarten cannot prove compliance because no record carries a consent flag. *Resolution:* `Customer.marketing_consent` (enum: `none`/`service_only`/`full`, default `none`) + `consent_provenance` (which Smarten touchpoint captured it). Ship in P1a.
+
+7. **Payment `payment_failed` recoverable window mid-chat** — CLAUDE.md (Payment): *"`ordering → payment_failed → paid` valid. Never treat as terminal unless cancelled."* "Canonical charge = LATEST `GatewayCharge`." A customer in chat during the recoverable window is **neither a paying customer nor a non-customer**. The CS Dashboard / Ticket system must not gate support on payment status (it would strand a customer mid-recovery), and must not show them as "paid" either (they may expire). *Resolution:* Conversation/Ticket never inherits "paid" privileges; CS sees payment state as a live read-only badge (latest GatewayCharge), not a gate. Document this in P1b.
+
+## Truth-Source Cross-Checks
+
+- **CLAUDE.md — Cart reset / `cartActions.resetCart()`:** "on order pages ONLY. NOT in `useOmisePayment.js`." Not directly contradicted, but the thesis's CS Dashboard is a *new order-adjacent surface* — if it ever triggers cart flows it inherits this rule. Note for P1b frontend.
+- **CLAUDE.md — `isOperationalDay` / advance-hour:** trip-operational-day logic lives in `helpers/checkAdvanceHour.js`. Auto-ticket (#Edge 3) and any "is this trip active?" CS badge must call this helper, never inline the calc. The thesis doesn't mention it.
+- **CLAUDE.md — `/ordersummary/` response shape:** "flat array. Guard both flat and `{count, results:[]}`." Any "Booking history" API for My Trip must follow the same defensive parsing. Thesis's "Booking DB reuse" assumes a clean shape that the codebase already guards against.
+- **CLAUDE.md — "canonical charge = LATEST `GatewayCharge`":** reinforces #Edge 7. The Customer/Booking view in the CS Dashboard must show the latest charge, not "any paid charge exists." Thesis silent.
+- **Backend — Daphne absent, prod runs Gunicorn:** `requirements.txt:91 gunicorn==21.2.0`, `docker-compose.yml` defines `web:` (gunicorn) + `celery-worker:` only. Confirms tech's "realtime dormant" — and confirms there is **no third process slot for Daphne** in the compose. The INFRA GATE is not "activate ASGI" — it is "add a 3rd long-running process to a single-vCPU box's compose + nginx + capacity budget." Understated by leader.
+
+## Consensus Challenge
+
+The 4-way PROCEED-REVISED convergence is **not groupthink on the verdict** (the verdict is sound: CS spine is worth building, OTA-conversion is a hypothesis to measure). It is groupthink on **what P1a contains**. Every reviewer approved "P1a = Account-lite + Customer roll-up + extend Ticket" without noticing that (a) there is no `source` field to tag OTA-vs-DIRECT, so the survival-correct service-only posture is unenforceable; (b) `BillingProfile` is merge-hostile and cannot be the Customer roll-up; (c) `tickets.Ticket`'s GenericFK is non-nullable, blocking booking-less support tickets. Each is a P1a deliverable in disguise. **Real P1a is 8-10 weeks, not 6-8**, and the "70% reuse" headline drops to ~55-60%.
+
+Strongest case **AGAINST proceeding at all**: "Phase 0 measurement" is framed as "~6 wks, near-zero cost." It is not. To measure OTA→account conversion you must first (i) add the `source` field, (ii) backfill it heuristically across the full order history, (iii) instrument a post-trip touchpoint, (iv) wait for a conversion window long enough to be statistically honest (a trip booked today converts weeks after travel). That is a **full quarter of data-eng + ops before the headline number lands**, on a box that has never run the infra this needs. "Cheap P0" is the most expensive assumption in the doc. The honest reframing: P0 is itself a multi-quarter org change (data discipline + instrumentation + a touchpoint product), not a 6-week instrument.
+
+What everyone politely skipped: **the booker-vs-passenger identity split.** Every reviewer wrote "OTA gives no identity" as if the booker *were* the customer. The backend shows the booker (`Order.email`) and the passenger (`BookingPassengerDetail`, no contact PII) are **different rows**. For travel, the passenger is usually the customer-relationship target, and Smarten has *zero* contact data on them. The OTA-acquisition gap is therefore wider than "no identity" — it is "the identity we'd want (passenger) has no contact channel, and the contact channel we have (booker) may be a travel agency." This re-opens the conversion-rate ceiling: even a perfect post-trip email reaches the booker, not necessarily the traveler. No reviewer modeled this.
+
+## Open Questions
+
+1. **`source` backfill strategy** — heuristic on order-ref prefixes vs OTA integration logs vs manual? Accuracy floor before service-only posture is trustworthy?
+2. **Booker-vs-passenger as Customer target** — is the Customer OS for the *traveler* (no contact PII today) or the *booker* (has email, may be agency)? This is a product-defining call none of the 4 reviewers made.
+3. **`BillingProfile` churn** — do we freeze `get_or_new`'s deactivate-prior behavior for Customer-linked profiles, or fork the manager? Breaks payment-history reads either way.
+4. **Daphne as a 3rd compose process** — capacity on the single-vCPU box for web+worker+daphne+redis simultaneously, or is a box upgrade a P0 prerequisite?
+5. **Marketing-consent provenance** — which Smarten touchpoints (chat open, in-trip QR, account creation) count as valid consent capture for OTA-sourced records, defensible to an OTA auditor?
+6. **"One Customer" promise** — given the booker/passenger split and 20-40% email-dedup noise (strategy), is "One Customer" a defensible external claim, or must it be explicitly probabilistic in all user-facing copy?
+
+## Related
+
+- [[r1-strategy]] · [[r1-tech-feasibility]] · [[r1-product]] · [[r3-leader-synthesis]] · [[smarten-customer-os-thesis]] · [[accounts]] · [[tickets]] · [[bookings]]

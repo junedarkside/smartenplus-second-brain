@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #139 — 2026-06-20 (END)
+
+**Achieved (#139) — CS Centralization vault: Supabase source-verified + channel architecture finalized. Vault-only, no code.**
+
+- **4-agent r2 red-team review** of `smarten-customer-os-thesis.md` (BD/backend/frontend/architecture skeptics, all verified vs source). Key findings: 256MB memory cliff, uWSGI-vs-Gunicorn deploy conflict, `CHANNEL_LAYERS` redis mismatch, `'__all__'` serializer drift, frontend cost INVERTED (My Trip/Saved Travelers/3 OAuth already ship). Verdict: PROCEED-REVISED for spine, demand-side weakened.
+- **Applied r2 findings to thesis**: renamed "Customer OS"→"CS Centralization", INFRA GATE deferred, Channels-first corrected from sunk-cost, realtime tradeoffs finalized.
+- **Stack ADR created** (`04-decisions/cs-centralization-stack.md`): reuse-first — long-polling (`useQRPolling`), `pyotp`+SES, Telegram-via-Celery, Channels dormant. Net new dep = `pyotp` only. Centrifugo/WhatsApp rejected.
+- **Supabase OTA store discovered** — standalone `gmail12go.Information` table holds 12Go traveler email/name/phone (parsed OTA confirmation emails). **Source-verified via live REST API**: 58 records, 16 cols, `12GO*` booking IDs, ingestion 2025-10-30→2026-06-15. Overturns r2's "no traveler PII" blocker → **conversion thesis REOPENED**.
+- **Channel architecture finalized**: customer chat = website widget (long-polling); trip reminders = AWS SNS SMS (same `boto3`/AWS account); confirmations = SES email; CS team = Telegram internal alert only. WhatsApp deferred (500+ bookings/mo).
+- **Vault propagated**: accounts.md, tickets.md, synopsis.md, master-state.md, index.md, log.md, r2-skeptic-review.md (annotated not rewritten), supabase-ota-booking-store.md (new, source-verified), cs-centralization-stack.md (new + updated), smarten-customer-os-thesis.md (multiple passes).
+- **Supabase gaps documented**: `Source`, `marketing_consent`, `consent_date`, `smarten_order_id` — owner to add to Supabase.
+
+_(Resume point: Supabase update by owner → add 4 gap fields. P0 = message 20 travelers, measure direct rebooking. Human decisions: branding, P0 threshold, consent step design.)_
+
+---
+
 ## Session #138 — 2026-06-20 (END)
 
 **Achieved (#138) — Unified search dialog w/ homepage tabbed search (FE-only, no deploy).**

@@ -50,9 +50,12 @@ Fields: `first_name`, `last_name`, `id_or_passport`, `datofbirth`.
 
 **Guest checkout:** no Account required. `BillingProfile.get_or_new()` creates anonymous profile linked to email. Guest can optionally create account post-order.
 
+**Planned (CS Centralization P1a — [[cs-centralization-stack]]):** `Account` is the Customer-identity base (r2 rejected `BillingProfile` — its manager churns identity per checkout). Account-lite adds **Email-OTP** via `pyotp` + the live AWS SES path; reuse-first, net-new dep `pyotp` only. Existing token/DRF + NextAuth (Google ✓ wired, Apple new) flows extend, not replace.
+
 ---
 
 ## Related
 - [[backend-architecture]]
 - [[billings]] (BillingProfile for guest checkout)
 - [[bookings]] (BookingPassengerDetail)
+- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] (Account = planned Customer identity)
