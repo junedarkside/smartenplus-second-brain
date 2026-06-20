@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #140 — 2026-06-20 | CS Centralization vault: Supabase source-verified + channel arch finalized
+
+- 4-agent r2 red-team review written; r2 findings applied to thesis (rename, infra-gate deferred, realtime corrected)
+- Stack ADR created (`cs-centralization-stack.md`): long-polling + `pyotp`+SES + Telegram-internal + AWS SNS SMS; net-new dep = `pyotp` only
+- Supabase `gmail12go.Information` **source-verified** via live REST API: 58 records, 16 cols, 12Go only, ingestion 2025-10-30→2026-06-15 — overturns r2's "no traveler PII" blocker → conversion thesis REOPENED
+- Channel architecture finalized: website widget (customer chat) · AWS SNS SMS (trip reminders, same boto3/AWS) · SES (confirmations) · Telegram (CS internal only). WhatsApp deferred.
+- Supabase gaps documented for owner to add: `Source`, `marketing_consent`, `consent_date`, `smarten_order_id`
+- Vault propagated: r2-skeptic-review (annotated), supabase-ota-booking-store (new), cs-centralization-stack (new), thesis (multi-pass), accounts, tickets, synopsis, index, log, master-state
+
+---
+
 ## Session #139 — 2026-06-20 (END)
 
 **Achieved (#139) — CS Centralization vault: Supabase source-verified + channel architecture finalized. Vault-only, no code.**

@@ -11,6 +11,14 @@ metadata:
 
 > ⚠️ **Update 2026-06-20 — Supabase overturns the data-layer findings.** A standalone Supabase store ([[supabase-ota-booking-store]]), discovered after this review, holds **traveler email/name/phone** for ~80%+ of OTA bookings (parsed from OTA confirmation emails). This **supersedes** the load-bearing BROKEN findings below: *"conversion mechanic has no viable channel / no traveler PII"* (BD-1, BD-2) and *"booker-may-be-agency contaminates P0"* are **no longer valid** — the data exists at scale. **Still valid:** consent absent, OTA-origin = poaching/channel-conflict risk, fuzzy cross-system identity merge, and unproven rebooking economics. Net effect: the conversion thesis is **reopened**, not dead. The backend/frontend/architecture findings below are unaffected. Original text preserved for the record.
 
+> ⚠️ **Update 2026-06-21 — 3-agent cross-repo scan corrected two architecture findings.**
+>
+> **Gunicorn capacity:** r2 architecture section assumed standard Gunicorn multi-worker. Source-verified against `docker-compose-rds.yml:13`: `--workers 1 --threads 2` = **2 concurrent requests max**. Long-polling for CS Dashboard would deadlock at 2 concurrent users — worse than r2 assessed. Solution adopted: **Option B hybrid** — customer widget polls Django every 3s (thread released immediately), CS Dashboard gets Supabase Realtime push via browser WebSocket (bypasses Django entirely). See [[cs-centralization-stack]] Supabase Realtime section.
+>
+> **`__all__` serializer count:** r2 cited "16+ `fields='__all__'` serializers". Actual count via grep: **103** across the backend. Blast radius from P1a migrations is larger — pin explicit fields on `TicketSerializer` + `OrderSerializer` before any migration.
+>
+> Architecture findings on ASGI/WS (256MB cliff, channel-layer redis mismatch, session-vs-JWT WS auth) remain valid and are already deferred — not on P1b critical path.
+
 ## Summary
 
 Verdict **weakened, not broken — but the framing must change.** The CS-centralization spine survives every attack and remains the one independently-positive ROI item. The *demand-side conversion thesis* that names the project is structurally broken at the data layer (no passenger contact PII; booker is often a travel agency) and gated on a P0 whose threshold and economics are admittedly unset — PROCEED-REVISED is, in effect, "build a CS tool, defer the thesis behind a gate it likely can't pass." Round 2 adds material NEW signal the prior reviews (r1/r3/grill) missed: the frontend is **cheaper** than assumed (My Trip / Saved Travelers / 3-of-4 OAuth already ship in prod), while the **realtime/infra track is worse** than assumed (256MB memory cliff, conflicting deploy paths, channel-layer/redis mismatch, silent 3-repo contract drift). Honest recommendation: rename to "CS Centralization", fund the spine only if it doesn't starve the higher-certainty cross-sell work, and treat P0 as a near-certain no rather than a live bet.

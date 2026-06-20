@@ -4,24 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-20 (session #140 END)
+**Updated:** 2026-06-21 (session #141 END)
 
-**Achieved this session (#140) — CS Centralization vault: Supabase source-verified + channel architecture finalized. Vault-only, no code.**
+**Achieved this session (#141) — CS Centralization: Option B architecture validated + vault fully propagated. Vault-only, no code.**
 
-- 4-agent r2 red-team review written; r2 findings applied to thesis (rename, infra-gate deferred, realtime corrected)
-- Stack ADR created (`cs-centralization-stack.md`): long-polling + `pyotp`+SES + Telegram-internal + AWS SNS SMS; net-new dep = `pyotp` only
-- Supabase `gmail12go.Information` **source-verified** via live REST API: 58 records, 16 cols, 12Go only, ingestion 2025-10-30→2026-06-15 — overturns r2's "no traveler PII" blocker → conversion thesis REOPENED
-- Channel architecture finalized: website widget (customer chat) · AWS SNS SMS (trip reminders, same boto3/AWS) · SES (confirmations) · Telegram (CS internal only). WhatsApp deferred.
-- Supabase gaps documented for owner to add: `Source`, `marketing_consent`, `consent_date`, `smarten_order_id`
-- Vault propagated: r2-skeptic-review (annotated), supabase-ota-booking-store (new), cs-centralization-stack (new), thesis (multi-pass), accounts, tickets, synopsis, index, log, master-state
+- 3-agent cross-repo investigation (Django BE + Next.js FE + Architecture/Admin-Dashboard): full codebase scan for CS Centralization gaps + reuse assets
+- **Option B hybrid architecture validated:** widget polls Django 3s (thread released immediately) + CS Dashboard gets Supabase Realtime push (anon key, browser WS, <1s). Root cause: Gunicorn 1w×2t (`docker-compose-rds.yml:13`) = 2 concurrent req cap — pure long-poll for CS Dashboard deadlocks at 2 users
+- Supabase Realtime stack-validated: NextAuth JWT ≠ Supabase JWT → no auth bridge needed (anon key = Realtime-event push only, no row reads)
+- Key reuse assets identified: `IsAdminOrIsStaff` (`accounts/permissions.py:4-14`), `dialogue/` GenericFK pattern (Message model template), `products/tasks.py:35` retry pattern (Celery→Supabase write), OTP via Redis TTL
+- 103 `fields='__all__'` serializers found (r2 said 16) — pin explicit fields on TicketSerializer + OrderSerializer before any P1a migration
+- Vault propagated: cs-centralization-stack (Option B section + Supabase Realtime layer + all consequences updated), thesis (P1b + consequences), supabase-ota-booking-store (dual-role section), r2-skeptic-review (Gunicorn + `__all__` corrections), log, master-state
 
 **Resume point (EXACT):**
 1. **Owner: add 4 gap fields to Supabase** — `Source` (OTA identifier), `marketing_consent` boolean, `consent_date`, `smarten_order_id` (nullable)
 2. **Owner: fix Supabase data quality** — `Operator` dirty values (`ensure plus`, trailing `\r\n`), `Date=5000-08-02` outlier
 3. **P0 test (no code):** message 20 Confirmed travelers from Supabase, send Smarten direct booking link, count rebookings in 30 days — this number decides the whole conversion thesis
-4. **Eng carry-forward (unchanged):** FE develop→main (SEARCH-DIALOG-UI-TEST manual verify); ISR prod activation (#129); REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch verify #139 fix)
+4. **When ready to build P1b:** serializer fixes first (`tickets/serializers.py:55` + `orders/serializers.py:94` explicit fields), then `cs/` Django app, then Supabase `cs` schema, then admin-dashboard Realtime. Full plan: `~/.claude/plans/create-business-development-backend-mossy-gadget.md`
+5. **Eng carry-forward (unchanged):** FE develop→main (SEARCH-DIALOG-UI-TEST manual verify); ISR prod activation (#129); REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch verify #139 fix)
 
-_(Session #139 block archived → `07-logs/session-history.md`.)_
+_(Session #140 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -29,7 +30,7 @@ _(Session #139 block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (long-polling, reuse `useQRPolling`); trip reminders = AWS SNS SMS (`boto3`, same AWS acct); confirmations = SES email (live); CS team = Telegram internal alert only. WhatsApp deferred (500+ bookings/mo). P1b needs new `Conversation`+`Message` Django models. Email-OTP `pyotp`+SES. Channels dormant. Net-new dep `pyotp` only. **Supabase source-verified** (`gmail12go.Information`, 58 records, 12Go only, 16 cols). Gaps to add: `Source`, `marketing_consent`, `consent_date`, `smarten_order_id`. **Conversion thesis REOPENED** — 80%+ OTA traveler contacts confirmed in Supabase. P0 = measure rebooking, not capture. | **DECISION OPEN — channel arch settled, not scheduled for dev** | [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] · [[supabase-ota-booking-store]] |
+| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django 3s, reuse `useQRPolling`); trip reminders = AWS SNS SMS (`boto3`, same AWS acct); confirmations = SES email (live); CS team = Telegram internal alert only. WhatsApp deferred (500+ bookings/mo). P1b needs new `Conversation`+`Message` Django models + Supabase `cs` schema. Email-OTP `pyotp`+SES. Channels dormant. **Net-new deps: `pyotp` (BE) + `@supabase/supabase-js` (admin-dashboard only).** **Option B validated 2026-06-21:** CS Dashboard gets Supabase Realtime push (anon key, browser WS, <1s) — Gunicorn 1w×2t (`docker-compose-rds.yml:13`) = 2 concurrent cap, rules out pure polling for dashboard. No NextAuth↔Supabase JWT bridge needed. **Supabase dual-role:** `gmail12go.Information` (OTA store, source-verified, 58 records) + `cs` schema (planned CS message relay). **103 `__all__` serializers** — pin TicketSerializer + OrderSerializer explicit fields before any P1a migration. **Conversion thesis REOPENED** — 80%+ OTA traveler contacts in Supabase. P0 = measure rebooking. | **DECISION OPEN — architecture validated (Option B), not scheduled for dev** | [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] · [[supabase-ota-booking-store]] |
 | **SEARCH-DIALOG-UI-TEST** | Unified search dialog now shows Transportation + Experiences tabs in all 3 hosts. MERGED develop `ceaa003` (#138). **NOT yet manually UI-tested** — verify PRE-DEPLOY: open each dialog (StickySearchBar / HeaderSearchSummary / SearchCover), transport tab unchanged (→ `/trips` + close), experiences tab → `/activities?search=&category=` + dialog closes, mobile full-screen Slide transition. Extracted `TabbedSearchPanel` (`components/search/`); `SearchDialog` static-imports it. | **PRE-DEPLOY verify** #138 | `components/search/TabbedSearchPanel.js`, `SearchDialog.js`, `ExperiencesSearch.js` |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **BE-HOMEPAGE-PRICE** | Homepage "From" prices computed BE-side. **Experiences + airport-routes FIXED #136** (`get_min_price` ADULT+fallback; airport `lowest_price` type-aware via new `route_lowest_price_annotation` helper shared with HomeViewSet). Merged BE develop `cff26b3`. **NEEDS DEPLOY + front-page cache bust.** Remaining OPEN (same bug class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **PARTIAL-CLOSE #136** — homepage DONE (needs deploy); REC-engine OPEN | `products/services.py` (REC), `products/serializers.py:~1105` |

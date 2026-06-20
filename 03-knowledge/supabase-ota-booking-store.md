@@ -87,9 +87,39 @@ Traveler-contact asset r2 ([[r2-skeptic-review]]) assumed didn't exist. r2 kille
 ## Planned role (CS Centralization — [[cs-centralization-stack]])
 
 Per owner decision: **keep Supabase separate, sync to platform** (reuse-first, no migration, no prod impact).
-- **Identity seed** — Supabase stable key + profiles seed the Customer roll-up P1a treated as greenfield (read-sync via Supabase REST/JS API).
-- **Service-comms source** — booking confirmations / trip reminders ("your ferry is tomorrow") sent from synced Supabase data; this is the natural place to **add a consent opt-in** (owner confirmed yes), which unlocks later marketing.
-- **Revised P0** — stop measuring "can we capture contacts" (answered: yes). Measure "do captured travelers who get a Smarten touchpoint **rebook direct**."
+
+### Dual-schema role (validated 2026-06-21)
+
+Same Supabase project (`npehhtcobshckhefrqhw`) serves two distinct purposes:
+
+| Schema | Table(s) | Purpose | Access |
+|---|---|---|---|
+| `gmail12go` | `Information` (58 records, 16 cols) | OTA booking store — traveler identity seed | Django reads via REST API (anon key) |
+| `cs` *(planned P1b)* | `cs.conversations`, `cs.messages` | CS message relay — Django→Supabase write, CS Dashboard Realtime push | Django writes (service_role key); CS Dashboard subscribes (anon key, Realtime only) |
+
+### CS Dashboard Realtime (Option B — P1b)
+
+CS Dashboard (admin-dashboard) subscribes to `cs.messages` Supabase Realtime channel using anon key (browser WebSocket). When Django→Celery writes a new message to `cs.messages`, Supabase Realtime pushes the INSERT event to the CS Dashboard browser (<1s). No NextAuth↔Supabase JWT bridge needed — anon key is for Realtime event push only, not row reads.
+
+```js
+// admin-dashboard: Realtime subscription pattern
+supabase.channel('cs-messages')
+  .on('postgres_changes', { event: 'INSERT', schema: 'cs', table: 'messages' }, handleNewMessage)
+  .subscribe()
+```
+
+Staff reads message history via Django API (NextAuth-authenticated), not directly from Supabase.
+
+### Identity seed (P1a)
+- Supabase stable key + profiles from `gmail12go.Information` seed the Customer roll-up (read-sync via REST API).
+- Read-only; no Django schema change; Supabase stays standalone.
+
+### Service-comms + consent (P1b)
+- Booking confirmations / trip reminders sent from synced Supabase data.
+- Natural place to **add a consent opt-in** (owner confirmed yes) → `marketing_consent` field → unlocks later marketing.
+
+### Revised P0
+Stop measuring "can we capture contacts" (answered: yes, 80%+ in Supabase). Measure "do captured travelers who get a Smarten touchpoint **rebook direct**."
 
 ## Related
 
