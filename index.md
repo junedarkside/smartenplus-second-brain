@@ -8,6 +8,13 @@ Global navigation catalog. Updated on every ingest.
 
 - [[master-state|Master State]] — Live session state: branches, loose ends, API contract, architecture guardrails
 
+## Knowledge — Backend / Celery
+
+- [[update-route-query-counts-audit]] — **AUDIT 2026-06-20.** Weekly Celery Beat task (`products/tasks.py:11`). **Not causing server down.** 3 real fixes: (1) add retry+logging to both tasks (no `bind=True` violates project policy); (2) add `db_index=True` on `QueryLog.query_time` (full table scan, insurance); (3) guard `bulk_create` against nullable `trip.route` → IntegrityError → 500 on search. 1 product decision needed: stale `query_count` never resets for zero-query routes (high-water-mark bug). `clear_old_query_logs` race: NOT a bug — date ranges disjoint. N+1 UPDATE loop: NOT a crash risk at current scale (~7k rows steady state).
+
+- [[precompute-popular-contracts-audit]] — **AUDIT 2026-06-20.** `precompute_popular_contracts` task (`products/tasks.py:88`), hourly Celery Beat. Fan-out: selects top-100 popular contracts → queues `precompute_contract_recommendations` per contract → 12 cache keys each (4 types × 3 limits), 24h TTL. **3 bugs found:** (1) `.count()` called on sliced queryset = TypeError, exception swallowed silently; (2) no ordering before `[:100]` = non-deterministic selection; (3) parent task has no retry. Also: `cleanup_expired_recommendation_cache` is a no-op placeholder; `get_cache_statistics` only probes `hybrid:8` key, understates coverage.
+- [[precompute-popular-contracts-fix-plan]] — **FIX PLAN 2026-06-20.** 3-agent debate result. 2 CRITICAL bugs active in prod: (1) `list.count()` TypeError silently kills task every hour — fix: `list()` + `len()`; (2) cache key mismatch (`:none` suffix missing in 4 places) means zero cache hits system-wide even if bug 1 fixed. Phase 1: fix both in one commit, restart workers only. Phase 2 (next biz day after data audit): add `reset_daily_counter` to Beat at 00:30. Includes exact verification commands + Redis-only rollback.
+
 ## Knowledge — SEO/AEO
 
 - [[trip-detail-server-side-seo-pattern]] — Pattern for moving client-side SEO hook to server-side `getStaticProps` on transport product pages. 5 pure util functions, thin renderer component, no hooks. Fixes AEO root cause (schema in SSR HTML). Key rule: JSON-LD payload functions return fields only — `CustomJsonLd` owns `@context`/`@type`.

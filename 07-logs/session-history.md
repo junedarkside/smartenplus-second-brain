@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #138 — 2026-06-20 (END)
+
+**Achieved (#138) — Unified search dialog w/ homepage tabbed search (FE-only, no deploy).**
+
+- Extracted `TabbedSearchPanel` (`components/search/TabbedSearchPanel.js`, NEW): shared shell — Transportation + Experiences tabs, owns `mode` (UI-only local state), dynamic-imports both forms (`ssr:false`).
+- `SearchDialog`: renders panel → all 3 dialog hosts (`StickySearchBar`, `HeaderSearchSummary`, `SearchCover`) show both tabs. Transport path unchanged. Experiences tab self-navigates `/activities?search=&category=` + closes dialog.
+- `ExperiencesSearch`: added `onNavigate` prop; `isSearching` reset fix (guard + 3s setTimeout fallback).
+- `DiscoverySection`: delegates to `<TabbedSearchPanel>`.
+- 2-agent review (report-only): zero regressions, state isolation clean, transport path intact.
+- Merged develop (`ceaa003`, --no-ff), feat branch pruned. FE main @ `ceaa003`.
+
+_(Resume point was: deploy FE develop→main + manual UI test SEARCH-DIALOG-UI-TEST. Open items carried in Section 2.)_
+
+---
+
 ## Session #137 — 2026-06-19 (END)
 
 **Achieved (#137) — Vault optimization pass (4 phases). No code/deploy — vault-only.**
