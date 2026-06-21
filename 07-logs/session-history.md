@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #146 (archived)
+
+**Updated:** 2026-06-21 (session #146 END)
+
+**Achieved:** Thailand Travel Guide homepage section redesigned (3-col equal card grid, text below image, no overlay/date/badge) + shipped to production. 3-agent debate team (UX + Visual + FE) researched card patterns across 7 travel sites. Rewrote `lib/homepage/components/TravelThailandBetterSection.js` (single `GuideCard` × 3, Embla mobile carousel, md 2-col, lg+ 3-col). `feat/travel-guide-card-grid-redesign` → develop `173cc03` → main `c3e2da9`. Branch pruned #147.
+
+---
+
 ## Session #145 (archived)
 
 **Updated:** 2026-06-21 (session #145 END)

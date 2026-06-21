@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-21] session-end #147 | Destinations card redesign (5-col text-below-image, c23a71b main) + pruned 3 merged branches + atom [[destinations-card-redesign]]
+
 ## [2026-06-21] session-end #146 | Thailand Travel Guide redesigned — 3-col equal card grid, shipped to production (c3e2da9 main)
 
 ## [2026-06-21] session-end #145 | Git branch policy added to CLAUDE.md + vault-guardrails. Never commit to main/develop directly.

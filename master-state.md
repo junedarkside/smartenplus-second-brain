@@ -4,13 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-21 (session #146 END)
+**Updated:** 2026-06-21 (session #147 END)
 
-**Achieved this session (#146) — Thailand Travel Guide homepage section redesigned + shipped to production.**
+**Achieved this session (#147) — Destinations card redesign shipped + branch hygiene.**
 
-- 3-agent debate team (UX + Visual Designer + Frontend Engineer) deep-researched blog card grid patterns across Lonely Planet, Booking.com, Airbnb, GYG, 12Go, Conde Nast. Converged on 3-col equal grid (text below image, no overlay, no date, no FEATURED badge).
-- Rewrote `lib/homepage/components/TravelThailandBetterSection.js` (1 file only): replaced asymmetric FeaturedCard+SecondaryCard layout with single `GuideCard` component × 3 posts. Mobile: Embla swipe carousel `w-[80vw]`. Tablet `md`: 2-col grid. Desktop `lg+`: 3-col grid. Cards: `aspect-[16/9]` image, `rounded-xl`, elevation/md shadow, title + excerpt + "Read guide →", `gap-5`.
-- Branched `feat/travel-guide-card-grid-redesign` → merged develop `173cc03` → merged main `c3e2da9` → shipped to production.
+- Destinations section ("Thailand's Top Destinations") redesigned to match #146 Travel Guide visual language: asymmetric FeaturedCard/SupportingCard overlay layout → equal 5-col grid, text below image (`aspect-[4/3]`, location name + badge). Files: `DestinationsEditorialGrid.js` (single `DestinationCard` × 5), `DestinationsCarousel.js` (mobile), `LocationsSkeletonLoader.js`. Shipped: `feat/destinations-card-text-below` → develop `bae332c` → main `c23a71b`.
+- Atom written: [[destinations-card-redesign]] (renamed to drop date — vault no-date convention #137).
+- Pruned 3 fully-merged branches (verified 0 commits ahead of main, both `--merged main` + `--merged develop`): `feat/destinations-card-text-below`, `feat/travel-guide-card-grid-redesign`, `fix/seo-audit-jun21`. Local + remote (2 of 3 had remotes) deleted with safe `git branch -d` + `git push origin --delete`.
 
 **Resume point (EXACT):**
 1. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy: open each dialog host, transport tab → /trips, experiences tab → /activities, mobile Slide transition.
@@ -19,7 +19,7 @@
 4. **P2 SEO fixes (optional):** twitter:image:alt, og:locale policy, meta desc cap, blog robots dup. See [[seo-audit-reconciliation-2026-06-21]].
 5. **Eng carry-forward:** REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch).
 
-_(Session #145 block archived → `07-logs/session-history.md`.)_
+_(Session #146 block archived → `07-logs/session-history.md`.)_
 
 ---
 
