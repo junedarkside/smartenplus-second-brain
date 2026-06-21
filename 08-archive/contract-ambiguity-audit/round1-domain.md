@@ -4,7 +4,7 @@
 
 **Audited by:** Domain / Business Analyst
 **Date:** 2026-06-03
-**Inputs read:** `[[admin-dashboard-contracts]]`, `[[08-archive/.originals/activities-location-search-bug.original]]`, `[[contract-trip-null-non-transport-pattern]]`, `[[contract-serializer-non-transport-fields]]`, `[[01-projects/operators]]`, `[[transportation-category-audit]]`, `[[activities-search-merge-review]]`, `[[stations]]`, `smartenplus-backend/operators/models.py:402-415`, `smartenplus-backend/operators/admin.py:1038-1102`, `smartenplus-backend/operators/migrations/0045_add_tour_fields.py`, `admin-dashboard/components/contracts/ContractFormFields.js:176-261`, `admin-dashboard/hooks/useContractFormData.js:127-128`, `admin-dashboard/components/utils/contractUtils.js:88-89`.
+**Inputs read:** `[[admin-dashboard-contracts]]`, `[[08-archive/.originals/activities-location-search-bug.original]]`, `[[contract-trip-null-non-transport-pattern]]`, `[[contract-serializer-non-transport-fields]]`, `[[operators]]`, `[[transportation-category-audit]]`, `[[activities-search-merge-review]]`, `[[stations]]`, `smartenplus-backend/operators/models.py:402-415`, `smartenplus-backend/operators/admin.py:1038-1102`, `smartenplus-backend/operators/migrations/0045_add_tour_fields.py`, `admin-dashboard/components/contracts/ContractFormFields.js:176-261`, `admin-dashboard/hooks/useContractFormData.js:127-128`, `admin-dashboard/components/utils/contractUtils.js:88-89`.
 
 ---
 
@@ -102,4 +102,4 @@
 - [[transportation-category-audit]] — Level-1 / Level-2 classification
 - [[activities-search-merge-review]] — `getActivityLocations` endpoint
 - [[stations]] — `Location` model hierarchy
-- [[01-projects/operators]] — Contract model + service_category enum
+- [[operators]] — Contract model + service_category enum

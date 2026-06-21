@@ -176,7 +176,7 @@ Error response structure reference (4xx/5xx status codes).
 | `expired` | `expired` | Timed out (PP/MB) |
 | `reversed` | N/A | Omise-initiated reversal (not modeled) |
 
-**Frontend polling:** Check BOTH `status === 'successful' || status === 'paid'` (domains differ).
+**Frontend polling:** Check BOTH `status === 'successful' || status === 'paid'` — Omise `cards.Charge` uses `successful`; backend `GatewayCharge` uses `paid`. `useQRPolling` checks both for cross-domain compatibility.
 
 ---
 

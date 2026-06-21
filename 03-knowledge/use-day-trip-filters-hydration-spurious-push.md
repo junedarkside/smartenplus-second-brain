@@ -24,11 +24,11 @@ Part of [[activities-day-tour-page-review]] findings. See [[nextjs-hydration-rul
 
 ## FQ-2 Severity
 
-Confirmed in [[activities-day-tour-page-review]] — interacts with [[mui-autocomplete-handlInputchange-parent-emit]] to amplify URL-overwrite bug. Specified fix: `useState(DEFAULT_FILTERS) + useEffect(() => { if (!router.isReady) return; setFilters(fromQuery(router.query)); }, [router.isReady])`.
+Confirmed in [[activities-day-tour-page-review]] — interacts with [[mui-autocomplete-handle-input-change-parent-emit]] to amplify URL-overwrite bug. Specified fix: `useState(DEFAULT_FILTERS) + useEffect(() => { if (!router.isReady) return; setFilters(fromQuery(router.query)); }, [router.isReady])`.
 
 ## Related
 - [[activities-day-tour-page-review]] FQ-2
 - [[activities-location-search-bug]]
 - [[nextjs-hydration-rules]]
-- [[mui-autocomplete-handlInputchange-parent-emit]]
+- [[mui-autocomplete-handle-input-change-parent-emit]]
 - CLAUDE.md: "useEffect chains forbidden"

@@ -55,6 +55,6 @@ metadata:
 
 ## Related
 
-- [[../gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]] — sibling: detail page
+- [[gyg-page-analysis-2026-06-04-overview|../gyg-page-analysis-2026-06-04]] — sibling: detail page
 - [[r2-skeptic]]
 - [[r3-leader-synthesis]]

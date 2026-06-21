@@ -189,6 +189,8 @@ SmartEnPlus frontend has 288-line design token system at `helpers/designSystem.j
 ### Phase 2: Component Cleanup (1-2 weeks)
 **Objective**: Remove inline styles and hardcoded values from top 10 violation files
 
+> **Counts as of 2026-06-13 audit.** Re-run `grep` before cleanup — violation counts drift with code changes; relative priority (most-first) is more stable than absolute counts.
+
 **Priority Order** (by violation count):
 1. `pdfStyles.js` (33 hardcoded colors) - PDF export styling, consider separate token system
 2. `components/auth/ProfileMenu.js` (23 colors, 26 inline styles) - Convert to design tokens

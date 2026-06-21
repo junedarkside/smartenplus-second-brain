@@ -7,6 +7,8 @@ metadata:
 
 # Trip Detail Deep Review — 2026-05-20
 
+> ⚠️ **SUPERSEDED 2026-06-16** — Predates the server-side SEO refactor. `useTripSEO.js` was **deleted**, replaced by `helpers/seo/tripDetailSEOUtils.js` + rewritten `TripDetailSEO.js`. The SEO findings below citing `useTripSEO.js ~line N` (H2 ISO8601, H7 USD `/30`) were resolved in the refactor — see [[trip-detail-seo-aeo-geo-audit-2026-06-16/r2-leader-synthesis]] (7/7 HIGH fixed). Findings retained as historical record; candidate for [[08-archive]].
+
 ## Summary
 4-specialist second-pass team (Adversarial · Blast-Radius · Hidden Issues · Production Risk) reviewed original 24-finding report. 3 overturned, 2 downgraded conditional. 8 new hidden issues. 4 production failure scenarios.
 

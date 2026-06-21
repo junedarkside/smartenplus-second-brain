@@ -37,7 +37,7 @@ Created 2026-05-21 after homepage UX/UI review (P0–P3 fixes complete). SEO inf
 - No other conditions — agent reads source files directly
 
 ## Known Issues Found on First Run (2026-05-21)
-See [[homepage-seo-performance-deep-review]] for full findings.
+See [[homepage-seo-performance-deep-review-2026-05-21]] for full findings.
 
 **Pre-identified gaps before audit:**
 - TravelAgency `telephone` hardcoded fake number (`+66-2-123-4567`) — real number in `constants.js`
@@ -89,6 +89,6 @@ Follows same structure as [[homepage-ux-review]]:
 
 ## Related
 - [[homepage-ux-review]] — prior UX review (P0–P3 complete)
-- [[homepage-seo-performance-deep-review]] — first run report
+- [[homepage-seo-performance-deep-review-2026-05-21]] — first run report
 - [[blog-seo-performance]] — blog SEO patterns (WebSite+SearchAction to replicate)
 - [[nav-header-redesign]] — header a11y patterns

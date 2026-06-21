@@ -16,7 +16,7 @@ External audit of smartenplus.co.th. SEO 75/100, Speed 40/100, Accessibility 85/
 ## Context
 Platform: Next.js 14, Thailand transport booking (bus, ferry, train, airport transfer, tours). Audit covers live production site. Scope: speed, SEO, mobile responsiveness, structured data, identity classification.
 
-Prior code-level audit: [[homepage-seo-performance-deep-review]] (30 findings, file:line refs, structured data schema errors in code).
+Prior code-level audit: [[homepage-seo-performance-deep-review-2026-05-21]] (30 findings, file:line refs, structured data schema errors in code).
 
 ## SEO & Speed
 
@@ -195,7 +195,7 @@ SmartEnPlus is a legitimate booking platform.
 - Priority order: Fix speed → fix mobile touch targets → add booking CTAs to blog → add Product schema to tours
 
 ## Related
-[[homepage-seo-performance-deep-review]] · [[structured-data-schema-patterns]] · [[carousel-design-standard]] · [[nextjs-patterns]] · [[seo-homepage-specialist-team]] · [[blog-seo-performance]]
+[[homepage-seo-performance-deep-review-2026-05-21]] · [[structured-data-schema-patterns]] · [[carousel-design-standard]] · [[nextjs-patterns]] · [[seo-homepage-specialist-team]] · [[blog-seo-performance]]
 
 ---
 
@@ -370,7 +370,7 @@ SmartEnPlus is a legitimate booking platform.
 
 ## Related
 
-[[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]] · [[homepage-seo-performance-deep-review]] · [[carousel-design-standard]] · [[mobile-header-analysis]]
+[[r1-performance]] · [[r1-mobile-ux]] · [[r1-seo-ai]] · [[r2-skeptic]] · [[r3-leader-synthesis]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[carousel-design-standard]] · [[mobile-header-analysis]]
 
 ## Related Atoms (Extracted 2026-06-13)
 - [[seo-canonical-getsiteurl-pattern]] — `getSiteUrl()` → `https://www.smartenplus.co.th` (www mandatory)

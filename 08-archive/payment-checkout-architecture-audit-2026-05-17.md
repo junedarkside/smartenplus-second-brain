@@ -38,8 +38,8 @@ Resets on: "Continue to Checkout" click, payment method change, component unmoun
 - [[payment-system]] — GatewayCharge, canonical charge rule
 - [[checkout-flow]] — checkout payment flow
 - [[backend-architecture]] — payments/services.py finalize_payment
-- [[docs/features/payment/PAYMENT_CHECKOUT_ARCHITECTURE_REVIEW.md]]
-- [[docs/testing/PAYMENT_CANCEL_FLOW_TESTS.md]]
+- [[payment-checkout-architecture-audit]]
+- [[payment-cancel-state-prevmethod-guard]]
 
 ---
 

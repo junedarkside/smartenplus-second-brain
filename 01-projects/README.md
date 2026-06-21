@@ -115,7 +115,7 @@ API changes → update frontend AND admin-dashboard.
 
 #### Homepage
 - [[homepage-ux-review]] — UX review
-- [[homepage-seo-performance-deep-review]] — SEO perf
+- [[homepage-seo-performance-deep-review-2026-05-21]] — SEO perf
 - [[homepage-terminology-audit-2026-06-05]] — terminology
 - [[hero-banner-cms]] — hero CMS
 - [[hero-section-comprehensive-audit]] — hero audit

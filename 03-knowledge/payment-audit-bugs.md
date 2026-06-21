@@ -1,7 +1,7 @@
 # Payment Audit Bugs — 2026-06-11
 
 ## Summary
-Full E2E audit (booking → checkout → payment, backend order → charge → webhook) uncovered 4 confirmed bugs: 2 MEDIUM (cart sync dead code), 2 LOW (stable_id cleanup, lazy query). All fixes straightforward. 2 open candidates pending runtime repro.
+Full E2E audit (booking → checkout → payment, backend order → charge → webhook) uncovered 4 confirmed bugs: 2 MEDIUM (cart sync dead code), 2 LOW (stable_id cleanup ✅ resolved 2026-06-21, lazy query). Candidates C1/C2 since fixed (`cb817d9`).
 
 ## Context
 Second audit pass with debug-mantra falsification on root causes. Every root cause verified surviving active disproof. Backend confirmed zero `stable_id` emission (legacy removed 2026-02-13). Full E2E audit report: `/01-projects/booking-payment-e2e-audit-2026-06-11.md` (includes scope, design confirmations, overturned findings).
@@ -22,12 +22,9 @@ Second audit pass with debug-mantra falsification on root causes. Every root cau
 **Fix:** Key both sets by `item.id` instead of `stable_id`.
 **Second-pass verification:** Line 155 is SOLE `clearTripInfo` dispatch site in source (grep ex-tests confirms). No alternate pruning path exists.
 
-### 3. LOW — stable_id remnants (tech debt)
-**Files affected:** 9 source, 3 test files still reference `stable_id`. Fallback `String(item.stable_id || item.id)` works but is dead code. Effect 6 (id→stable_id migration, lines 317-357) can never migrate.
-**Fix:** Sweep all 12 files to `item.id` only. Delete Effect 6.
-**Files:**
-- Source: `PassengerAssignment.js`, `Passengers.js`, `Confirmation.js`, `useCartSync.js`, `useStepValidation.js`, `pages/checkout/index.js`, `checkoutPersistence.js`, `savePassengerAssignmentsToCart.js`, `checkout-slice.js`
-- Tests: `__tests__/hooks/useCheckoutAutoSave.test.js`, `__tests__/helpers/savePassengerAssignmentsToCart.test.js`, `__tests__/helpers/checkoutPersistence.test.js`
+### 3. ✅ RESOLVED — stable_id remnants (sweep completed)
+**Status (verified 2026-06-21 against frontend):** `stable_id` removed from backend 2026-02-13 (migration `carts/0012`). Source sweep done — `stable_id` now comment-only in ~4 source files (e.g. `store/checkout-slice.js:20`); 2 test files still reference it. Cart item key is `item.id` (frontend CLAUDE.md). `useCartSync` Effect 6 (formerly the id→stable_id migration at lines 317-357) was rewritten to a formData-initialization effect (`hooks/checkout/useCartSync.js:317`) — the dead migration path no longer exists.
+**Remainder:** 2 test files + incidental comments. No functional impact — no further action needed.
 
 ### 4. LOW — Dead lazy query hook in BookButton
 **File:** `smartenplus-frontend/components/UI/BookButton.js:41-43`

@@ -79,12 +79,12 @@ Atomic concepts extracted from projects, audits, and bugs. Each note = one idea,
 - [[star-aria-radiogroup-pattern]] — star a11y
 - [[expandable-menu-row-mui-collapse]] — menu collapse
 - [[mui-autocomplete-inputvalue-sync]] — autocomplete sync
-- [[mui-autocomplete-handlInputchange-parent-emit]] — autocomplete parent emit
+- [[mui-autocomplete-handle-input-change-parent-emit]] — autocomplete parent emit
 - [[mui-dropdown-preserve-strategy]] — dropdown preserve
 - [[mui-menu-paper-overflow-guard]] — menu overflow
 - [[mui-emotion-tailwind-injectfirst]] — emotion injectFirst
 - [[mui-tailwind-css-specificity]] — MUI+Tailwind specificity
-- [[usedayTripFilters-hydration-spurious-push]] — filter hydration
+- [[use-day-trip-filters-hydration-spurious-push]] — filter hydration
 - [[hero-cls-precise-sizes-attribute]] — hero CLS
 - [[hero-88px-gap-root-cause]] — hero gap
 - [[hero-back-share-buttons-2row-header-fix]] — hero back/share

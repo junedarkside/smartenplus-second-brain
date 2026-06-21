@@ -208,4 +208,4 @@ date: 2026-06-06
 
 ## Related
 
-[[homepage-seo-performance-deep-review]] (30 findings, most already fixed) · [[blog-seo-performance]] · [[structured-data-schema-patterns]]
+[[homepage-seo-performance-deep-review-2026-05-21]] (30 findings, most already fixed) · [[blog-seo-performance]] · [[structured-data-schema-patterns]]

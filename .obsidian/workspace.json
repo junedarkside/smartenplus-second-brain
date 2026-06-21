@@ -179,6 +179,8 @@
   },
   "active": "219dc9b58039cc70",
   "lastOpenFiles": [
+    "index.md",
+    "01-projects/README.md",
     "03-knowledge/content-marketing-strategy-review.md",
     "02-areas/content-marketing-strategy.md",
     "03-knowledge/design-system-audit.md",
@@ -203,8 +205,6 @@
     "04-decisions/adr-contract-soft-delete.md",
     "01-projects/profile-dropdown-redesign.md",
     "01-projects/payment-auto-test-results.md",
-    "01-projects/filter-functionality-audit.md",
-    "07-logs/vault-optimization-snapshot.md",
     "08-archive/website-audit-full-2026-06-06",
     "08-archive/trip-detail-seo-aeo-geo-audit-2026-06-16",
     "08-archive/rate-review-uxui-audit-2026-06-06",

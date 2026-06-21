@@ -107,7 +107,7 @@ ISR cache volume cleared on deploy (`deploy-ghcr.sh:168`). notFound correct on t
 - Deploy to prod (NOTE: P0-3/P1-7 only take effect after rebuild+deploy; ISR cache volume cleared by deploy-ghcr.sh)
 
 ## Related
-[[gsc-crawled-not-indexed-investigation-2026-06-05]] · [[website-audit-full-2026-06-06-overview]] · [[seo-wave2-audit-2026-05-23]] · [[homepage-seo-performance-deep-review]] · [[homepage-terminology-audit-2026-06-05]] · [[og-image-inferred-audit-2026-05-23]] · [[blog-canonical-url-wp-subdomain-bug]] · [[structured-data-schema-patterns]] · [[seo-homepage-specialist-team]] · [[persistgate-ssr-suppresses-head-component]]
+[[gsc-crawled-not-indexed-investigation-2026-06-05]] · [[website-audit-full-2026-06-06-overview]] · [[seo-wave2-audit-2026-05-23]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[homepage-terminology-audit-2026-06-05]] · [[og-image-inferred-audit-2026-05-23]] · [[blog-canonical-url-wp-subdomain-bug]] · [[structured-data-schema-patterns]] · [[seo-homepage-specialist-team]] · [[persistgate-ssr-suppresses-head-component]]
 
 ## Orphan Link-Backlog (Linked 2026-06-13)
 - [[touristtrip-schema-iso8601-departure-time]] — full ISO8601 with date prefix (prefix-less is silently invalid for rich results)

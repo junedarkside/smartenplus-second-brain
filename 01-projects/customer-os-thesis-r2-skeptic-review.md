@@ -106,8 +106,8 @@ Not severe enough to auto-flip the decision — but enough that the project shou
 ## Related
 
 - [[smarten-customer-os-thesis]] — the decision this round-2 stress-tests
-- [[r3-leader-synthesis]] — round-1 leader synthesis
-- [[grill-audit]] — round-1 grill (3 corrections, all UPHELD here)
-- [[r1-strategy]] · [[r1-tech-feasibility]] · [[r1-product]] — round-1 specialists
+- [[customer-os-thesis-r3-leader-synthesis]] — round-1 leader synthesis
+- [[customer-os-thesis-grill-audit]] — round-1 grill (3 corrections, all UPHELD here)
+- [[customer-os-thesis-r1-strategy]] · [[customer-os-thesis-r1-tech-feasibility]] · [[customer-os-thesis-r1-product]] — round-1 specialists
 - [[customer-os-thesis-review]] — parent review
 - [[business]] · [[business-development-unified-travel-wellness-thesis]] — strategic context

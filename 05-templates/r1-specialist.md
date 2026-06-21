@@ -63,7 +63,7 @@ metadata:
 
 1. **Score all 3 axes** for every pattern. No "effort TBD" — cite file:line.
 2. **Cite evidence**: file path + line range. "Inline code span" for paths, not wikilinks.
-3. **Code symbols are inline code**: `\`useAuthRedirect\`` not `[[useAuthRedirect]]`.
+3. **Code symbols are inline code**: `\`useAuthRedirect\`` not ``useAuthRedirect``.
 4. **One verdict per pattern**: KEEP / DOWNGRADE / DROP / DEFER P3.
 5. **Pre-flag backend debt** in a separate table — don't score it.
 6. **Length target**: 50-150 lines. If > 200, split out atoms to `03-knowledge/`.
@@ -74,6 +74,6 @@ metadata:
 - "Dark pattern" / "critical" / "blocker" without evidence
 - P0 labels for hygiene issues
 - Duplicate findings across specialists
-- Code symbol wikilinks (`[[theme.js]]` is wrong)
+- Code symbol wikilinks (``theme.js`` is wrong)
 - No frontmatter
 - No evidence file:line

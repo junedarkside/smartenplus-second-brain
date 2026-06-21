@@ -15,7 +15,7 @@ Three independent reads converge: the CS-centralization spine is worth building 
 
 ## Context
 
-Synthesizes [[r1-strategy]] (PROCEED-REVISED), [[r1-tech-feasibility]] (BUILDABLE-REVISED), [[r1-product]] (RESEQUENCE+TRIM). Each lens scores differently but the deltas reconcile: strategy flags the acquisition-mechanic gap and channel conflict; tech corrects the greenfield scope and splits the timeline; product inverts the phase order (identity must precede Customer DB). This note runs a skeptic pass over each, resolves the cross-specialist conflicts, ranks phases by Impact × Feasibility, and emits the executable sequence. Durability artifact: [[smarten-customer-os-thesis]].
+Synthesizes [[customer-os-thesis-r1-strategy]] (PROCEED-REVISED), [[customer-os-thesis-r1-tech-feasibility]] (BUILDABLE-REVISED), [[customer-os-thesis-r1-product]] (RESEQUENCE+TRIM). Each lens scores differently but the deltas reconcile: strategy flags the acquisition-mechanic gap and channel conflict; tech corrects the greenfield scope and splits the timeline; product inverts the phase order (identity must precede Customer DB). This note runs a skeptic pass over each, resolves the cross-specialist conflicts, ranks phases by Impact × Feasibility, and emits the executable sequence. Durability artifact: [[smarten-customer-os-thesis]].
 
 ## Problem
 
@@ -121,7 +121,7 @@ Synthesis complete. Final verdict + re-evaluation triggers in [[smarten-customer
 
 ## Related
 
-- [[r1-strategy]] · [[r1-tech-feasibility]] · [[r1-product]] — specialist inputs
-- [[grill-audit]] — contradictions, fuzzy terms, edge cases
+- [[customer-os-thesis-r1-strategy]] · [[customer-os-thesis-r1-tech-feasibility]] · [[customer-os-thesis-r1-product]] — specialist inputs
+- [[customer-os-thesis-grill-audit]] — contradictions, fuzzy terms, edge cases
 - [[smarten-customer-os-thesis]] — decision doc (durable artifact)
 - [[customer-os-thesis-review]] — parent review

@@ -85,7 +85,7 @@ Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplic
 - **Update** — existing page incomplete or stale
 - **Merge** — two pages same topic → combine, update all links
 - **Archive** — completed/superseded → move to `08-archive/`. Never delete.
-- `[[page-name]]` wikilinks. No aliases. `[[name]]` with no matching page = "worth writing later", not error.
+- `[[page-name]]` wikilinks. No aliases in content notes. Display aliases (`[[name|Title]]`) allowed in `index.md` only. `[[name]]` with no matching page = "worth writing later", not error.
 - When updating: check if linked pages need updates too.
 
 ## Behavior Rules
@@ -103,6 +103,8 @@ Avoid: filler, vague summaries, generic AI writing, unnecessary metadata, duplic
 | `log.md` (root) | Main operational journal. `grep "^## \[" log.md \| tail -5` | Every ingest |
 | `07-logs/log.md` | Session-end log. Wrap-up protocol appends here. | Session wrap-up |
 | `master-state.md` | Live session state: branches, loose ends, API contract, guardrails. | S1: every session. S2: weekly. S3–4: monthly or less. |
+| `vault-protocol.md` | API contract details. Read only when working on API changes. | On API contract change |
+| `vault-guardrails.md` | Architecture guardrails. Read only when working on payment/infra. | On guardrail change |
 
 ## Session Initialization Protocol
 

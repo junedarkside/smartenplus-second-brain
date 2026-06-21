@@ -80,4 +80,4 @@ curl -s "http://localhost:3000/blog/SLUG" | grep 'og:title\|og:image'
 ## Related
 - [[og-image-inferred-audit-2026-05-23]] — previous session fix (secureUrl site-wide)
 - [[nextjs-patterns]] — PersistGate SSR blocker pattern + OG absolute URL rule
-- [[homepage-seo-performance-deep-review]] — original SEO audit
+- [[homepage-seo-performance-deep-review-2026-05-21]] — original SEO audit

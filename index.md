@@ -14,6 +14,9 @@ Global navigation catalog. Updated on every ingest.
 
 - [[precompute-popular-contracts-audit]] — **AUDIT 2026-06-20.** `precompute_popular_contracts` task (`products/tasks.py:88`), hourly Celery Beat. Fan-out: selects top-100 popular contracts → queues `precompute_contract_recommendations` per contract → 12 cache keys each (4 types × 3 limits), 24h TTL. **3 bugs found:** (1) `.count()` called on sliced queryset = TypeError, exception swallowed silently; (2) no ordering before `[:100]` = non-deterministic selection; (3) parent task has no retry. Also: `cleanup_expired_recommendation_cache` is a no-op placeholder; `get_cache_statistics` only probes `hybrid:8` key, understates coverage.
 - [[precompute-popular-contracts-fix-plan]] — **FIX PLAN 2026-06-20.** 3-agent debate result. 2 CRITICAL bugs active in prod: (1) `list.count()` TypeError silently kills task every hour — fix: `list()` + `len()`; (2) cache key mismatch (`:none` suffix missing in 4 places) means zero cache hits system-wide even if bug 1 fixed. Phase 1: fix both in one commit, restart workers only. Phase 2 (next biz day after data audit): add `reset_daily_counter` to Beat at 00:30. Includes exact verification commands + Redis-only rollback.
+- [[prod-capacity-celery-audit]] — **AUDIT 2026-06-21.** Small EC2 box: web 2-slot + celery 1-serial both at floor; 24 celery tasks / 7 apps; `sync_pending_charges` heaviest recurring blocker; Beat = DatabaseScheduler (prod DB, not code). Fix for both tiers = bigger instance, not a flag. Surfaced during [[cs-architecture-decision]].
+- [[serializer-field-omission-starves-ui]] — **BUG PATTERN.** DRF serializer `Meta.fields` omission ships `undefined` → UI degrades silently (wrong default, no error). Case: contract soft-delete showed Inactive not Deleted, Restore action missing.
+- [[dangling-export-import-bug-pattern]] — **BUG PATTERN.** Call site imports a name not exported (agent-worktree drift) or wrong shape (default vs named) → build break. Case: `getOptimalImageQuality is not a function` across 13 SSG pages.
 
 ## Knowledge — SEO/AEO
 
@@ -28,6 +31,8 @@ Global navigation catalog. Updated on every ingest.
 ## Active Projects
 
 > **Note (2026-06-19):** Items marked **CLOSED / COMPLETED / MERGED** below were archived to `08-archive/` this session. Their `[[wikilinks]]` still resolve (Obsidian finds them in the archive folder). Pending a future pass to relocate these lines into `## Archive`.
+
+- [[filter-functionality-audit]] — **AUDIT.** Filter bugs: BUG-001 object-stringify in checkbox handler, BUG-002 onClick vs onChange inversion, BUG-003 Array.includes reference equality, BACKEND-001 departure-station double-guard.
 
 - [[homepage-search-transportation-experiences-tabs]] — **PLAN 2026-06-17.** File-by-file impl plan for homepage Transportation|Experiences search tabs (from [[adr-homepage-search-transportation-experiences-tabs]], audited). Split 379-line ProductSearchForm2 into shared fields + 2 mode forms + segmented control (local useState). Hero → reuse FeaturedImageHeader (isCinematic). Experiences = Destination+Category → /activities?location=&category=. Key audit fix: do NOT reuse ActivitySearch (forces dayTripsApi RTK + locations API onto homepage); use AutoCompleteSearch. Tokens via helpers/designSystem.js.
 - [[not-suitable-for-section]] — **SPEC 2026-06-18.** 5-agent team debate (business/UX/design/backend/frontend+admin) on operator-authored "Not suitable for" section. Converged: JSONField enum array on Contract, frontend-mapped labels, replace "Good to know" badges with icon+text list, admin multi-select on BookingConfig.js. Plan file `not-suitable-for-full-build.md` ready. No code shipped.
@@ -378,6 +383,8 @@ Global navigation catalog. Updated on every ingest.
 - [[payment-system]] — Legacy payment system notes. Archived.
 - [[payments-deep-dive]] — Legacy payment deep dive. Archived.
 - [[payments-enums]] — Legacy payment enums. Superseded by [[payment-status-enums]].
+- [[finding-submit-review-auth-2026-06-07]] — Security finding: submit/review authorization, 2026-06-07.
+- [[migration-0026-runbook]] — Migration 0026 runbook (favorite-heart-analysis audit bundle).
 
 ## Systems
 
@@ -397,11 +404,11 @@ Global navigation catalog. Updated on every ingest.
 - Pages: ~335 (active; ~497 total including 08-archive)
 - Last updated: 2026-06-19 (vault optimization pass: 8 audit bundles + 15 completed projects archived → 08-archive; 01-projects 91→71 md; flat structure restored; 0 broken links)
 - [[activities-browse-filter-inactive-contracts]] — FQ-0 P0: 1-line fix to send ?status=active to API
-- [[usedayTripFilters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
+- [[use-day-trip-filters-hydration-spurious-push]] — FQ-2 P1: router.query read pre-hydration → spurious push
 - [[design-token-caption-tailwind-gotcha]] — DS-1 gotcha: Tailwind strings can't be used in MUI sx
 - [[activities-location-search-backend-text-fallback]] — RC-1: _parse_int_list text fallback for city name search
 - [[mui-autocomplete-inputvalue-sync]] — F-1: useEffect sync on value prop change to restore URL state
-- [[mui-autocomplete-handlInputchange-parent-emit]] — F-2: handleInputChange must call onChange to emit to parent
+- [[mui-autocomplete-handle-input-change-parent-emit]] — F-2: handleInputChange must call onChange to emit to parent
 - [[design-system-phase1-migration]] — Phase 1: 16 component files migrated from hardcoded hex to COLORS tokens. Exact-match only, zero visual changes.
 - [[payment-amount-validation-rule]] — H1: server `(amount_thb - fee) == order.get_total_cost_after_discount()` ±1.00 THB
 - [[payment-legacy-deprecation-map]] — 410-returning routes: `/api/payments/webhook-legacy/`, `/api/placeorder/`

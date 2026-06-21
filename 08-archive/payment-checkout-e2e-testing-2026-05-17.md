@@ -73,5 +73,5 @@ Alert + "Cancel This Payment" button in FormCard = intended UX.
 - [[payment-checkout-architecture-audit-2026-05-17]]
 - [[payment-system]]
 - [[checkout-flow]]
-- [[docs/testing/PAYMENT_CHECKOUT_MANUAL_TEST_GUIDE.md]]
-- [[docs/testing/PAYMENT_CHECKOUT_AUDIT.md]]
+- [[payment-checkout-e2e-testing]]
+- [[payment-checkout-architecture-audit]]

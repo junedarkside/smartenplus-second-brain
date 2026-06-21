@@ -126,4 +126,4 @@ The MVP answers one question: *can we centralize CS and identify the direct cust
 
 ## Related
 
-[[business]] · [[business-development-unified-travel-wellness-thesis]] · [[checkout-flow]] · [[bookings]] · [[orders]] · [[r3-leader-synthesis]] · [[grill-audit]]
+[[business]] · [[business-development-unified-travel-wellness-thesis]] · [[checkout-flow]] · [[bookings]] · [[orders]] · [[customer-os-thesis-r3-leader-synthesis]] · [[customer-os-thesis-grill-audit]]

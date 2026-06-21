@@ -427,7 +427,7 @@ Fix in this sequence to minimize risk and maximize dependency resolution:
 **Target after P0+P1+P2 fixes: 9.0/10**
 
 ## Sibling Sub-Files (Linked 2026-06-13)
-- [[../rate-review-uxui-audit-2026-06-06-overview]] — umbrella overview
+- [[rate-review-uxui-audit-2026-06-06-overview]] — umbrella overview
 - [[r1-frontend]] — Phase 1 frontend & a11y audit (22 findings)
 - [[r4-scrutinize]] — outsider verification pass (4 corrections)
 - [[r5-implementation-plan]] — Release 1 fix spec + Sprint 1 backlog

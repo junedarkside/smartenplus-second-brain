@@ -4,6 +4,8 @@
 
 Not every field on the detail pages needs ISR revalidation. Match the refresh mechanism to the field's volatility + consumer. This matrix settles what the on-demand revalidate signal is actually for, and what it deliberately does NOT touch.
 
+> **Note:** "ISR" here = Next.js **page-level** revalidation (`revalidate: 300` in `getStaticProps`) applied to the whole page — Next.js has no field-level ISR. "ISR only" means a field is sourced from the ISR HTML (no CSR overlay), not that the field is revalidated independently.
+
 ## Matrix (verified against source)
 
 | Field | trips/detail | activities/detail | Right mechanism | Why |

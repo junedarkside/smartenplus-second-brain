@@ -24,10 +24,10 @@ See [[activities-location-search-bug]] F-1.
 
 ## Companion Pattern
 
-Pairs with [[mui-autocomplete-handlInputchange-parent-emit]] — together form the "URL-hydrated search bar" recipe. FQ-2 (activities-day-tour-page-review) confirms both must be present; missing either yields blank field or unfiltered API calls.
+Pairs with [[mui-autocomplete-handle-input-change-parent-emit]] — together form the "URL-hydrated search bar" recipe. FQ-2 (activities-day-tour-page-review) confirms both must be present; missing either yields blank field or unfiltered API calls.
 
 ## Related
 - [[activities-location-search-bug]]
 - [[activities-day-tour-page-review]] FQ-2
-- [[mui-autocomplete-handlInputchange-parent-emit]]
+- [[mui-autocomplete-handle-input-change-parent-emit]]
 - React: prop updates must trigger effect, not be ignored

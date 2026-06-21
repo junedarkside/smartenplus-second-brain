@@ -17,7 +17,7 @@ The thesis's CS-centralization spine (Phases 1, 3, 4) is sound and overdue. Its 
 
 ## Context
 
-Demand-side complement to the supply-side [[business-development-unified-travel-wellness-thesis]]. Against the [[business]] reality — B2B supplier (Klook/12Go/Bookaway ~90%) + B2C direct (~10%) — Customer OS is an attempt to flip the demand-side ratio by owning the customer relationship OTAs currently hold. Strategy lens interrogates *whether the bridge from OTA customer to Smarten-owned customer exists*, not whether the DB schema is buildable (that's [[r1-tech-feasibility]]).
+Demand-side complement to the supply-side [[business-development-unified-travel-wellness-thesis]]. Against the [[business]] reality — B2B supplier (Klook/12Go/Bookaway ~90%) + B2C direct (~10%) — Customer OS is an attempt to flip the demand-side ratio by owning the customer relationship OTAs currently hold. Strategy lens interrogates *whether the bridge from OTA customer to Smarten-owned customer exists*, not whether the DB schema is buildable (that's [[customer-os-thesis-r1-tech-feasibility]]).
 
 ## Problem
 
@@ -108,6 +108,6 @@ Revise before building: (a) **add Phase 0** to measure OTA→account conversion 
 - [[business]] — B2B(90%)+B2C(10%) strategy, "Stippl for SEA" vision
 - [[business-development-unified-travel-wellness-thesis]] — supply-side complement (wellness+transport bundling)
 - [[business-development-thesis-2026-2029]] — overall strategic position
-- [[r1-tech-feasibility]] · [[r1-product]] — sibling specialist reviews
-- [[r3-leader-synthesis]] — skeptic pass + ranking + verdict
-- [[grill-audit]] — contradictions, fuzzy terms, edge cases
+- [[customer-os-thesis-r1-tech-feasibility]] · [[customer-os-thesis-r1-product]] — sibling specialist reviews
+- [[customer-os-thesis-r3-leader-synthesis]] — skeptic pass + ranking + verdict
+- [[customer-os-thesis-grill-audit]] — contradictions, fuzzy terms, edge cases

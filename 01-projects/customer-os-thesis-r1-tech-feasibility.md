@@ -100,4 +100,4 @@ Proposed stack (Next.js + Django/DRF + Channels + Celery + Redis + PostgreSQL + 
 
 ## Related
 
-[[r3-leader-synthesis]] · [[grill-audit]] · [[accounts]] · [[tickets]] · [[backend-architecture]]
+[[customer-os-thesis-r3-leader-synthesis]] · [[customer-os-thesis-grill-audit]] · [[accounts]] · [[tickets]] · [[backend-architecture]]

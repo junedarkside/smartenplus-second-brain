@@ -205,7 +205,7 @@ Message lifecycle: `COMPOSING → ECHOED(optimistic, opacity 0.5, "Sending…" s
 6. **Token WCAG fix** — add G-05/06/07 text-tokens (or update hex) to `designSystem.js`; file separate audit issue.
 
 ## Related
-- [[designSystem]] — token source (`helpers/designSystem.js`)
+- [[design-systems]] — token source (`helpers/designSystem.js`)
 - [[cs-centralization-stack]] — build stack (Option B / arch)
 - [[cs-centralization-doc-review]] — architecture review (over-engineering flag)
 - [[smarten-customer-os-thesis]] — parent decision

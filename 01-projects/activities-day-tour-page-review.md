@@ -133,7 +133,7 @@ Scoped fix: `CategoryFilter.js:55,80` + `FilterDayTripsPage.js:142` → `TOUCH_T
 
 **FQ-3 [P1] — SEO meta missing structured data (ItemList schema)**
 - `pages/activities/index.js` — has `<title>`, `description`, `og:title`, `og:description`. No structured data.
-- OTA category pages benefit from `ItemList` schema listing top 3–5 results. Pattern from [[trip-detail-page-review]] and [[homepage-seo-performance-deep-review]].
+- OTA category pages benefit from `ItemList` schema listing top 3–5 results. Pattern from [[trip-detail-page-review]] and [[homepage-seo-performance-deep-review-2026-05-21]].
 - `og:url` hardcodes `https://smartenplus.co.th` — `NEXT_PUBLIC_SITE_URL` should be used (ISR pattern from [[og-image-ssr-fix-2026-05-23]]).
 - **Fix (P1):** Replace hardcoded domain with `process.env.NEXT_PUBLIC_SITE_URL`. Add `ItemList` JSON-LD with top N contracts once SSR/ISR available.
 

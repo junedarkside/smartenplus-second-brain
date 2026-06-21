@@ -7,11 +7,13 @@ metadata:
 
 # Trip Detail Page Review — 2026-05-20
 
+> ⚠️ **SUPERSEDED 2026-06-16** — Predates the server-side SEO refactor. `useTripSEO.js` was **deleted** and replaced by `helpers/seo/tripDetailSEOUtils.js` + a rewritten `components/trips/detail/TripDetailSEO.js` (schema moved into `getStaticProps`). The SEO findings below citing `useTripSEO.js` (e.g. S8) were resolved in that refactor — see [[trip-detail-seo-aeo-geo-audit-2026-06-16/r2-leader-synthesis]] (7/7 HIGH fixed). Findings retained as historical record; candidate for [[08-archive]].
+
 ## Summary
 3-agent team (SSR/Perf · SEO · Code Quality) reviewed `pages/trips/detail/[...slug].js`. 24 issues found. Leader-filtered — false positives removed.
 
 ## Context
-Branch `260520-update/recommend-route`. ~481 lines. ISR (revalidate: 300). RTK Query for contract refresh, dynamic imports, useTripSEO hook for JSON-LD.
+Branch `260520-update/recommend-route`. ~481 lines. ISR (revalidate: 300). RTK Query for contract refresh, dynamic imports. *(2026-05-20: SEO via client `useTripSEO` hook; **deleted 2026-06-16**, now server-side `tripDetailSEOUtils.js`.)*
 
 ---
 

@@ -148,7 +148,7 @@ Size (refactor-on-touch only): `checkout/index.js` 1201 · `PaymentComponent.js`
 ---
 
 ## Carried-over open items (status 2026-06-12)
-- `stable_id`: now comment-only in source + 2 test files; `useCartSync` Effect 6 still present (`:317-335`) — finish sweep.
+- `stable_id`: sweep complete (source comment-only, 2 test files remain); `useCartSync` Effect 6 rewritten to formData-init (`:317`) — no longer the id→stable_id migration. Verified 2026-06-21.
 - `BookButton`: line 41 `checkCart` now used; residual dead `useCheckCartIdQuery` import (line 8) + unused `[result, setResult]` (line 45).
 - Celery retry wired-but-uncalled: CONFIRMED (`tasks.py:14` config inert; per-item swallowing is correct behavior — delete the retry kwargs).
 - `OrderDetailsViewSet` throttle: global `AnonRateThrottle` 500/h applies (`settings.py:405-415`) — not unthrottled, just untightened.

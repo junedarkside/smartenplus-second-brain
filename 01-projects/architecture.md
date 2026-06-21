@@ -83,7 +83,7 @@ Architecture hub references for orphan knowledge notes consolidated here:
 - [[next-font-self-host-perf-pattern]] — `next/font/google` self-host migration
 - [[react-hooks-rules-lowercase-component]] — React hooks rules: lowercase component name gotcha
 - [[two-surface-parity-shared-module]] — two-surface parity shared module pattern
-- [[usedayTripFilters-hydration-spurious-push]] — `useDayTripFilters` pre-hydration query read
+- [[use-day-trip-filters-hydration-spurious-push]] — `useDayTripFilters` pre-hydration query read
 - [[touch-target-44px-enforcement]] — 44px touch target enforcement
 - [[star-aria-radiogroup-pattern]] — star rating ARIA radiogroup a11y
 - [[adaptive-header-route-type-pattern]] — Type A/B header route-type pattern

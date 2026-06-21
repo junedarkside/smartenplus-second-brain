@@ -224,4 +224,4 @@ Verdict: Fix to primary (#3b5998). **Implemented.**
 
 ## Related
 
-[[seo-homepage-specialist-team]] · [[homepage-seo-performance-deep-review]] · [[trip-detail-page-review]] · [[design-systems]] · [[master-state]]
+[[seo-homepage-specialist-team]] · [[homepage-seo-performance-deep-review-2026-05-21]] · [[trip-detail-page-review]] · [[design-systems]] · [[master-state]]

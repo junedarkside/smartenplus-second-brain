@@ -23,11 +23,11 @@ Customers arrive from OTAs and remember the OTA brand, not Smarten. Conversation
 
 | Round | Agent | Output |
 |-------|-------|--------|
-| 1 | r1-strategy | [[r1-strategy]] — validity, OTA-data-ownership, moat |
-| 1 | r1-tech-feasibility | [[r1-tech-feasibility]] — greenfield reality, build cost, realism |
-| 1 | r1-product | [[r1-product]] — sequencing, ROI, dependencies, MVP |
-| 2 | r3-leader | [[r3-leader-synthesis]] — skeptic pass + ranking + verdict |
-| 3 | grill | [[grill-audit]] — contradictions, fuzzy terms, edge cases |
+| 1 | r1-strategy | [[customer-os-thesis-r1-strategy]] — validity, OTA-data-ownership, moat |
+| 1 | r1-tech-feasibility | [[customer-os-thesis-r1-tech-feasibility]] — greenfield reality, build cost, realism |
+| 1 | r1-product | [[customer-os-thesis-r1-product]] — sequencing, ROI, dependencies, MVP |
+| 2 | r3-leader | [[customer-os-thesis-r3-leader-synthesis]] — skeptic pass + ranking + verdict |
+| 3 | grill | [[customer-os-thesis-grill-audit]] — contradictions, fuzzy terms, edge cases |
 
 Verdict + re-evaluation triggers → [[smarten-customer-os-thesis]] (decision doc).
 

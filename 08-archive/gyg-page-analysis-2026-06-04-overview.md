@@ -139,4 +139,4 @@ Adopted Skeptic verdicts. Best-case-for-pattern assumption: if verify fails at i
 - [[trip-detail-page-review]] — prior detail page audit
 - [[trip-detail-uxui-audit-2026-05-22]] — 3-specialist audit: 32 issues
 - [[seo-homepage-specialist-team]] — SEO specialist team pattern
-- [[homepage-seo-performance-deep-review]] — prior SEO deep review
+- [[homepage-seo-performance-deep-review-2026-05-21]] — prior SEO deep review

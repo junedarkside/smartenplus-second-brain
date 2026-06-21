@@ -13,7 +13,7 @@ metadata:
 # r1-visual — Visual Design & Typography Audit
 **Specialist:** Visual Design & Typography
 **Date:** 2026-06-06
-**Reference:** `[[designSystem]]`
+**Reference:** `[[design-systems]]`
 **Scope:** `/rate-review` flow — index, detail, submit-review pages + BookingReviewList, RateAndReviewForm components
 
 ---

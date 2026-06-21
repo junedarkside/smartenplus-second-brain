@@ -198,5 +198,5 @@ Components audited:
 
 - [[design-system-audit]] — project-wide audit, migration roadmap
 - [[design-system-phase1-migration]] — token completion tasks
-- [[designSystem.md]] — token inventory
+- [[design-systems]] — token inventory
 - `helpers/designSystem.js` — source of truth

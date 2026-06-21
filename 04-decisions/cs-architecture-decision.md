@@ -100,3 +100,4 @@ Sustained **concurrent customer widgets in the hundreds** — when widget pollin
 - [[cs-centralization-doc-review]] — the 6 risks + polling-ceiling math
 - [[cs-api-contract]] — built on this decision
 - [[cs-centralization-design-concept]] — token WCAG source
+- [[prod-capacity-celery-audit]] — prod EC2/Celery capacity constraints driving the polling decision (web 2-slot + celery 1-serial at floor)

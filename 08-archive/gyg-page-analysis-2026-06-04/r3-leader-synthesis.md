@@ -181,4 +181,4 @@ Main doc `## Verification Matrix` tracks all 4. This keeps the synthesis actiona
 - [[business-development-thailand-platform-analysis]] — GYG positioning
 
 ## Sibling Sub-Files (Linked 2026-06-13)
-- [[../gyg-page-analysis-2026-06-04-overview]] — umbrella overview
+- [[gyg-page-analysis-2026-06-04-overview]] — umbrella overview
