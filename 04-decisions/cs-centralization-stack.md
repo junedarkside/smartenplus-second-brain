@@ -1,21 +1,24 @@
 ---
 name: cs-centralization-stack
-description: Reuse-first build-stack for CS Centralization — Option B hybrid (widget polls Django, CS Dashboard gets Supabase Realtime push), pyotp/SES OTP, AWS SNS SMS reminders, Telegram internal alert, Channels dormant
+description: Reuse-first build-stack for CS Centralization — both-sides-poll-Django (Supabase OUT of message path), pyotp/SES OTP, AWS SNS SMS reminders, Telegram internal alert, Channels dormant
 metadata:
   type: decision
   status: accepted
   date: 2026-06-20
   updated: 2026-06-21
   parent: smarten-customer-os-thesis
+  superseded_transport_by: cs-architecture-decision
 ---
 
 # CS Centralization — Build Stack
 
+> ⚠️ **Transport REVERSED 2026-06-21 → [[cs-architecture-decision]].** This doc originally specified Option B (CS Dashboard Supabase Realtime push). That was **reversed to both-sides-poll-Django** — Supabase OUT of the message path. Net-new dep dropped to **`pyotp` only** (no `@supabase/supabase-js`, no `cs` schema, no `sync_status`). The "Supabase Realtime Layer" section below + the Option-B mentions in the Decision table are **SUPERSEDED — kept for the reasoning trail**. Everything else (channels, OTP, SNS SMS, Telegram-internal, Supabase-as-OTA-read-store) stands.
+
 ## Summary
 
-The CS Centralization messaging track ships on **what is already installed**, plus **two** new dependencies (`pyotp` on backend, `@supabase/supabase-js` on admin-dashboard only). Customer chat = **website widget via HTTP polling every 3s** (reuse `useQRPolling.js`). CS Dashboard (admin staff) = **Supabase Realtime push** (<1s, browser WebSocket to Supabase — no Django thread consumed). Trip reminders = **AWS SNS SMS** (same `boto3`/AWS account as SES — zero new service). Email-OTP = **`pyotp` + AWS SES**. **Telegram = internal CS team alerts only** (not customer-facing). **Django Channels stays dormant**. Net effect: zero new infra, zero compose/nginx change, no production impact until P1b is built.
+The CS Centralization messaging track ships on **what is already installed**, plus **one** new dependency (`pyotp`, backend). Customer chat = **website widget via HTTP short-polling ~5s** (reuse `useQRPolling.js`). **CS Dashboard (admin staff) ALSO polls Django** (RTK `pollingInterval`) — NOT Supabase Realtime (see [[cs-architecture-decision]]; small prod box makes short-poll the only viable transport). Trip reminders = **AWS SNS SMS** (same `boto3`/AWS account as SES — zero new service). Email-OTP = **`pyotp` + AWS SES**. **Telegram = internal CS team alerts only** (not customer-facing). **Django Channels stays dormant**. Net effect: zero new infra, zero compose/nginx change, no production impact until P1b is built.
 
-> **Architecture decision (Option B) validated 2026-06-21.** Root cause: `docker-compose-rds.yml:13` = `--workers 1 --threads 2` = 2 concurrent requests max. Pure long-polling for CS Dashboard would deadlock at 2 users. Solution: widget polls Django (fast, thread released immediately), CS Dashboard gets Supabase Realtime push (bypasses Django entirely).
+> **Transport decision (both-sides-poll) — [[cs-architecture-decision]] 2026-06-21.** Prod (`docker-compose-rds.yml`, confirmed) = `--workers 1 --threads 2` + 256MB cap + celery `--concurrency=1`. Short-poll releases a slot in ~20ms (5 CS staff = ~1.6 req/s, negligible). WebSocket would blow the 256MB cap; Supabase two-write would block the single celery worker. So BOTH customer widget and CS Dashboard poll one cheap Django endpoint; Postgres = single source of truth.
 
 ## Channel Architecture
 
@@ -36,10 +39,10 @@ r2 red-team ([[r2-skeptic-review]]) showed the originally-implied realtime path 
 
 | Component | Choice | Reuses | Net new |
 |---|---|---|---|
-| Customer chat transport | HTTP long-polling | `hooks/useQRPolling.js` (interval `axios.get`) | none |
+| Customer chat transport | HTTP short-poll ~5s | `hooks/useQRPolling.js` (interval `axios.get`) | none |
 | Chat widget (FE) | Poll client, lazy-mounted `dynamic(ssr:false)` | `useQRPolling` pattern | none |
-| Django chat models | `Conversation` + `Message` models (new, with `sync_status` field) | `tickets.Ticket` pattern, `dialogue/` GenericFK pattern | new models (P1b) |
-| CS Dashboard realtime | **Supabase Realtime push** (INSERT on `cs.messages` → browser push) | existing Supabase project (`npehhtcobshckhefrqhw`) | `@supabase/supabase-js` (admin-dashboard only) |
+| Django chat models | `Conversation` + `Message` models (new) — ~~`sync_status`~~ dropped (no Supabase write) | `tickets.Ticket` pattern, `dialogue/` GenericFK pattern | new models (P1b) |
+| CS Dashboard transport | **Polls Django** (RTK `pollingInterval`) — ~~Supabase Realtime~~ REVERSED → [[cs-architecture-decision]] | `store/api/ordersApi.js` RTK pattern | none (~~`@supabase/supabase-js`~~) |
 | CS Dashboard UI | React page (CS staff reply, conversation list) | existing admin-dashboard patterns, `store/api/ordersApi.js` RTK pattern | new page (P1b) |
 | Email-OTP | `pyotp` + AWS SES | `boto3==1.26.70`, `AWS_SES_REGION_*` (`settings.py:400`), `DEFAULT_FROM_EMAIL` (`:348`); FE `next-auth ^4.18.8` | `pyotp` (BE) |
 | Trip reminders (SMS) | **AWS SNS** via `boto3` | same `boto3` + AWS account as SES — zero new service/account | none |
@@ -47,7 +50,7 @@ r2 red-team ([[r2-skeptic-review]]) showed the originally-implied realtime path 
 | Telegram inbound (optional) | Celery `getUpdates` poll → CS dashboard relay | `celery==5.3.1` | none (queue config) |
 | OTA traveler identity seed | **Supabase read-sync via REST/JS API** ([[supabase-ota-booking-store]]) — `gmail12go.Information` table, 16 fields, HTTP read-only | existing Supabase REST/JS API | thin HTTP call only |
 
-**Net new dependencies:** `pyotp` (backend) + `@supabase/supabase-js` (admin-dashboard only). SMS = `boto3` already installed. Supabase = existing project, existing REST API.
+**Net new dependency: `pyotp` (backend) only** (reversed from Option B — no `@supabase/supabase-js`, see [[cs-architecture-decision]]). SMS = `boto3` already installed. Supabase = existing project, existing REST API (OTA read-store role only).
 
 ## Reuse map
 
@@ -57,13 +60,15 @@ r2 red-team ([[r2-skeptic-review]]) showed the originally-implied realtime path 
 - **Telegram = internal only** — `send_telegram_message` (`carts/utils.py:690`) already outbound; use for CS staff alerts (new chat message, new booking). NOT customer-facing. Customer talks via website widget only.
 - **Celery already live** — optional inbound Telegram relay = one more beat task; outbound reuses existing helper.
 - **Channels stays dormant** — `channels==4.0.0` + `channels-redis==4.1.0` stay in `requirements.txt`, `carts/consumers.py` stays `TestConsumer` stub. Not removed, not activated.
-- **Supabase = dual-role** — ([[supabase-ota-booking-store]]): (1) `gmail12go.Information` table (source-verified: 16 cols, 58 records, 12Go bookings) — read-only identity seed; (2) new `cs` schema (`cs.conversations` + `cs.messages`) — CS message relay. Django→Celery writes to `cs` schema (service_role key); Supabase Realtime pushes INSERT events to CS Dashboard (anon key, browser WebSocket). Two schemas, same Supabase project, zero new service.
+- **Supabase = OTA read-store ONLY** — ([[supabase-ota-booking-store]]): `gmail12go.Information` table (source-verified: 16 cols, 58 records, 12Go bookings) — read-only identity seed. ~~(2) `cs` schema CS message relay~~ **REVERSED** — Supabase is OUT of the message path ([[cs-architecture-decision]]); no `cs` schema, no Django→Supabase write, no Realtime. Django/Postgres is the sole message store.
 - **`IsAdminOrIsStaff` permission** — `accounts/permissions.py:4-14` already exists; reuse for CS endpoints. No new permission class needed.
 - **`dialogue/` GenericFK pattern** — `dialogue/models.py` Comment/Notification/Review models use GenericFK; reuse as template for `Message` model structure.
 
-## Supabase Realtime Layer (CS Dashboard only)
+## Supabase Realtime Layer (CS Dashboard only) — ⚠️ SUPERSEDED
 
-> **Validated 2026-06-21** via 3-agent cross-repo investigation.
+> 🛑 **SUPERSEDED 2026-06-21 → [[cs-architecture-decision]].** This entire section described Option B (CS Dashboard Supabase Realtime push), which was REVERSED to both-sides-poll-Django. Supabase is OUT of the message path. Section kept below for the reasoning trail only — **do not implement.**
+>
+> _Original (validated 2026-06-21 via 3-agent investigation, then reversed same day after the polling-ceiling re-analysis):_
 
 ### Why Supabase Realtime (not pure polling for CS Dashboard)
 
@@ -104,22 +109,22 @@ Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.
 
 ## Tradeoffs
 
-- **Polling latency (widget) vs WS push:** 0-3s latency for customer to see CS reply. Acceptable for support chat. Zero new infra, zero prod risk.
-- **Supabase Realtime (CS Dashboard):** staff gets <1s push, no Gunicorn thread consumed. Cost: two-write consistency + `sync_status` field + `@supabase/supabase-js` dep (admin-dashboard only).
+- **Short-poll latency (both sides) vs WS push:** 0-5s latency for a reply to surface. Acceptable for support chat. Zero new infra, zero prod risk. (Both widget AND CS Dashboard poll Django — [[cs-architecture-decision]].)
+- ~~**Supabase Realtime (CS Dashboard):** <1s push, two-write + `sync_status` + `@supabase/supabase-js`.~~ **REVERSED** — see [[cs-architecture-decision]]; small prod box (256MB / celery concurrency=1) makes this net-negative.
 - **Deferring Channels:** avoids r2 256MB-cliff / redis-mismatch / WS-auth work entirely. Channels stays dormant. If measured chat volume later needs true real-time on the widget side, that becomes a gated project.
 - **`pyotp` add:** one small pure-python lib, no service. Lowest-footprint OTP option.
 
 ## Consequences
 
-- `pyotp` enters backend `requirements.txt` when P1a builds. `@supabase/supabase-js` enters admin-dashboard `package.json` when P1b builds. **No `smartenplus-frontend` dep added.** No `docker-compose*` service added. No `nginx.conf` change.
+- `pyotp` enters backend `requirements.txt` when P1a builds. **No frontend or admin-dashboard dep added** (reversed — no `@supabase/supabase-js`). No `docker-compose*` service added. No `nginx.conf` change.
 - AWS SNS SMS = zero new dep (same `boto3`); zero new service account.
-- Gunicorn `--workers 1 --threads 2` (`docker-compose-rds.yml:13`) = 2 concurrent request cap. Widget polling (fast non-blocking GET, thread released immediately) fits this. CS Dashboard Supabase Realtime (browser→Supabase WebSocket, bypasses Django entirely) fits this. Long-polling would not.
-- P1b requires two new Django models: `Conversation` + `Message` (with `sync_status` field — tracks two-write consistency state). Django saves to DB; Celery writes copy to Supabase `cs` schema.
+- Prod (`docker-compose-rds.yml`, confirmed) = `--workers 1 --threads 2` + 256MB cap + celery `--concurrency=1`. **Both** widget and CS Dashboard short-poll Django (fast non-blocking GET, slot released ~20ms). WebSocket/long-poll would blow the box; Supabase two-write would block the single celery worker. See [[cs-architecture-decision]].
+- P1b requires two new Django models: `Conversation` + `Message` (no `sync_status` — Postgres is sole store, no Supabase write). Follows `dialogue/` GenericFK pattern (FK NOT nullable).
 - 103 `fields='__all__'` serializers exist in backend (3-agent scan — r2 estimated 16). P1a migrations adding new FKs auto-leak through all of them. **Must pin explicit fields on `TicketSerializer` + `OrderSerializer` BEFORE any P1a migration** to avoid 3-repo contract drift.
 - Telegram stays internal-ops only — never customer-facing in this architecture.
 - Channels left dormant — no Daphne process, no ASGI migration, no `CHANNEL_LAYERS` redis fix required for P1b.
-- The r2 "INFRA GATE" WS work (Daphne, JWT WS auth, channel-layer redis) is **deferred, not required** — P1b ships Option B hybrid.
-- A future "real-time push" need on the **widget** side is the only trigger to revisit Channels vs sidecar.
+- The r2 "INFRA GATE" WS work (Daphne, JWT WS auth, channel-layer redis) is **deferred, not required** — P1b ships both-sides-poll.
+- A future "real-time push" need on the **customer-widget** side (hundreds of concurrent widgets) is the only trigger to revisit Channels vs sidecar.
 
 ## Rejected alternatives
 
@@ -134,6 +139,6 @@ Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.
 
 - [[smarten-customer-os-thesis]] — the decision this stack serves
 - [[r2-skeptic-review]] — flagged the realtime track; source of the constraints
-- [[customer-os-thesis-review]] — parent review
+- [[r3-leader-synthesis]] — parent review synthesis
 
 Research sources: [Centrifugo](https://github.com/centrifugal/centrifugo) · [Soketi](https://github.com/soketi/soketi) · [PyOTP](https://pyauth.github.io/pyotp/) · [SES OTP cost](https://prelude.so/blog/10-best-email-otp-providers-for-verification)

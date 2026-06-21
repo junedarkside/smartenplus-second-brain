@@ -116,6 +116,6 @@ Decisions only a human can make — resolve before/at the relevant gate:
 - [[r3-leader-synthesis]] — round-1 skeptic pass + ranking + verdict
 - [[r2-skeptic-review]] — **round-2 4-agent red-team** (source of the rename + infra-gate rescope applied above)
 - [[grill-audit]] — contradictions, fuzzy terms, edge cases
-- [[customer-os-thesis-review]] — parent review
+- [[r3-leader-synthesis]] — parent review synthesis
 - [[business]] · [[business-development-unified-travel-wellness-thesis]] · [[business-development-thesis-2026-2029]] — strategic context
 - [[accounts]] · [[tickets]] — backend reuse assets
