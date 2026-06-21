@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #142 — 2026-06-21 | CS Centralization: arch REVERSED to both-poll, 5 gaps closed, doc set reconciled
+
+- 5-agent gap-closure team — closed all 5 doc gaps. Gap-2 (Supabase cs schema) collapsed to N/A.
+- ARCH REVERSED: Option B → both-sides-poll-Django. Polling-ceiling math killed "Gunicorn deadlock" premise; both-poll eliminates R1/R2/R3. Net-new dep: pyotp only.
+- EC2-too-small objection answered, prod-verified — docker-compose-rds.yml = production. Small box is WHY both-poll wins.
+- NEW docs: cs-architecture-decision, cs-api-contract (7 endpoints), cs-consent-gdpr-model, cs-p0-measurement-protocol, cs-centralization-design-concept, prod-capacity-celery-audit.
+- Doc-set reconciled: cs-centralization-stack.md marked SUPERSEDED, wikilinks fixed. 11-doc CS set consistent.
+- Commits: vault 9ce9e52 + c78d9d4, pushed.
+
 ## Session #141 — 2026-06-21 | CS Centralization: Option B validated + vault propagated (later reversed #142)
 
 - 3-agent cross-repo investigation (Django BE + Next.js FE + Architecture/Admin): full scan for CS gaps + reuse assets

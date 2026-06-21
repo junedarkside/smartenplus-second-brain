@@ -20,6 +20,8 @@ Global navigation catalog. Updated on every ingest.
 
 ## Knowledge — SEO/AEO
 
+- [[nextseo-v6-jsonld-silent-drop]] — **BUG PATTERN.** next-seo v6 `NextSeo` has no `jsonLd` prop — passing `jsonLd:[...]` is silently ignored, schemas never render. Fix: raw `<script type="application/ld+json" dangerouslySetInnerHTML>` tags (same as homepagev2.js pattern). Detection: `grep -r "jsonLd:" pages/`. Fixed in blog/index.js + blog/tags/[slug].js 2026-06-21.
+- [[seo-audit-reconciliation-2026-06-21]] — **AUDIT 2026-06-21.** External 28-finding SEO audit repro re-audited via debug-mantra (live HTTP + code-trace, FE scope). **4 of 6 Criticals PHANTOM** (apex 301 artifact + audit methodology — crawl didn't follow redirects). 10 real FE-fixable: blog JSON-LD dead code (next-seo v6 silently drops `jsonLd` key), duplicate TravelAgency entity (competing names), double brand in titles, /ref/* title dup, og:url missing on /about, og:image:type, twitter:image:alt, ContactPoint absent, 1-item homepage breadcrumb, home title 94→≤60. 5 CMS-only (author, dateModified). 2 WP. P0: fix blog schemas (#17) + TravelAgency merge (#19/#20).
 - [[trip-detail-server-side-seo-pattern]] — Pattern for moving client-side SEO hook to server-side `getStaticProps` on transport product pages. 5 pure util functions, thin renderer component, no hooks. Fixes AEO root cause (schema in SSR HTML). Key rule: JSON-LD payload functions return fields only — `CustomJsonLd` owns `@context`/`@type`.
 
 ## Knowledge — UX/Design
