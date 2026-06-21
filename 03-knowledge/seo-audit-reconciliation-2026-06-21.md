@@ -3,6 +3,8 @@
 ## Summary
 External audit scored smartenplus.co.th (28 findings). Repro re-audit via debug-mantra (live HTTP + code-trace, frontend-only scope). **4 of 6 Criticals are PHANTOM** (apex-301 artifact + audit methodology). 10 real FE-fixable findings. 5 CMS-only. 2 WP. 7 defer/content.
 
+**P0+P1 fixes shipped to production 2026-06-21** (FE `e5de5f5` → develop → main → prod). Live-verified same day. See Production Verification section below.
+
 ## Context
 External audit ran against live HTTP from bare apex (`smartenplus.co.th`), which 301s to `www.`. Crawl didn't follow redirects → every URL appeared as "301/dead". Inflated phantom 404 counts. Re-audit run 2026-06-21 via `curl -L` (follow redirects) against `www.smartenplus.co.th` + code-trace of smartenplus-frontend repo. Team: 3 verifiers (A: routing/sitemap, B: metadata/OG, C: schema/images) + leader synthesis.
 
@@ -68,8 +70,35 @@ All apex URLs 301 → www. Any crawl tool not following redirects will report al
 11. **#10** og:locale policy — document or unify _app.js:41
 12. **#8** Meta desc length — pages/blog/index.js:112, utils/blog/seoHelper.js:136
 
-## Code↔Live Drift — Open Question
-**/blog emits 0 JSON-LD live despite 4 schemas in code.** Root cause confirmed: next-seo v6 silently drops the `jsonLd` key. Fix = raw `<script>` tags. No deploy/branch mystery — pure API misuse.
+## Production Verification — 2026-06-21 (post-deploy live audit)
+
+Verified against https://www.smartenplus.co.th after production deploy.
+
+| Fix | Finding | Live result | Status |
+|-----|---------|-------------|--------|
+| Home title | #7 | "Book Bus, Ferry & Train Tickets in Thailand \| SmartEnPlus" (57 chars) ✓ | ✅ LIVE |
+| Blog title | #9 | "Blogs \| SmartEnPlus" (no double brand) ✓ | ✅ LIVE |
+| Blog post title | #9 | "Island Hopping in Trat: ... \| SmartEnPlus" (no double brand) ✓ | ✅ LIVE |
+| Blog JSON-LD | #17 | 4 blocks live: Organization/WebSite/BreadcrumbList/CollectionPage ✓ | ✅ LIVE |
+| og:image:type | #28 | image/webp on homepage ✓ | ✅ LIVE |
+| TravelAgency dup | #19 | 1 TravelAgency entity only, name="SmartEnPlus" ✓ | ✅ LIVE |
+| ContactPoint | #20 | contactPoint present on TravelAgency ✓ | ✅ LIVE |
+| Homepage breadcrumb | #21 | No BreadcrumbList on homepage ✓ | ✅ LIVE |
+| /ref title | #6 | "... \| Thailand Travel Reference \| SmartEnPlus" (single brand) ✓ | ✅ LIVE |
+| /about og:url | #15 | **PARTIAL** — two og:url tags found: homepage URL + /about URL. DefaultSeo emits homepage, page adds /about. Both present = duplicate tag. Functional (crawlers take last) but not clean. | ⚠️ PARTIAL |
+
+### Remaining issues found in production
+
+**⚠️ /about double og:url** — two `<meta property="og:url">` tags render: DefaultSeo emits homepage URL, page adds `/about`. Fix: migrate pages/about/index.js from plain `<Head>` to `<NextSeo openGraph={{url: domain+'/about'}}>` so it overrides DefaultSeo rather than appending.
+
+**⚠️ Blog robots dup** — two `name="robots"` tags on /blog: `index,follow` (DefaultSeo) + `index, follow, max-image-preview:large` (page additionalMetaTags). Not a regression — the max-image-preview tag was already there. The DefaultSeo emits base robots; page adds extra. Crawlers take union, so net effect = `index, follow, max-image-preview:large`. Low severity but worth cleaning: remove base robots from DefaultSeo or ensure page tag is the only one.
+
+**❌ twitter:image:alt** — still missing sitewide (#25, P2, not yet fixed).
+
+**❌ og:locale** — home=th_TH, blog=en_US (#10, P2 policy decision, not yet fixed).
+
+## Code↔Live Drift — RESOLVED
+**/blog 0 JSON-LD** was root cause: next-seo v6 silently drops `jsonLd` key. Fixed 2026-06-21 — now 4 blocks live. ✅
 
 ## CMS/WP-Only (not FE-fixable)
 - **#11, #24** — author "Traveler's Compass" + article:author URL: WP author display name → fix in WP
