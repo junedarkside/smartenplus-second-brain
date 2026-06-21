@@ -21,6 +21,13 @@
 - Memory: web 512MB | celery-worker 384MB | redis 64MB = ~960MB
 - `WebhookEvent.get_or_create` outside `atomic()`
 
+## Git Branch Policy — MANDATORY (all repos)
+- **NEVER commit directly to `main` or `develop`**
+- Always branch from `develop`: `git checkout develop && git pull && git checkout -b <type>/<desc>`
+- Branch naming: `fix/`, `feat/`, `refactor/`, `chore/`
+- Merge target: `develop` only. `main` = production, deploy-only flow.
+- Violation = no rollback, broken prod, lost audit trail.
+
 ## Frontend Patterns
 - **Tailwind JIT:** Never interpolate into arbitrary class strings — only static strings scanned at build time
 - **Currency:** `useCurrency()` → display only. API always receives THB. Pattern: `formatCurrency(value / rate, currency)`
