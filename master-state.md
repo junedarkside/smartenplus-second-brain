@@ -4,25 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-21 (session #141 END)
+**Updated:** 2026-06-21 (session #142 END)
 
-**Achieved this session (#141) — CS Centralization: Option B architecture validated + vault fully propagated. Vault-only, no code.**
+**Achieved this session (#142) — CS Centralization: arch REVERSED to both-poll, 5 gaps closed, EC2 prod-verified, doc set reconciled + COMPLETE. Vault-only, no code.**
 
-- 3-agent cross-repo investigation (Django BE + Next.js FE + Architecture/Admin-Dashboard): full codebase scan for CS Centralization gaps + reuse assets
-- **Option B hybrid architecture validated:** widget polls Django 3s (thread released immediately) + CS Dashboard gets Supabase Realtime push (anon key, browser WS, <1s). Root cause: Gunicorn 1w×2t (`docker-compose-rds.yml:13`) = 2 concurrent req cap — pure long-poll for CS Dashboard deadlocks at 2 users
-- Supabase Realtime stack-validated: NextAuth JWT ≠ Supabase JWT → no auth bridge needed (anon key = Realtime-event push only, no row reads)
-- Key reuse assets identified: `IsAdminOrIsStaff` (`accounts/permissions.py:4-14`), `dialogue/` GenericFK pattern (Message model template), `products/tasks.py:35` retry pattern (Celery→Supabase write), OTP via Redis TTL
-- 103 `fields='__all__'` serializers found (r2 said 16) — pin explicit fields on TicketSerializer + OrderSerializer before any P1a migration
-- Vault propagated: cs-centralization-stack (Option B section + Supabase Realtime layer + all consequences updated), thesis (P1b + consequences), supabase-ota-booking-store (dual-role section), r2-skeptic-review (Gunicorn + `__all__` corrections), log, master-state
+- **5-agent gap-closure team** — closed all 5 doc gaps. Gap-2 (Supabase `cs` schema) collapsed to N/A.
+- **ARCH REVERSED: Option B → both-sides-poll-Django** ([[cs-architecture-decision]]). Polling-ceiling math killed the "Gunicorn deadlock" premise (long-poll≠short-poll); both-poll eliminates R1(Celery starvation)/R2(silent-ghost)/R3(anon-PII) — existed ONLY because Supabase was in message path. Net-new dep back to `pyotp` only.
+- **EC2-too-small objection answered, PROD-VERIFIED** — owner confirmed `docker-compose-rds.yml` = production (uwsgi run.sh dead). `--workers 1 --threads 2` + 256MB cap + celery `--concurrency=1`. Small box is WHY both-poll wins (short-poll releases slot ~20ms; WS dies on 256MB; Supabase two-write dies on single celery worker).
+- **NEW docs:** cs-architecture-decision, cs-api-contract (7 endpoints), cs-consent-gdpr-model (two-store, 9 owner Qs), cs-p0-measurement-protocol (~35 contacts, 5 owner Qs), cs-centralization-design-concept (3 surfaces), cs-centralization-doc-review (3-agent review), prod-capacity-celery-audit (24 tasks, single-worker bottleneck, instance-size is the only lever).
+- **Doc-set reconciled** — caught + fixed stale `cs-centralization-stack.md` (still preaching superseded Option-B); marked SUPERSEDED, corrected to both-poll; fixed broken wikilinks. 11-doc CS set now internally consistent, all links resolve.
+- Token-WCAG = separate platform issue (3 design tokens fail AA as text; Approach A = 3 companion text-tokens; ~8-10 non-CS text sites).
+- Commits: vault `9ce9e52` (gap docs) + `c78d9d4` (reconcile). Pushed.
 
 **Resume point (EXACT):**
-1. **Owner: add 4 gap fields to Supabase** — `Source` (OTA identifier), `marketing_consent` boolean, `consent_date`, `smarten_order_id` (nullable)
-2. **Owner: fix Supabase data quality** — `Operator` dirty values (`ensure plus`, trailing `\r\n`), `Date=5000-08-02` outlier
-3. **P0 test (no code):** message 20 Confirmed travelers from Supabase, send Smarten direct booking link, count rebookings in 30 days — this number decides the whole conversion thesis
-4. **When ready to build P1b:** serializer fixes first (`tickets/serializers.py:55` + `orders/serializers.py:94` explicit fields), then `cs/` Django app, then Supabase `cs` schema, then admin-dashboard Realtime. Full plan: `~/.claude/plans/create-business-development-backend-mossy-gadget.md`
-5. **Eng carry-forward (unchanged):** FE develop→main (SEARCH-DIALOG-UI-TEST manual verify); ISR prod activation (#129); REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch verify #139 fix)
+1. **OWNER DECISIONS gate everything (batched in docs):** consent/GDPR ×9 ([[cs-consent-gdpr-model]]) — 2 strategic: **12Go ToS permits processing PII?** + **willing to message OTA contacts (poaching risk)?**; P0 ×5 ([[cs-p0-measurement-protocol]]) — threshold confirm + offer type.
+2. **P0 test run (no code, ~5wk, ~$0)** — message ~35 Confirmed Supabase travelers, tracked direct-booking link, 30d window. <3% collapse / 5-10% proceed. **Decides the conversion thesis.** Blocked on owner decision #1 (OTA-messaging willingness).
+3. **Owner: add 4 Supabase gap fields** — `Source`, `marketing_consent`, `consent_date`, `smarten_order_id`; fix data quality (`Operator` dirty, `Date=5000-08-02` outlier).
+4. **When P1a build starts:** serializer pins FIRST (`tickets/serializers.py:55` `__all__` → explicit; OrderSerializer already explicit — verify), then `cs/` Django app per [[cs-api-contract]] (NO Supabase, NO cs schema, NO sync_status). Full impl plan: `~/.claude/plans/create-business-development-backend-mossy-gadget.md`.
+5. **Token-WCAG platform fix** (separate): add `status.successText/errorText/warningText` to `helpers/designSystem.js`, migrate ~8-10 text sites.
+6. **Eng carry-forward (unchanged):** FE develop→main (SEARCH-DIALOG-UI-TEST manual verify); ISR prod activation (#129); REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch).
 
-_(Session #140 block archived → `07-logs/session-history.md`.)_
+_(Session #141 block archived → `07-logs/session-history.md`.)_
 
 ---
 

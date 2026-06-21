@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #141 — 2026-06-21 | CS Centralization: Option B validated + vault propagated (later reversed #142)
+
+- 3-agent cross-repo investigation (Django BE + Next.js FE + Architecture/Admin): full scan for CS gaps + reuse assets
+- **Option B hybrid validated** (widget polls Django + CS Dashboard Supabase Realtime push). NOTE: REVERSED next session (#142) to both-poll after polling-ceiling re-analysis.
+- NextAuth JWT ≠ Supabase JWT → no bridge (anon key Realtime-only)
+- Reuse assets: `IsAdminOrIsStaff`, `dialogue/` GenericFK, `products/tasks.py:35` retry, OTP Redis TTL
+- 103 `__all__` serializers found (r2 said 16)
+- Vault propagated: stack, thesis, supabase-ota-store, r2-review, log, master-state
+- Commit `18f64c8`
+
+---
+
 ## Session #140 — 2026-06-20 | CS Centralization vault: Supabase source-verified + channel arch finalized
 
 - 4-agent r2 red-team review written; r2 findings applied to thesis (rename, infra-gate deferred, realtime corrected)
