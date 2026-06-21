@@ -4,22 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-21 (session #145 END)
+**Updated:** 2026-06-21 (session #146 END)
 
-**Achieved this session (#145) — Git branch policy enforced in CLAUDE.md + vault-guardrails.**
+**Achieved this session (#146) — Thailand Travel Guide homepage section redesigned + shipped to production.**
 
-- Added "Git Branch Policy — MANDATORY" to `smartenplus-frontend/CLAUDE.md` and `vault-guardrails.md`: never commit to `main`/`develop` directly, always branch from `develop`. `1c14d72` main (meta-only, skipped per user).
-- Note: sessions #143–#144 committed directly to main — rule now locked to prevent repeat.
+- 3-agent debate team (UX + Visual Designer + Frontend Engineer) deep-researched blog card grid patterns across Lonely Planet, Booking.com, Airbnb, GYG, 12Go, Conde Nast. Converged on 3-col equal grid (text below image, no overlay, no date, no FEATURED badge).
+- Rewrote `lib/homepage/components/TravelThailandBetterSection.js` (1 file only): replaced asymmetric FeaturedCard+SecondaryCard layout with single `GuideCard` component × 3 posts. Mobile: Embla swipe carousel `w-[80vw]`. Tablet `md`: 2-col grid. Desktop `lg+`: 3-col grid. Cards: `aspect-[16/9]` image, `rounded-xl`, elevation/md shadow, title + excerpt + "Read guide →", `gap-5`.
+- Branched `feat/travel-guide-card-grid-redesign` → merged develop `173cc03` → merged main `c3e2da9` → shipped to production.
 
 **Resume point (EXACT):**
-1. **OWNER DECISIONS gate CS everything:** consent/GDPR ×9 ([[cs-consent-gdpr-model]]); P0 ×5 ([[cs-p0-measurement-protocol]]).
-2. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy: open each dialog host, transport tab → /trips, experiences tab → /activities, mobile Slide transition.
-3. **ISR prod activation (#129)** — deploy BE develop→main + set `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + restart worker.
+1. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy: open each dialog host, transport tab → /trips, experiences tab → /activities, mobile Slide transition.
+2. **ISR prod activation (#129)** — deploy BE develop→main + set `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + restart worker.
+3. **OWNER DECISIONS gate CS everything:** consent/GDPR ×9 ([[cs-consent-gdpr-model]]); P0 ×5 ([[cs-p0-measurement-protocol]]).
 4. **P2 SEO fixes (optional):** twitter:image:alt, og:locale policy, meta desc cap, blog robots dup. See [[seo-audit-reconciliation-2026-06-21]].
-5. **P0 test run (no code)** — ~35 Supabase travelers. Blocked on OTA-messaging owner decision.
-6. **Eng carry-forward:** REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch).
+5. **Eng carry-forward:** REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch).
 
-_(Session #144 block archived → `07-logs/session-history.md`.)_
+_(Session #145 block archived → `07-logs/session-history.md`.)_
 
 ---
 

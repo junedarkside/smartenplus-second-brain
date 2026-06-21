@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-21] session-end #146 | Thailand Travel Guide redesigned — 3-col equal card grid, shipped to production (c3e2da9 main)
+
 ## [2026-06-21] session-end #145 | Git branch policy added to CLAUDE.md + vault-guardrails. Never commit to main/develop directly.
 
 ## [2026-06-21] session-end #144 | Live prod audit — 9/10 SEO fixes verified. /about og:url fully fixed (Head→NextSeo, 0aa748c main).

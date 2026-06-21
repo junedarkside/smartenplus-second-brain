@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #145 (archived)
+
+**Updated:** 2026-06-21 (session #145 END)
+
+**Achieved:** Git branch policy enforced in CLAUDE.md + vault-guardrails. Never commit to main/develop directly. `1c14d72`.
+
+---
+
 ## Session #144 — 2026-06-21 | Live prod audit (9/10 ✅) + /about og:url fix (0aa748c main)
 
 ## Session #143 — 2026-06-21 | SEO audit reconciliation + P0+P1 impl (9 fixes, 14 files, e5de5f5 develop)
