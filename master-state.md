@@ -4,23 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-21 (session #144 END)
+**Updated:** 2026-06-21 (session #145 END)
 
-**Achieved this session (#144) — Live prod audit of SEO fixes + /about og:url double-tag fix.**
+**Achieved this session (#145) — Git branch policy enforced in CLAUDE.md + vault-guardrails.**
 
-- **Live prod audit** — verified 9/10 P0+P1 fixes on www.smartenplus.co.th. All confirmed live except /about double og:url (plain Head appended instead of overriding DefaultSeo).
-- **#15 /about og:url fully fixed** — migrated pages/about/index.js from `<Head>` to `<NextSeo>` so `openGraph.url` overrides DefaultSeo correctly. Single clean og:url tag now. `0aa748c` on main, pushed.
-- Vault reconciliation note updated with production verification table (9/10 ✅, 1 ⚠️ now resolved).
+- Added "Git Branch Policy — MANDATORY" to `smartenplus-frontend/CLAUDE.md` and `vault-guardrails.md`: never commit to `main`/`develop` directly, always branch from `develop`. `1c14d72` main (meta-only, skipped per user).
+- Note: sessions #143–#144 committed directly to main — rule now locked to prevent repeat.
 
 **Resume point (EXACT):**
-1. **OWNER DECISIONS gate CS everything (batched in docs):** consent/GDPR ×9 ([[cs-consent-gdpr-model]]) — 2 strategic: **12Go ToS permits processing PII?** + **willing to message OTA contacts (poaching risk)?**; P0 ×5 ([[cs-p0-measurement-protocol]]) — threshold confirm + offer type.
+1. **OWNER DECISIONS gate CS everything:** consent/GDPR ×9 ([[cs-consent-gdpr-model]]); P0 ×5 ([[cs-p0-measurement-protocol]]).
 2. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy: open each dialog host, transport tab → /trips, experiences tab → /activities, mobile Slide transition.
 3. **ISR prod activation (#129)** — deploy BE develop→main + set `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + restart worker.
-4. **P2 SEO fixes (optional):** twitter:image:alt (_app.js additionalMetaTags), og:locale policy doc, meta desc cap, blog robots dup. See [[seo-audit-reconciliation-2026-06-21]].
-5. **P0 test run (no code, ~5wk, ~$0)** — ~35 Supabase travelers, tracked link, 30d window. Blocked on OTA-messaging owner decision.
+4. **P2 SEO fixes (optional):** twitter:image:alt, og:locale policy, meta desc cap, blog robots dup. See [[seo-audit-reconciliation-2026-06-21]].
+5. **P0 test run (no code)** — ~35 Supabase travelers. Blocked on OTA-messaging owner decision.
 6. **Eng carry-forward:** REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch).
 
-_(Session #143 block archived → `07-logs/session-history.md`.)_
+_(Session #144 block archived → `07-logs/session-history.md`.)_
 
 ---
 

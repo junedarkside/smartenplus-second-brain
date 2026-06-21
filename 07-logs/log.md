@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-21] session-end #145 | Git branch policy added to CLAUDE.md + vault-guardrails. Never commit to main/develop directly.
+
 ## [2026-06-21] session-end #144 | Live prod audit — 9/10 SEO fixes verified. /about og:url fully fixed (Head→NextSeo, 0aa748c main).
 
 ## [2026-06-21] session-end #143 | SEO audit reconciliation (debug-mantra repro re-audit) + P0+P1 impl. 28 findings: 4 phantom (apex-301 artifact), 10 FE-fixable, 5 CMS-only. 9 fixes in 14 files merged to develop e5de5f5. Atom: nextseo-v6-jsonld-silent-drop. → [[seo-audit-reconciliation-2026-06-21]]

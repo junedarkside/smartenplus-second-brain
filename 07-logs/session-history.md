@@ -4,6 +4,8 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #144 — 2026-06-21 | Live prod audit (9/10 ✅) + /about og:url fix (0aa748c main)
+
 ## Session #143 — 2026-06-21 | SEO audit reconciliation + P0+P1 impl (9 fixes, 14 files, e5de5f5 develop)
 
 - Debug-mantra repro re-audit: 4/6 Criticals phantom (apex-301 artifact). 28 findings classified.
