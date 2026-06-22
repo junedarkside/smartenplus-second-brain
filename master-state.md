@@ -4,35 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-22 (session #151 END)
+**Updated:** 2026-06-22 (session #152 END)
 
-**Achieved this session (#151) — CS cluster review + vault optimization:**
+**Achieved this session (#152) — SEO/AEO/GEO P0 audit + fixes + vault:**
 
-**CS centralization cluster review (3-agent read-only audit):**
-- 9-note integrity audit (consistency / link-graph / open-questions) → cluster 98% consistent
-- 1 HIGH supersession drift fixed: `smarten-customer-os-thesis:42` P1b row still asserted reversed Supabase Realtime + `sync_status` + Celery→Supabase write → rewritten to both-sides-poll-Django, banner → [[cs-architecture-decision]]
-- 5 gap-closure edits applied: thesis:42/70/72 rewritten + lines 70/72 Supabase struck from message path; D1-D6 triaged into [[cs-centralization-stack]] (D1/D3/D5 applied, D4/D6 marked MOOT post-reversal, D2 already present); thesis back-links added (consent-model, p0-protocol, stack, arch-decision); [[cs-centralization-review-2026-06-22.md]] status flipped active→resolved + closure block
-- All OTP/store/eng/app decisions verified consistent between [[cs-api-contract]] + [[cs-gap-debate-verdicts]] (PostgreSQL HOTP, cs/ app, composite index)
+- **3-agent live production audit** of smartenplus.co.th (SEO + AEO + GEO specialists)
+- **r3-synthesis** written; **r4-peer-review** caught 4 factual errors in r3; **r5-live-reaudit** overturned r4 via HTTP verification
+- **Key findings:** Cloudflare "Block AI Bots" = ON (blocking GPTBot/ClaudeBot/Google-Extended + 5 others); `/ref/[type].js:173` ItemList JSON-LD emits `/ref/article/{slug}` URLs (wrong) → poisons sitemap-0.xml; `/help/index.js` apex canonical + missing openGraph.url; `/help/faqs.js` double-brand title + missing og:url + empty FAQPage guard; `/help/faqs` empty in prod = `NEXT_PUBLIC_WP_URL` missing at build time (query works fine live)
+- **P0 code fixes shipped** on branch `fix/p0-seo-geo-2026-06-22` → merged develop `60d1e1a`:
+  - `next-sitemap.config.js`: 8 AI-crawler allow policies (CF frontend backup)
+  - `pages/ref/[type].js:173`: `/ref/article/${slug}` → `/ref/${slug}` (1 line)
+  - `pages/help/index.js`: apex→www canonical + added openGraph.url + removed double-brand title
+  - `pages/help/faqs.js`: removed double-brand title + added openGraph.url + `faqs.length > 0` FAQPage guard
+- **P0-A (CF)**: "Block AI Bots" toggled to "Do not block (off)" in Cloudflare UI — propagation may still be pending
+- **3 vault atoms extracted**: `filter-trips-seo-faq-prop-dropped`, `help-faqs-wp-graphql-broken-prod`, `ref-url-structure-live-vs-code`
+- **3 stale branches pruned** local + remote: `fix/csp-google-ads-domains`, `fix/og-image-and-csp-google-co-th`, `fix/p0-seo-geo-2026-06-22`
 
-**Vault optimization (25 atoms extracted):**
-- `experiences-marketplace-4-phase-architecture-sequence` — extracted from experiences-2026-marketplace-redesign (349→253 lines, now <150 cap)
-- Filter bugs: `filter-status-checkbox-onclick-inversion` · `filter-array-includes-reference-bug` · `filter-text-stringify-bug` (3 atoms)
-- Payment system: `payment-pending-deadlock-heal` · `payment-polling-fallback-triple` · `payment-expiry-path-complete` · `payment-idempotency-key-name-error` (4 atoms)
-- Activities day-tour page: `activities-day-tour-stored-xss-page-crash` · `activities-day-tour-star-rating-aria-broken` · `activities-day-tour-wrong-router-import` (3 atoms)
-- Activities location search: `activities-location-search-backend-text-id-type-mismatch` · `activities-location-search-inputvalue-divergence` (2 atoms)
-- Design system: `mui-tailwind-breakpoint-mismatch-sm-600-vs-640` · `hybrid-mui-preserve-tailwind-new-styling-strategy` · `tailwind-first-spacing-semantic-tokens-only-5plus-reuse` (3 atoms)
-- Recommendation engine: `recommendation-hybrid-rec-type-non-transport-dead-end` · `recommendation-flat-score-finder-pollution` · `recommendation-anchor-priority-experience-before-transport` · `recommendation-mincartprice-floor-suppresses-complementary` · `recommendation-booked-count-default-10-inflates-new-contracts` · `fake-scarcity-eu-us-trust-risk-policy` (6 atoms)
-- Transportation category: `django-is-actived-vs-is-active-field-name-gotcha` · `station-type-airport-first-class-iata-restriction` · `transfer-category-vs-airport-filter-independence` (3 atoms)
-- 25 atoms added to index.md under "Vault Optimization — Atomized Notes (2026-06-22)" section, log.md appended
+**Resume point (EXACT):**
+1. **VERIFY CF propagation** — `curl -s https://www.smartenplus.co.th/robots.txt | grep -A1 "GPTBot"` — expect no `Disallow` lines
+2. **CHECK prod env var** — `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` must exist on prod server BEFORE rebuild or `/help/faqs` stays empty
+3. **DEPLOY develop→main** (frontend `60d1e1a`) — activates P0-B/C/D fixes
+4. **CS BUILD STEP 1** — Django `cs/` app models (from prior session)
+5. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-**Resume point (EXACT) — next session:**
-1. **CS BUILD STEP 1** — Django `cs/` app: `Conversation` + `Message` + `CSOtp` models + composite index `(conversation_id, created_at)` + migration. Reference: [[cs-gap-debate-verdicts]] Build Order Step 1.
-2. **CS BUILD STEP 2** — 7 API endpoints. Reference: [[cs-api-contract]].
-3. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy (pending from #138).
-4. **ISR prod activation (#129)** — deploy BE develop→main + `FRONTEND_URL=www` + `REVALIDATION_SECRET` + restart worker.
-5. **OWNER DECISIONS gate P0:** P0 ×5 ([[cs-p0-measurement-protocol]]); metric+MDE pre-commitment before pilot send.
-
-_(Session #150 block archived → `07-logs/session-history.md`.)_
+_(Session #151 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -51,6 +46,7 @@ _(Session #150 block archived → `07-logs/session-history.md`.)_
 | **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **FE SHIPPED #130** (main `35c524d` carries ISR route). **BE ACTIVATION PENDING:** deploy BE develop→main + set prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (#134: stale worker = `unregistered task`, msgs discarded — [[celery-unregistered-task-stale-worker]]), then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: public LIST `ContractSerializer` doesn't expose `tour_duration_days`, so cards can't show "N Days" (detail page works, uses `__all__`). FE-only fix #130 chose omission over false "1 Day". Option B: add `tour_duration_days` to list serializer `fields`. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional follow-up, low priority. FE helper unchanged either way. | `smartenplus-backend/operators/serializers.py` (ContractSerializer), [[category-aware-duration-formatter]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate, pre-existing). Cluster 1: WebP resize/compress algorithm duplicated ~2-3× — `operators/utils.py:process_operator_image` (now parametrized #126b), `dialogue/utils.py:process_review_image` (120KB hardcoded), plus WebP/thumbnail code in `operators/admin.py`. Cluster 2: upload validation (ext whitelist + size) copy-pasted across 5 files (`stations/views.py`, `operators/utils.py`, `operators/views.py`, `pages_info/models.py`, `dialogue/utils.py`) each with own constants → drift risk. Consolidate → one `core/image_utils.py`: `process_image_to_webp(file, *, max_output_size, max_dimensions)` + `validate_upload(file, *, allowed_ext, max_size)`, migrate all callers. | OPEN #126 — dedicated refactor session. High blast radius (operators/dialogue/stations/pages_info), zero user value, all spots work. Do NOT bolt onto feature work. | `operators/utils.py`, `dialogue/utils.py` |
+| **SEO-P0-DEPLOY** | P0 code fixes in frontend develop `60d1e1a`. **Before deploy:** confirm `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` set in prod env. **After deploy:** verify CF robots.txt — `curl -s https://www.smartenplus.co.th/robots.txt \| grep -A1 "GPTBot"` (expect no Disallow). P1 backlog: FAQPage on activity detail (wire `generateFAQSchema` into `getStaticProps` + `DayTripDetailSEO.js`); `FilterTripsSEO.js:41–55` faqMainEntity render; og:locale `th_TH→en_US` in 6 files; TravelAgency schema on About; homepage FAQPage via SEOSection.js; BreadcrumbList + FAQPage on airport transfer; `help/[...slug].js:82` canonical collapse. | **DEPLOY PENDING** | `pages/ref/[type].js`, `pages/help/index.js`, `pages/help/faqs.js`, `next-sitemap.config.js` |
 | **SEO-P2-FIXES** | Remaining P2 SEO fixes from [[seo-audit-reconciliation-2026-06-21]]: (1) twitter:image:alt — add to `pages/_app.js` DefaultSeo + `components/FrontPage/Seo.js` via additionalMetaTags; (2) og:locale policy — document or unify (_app.js:41 th_TH vs blog en_US); (3) meta desc length cap ≤155 chars — `pages/blog/index.js:112`, `utils/blog/seoHelper.js:136`; (4) blog robots dup — DefaultSeo + page both emit robots tag. **#15 og:url CLOSED** (`0aa748c` — Head→NextSeo, clean single tag). | OPEN — optional, low priority | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js` |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell | OPEN. BD task — no eng work. Needs: (1) return route Koh Lipe→Hat Yai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`. **All 4 FE surfaces already live and verified 2026-06-13. GTM `item_category` + activity-detail accuracy ALSO already shipped (`hooks/useOmisePayment.js:59`+`:144`, `RelatedExperiences.js:7`) — were wrongly listed as open eng work.** Only BD inventory blocks value. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2, not urgent). See [[cross-sell-integration-status-2026-06-13]]. | BD action |
 | **IMG-ALT-DEBUG-1** | Next.js HMR cross-module callback staleness | OPEN. Optional refactor: move mutation call INTO dialog component, drop parent `onSubmit` indirection. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Low priority. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:140-178` |

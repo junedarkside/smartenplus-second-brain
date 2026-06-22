@@ -4,6 +4,31 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #151 (archived)
+
+**Updated:** 2026-06-22 (session #151 END)
+
+**Achieved this session (#151) — CS cluster review + vault optimization:**
+
+**CS centralization cluster review (3-agent read-only audit):**
+- 9-note integrity audit (consistency / link-graph / open-questions) → cluster 98% consistent
+- 1 HIGH supersession drift fixed: `smarten-customer-os-thesis:42` P1b row still asserted reversed Supabase Realtime + `sync_status` + Celery→Supabase write → rewritten to both-sides-poll-Django, banner → [[cs-architecture-decision]]
+- 5 gap-closure edits applied: thesis:42/70/72 rewritten + lines 70/72 Supabase struck from message path; D1-D6 triaged into [[cs-centralization-stack]] (D1/D3/D5 applied, D4/D6 marked MOOT post-reversal, D2 already present); thesis back-links added (consent-model, p0-protocol, stack, arch-decision); [[cs-centralization-review-2026-06-22.md]] status flipped active→resolved + closure block
+- All OTP/store/eng/app decisions verified consistent between [[cs-api-contract]] + [[cs-gap-debate-verdicts]] (PostgreSQL HOTP, cs/ app, composite index)
+
+**Vault optimization (25 atoms extracted):**
+- `experiences-marketplace-4-phase-architecture-sequence` — extracted from experiences-2026-marketplace-redesign (349→253 lines, now <150 cap)
+- Filter bugs: `filter-status-checkbox-onclick-inversion` · `filter-array-includes-reference-bug` · `filter-text-stringify-bug` (3 atoms)
+- Payment system: `payment-pending-deadlock-heal` · `payment-polling-fallback-triple` · `payment-expiry-path-complete` · `payment-idempotency-key-name-error` (4 atoms)
+- Activities day-tour page: `activities-day-tour-stored-xss-page-crash` · `activities-day-tour-star-rating-aria-broken` · `activities-day-tour-wrong-router-import` (3 atoms)
+- Activities location search: `activities-location-search-backend-text-id-type-mismatch` · `activities-location-search-inputvalue-divergence` (2 atoms)
+- Design system: `mui-tailwind-breakpoint-mismatch-sm-600-vs-640` · `hybrid-mui-preserve-tailwind-new-styling-strategy` · `tailwind-first-spacing-semantic-tokens-only-5plus-reuse` (3 atoms)
+- Recommendation engine: `recommendation-hybrid-rec-type-non-transport-dead-end` · `recommendation-flat-score-finder-pollution` · `recommendation-anchor-priority-experience-before-transport` · `recommendation-mincartprice-floor-suppresses-complementary` · `recommendation-booked-count-default-10-inflates-new-contracts` · `fake-scarcity-eu-us-trust-risk-policy` (6 atoms)
+- Transportation category: `django-is-actived-vs-is-active-field-name-gotcha` · `station-type-airport-first-class-iata-restriction` · `transfer-category-vs-airport-filter-independence` (3 atoms)
+- 25 atoms added to index.md under "Vault Optimization — Atomized Notes (2026-06-22)" section, log.md appended
+
+---
+
 ## Session #150 (archived)
 
 **Updated:** 2026-06-22 (session #150 END)

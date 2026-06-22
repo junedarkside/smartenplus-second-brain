@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-22] session-end #152 | SEO/AEO/GEO P0 audit + 4 code fixes (robots.txt AI-crawlers, /ref/ sitemap URL poison, /help canonical, /help/faqs schema guard). CF Block AI Bots toggled off. develop `60d1e1a` awaits prod deploy. 3 atoms extracted.
+
 ## [2026-06-22] session-end #150 | email redesign: booking + order confirmation black/white minimalist. Service-category timeline, double-email fix, TimeField format, addons, coupon_code, payment_method, idempotency guard, design tokens. Merged develop→main `7c8f9c6`, shipped to production.
 
 ## [2026-06-22] session-end #149 | og:image fix (image field singular + absolute fallback + product namespace tags via additionalMetaTags) + getDayTripCoverImage field fix + CSP Google Ads pixel: 23 country TLDs added nginx img-src+connect-src. All shipped prod (frontend 0026784, nginx reloaded).
@@ -172,3 +174,5 @@
 ## [2026-06-16] template | masked [[adr-xxx]] in 05-templates/architecture-review.md and 04-decisions/adr-template.md with HTML comments — placeholders preserved
 ## [2026-06-16] archive | moved 65 .original.md to 08-archive/.originals/ (leading-dot hidden from Obsidian default graph) — 2 contract-ambiguity-audit references updated to new path
 ## [2026-06-16] stub | created docs/README.md deprecating cross-vault docs/testing/ redirects to vault-internal payment pages
+
+## [2026-06-22] live-reaudit | SEO/AEO/GEO whole-site live re-audit — corrected 6 wrong findings from r1/r3/r4; critical: route listing has zero FAQPage (FilterTripsSEO drops prop), /help/faqs FAQPage empty (WP GraphQL broken), /ref URL direction inverted (live URL is /ref/{slug} not /ref/article/{slug}); AEO score corrected 5.5→3.5/10; GEO raised 1.5→3/10; r3-synthesis updated in-place, r4-peer-review patched, r5-live-reaudit created, 3 vault atoms extracted

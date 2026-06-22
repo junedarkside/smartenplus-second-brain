@@ -5,94 +5,134 @@ status: open
 date: 2026-06-22
 scope: live-production
 target: https://www.smartenplus.co.th
+last-updated: 2026-06-22
+update-source: r4-peer-review + r5-live-reaudit
 ---
 
 # Live Production SEO / AEO / GEO Audit — 2026-06-22
+
+> **Updated 2026-06-22** after live re-audit (r5) + peer review (r4). Several findings from the original audit were wrong. See [[r4-peer-review]] and [[r5-live-reaudit]] for full correction log. Struck-through items are superseded.
 
 ## Summary
 
 Whole-site **live production** audit of `https://www.smartenplus.co.th` across three lenses. Distinct from prior per-page **code-scoped** audits (trip detail, operator, route) — this measures what the public web and AI/answer engines actually receive today.
 
-**Composite scores:**
-- **SEO (Technical): 7/10** — foundations strong; one P0 sitemap-poison defect + page-level canonical/title/schema regressions.
-- **AEO (Answer Engine): 5.5/10** — bimodal. Product pages excellent (FAQ live in SSR), hub pages (/help, home, airport) have zero FAQ + client-only content.
-- **GEO (Generative Engine): 1.5/10** — almost entirely gated by a single defect: **`robots.txt` blocks every AI crawler** (Cloudflare-managed). The site is invisible to ChatGPT, Claude, Gemini, Perplexity, Meta AI.
+**Composite scores (live re-audit 2026-06-22):**
+- **SEO (Technical): 6.5/10** — foundations strong; sitemap poison unresolved; /help canonical/og still broken; double-brand on 4 pages; og:locale th_TH site-wide.
+- **AEO (Answer Engine): 3.5/10** — ~~bimodal; product pages excellent~~ **CORRECTED:** route listing has zero FAQPage in HTML (FilterTripsSEO drops prop); /help/faqs FAQPage empty (WP GraphQL broken); activity detail FAQ text SSR-visible but no schema. Only homepage ItemList schemas are new positives.
+- **GEO (Generative Engine): 3/10** — ~~1.5/10~~ raised: taxID/sameAs confirmed present, CitationSection URLs correct, llms.txt exists, /ref pages return 200. P0-A (AI crawler block) still fully active — caps effective ceiling.
 
-**One-line thesis:** Strong latent SEO/AEO quality on booking pages, but the site is **deliberately invisible to all generative engines**, has **41 sitemap URLs 404ing**, and its **two highest-intent Q&A pages ship zero structured data**. Fixing 4 frontend files + 1 Cloudflare toggle unlocks the bulk of the value.
+**One-line thesis:** Site is **still invisible to all generative engines** (robots block unchanged), has **41 sitemap-0.xml URLs 404ing**, and the route-listing + /help/faqs FAQ schemas that the original audit counted as "working" are **both broken in production**. The real fix count is higher than originally estimated.
 
 ## The 3 decisive findings (read these first)
 
 ### 🔴 P0-A · robots.txt blocks all AI crawlers → GEO = ~0 (Cloudflare)
-`GPTBot`, `ClaudeBot`, `Google-Extended`, `CCBot`, `meta-externalagent`, `Bytespider`, `Applebot-Extended`, `Amazonbot` all `Disallow: /`. Auto-injected by Cloudflare ("BEGIN Cloudflare Managed content"); frontend `next-sitemap.config.js` cannot override it. → Site cannot appear in any AI answer. **Fix: Cloudflare dashboard → Security → Bots → "AI Scrapers and Crawlers" → DISABLE.** Keep `ai-train=no`. Drafted frontend allowlist in [[r1-geo]] for clarity/drift-resistance. Full evidence + spec: [[r1-geo]].
+`GPTBot`, `ClaudeBot`, `Google-Extended`, `CCBot`, `meta-externalagent`, `Bytespider`, `Applebot-Extended`, `Amazonbot` all `Disallow: /`. **Live verified 2026-06-22 — UNCHANGED.** A new `Content-Signal: search=yes,ai-train=no` directive appeared (Cloudflare EU DSM Article 4) but does NOT replace explicit per-crawler rules. **Fix: Cloudflare dashboard → Security → Bots → "AI Scrapers and Crawlers" → DISABLE.** Keep `ai-train=no`. Add frontend allowlist to `next-sitemap.config.js` robots section as backup (if CF removed, next deploy would lose the policy). Full evidence + spec: [[r1-geo]].
 
-### 🔴 P0-B · 41 `/ref/article/*` URLs in sitemap return 404 (sitemap poison)
-10/10 sampled 404. Pre-rendered at build from WP slugs that no longer resolve; `next-sitemap` wrote them; `getStaticProps` returns `notFound`. Bonus bug: those pages self-canonical to `/ref/{slug}` (wrong path; real URL is `/ref/article/{slug}`). Crawl-budget waste + "Crawled, not indexed" surface. Also kills the site's best GEO/AEO reference content. Root cause + fix: [[r1-seo]] SEO-1.
+### 🔴 P0-B · 41 `/ref/article/*` URLs in sitemap-0.xml return 404 — **URL direction was inverted in original audit**
+~~Bonus bug: pages self-canonical to `/ref/{slug}` (wrong path; real URL is `/ref/article/{slug}`)~~
 
-### 🔴 P0-C · `/help` (the FAQ hub) ships zero schema + canonical → apex host
-`pages/help/index.js:21` hardcodes `canonical: 'https://smartenplus.co.th/help'` (apex, which 301→www = canonical chain); `og:url` inherits homepage; title double-brands; Q/A content is client-only (`ssr:false` breadcrumb + WP fetch). The single highest-AEO-ROI page on the site is the worst-marked-up. Fix: [[r1-aeo]] + [[r1-seo]] SEO-2.
+**CORRECTED (live verified 2026-06-22):** The live URL format is `/ref/{slug}` (no `/article/` segment) — these return **HTTP 200**. The path `/ref/article/{slug}` is what 404s. `server-sitemap.xml` correctly uses `/ref/{slug}`. `CitationSection.js` correctly generates `/ref/${slug}` URLs.
 
-## Prioritized action list
+**What is actually broken:** `sitemap-0.xml` lists 41 `/ref/article/{slug}` URLs — these 404. Fix is to regenerate sitemap-0 to use `/ref/{slug}` format (matching `server-sitemap.xml`), not the other way around. The page component at `pages/ref/article/[slug].js:91` sets `canonical: https://www.smartenplus.co.th/ref/${slug}` — this is correct (canonical matches live URL); the original audit's "wrong path" call was backwards.
 
-### P0 — do first (highest impact, frontend + 1 infra)
+Root cause + fix: [[r5-live-reaudit]].
+
+### 🔴 P0-C · `/help` ships zero schema + canonical → apex host; `/help/faqs` FAQPage broken in prod
+`pages/help/index.js:21` hardcodes `canonical: 'https://smartenplus.co.th/help'` (apex, 301→www = canonical chain); `og:url` = homepage root (not /help); title double-brands; zero JSON-LD. **Live verified unchanged.**
+
+~~`/help/faqs` has working SSR FAQPage schema~~ **CORRECTED:** `/help/faqs` FAQPage schema is present in SSR HTML but `mainEntity: []` — the WordPress GraphQL query `POSTS_BY_FAQ_CATEGORY` returns empty data in production. A FAQPage with zero Q/A pairs is invalid for rich results and may be penalized. Additionally, `og:url` on `/help/faqs` also points to homepage root. **Fix requires two steps:** (1) debug WP GraphQL data fetch, (2) fix `og:url` on both /help pages.
+
+## Prioritized action list (corrected)
+
+### P0 — do first
 | # | Action | Lens | File(s) | Effort |
 |---|--------|------|---------|--------|
-| 1 | Disable CF "AI Scrapers and Crawlers" toggle (allow grounding, keep `ai-train=no`) | GEO | Cloudflare dashboard | 5 min |
-| 2 | Remove 404 `/ref/article/*` from `sitemap-0.xml`; fix canonical `/ref/{slug}`→`/ref/article/{slug}`; redeploy + clear ISR cache | SEO/GEO | `pages/ref/article/[slug].js:91`, `next-sitemap.config.js`, deploy | 1–2 hr |
-| 3 | `/help`: fix canonical→www, fix `og:url`, add FAQPage schema, SSR the Q/A list, drop double-brand from title | SEO/AEO | `pages/help/index.js:19-23` | 2–3 hr |
-| 4 | Add homepage FAQPage (6–8 Q/A in SSR HTML) | AEO | homepage SEO (`components/SEO/JsonLd.js` / `generateFAQSchema`) | 2 hr |
-| 5 | Fix `og:locale: 'th_TH'`→`'en_US'` site-wide | SEO | `pages/_app.js:41` | 1 line |
+| 1 | Disable CF "AI Scrapers and Crawlers" toggle + add frontend robots allowlist as backup | GEO | Cloudflare dashboard + `next-sitemap.config.js` | 10 min |
+| 2 | Remove `/ref/article/*` from `sitemap-0.xml`; redeploy + clear ISR cache | SEO | `next-sitemap.config.js` | 30 min |
+| 3 | `/help/index.js`: fix canonical→www, fix `og:url`→`/help`, drop double-brand from title | SEO/AEO | `pages/help/index.js:19-23` | 30 min |
+| 4 | Debug `/help/faqs` WordPress `POSTS_BY_FAQ_CATEGORY` GraphQL returning empty; fix `og:url` on /help/faqs | AEO | `pages/help/faqs.js` + WP backend | 1–2 hr |
 
 ### P1 — high value
-| # | Action | Lens | File(s) |
-|---|--------|------|---------|
-| 6 | `/airport-transfer`: add ItemList + FAQPage schema; SSR station list; drop "Page 1" + leading brand from title | SEO/AEO | `pages/airport-transfer/index.js:51` |
-| 7 | Activity/day-trip detail: add FAQPage (reuse `helpers/seo/dayTripSEOUtils.js`); trim 131-char title | AEO | activity detail SEO util |
-| 8 | Add Organization `sameAs` (GBP, social, Naver) + `taxID`/`identifier` (TAT 11/06622) + `areaServed: TH` | GEO | `components/SEO/LocalBusinessSchema.js` / homepage org node |
-| 9 | Route-listing title 76 chars → trim to ≤60 | SEO | `helpers/seo/*SEOUtils.js` |
-| 10 | Stop double-brand: pages pass bare title, template adds `\| SmartEnPlus` (`help`, `airport-transfer`, 404) | SEO | `pages/help/index.js:19`, `pages/airport-transfer/index.js:51` |
-| 11 | Grow + recent-ize reviews (citation trust) | GEO/AEO | review pipeline |
+| # | Action | Lens | File(s) | Note |
+|---|--------|------|---------|------|
+| 5 | Fix `FilterTripsSEO.js:41–55` — render `faqMainEntity` prop + move FAQ data from `useRouteSeo` hook to `getStaticProps` | AEO | `components/trips/search/FilterTripsSEO.js`, trips page | Prop silently dropped; route listing has zero FAQPage live |
+| 6 | Wire `generateFAQSchema` into activity detail `getStaticProps` + `DayTripDetailSEO.js` | AEO | `pages/activities/detail/[...slug].js:124–139`, `DayTripDetailSEO.js` | Schema util exists at `dayTripSEOUtils.js:321`; just not wired |
+| 7 | Fix `og:locale: 'th_TH'`→`'en_US'` across all 6 files | SEO | `pages/_app.js:41`, `helpers/seo/dayTripSEOUtils.js:126`, `helpers/seo/tripDetailSEOUtils.js:34`, `helpers/seo/operatorDetailSEOUtils.js:42`, `components/FrontPage/Seo.js:59`, `pages/about/index.js:49` | ~~1 line~~ **6 files** — page-level utils override DefaultSeo |
+| 8 | `/airport-transfer`: add BreadcrumbList + FAQPage schema; fix double-brand title | SEO/AEO | `pages/airport-transfer/index.js:51` | Station list already SSR-rendered; schema entirely absent |
+| 9 | Add homepage FAQPage (4–6 Q/A, SSR) via `SEOSection.js` | AEO | `pages/homepagev2.js`, `components/SEO/SEOSection.js` | Component exists, unused |
+| 10 | Add `about/index.js` `TravelAgency` schema with TAT license `identifier` | GEO | `pages/about/index.js` | Currently zero JSON-LD; TAT/VAT data exists in page text |
+| 11 | Fix `help/[...slug].js:82` canonical collapse — all /help/* category pages self-canonical to /help root | SEO | `pages/help/[...slug].js:82` | Higher-impact than index.js apex bug |
 
 ### P2 — polish
-| # | Action | Lens |
-|---|--------|------|
-| 12 | Confirm `/operators/*`, `/locations/*` in `server-sitemap.xml` (absent from `sitemap-0`) | SEO |
-| 13 | Blog: consolidate to `/blog` OR ensure AI-allow on subdomain; fix WP double-brand + empty desc | SEO/GEO |
-| 14 | Add `llms.txt` | GEO |
-| 15 | Deduplicate security headers (CF + Next layering) | SEO |
-| 16 | Add `definedTerm`/glossary (restore `/ref` terminology) | AEO/GEO |
+| # | Action | Lens | Note |
+|---|--------|------|------|
+| 12 | Enrich `public/llms.txt` — add TAT license 11/06622, VAT 0105554078213, founding year, route/operator stats | GEO | File exists (200 OK) — content-thin only |
+| 13 | Normalize `sameAs` array across all schema nodes — `homepagev2.js` (3 entries), `/blog` Organization (1), `BlogPostSchemaGenerator.js` (1) | GEO | Add GBP URL, Wikidata, Naver, LINE OA, YouTube |
+| 14 | Add TAT license as `identifier` PropertyValue in homepage TravelAgency schema | GEO | `homepagev2.js:265` — `taxID` already present; TAT license missing |
+| 15 | Blog: consolidate dual-origin (main domain + blog.smartenplus.co.th WP); fix duplicate `@graph` schema conflict | SEO/GEO | Two competing BlogPosting schemas on blog post pages |
+| 16 | Add `definedTerm`/glossary content to `/ref` pages | AEO/GEO | |
+
+### ~~Removed from action list~~
+- ~~Action #8 "Add sameAs/taxID/areaServed"~~ — `homepagev2.js:243–265` already has all three. **Done.**
+- ~~Action #12 "Confirm operators/locations in sitemap"~~ — `server-sitemap.xml` already covers both (36 + 176 URLs). **Done.**
+- ~~Action #14 "Add llms.txt"~~ — `/public/llms.txt` exists (HTTP 200). Changed to "enrich" (P2 above).
 
 ## Lens scores
 
-| Lens | Score | Why |
-|------|------:|-----|
-| SEO (Technical) | **7/10** | canonical/og/sitemap/security/ISR/CWV healthy; minus sitemap-poison, /help canonical, og:locale, title regressions |
-| AEO | **5.5/10** | trip detail + route listing = 8–8.5; homepage/help/airport = 2–5 |
-| GEO | **1.5/10** | gated by robots block; strong latent schema but invisible to engines |
+| Lens | Original score | Live re-audit score | Key delta |
+|------|:---:|:---:|---|
+| SEO (Technical) | **7/10** | **6.5/10** | /help og:url = root (not /help), /help/faqs og:url = root, double-brand on 4 pages confirmed |
+| AEO | **5.5/10** | **3.5/10** | Route listing 8.5→2/10 (FAQPage prop dropped); /help/faqs 0→1/10 (empty mainEntity); activity detail 7→5/10 |
+| GEO | **1.5/10** | **3/10** | taxID/sameAs/CitationSection/llms.txt/ref-pages all confirmed present; AI block unchanged |
+
+### AEO per-page scores (corrected)
+
+| Page | Original | Corrected | Reason |
+|---|:---:|:---:|---|
+| Homepage | 3/10 | 4/10 | +1: ItemList schemas (routes + destinations) added |
+| /help index | 2/10 | 2/10 | Unchanged — zero JSON-LD confirmed |
+| /help/faqs | (not scored) | 1/10 | FAQPage present but `mainEntity:[]`; WP GraphQL broken |
+| Activity detail | 7/10 | 5/10 | FAQ text in SSR HTML; zero FAQPage schema |
+| Route listing | 8.5/10 | 2/10 | FilterTripsSEO drops faqMainEntity; zero JSON-LD in prod HTML |
+| Airport transfer | 5/10 | 3/10 | Zero JSON-LD confirmed; station data SSR but not schematized |
 
 ## CWV snapshot (homepage, headless — real-user floor)
 Desktop: TTFB 1023ms · FCP 1284ms · LCP 1628ms · CLS 0 · 935KB / 98 JS req / 139 total. Mobile (iPhone 13): TTFB 1155ms · FCP 1384ms · LCP 1716ms · CLS 0 · 943KB / 62 JS req. No render-blocking scripts; hero preloaded `fetchpriority=high`. JS bundle fragmentation (98 chunks desktop) is the persistent risk. Full table + caveats: [[r1-seo]]. **Recommend real PSI/CrUX field-data pass** (this run underestimates throttled mobile).
 
-## What's already good (don't touch)
-- Trip-detail + route-listing schema is best-in-class (FAQ live, prior fix working). They are the model.
+## What's actually good (live-verified)
+- `/ref/{slug}` pages return HTTP 200 with Article schema — the citation system works.
+- `CitationSection.js` generates correct `/ref/${slug}` URLs — the peer review's "URL bug" claim was wrong.
+- Homepage TravelAgency schema: `taxID`, `sameAs` (3 social), `areaServed` all present.
+- `public/llms.txt` exists (HTTP 200) — product description present.
+- `server-sitemap.xml`: operators (36) + locations (176) + activities + trips + /ref + /help all indexed.
 - Security headers, HSTS preload, CSP, ISR warmth, Cloudflare CDN/HTTP2/h3, image preload/lazy/`fetchpriority`.
-- Sitemap cleanup to 107 URLs (post [[seo-sitemap-whole-site-audit-2026-06-11]]).
+- Homepage ItemList schemas for routes and destinations (new since r1 audit).
+
+## ~~What's already good (original — partially wrong)~~
+- ~~"Trip-detail + route-listing schema is best-in-class (FAQ live, prior fix working). They are the model."~~
+  **CORRECTED:** Route listing has zero FAQPage in live HTML. Trip detail is fine; remove route listing from "model pages."
 
 ## Cross-references — UPDATE vs cite
-**Cite (no edit):** [[trip-detail-seo-aeo-geo-audit-2026-06-16]] · [[operator-detail-seo-aeo-geo-audit]] · [[trip-route-page-seo-aeo-geo-audit]] · [[seo-sitemap-whole-site-audit-2026-06-11]] · [[canonicalization-audit-checklist]] · [[core-web-vitals-budget]] · [[build-experience-faq-items-pure-function]] · [[isr-client-rtk-stats-seo-pattern]] · [[nextseo-v6-jsonld-silent-drop]] · [[og-image-1200x630-webp]] · [[gsc-crawled-not-indexed-investigation-2026-06-05]].
+**Cite (no edit):** [[trip-detail-seo-aeo-geo-audit-2026-06-16]] · [[operator-detail-seo-aeo-geo-audit]] · [[seo-sitemap-whole-site-audit-2026-06-11]] · [[canonicalization-audit-checklist]] · [[core-web-vitals-budget]] · [[build-experience-faq-items-pure-function]] · [[isr-client-rtk-stats-seo-pattern]] · [[nextseo-v6-jsonld-silent-drop]] · [[og-image-1200x630-webp]] · [[gsc-crawled-not-indexed-investigation-2026-06-05]].
 
 **Consider UPDATE after fixes land:**
-- [[frontend-url-canonical-www-not-apex]] — the `/help` apex-canonical is a live instance of this atom; add a `/help` example once fixed.
-- [[wordpress-faqpage-deprecation-note]] — tie to `/help` re-markup decision (raw `<script>` not `<NextSeo jsonLd>`).
-- [[canonicalization-audit-checklist]] — add "sitemap URLs must resolve (no 404)" check from SEO-1.
+- [[frontend-url-canonical-www-not-apex]] — `/help` apex-canonical live instance; add example once fixed.
+- [[wordpress-faqpage-deprecation-note]] — tie to `/help/faqs` WP GraphQL empty-data fix decision.
+- [[canonicalization-audit-checklist]] — add "sitemap URLs must match live URL format exactly" + "FAQPage mainEntity must be non-empty."
+- [[trip-route-page-seo-aeo-geo-audit]] — update: route listing FAQPage not live (FilterTripsSEO drops prop).
 
-## Verification (post-implementation, future)
-1. `curl /robots.txt` shows no AI-UA `Disallow: /` (GEO-1 lifted).
-2. `/ref/article/*` removed from `sitemap-0.xml`; remaining resolve 200; canonical path-correct.
-3. `/help` canonical = www, `og:url` = /help, FAQPage present in SSR HTML, single brand in title.
-4. Homepage FAQPage present in SSR HTML.
-5. `og:locale` = `en_US` across templates.
-6. Re-run this Playwright CWV script with throttling + PSI for field data.
-7. GSC + Perplexity/ChatGPT spot-check for citations over 1–2 weeks.
+## Verification (post-implementation)
+1. `curl /robots.txt` — no AI-UA `Disallow: /` lines (P0-A lifted).
+2. `curl /sitemap-0.xml | grep ref/article` — zero results (P0-B sitemap poison cleared).
+3. `curl /help` — canonical = `https://www.smartenplus.co.th/help`, `og:url` = `https://www.smartenplus.co.th/help`, single brand in title.
+4. `curl /help/faqs` — FAQPage `mainEntity` non-empty (≥1 Q/A), `og:url` = `/help/faqs`.
+5. `curl /trips/bkk-phuket | grep FAQPage` — FAQPage present in SSR HTML (P1-5 fix verified).
+6. `curl /activities/detail/{slug} | grep FAQPage` — FAQPage present.
+7. `grep "og:locale" _app.js dayTripSEOUtils.js tripDetailSEOUtils.js operatorDetailSEOUtils.js FrontPage/Seo.js about/index.js` — all `en_US`.
+8. `cat public/llms.txt | grep -i "TAT\|11/06622\|founding"` — credentials present.
+9. Re-run PSI/CrUX for field data.
+10. GSC + Perplexity/ChatGPT spot-check for citations over 1–2 weeks after P0-A fix.
 
 ## Out of scope
 - Applying any fix (this audit is read-only; specs drafted only).
@@ -100,4 +140,4 @@ Desktop: TTFB 1023ms · FCP 1284ms · LCP 1628ms · CLS 0 · 935KB / 98 JS req /
 - GSC live data (no access).
 
 ---
-**Raw findings:** [[r1-seo]] · [[r1-aeo]] · [[r1-geo]]  ·  Audit folder: `01-projects/seo-aeo-geo-live-audit-2026-06-22/`
+**Raw findings:** [[r1-seo]] · [[r1-aeo]] · [[r1-geo]]  ·  **Peer review:** [[r4-peer-review]]  ·  **Live re-audit:** [[r5-live-reaudit]]  ·  Audit folder: `01-projects/seo-aeo-geo-live-audit-2026-06-22/`
