@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #148 (archived)
+
+**Updated:** 2026-06-22 (session #148 END)
+
+**Achieved this session (#148) — CS Centralization vault audit + Supabase schema verification + gap debate.**
+
+- Supabase source-verified: `gmailklook` schema confirmed (503 records, 100% email coverage). Combined 561 total (12Go 58 + Klook 503). All Supabase data gaps closed — `source` field solved in view, `marketing_consent`/`consent_date` dropped (owner decision), `smarten_order_id` dropped (wrong direction), Bookaway = 12Go.
+- 3-agent gap debate (backend + frontend + skeptic): 12 verdicts + 6 skeptic corrections. Key: poll safe limit = 30 widgets (not 150), OTP in PostgreSQL not Redis, server-side cursor not client timestamp, reopen rate limit required.
+- Vault updated: `supabase-ota-booking-store.md` (full rewrite), `cs-api-contract.md` (4 corrections), `cs-p0-measurement-protocol.md` (sample ~35→~450), NEW `cs-gap-debate-verdicts.md`, index + log updated.
+- No code built this session — vault knowledge only.
+
+---
+
 ## Session #146 (archived)
 
 **Updated:** 2026-06-21 (session #146 END)

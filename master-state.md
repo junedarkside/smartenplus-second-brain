@@ -4,22 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-21 (session #147 END)
+**Updated:** 2026-06-22 (session #149 END)
 
-**Achieved this session (#147) — Destinations card redesign shipped + branch hygiene.**
+**Achieved this session (#149) — og:image + CSP Google TLD fixes:**
 
-- Destinations section ("Thailand's Top Destinations") redesigned to match #146 Travel Guide visual language: asymmetric FeaturedCard/SupportingCard overlay layout → equal 5-col grid, text below image (`aspect-[4/3]`, location name + badge). Files: `DestinationsEditorialGrid.js` (single `DestinationCard` × 5), `DestinationsCarousel.js` (mobile), `LocationsSkeletonLoader.js`. Shipped: `feat/destinations-card-text-below` → develop `bae332c` → main `c23a71b`.
-- Atom written: [[destinations-card-redesign]] (renamed to drop date — vault no-date convention #137).
-- Pruned 3 fully-merged branches (verified 0 commits ahead of main, both `--merged main` + `--merged develop`): `feat/destinations-card-text-below`, `feat/travel-guide-card-grid-redesign`, `fix/seo-audit-jun21`. Local + remote (2 of 3 had remotes) deleted with safe `git branch -d` + `git push origin --delete`.
+- Fixed activity detail og:image for FB/social sharing: corrected image field (`image` singular matches API), absolute fallback URL, moved product namespace tags to `additionalMetaTags` (next-seo was silently dropping `product:` nested key in `openGraph`). Also fixed `generateProductJsonLd` images field (`images`→`image`).
+- Fixed activity card showing default placeholder: `getDayTripCoverImage` had wrong `images` (plural) → reverted to `image` (singular, matches API `ContractSerializer`).
+- Fixed CSP blocking Google Ads remarketing pixel: added 23 Google country TLDs to nginx `img-src` + `connect-src` (Europe: .co.uk .de .fr .it .es .nl .se .pl; Americas: .com.br .com.mx .com.ar .com.co .cl .ca; Asia-Pacific: .com.au .com.sg .co.jp .co.kr .co.in .com.hk .com.my .co.id .com.ph).
+- All shipped to production: frontend `0026784`, nginx reloaded.
 
-**Resume point (EXACT):**
-1. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy: open each dialog host, transport tab → /trips, experiences tab → /activities, mobile Slide transition.
-2. **ISR prod activation (#129)** — deploy BE develop→main + set `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + restart worker.
-3. **OWNER DECISIONS gate CS everything:** consent/GDPR ×9 ([[cs-consent-gdpr-model]]); P0 ×5 ([[cs-p0-measurement-protocol]]).
-4. **P2 SEO fixes (optional):** twitter:image:alt, og:locale policy, meta desc cap, blog robots dup. See [[seo-audit-reconciliation-2026-06-21]].
-5. **Eng carry-forward:** REC-engine min-price bug; TASK-1VCPU-MONITOR (CloudWatch).
+**Resume point (EXACT) — next session:**
+1. **CS BUILD STEP 1** — Django `cs/` app: `Conversation` + `Message` + `CSOtp` models + composite index `(conversation_id, created_at)` + migration. Reference: [[cs-gap-debate-verdicts]] Build Order Step 1.
+2. **CS BUILD STEP 2** — 7 API endpoints. Reference: [[cs-api-contract]].
+3. **SEARCH-DIALOG-UI-TEST** — manual verify pre-deploy (pending from #138).
+4. **ISR prod activation (#129)** — deploy BE develop→main + `FRONTEND_URL=www` + `REVALIDATION_SECRET` + restart worker.
+5. **OWNER DECISIONS gate P0:** P0 ×5 ([[cs-p0-measurement-protocol]]); metric+MDE pre-commitment before pilot send.
 
-_(Session #146 block archived → `07-logs/session-history.md`.)_
+_(Session #148 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -27,7 +28,7 @@ _(Session #146 block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5s, reuse `useQRPolling`); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES. Channels dormant. **ARCH DECIDED 2026-06-21 ([[cs-architecture-decision]]): both-sides-poll-Django, Supabase OUT of message path.** Reverses Option B — polling-ceiling math killed the "deadlock" premise; both-poll kills R1(Celery starvation)/R2(silent-ghost)/R3(anon-PII). **Prod compose CONFIRMED** (`docker-compose-rds.yml` = production; uwsgi run.sh dead): `--workers 1 --threads 2` + 256MB web cap + celery `--concurrency=1` = small box. Small box is WHY both-poll wins — short-poll releases slot in ~20ms (5 staff = ~1.6 req/s); WebSocket dies on 256MB, Supabase two-write dies on single celery worker. Real EC2 fix = instance-size up, not config flag. **No `cs` schema, no chat queue, no `sync_status`, no `@supabase/supabase-js`.** Net-new dep: **`pyotp` only**. Supabase keeps gmail12go OTA-store read-sync role only. **Gaps CLOSED:** API contract ([[cs-api-contract]] 7 endpoints, explicit fields) · consent/GDPR ([[cs-consent-gdpr-model]] two-store, 9 owner Qs) · P0 protocol ([[cs-p0-measurement-protocol]] ~35 contacts, 5 owner Qs). Token-WCAG = separate platform issue (Approach A, 3 text-tokens). 103 `__all__` serializers — pin Ticket+Order before P1a migration. **Conversion thesis REOPENED.** | **DOCS COMPLETE — awaiting owner decisions (consent legal ×9, P0 ×5) + P0 run; not scheduled for dev** | [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-consent-gdpr-model]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[cs-centralization-design-concept]] |
+| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **READY TO BUILD** — Step 1: Django `cs/` app + models. Owner still needed for P0 ×5 decisions before pilot send. | **BUILD READY — Step 1 next session. P0 blocked on owner decisions (×5).** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
 | **SEARCH-DIALOG-UI-TEST** | Unified search dialog now shows Transportation + Experiences tabs in all 3 hosts. MERGED develop `ceaa003` (#138). **NOT yet manually UI-tested** — verify PRE-DEPLOY: open each dialog (StickySearchBar / HeaderSearchSummary / SearchCover), transport tab unchanged (→ `/trips` + close), experiences tab → `/activities?search=&category=` + dialog closes, mobile full-screen Slide transition. Extracted `TabbedSearchPanel` (`components/search/`); `SearchDialog` static-imports it. | **PRE-DEPLOY verify** #138 | `components/search/TabbedSearchPanel.js`, `SearchDialog.js`, `ExperiencesSearch.js` |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **BE-HOMEPAGE-PRICE** | Homepage "From" prices computed BE-side. **Experiences + airport-routes FIXED #136** (`get_min_price` ADULT+fallback; airport `lowest_price` type-aware via new `route_lowest_price_annotation` helper shared with HomeViewSet). Merged BE develop `cff26b3`. **NEEDS DEPLOY + front-page cache bust.** Remaining OPEN (same bug class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **PARTIAL-CLOSE #136** — homepage DONE (needs deploy); REC-engine OPEN | `products/services.py` (REC), `products/serializers.py:~1105` |

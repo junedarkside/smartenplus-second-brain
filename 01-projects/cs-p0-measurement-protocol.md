@@ -17,10 +17,13 @@ metadata:
 - **Metric:** direct rebooking rate = (tracked attributable direct bookings) / (travelers messaged), measured at **day 30 per individual** (not batch date).
 - Revised P0 (post-Supabase): not "can we capture contacts" (yes, 80%+) — measure "do captured travelers **rebook direct**."
 
-## Sample (~25-45 usable)
-Filter `gmail12go.Information`: **Status=Confirmed** · travel date 2026-01-01→2027-01-01 (exclude `5000-08-02` outlier) · Gmail non-null · **Langkawi/Koh Lipe routes only** (no route-mixing confound). 58 total → ~25-45 after filter (run live query, ~5min).
+## Sample (~400-450 usable)
 
-**Honest power statement:** 58 records is NOT significance-adequate (5% rate needs ~700 contacts @ 80% power). This is a **directional pilot** — "is this plausible?" not "is this proven?" 0-1 rebooking = negative; 3+ = positive enough to justify building a bigger contact base. Value = speed + near-zero cost. Don't skip it; building on an unvalidated assumption is worse.
+> **Updated 2026-06-22** — `gmailklook` schema source-verified: 503 records, 100% email coverage. Total combined: 561 (58 12Go + 503 Klook).
+
+Filter `public.view_information` (unified view): **Status=✅Confirmed** · travel date 2026-01-01→2027-01-01 (exclude `N/A` and `5000-08-02` outliers) · Gmail non-null · **Langkawi/Koh Lipe routes** (dominant route, no confound). ~457 Klook Confirmed + ~42 12Go Confirmed → **~400-450 usable** after date/route filter.
+
+**Power statement (updated):** 450 contacts at 5% rebooking rate = ~75% power (marginal but workable for directional signal). Still NOT a significance test — but far stronger than original ~35. Key constraint: if primary metric is booking conversion ≥2%, need ~1,400 contacts (underpowered at 450). If primary metric is open rate ≥15%, 450 is adequate. **Owner must pre-commit metric + MDE before send** — cannot interpret result otherwise.
 
 ## Method
 - **No control group** (sub-groups too small). Single cohort, baseline = current ~10% B2C direct.
@@ -42,7 +45,7 @@ Langkawi-Koh Lipe booked 1-4wk ahead; 30d captures next-trip intent, excludes im
 | Result (~35 contacts) | Decision |
 |---|---|
 | 0 (0%) | Collapse to CS-tooling. Kill conversion + P5. P1a/P1b efficiency-only. Defer P2/P3. |
-| 1 (~3%) | Marginal — single booking unreliable. Extend pilot (+more contacts: Klook/Bookaway if schemas found) or treat negative. |
+| 1 (~3%) | Marginal — single booking unreliable. Extend pilot (+more contacts from Klook schema `gmailklook`) or treat negative. |
 | 2-3 (~5-9%) | Positive. Proceed full roadmap incl P3/P5. Expect OTA friction <12mo — contractual cover ready. |
 | 4+ (10%+) | Strong. Accelerate. Understand discount-driver before scaling (economics shift). |
 
@@ -63,7 +66,7 @@ Owner: approve contact list + offer + copy + send + day-30 go/no-go. Tech (~5-6h
 1. **Threshold confirm** — use thesis 3%/5-10%? Lock before send.
 2. **Willingness to message OTA contacts** — poaching risk acceptable? If no → wait for inbound (website chat P1b) + capture consent there, measure from consent-clean pool.
 3. **Offer/discount** — A: none (service-only, clean test, lower conversion) · B: small fixed discount (unique code attribution) · C: free service upgrade (relational, on-brand).
-4. **Supabase service_role access** — check Klook/Bookaway schemas to grow sample?
+4. **Supabase service_role access** — check `gmailklook` schema to grow sample (Klook confirmed; Bookaway = same as 12Go, appears under `12GO*` prefix)?
 5. **Send timing** — T-7 future-dated / immediate past-dated (recommended) — confirm.
 
 ## Related

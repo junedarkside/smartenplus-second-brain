@@ -1,5 +1,9 @@
 # Vault Log
 
+## [2026-06-22] session-end #149 | og:image fix (image field singular + absolute fallback + product namespace tags via additionalMetaTags) + getDayTripCoverImage field fix + CSP Google Ads pixel: 23 country TLDs added nginx img-src+connect-src. All shipped prod (frontend 0026784, nginx reloaded).
+
+## [2026-06-22] session-end #148 | CS Centralization vault audit + gap debate. Supabase schema source-verified: `gmailklook` 503 records 100% email + `gmail12go` 58 records = 561 total. All Supabase gaps closed (source field solved in view, marketing_consent dropped, smarten_order_id dropped, Bookaway=12Go). 3-agent gap debate: 12 verdicts (B1-B6 backend + F1-F6 frontend) + 6 skeptic corrections (S1-S6). Key corrections: poll safe limit=30 widgets not 150, OTP store=PostgreSQL not Redis, server-side cursor not client timestamp, reopen rate limit needed. cs-api-contract.md updated (4 corrections). cs-p0-measurement-protocol.md updated (sample ~35→~450). NEW: [[cs-gap-debate-verdicts]]. No code built — vault only. → [[cs-gap-debate-verdicts]] · [[supabase-ota-booking-store]] · [[cs-api-contract]]
+
 ## [2026-06-21] session-end #147 | Destinations card redesign (5-col text-below-image, c23a71b main) + pruned 3 merged branches + atom [[destinations-card-redesign]]
 
 ## [2026-06-21] session-end #146 | Thailand Travel Guide redesigned — 3-col equal card grid, shipped to production (c3e2da9 main)
