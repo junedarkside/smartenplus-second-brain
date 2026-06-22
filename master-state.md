@@ -4,21 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-22 (session #150 END)
+**Updated:** 2026-06-22 (session #151 END)
 
-**Achieved this session (#150) — email redesign (booking + order confirmation) black/white:**
+**Achieved this session (#151) — CS cluster review + vault optimization:**
 
-- Full visual redesign of `booking_confirmation_template.html` + `order_email_template_pro.html`: black/white minimalist, Inter font, table-based layout, Outlook VML fallback, Gmail clip guard (<80KB).
-- Service-category-aware timeline: TRANSPORTATION/TRANSFER → departure→arrival stations+times; all others → date + time slot + meeting point.
-- Fixed double email in Traveler section: `customer_name` fallback → template guard `{% if customer_name != customer_email %}`.
-- Fixed TimeField rendering ("09:30:00" → "09:30"): `.strftime("%H:%M")` in `orders/utils.py` + `orders/services.py`.
-- Added addon rows (BookingItemAddon) to payment section in both templates.
-- Added coupon_code + payment_method to order email context (`orders/utils.py`).
-- Switched `order.discount` → `order.get_discount` for decimal precision.
-- Fixed `booking_check_url` domain in `carts/tasks.py` (`.com/booking/` → `.co.th/bookings/`).
-- Added idempotency guard in `send_booking_confirmation_email` task.
-- New `bookings/emails/email_design_tokens.md` — design reference for future email templates.
-- Committed `7c8f9c6`, merged to `develop`, merged to `main`, **shipped to production**.
+**CS centralization cluster review (3-agent read-only audit):**
+- 9-note integrity audit (consistency / link-graph / open-questions) → cluster 98% consistent
+- 1 HIGH supersession drift fixed: `smarten-customer-os-thesis:42` P1b row still asserted reversed Supabase Realtime + `sync_status` + Celery→Supabase write → rewritten to both-sides-poll-Django, banner → [[cs-architecture-decision]]
+- 5 gap-closure edits applied: thesis:42/70/72 rewritten + lines 70/72 Supabase struck from message path; D1-D6 triaged into [[cs-centralization-stack]] (D1/D3/D5 applied, D4/D6 marked MOOT post-reversal, D2 already present); thesis back-links added (consent-model, p0-protocol, stack, arch-decision); [[cs-centralization-review-2026-06-22.md]] status flipped active→resolved + closure block
+- All OTP/store/eng/app decisions verified consistent between [[cs-api-contract]] + [[cs-gap-debate-verdicts]] (PostgreSQL HOTP, cs/ app, composite index)
+
+**Vault optimization (25 atoms extracted):**
+- `experiences-marketplace-4-phase-architecture-sequence` — extracted from experiences-2026-marketplace-redesign (349→253 lines, now <150 cap)
+- Filter bugs: `filter-status-checkbox-onclick-inversion` · `filter-array-includes-reference-bug` · `filter-text-stringify-bug` (3 atoms)
+- Payment system: `payment-pending-deadlock-heal` · `payment-polling-fallback-triple` · `payment-expiry-path-complete` · `payment-idempotency-key-name-error` (4 atoms)
+- Activities day-tour page: `activities-day-tour-stored-xss-page-crash` · `activities-day-tour-star-rating-aria-broken` · `activities-day-tour-wrong-router-import` (3 atoms)
+- Activities location search: `activities-location-search-backend-text-id-type-mismatch` · `activities-location-search-inputvalue-divergence` (2 atoms)
+- Design system: `mui-tailwind-breakpoint-mismatch-sm-600-vs-640` · `hybrid-mui-preserve-tailwind-new-styling-strategy` · `tailwind-first-spacing-semantic-tokens-only-5plus-reuse` (3 atoms)
+- Recommendation engine: `recommendation-hybrid-rec-type-non-transport-dead-end` · `recommendation-flat-score-finder-pollution` · `recommendation-anchor-priority-experience-before-transport` · `recommendation-mincartprice-floor-suppresses-complementary` · `recommendation-booked-count-default-10-inflates-new-contracts` · `fake-scarcity-eu-us-trust-risk-policy` (6 atoms)
+- Transportation category: `django-is-actived-vs-is-active-field-name-gotcha` · `station-type-airport-first-class-iata-restriction` · `transfer-category-vs-airport-filter-independence` (3 atoms)
+- 25 atoms added to index.md under "Vault Optimization — Atomized Notes (2026-06-22)" section, log.md appended
 
 **Resume point (EXACT) — next session:**
 1. **CS BUILD STEP 1** — Django `cs/` app: `Conversation` + `Message` + `CSOtp` models + composite index `(conversation_id, created_at)` + migration. Reference: [[cs-gap-debate-verdicts]] Build Order Step 1.
@@ -27,7 +32,7 @@
 4. **ISR prod activation (#129)** — deploy BE develop→main + `FRONTEND_URL=www` + `REVALIDATION_SECRET` + restart worker.
 5. **OWNER DECISIONS gate P0:** P0 ×5 ([[cs-p0-measurement-protocol]]); metric+MDE pre-commitment before pilot send.
 
-_(Session #149 block archived → `07-logs/session-history.md`.)_
+_(Session #150 block archived → `07-logs/session-history.md`.)_
 
 ---
 

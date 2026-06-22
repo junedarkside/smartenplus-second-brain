@@ -68,6 +68,8 @@ r2 red-team ([[r2-skeptic-review]]) showed the originally-implied realtime path 
 
 > 🛑 **SUPERSEDED 2026-06-21 → [[cs-architecture-decision]].** This entire section described Option B (CS Dashboard Supabase Realtime push), which was REVERSED to both-sides-poll-Django. Supabase is OUT of the message path. Section kept below for the reasoning trail only — **do not implement.**
 >
+> **D4 + D6 ([[cs-centralization-doc-review]]) are MOOT post-reversal:** D4 (anon-key RLS would expose `cs.messages` REST reads of CS PII) and D6 (`sync_status`+retry ≠ consistency, needs reconciliation) both only applied to the Supabase relay — which no longer exists. No `cs` schema is written, so no RLS exposure and no two-write consistency gap. Recorded here, not silently dropped.
+>
 > _Original (validated 2026-06-21 via 3-agent investigation, then reversed same day after the polling-ceiling re-analysis):_
 
 ### Why Supabase Realtime (not pure polling for CS Dashboard)
@@ -101,7 +103,7 @@ NextAuth JWT ≠ Supabase JWT (different signers, different `aud`). CS Dashboard
 | `failed` | Max retries (5) exhausted |
 | `retrying` | Backoff in progress |
 
-Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.py:35` pattern.
+Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.py:90` pattern (D3 correction [[cs-centralization-doc-review]]: line is `:90`, not `:35`).
 
 ### Dependency scope
 
@@ -110,6 +112,7 @@ Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.
 ## Tradeoffs
 
 - **Short-poll latency (both sides) vs WS push:** 0-5s latency for a reply to surface. Acceptable for support chat. Zero new infra, zero prod risk. (Both widget AND CS Dashboard poll Django — [[cs-architecture-decision]].)
+- **Polling-safe caveat (D5 [[cs-centralization-doc-review]] — STILL LIVE):** the 2 Gunicorn slots are shared with ALL site traffic and degrade to 1 under slow requests. Mitigate: client uses **`setTimeout`-recursion (not `setInterval`)** so a slow response can't stack requests, plus **tab-idle backoff** (slow/stop polling on hidden tab). This is a real implementation constraint for both-poll, not superseded.
 - ~~**Supabase Realtime (CS Dashboard):** <1s push, two-write + `sync_status` + `@supabase/supabase-js`.~~ **REVERSED** — see [[cs-architecture-decision]]; small prod box (256MB / celery concurrency=1) makes this net-negative.
 - **Deferring Channels:** avoids r2 256MB-cliff / redis-mismatch / WS-auth work entirely. Channels stays dormant. If measured chat volume later needs true real-time on the widget side, that becomes a gated project.
 - **`pyotp` add:** one small pure-python lib, no service. Lowest-footprint OTP option.
@@ -120,7 +123,7 @@ Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.
 - AWS SNS SMS = zero new dep (same `boto3`); zero new service account.
 - Prod (`docker-compose-rds.yml`, confirmed) = `--workers 1 --threads 2` + 256MB cap + celery `--concurrency=1`. **Both** widget and CS Dashboard short-poll Django (fast non-blocking GET, slot released ~20ms). WebSocket/long-poll would blow the box; Supabase two-write would block the single celery worker. See [[cs-architecture-decision]].
 - P1b requires two new Django models: `Conversation` + `Message` (no `sync_status` — Postgres is sole store, no Supabase write). Follows `dialogue/` GenericFK pattern (FK NOT nullable).
-- 103 `fields='__all__'` serializers exist in backend (3-agent scan — r2 estimated 16). P1a migrations adding new FKs auto-leak through all of them. **Must pin explicit fields on `TicketSerializer` + `OrderSerializer` BEFORE any P1a migration** to avoid 3-repo contract drift.
+- 103 `fields='__all__'` serializers exist in backend (3-agent scan — r2 estimated 16). P1a migrations adding new FKs auto-leak through all of them. **Must pin explicit fields on `TicketSerializer` (`tickets/serializers.py:55`) BEFORE any P1a migration** to avoid 3-repo contract drift. (D1 correction [[cs-centralization-doc-review]]: `OrderSerializer:94` is **already explicit fields**, not `__all__` — earlier "+ OrderSerializer" claim removed.)
 - Telegram stays internal-ops only — never customer-facing in this architecture.
 - Channels left dormant — no Daphne process, no ASGI migration, no `CHANNEL_LAYERS` redis fix required for P1b.
 - The r2 "INFRA GATE" WS work (Daphne, JWT WS auth, channel-layer redis) is **deferred, not required** — P1b ships both-sides-poll.
@@ -138,6 +141,9 @@ Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.
 ## Related
 
 - [[smarten-customer-os-thesis]] — the decision this stack serves
+- [[cs-architecture-decision]] — transport reversal (both-sides-poll, supersedes the Supabase relay section)
+- [[cs-centralization-doc-review]] — source-verification; D1-D6 corrections applied here
+- [[cs-centralization-review-2026-06-22]] — cluster integrity review
 - [[r2-skeptic-review]] — flagged the realtime track; source of the constraints
 - [[r3-leader-synthesis]] — parent review synthesis
 

@@ -173,6 +173,14 @@ Global navigation catalog. Updated on every ingest.
 - [[r2-skeptic-review]] — Round-2 4-agent red-team (BD/backend/frontend/arch) of the Customer OS thesis. Verdict: spine UPHELD, conversion-thesis WEAKENED, realtime track NOT committable as scoped. NEW vs r1/r3/grill: prod is uWSGI not Gunicorn (+gunicorn compose conflict); 256MB memory cliff + 100MB LRU redis = realtime non-starter; channel-layer points at wrong redis; `'__all__'` serializers = silent 3-repo contract drift; frontend cost INVERTED (My Trip/Saved Travelers/3-of-4 OAuth already ship → P2≈rebrand); booker-may-be-agency contaminates P0. Recommends rename to "CS Centralization"
 - [[supabase-ota-booking-store]] — **KNOWLEDGE 2026-06-22 (updated).** Supabase: 561 total bookings (58 12Go + 503 Klook), unified via `public.view_information`. Klook = 100% email coverage, dominant source. Bookaway = same as 12Go. Only remaining CS gap: `smarten_order_id` (P2). **Overturns r2's "no traveler PII" blocker → conversion thesis reopened.**
 - [[cs-gap-debate-verdicts]] — **KNOWLEDGE 2026-06-22.** 3-agent gap debate verdicts (B1-B6 backend + F1-F6 frontend + S1-S6 skeptic). Key corrections: poll safe limit=30 widgets (not 150), OTP in PostgreSQL not Redis, server-side cursor not client timestamp, reopen rate limit required. Build order 1-8 inside. **Next session starts from Step 1.**
+- [[cs-centralization-review-2026-06-22]] — **REVIEW 2026-06-22 · RESOLVED.** 3-agent read-only integrity audit of the 9-note CS cluster. Cluster ~98% consistent. **5 recommended vault edits now APPLIED:** thesis:42/70/72 rewritten to both-sides-poll (Supabase struck from message path), design-concept split 211→~155 (token audit → [[cs-design-tokens-audit]]), D1-D6 triaged into [[cs-centralization-stack]] (D4/D6 moot post-reversal), thesis back-links added, status flipped. **Still OPEN (bucket-C, owner/legal/eng):** 6 hard build blockers (5 P0 + 9 GDPR/PDPA legal + Supabase merge-key + 5 API Qs + WCAG token) + 6 GAP-A→F spec holes.
+- [[cs-architecture-decision]] — **ADR 2026-06-21.** Message transport = both-sides-poll-Django (customer widget AND CS Dashboard poll one cheap Django endpoint; Postgres = single source of truth). **Supabase OUT of message path** — supersedes the Supabase-relay section of [[cs-centralization-stack]]. Rejected Option B; the only push justification was a false long-poll/short-poll conflation (5 staff = ~1.6 req/s, 3 orders below saturation). Also resolves token-WCAG (Approach A companion text-tokens).
+- [[cs-api-contract]] — **DRAFT 2026-06-21.** CS backend API contract: 7 endpoints (conversations, messages poll/send, status PATCH, OTP request/verify). Polling-based. Explicit serializer fields (never `__all__`). Models pinned: Conversation/Message/CSOtp (OTP in PostgreSQL not Redis; reopen abuse guard → 429). Reuses `IsAdminOrIsStaff`.
+- [[cs-consent-gdpr-model]] — **DRAFT 2026-06-21.** Consent/GDPR data model: two-store (Django ConsentRecord + Supabase consent.records), append-only versioned consent strings, service-vs-marketing enforcement. Service-only-by-default for OTA-sourced contact. **9 owner/legal questions OPEN** (GDPR + Thai PDPA).
+- [[cs-centralization-design-concept]] — **DRAFT 2026-06-21.** UX/UI for 3 surfaces (customer chat widget, CS Dashboard, Email-OTP) on existing `designSystem.js`. Flows, states, a11y, microcopy. Architecture-agnostic. Token gaps + WCAG audit extracted → [[cs-design-tokens-audit]].
+- [[cs-design-tokens-audit]] — **KNOWLEDGE 2026-06-22.** Token + WCAG audit extracted from the CS design concept: 4 status/gray tokens FAIL AA as text (platform-wide, not CS-only — G-05/06/07 fix), 15 token gaps (G-01..15) to add to `designSystem.js`, full design-system reuse map for the 3 surfaces.
+- [[cs-p0-measurement-protocol]] — **READY-TO-RUN 2026-06-21.** P0 rebooking-rate test gating the OTA→direct conversion thesis. Email ~400-450 Confirmed Supabase OTA travelers (Langkawi/Koh Lipe) a tracked direct offer, measure 30-day direct rebooking per individual. Directional pilot (small N). **5 owner decisions block start.**
+- [[cs-centralization-doc-review]] — **REVIEW 2026-06-21.** 3-agent source-verification of the session #141 Option B docs vs 3 live repos: 2 factual errors, 1 PII exposure (anon-key RLS), 1 silent-data-loss path, over-engineering inversion → recommended both-sides-poll (adopted in [[cs-architecture-decision]]). D1-D6 corrections now applied to [[cs-centralization-stack]].
 - [[cs-centralization-stack]] — **STACK DECISION 2026-06-20.** Reuse-first build stack for CS Centralization messaging track. Realtime chat = HTTP long-polling (reuse `useQRPolling.js`), Email-OTP = `pyotp` + live AWS SES, Telegram bridge = extend `send_telegram_message` + Celery. **Channels stays dormant** — no Daphne/ASGI, r2 WS work deferred not required. Net new dep = `pyotp` only; zero prod/compose impact. Rejected Centrifugo/Soketi sidecar (new infra) + Daphne activation (256MB cliff) per no-over-engineering constraint
 - [[business-development-zeitrip-mvp]] — MVP: single itinerary timeline vs cart. 3 corridors, wizard flow, conflict detection. "Plan your Thailand trip in one timeline"
 - [[trip-detail-page-review|Trip Detail Page Review 2026-05-20]] — 3-agent review: 8 perf + 8 SEO + 8 code quality issues; 24 verified findings with line numbers and fix order
@@ -454,3 +462,49 @@ Global navigation catalog. Updated on every ingest.
 - [[header-glass-to-solid-migration]] — glass→solid migration recipe; MUI AppBar `color="inherit"` gotcha
 - [[build-experience-faq-items-pure-function]] — pure `buildExperienceFAQItems(contract)` helper; derive cancellation text from structured data (legal liability pattern)
 - [[parseiso-null-guard-date-sort-pattern]] — `parseISO(null)` → Invalid Date → `compareAsc` NaN → page crash
+
+---
+
+## Vault Optimization — Atomized Notes (2026-06-22)
+
+### Experiences Marketplace
+- [[experiences-marketplace-4-phase-architecture-sequence]] — Phase rollout: frontend-only → backend filters → mobile → iPad polish. Frontend-endowed, no backend coupling.
+
+### Filter Functionality (3 bugs)
+- [[filter-status-checkbox-onclick-inversion]] — BUG-001: onClick instead of onChange for status checkbox. State inversion on every render.
+- [[filter-array-includes-reference-bug]] — BUG-002: `Array.includes()` reference equality fails on objects. Filter always returns false.
+- [[filter-text-stringify-bug]] — BUG-003: Object passed to text filter → `[object Object]` string comparison. Text search never matches.
+
+### Payment System (4 atoms)
+- [[payment-pending-deadlock-heal]] — Paid-but-unfinalized order deadlock — expire endpoint recovery + reconcile retry. Manual heal: `payment_finalized_at=None` → `finalize_payment`.
+- [[payment-polling-fallback-triple]] — Triple webhook fallback: QR polling (auto) → payment-status refresh (manual) → staff force-expiry (admin). Covers downtime.
+- [[payment-expiry-path-complete]] — Complete expiry paths: redirect-method cards (3DS/OTP), off-site banks, PromptPay QR. Celery Beat + manual force-expiry.
+- [[payment-idempotency-key-name-error]] — `IdempotencyKey` without `key=` prefix breaks charge creation. Use `f"key_{order_id}_{timestamp}"` format.
+
+### Activities Day-Tour Page (3 atoms)
+- [[activities-day-tour-stored-xss-page-crash]] — Stored XSS + page crash: `dangerouslySetInnerHTML` no DOMPurify + `parseISO(null)` → crash. Install dompurify, add null guard.
+- [[activities-day-tour-star-rating-aria-broken]] — Star rating ARIA broken: multiple `aria-pressed=true`. Use radiogroup pattern or fix single boolean.
+- [[activities-day-tour-wrong-router-import]] — Wrong router import breaks "Write Review" CTA. `next/router` → `next/navigation` (App Router incompatible).
+
+### Activities Location Search (2 atoms)
+- [[activities-location-search-backend-text-id-type-mismatch]] — Backend expects UUID, frontend sends text. `products/views.py:446` filters by `Station.id=` (UUID) against location name. Fix: accept text OR ID.
+- [[activities-location-search-inputvalue-divergence]] — `inputValue` state never emits to parent. Add `onLocationSelect` callback prop.
+
+### Design System (3 atoms)
+- [[mui-tailwind-breakpoint-mismatch-sm-600-vs-640]] — MUI `sm=600` vs Tailwind `sm=640` breakpoint mismatch. Responsive layout misalignment. Standardize on Tailwind breakpoints.
+- [[hybrid-mui-preserve-tailwind-new-styling-strategy]] — Hybrid: preserve MUI for existing admin, Tailwind-first for new. Semantic tokens only for 5+ reuse.
+- [[tailwind-first-spacing-semantic-tokens-only-5plus-reuse]] — Tailwind-first for spacing. Extract tokens ONLY if reused ≥5 times. One-off values stay inline.
+
+### Recommendation Engine (6 atoms)
+- [[recommendation-hybrid-rec-type-non-transport-dead-end]] — `hybrid` `rec_type` kills non-transport recommendations when `trip.route` null. Fix: remove route requirement for activities.
+- [[recommendation-flat-score-finder-pollution]] — Flat-score pollution: package=90, activity=80, alternative=70 overrides. Remove hardcoded boosts, use weighted sum.
+- [[recommendation-anchor-priority-experience-before-transport]] — Anchor priority inversion: TRANSPORTATION=100 > DAY_TOUR=80 wrong. Experience-first marketplace → activities higher priority.
+- [[recommendation-mincartprice-floor-suppresses-complementary]] — `minCartPrice` floor suppresses cheap add-ons (SIM cards, snacks). Remove floor for complementary items.
+- [[recommendation-booked-count-default-10-inflates-new-contracts]] — `booked_count` default=10 inflates new contracts. Honest zero → exclude from "Popular" or use "New" filter.
+- [[fake-scarcity-eu-us-trust-risk-policy]] — EU/US trust risk: fabricated scarcity violates consumer protection laws. Scarcity claims must be data-backed (live inventory, analytics).
+
+### Transportation Category (3 atoms)
+- [[django-is-actived-vs-is-active-field-name-gotcha]] — Django field typo `is_actived` vs `is_active`. Silent filter failure → zero results. Grep + fix all occurrences.
+- [[station-type-airport-first-class-iata-restriction]] — `station_type='airport'` is first-class. IATA code restricted to airport only. Data quality guarantee.
+- [[transfer-category-vs-airport-filter-independence]] — `TRANSFER` service_category and airport filter independent. Airport stations can be transfers, piers, buses. Filter type ≠ category.
+

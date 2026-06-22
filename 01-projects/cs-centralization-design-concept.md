@@ -19,20 +19,10 @@ metadata:
 3. **Architecture-agnostic** — optimistic echo + sent/delivered/failed states make 0-3s transport latency feel instant. UI never exposes poll vs push.
 4. **No positional language in alerts** — element names, not "above/below" (per CLAUDE.md rule).
 
-## ⚠️ Blocking Finding — Design-System Token WCAG Failures
-
-A11y audit measured 3 status tokens + gray400 FAIL WCAG AA as text on white. **Affects the whole feature** and any other feature using these for text.
-
-| Token | Ratio on white | Verdict | Rule applied here |
-|---|---|---|---|
-| `status.success` #10B981 | 2.54:1 | FAIL | icon/dot only, never text |
-| `status.warning` #F59E0B | 2.15:1 | FAIL | icon only |
-| `status.error` #EF4444 | 3.76:1 | FAIL (normal weight) | icon + badge-dot only; never error text |
-| `neutral.gray400` #9CA3AF | 2.54:1 | FAIL | replaced by gray500 (4.83:1 floor) everywhere |
-
-**Safe pairs used throughout:** white-on-`brand.primary` (6.84:1) · `gray900`-on-`gray100` (16.12:1) · `primaryDark`-on-`primaryLight` (8.93:1) · `brand.secondary` #2563eb on white (5.17:1) · `gray700` on white (8.59:1, used for ALL error/success TEXT).
-
-→ Proposed companion text-tokens `status.successText`/`errorText`/`warningText` (G-05..07 below). **File a design-token audit issue against `helpers/designSystem.js` regardless of CS feature** — these failures pre-exist.
+> ⚠️ **Blocking finding — 4 tokens FAIL WCAG AA as text** (3 status + gray400). Rules applied throughout
+> this concept (status colors icon-only; `gray700` for all error/success TEXT). **Full audit + the 15 token
+> gaps (G-01..15) + design-system reuse map → [[cs-design-tokens-audit]]** (extracted to keep this note under
+> the 200-line cap). G-05/06/07 are a platform-wide fix, not CS-only.
 
 ---
 
@@ -140,41 +130,8 @@ Heading `h2`/semibold gray900; subtitle `body` gray500; email input `INPUT_CONFI
 
 ---
 
-## Design-System Reuse Map (summary)
-
-| Element | Token/preset | Source |
-|---|---|---|
-| FAB / header / outgoing-tint bg | `COLORS.brand.primary` / `primaryDark` / `primaryLight` | designSystem.js |
-| Incoming bubble | `COLORS.neutral.gray100` + `gray900` | designSystem.js |
-| Timestamps / secondary text | `COLORS.neutral.gray500` (4.83:1 floor) | designSystem.js |
-| Error/success TEXT | `COLORS.neutral.gray700` (8.59:1) | designSystem.js |
-| Inputs | `INPUT_CONFIG.base/focus/error/borderRadius` | designSystem.js |
-| Buttons | `BUTTON_CONFIG.primary/secondary` | designSystem.js |
-| Badges/chips | `COLORS.badge.primary/neutral` + `BORDER_RADIUS.badge` | designSystem.js |
-| Tap targets | `TOUCH_TARGET.minHeight` 44px | designSystem.js |
-| Mobile drawer | `ProfileBottomSheet.js` shell | frontend |
-| Desktop dialog | `Modal.js` shell | frontend |
-| OTP/auth screens | `login.js` layout + `SuccessState` | frontend |
-| CS Dashboard | admin `lightTheme.js` palette + MUI Chip/Avatar/TextField | admin |
-| Toast | `react-toastify` ^9.1.1 | frontend package.json |
-| Lazy mount | `dynamic(ssr:false)` `_app.js:22` | frontend |
-
-## Token Gaps (15 — propose adding to designSystem.js)
-
-| ID | Token | Value | Why |
-|---|---|---|---|
-| G-01/02 | `BORDER_RADIUS.chatBubbleOutgoing/Incoming` | `12 12 2 12` / `12 12 12 2` | asymmetric tail not coverable |
-| G-03 | `BORDER_RADIUS.chatFab` | `50%` | no circle token |
-| G-04 | `BORDER_RADIUS.chatDrawerTop` | `16 16 0 0` | codify ProfileBottomSheet value |
-| **G-05** | `COLORS.status.successText` | `#065F46` (9.73:1) | success TEXT (status.success fails) |
-| **G-06** | `COLORS.status.errorText` | `#991B1B` (6.30:1) | error TEXT (status.error fails) |
-| **G-07** | `COLORS.status.warningText` | `#92400E` (9.73:1) | warning TEXT (status.warning fails) |
-| G-08/09 | `COLORS.cs.pendingChipBg/Text` | `#FEF3C7`/`#92400E` | pending chip (no amber chip token) |
-| G-10 | `Z_INDEX.chatWidget` | `75` | above `notification`(70)/snackbar conflict |
-| G-11..14 | `DIMENSIONS.chatFabSize/PanelWidth/PanelHeight/AgentAvatarSize` | 56/380/560/28px | no chat geometry tokens |
-| G-15 | `COLORS.cs.listPaneSelectedBg` | `#E3E8F0` | admin-only, document for CS list |
-
-**G-05/06/07 are not just chat gaps — they fix a platform-wide WCAG failure.**
+> **Design-system reuse map + 15 token gaps (G-01..15) → [[cs-design-tokens-audit]].** Every element above
+> maps to an existing `designSystem.js` token or a flagged gap; full table extracted there.
 
 ## Latency Affordances (architecture-agnostic)
 
@@ -205,7 +162,8 @@ Message lifecycle: `COMPOSING → ECHOED(optimistic, opacity 0.5, "Sending…" s
 6. **Token WCAG fix** — add G-05/06/07 text-tokens (or update hex) to `designSystem.js`; file separate audit issue.
 
 ## Related
+- [[cs-design-tokens-audit]] — extracted token gaps (G-01..15) + WCAG audit + reuse map
 - [[design-systems]] — token source (`helpers/designSystem.js`)
-- [[cs-centralization-stack]] — build stack (Option B / arch)
+- [[cs-centralization-stack]] — build stack (transport: both-sides-poll per [[cs-architecture-decision]])
 - [[cs-centralization-doc-review]] — architecture review (over-engineering flag)
 - [[smarten-customer-os-thesis]] — parent decision

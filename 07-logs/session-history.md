@@ -4,6 +4,26 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #150 (archived)
+
+**Updated:** 2026-06-22 (session #150 END)
+
+**Achieved this session (#150) — email redesign (booking + order confirmation) black/white:**
+
+- Full visual redesign of `booking_confirmation_template.html` + `order_email_template_pro.html`: black/white minimalist, Inter font, table-based layout, Outlook VML fallback, Gmail clip guard (<80KB).
+- Service-category-aware timeline: TRANSPORTATION/TRANSFER → departure→arrival stations+times; all others → date + time slot + meeting point.
+- Fixed double email in Traveler section: `customer_name` fallback → template guard `{% if customer_name != customer_email %}`.
+- Fixed TimeField rendering ("09:30:00" → "09:30"): `.strftime("%H:%M")` in `orders/utils.py` + `orders/services.py`.
+- Added addon rows (BookingItemAddon) to payment section in both templates.
+- Added coupon_code + payment_method to order email context (`orders/utils.py`).
+- Switched `order.discount` → `order.get_discount` for decimal precision.
+- Fixed `booking_check_url` domain in `carts/tasks.py` (`.com/booking/` → `.co.th/bookings/`).
+- Added idempotency guard in `send_booking_confirmation_email` task.
+- New `bookings/emails/email_design_tokens.md` — design reference for future email templates.
+- Committed `7c8f9c6`, merged to `develop`, merged to `main`, **shipped to production**.
+
+---
+
 ## Session #149 (archived)
 
 **Updated:** 2026-06-22 (session #149 END)

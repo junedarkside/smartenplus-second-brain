@@ -131,106 +131,10 @@ Phase 2 backend changes: add `FilterSet` to `products/views.py` via `products/fi
 
 ## Phase Breakdown
 
-### Phase 1 — Layout + Premium Card
-**Git branch:** `260601-fix/activities-browse-audit` (current) or new branch
-**Checkpoint commit:** `feat(activities): Phase 1 — sidebar layout + premium card + sort bar`
+> 4-phase architecture sequence extracted → [[experiences-marketplace-4-phase-architecture-sequence]]
+> (Phase 1: layout + premium card, frontend-only → Phase 2: backend filters → Phase 3: mobile → Phase 4: iPad + polish)
 
-**Blocking pre-conditions (from agent review):**
-- [ ] `ContractViewSet.get_queryset()` annotates `avg_rating` for `-average_rating` ordering
-- [ ] `SortBar.js` SORT_OPTIONS limited to 3 (remove `min_rate`, `-min_rate`)
-- [ ] `useDayTripFilters.js` has `sort` field + URL sync
-- [ ] `dayTripsApi.js` passes `ordering` param
-- [ ] `ExperienceSidebar.js` created
-- [ ] `SIDEBAR_CONFIG` added to `designSystem.js`
 
-**Deliverables:**
-- 2-col layout desktop (`lg:grid-cols-[240px_1fr]`, container `max-w-[1536px]`)
-- Sidebar with CategoryFilter (vertical list, moves from header)
-- SortBar: results count + 3-option sort dropdown + active sort indicator
-- DayTripCard: 220px image (4:3 ratio, object-cover), wishlist heart (per-card state), hover `translateY(-2px)` + shadow `duration-200`, focus-visible ring
-- Header: compact, "Experiences in Thailand" H1, subtitle
-- Sort wired to `ordering` API param
-
-**SortBar Phase 1 options (exact values):**
-```js
-const SORT_OPTIONS = [
-  { value: '',               label: 'Recommended' },
-  { value: '-booked_count',  label: 'Most Popular' },
-  { value: '-average_rating', label: 'Highest Rated' },
-];
-// NO min_rate or -min_rate — backend Phase 2 only
-```
-
-**Does not touch:** payment, checkout, cart, auth, any shared helpers.
-
----
-
-### Phase 2 — Backend Filters
-
-**Phase 2 Pre-flight Checklist (backend, complete before any Phase 2 frontend):**
-- [ ] Create `smartenplus-backend/products/filters.py` with `ContractFilter(FilterSet)`
-- [ ] Add `duration_type` mapping (see table below)
-- [ ] Define canonical `extra.item` slug list (see table below)
-- [ ] Add `min_price`/`max_price` with `annotate(min_rate=Min(...)).distinct()`
-- [ ] Add `min_rating` with `Avg()` annotation
-- [ ] Add `contract_type` filter to `ContractViewSet`
-- [ ] Write N+1 query tests for each new filter
-
-**`duration_type` mapping:**
-
-| Value | Rule |
-|-------|------|
-| `half_day` | `tour_duration_days = 0` OR `duration < 4 hours` |
-| `full_day` | `tour_duration_days = 1` OR `4h ≤ duration ≤ 8h` |
-| `multi_day` | `tour_duration_days > 1` |
-
-**Canonical `extra.item` slugs (define before Phase 2):**
-
-| Slug | Maps to `extra.item` |
-|------|---------------------|
-| `free-cancellation` | "Free Cancellation" |
-| `instant-confirmation` | "Instant Confirmation" |
-| `hotel-pickup` | "Hotel Pickup" |
-
-**Checkpoint commit:** `feat(activities): Phase 2 — full filter params frontend+backend`
-
-Backend (`smartenplus-backend/products/views.py`):
-- Add `min_price`, `max_price` → filter on `ratecards.selling_rate` (annotate first)
-- Add `duration_type` → map to model field ranges per table above
-- Add `contract_type` → filter on `type` (JOIN=Group, PRIVATE=Private)
-- Add `features` → filter on `extra__item__in=[slugs].distinct()`
-- Add `min_rating` → filter on annotated `avg_rating`
-
-Frontend:
-- `ExperienceSidebar.js` — activate Price/Duration/Type/Features/Rating filter sections
-- `useDayTripFilters.js` — add new filter keys
-- `dayTripsApi.js` — pass new params
-- Add `min_rate`/`-min_rate` back to SortBar SORT_OPTIONS
-
----
-
-### Phase 3 — Mobile
-**Checkpoint commit:** `feat(activities): Phase 3 — mobile layout + bottom-sheet filters`
-
-- Sidebar `hidden lg:block`
-- Sticky bottom bar: Filter + Sort buttons (`fixed bottom-0 left-0 right-0 z-40` — below modals at z-50)
-- MUI Drawer `anchor="bottom"` for filter sheet (max-height 70vh, scrollable content, sticky "Apply" button)
-- Category chips inside bottom sheet: `flex flex-nowrap overflow-x-auto`
-- Cards: `grid-cols-1` mobile
-- Bottom bar local to FilterDayTripsPage, not global layout
-
----
-
-### Phase 4 — iPad + Polish
-**Checkpoint commit:** `feat(activities): Phase 4 — iPad layout + polish`
-
-- 1024px: 2-col card grid, filter drawer (not sidebar)
-- `DayTripList.js` grid: `xs=12 sm=6 md=6 lg=4 xl=3`
-- Skeletons match 220px card height
-- Empty state redesign (icon + contextual message + clear-filters CTA)
-- Dark mode (light only for Phase 1–3; add `dark:` tokens in Phase 4 if needed)
-
----
 
 ## Design Spec (Source of Truth)
 
