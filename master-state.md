@@ -18,7 +18,7 @@
 - Fixed `booking_check_url` domain in `carts/tasks.py` (`.com/booking/` → `.co.th/bookings/`).
 - Added idempotency guard in `send_booking_confirmation_email` task.
 - New `bookings/emails/email_design_tokens.md` — design reference for future email templates.
-- Committed `7c8f9c6`, merged to `develop`, pushed.
+- Committed `7c8f9c6`, merged to `develop`, merged to `main`, **shipped to production**.
 
 **Resume point (EXACT) — next session:**
 1. **CS BUILD STEP 1** — Django `cs/` app: `Conversation` + `Message` + `CSOtp` models + composite index `(conversation_id, created_at)` + migration. Reference: [[cs-gap-debate-verdicts]] Build Order Step 1.

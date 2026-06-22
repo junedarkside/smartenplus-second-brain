@@ -1,6 +1,6 @@
 # Vault Log
 
-## [2026-06-22] session-end #150 | email redesign: booking + order confirmation black/white minimalist. Service-category timeline, double-email fix, TimeField format, addons, coupon_code, payment_method, idempotency guard, design tokens. Merged develop `7c8f9c6`.
+## [2026-06-22] session-end #150 | email redesign: booking + order confirmation black/white minimalist. Service-category timeline, double-email fix, TimeField format, addons, coupon_code, payment_method, idempotency guard, design tokens. Merged develop→main `7c8f9c6`, shipped to production.
 
 ## [2026-06-22] session-end #149 | og:image fix (image field singular + absolute fallback + product namespace tags via additionalMetaTags) + getDayTripCoverImage field fix + CSP Google Ads pixel: 23 country TLDs added nginx img-src+connect-src. All shipped prod (frontend 0026784, nginx reloaded).
 
