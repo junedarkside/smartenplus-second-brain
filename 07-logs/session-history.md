@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #149 (archived)
+
+**Updated:** 2026-06-22 (session #149 END)
+
+**Achieved this session (#149) — og:image + CSP Google TLD fixes:**
+
+- Fixed activity detail og:image for FB/social sharing: corrected image field (`image` singular matches API), absolute fallback URL, moved product namespace tags to `additionalMetaTags` (next-seo was silently dropping `product:` nested key in `openGraph`). Also fixed `generateProductJsonLd` images field (`images`→`image`).
+- Fixed activity card showing default placeholder: `getDayTripCoverImage` had wrong `images` (plural) → reverted to `image` (singular, matches API `ContractSerializer`).
+- Fixed CSP blocking Google Ads remarketing pixel: added 23 Google country TLDs to nginx `img-src` + `connect-src`.
+- All shipped to production: frontend `0026784`, nginx reloaded.
+
+---
+
 ## Session #148 (archived)
 
 **Updated:** 2026-06-22 (session #148 END)

@@ -4,14 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-22 (session #149 END)
+**Updated:** 2026-06-22 (session #150 END)
 
-**Achieved this session (#149) — og:image + CSP Google TLD fixes:**
+**Achieved this session (#150) — email redesign (booking + order confirmation) black/white:**
 
-- Fixed activity detail og:image for FB/social sharing: corrected image field (`image` singular matches API), absolute fallback URL, moved product namespace tags to `additionalMetaTags` (next-seo was silently dropping `product:` nested key in `openGraph`). Also fixed `generateProductJsonLd` images field (`images`→`image`).
-- Fixed activity card showing default placeholder: `getDayTripCoverImage` had wrong `images` (plural) → reverted to `image` (singular, matches API `ContractSerializer`).
-- Fixed CSP blocking Google Ads remarketing pixel: added 23 Google country TLDs to nginx `img-src` + `connect-src` (Europe: .co.uk .de .fr .it .es .nl .se .pl; Americas: .com.br .com.mx .com.ar .com.co .cl .ca; Asia-Pacific: .com.au .com.sg .co.jp .co.kr .co.in .com.hk .com.my .co.id .com.ph).
-- All shipped to production: frontend `0026784`, nginx reloaded.
+- Full visual redesign of `booking_confirmation_template.html` + `order_email_template_pro.html`: black/white minimalist, Inter font, table-based layout, Outlook VML fallback, Gmail clip guard (<80KB).
+- Service-category-aware timeline: TRANSPORTATION/TRANSFER → departure→arrival stations+times; all others → date + time slot + meeting point.
+- Fixed double email in Traveler section: `customer_name` fallback → template guard `{% if customer_name != customer_email %}`.
+- Fixed TimeField rendering ("09:30:00" → "09:30"): `.strftime("%H:%M")` in `orders/utils.py` + `orders/services.py`.
+- Added addon rows (BookingItemAddon) to payment section in both templates.
+- Added coupon_code + payment_method to order email context (`orders/utils.py`).
+- Switched `order.discount` → `order.get_discount` for decimal precision.
+- Fixed `booking_check_url` domain in `carts/tasks.py` (`.com/booking/` → `.co.th/bookings/`).
+- Added idempotency guard in `send_booking_confirmation_email` task.
+- New `bookings/emails/email_design_tokens.md` — design reference for future email templates.
+- Committed `7c8f9c6`, merged to `develop`, pushed.
 
 **Resume point (EXACT) — next session:**
 1. **CS BUILD STEP 1** — Django `cs/` app: `Conversation` + `Message` + `CSOtp` models + composite index `(conversation_id, created_at)` + migration. Reference: [[cs-gap-debate-verdicts]] Build Order Step 1.
@@ -20,7 +27,7 @@
 4. **ISR prod activation (#129)** — deploy BE develop→main + `FRONTEND_URL=www` + `REVALIDATION_SECRET` + restart worker.
 5. **OWNER DECISIONS gate P0:** P0 ×5 ([[cs-p0-measurement-protocol]]); metric+MDE pre-commitment before pilot send.
 
-_(Session #148 block archived → `07-logs/session-history.md`.)_
+_(Session #149 block archived → `07-logs/session-history.md`.)_
 
 ---
 

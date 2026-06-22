@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-22] session-end #150 | email redesign: booking + order confirmation black/white minimalist. Service-category timeline, double-email fix, TimeField format, addons, coupon_code, payment_method, idempotency guard, design tokens. Merged develop `7c8f9c6`.
+
 ## [2026-06-22] session-end #149 | og:image fix (image field singular + absolute fallback + product namespace tags via additionalMetaTags) + getDayTripCoverImage field fix + CSP Google Ads pixel: 23 country TLDs added nginx img-src+connect-src. All shipped prod (frontend 0026784, nginx reloaded).
 
 ## [2026-06-22] session-end #148 | CS Centralization vault audit + gap debate. Supabase schema source-verified: `gmailklook` 503 records 100% email + `gmail12go` 58 records = 561 total. All Supabase gaps closed (source field solved in view, marketing_consent dropped, smarten_order_id dropped, Bookaway=12Go). 3-agent gap debate: 12 verdicts (B1-B6 backend + F1-F6 frontend) + 6 skeptic corrections (S1-S6). Key corrections: poll safe limit=30 widgets not 150, OTP store=PostgreSQL not Redis, server-side cursor not client timestamp, reopen rate limit needed. cs-api-contract.md updated (4 corrections). cs-p0-measurement-protocol.md updated (sample ~35→~450). NEW: [[cs-gap-debate-verdicts]]. No code built — vault only. → [[cs-gap-debate-verdicts]] · [[supabase-ota-booking-store]] · [[cs-api-contract]]
