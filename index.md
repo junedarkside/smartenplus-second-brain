@@ -34,6 +34,10 @@ Global navigation catalog. Updated on every ingest.
 - [[unified-badge-system-pattern]] — Multi-badge card rows: one geometry, differentiate axes (status/category/type) by fill+icon NOT clashing hue; non-ordinal sets get one color + distinct icons; colors from tokens. Twin-component over fork/premature-primitive. From operators card fix #124.
 - [[mobile-search-bar-ux-competitor-research-2026]] — Mobile sticky search bar competitor research + redesign direction. Chip pattern, brand-blue CTA, drop "One Way" label. Branch: `feat/mobile-search-bar-redesign`.
 
+## Knowledge — CS Platform
+
+- [[cs-guest-identity-best-practices]] — **RESEARCH 2026-06-23.** 3-agent debate: Zendesk/Intercom/Crisp + Booking.com/Airbnb/Klook patterns for guest→auth identity. Recommendation: Soft link (Option D) — `related_conversation_id` FK + agent-initiated merge gate. Auto-merge rejected: PDPA Article 18/22 breach + family-email false-positive. Soft link = PDPA-safe, reversible, Phase 4 OTA-ready. [[cs-centralization-review-2026-06-22]]
+
 ## Active Projects
 
 > **Note (2026-06-19):** Items marked **CLOSED / COMPLETED / MERGED** below were archived to `08-archive/` this session. Their `[[wikilinks]]` still resolve (Obsidian finds them in the archive folder). Pending a future pass to relocate these lines into `## Archive`.
