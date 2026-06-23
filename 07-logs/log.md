@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-23] session-end #153 | CS guest 403 (5 rounds): CORS x-cs-guest-token header + stale convId/no-credentials guard. Admin stale status dropdown fixed (RTK derive selectedConversation). All phases live on develop. Deploy pending.
+
 ## [2026-06-22] session-end #152 | SEO/AEO/GEO P0 audit + 4 code fixes (robots.txt AI-crawlers, /ref/ sitemap URL poison, /help canonical, /help/faqs schema guard). CF Block AI Bots toggled off. develop `60d1e1a` awaits prod deploy. 3 atoms extracted.
 
 ## [2026-06-22] session-end #150 | email redesign: booking + order confirmation black/white minimalist. Service-category timeline, double-email fix, TimeField format, addons, coupon_code, payment_method, idempotency guard, design tokens. Merged develop→main `7c8f9c6`, shipped to production.

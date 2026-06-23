@@ -4,6 +4,26 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #152 (archived)
+
+**Updated:** 2026-06-22 (session #152 END)
+
+**Achieved this session (#152) — SEO/AEO/GEO P0 audit + fixes + vault:**
+
+- **3-agent live production audit** of smartenplus.co.th (SEO + AEO + GEO specialists)
+- **r3-synthesis** written; **r4-peer-review** caught 4 factual errors in r3; **r5-live-reaudit** overturned r4 via HTTP verification
+- **Key findings:** Cloudflare "Block AI Bots" = ON (blocking GPTBot/ClaudeBot/Google-Extended + 5 others); `/ref/[type].js:173` ItemList JSON-LD emits `/ref/article/{slug}` URLs (wrong) → poisons sitemap-0.xml; `/help/index.js` apex canonical + missing openGraph.url; `/help/faqs.js` double-brand title + missing og:url + empty FAQPage guard; `/help/faqs` empty in prod = `NEXT_PUBLIC_WP_URL` missing at build time (query works fine live)
+- **P0 code fixes shipped** on branch `fix/p0-seo-geo-2026-06-22` → merged develop `60d1e1a`:
+  - `next-sitemap.config.js`: 8 AI-crawler allow policies (CF frontend backup)
+  - `pages/ref/[type].js:173`: `/ref/article/${slug}` → `/ref/${slug}` (1 line)
+  - `pages/help/index.js`: apex→www canonical + added openGraph.url + removed double-brand title
+  - `pages/help/faqs.js`: removed double-brand title + added openGraph.url + `faqs.length > 0` FAQPage guard
+- **P0-A (CF)**: "Block AI Bots" toggled to "Do not block (off)" in Cloudflare UI — propagation may still be pending
+- **3 vault atoms extracted**: `filter-trips-seo-faq-prop-dropped`, `help-faqs-wp-graphql-broken-prod`, `ref-url-structure-live-vs-code`
+- **3 stale branches pruned** local + remote: `fix/csp-google-ads-domains`, `fix/og-image-and-csp-google-co-th`, `fix/p0-seo-geo-2026-06-22`
+
+---
+
 ## Session #151 (archived)
 
 **Updated:** 2026-06-22 (session #151 END)

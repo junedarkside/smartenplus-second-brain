@@ -4,30 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-22 (session #152 END)
+**Updated:** 2026-06-23 (session #153 END)
 
-**Achieved this session (#152) — SEO/AEO/GEO P0 audit + fixes + vault:**
+**Achieved this session (#153) — CS guest 403 debugging (5 rounds) + admin stale dropdown fix:**
 
-- **3-agent live production audit** of smartenplus.co.th (SEO + AEO + GEO specialists)
-- **r3-synthesis** written; **r4-peer-review** caught 4 factual errors in r3; **r5-live-reaudit** overturned r4 via HTTP verification
-- **Key findings:** Cloudflare "Block AI Bots" = ON (blocking GPTBot/ClaudeBot/Google-Extended + 5 others); `/ref/[type].js:173` ItemList JSON-LD emits `/ref/article/{slug}` URLs (wrong) → poisons sitemap-0.xml; `/help/index.js` apex canonical + missing openGraph.url; `/help/faqs.js` double-brand title + missing og:url + empty FAQPage guard; `/help/faqs` empty in prod = `NEXT_PUBLIC_WP_URL` missing at build time (query works fine live)
-- **P0 code fixes shipped** on branch `fix/p0-seo-geo-2026-06-22` → merged develop `60d1e1a`:
-  - `next-sitemap.config.js`: 8 AI-crawler allow policies (CF frontend backup)
-  - `pages/ref/[type].js:173`: `/ref/article/${slug}` → `/ref/${slug}` (1 line)
-  - `pages/help/index.js`: apex→www canonical + added openGraph.url + removed double-brand title
-  - `pages/help/faqs.js`: removed double-brand title + added openGraph.url + `faqs.length > 0` FAQPage guard
-- **P0-A (CF)**: "Block AI Bots" toggled to "Do not block (off)" in Cloudflare UI — propagation may still be pending
-- **3 vault atoms extracted**: `filter-trips-seo-faq-prop-dropped`, `help-faqs-wp-graphql-broken-prod`, `ref-url-structure-live-vs-code`
-- **3 stale branches pruned** local + remote: `fix/csp-google-ads-domains`, `fix/og-image-and-csp-google-co-th`, `fix/p0-seo-geo-2026-06-22`
+- **Round 1-3:** backend `guest_token` issuance, `X-CS-Guest-Token` ownership checks in `MessageListView`/`MessageCreateView`, `guestTokenRef` stale closure fix in `useChatPolling.js`
+- **Round 4:** CORS — added `x-cs-guest-token` to `CORS_ALLOW_HEADERS` (`settings.py`) — `fix/cs-guest-403-r4` → backend develop `142e712`
+- **Round 5:** stale `conversationId=2` (old guest conv) short-circuiting `handleOpen` for authenticated user — guard fixed to require credentials before skipping re-fetch — `fix/cs-guest-403-r5` → frontend develop `f38edcd`
+- **Admin stale status dropdown:** replaced `selected` object snapshot with `selectedId` + derived `selectedConversation` from live RTK cache — `fix/cs-admin-stale-status` → admin-dashboard develop `75a7912`
+- All CS Phases 1-8 remain complete. Phase 4 (Supabase) still deferred. All 3 repos clean on develop.
 
 **Resume point (EXACT):**
 1. **VERIFY CF propagation** — `curl -s https://www.smartenplus.co.th/robots.txt | grep -A1 "GPTBot"` — expect no `Disallow` lines
-2. **CHECK prod env var** — `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` must exist on prod server BEFORE rebuild or `/help/faqs` stays empty
-3. **DEPLOY develop→main** (frontend `60d1e1a`) — activates P0-B/C/D fixes
-4. **CS BUILD STEP 1** — Django `cs/` app models (from prior session)
+2. **CHECK prod env var** — `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` must exist before rebuild or `/help/faqs` stays empty
+3. **DEPLOY develop→main** (frontend SEO P0 `60d1e1a`, backend `142e712`, admin-dashboard `75a7912`)
+4. **SMOKE-TEST CS guest flow** end-to-end on prod after deploy
 5. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-_(Session #151 block archived → `07-logs/session-history.md`.)_
+_(Session #152 block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -35,7 +29,7 @@ _(Session #151 block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **READY TO BUILD** — Step 1: Django `cs/` app + models. Owner still needed for P0 ×5 decisions before pilot send. | **BUILD READY — Step 1 next session. P0 blocked on owner decisions (×5).** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
+| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **ALL PHASES BUILT (1-3, 5-8)** — 5 guest-403 rounds fixed (CORS + stale convId guard). Admin stale-status dropdown fixed (RTK derive). Phase 4 deferred. **Deploy develop→main + smoke-test pending.** Owner still needed for P0 ×5 decisions before pilot send. | **ALL PHASES BUILT. Deploy + smoke-test pending. P0 blocked on owner decisions (×5).** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
 | **SEARCH-DIALOG-UI-TEST** | Unified search dialog now shows Transportation + Experiences tabs in all 3 hosts. MERGED develop `ceaa003` (#138). **NOT yet manually UI-tested** — verify PRE-DEPLOY: open each dialog (StickySearchBar / HeaderSearchSummary / SearchCover), transport tab unchanged (→ `/trips` + close), experiences tab → `/activities?search=&category=` + dialog closes, mobile full-screen Slide transition. Extracted `TabbedSearchPanel` (`components/search/`); `SearchDialog` static-imports it. | **PRE-DEPLOY verify** #138 | `components/search/TabbedSearchPanel.js`, `SearchDialog.js`, `ExperiencesSearch.js` |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **BE-HOMEPAGE-PRICE** | Homepage "From" prices computed BE-side. **Experiences + airport-routes FIXED #136** (`get_min_price` ADULT+fallback; airport `lowest_price` type-aware via new `route_lowest_price_annotation` helper shared with HomeViewSet). Merged BE develop `cff26b3`. **NEEDS DEPLOY + front-page cache bust.** Remaining OPEN (same bug class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **PARTIAL-CLOSE #136** — homepage DONE (needs deploy); REC-engine OPEN | `products/services.py` (REC), `products/serializers.py:~1105` |
