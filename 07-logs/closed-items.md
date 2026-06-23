@@ -2,6 +2,18 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-06-23 (deploy-blocking verified shipped)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **SEO-P0-DEPLOY** | #p0-seo-geo-2026-06-22 | P0 SEO fixes: sitemap poison, /help canonical, AI crawler unblock, robots.txt bot rules (GPTBot, ClaudeBot, Google-Extended, Perplexity, etc). FE main `6390887`. OAI-SearchBot gap = follow-up, not blocker. |
+| **SEARCH-DIALOG-UI-TEST** | #138 | Unified search dialog tabs (Transportation + Experiences) in all 3 hosts (StickySearchBar/HeaderSearchSummary/SearchCover). Extracted `TabbedSearchPanel`. FE main `ceaa003`. |
+| **REC-CHECKOUT-ZONES** | #133 | Checkout "Complete your trip" rec engine: ESSENTIAL/POPULAR/SIMILAR zones, hybrid fix, price/anchor fix, GTM `add_cart`, mobile cap, seed command. FE `0877d23` + BE `ae31f1f` both on main. Prod seed cleanup pending (low, BD). |
+| **ISR-REVALIDATE-GAP** (deploy portion) | #129/#130 | On-demand ISR: FE `pages/api/revalidate.js` + BE `revalidate_frontend_isr` Celery task + `FRONTEND_URL` www fix. FE main `35c524d`, BE main `4eaaf8d`. Prod env var activation (REVALIDATION_SECRET + worker restart) = MONITOR item, not deploy-blocking. |
+| **BE-HOMEPAGE-PRICE** (homepage portion) | #136 | `get_min_price` ADULT+fallback + `route_lowest_price_annotation` helper for experiences + airport routes. BE main `cff26b3`. REC-engine price bug (`services.py:74`, `serializers.py:~1105`, 6 finder annotations) still open. |
+
+---
+
 | # | Issue | Resolved |
 |---|-------|----------|
 | **REC-PRECOMPUTE-CACHEKEY** | precompute cache key 4-part vs runtime 5-part (`:none` suffix) → zero cache hits → prod CPU-credit drain on 1-vCPU EC2. Was mislabeled "low" #132; was actually the incident root cause. | **CLOSED #139** (2026-06-20). Fixed `7b6a9f8` (`:none` align + cache list not dict), `a59b9b8` (skip-if-fresh), `2c2c799` (every-6h, drop nightly), `bf633ac` (bound sync_pending_charges). Merged develop `e983c3e`, deployed, admin DatabaseScheduler updated. [[precompute-popular-contracts-fix-plan]] |
