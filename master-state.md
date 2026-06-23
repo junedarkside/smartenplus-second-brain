@@ -4,13 +4,19 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #154 end — short audit session)
+**Updated:** 2026-06-23 (session #154 end — full)
 
 **Achieved this session (#154):**
-- **CF robots.txt audit** (read-only) — live https://www.smartenplus.co.th/robots.txt fetched via CF, compared against `next-sitemap.config.js` + `public/robots.txt`
-  - SEO: PASS — /orders, /checkout, /account, /profile, /bookings, /guest-order, /dev all blocked
-  - AEO/GEO: 95% — all major AI bots explicitly allowed (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot, meta-externalagent, Applebot-Extended, Amazonbot, Bytespider)
-  - Issues found (not fixed this session): (1) `public/robots.txt` stale — missing all AI bot entries; (2) `OAI-SearchBot` (SearchGPT) missing from `next-sitemap.config.js`; (3) `Gemini-SearchBot` not listed
+- **CF robots.txt audit** (read-only) — live prod fetched, compared `next-sitemap.config.js` + `public/robots.txt`
+  - SEO: PASS — private pages blocked (/orders/checkout/account/profile/bookings/guest-order/dev)
+  - AEO/GEO: 95% — all major AI bots allowed (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot, meta-externalagent, Applebot-Extended, Amazonbot, Bytespider)
+  - Issues (not fixed): `public/robots.txt` stale; `OAI-SearchBot` missing from `next-sitemap.config.js`
+- **Deploy-blocking closure** — 5 items verified on git main + archived to `07-logs/closed-items.md`:
+  - SEO-P0-DEPLOY → SEO-P1-BACKLOG (open follow-ups remain)
+  - SEARCH-DIALOG-UI-TEST #138 — closed (`ceaa003` FE main)
+  - REC-CHECKOUT-ZONES #133 — closed (`0877d23` FE + `ae31f1f` BE main)
+  - ISR-REVALIDATE-GAP deploy portion — downgraded to MONITOR (`35c524d` FE + `4eaaf8d` BE main)
+  - BE-HOMEPAGE-PRICE homepage portion — closed (`cff26b3` BE main); REC-engine bug stays open
 
 **Workspace (verified by vault-wrapup.sh):**
 - `smartenplus-frontend` develop `f6ba2c4` — clean
@@ -22,10 +28,10 @@
 1. **ISR PROD VERIFY** — confirm `REVALIDATION_SECRET` + `FRONTEND_URL=https://www.smartenplus.co.th` set in prod env + worker recreated; smoke-test: admin contract edit → activity detail page updates within 60s
 2. **FIX robots.txt** — add `OAI-SearchBot` to `next-sitemap.config.js` + delete stale `public/robots.txt`, redeploy FE
 3. **SMOKE-TEST CS guest flow** end-to-end on prod
-4. **BUILD CS chat perf mitigations** — idle backoff + closed-conv poll stop (`fix/cs-chat-perf` off develop in frontend + backend)
+4. **BUILD CS chat perf mitigations** — idle backoff + closed-conv poll stop (`fix/cs-chat-perf` off develop)
 5. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-_(Session #153 full block archived → `07-logs/session-history.md`.)_
+_(Sessions #153 full + #154 partial archived → `07-logs/session-history.md`.)_
 
 ---
 

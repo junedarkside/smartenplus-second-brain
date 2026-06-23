@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #154 partial (archived — superseded by full block in master-state.md)
+
+**Achieved (partial write):**
+- CF robots.txt audit — SEO pass, AEO/GEO 95%, issues found (stale public/robots.txt, OAI-SearchBot missing)
+
+---
+
 ## Session #153 full (archived)
 
 **Updated:** 2026-06-23 (session #153 end — full session)

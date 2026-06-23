@@ -2,7 +2,7 @@
 
 ## [2026-06-23] closed: deploy-blocking items verified shipped — SEO-P0, search-tabs (#138), rec-zones (#133), ISR (#129/#130), homepage price (#136)
 
-## [2026-06-23] session-end #154 | CF robots.txt audit — SEO pass, AEO/GEO 95% (OAI-SearchBot gap found, not fixed)
+## [2026-06-23] session-end #154-full | robots.txt audit (SEO pass, AEO/GEO 95%, OAI-SearchBot gap) + 5 deploy-blocking items verified git main + closed in vault
 
 ## [2026-06-23] session-end #153-full | CS weakpoint audit (3-agent, 19 items → cs-subsystem-weakpoints.md) + surgical High-severity fixes (tokenRef, session race, XOR creds 403, in-flight guard, error surfacing; 16 FE + 7 BE tests green; both repos pushed develop) + branch pruning all 3 repos (FE 8, BE 8+2remote, admin 2)
 
