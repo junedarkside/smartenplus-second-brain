@@ -4,23 +4,39 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #153 continuation END)
+**Updated:** 2026-06-23 (session #153 end — full session)
 
-**Achieved this session (#153 continuation):**
+**Achieved this session (full #153):**
 
-- **3-agent debate** — CS + booking platform best practices for guest→auth identity. Soft Link (Option D) recommended: `related_conversation_id` FK + agent-initiated merge gate. Auto-merge rejected (PDPA Articles 18/22 + family-email false positive). Written to `03-knowledge/cs-guest-identity-best-practices.md`, vault commit `cbd415c`.
-- **CS chat performance analysis** — load math on tiny EC2 (Gunicorn 2-slot bottleneck, 12 req/min per widget). 3 mitigations planned: idle backoff 5s→15s→30s, closed-conv poll stop, workers=2. Safe threshold <15 concurrent chats. **NOT yet built.**
-- **Guest email gate risk** documented — any guest can type any email before OTP (no verification on conv creation). Low risk now; must add OTP gate before Phase 4 OTA booking data shown to agents.
+- **CS weakpoint audit** — 3-agent read-only (Architecture/State + Security/Auth + Error/UX). 19 weakpoints, source-grounded, 3 agent claims pruned. Vault report `01-projects/cs-subsystem-weakpoints.md` + `index.md` + `log.md` + back-link in `cs-centralization-design-concept.md`. Vault pushed.
+- **High-severity CS surgical fixes** (`fix/cs-high-severity-auth-race`, both repos merged develop + pushed):
+  - `tokenRef` — refreshed accessToken now used without remount (`useChatPolling.js`) — mirrors r3's guestTokenRef pattern
+  - Session re-check post-await — aborts dispatch if session changed mid-fetch (`ChatWidget.js`)
+  - Reducer enforces `token` XOR `guestToken` — kills dual-header 403 class at root (`ChatWidget.js`)
+  - `openingRef` in-flight guard — rapid FAB taps → 1 fetch (`ChatWidget.js`)
+  - Inline `BannerAlert` on send/open failure — no more silent dead widget (`ChatPanel.js`)
+  - Backend precedence test: authenticated branch wins over `X-CS-Guest-Token` → 403 on guest conv (`cs/tests/test_guest_token_fix.py`)
+  - 16 FE chat tests green + 7 BE tests green
+- **Branch pruning** (all verified merged before delete):
+  - FE: 8 local deleted → `develop` + `main` only
+  - BE: 8 local + 2 remote deleted → `develop` + `main` only (local + remote)
+  - Admin-dashboard: 2 local deleted → `develop` + `main` only
+
+**Workspace (verified by vault-wrapup.sh):**
+- `smartenplus-frontend` develop `f6ba2c4` — clean
+- `smartenplus-backend` develop `a6099a1` — clean
+- `admin-dashboard` develop `75a7912` — clean
+- `smartenplus-content` master `3756e5b` — clean
 
 **Resume point (EXACT):**
 1. **VERIFY CF propagation** — `curl -s https://www.smartenplus.co.th/robots.txt | grep -A1 "GPTBot"` — expect no `Disallow` lines
 2. **CHECK prod env var** — `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` must exist before rebuild or `/help/faqs` stays empty
-3. **DEPLOY develop→main** (frontend SEO P0 `60d1e1a`, backend `142e712`, admin-dashboard `75a7912`)
+3. **DEPLOY develop→main** (frontend `f6ba2c4`, backend `a6099a1`, admin-dashboard `75a7912`)
 4. **SMOKE-TEST CS guest flow** end-to-end on prod after deploy
 5. **BUILD CS chat perf mitigations** — idle backoff + closed-conv poll stop (`fix/cs-chat-perf` off develop in frontend + backend)
 6. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-_(Sessions #153 + #152 blocks archived → `07-logs/session-history.md`.)_
+_(Sessions #153 continuation + prior blocks archived → `07-logs/session-history.md`.)_
 
 ---
 
