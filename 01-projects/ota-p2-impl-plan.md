@@ -259,5 +259,56 @@ class CsOtaBookingAdmin(admin.ModelAdmin):
 
 ---
 
+---
+
+## Simplicity Audit (2026-06-23)
+
+Grounded against live `cs/models.py`, `cs/admin.py`, `cs/views.py`, `cs/tokens.py`. Lens: no tech debt, no over-engineering, zero blast radius on production.
+
+### Removals — cut from plan before build
+
+| Item | Why cut |
+|---|---|
+| `CsSyncLog` model | 9 fields + migration + admin for manual-batch counters. Replace with `cache.set('cs:ota_sync:last_success', now().isoformat())` — zero migration, zero admin. Promote to model only if Beat is added. |
+| `SUPABASE_PAGE_SIZE` in settings | Config knob for a constant. 561 rows = always 1 page. Hardcode `_PAGE_SIZE = 1000` in `supabase_client.py`. No settings entry. |
+| `ota_booking_url` field | Speculative field for P3b. Migrations are cheap. Add it in P3b if staff-relay UI actually needs it. |
+| `bulk_create(update_conflicts=True)` | Django 4.1+ only, adds batching complexity. 561 rows × `update_or_create` ≈ 0.5s — not a problem. Keep it simple. |
+| `requests.Session()` in `try/finally` | Premature optimization for ≤1 page. Plain `requests.get()` per call. Add session if volume ever crosses 10k rows. |
+| `_resolve_signed_token` extraction | Architect flagged it; P2 doesn't need it. P3a engineer extracts when building the trip endpoint. P2 must not touch `cs/views.py`. |
+| Composite `ordering = ['-booking_date', 'source']` | Extra complexity. Use `ordering = ['-booking_date']` only. |
+
+### Production safety corrections
+
+| Item | Risk | Fix |
+|---|---|---|
+| `config('SUPABASE_ANON_KEY')` with no default | Startup failure if env var absent on deploy | Keep `default=''` in `settings.py`. Validate at call time in `supabase_client.py`: `if not settings.SUPABASE_ANON_KEY: raise ImproperlyConfigured(...)`. Server starts; sync fails cleanly if unconfigured. |
+| `email` in admin `list_display` | PII editable in list view | Add `email` to `readonly_fields` in `CsOtaBookingAdmin`. |
+| `raw_status` in admin `list_display` | Emoji strings may break some admin row renderers | Exclude from `list_display`; accessible in detail view only (same treatment as `passenger_names`). |
+
+### Reuse alignment (must match live patterns)
+
+| Pattern | Live (`cs/models.py`) | Plan must follow |
+|---|---|---|
+| Choice constants | Class-level: `STATUS_OPEN = 'open'` inside model | Same placement in `CsOtaBooking` |
+| `__str__` | `f"ClassName(id, field)"` | `f"CsOtaBooking({self.source}/{self.booking_id}, {self.status})"` |
+| Logger | `logger = logging.getLogger(__name__)` in views | Same in `cs/tasks.py` |
+| `IsAdminOrIsStaff` | Imported in `cs/views.py` | P2 adds no view — no import needed |
+
+### Simplified final scope
+
+```
+cs/models.py          → + CsOtaBooking (14 fields, no CsSyncLog)
+cs/migrations/0003    → CREATE TABLE cs_otabooking only
+cs/supabase_client.py → fetch_ota_bookings() + assert_ota_view_accessible()
+cs/tasks.py           → sync_ota_bookings (update_or_create, cache staleness key)
+cs/management/        → sync_ota_bookings command (thin wrapper)
+cs/admin.py           → CsOtaBookingAdmin
+Smartenplus/settings.py → 2 lines: SUPABASE_URL, SUPABASE_ANON_KEY
+```
+
+Must-fix items still active from correctness review: #1 (autoretry scope), #2 (lock token), #3 (UniqueConstraint), #8 (assert→raise), #9 (passenger_names JSONField). Items #4 (CsSyncLog fields), #5 (Beat), #6 (makemigrations), #10 (ota_booking_url) resolved or removed above.
+
+---
+
 ## Related
 [[ota-portal-overview]] · [[ota-sync-supabase-mirror]] · [[ota-portal-review]] · [[cs-api-contract]] · [[supabase-ota-booking-store]]

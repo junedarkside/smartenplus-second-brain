@@ -1,5 +1,7 @@
 # Second Brain — Operational Log
 
+## [2026-06-23] audit | P2 simplicity audit — 7 items cut (CsSyncLog model, SUPABASE_PAGE_SIZE, ota_booking_url, bulk_create batching, requests.Session, _resolve_signed_token extraction, composite ordering). 3 production-safety corrections (SUPABASE_ANON_KEY validate at call time not startup, email→readonly, raw_status out of list_display). 5 must-fix items from correctness review still active. → [[ota-p2-impl-plan]]
+
 ## [2026-06-23] review | P2 implementation plan 3-agent review — Implementer (full build spec) + Code Reviewer (8 issues: lock token, autoretry too broad, UniqueConstraint, CsSyncLog fields, Beat scope, makemigrations missing, no default on SUPABASE_ANON_KEY, assert→raise) + Architect (2 gaps: ota_booking_url missing, passenger_names type). Verdict: 10 must-fix items before makemigrations. Schema design + sequencing sound. → [[ota-p2-impl-plan]]
 
 ## [2026-06-23] review | OTA portal 3-agent team review complete — Backend (P2+P3b) + Frontend (P3a+P3c) + Architect (all 5 notes). Verdicts: P2 needs-clarification (confirm RLS + pagination), P3a blocked (boarding-info feed unverified + RTK slice undesigned), P3b blocked (`Ticket.created_by` non-nullable FK — highest-priority P1 fix), P3c needs-clarification (SNS unconfirmed, consent UI no spec, `Order.source` missing). 8 open Qs batched for owner. Architect uncovered 2 code facts: `Order.source` = payment-source not booking-channel; `VALID_TRANSITIONS` = Conversation-scoped not Ticket-scoped. Review doc → [[ota-portal-review]].
