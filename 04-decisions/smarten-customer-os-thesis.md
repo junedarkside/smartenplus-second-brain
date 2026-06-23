@@ -10,6 +10,8 @@ metadata:
 
 # Smarten Customer OS Thesis — Decision
 
+> 🔁 **RESCOPED 2026-06-23 → [[booking-command-centre-decision]].** Owner clarified the goal is bigger than this thesis's "CS-centralization spine": a **Unified Booking Command Centre** (control OTA+direct bookings + customer self-service requests + live trip info; chat = sub-channel). New build order (P0-P5, direct-slice first) + 3-tier consent model in the new note. This thesis's verdict (PROCEED-REVISED) + transport/OTA-store facts still hold — read with the rescope.
+
 ## Summary
 
 > ⚠️ **Update 2026-06-20 — conversion thesis REOPENED.** The "demand-side broken at the data layer" basis for the rename/deflation is **superseded**: a standalone Supabase store ([[supabase-ota-booking-store]]) already holds **traveler email/name/phone** for ~80%+ of Klook/12Go/Bookaway bookings (parsed from OTA confirmation emails, reliable). The data r2 said didn't exist **does exist**. The make-or-break narrows from "no data" to **consent + channel-conflict + unproven rebooking economics**. The "CS Centralization" rename and CS-only deflation are **back under review**. Owner direction: keep Supabase separate + **read-sync** to the platform, **add a consent opt-in**. Details below are pre-Supabase and partially superseded where flagged.

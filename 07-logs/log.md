@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-23] session-end #156 | Booking Command Centre rescope — owner clarified CS Centralization goal = unified command centre (OTA+direct bookings, customer self-service requests, chat=sub-channel). 4-advocate debate → direct-only vertical slice first (zero deps, ~80% staff UI exists, validates request taxonomy on safe slice). 3-tier consent model locked (service always no opt-in / WhatsApp+SMS opt-in / marketing gated on P0); service-comms legal risk recalibrated HIGH→LOW (SmartEnPlus = operator running the trip, not poaching; contract check = real gate). Approved plan P0-P5 (`.claude/plans/check-vault-for-cs-clever-bonbon.md`). New [[booking-command-centre-decision]] + thesis rescope banner + index/log. No code written — planning + vault only. Resume: deploy cs-chat-perf [USER ACTION] → Phase 1 direct slice.
+
 ## [2026-06-23] session-end #155 | CS storm mitigations + kill switch — 5-layer mitigation built (backoff+jitter, stop-on-close, 429, DRF throttle, FeatureFlag kill switch). 3 repos on fix/cs-chat-perf. Deploy pending. 2 atoms: feature-flag-kill-switch-pattern + polling-backoff-jitter-pattern.
 
 ## [2026-06-23] closed: deploy-blocking items verified shipped — SEO-P0, search-tabs (#138), rec-zones (#133), ISR (#129/#130), homepage price (#136)

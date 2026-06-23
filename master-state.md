@@ -4,31 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #155 end — full)
+**Updated:** 2026-06-23 (session #156 end — full)
 
-**Achieved this session (#155):**
-- **CS storm risk investigation** — quantified (100 guests = 1,200 req/min = 2× Gunicorn ceiling, prod down in 4 min)
-- **3-agent Scrutinize debate** — 4 critical blockers found + fixed in plan
-- **5-layer mitigation built across 3 repos** (`fix/cs-chat-perf`):
-  - BE: `FeatureFlag` model+migration, kill switch endpoints, `conversation_status` in poll response, `CsPollThrottle` 60/min, Django admin
-  - FE: `useFeatureFlag` (fail-open), `useChatPolling` backoff+jitter+stop-on-close+429, `ChatWidget` kill switch banner
-  - Admin: Settings page toggle + CS inbox warning banner + Settings sidebar nav item
-- **Vault report:** `03-knowledge/cs-guest-storm-investigation.md`
+**Achieved this session (#156):**
+- **CS Centralization RESCOPED → Unified Booking Command Centre** — owner clarified the real goal is bigger than CS chat: ONE command centre controlling OTA(12Go/Klook) + direct bookings; customer self-service (view booking, request change/cancel, live trip info); chat = sub-channel.
+- **4-advocate debate** (staff-centre / customer-portal / request-spine / OTA-sync) over best first slice → verdict: **direct-only vertical slice first** (zero deps, ~80% staff UI already exists, validates request taxonomy on the safe slice).
+- **Consent model locked (3 tiers):** service always (no opt-in) / WhatsApp+SMS opt-in / marketing separate (gated on P0). Service comms recalibrated as defensible (SmartEnPlus = operator running the trip, not poaching).
+- **Approved plan:** `.claude/plans/check-vault-for-cs-clever-bonbon.md` — phased roadmap P0-P5.
+- **Vault:** new decision [[booking-command-centre-decision]]; thesis rescope banner added; index + log updated.
 
 **Workspace:**
-- `smartenplus-frontend` `fix/cs-chat-perf` — committed, deploy pending
+- `smartenplus-frontend` `fix/cs-chat-perf` — committed, deploy pending (unchanged)
 - `smartenplus-backend` `fix/cs-chat-perf` — committed, deploy pending
 - `admin-dashboard` `fix/cs-chat-perf` — committed, deploy pending
-- `smartenplus-content` master `3756e5b` — clean
+- `smartenplus-content` master — clean
 
 **Resume point (EXACT):**
-1. **DEPLOY CS-CHAT-PERF** — merge `fix/cs-chat-perf` → develop → main on all 3 repos; seed `cs_chat` FeatureFlag row in prod DB; smoke-test kill switch toggle in admin dashboard
-2. **ISR PROD VERIFY** — confirm `REVALIDATION_SECRET` + `FRONTEND_URL=https://www.smartenplus.co.th` set in prod env + worker recreated; smoke-test: admin contract edit → activity detail page updates within 60s
-3. **FIX robots.txt** — add `OAI-SearchBot` to `next-sitemap.config.js` + delete stale `public/robots.txt`, redeploy FE
-4. **SMOKE-TEST CS guest flow** end-to-end on prod
-5. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
+1. **DEPLOY CS-CHAT-PERF** — merge `fix/cs-chat-perf` → develop → main on all 3 repos; seed `cs_chat` FeatureFlag row; smoke-test kill switch. **[USER ACTION — owner runs]**
+2. **PHASE 1 — command-centre direct slice** (first build): pin `tickets/serializers.py:55` explicit fields → extend `tickets.Ticket` (`request_type`/`status`/`source`/`requested_value` + migration) → request create+transition endpoints (port `cs/` `VALID_TRANSITIONS` + reopen guard) → admin `pages/command-centre/index.js` queue → FE "Request change" button on `pages/orders`+`pages/bookings`. **Direct only.**
+3. **Phase 2** OTA sync → **Phase 3** customer portal (magic-link + service email + SMS trip-reminder + opt-in WhatsApp/Line) → **Phase 4** spine harden + chat→request bind → **Phase 5** live-trip info + channels + automation.
+4. **Before P3:** confirm 12Go/Klook contracts allow operator→traveler service contact (hard gate, contract law).
 
-_(Sessions #153 full + #154 full + #155 full archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#155 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -38,7 +35,7 @@ _(Sessions #153 full + #154 full + #155 full archived → `07-logs/session-histo
 |---|-------|--------|-------|
 | **CS-CHAT-PERF** | Chat polling storm risk fully investigated + kill switch designed. 100 guests = 1,200 req/min = 2× Gunicorn ceiling. 4 critical blockers surfaced + fixed. **5-layer mitigation BUILT** (stop-on-close, backoff+jitter, 429 handling, DRF throttle, kill switch). BE: `FeatureFlag` model+migration, `conversation_status` in poll, `CsPollThrottle` 60/min. FE: `useFeatureFlag` fail-open, `useChatPolling` backoff. Admin: Settings page toggle + CS inbox banner + sidebar nav. Branch `fix/cs-chat-perf` on all 3 repos. **Needs: merge → develop → main + seed `cs_chat` FeatureFlag row in prod DB.** | **BUILT — deploy + DB seed pending** | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py`, `admin-dashboard/pages/dashboard/settings/` · [[cs-guest-storm-investigation]] |
 | **CS-GUEST-EMAIL-GATE** | Any guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. Approach: create conv freely, hide `CsOtaBooking` results until guest completes OTP. Phase 4 prereq. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView`, `cs/views.py` OTA data endpoint (Phase 4) |
-| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **ALL PHASES BUILT (1-3, 5-8)** — 5 guest-403 rounds fixed (CORS + stale convId guard). Admin stale-status dropdown fixed (RTK derive). Phase 4 deferred. **Deploy develop→main + smoke-test pending.** Owner still needed for P0 ×5 decisions before pilot send. | **ALL PHASES BUILT. Deploy + smoke-test pending. P0 blocked on owner decisions (×5).** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
+| **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **ALL PHASES BUILT (1-3, 5-8)** — 5 guest-403 rounds fixed (CORS + stale convId guard). Admin stale-status dropdown fixed (RTK derive). Phase 4 deferred. **Deploy develop→main + smoke-test pending.** Owner still needed for P0 ×5 decisions before pilot send. | **RESCOPED 2026-06-23 → Unified Booking Command Centre ([[booking-command-centre-decision]]). CS chat built (deploy pending). Phase 1 direct-slice = next build. P3 OTA outbound gated on contract check; Tier-3 marketing gated on P0.** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **BE-HOMEPAGE-PRICE** (REC-engine portion) | Homepage "From" price SHIPPED #136 (`cff26b3` on main). Remaining bug (same class, out of scope #136): REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when a cart item overlaps a backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. Medium. | OPEN #133 — deferred, tracked. | `smartenplus-backend/products/services.py` get_recommendations, [[recommendation-engine-completion-roadmap]] |
