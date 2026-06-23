@@ -4,23 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #153 end — full session)
+**Updated:** 2026-06-23 (session #154 end — short audit session)
 
-**Achieved this session (full #153):**
-
-- **CS weakpoint audit** — 3-agent read-only (Architecture/State + Security/Auth + Error/UX). 19 weakpoints, source-grounded, 3 agent claims pruned. Vault report `01-projects/cs-subsystem-weakpoints.md` + `index.md` + `log.md` + back-link in `cs-centralization-design-concept.md`. Vault pushed.
-- **High-severity CS surgical fixes** (`fix/cs-high-severity-auth-race`, both repos merged develop + pushed):
-  - `tokenRef` — refreshed accessToken now used without remount (`useChatPolling.js`) — mirrors r3's guestTokenRef pattern
-  - Session re-check post-await — aborts dispatch if session changed mid-fetch (`ChatWidget.js`)
-  - Reducer enforces `token` XOR `guestToken` — kills dual-header 403 class at root (`ChatWidget.js`)
-  - `openingRef` in-flight guard — rapid FAB taps → 1 fetch (`ChatWidget.js`)
-  - Inline `BannerAlert` on send/open failure — no more silent dead widget (`ChatPanel.js`)
-  - Backend precedence test: authenticated branch wins over `X-CS-Guest-Token` → 403 on guest conv (`cs/tests/test_guest_token_fix.py`)
-  - 16 FE chat tests green + 7 BE tests green
-- **Branch pruning** (all verified merged before delete):
-  - FE: 8 local deleted → `develop` + `main` only
-  - BE: 8 local + 2 remote deleted → `develop` + `main` only (local + remote)
-  - Admin-dashboard: 2 local deleted → `develop` + `main` only
+**Achieved this session (#154):**
+- **CF robots.txt audit** (read-only) — live https://www.smartenplus.co.th/robots.txt fetched via CF, compared against `next-sitemap.config.js` + `public/robots.txt`
+  - SEO: PASS — /orders, /checkout, /account, /profile, /bookings, /guest-order, /dev all blocked
+  - AEO/GEO: 95% — all major AI bots explicitly allowed (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot, meta-externalagent, Applebot-Extended, Amazonbot, Bytespider)
+  - Issues found (not fixed this session): (1) `public/robots.txt` stale — missing all AI bot entries; (2) `OAI-SearchBot` (SearchGPT) missing from `next-sitemap.config.js`; (3) `Gemini-SearchBot` not listed
 
 **Workspace (verified by vault-wrapup.sh):**
 - `smartenplus-frontend` develop `f6ba2c4` — clean
@@ -29,14 +19,14 @@
 - `smartenplus-content` master `3756e5b` — clean
 
 **Resume point (EXACT):**
-1. **VERIFY CF propagation** — `curl -s https://www.smartenplus.co.th/robots.txt | grep -A1 "GPTBot"` — expect no `Disallow` lines
+1. **FIX robots.txt** — add `OAI-SearchBot` to `next-sitemap.config.js` + sync/delete stale `public/robots.txt`
 2. **CHECK prod env var** — `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` must exist before rebuild or `/help/faqs` stays empty
 3. **DEPLOY develop→main** (frontend `f6ba2c4`, backend `a6099a1`, admin-dashboard `75a7912`)
 4. **SMOKE-TEST CS guest flow** end-to-end on prod after deploy
 5. **BUILD CS chat perf mitigations** — idle backoff + closed-conv poll stop (`fix/cs-chat-perf` off develop in frontend + backend)
 6. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-_(Sessions #153 continuation + prior blocks archived → `07-logs/session-history.md`.)_
+_(Session #153 full block archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -57,7 +47,7 @@ _(Sessions #153 continuation + prior blocks archived → `07-logs/session-histor
 | **ISR-REVALIDATE-GAP** | Admin contract edit not reaching prod `/activities/detail` (revalidate 3600) + `/trips/detail` (revalidate 300). Backend busts Redis correctly (`operators/signals.py:33`); Next.js Pages-Router ISR HTML never told to regen + no `/api/revalidate` route → stale, forever on cold pages (persistent `next_cache` volume). Fix (4 steps, build order in plan): (1) BE `daily_counter`→`.update(F+1)` enabler stops per-view post_save, (2) FE `pages/api/revalidate.js` POSTs `{slug}` owns path map, (3) BE `revalidate_frontend_isr` Celery task + `_trigger_revalidate` signal helper, (4) `REVALIDATION_SECRET` both repos incl GH Actions runtime path. Task no-ops on empty secret. | **IMPLEMENTED #129 → develop** (BE `4eaaf8d`, FE `66d896e`). All 4 steps done + verified (29 tests, manage.py check, ESLint, no-storm proof). **Prod root cause found:** `FRONTEND_URL` was apex → 301→www dropped the POST; fixed default→www (`d37dee3`). **FE SHIPPED #130** (main `35c524d` carries ISR route). **BE ACTIVATION PENDING:** deploy BE develop→main + set prod `FRONTEND_URL=www` + non-empty `REVALIDATION_SECRET` + **restart/recreate worker** (#134: stale worker = `unregistered task`, msgs discarded — [[celery-unregistered-task-stale-worker]]), then smoke-test (see Section 1 resume). | `operators/signals.py`, `operators/tasks.py`, `products/views.py:884`, `Smartenplus/settings.py:373`, FE `pages/api/revalidate.js`, `deploy-ghcr.sh` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: public LIST `ContractSerializer` doesn't expose `tour_duration_days`, so cards can't show "N Days" (detail page works, uses `__all__`). FE-only fix #130 chose omission over false "1 Day". Option B: add `tour_duration_days` to list serializer `fields`. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional follow-up, low priority. FE helper unchanged either way. | `smartenplus-backend/operators/serializers.py` (ContractSerializer), [[category-aware-duration-formatter]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate, pre-existing). Cluster 1: WebP resize/compress algorithm duplicated ~2-3× — `operators/utils.py:process_operator_image` (now parametrized #126b), `dialogue/utils.py:process_review_image` (120KB hardcoded), plus WebP/thumbnail code in `operators/admin.py`. Cluster 2: upload validation (ext whitelist + size) copy-pasted across 5 files (`stations/views.py`, `operators/utils.py`, `operators/views.py`, `pages_info/models.py`, `dialogue/utils.py`) each with own constants → drift risk. Consolidate → one `core/image_utils.py`: `process_image_to_webp(file, *, max_output_size, max_dimensions)` + `validate_upload(file, *, allowed_ext, max_size)`, migrate all callers. | OPEN #126 — dedicated refactor session. High blast radius (operators/dialogue/stations/pages_info), zero user value, all spots work. Do NOT bolt onto feature work. | `operators/utils.py`, `dialogue/utils.py` |
-| **SEO-P0-DEPLOY** | P0 code fixes in frontend develop `60d1e1a`. **Before deploy:** confirm `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` set in prod env. **After deploy:** verify CF robots.txt — `curl -s https://www.smartenplus.co.th/robots.txt \| grep -A1 "GPTBot"` (expect no Disallow). P1 backlog: FAQPage on activity detail (wire `generateFAQSchema` into `getStaticProps` + `DayTripDetailSEO.js`); `FilterTripsSEO.js:41–55` faqMainEntity render; og:locale `th_TH→en_US` in 6 files; TravelAgency schema on About; homepage FAQPage via SEOSection.js; BreadcrumbList + FAQPage on airport transfer; `help/[...slug].js:82` canonical collapse. | **DEPLOY PENDING** | `pages/ref/[type].js`, `pages/help/index.js`, `pages/help/faqs.js`, `next-sitemap.config.js` |
+| **SEO-P0-DEPLOY** | P0 code fixes in frontend develop `60d1e1a`. **Before deploy:** confirm `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` set in prod env. **CF robots.txt verified ✅ 2026-06-23** — AI bots allowed (SEO/AEO/GEO pass). Gap: `OAI-SearchBot` not listed → add to `next-sitemap.config.js` before next deploy; also delete stale `public/robots.txt`. P1 backlog: FAQPage on activity detail (wire `generateFAQSchema` into `getStaticProps` + `DayTripDetailSEO.js`); `FilterTripsSEO.js:41–55` faqMainEntity render; og:locale `th_TH→en_US` in 6 files; TravelAgency schema on About; homepage FAQPage via SEOSection.js; BreadcrumbList + FAQPage on airport transfer; `help/[...slug].js:82` canonical collapse. | **DEPLOY PENDING** | `pages/ref/[type].js`, `pages/help/index.js`, `pages/help/faqs.js`, `next-sitemap.config.js` |
 | **SEO-P2-FIXES** | Remaining P2 SEO fixes from [[seo-audit-reconciliation-2026-06-21]]: (1) twitter:image:alt — add to `pages/_app.js` DefaultSeo + `components/FrontPage/Seo.js` via additionalMetaTags; (2) og:locale policy — document or unify (_app.js:41 th_TH vs blog en_US); (3) meta desc length cap ≤155 chars — `pages/blog/index.js:112`, `utils/blog/seoHelper.js:136`; (4) blog robots dup — DefaultSeo + page both emit robots tag. **#15 og:url CLOSED** (`0aa748c` — Head→NextSeo, clean single tag). | OPEN — optional, low priority | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js` |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell | OPEN. BD task — no eng work. Needs: (1) return route Koh Lipe→Hat Yai Airport, (2) DAY_TOUR contracts at Koh Lipe, (3) SPA_WELLNESS contracts at Koh Lipe. Cross-sell auto-hides until `recommendation_count > 0`. **All 4 FE surfaces already live and verified 2026-06-13. GTM `item_category` + activity-detail accuracy ALSO already shipped (`hooks/useOmisePayment.js:59`+`:144`, `RelatedExperiences.js:7`) — were wrongly listed as open eng work.** Only BD inventory blocks value. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2, not urgent). See [[cross-sell-integration-status-2026-06-13]]. | BD action |
 | **IMG-ALT-DEBUG-1** | Next.js HMR cross-module callback staleness | OPEN. Optional refactor: move mutation call INTO dialog component, drop parent `onSubmit` indirection. Atom: [[nextjs-hmr-cross-module-callback-staleness]]. Low priority. | `pages/routemanagement/operators/images/ImageEditDialog.js`, `index.js:140-178` |
