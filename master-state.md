@@ -4,28 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #156 end — full)
+**Updated:** 2026-06-23 (session #157 end — full)
 
-**Achieved this session (#156):**
-- **CS Centralization RESCOPED → Unified Booking Command Centre** — owner clarified the real goal is bigger than CS chat: ONE command centre controlling OTA(12Go/Klook) + direct bookings; customer self-service (view booking, request change/cancel, live trip info); chat = sub-channel.
-- **4-advocate debate** (staff-centre / customer-portal / request-spine / OTA-sync) over best first slice → verdict: **direct-only vertical slice first** (zero deps, ~80% staff UI already exists, validates request taxonomy on the safe slice).
-- **Consent model locked (3 tiers):** service always (no opt-in) / WhatsApp+SMS opt-in / marketing separate (gated on P0). Service comms recalibrated as defensible (SmartEnPlus = operator running the trip, not poaching).
-- **Approved plan:** `.claude/plans/check-vault-for-cs-clever-bonbon.md` — phased roadmap P0-P5.
-- **Vault:** new decision [[booking-command-centre-decision]]; thesis rescope banner added; index + log updated.
+**Achieved this session (#157):**
+- **P2 OTA booking sync BUILT + VERIFIED** — `CsOtaBooking` model + Celery task (`sync_ota_bookings`) + management command + Supabase client. Queries `gmail12go."Information"` + `gmailklook."Information"` directly (public schema not exposed in PostgREST). 563 fetched, 560 upserted, 3 excluded (sentinel dates), 0 quarantined. Idempotent (second run = 0 upserted). Merged `feat/p2-ota-sync` → `develop` on backend.
+- **CS chat-perf merged to develop on all 3 repos** — `fix/cs-chat-perf` → `develop` on FE + admin-dashboard. All branches pruned.
+- **Stale branches pruned** — FE: `fix/cs-chat-perf` + worktree ref removed. Admin: `fix/cs-chat-perf` local+remote deleted. BE: `feat/p2-ota-sync` + `fix/cs-chat-perf` ready to prune.
 
 **Workspace:**
-- `smartenplus-frontend` `fix/cs-chat-perf` — committed, deploy pending (unchanged)
-- `smartenplus-backend` `fix/cs-chat-perf` — committed, deploy pending
-- `admin-dashboard` `fix/cs-chat-perf` — committed, deploy pending
+- `smartenplus-backend` `develop` — clean (`e227485`)
+- `smartenplus-frontend` `develop` — clean (`56298b0`)
+- `admin-dashboard` `develop` — clean (`78dee2b`)
 - `smartenplus-content` master — clean
 
 **Resume point (EXACT):**
-1. **DEPLOY CS-CHAT-PERF** — merge `fix/cs-chat-perf` → develop → main on all 3 repos; seed `cs_chat` FeatureFlag row; smoke-test kill switch. **[USER ACTION — owner runs]**
-2. **PHASE 1 — command-centre direct slice** (first build): pin `tickets/serializers.py:55` explicit fields → extend `tickets.Ticket` (`request_type`/`status`/`source`/`requested_value` + migration) → request create+transition endpoints (port `cs/` `VALID_TRANSITIONS` + reopen guard) → admin `pages/command-centre/index.js` queue → FE "Request change" button on `pages/orders`+`pages/bookings`. **Direct only.**
-3. **Phase 2** OTA sync → **Phase 3** customer portal (magic-link + service email + SMS trip-reminder + opt-in WhatsApp/Line) → **Phase 4** spine harden + chat→request bind → **Phase 5** live-trip info + channels + automation.
-4. **Before P3:** confirm 12Go/Klook contracts allow operator→traveler service contact (hard gate, contract law).
+1. **SEED FeatureFlag** — run in prod DB: `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);` then smoke-test kill switch toggle in admin settings.
+2. **DEPLOY develop→main** — all 3 repos. Run migrations on BE (`0002_featureflag`, `0003_csotabooking`, `0004_csotabooking_extra_fields`).
+3. **PRUNE BE stale branches** — `git branch -d feat/p2-ota-sync fix/cs-chat-perf` on smartenplus-backend.
+4. **PHASE 1 — command-centre direct slice** (next build): pin `tickets/serializers.py:55` explicit fields → extend `tickets.Ticket` (`request_type`/`status`/`source`/`requested_value` + migration) → request create+transition endpoints → admin queue page → FE "Request change" button.
+5. **Phase 3 OTA portal** (magic-link trip view) — gated on 12Go/Klook contract check for operator→traveler service contact.
 
-_(Sessions #153-#155 archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#156 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -33,7 +32,8 @@ _(Sessions #153-#155 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CS-CHAT-PERF** | Chat polling storm risk fully investigated + kill switch designed. 100 guests = 1,200 req/min = 2× Gunicorn ceiling. 4 critical blockers surfaced + fixed. **5-layer mitigation BUILT** (stop-on-close, backoff+jitter, 429 handling, DRF throttle, kill switch). BE: `FeatureFlag` model+migration, `conversation_status` in poll, `CsPollThrottle` 60/min. FE: `useFeatureFlag` fail-open, `useChatPolling` backoff. Admin: Settings page toggle + CS inbox banner + sidebar nav. Branch `fix/cs-chat-perf` on all 3 repos. **Needs: merge → develop → main + seed `cs_chat` FeatureFlag row in prod DB.** | **BUILT — deploy + DB seed pending** | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py`, `admin-dashboard/pages/dashboard/settings/` · [[cs-guest-storm-investigation]] |
+| **CS-CHAT-PERF** | Chat polling storm risk fully investigated + kill switch designed. 100 guests = 1,200 req/min = 2× Gunicorn ceiling. 4 critical blockers surfaced + fixed. **5-layer mitigation BUILT** (stop-on-close, backoff+jitter, 429 handling, DRF throttle, kill switch). BE: `FeatureFlag` model+migration, `conversation_status` in poll, `CsPollThrottle` 60/min. FE: `useFeatureFlag` fail-open, `useChatPolling` backoff. Admin: Settings page toggle + CS inbox banner + sidebar nav. **Merged → develop all 3 repos 2026-06-23.** Needs: develop→main deploy + seed `cs_chat` FeatureFlag row in prod DB. | **MERGED develop — main deploy + DB seed pending** | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py`, `admin-dashboard/pages/dashboard/settings/` · [[cs-guest-storm-investigation]] |
+| **P2-OTA-SYNC** | `CsOtaBooking` model + Celery task `sync_ota_bookings` + mgmt command `sync_ota_bookings` + `cs/supabase_client.py`. Queries `gmail12go."Information"` + `gmailklook."Information"` via PostgREST `Accept-Profile` header. 563 rows: 560 upserted, 3 excluded (sentinel dates), idempotent. Migrations: `0003_csotabooking` + `0004_csotabooking_extra_fields`. Merged `feat/p2-ota-sync` → `develop` BE 2026-06-23. **Needs: run migrations on prod + schedule Celery beat task.** | **MERGED develop — prod migrate + schedule pending** | `cs/tasks.py`, `cs/supabase_client.py`, `cs/models.py`, `cs/management/commands/sync_ota_bookings.py` · [[ota-sync-supabase-mirror]] |
 | **CS-GUEST-EMAIL-GATE** | Any guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. Approach: create conv freely, hide `CsOtaBooking` results until guest completes OTP. Phase 4 prereq. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView`, `cs/views.py` OTA data endpoint (Phase 4) |
 | **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **ALL PHASES BUILT (1-3, 5-8)** — 5 guest-403 rounds fixed (CORS + stale convId guard). Admin stale-status dropdown fixed (RTK derive). Phase 4 deferred. **Deploy develop→main + smoke-test pending.** Owner still needed for P0 ×5 decisions before pilot send. | **RESCOPED 2026-06-23 → Unified Booking Command Centre ([[booking-command-centre-decision]]). CS chat built (deploy pending). Phase 1 direct-slice = next build. P3 OTA outbound gated on contract check; Tier-3 marketing gated on P0.** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |

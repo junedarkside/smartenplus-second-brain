@@ -4,6 +4,25 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #156 full (archived)
+
+**Updated:** 2026-06-23 (session #156 end — full)
+
+**Achieved this session (#156):**
+- **CS Centralization RESCOPED → Unified Booking Command Centre** — owner clarified the real goal is bigger than CS chat: ONE command centre controlling OTA(12Go/Klook) + direct bookings; customer self-service (view booking, request change/cancel, live trip info); chat = sub-channel.
+- **4-advocate debate** (staff-centre / customer-portal / request-spine / OTA-sync) over best first slice → verdict: **direct-only vertical slice first** (zero deps, ~80% staff UI already exists, validates request taxonomy on the safe slice).
+- **Consent model locked (3 tiers):** service always (no opt-in) / WhatsApp+SMS opt-in / marketing separate (gated on P0). Service comms recalibrated as defensible (SmartEnPlus = operator running the trip, not poaching).
+- **Approved plan:** `.claude/plans/check-vault-for-cs-clever-bonbon.md` — phased roadmap P0-P5.
+- **Vault:** new decision [[booking-command-centre-decision]]; thesis rescope banner added; index + log updated.
+
+**Workspace:**
+- `smartenplus-frontend` `fix/cs-chat-perf` — committed, deploy pending (unchanged)
+- `smartenplus-backend` `fix/cs-chat-perf` — committed, deploy pending
+- `admin-dashboard` `fix/cs-chat-perf` — committed, deploy pending
+- `smartenplus-content` master — clean
+
+---
+
 ## Session #155 full (archived)
 
 **Updated:** 2026-06-23 (session #155 end — full session)
