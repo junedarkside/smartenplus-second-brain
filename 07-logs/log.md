@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-23] session-end #153-cont | CS identity debate (soft-link), perf analysis (idle backoff + closed-conv stop planned), guest email gate risk. No new code commits.
+
 ## [2026-06-23] knowledge | CS guest identity best practices (3-agent debate): Soft link recommended over auto-merge. PDPA + false-positive rationale. Option D: related_conversation_id FK + agent-initiated merge gate.
 
 ## [2026-06-23] session-end #153 | CS guest 403 (5 rounds): CORS x-cs-guest-token header + stale convId/no-credentials guard. Admin stale status dropdown fixed (RTK derive selectedConversation). All phases live on develop. Deploy pending.

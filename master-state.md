@@ -4,24 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #153 END)
+**Updated:** 2026-06-23 (session #153 continuation END)
 
-**Achieved this session (#153) — CS guest 403 debugging (5 rounds) + admin stale dropdown fix:**
+**Achieved this session (#153 continuation):**
 
-- **Round 1-3:** backend `guest_token` issuance, `X-CS-Guest-Token` ownership checks in `MessageListView`/`MessageCreateView`, `guestTokenRef` stale closure fix in `useChatPolling.js`
-- **Round 4:** CORS — added `x-cs-guest-token` to `CORS_ALLOW_HEADERS` (`settings.py`) — `fix/cs-guest-403-r4` → backend develop `142e712`
-- **Round 5:** stale `conversationId=2` (old guest conv) short-circuiting `handleOpen` for authenticated user — guard fixed to require credentials before skipping re-fetch — `fix/cs-guest-403-r5` → frontend develop `f38edcd`
-- **Admin stale status dropdown:** replaced `selected` object snapshot with `selectedId` + derived `selectedConversation` from live RTK cache — `fix/cs-admin-stale-status` → admin-dashboard develop `75a7912`
-- All CS Phases 1-8 remain complete. Phase 4 (Supabase) still deferred. All 3 repos clean on develop.
+- **3-agent debate** — CS + booking platform best practices for guest→auth identity. Soft Link (Option D) recommended: `related_conversation_id` FK + agent-initiated merge gate. Auto-merge rejected (PDPA Articles 18/22 + family-email false positive). Written to `03-knowledge/cs-guest-identity-best-practices.md`, vault commit `cbd415c`.
+- **CS chat performance analysis** — load math on tiny EC2 (Gunicorn 2-slot bottleneck, 12 req/min per widget). 3 mitigations planned: idle backoff 5s→15s→30s, closed-conv poll stop, workers=2. Safe threshold <15 concurrent chats. **NOT yet built.**
+- **Guest email gate risk** documented — any guest can type any email before OTP (no verification on conv creation). Low risk now; must add OTP gate before Phase 4 OTA booking data shown to agents.
 
 **Resume point (EXACT):**
 1. **VERIFY CF propagation** — `curl -s https://www.smartenplus.co.th/robots.txt | grep -A1 "GPTBot"` — expect no `Disallow` lines
 2. **CHECK prod env var** — `NEXT_PUBLIC_WP_URL=https://blog.smartenplus.co.th/graphql` must exist before rebuild or `/help/faqs` stays empty
 3. **DEPLOY develop→main** (frontend SEO P0 `60d1e1a`, backend `142e712`, admin-dashboard `75a7912`)
 4. **SMOKE-TEST CS guest flow** end-to-end on prod after deploy
-5. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
+5. **BUILD CS chat perf mitigations** — idle backoff + closed-conv poll stop (`fix/cs-chat-perf` off develop in frontend + backend)
+6. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-_(Session #152 block archived → `07-logs/session-history.md`.)_
+_(Sessions #153 + #152 blocks archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -29,6 +28,8 @@ _(Session #152 block archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **CS-CHAT-PERF** | Chat polling load on tiny EC2 (Gunicorn 2 slots). 3 mitigations planned: (1) idle backoff `useChatPolling.js` 5s→15s→30s based on `lastMessageAt`; (2) `MessageListView` returns `conv_closed` flag → frontend stops scheduling; (3) `docker-compose-rds.yml` workers=2 (verify RAM first). Safe threshold: <15 concurrent open chats with mitigations. Branch: `fix/cs-chat-perf` off develop (frontend + backend). Vault note pending after build. | **OPEN — build before launch** | `hooks/useChatPolling.js`, `cs/views.py`, `docker-compose-rds.yml` |
+| **CS-GUEST-EMAIL-GATE** | Any guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. Approach: create conv freely, hide `CsOtaBooking` results until guest completes OTP. Phase 4 prereq. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView`, `cs/views.py` OTA data endpoint (Phase 4) |
 | **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **ALL PHASES BUILT (1-3, 5-8)** — 5 guest-403 rounds fixed (CORS + stale convId guard). Admin stale-status dropdown fixed (RTK derive). Phase 4 deferred. **Deploy develop→main + smoke-test pending.** Owner still needed for P0 ×5 decisions before pilot send. | **ALL PHASES BUILT. Deploy + smoke-test pending. P0 blocked on owner decisions (×5).** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
 | **SEARCH-DIALOG-UI-TEST** | Unified search dialog now shows Transportation + Experiences tabs in all 3 hosts. MERGED develop `ceaa003` (#138). **NOT yet manually UI-tested** — verify PRE-DEPLOY: open each dialog (StickySearchBar / HeaderSearchSummary / SearchCover), transport tab unchanged (→ `/trips` + close), experiences tab → `/activities?search=&category=` + dialog closes, mobile full-screen Slide transition. Extracted `TabbedSearchPanel` (`components/search/`); `SearchDialog` static-imports it. | **PRE-DEPLOY verify** #138 | `components/search/TabbedSearchPanel.js`, `SearchDialog.js`, `ExperiencesSearch.js` |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |

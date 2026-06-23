@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #153 (archived)
+
+**Updated:** 2026-06-23 (session #153 END)
+
+**Achieved this session (#153) — CS guest 403 debugging (5 rounds) + admin stale dropdown fix:**
+
+- **Round 1-3:** backend `guest_token` issuance, `X-CS-Guest-Token` ownership checks in `MessageListView`/`MessageCreateView`, `guestTokenRef` stale closure fix in `useChatPolling.js`
+- **Round 4:** CORS — added `x-cs-guest-token` to `CORS_ALLOW_HEADERS` (`settings.py`) — `fix/cs-guest-403-r4` → backend develop `142e712`
+- **Round 5:** stale `conversationId=2` (old guest conv) short-circuiting `handleOpen` for authenticated user — guard fixed to require credentials before skipping re-fetch — `fix/cs-guest-403-r5` → frontend develop `f38edcd`
+- **Admin stale status dropdown:** replaced `selected` object snapshot with `selectedId` + derived `selectedConversation` from live RTK cache — `fix/cs-admin-stale-status` → admin-dashboard develop `75a7912`
+- All CS Phases 1-8 remain complete. Phase 4 (Supabase) still deferred. All 3 repos clean on develop.
+
+---
+
 ## Session #152 (archived)
 
 **Updated:** 2026-06-22 (session #152 END)
