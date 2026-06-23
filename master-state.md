@@ -4,34 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-23 (session #154 end — full)
+**Updated:** 2026-06-23 (session #155 end — full)
 
-**Achieved this session (#154):**
-- **CF robots.txt audit** (read-only) — live prod fetched, compared `next-sitemap.config.js` + `public/robots.txt`
-  - SEO: PASS — private pages blocked (/orders/checkout/account/profile/bookings/guest-order/dev)
-  - AEO/GEO: 95% — all major AI bots allowed (GPTBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot, meta-externalagent, Applebot-Extended, Amazonbot, Bytespider)
-  - Issues (not fixed): `public/robots.txt` stale; `OAI-SearchBot` missing from `next-sitemap.config.js`
-- **Deploy-blocking closure** — 5 items verified on git main + archived to `07-logs/closed-items.md`:
-  - SEO-P0-DEPLOY → SEO-P1-BACKLOG (open follow-ups remain)
-  - SEARCH-DIALOG-UI-TEST #138 — closed (`ceaa003` FE main)
-  - REC-CHECKOUT-ZONES #133 — closed (`0877d23` FE + `ae31f1f` BE main)
-  - ISR-REVALIDATE-GAP deploy portion — downgraded to MONITOR (`35c524d` FE + `4eaaf8d` BE main)
-  - BE-HOMEPAGE-PRICE homepage portion — closed (`cff26b3` BE main); REC-engine bug stays open
+**Achieved this session (#155):**
+- **CS storm risk investigation** — quantified (100 guests = 1,200 req/min = 2× Gunicorn ceiling, prod down in 4 min)
+- **3-agent Scrutinize debate** — 4 critical blockers found + fixed in plan
+- **5-layer mitigation built across 3 repos** (`fix/cs-chat-perf`):
+  - BE: `FeatureFlag` model+migration, kill switch endpoints, `conversation_status` in poll response, `CsPollThrottle` 60/min, Django admin
+  - FE: `useFeatureFlag` (fail-open), `useChatPolling` backoff+jitter+stop-on-close+429, `ChatWidget` kill switch banner
+  - Admin: Settings page toggle + CS inbox warning banner + Settings sidebar nav item
+- **Vault report:** `03-knowledge/cs-guest-storm-investigation.md`
 
-**Workspace (verified by vault-wrapup.sh):**
-- `smartenplus-frontend` develop `f6ba2c4` — clean
-- `smartenplus-backend` develop `a6099a1` — clean
-- `admin-dashboard` develop `75a7912` — clean
+**Workspace:**
+- `smartenplus-frontend` `fix/cs-chat-perf` — committed, deploy pending
+- `smartenplus-backend` `fix/cs-chat-perf` — committed, deploy pending
+- `admin-dashboard` `fix/cs-chat-perf` — committed, deploy pending
 - `smartenplus-content` master `3756e5b` — clean
 
 **Resume point (EXACT):**
-1. **ISR PROD VERIFY** — confirm `REVALIDATION_SECRET` + `FRONTEND_URL=https://www.smartenplus.co.th` set in prod env + worker recreated; smoke-test: admin contract edit → activity detail page updates within 60s
-2. **FIX robots.txt** — add `OAI-SearchBot` to `next-sitemap.config.js` + delete stale `public/robots.txt`, redeploy FE
-3. **SMOKE-TEST CS guest flow** end-to-end on prod
-4. **BUILD CS chat perf mitigations** — idle backoff + closed-conv poll stop (`fix/cs-chat-perf` off develop)
+1. **DEPLOY CS-CHAT-PERF** — merge `fix/cs-chat-perf` → develop → main on all 3 repos; seed `cs_chat` FeatureFlag row in prod DB; smoke-test kill switch toggle in admin dashboard
+2. **ISR PROD VERIFY** — confirm `REVALIDATION_SECRET` + `FRONTEND_URL=https://www.smartenplus.co.th` set in prod env + worker recreated; smoke-test: admin contract edit → activity detail page updates within 60s
+3. **FIX robots.txt** — add `OAI-SearchBot` to `next-sitemap.config.js` + delete stale `public/robots.txt`, redeploy FE
+4. **SMOKE-TEST CS guest flow** end-to-end on prod
 5. **SEO P1 items** — FAQPage on activity detail, FilterTripsSEO faqMainEntity, og:locale fix (6 files), TravelAgency schema on About
 
-_(Sessions #153 full + #154 partial archived → `07-logs/session-history.md`.)_
+_(Sessions #153 full + #154 full + #155 full archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -39,7 +36,7 @@ _(Sessions #153 full + #154 partial archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CS-CHAT-PERF** | Chat polling load on tiny EC2 (Gunicorn 2 slots). 3 mitigations planned: (1) idle backoff `useChatPolling.js` 5s→15s→30s based on `lastMessageAt`; (2) `MessageListView` returns `conv_closed` flag → frontend stops scheduling; (3) `docker-compose-rds.yml` workers=2 (verify RAM first). Safe threshold: <15 concurrent open chats with mitigations. Branch: `fix/cs-chat-perf` off develop (frontend + backend). Vault note pending after build. | **OPEN — build before launch** | `hooks/useChatPolling.js`, `cs/views.py`, `docker-compose-rds.yml` |
+| **CS-CHAT-PERF** | Chat polling storm risk fully investigated + kill switch designed. 100 guests = 1,200 req/min = 2× Gunicorn ceiling. 4 critical blockers surfaced + fixed. **5-layer mitigation BUILT** (stop-on-close, backoff+jitter, 429 handling, DRF throttle, kill switch). BE: `FeatureFlag` model+migration, `conversation_status` in poll, `CsPollThrottle` 60/min. FE: `useFeatureFlag` fail-open, `useChatPolling` backoff. Admin: Settings page toggle + CS inbox banner + sidebar nav. Branch `fix/cs-chat-perf` on all 3 repos. **Needs: merge → develop → main + seed `cs_chat` FeatureFlag row in prod DB.** | **BUILT — deploy + DB seed pending** | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py`, `admin-dashboard/pages/dashboard/settings/` · [[cs-guest-storm-investigation]] |
 | **CS-GUEST-EMAIL-GATE** | Any guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. Approach: create conv freely, hide `CsOtaBooking` results until guest completes OTP. Phase 4 prereq. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView`, `cs/views.py` OTA data endpoint (Phase 4) |
 | **CS-CENTRALIZATION** | Reuse-first stack. **Channel map (final):** customer chat = website widget (polls Django ~5-10s); trip reminders = AWS SNS SMS; confirmations = SES (live); CS team = Telegram internal alert. WhatsApp deferred. Email-OTP `pyotp`+SES+PostgreSQL. Channels dormant. **ARCH DECIDED 2026-06-21:** both-sides-poll-Django, Supabase OUT of message path. Net-new dep: `pyotp` only. **Supabase source-verified 2026-06-22:** 561 total (gmail12go 58 + gmailklook 503, 100% email). All data gaps closed. **Gap debate 2026-06-22 ([[cs-gap-debate-verdicts]]):** poll safe=30 widgets (not 150, 5-10s interval); OTP=PostgreSQL `CSOtp` table (Redis allkeys-lru evicts); server-side `cursor` id not client `since` timestamp; `reopen_count` rate-limit on auto-reopen. **cs-api-contract.md updated** (4 corrections). P0 sample=~450 Klook Confirmed (not ~35). **ALL PHASES BUILT (1-3, 5-8)** — 5 guest-403 rounds fixed (CORS + stale convId guard). Admin stale-status dropdown fixed (RTK derive). Phase 4 deferred. **Deploy develop→main + smoke-test pending.** Owner still needed for P0 ×5 decisions before pilot send. | **ALL PHASES BUILT. Deploy + smoke-test pending. P0 blocked on owner decisions (×5).** | [[cs-gap-debate-verdicts]] · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-centralization-design-concept]] · [[supabase-ota-booking-store]] · [[cs-p0-measurement-protocol]] · [[smarten-customer-os-thesis]] |
 | **SEARCH-UI-POLISH** | Deferred pre-existing nits surfaced by #138 review (NOT regressions). (1) `SearchModeTabs.js` ARIA: no arrow-key nav, no `aria-controls`/`role=tabpanel` association. (2) `seach-button` typo — also in `TransportationSearch.js:248`. (3) `SearchDialog.js` close icon `text-red-500` vs grey theme. (4) `SearchDialog.js` comment "close first then navigate" inverts actual nav-then-close order. (5) Mobile tab-switch height jump (`md:min-h-[120px]` desktop-only, now in `TabbedSearchPanel.js:48`). Low priority. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |

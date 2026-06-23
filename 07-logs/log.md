@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-23] session-end #155 | CS storm mitigations + kill switch — 5-layer mitigation built (backoff+jitter, stop-on-close, 429, DRF throttle, FeatureFlag kill switch). 3 repos on fix/cs-chat-perf. Deploy pending. 2 atoms: feature-flag-kill-switch-pattern + polling-backoff-jitter-pattern.
+
 ## [2026-06-23] closed: deploy-blocking items verified shipped — SEO-P0, search-tabs (#138), rec-zones (#133), ISR (#129/#130), homepage price (#136)
 
 ## [2026-06-23] session-end #154-full | robots.txt audit (SEO pass, AEO/GEO 95%, OAI-SearchBot gap) + 5 deploy-blocking items verified git main + closed in vault

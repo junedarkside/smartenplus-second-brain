@@ -4,7 +4,27 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
-## Session #154 partial (archived — superseded by full block in master-state.md)
+## Session #155 full (archived)
+
+**Updated:** 2026-06-23 (session #155 end — full session)
+
+**Achieved this session (#155):**
+- **CS storm risk investigation** — quantified: 100 guests = 1,200 req/min = 2× Gunicorn ceiling. Marketing email → prod down in 4 min.
+- **3-agent Scrutinize debate** — surfaced 4 critical blockers (missing `conversation_status`, wrong flag permission, no fail-safe, silent unmount UX). All fixed in plan.
+- **5-layer mitigation implemented across 3 repos** (`fix/cs-chat-perf`):
+  - BE: `FeatureFlag` model + migration, kill switch endpoints, `conversation_status` in poll response, `CsPollThrottle` (60/min), Django admin
+  - FE: `useFeatureFlag` hook (fail-open), `useChatPolling` backoff+jitter+stop-on-close+429, `ChatWidget` kill switch banner + dead code fix
+  - Admin: Settings page toggle UI + CS inbox warning banner + Settings sidebar nav item
+- **Vault investigation report** written: `03-knowledge/cs-guest-storm-investigation.md`
+
+**Workspace at session end:**
+- `smartenplus-frontend` `fix/cs-chat-perf` — committed, deploy pending
+- `smartenplus-backend` `fix/cs-chat-perf` — committed, deploy pending
+- `admin-dashboard` `fix/cs-chat-perf` — committed, deploy pending
+
+---
+
+## Session #154 full (archived — from master-state.md)
 
 **Achieved (partial write):**
 - CF robots.txt audit — SEO pass, AEO/GEO 95%, issues found (stale public/robots.txt, OAI-SearchBot missing)
