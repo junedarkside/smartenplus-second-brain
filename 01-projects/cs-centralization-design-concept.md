@@ -166,4 +166,5 @@ Message lifecycle: `COMPOSING → ECHOED(optimistic, opacity 0.5, "Sending…" s
 - [[design-systems]] — token source (`helpers/designSystem.js`)
 - [[cs-centralization-stack]] — build stack (transport: both-sides-poll per [[cs-architecture-decision]])
 - [[cs-centralization-doc-review]] — architecture review (over-engineering flag)
+- [[cs-subsystem-weakpoints]] — current-state gap map; this design's state inventory names the states it finds missing
 - [[smarten-customer-os-thesis]] — parent decision
