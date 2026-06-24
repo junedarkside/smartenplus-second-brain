@@ -312,3 +312,9 @@ Previous audit (`[[design-system-audit-2026-05-31]]`) covered brand color (#3b59
 - [[nextjs-patterns]] — Component patterns (docs/development/CODE_PATTERNS.md)
 - [[design-systems]] — Design system documentation (docs/design/DESIGN_SYSTEM.md)
 - [[design-systems]] — Vault design system knowledge (03-knowledge/design-systems.md)
+
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[mui-tailwind-breakpoint-mismatch-sm-600-vs-640]] — MUI `sm=600` vs Tailwind `sm=640` mismatch. Standardize on Tailwind.
+- [[hybrid-mui-preserve-tailwind-new-styling-strategy]] — hybrid: preserve MUI existing, Tailwind-first new. Semantic tokens ≥5 reuse.
+- [[tailwind-first-spacing-semantic-tokens-only-5plus-reuse]] — Tailwind-first spacing. Tokens only if reused ≥5×.

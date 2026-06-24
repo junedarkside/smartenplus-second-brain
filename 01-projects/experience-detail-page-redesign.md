@@ -1,7 +1,3 @@
-Skill loaded. Now compressing the markdown you provided inline (no file path given, so I'll return compressed text directly).
-
----
-
 # Experience Detail Page — Premium Redesign 2026
 
 **Status:** Planned (not implemented)
@@ -286,3 +282,6 @@ Codebase verified post-spec. Four issues found and resolved above.
 | B | `useGetContractsQuery` has no `exclude_slug` param — current contract silently appears in own Related list | Client-side filter documented in RelatedExperiences.js spec |
 | C | Step 4→5 hard dependency not explicit in sequence — double-sticky breaks silently | Prerequisite language added to Steps 4 and 5 |
 | D | Hash nav has 4 moving parts — "Keep: all refs" too easy to skim past during rewrite | Full breakdown added to DayTripDetailPage.js rewrite notes |
+## Atomized Notes (Extracted 2026-06-24)
+
+- [[nextjs-double-sticky-sidebar-silent-break]] — PremiumBookingPanel wrapping DayTripBookingWidget: nested StickySidebar breaks stickiness silently. One StickySidebar per ancestor chain.

@@ -292,3 +292,10 @@ After all batches: re-run the "Verified clean" checklist from `master-state.md` 
 ## Related
 
 [[payment-deep-review]] · [[payment-deep-review-verification]] · [[omise-api-reference]] · [[payment-checkout-5-principles]] · [[payment-gateway-charge-architecture]] · [[payment-finalize-deep-dive]] · [[payment-exception-catalog]] · [[payment-charge-service-layer]] · [[payment-frontend-flow-mechanics]] · [[payment-qr-polling-mechanics]] · [[refund-flow]] · [[payment-status-enums]] · [[payment-backend-charge-flow]]
+
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[payment-pending-deadlock-heal]] — paid-but-unfinalized deadlock: expire-endpoint recovery + reconcile retry. Manual heal: `payment_finalized_at=None` → finalize.
+- [[payment-polling-fallback-triple]] — triple webhook fallback: QR polling (auto) → payment-status refresh (manual) → staff force-expiry.
+- [[payment-expiry-path-complete]] — complete expiry paths: redirect-method cards (3DS/OTP), off-site banks, PromptPay QR.
+- [[payment-idempotency-key-name-error]] — `IdempotencyKey` without `key=` prefix breaks charge creation. Use `key_{order_id}_{timestamp}`.

@@ -312,3 +312,7 @@ Must-fix items still active from correctness review: #1 (autoretry scope), #2 (l
 
 ## Related
 [[ota-portal-overview]] · [[ota-sync-supabase-mirror]] · [[ota-portal-review]] · [[cs-api-contract]] · [[supabase-ota-booking-store]]
+
+## Atomized Notes (Extracted 2026-06-24)
+
+- [[django-config-validate-at-call-time-not-startup]] — must-fix #7: keep `default=''` so server boots, validate secret at call time (raise `ImproperlyConfigured`), never on import/startup.

@@ -199,3 +199,9 @@ redis-cli -n 0 --scan --pattern "recommendations:*" | xargs redis-cli -n 0 DEL
 - [[precompute-popular-contracts-audit]] — original audit with all bug details
 - [[celery-tasks]] — general Celery patterns
 - [[recommendation-engine-completion-roadmap]] — broader roadmap
+
+## Atomized Notes (Extracted 2026-06-24)
+
+- [[django-queryset-slice-becomes-list-count-typeerror]] — BUG 1: `qs[:100]` is a list; `.count()` → TypeError. Use `list(qs)` + `len()`.
+- [[celery-task-defined-but-not-in-beat-schedule]] — BUG 2: task in `tasks.py` but absent from `celery.py` beat_schedule silently never runs.
+- [[cache-precompute-key-must-match-reader-suffix]] — BUG 3: writer omits `:none` suffix reader appends → zero cache hits. Centralize key construction.

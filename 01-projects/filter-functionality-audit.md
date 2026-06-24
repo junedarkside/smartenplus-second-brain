@@ -324,3 +324,9 @@ This is logically correct. If `filterData.amenities` contains `{extra_type: "AME
 ## Overall Verdict
 
 **3 P0 bugs share a single root cause — all checkbox-based filters (Operators, Conditions, Amenities) are functionally broken for multi-select, deselection, and visual feedback.** String-based filters (Transport, Times) work correctly. The filter architecture and AND logic are sound; fixing the three P0 issues would restore full filter functionality. Estimated fix time: 30–60 minutes in `DynamicCheckboxItem.js`, `DynamicFilterList.js`, and `FilterTrip.js`.
+
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[filter-status-checkbox-onclick-inversion]] — BUG-001: onClick vs onChange for status checkbox. State inversion each render.
+- [[filter-array-includes-reference-bug]] — BUG-002: `Array.includes()` ref-equality fails on objects. Filter always false.
+- [[filter-text-stringify-bug]] — BUG-003: object to text filter → `[object Object]`. Text search never matches.

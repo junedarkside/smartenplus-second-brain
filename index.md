@@ -526,3 +526,20 @@ Global navigation catalog. Updated on every ingest.
 - [[station-type-airport-first-class-iata-restriction]] — `station_type='airport'` is first-class. IATA code restricted to airport only. Data quality guarantee.
 - [[transfer-category-vs-airport-filter-independence]] — `TRANSFER` service_category and airport filter independent. Airport stations can be transfers, piers, buses. Filter type ≠ category.
 
+
+## Vault Optimization — Atomized Notes (2026-06-24)
+
+### Design System
+- [[design-system-missing-tokens-gaps]] — 4 system token gaps (no circular radius, OPACITY unmapped, no sub-caption sizes, no error-tinted bg) forcing invented values.
+
+### Django / Backend
+- [[django-queryset-slice-becomes-list-count-typeerror]] — `qs[:N]` is a list; `.count()` → TypeError. Use `list(qs)` + `len()`.
+- [[celery-task-defined-but-not-in-beat-schedule]] — task in `tasks.py` absent from `celery.py` beat_schedule silently never runs.
+- [[cache-precompute-key-must-match-reader-suffix]] — writer/reader must build identical cache keys incl. optional `:none` suffix; centralize key construction.
+- [[django-config-validate-at-call-time-not-startup]] — keep `default=''` so server boots; validate secret at call time, never on import/startup.
+
+### React / Next.js Frontend
+- [[nextjs-double-sticky-sidebar-silent-break]] — nested StickySidebar breaks stickiness silently; one per ancestor chain.
+- [[react-api-field-access-null-guard-pattern]] — guard `arr?.length` before `Math.max(...arr.map())`; optional-chain nested API objects.
+- [[nextjs-magic-link-token-query-param-strip-after-validation]] — ephemeral token = query param not route segment; validate SSR; `router.replace` strips token.
+- [[rtk-query-dedicated-basequery-per-credential]] — different credential (OTA Bearer vs session) needs dedicated RTK slice/baseQuery.

@@ -200,3 +200,7 @@ Components audited:
 - [[design-system-phase1-migration]] — token completion tasks
 - [[design-systems]] — token inventory
 - `helpers/designSystem.js` — source of truth
+
+## Atomized Notes (Extracted 2026-06-24)
+
+- [[design-system-missing-tokens-gaps]] — 4 system-level token gaps (no circular radius, OPACITY unmapped, no sub-caption sizes, no error-tinted bg) that force invented values. Track as token-layer todo, not per-component.

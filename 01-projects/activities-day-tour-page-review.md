@@ -244,3 +244,8 @@ Removing `ACCOMMODATION`, `TRANSPORTATION`, `TRANSFER` means existing URLs with 
 
 ## Related Atoms (Extracted 2026-06-13)
 - [[contract-fk-icontains-or-fallback]] — M2M+FK icontains search with `.distinct()`; cache-clear on deploy
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[activities-day-tour-stored-xss-page-crash]] — stored XSS + crash: `dangerouslySetInnerHTML` no DOMPurify + `parseISO(null)`.
+- [[activities-day-tour-star-rating-aria-broken]] — star rating ARIA broken: multiple `aria-pressed=true`.
+- [[activities-day-tour-wrong-router-import]] — wrong router import breaks "Write Review" CTA. `next/router` → `next/navigation`.

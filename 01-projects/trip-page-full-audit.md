@@ -210,3 +210,7 @@ The full audit focused on crashes, XSS, dead code, perf. Currency rendering was 
 ## Related
 
 [[currency-context-price-rendering-rule]] | [[slidecalendar2-farecalendar-prop-pattern]] | [[trip-filter-modal-audit]] | [[frontend-architecture-audit]] | [[trip-search-results-redesign-2026-06-14]] | [[trip-search-below-fold-redesign-2026-06-15]]
+
+## Atomized Notes (Extracted 2026-06-24)
+
+- [[react-api-field-access-null-guard-pattern]] — C2/C3/C4/M2 crashes: guard `arr?.length` before `Math.max(...arr.map())`; optional-chain nested API objects. Existing currency atoms already extracted: [[currency-context-price-rendering-rule]], [[slidecalendar2-farecalendar-prop-pattern]].

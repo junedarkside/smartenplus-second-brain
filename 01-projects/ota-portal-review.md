@@ -236,3 +236,8 @@ P2 BE (sync + admin queue) and early P3a FE scaffolding (route, token parse, loa
 
 ## Related
 [[ota-portal-overview]] · [[ota-sync-supabase-mirror]] · [[ota-magic-link-trip-view]] · [[ota-request-submit]] · [[ota-consent-comms-pii-gate]] · [[booking-command-centre-decision]] · [[cs-api-contract]] · [[cs-consent-gdpr-model]] · [[supabase-ota-booking-store]]
+
+## Atomized Notes (Extracted 2026-06-24)
+
+- [[nextjs-magic-link-token-query-param-strip-after-validation]] — P3a/Q10: ephemeral token = query param (`?token=`), not route segment; validate in getServerSideProps; `router.replace` strips token (log/referrer leak).
+- [[rtk-query-dedicated-basequery-per-credential]] — P3a: OTA Bearer token ≠ session accessToken → dedicated RTK slice/baseQuery, don't overload prepareHeaders.

@@ -211,3 +211,8 @@ Full AT-1 implementation spec (card design, serializer expansion, null safety, v
 - [[airport-transfer-redesign-2026]] — frontend implementation notes
 - [[smartenplus-product-positioning]] — platform category strategy
 - [[carousel-design-standard]] — Embla carousel patterns, breakpoints, gap values
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[django-is-actived-vs-is-active-field-name-gotcha]] — Django field typo `is_actived` vs `is_active`. Silent filter failure.
+- [[station-type-airport-first-class-iata-restriction]] — `station_type='airport'` first-class; IATA code airport-only.
+- [[transfer-category-vs-airport-filter-independence]] — `TRANSFER` category and airport filter independent.

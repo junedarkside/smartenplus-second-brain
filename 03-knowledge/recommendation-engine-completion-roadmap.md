@@ -267,3 +267,12 @@ External doc: when cart has multiple items, use ONE primary-intent anchor + ONE 
 
 ## Related
 [[people-also-book-checkout-audit]] [[cross-sell-placement-strategy]] [[recommendation-type-selection-by-service-category]] [[recommendation-anchor-first-transport-rule]] [[activity-to-activity-cross-sell]] [[django-m2m-location-join-recommendations]]
+
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[recommendation-hybrid-rec-type-non-transport-dead-end]] — `hybrid` rec_type kills non-transport recs when `trip.route` null.
+- [[recommendation-flat-score-finder-pollution]] — flat-score pollution: package=90/activity=80/alt=70 overrides.
+- [[recommendation-anchor-priority-experience-before-transport]] — anchor priority inversion: TRANSPORTATION=100 > DAY_TOUR=80 wrong.
+- [[recommendation-mincartprice-floor-suppresses-complementary]] — `minCartPrice` floor suppresses cheap add-ons.
+- [[recommendation-booked-count-default-10-inflates-new-contracts]] — `booked_count` default=10 inflates new contracts.
+- [[fake-scarcity-eu-us-trust-risk-policy]] — EU/US trust risk: fabricated scarcity violates consumer-protection laws.

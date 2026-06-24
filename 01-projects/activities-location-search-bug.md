@@ -239,3 +239,7 @@ const handleInputChange = (event, newInputValue) => {
 - [[adr-experiences-nav-category-filtering]] — Category URL param filter chain (working correctly, unrelated to this bug)
 - [[stations]] — `Location` model: `location_name`, `city`, `province`, `normalized_location_name` fields
 - [[backend-architecture]] — `products` app = public API; `operators` app = admin API
+## Atomized Notes (Extracted 2026-06-22)
+
+- [[activities-location-search-backend-text-id-type-mismatch]] — backend expects UUID, frontend sends text. `products/views.py:446`.
+- [[activities-location-search-inputvalue-divergence]] — `inputValue` never emits to parent. Add `onLocationSelect` callback.
