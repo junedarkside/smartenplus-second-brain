@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-24] session-end #160 | Booking detail page full CSS consistency redesign — card margins (mx-2 md:mx-3 xl:mx-0), double-padding removed (9 files), section labels unified (h2 outside card, small+semibold+gray-700), gap/padding scale normalized, header nav row aligned to card edges + py-2 breathing room, PostBookingRecommendations title/padding fixed. FE develop c14708a.
+
 ## [2026-06-24] session-end #159 | P1e complete (ChangeRequestsSection built + redesigned), header buttons labeled Get Ticket/Request Change, mobile responsive flex-wrap header fix, BE debug logs removed
 
 ## [2026-06-23] session-end #157 | P2 OTA booking sync built + all branches merged to develop — `CsOtaBooking` model + Celery task + Supabase client querying gmail12go+gmailklook schemas directly (PostgREST public schema not exposed). 563 rows fetched, 560 upserted, idempotent. `feat/p2-ota-sync` → develop (BE). `fix/cs-chat-perf` → develop (FE + admin-dashboard). Stale branches pruned all repos. Next: develop→main deploy + prod DB migrations + seed FeatureFlag + schedule Celery beat.

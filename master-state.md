@@ -4,28 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-24 (session #159)
+**Updated:** 2026-06-24 (session #160)
 
-**Achieved this session (#159):**
-- **P1e COMPLETE** — BE `CustomerTicketViewSet` extended with `ListModelMixin` + `booking_id` filter (`tickets/views.py`). FE `getCustomerRequests` RTK query + `ChangeRequestsSection.js` (clean white cards, human-language status labels, MUI icons, 60s poll). Debug logs cleaned from both repos.
-- **Header buttons labeled** — `BookingDetailMain.js` header: `Tooltip+IconButton` → `Button` with labels "Get Ticket" (blue contained, `COLORS.brand.primary`) + "Request Change" (outlined gray). Branch `fix/header-buttons-labeled` → merged FE develop `1e56a28`.
-- **Mobile responsive header** — `flex-wrap` + `shrink-0` on button group + `min-w-0` on info div. Buttons wrap to row 2 on 375px, single row on desktop. Branch `fix/header-responsive` → merged FE develop `90392ba`.
-- **BE debug logs removed** — `[DEBUG] logger.warning` calls removed from `CustomerTicketViewSet`. Branch `fix/rm-debug-logs` → merged BE develop `6b10123`.
+**Achieved this session (#160):**
+- **Booking detail page full CSS/layout redesign** — width, margin, padding, gap, title, color consistency audit vs trip detail + homepage reference. 10 fix branches merged to FE develop.
+- **Card margin system** — all white cards switched to `mx-2 md:mx-3 xl:mx-0` (matches trip detail `ContentCard`). Removed double-padding: outer section wrappers had `md:px-3` stacked on top of card `md:mx-3` = 24px at md. Now flat 12px. 9 files fixed.
+- **Section labels unified** — all `h2` labels outside card, `TYPOGRAPHY_SCALE.small + semibold + text-gray-700`. Fixed: `JourneyTimeline` bold→semibold, `ChangeRequestsSection` p→h2, `PostBookingRecommendations` hardcoded `text-xl`→token, removed icon from recommendations title, baggage h5 subheadings tokenized.
+- **Gap/padding scale** — page `gap-3`→`gap-2`, `Information.js` `p-3`→`p-4`, `ChangeRequestsSection` + `PostBookingRecommendations` `p-4 md:p-6`→flat `p-4`, internal list gaps unified to `gap-2`.
+- **Header nav row alignment** — switched from wrapper `md:px-3` to nav element `mx-2 md:mx-3 xl:mx-0` so back btn + booking ID + action buttons align with card edges at all breakpoints. Added `py-2` for vertical breathing room.
+- **PostBookingRecommendations** ("Plan Your Next Adventure") — double padding removed, title moved outside card, description tokenized.
 
 **Workspace:**
-- `smartenplus-backend` `develop` → `6b10123`
-- `smartenplus-frontend` `develop` → `90392ba`
-- `admin-dashboard` `develop` → `036b55e`
+- `smartenplus-backend` `develop` → `6b10123` (unchanged)
+- `smartenplus-frontend` `develop` → `c14708a`
+- `admin-dashboard` `develop` → `036b55e` (unchanged)
 - `smartenplus-content` `master` → `3756e5b` (unchanged)
 
 **Resume point (EXACT):**
 1. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
 2. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
 3. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
-4. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked in comment. Add `CsOtaBooking` branch when contract ready.
+4. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
 5. **Phase 3 OTA portal** — gated on 12Go/Klook contract check.
 
-_(Sessions #153-#158 archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#159 archived → `07-logs/session-history.md`.)_
 
 ---
 

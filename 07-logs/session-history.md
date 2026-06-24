@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #159 — 2026-06-24
+
+**Achieved:**
+- P1e COMPLETE — BE `CustomerTicketViewSet` + `getCustomerRequests` RTK query + `ChangeRequestsSection.js` (white cards, human-language status, MUI icons, 60s poll)
+- Header buttons labeled — "Get Ticket" (blue contained) + "Request Change" (outlined gray)
+- Mobile responsive header — `flex-wrap` + `shrink-0` + `min-w-0`. Wraps on 375px.
+- BE debug logs removed from `CustomerTicketViewSet`
+
+**Workspace:** FE develop `90392ba` · BE develop `6b10123` · admin `036b55e`
+
+---
+
 ## Session #158 (archived)
 
 **Updated:** 2026-06-24 (session #158)
