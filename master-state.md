@@ -4,30 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-24 (session #160)
+**Updated:** 2026-06-24 (session #161)
 
-**Achieved this session (#160):**
-- **Booking detail page full CSS/layout redesign** — width, margin, padding, gap, title, color consistency audit vs trip detail + homepage reference. 10 fix branches merged to FE develop.
-- **Card margin system** — all white cards switched to `mx-2 md:mx-3 xl:mx-0` (matches trip detail `ContentCard`). Removed double-padding: outer section wrappers had `md:px-3` stacked on top of card `md:mx-3` = 24px at md. Now flat 12px. 9 files fixed.
-- **Section labels unified** — all `h2` labels outside card, `TYPOGRAPHY_SCALE.small + semibold + text-gray-700`. Fixed: `JourneyTimeline` bold→semibold, `ChangeRequestsSection` p→h2, `PostBookingRecommendations` hardcoded `text-xl`→token, removed icon from recommendations title, baggage h5 subheadings tokenized.
-- **Gap/padding scale** — page `gap-3`→`gap-2`, `Information.js` `p-3`→`p-4`, `ChangeRequestsSection` + `PostBookingRecommendations` `p-4 md:p-6`→flat `p-4`, internal list gaps unified to `gap-2`.
-- **Header nav row alignment** — switched from wrapper `md:px-3` to nav element `mx-2 md:mx-3 xl:mx-0` so back btn + booking ID + action buttons align with card edges at all breakpoints. Added `py-2` for vertical breathing room.
-- **PostBookingRecommendations** ("Plan Your Next Adventure") — double padding removed, title moved outside card, description tokenized.
+**Achieved this session (#161):**
+- **Booking detail CSS consistency continued** — mobile icon-only buttons, traveling date moved to header, section labels `px-2 md:px-3 xl:px-0` aligned to card edges, Passenger Details label simplified, dead `showBookingInfo` state + unused import removed
+- All changes on branch `fix/booking-header-mobile-icon-buttons` — NOT yet merged to develop
 
 **Workspace:**
 - `smartenplus-backend` `develop` → `6b10123` (unchanged)
-- `smartenplus-frontend` `develop` → `c14708a`
+- `smartenplus-frontend` `fix/booking-header-mobile-icon-buttons` → `dcba31d`
 - `admin-dashboard` `develop` → `036b55e` (unchanged)
 - `smartenplus-content` `master` → `3756e5b` (unchanged)
 
 **Resume point (EXACT):**
-1. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
-2. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
-3. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
-4. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
-5. **Phase 3 OTA portal** — gated on 12Go/Klook contract check.
+1. **MERGE `fix/booking-header-mobile-icon-buttons` → develop** — FE branch ready, not yet merged
+2. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
+3. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
+4. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
+5. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
 
-_(Sessions #153-#159 archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#160 archived → `07-logs/session-history.md`.)_
 
 ---
 

@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-24] session-end #161 | Booking detail CSS cont. — mobile icon-only buttons, traveling date → header subtitle, section label px aligned (px-2 md:px-3 xl:px-0), Passenger Details label simplified, dead state removed. Branch fix/booking-header-mobile-icon-buttons dcba31d — merge to develop pending.
+
 ## [2026-06-24] session-end #160 | Booking detail page full CSS consistency redesign — card margins (mx-2 md:mx-3 xl:mx-0), double-padding removed (9 files), section labels unified (h2 outside card, small+semibold+gray-700), gap/padding scale normalized, header nav row aligned to card edges + py-2 breathing room, PostBookingRecommendations title/padding fixed. FE develop c14708a.
 
 ## [2026-06-24] session-end #159 | P1e complete (ChangeRequestsSection built + redesigned), header buttons labeled Get Ticket/Request Change, mobile responsive flex-wrap header fix, BE debug logs removed

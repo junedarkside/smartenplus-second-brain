@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #160 — 2026-06-24
+
+**Achieved:**
+- **Booking detail page CSS/layout consistency audit + redesign** — full pass vs trip detail + homepage reference
+- Mobile icon-only buttons — "Get Ticket" + "Request Change" icon-only on xs, text+icon on sm+. MUI `Button` kept (not `IconButton`) to preserve contained/outlined hierarchy. Tooltip + aria-label. Branch `fix/booking-header-mobile-icon-buttons`
+- Traveling date moved to header subtitle — removed from Passenger Details section label row (wrong semantic level). Now sits below Booking ID row as `text-xs text-gray-500` line aligned to card edges via `mx-2 md:mx-3 xl:mx-0`
+- Passenger Details label simplified — stripped one-off `justify-between` wrapper, now matches all other section labels (standalone h2, no paired right-aligned content)
+- Section label `px-2` → `px-2 md:px-3 xl:px-0` — labels were 8px at md/xl while cards were 12px/0px. All 6 section labels fixed to align with card left edges
+- Dead code removed — `showBookingInfo` state (always false) + unused `formatDate` import in `BookingDetail/index.js`
+- Redundant `px-2` removed from traveling date div (mx- already handles positioning)
+- All commits on `fix/booking-header-mobile-icon-buttons` — not yet merged to develop
+
+**Workspace:** FE `fix/booking-header-mobile-icon-buttons` `dcba31d` · BE develop `6b10123` · admin `036b55e`
+
+---
+
 ## Session #159 — 2026-06-24
 
 **Achieved:**
