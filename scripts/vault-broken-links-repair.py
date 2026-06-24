@@ -35,6 +35,7 @@ RULES = [
     ("[[payment-promptpay-no-webhook-on-expiry]]", "[[promptpay-no-webhook-on-expiry]]"),
     ("[[webp-og-image-1200x630]]", "[[og-image-1200x630-webp]]"),
     # orphan redirects to real notes
+    ("[[r2-skeptic-review]]", "[[customer-os-thesis-r2-skeptic-review]]"),  # alias -> full filename (8 linkers, false orphan)
     ("[[thailand-platform-analysis]]", "[[business-development-thailand-platform-analysis]]"),
     ("[[thailand-bundle-architecture]]", "[[business-development-thailand-bundle-architecture]]"),
     ("[[zeitrip-mvp-product-spec]]", "[[business-development-zeitrip-mvp]]"),

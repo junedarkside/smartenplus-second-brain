@@ -58,4 +58,4 @@ Fields: `first_name`, `last_name`, `id_or_passport`, `datofbirth`.
 - [[backend-architecture]]
 - [[billings]] (BillingProfile for guest checkout)
 - [[bookings]] (BookingPassengerDetail)
-- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] (Account = planned Customer identity)
+- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[customer-os-thesis-r2-skeptic-review]] (Account = planned Customer identity)

@@ -98,4 +98,4 @@ Removing Supabase:
 - [[cs-centralization-stack]] — the reviewed stack ADR (D1-D6 apply)
 - [[smarten-customer-os-thesis]] — P1b row (D1, D4 apply)
 - [[supabase-ota-booking-store]] — dual-role section (D4 applies to cs-schema relay only; gmail12go OTA store unaffected)
-- [[r2-skeptic-review]] — prior red-team
+- [[customer-os-thesis-r2-skeptic-review]] — prior red-team

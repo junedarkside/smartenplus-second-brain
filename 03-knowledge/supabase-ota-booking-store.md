@@ -82,7 +82,7 @@ Klook is the **dominant source** (503 vs 58) with **perfect email coverage** —
 
 ## Why it matters
 
-Traveler-contact asset r2 ([[r2-skeptic-review]]) assumed didn't exist. Supabase fills that gap — real traveler email/phone confirmed — so conversion mechanic r2 called "unsolvable" **already runs** as ops tool. Conversion thesis **reopened**.
+Traveler-contact asset r2 ([[customer-os-thesis-r2-skeptic-review]]) assumed didn't exist. Supabase fills that gap — real traveler email/phone confirmed — so conversion mechanic r2 called "unsolvable" **already runs** as ops tool. Conversion thesis **reopened**.
 
 ## Gaps / risks (r2 findings that still stand)
 
@@ -105,6 +105,6 @@ Contacts confirmed (80%+). Measure "do captured travelers rebook direct." See [[
 ## Related
 
 - [[smarten-customer-os-thesis]] — decision this reopens
-- [[r2-skeptic-review]] — the data blocker this overturns
+- [[customer-os-thesis-r2-skeptic-review]] — the data blocker this overturns
 - [[cs-centralization-stack]] — reuse-first stack (Supabase read-sync added)
 - [[accounts]] — Django Customer-identity base this would seed

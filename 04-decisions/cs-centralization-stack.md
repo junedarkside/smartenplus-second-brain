@@ -33,7 +33,7 @@ The CS Centralization messaging track ships on **what is already installed**, pl
 
 ## Context
 
-r2 red-team ([[r2-skeptic-review]]) showed the originally-implied realtime path (Daphne/Channels in-process) is not committable as scoped: a 256MB co-resident memory cliff, a `CHANNEL_LAYERS` host that points at a different redis than prod, and a session-based WS auth scheme while the API is JWT. A first research pass recommended a Centrifugo sidecar. **User constraints override that:** no over-engineering, reuse existing components/functions/modules, must not affect existing functionality or production, free/low-cost. A new Go process + compose service + nginx ws-route fails the "no new infra / no prod impact" bar. This ADR records the reuse-first stack instead.
+r2 red-team ([[customer-os-thesis-r2-skeptic-review]]) showed the originally-implied realtime path (Daphne/Channels in-process) is not committable as scoped: a 256MB co-resident memory cliff, a `CHANNEL_LAYERS` host that points at a different redis than prod, and a session-based WS auth scheme while the API is JWT. A first research pass recommended a Centrifugo sidecar. **User constraints override that:** no over-engineering, reuse existing components/functions/modules, must not affect existing functionality or production, free/low-cost. A new Go process + compose service + nginx ws-route fails the "no new infra / no prod impact" bar. This ADR records the reuse-first stack instead.
 
 ## Decision
 
@@ -144,7 +144,7 @@ Retry: `max_retries=5`, `countdown=120 * (2 ** retry)` — copy `products/tasks.
 - [[cs-architecture-decision]] — transport reversal (both-sides-poll, supersedes the Supabase relay section)
 - [[cs-centralization-doc-review]] — source-verification; D1-D6 corrections applied here
 - [[cs-centralization-review-2026-06-22]] — cluster integrity review
-- [[r2-skeptic-review]] — flagged the realtime track; source of the constraints
+- [[customer-os-thesis-r2-skeptic-review]] — flagged the realtime track; source of the constraints
 - [[r3-leader-synthesis]] — parent review synthesis
 
 Research sources: [Centrifugo](https://github.com/centrifugal/centrifugo) · [Soketi](https://github.com/soketi/soketi) · [PyOTP](https://pyauth.github.io/pyotp/) · [SES OTP cost](https://prelude.so/blog/10-best-email-otp-providers-for-verification)

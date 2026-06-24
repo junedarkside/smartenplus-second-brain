@@ -6,11 +6,15 @@ from pathlib import Path
 
 VAULT = Path("/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus project")
 WIKILINK_RE = re.compile(r"\[\[([^\]\n]+?)\]\]")
-DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+# leading date-prefix only (2026-06-14-foo.md); date-suffixes (foo-2026-06-14.md) are legit version stamps
+DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}([-.]|$)")
 
 def main():
     md_files = sorted(VAULT.rglob("*.md"))
-    md_files = [p for p in md_files if ".git" not in p.parts and ".obsidian" not in p.parts]
+    # exclude caveman-compress backups (08-archive/.originals/*.original.md) — not content notes
+    md_files = [p for p in md_files
+                if ".git" not in p.parts and ".obsidian" not in p.parts
+                and ".originals" not in p.parts and not p.name.endswith(".original.md")]
 
     basenames = {p.stem for p in md_files}
     # account for `.original.md` files - their stem is "foo.original"

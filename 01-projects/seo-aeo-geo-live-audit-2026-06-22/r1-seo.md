@@ -41,7 +41,7 @@ Templates sampled (sitemap = 107 URLs):
 
 ### SEO-3 · `og:locale = th_TH` site-wide — **P1** (recurring)
 - Hardcoded in `pages/_app.js:41` DefaultSeo `openGraph.locale: 'th_TH'`. Reproduces on homepage, trip detail, route listing, activity detail, help, airport-transfer. Content is **English**; only `/blog` (`en_US`) is correct.
-- Prior flags: [[trip-detail-seo-aeo-geo-audit-2026-06-16]], [[homepage-seo-performance-deep-review]]. Still not fixed at the shared source.
+- Prior flags: [[trip-detail-seo-aeo-geo-audit-2026-06-16]], [[homepage-seo-performance-deep-review-2026-05-21]]. Still not fixed at the shared source.
 - Fix: one-line change `_app.js:41` → `locale: 'en_US'` (or remove — Google infers from content/lang). Single fix clears 6 templates.
 
 ### SEO-4 · Double brand in titles — **P1**
@@ -90,7 +90,7 @@ Templates sampled (sitemap = 107 URLs):
 - ✅ Hero `<img>` preloaded with `fetchpriority="high"`; `next/image` responsive srcset; lazy-load + explicit width/height + `decoding="async"`.
 - ✅ `preconnect`/`dns-prefetch` to GTM + both S3 buckets; font woff2 + CSS preloaded.
 - ⚠️ 71 inline `<style>` blocks (MUI `sx`/styled-jsx) — bloats HTML, not blocking.
-- ⚠️ Prior baseline [[website-audit-full-2026-06-06]] Speed 40/100 → appears improved, but JS bundle (98 req) is the persistent risk. See [[core-web-vitals-budget]].
+- ⚠️ Prior baseline [[website-audit-full-2026-06-06-overview]] Speed 40/100 → appears improved, but JS bundle (98 req) is the persistent risk. See [[core-web-vitals-budget]].
 
 ## Structured data inventory (validity spot-check)
 
@@ -119,4 +119,4 @@ Schema quality is **strong on product pages** (trip/route) and **absent on hub p
 - [[r1-aeo]] · [[r1-geo]] · [[r3-synthesis]]
 - [[canonicalization-audit-checklist]] · [[frontend-url-canonical-www-not-apex]] · [[seo-canonical-getsiteurl-pattern]]
 - [[trip-detail-seo-aeo-geo-audit-2026-06-16]] · [[operator-detail-seo-aeo-geo-audit]] · [[trip-route-page-seo-aeo-geo-audit]]
-- [[gsc-crawled-not-indexed-investigation-2026-06-05]] · [[core-web-vitals-budget]] · [[website-audit-full-2026-06-06]]
+- [[gsc-crawled-not-indexed-investigation-2026-06-05]] · [[core-web-vitals-budget]] · [[website-audit-full-2026-06-06-overview]]

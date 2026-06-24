@@ -134,4 +134,4 @@ Steps 1-4 deploy independently. Steps 5-7 require Steps 2+3 live first.
 - [ ] Should kill switch toggle fire Telegram alert to ops? Reuse `send_telegram_message` (`carts/utils.py:690`).
 
 ## Related
-[[cs-architecture-decision]] · [[cs-gap-debate-verdicts]] · [[cs-subsystem-weakpoints]]
+[[cs-architecture-decision]] · [[cs-gap-debate-verdicts]] · [[cs-subsystem-weakpoints]] · [[feature-flag-kill-switch-pattern]]

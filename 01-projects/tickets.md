@@ -42,4 +42,4 @@ Attaches to any Django model. `BookingItem` has GenericRelation via `ticket` fie
 ## Related
 - [[bookings]] (BookingItem GenericRelation noted)
 - [[accounts]] (User model for created_by/assigned_to)
-- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[r2-skeptic-review]] (Ticket = CS extend asset)
+- [[smarten-customer-os-thesis]] · [[cs-centralization-stack]] · [[customer-os-thesis-r2-skeptic-review]] (Ticket = CS extend asset)
