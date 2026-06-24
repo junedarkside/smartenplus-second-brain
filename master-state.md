@@ -4,26 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-24 (session #161)
+**Updated:** 2026-06-24 (session #162)
 
-**Achieved this session (#161):**
-- **Booking detail CSS consistency continued** — mobile icon-only buttons, traveling date moved to header, section labels `px-2 md:px-3 xl:px-0` aligned to card edges, Passenger Details label simplified, dead `showBookingInfo` state + unused import removed
-- All changes on branch `fix/booking-header-mobile-icon-buttons` — NOT yet merged to develop
+**Achieved this session (#162):**
+- **Branch prune** — FE: 21 merged branches deleted (local + remote). BE: 5 merged branches deleted (local + remote). Repos clean.
+- **FE develop pushed** → `46e4550` (`fix/booking-header-mobile-icon-buttons` merged)
 
 **Workspace:**
-- `smartenplus-backend` `develop` → `6b10123` (unchanged)
-- `smartenplus-frontend` `fix/booking-header-mobile-icon-buttons` → `dcba31d`
-- `admin-dashboard` `develop` → `036b55e` (unchanged)
-- `smartenplus-content` `master` → `3756e5b` (unchanged)
+- `smartenplus-backend` `develop` → `6b10123`
+- `smartenplus-frontend` `develop` → `46e4550`
+- `admin-dashboard` `develop` → `036b55e`
+- `smartenplus-content` `master` → `3756e5b`
 
 **Resume point (EXACT):**
-1. **MERGE `fix/booking-header-mobile-icon-buttons` → develop** — FE branch ready, not yet merged
-2. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
-3. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
-4. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
-5. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
+1. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
+2. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
+3. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
+4. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
+5. **Phase 3 OTA portal** — gated on 12Go/Klook contract check.
 
-_(Sessions #153-#160 archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#161 archived → `07-logs/session-history.md`.)_
 
 ---
 
