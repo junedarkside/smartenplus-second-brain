@@ -4,29 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-24 (session #163)
+**Updated:** 2026-06-24 (session #164)
 
-**Achieved this session (#163) — vault optimization (vault-only, no code repos touched):**
-- **Cost optimization** — master-state Section 2 pruned (79→62 lines: CLOSED #139 → closed-items, deploy-pending cluster consolidated, 27 low-pri nits → new [[low-priority-backlog]]); root `log.md` rotated (752→355 lines, 160 May entries → `07-logs/log-2026-05.md`); 9 atoms extracted from 6 over-cap notes + 7 deferred 2026-06-22 parent back-refs finished; fixed leaked skill-output corruption in experience-detail-page-redesign.
-- **Orphan + stale cleanup** — revealed "71 orphans" was a `vault-stats.py` artifact (65 `.original.md` backups); wired 5 pattern orphans into index.md; fixed `r2-skeptic` alias (8 links via repair-script rule); archived 2 superseded trip-detail reviews; fixed `vault-stats.py` exclusions. **Orphans 71→0 (true), broken 37→34, date-prefix 50→1.**
-- **Rate-review r1-ux verdict** — KEEP (archived + linked, not stray); full code verification **8/9 findings resolved**; **FE-22 = NOT a bug** (backend `ReviewViewSet.get_object` resolves by `booking_item__slug`, designed with frontend 2024-12-14); **UX-03 (P2, 5-star `useState(5)` default) confirmed still open**; overview status de-staled IN PROGRESS→COMPLETED.
-- 4 vault commits: `da58b04` · `bdc3da2` · `9f1f0bc` · `d2b9968`.
+**Achieved this session (#164) — admin-dashboard command-centre UX + ticket lifecycle:**
+- **Command-centre confirm dialog** — replaced inline resolve/reject chips with `ActionDialog`. All statuses show Review/View button. Terminal tickets read-only dialog. 6 commits on `feat/command-centre-confirm-dialog`.
+- **Status filter fix** — backend `TicketViewSet.get_queryset` ignored `?request_status=` param. 1-line fix. Branch `fix/command-centre-status-filter` · `c6ab62d`.
+- **Booking Ref column** — was showing ticket UUID (`79161858…`), now shows `content_object.slug` (`PSF9498724`). Commit `371d61d`.
+- **View order button** — dialog now has "View order" → `/orders/[order_id]` for cancel/refund workflow. Backend: exposed `order_id` on `BookingItemSerializer` (tickets app). Commits `ae90d5f` (BE) · `2276449` (FE).
+- **Ticket lifecycle auto-sync** — `resolved/rejected` on command-centre now atomically sets `ticket_status=Completed` + `is_resolved=True`. Backend branch `fix/ticket-status-sync-on-terminal` · `e7d2e03`.
+- **Ticket editor locked on Completed** — `SelectAction` + action panels greyed (`pointer-events:none`). `request_status` chip in header. "Reopen ticket" button. Commit `8c2ee63`.
+- 4-agent debate (UX/UI + BizDev + Frontend + Ops) — unanimous Option A for lifecycle design.
 
-**Workspace (unchanged — vault-only session):**
-- `smartenplus-backend` `develop` → `6b10123`
+**Workspace:**
+- `smartenplus-backend` `fix/ticket-status-sync-on-terminal` → `e7d2e03`
 - `smartenplus-frontend` `develop` → `46e4550`
-- `admin-dashboard` `develop` → `036b55e`
+- `admin-dashboard` `feat/command-centre-confirm-dialog` → `8c2ee63`
 - `smartenplus-content` `master` → `3756e5b`
 
 **Resume point (EXACT):**
-1. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
-2. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
-3. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
-4. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
-5. **Phase 3 OTA portal** — gated on 12Go/Klook contract check.
-6. *(Optional)* **UX-03** — rate-review 5-star default (P2): force explicit selection (`useState(0)` + `rating===0` submit gate + "Tap to rate" helper). Frontend branch task — fix or accept.
+1. **OPEN PRs** — browser only (gh not installed): admin-dashboard `feat/command-centre-confirm-dialog` → develop; BE `fix/command-centre-status-filter` → develop; BE `fix/ticket-status-sync-on-terminal` → develop.
+2. **DEPLOY develop→main** — Order: BE first (run migrations) → FE → admin-dashboard.
+3. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
+4. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
+5. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked. Add `CsOtaBooking` branch when contract ready.
+6. *(Optional)* **UX-03** — rate-review 5-star default (P2).
 
-_(Sessions #153-#162 archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#163 archived → `07-logs/session-history.md`.)_
 
 ---
 

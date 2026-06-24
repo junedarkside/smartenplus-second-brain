@@ -43,6 +43,7 @@ Global navigation catalog. Updated on every ingest.
 
 - [[cs-guest-storm-investigation]] — **SCRUTINIZE 2026-06-23.** Storm risk (100 guests = 2× Gunicorn ceiling), 4 critical blockers in kill switch design, 5-layer mitigation plan, FeatureFlag model + Django admin kill switch. 8-step build order. [[cs-architecture-decision]] · [[cs-gap-debate-verdicts]]
 - [[cs-guest-identity-best-practices]] — **RESEARCH 2026-06-23.** 3-agent debate: Zendesk/Intercom/Crisp + Booking.com/Airbnb/Klook patterns for guest→auth identity. Recommendation: Soft link (Option D) — `related_conversation_id` FK + agent-initiated merge gate. Auto-merge rejected: PDPA Article 18/22 breach + family-email false-positive. Soft link = PDPA-safe, reversible, Phase 4 OTA-ready. [[cs-centralization-review-2026-06-22]]
+- [[command-centre-ticket-booking-flow]] — **RESEARCH 2026-06-24 · quick-win DONE.** 3-agent audit of `/dashboard/command-centre`. Requested change = `requested_value` JSON (NOT `description`, which is just `str(requested_value)` — vault note corrected after scrutiny). Now surfaced in Review dialog (commit `4dee15c`). Booking-update has TWO disconnected systems: legacy `/tickets/[id]` (`TicketViewSet.partial_update` mutates date/passengers) vs command-centre (`RequestStatusViewSet` sets status flag only). Resolving still does NOT apply the change. Security: order-detail endpoint public. Open recs: bridge resolve→booking · lock order-detail auth.
 
 ## Active Projects
 

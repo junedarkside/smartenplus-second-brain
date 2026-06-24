@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-24] session-end #164 | admin-dashboard command-centre UX + ticket lifecycle auto-sync — confirm dialog, status filter fix, booking ref column, View order button, request_status→ticket_status auto-sync on resolve/reject, editor lock + reopen, 4-agent debate unanimous Option A. 8 commits across 2 BE branches + 1 FE branch.
+
 ## [2026-06-24] session-end #163 | Vault optimization (vault-only, no code repos touched) — (1) cost: master-state Section 2 pruned 79→62, root log.md rotated 752→355 (May→log-2026-05), 9 atoms + 7 deferred back-refs, fixed leaked skill-output; (2) orphan/stale: "71 orphans" was vault-stats.py artifact (65 .original.md backups), wired 5 patterns, fixed r2-skeptic alias (8 links), archived 2 superseded reviews, fixed stats exclusions — orphans 71→0 true; (3) rate-review r1-ux verdict: KEEP (archived+linked), 8/9 findings resolved, FE-22 not-a-bug (backend booking_item__slug lookup, designed 2024-12-14), UX-03 P2 open. 4 commits da58b04/bdc3da2/9f1f0bc/d2b9968.
 
 ## [2026-06-24] session-end #162 | Branch prune — FE 21 branches + BE 5 branches deleted (local+remote). FE develop 46e4550.
