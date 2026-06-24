@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-24] session-end #163 | Vault optimization (vault-only, no code repos touched) — (1) cost: master-state Section 2 pruned 79→62, root log.md rotated 752→355 (May→log-2026-05), 9 atoms + 7 deferred back-refs, fixed leaked skill-output; (2) orphan/stale: "71 orphans" was vault-stats.py artifact (65 .original.md backups), wired 5 patterns, fixed r2-skeptic alias (8 links), archived 2 superseded reviews, fixed stats exclusions — orphans 71→0 true; (3) rate-review r1-ux verdict: KEEP (archived+linked), 8/9 findings resolved, FE-22 not-a-bug (backend booking_item__slug lookup, designed 2024-12-14), UX-03 P2 open. 4 commits da58b04/bdc3da2/9f1f0bc/d2b9968.
+
 ## [2026-06-24] session-end #162 | Branch prune — FE 21 branches + BE 5 branches deleted (local+remote). FE develop 46e4550.
 
 ## [2026-06-24] session-end #161 | Booking detail CSS cont. — mobile icon-only buttons, traveling date → header subtitle, section label px aligned (px-2 md:px-3 xl:px-0), Passenger Details label simplified, dead state removed. Branch fix/booking-header-mobile-icon-buttons dcba31d — merge to develop pending.
