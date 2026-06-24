@@ -6,7 +6,11 @@
 
 ## Status
 
-IN PROGRESS — Release 1 shipped (P0-1/P0-2/P0-3 + P1-1/P1-2). Sprint 1 (P1-3 through P1-9) pending. FE-22 deferred (API shape unverified).
+> ✅ **Re-verified 2026-06-24** — full code check of r2-skeptic Top-5 + key P1s vs current `smartenplus-frontend`: **7 of 9 resolved** (FE-01 XSS `DOMPurify` at [reviewSlug].js:137, FE-03 parseISO null guards BookingReviewList.js:41-42/110, FE-14 `next/router` import + no relative pushes, UX-10 `maskEmail(user_info.email)` ReviewList.js:55, FE-02 `role="radiogroup"`/`radio`+`aria-checked` RateAndReviewForm.js:129-134, UX-14 `router.push('/rate-review')` submit-review:152, FE-09/UX-17 `getSiteUrl()` dynamic canonical). **Residual (still open):** FE-22 (P1 — post-submit redirect to `/rate-review/${booking_item_slug}` while guard checks `slug` → `/rate-review/undefined`; deferred, API shape unverified) + UX-03 (P2 — `useState(5)` default at RateAndReviewForm.js:22; submit disabled l.328 lacks `rating===0`). Audit ~90% implemented.
+
+**COMPLETED** (R1 + Sprint 1 shipped, verified 2026-06-24).
+
+~~IN PROGRESS — Release 1 shipped (P0-1/P0-2/P0-3 + P1-1/P1-2). Sprint 1 (P1-3 through P1-9) pending. FE-22 deferred (API shape unverified).~~
 
 ## Key Files
 
