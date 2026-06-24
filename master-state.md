@@ -4,33 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-24 (session #158)
+**Updated:** 2026-06-24 (session #159)
 
-**Achieved this session (#158):**
-- **BE stale branches PRUNED** — `feat/p2-ota-sync` (local+remote) + `fix/cs-chat-perf` (local) deleted from `smartenplus-backend`
-- **P0 serializer pin** — `tickets/serializers.py` + `bookings/serializers.py` both `fields='__all__'` → explicit list. Branch `fix/ticket-serializer-pin` → merged FE develop `fde86fc`
-- **P1a model** — `Ticket` extended: `request_type`, `request_status`, `source`, `requested_value` + migration `0004`. Branch `feat/p1a-ticket-model` → merged BE develop `d54f49c`
-- **P1b endpoints** — `CustomerTicketViewSet` (POST, IsAuthenticated, ownership check) + `RequestStatusViewSet` (PATCH, IsAdminOrIsStaff, state machine). Branch `feat/p1b-ticket-endpoints` → merged BE develop `073eb96`
-- **P1c admin queue** — Command Centre page (`pages/dashboard/command-centre/index.js`) + nav item + RTK endpoints. Branch `feat/p1c-command-centre-admin` → merged admin-dashboard develop `036b55e`
-- **P1d FE button** — "Request Change" `EditOutlinedIcon` button + `RequestChangeModal` + `useSubmitChangeRequestMutation`. Branch `feat/p1d-request-change-button` → merged FE develop `12e0b25`
-- **fix/completed-guard** — button also disabled for completed bookings (`isCompleted = isConfirmed && traveling_date < today`). Merged FE develop `797765c`
-- **P1e design decided** — 3-agent debate (UX/UI + Design + Frontend). Decision: `ChangeRequestsSection` card below `<BookingDetail>`, polling 60s while active, `BadgeChip` status colors, 4px left accent bar. Recorded in vault.
+**Achieved this session (#159):**
+- **P1e COMPLETE** — BE `CustomerTicketViewSet` extended with `ListModelMixin` + `booking_id` filter (`tickets/views.py`). FE `getCustomerRequests` RTK query + `ChangeRequestsSection.js` (clean white cards, human-language status labels, MUI icons, 60s poll). Debug logs cleaned from both repos.
+- **Header buttons labeled** — `BookingDetailMain.js` header: `Tooltip+IconButton` → `Button` with labels "Get Ticket" (blue contained, `COLORS.brand.primary`) + "Request Change" (outlined gray). Branch `fix/header-buttons-labeled` → merged FE develop `1e56a28`.
+- **Mobile responsive header** — `flex-wrap` + `shrink-0` on button group + `min-w-0` on info div. Buttons wrap to row 2 on 375px, single row on desktop. Branch `fix/header-responsive` → merged FE develop `90392ba`.
+- **BE debug logs removed** — `[DEBUG] logger.warning` calls removed from `CustomerTicketViewSet`. Branch `fix/rm-debug-logs` → merged BE develop `6b10123`.
 
 **Workspace:**
-- `smartenplus-backend` `develop` — `073eb96` (P1b merged)
-- `smartenplus-frontend` `develop` — `797765c` (completed-guard fix)
-- `admin-dashboard` `develop` — `036b55e` (P1c merged)
-- `smartenplus-content` master — clean
+- `smartenplus-backend` `develop` → `6b10123`
+- `smartenplus-frontend` `develop` → `90392ba`
+- `admin-dashboard` `develop` → `036b55e`
+- `smartenplus-content` `master` → `3756e5b` (unchanged)
 
 **Resume point (EXACT):**
-1. **BUILD P1e** — BE: add `ListModelMixin` + `booking_id` filter to `CustomerTicketViewSet`. FE: `getCustomerRequests` query in `bookingsApi.js` + new `ChangeRequestsSection.js` component + wire into `BookingDetailMain.js`. See plan file.
-2. **DEPLOY develop→main** — user handles. Order: BE first (migrations `0002/0003/0004` CS + `0004` ticket fields) → FE → admin-dashboard.
-3. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
-4. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
-5. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked in comment. Add `CsOtaBooking` branch when contract ready.
-6. **Phase 3 OTA portal** — gated on 12Go/Klook contract check.
+1. **DEPLOY develop→main** — user handles. Order: BE first (run migrations) → FE → admin-dashboard.
+2. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
+3. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
+4. **Phase 2 OTA** — `CustomerTicketViewSet.create()` seam already marked in comment. Add `CsOtaBooking` branch when contract ready.
+5. **Phase 3 OTA portal** — gated on 12Go/Klook contract check.
 
-_(Sessions #153-#157 archived → `07-logs/session-history.md`.)_
+_(Sessions #153-#158 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -38,7 +33,6 @@ _(Sessions #153-#157 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **P1e-REQUEST-STATUS** | Customer request status section on booking detail page. Design decided (3-agent debate). BE: add `ListModelMixin` + `booking_id` filter to `CustomerTicketViewSet`. FE: `getCustomerRequests` RTK query + `ChangeRequestsSection.js` card (4px left accent bar, `BadgeChip` per status, 60s poll while active, hide if no requests). Visual: pending=amber, in_review=blue, resolved=green, rejected=red. Place below `<BookingDetail>`, above post-booking recs. | **PLANNED — build next** | `tickets/views.py`, `store/api/bookingsApi.js`, `components/bookings/ChangeRequestsSection.js`, `BookingDetailMain.js` |
 | **CS-CHAT-PERF** | Chat polling storm risk fully investigated + kill switch designed. 100 guests = 1,200 req/min = 2× Gunicorn ceiling. 4 critical blockers surfaced + fixed. **5-layer mitigation BUILT** (stop-on-close, backoff+jitter, 429 handling, DRF throttle, kill switch). BE: `FeatureFlag` model+migration, `conversation_status` in poll, `CsPollThrottle` 60/min. FE: `useFeatureFlag` fail-open, `useChatPolling` backoff. Admin: Settings page toggle + CS inbox banner + sidebar nav. **Merged → develop all 3 repos 2026-06-23. BE stale branches pruned 2026-06-24.** Needs: develop→main deploy + seed `cs_chat` FeatureFlag row in prod DB. | **MERGED develop — main deploy + DB seed pending** | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py`, `admin-dashboard/pages/dashboard/settings/` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | `CsOtaBooking` model + Celery task `sync_ota_bookings` + mgmt command `sync_ota_bookings` + `cs/supabase_client.py`. Queries `gmail12go."Information"` + `gmailklook."Information"` via PostgREST `Accept-Profile` header. 563 rows: 560 upserted, 3 excluded (sentinel dates), idempotent. Migrations: `0003_csotabooking` + `0004_csotabooking_extra_fields`. Merged `feat/p2-ota-sync` → `develop` BE 2026-06-23. **Needs: run migrations on prod + schedule Celery beat task.** | **MERGED develop — prod migrate + schedule pending** | `cs/tasks.py`, `cs/supabase_client.py`, `cs/models.py`, `cs/management/commands/sync_ota_bookings.py` · [[ota-sync-supabase-mirror]] |
 | **CS-GUEST-EMAIL-GATE** | Any guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. Approach: create conv freely, hide `CsOtaBooking` results until guest completes OTP. Phase 4 prereq. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView`, `cs/views.py` OTA data endpoint (Phase 4) |

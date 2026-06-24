@@ -4,6 +4,28 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #158 (archived)
+
+**Updated:** 2026-06-24 (session #158)
+
+**Achieved this session (#158):**
+- **BE stale branches PRUNED** — `feat/p2-ota-sync` (local+remote) + `fix/cs-chat-perf` (local) deleted from `smartenplus-backend`
+- **P0 serializer pin** — `tickets/serializers.py` + `bookings/serializers.py` both `fields='__all__'` → explicit list. Branch `fix/ticket-serializer-pin` → merged FE develop `fde86fc`
+- **P1a model** — `Ticket` extended: `request_type`, `request_status`, `source`, `requested_value` + migration `0004`. Branch `feat/p1a-ticket-model` → merged BE develop `d54f49c`
+- **P1b endpoints** — `CustomerTicketViewSet` (POST, IsAuthenticated, ownership check) + `RequestStatusViewSet` (PATCH, IsAdminOrIsStaff, state machine). Branch `feat/p1b-ticket-endpoints` → merged BE develop `073eb96`
+- **P1c admin queue** — Command Centre page (`pages/dashboard/command-centre/index.js`) + nav item + RTK endpoints. Branch `feat/p1c-command-centre-admin` → merged admin-dashboard develop `036b55e`
+- **P1d FE button** — "Request Change" `EditOutlinedIcon` button + `RequestChangeModal` + `useSubmitChangeRequestMutation`. Branch `feat/p1d-request-change-button` → merged FE develop `12e0b25`
+- **fix/completed-guard** — button also disabled for completed bookings (`isCompleted = isConfirmed && traveling_date < today`). Merged FE develop `797765c`
+- **P1e design decided** — 3-agent debate (UX/UI + Design + Frontend). Decision: `ChangeRequestsSection` card below `<BookingDetail>`, polling 60s while active, `BadgeChip` status colors, 4px left accent bar. Recorded in vault.
+
+**Workspace:**
+- `smartenplus-backend` `develop` — `073eb96` (P1b merged)
+- `smartenplus-frontend` `develop` — `797765c` (completed-guard fix)
+- `admin-dashboard` `develop` — `036b55e` (P1c merged)
+- `smartenplus-content` master — clean
+
+---
+
 ## Session #156 full (archived)
 
 **Updated:** 2026-06-23 (session #156 end — full)

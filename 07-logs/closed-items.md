@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-06-24 (session #159)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **P1e-REQUEST-STATUS** | session #159 | BE `ListModelMixin` + `booking_id` filter on `CustomerTicketViewSet` (`tickets/views.py`). FE `getCustomerRequests` RTK query + `ChangeRequestsSection.js` (white cards, human-language status labels, MUI icons, 60s poll). Header buttons labeled "Get Ticket"/"Request Change". Mobile responsive `flex-wrap` header. Merged FE develop `90392ba`, BE develop `6b10123`. |
+
 ## Closed — 2026-06-23 (deploy-blocking verified shipped)
 
 | Item | Closed | What shipped |
