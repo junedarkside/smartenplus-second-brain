@@ -5,13 +5,15 @@ status: open
 date: 2026-06-22
 scope: live-production
 target: https://www.smartenplus.co.th
-last-updated: 2026-06-22
-update-source: r4-peer-review + r5-live-reaudit
+last-updated: 2026-06-25
+update-source: r4-peer-review + r5-live-reaudit + r6-external-reconciliation
 ---
 
 # Live Production SEO / AEO / GEO Audit — 2026-06-22
 
 > **Updated 2026-06-22** after live re-audit (r5) + peer review (r4). Several findings from the original audit were wrong. See [[r4-peer-review]] and [[r5-live-reaudit]] for full correction log. Struck-through items are superseded.
+
+> ⚠️ **r6 correction (2026-06-25):** **P0-A (AI crawler block) is now OBSOLETE.** A live robots.txt fetch on 2026-06-25 shows all 10 AI UAs `Allow: /` with no Cloudflare managed block — the CF "AI Scrapers and Crawlers" toggle was disabled since r5. The GEO ceiling is lifted; revise **3/10 → ~6–7/10**. Re-confirm with `curl /robots.txt` before closing. A third-party external audit was also reconciled against code in r6 — it corroborates r1–r5 and surfaces net-new defects (help `[...slug]` notFound, destinations `station_name` guard, manifest Thai, `availableLanguage:["en","th"]`), but ~50% of its fixes are wrong-as-written (assumes App Router; repo is Pages Router) and its `/operators` canonical claim is a false-positive. Full scorecard: [[r6-external-reconciliation-2026-06-25]].
 
 ## Summary
 
