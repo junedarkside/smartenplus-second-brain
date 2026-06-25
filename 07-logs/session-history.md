@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-25 (session #168)
+
+**Achieved this session (#168) — P3b OTA ticket flow: debug + fix /my-trip ticket display:**
+- **Root cause found + fixed**: `OtaTripView.get()` was returning no `ticket` field — two Django servers running (old process answering requests). Fixed server state + added ticket lookup code.
+- **BE**: `OtaTripView` now returns `tickets[]` array (all tickets for booking, newest first) — `fix/ota-trip-tickets-list` → `f8e1f4b`.
+- **FE**: `/my-trip` consumes `tickets[]`, renders all `OtaRequestCard`s stacked, shows form only when no tickets exist — `fix/my-trip-tickets-list` → `d18941e`.
+- **FE**: `submitOtaRequest` mutation gets `invalidatesTags: ['OtaTrip']` so card appears immediately after submit without manual refresh.
+- **Debug tooling**: added + removed `print` (BE) + `console.log` (FE) debug logs to trace exact data flow.
+- **Sort bug debugged**: two tickets had different timestamps (not a tie) — `other/pending` was genuinely newer than `cancellation/resolved`. Fixed by returning all tickets, not just latest.
+- **admin-dashboard ticket components**: CancelBooking, UpdatePassenger, UpdateTrip all OTA-guarded; ticket detail has back button, Guest Request card, Resolution row, auto-seeded action dropdown, locked-state banner.
+
+---
+
 ## Session #167 — 2026-06-25 — G2 admin copy-link SHIPPED
 
 - **G2 SHIPPED** — admin-dashboard command-centre now has "OTA Bookings" tab. Each row has Copy Link button: calls `POST /api/cs/ota/trip-link/` → mints 7-day signed token → writes `/my-trip?token=` URL to clipboard. Disabled for no-email rows. Feedback: "Copied!" / "Failed" 3s.

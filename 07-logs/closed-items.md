@@ -2,6 +2,14 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-06-25 (session #169)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **G8-OTA-CONSENT** | session #169 | PDPA consent gate on `/my-trip` before any trip data shown. Once per token (localStorage key `ota_consent_<first8>`). `OtaPdpaGate.js` (Thai PDPA compliant: controller, purpose, retention, rights, withdraw). `otaConsent.js` helper (SSR-safe). `consentChecked` flag prevents flash-of-gate on return visits. FE `feat/g8-ota-pdpa-gate` `d0d2069` — pending merge → develop. |
+| **P3b-OTA-TICKETS** | session #168 | BE `OtaTripView` returns `tickets[]` array (all tickets newest-first). FE `/my-trip` renders all `OtaRequestCard`s stacked; form shown only when no tickets. RTK `invalidatesTags: ['OtaTrip']` on submit. Admin-dashboard ticket components OTA-guarded. BE `fix/ota-trip-tickets-list` `f8e1f4b` + FE `fix/my-trip-tickets-list` `d18941e` — merged to develop. |
+| **G2-OTA-COPY-LINK** | session #167 | Admin-dashboard command-centre OTA Bookings tab + Copy Link button. BE `cs/views.py` OTA trip token endpoint. Admin `f7cc7ee` — merged to develop. |
+
 ## Closed — 2026-06-24 (session #159)
 
 | Item | Closed | What shipped |

@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-25] session-end #169 | G8 OTA PDPA consent gate — 4-agent debate + grill audit; PDPA gate built (OtaPdpaGate.js + otaConsent.js + my-trip gate); once-per-token localStorage; flash-of-gate fixed with consentChecked flag. FE feat/g8-ota-pdpa-gate d0d2069 ready to merge.
+
 ## [2026-06-25] session-end #168 | P3b OTA ticket flow — debug + fix /my-trip ticket display. BE OtaTripView returns tickets[] array; FE renders all cards stacked; cache invalidated on submit; two-Django-process bug traced + fixed. BE fix/ota-trip-tickets-list f8e1f4b + FE fix/my-trip-tickets-list d18941e pushed.
 
 ## [2026-06-24] session-end #164 | admin-dashboard command-centre UX + ticket lifecycle auto-sync — confirm dialog, status filter fix, booking ref column, View order button, request_status→ticket_status auto-sync on resolve/reject, editor lock + reopen, 4-agent debate unanimous Option A. 8 commits across 2 BE branches + 1 FE branch.

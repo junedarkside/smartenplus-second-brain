@@ -4,16 +4,12 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-25 (session #168)
+**Updated:** 2026-06-25 (session #169)
 
-**Achieved this session (#168) — P3b OTA ticket flow: debug + fix /my-trip ticket display:**
-- **Root cause found + fixed**: `OtaTripView.get()` was returning no `ticket` field — two Django servers running (old process answering requests). Fixed server state + added ticket lookup code.
-- **BE**: `OtaTripView` now returns `tickets[]` array (all tickets for booking, newest first) — `fix/ota-trip-tickets-list` → `f8e1f4b`.
-- **FE**: `/my-trip` consumes `tickets[]`, renders all `OtaRequestCard`s stacked, shows form only when no tickets exist — `fix/my-trip-tickets-list` → `d18941e`.
-- **FE**: `submitOtaRequest` mutation gets `invalidatesTags: ['OtaTrip']` so card appears immediately after submit without manual refresh.
-- **Debug tooling**: added + removed `print` (BE) + `console.log` (FE) debug logs to trace exact data flow.
-- **Sort bug debugged**: two tickets had different timestamps (not a tie) — `other/pending` was genuinely newer than `cancellation/resolved`. Fixed by returning all tickets, not just latest.
-- **admin-dashboard ticket components**: CancelBooking, UpdatePassenger, UpdateTrip all OTA-guarded; ticket detail has back button, Guest Request card, Resolution row, auto-seeded action dropdown, locked-state banner.
+**Achieved this session (#169) — G8 OTA PDPA consent gate:**
+- **Debate**: 4-agent team (uxui/design/bd/frontend) debated G8 consent + OTA CS service access. Grill audit confirmed: chat widget already on `/my-trip` (`_app.js:88`); HMAC bypass not built yet; 1.5-day estimate low (2–3 days realistic); passive disclosure insufficient for Thai PDPA.
+- **Decision**: OTA user must accept PDPA before ANY trip content shown. Consent stored once per token in localStorage. Covers service features only (trip view, requests, CS chat). Marketing requires separate consent + contract gate.
+- **FE `feat/g8-ota-pdpa-gate`**: 3 files — `helpers/otaConsent.js` (localStorage read/write, SSR-safe), `components/bookings/OtaPdpaGate.js` (full-screen PDPA notice: controller, purpose, retention, rights, withdraw), `pages/my-trip/index.js` (early-return gate + `consentChecked` flag prevents flash-of-gate on return visits). `79bdd43` + `d0d2069`. Branch ready to merge → develop.
 
 **Achieved this session (#167) — G2 admin copy-link SHIPPED:**
 - **G2 SHIPPED** — admin-dashboard command-centre OTA Bookings tab + Copy Link button. BE `f714ba8`. Admin-dashboard `f7cc7ee`.
@@ -44,12 +40,12 @@
 - `smartenplus-content` `master` → `3756e5b`
 
 **Resume point (EXACT):**
-1. **VERIFY /my-trip end-to-end**: restart Django, hard-reload `/my-trip?token=...` → both ticket cards visible (Cancellation/Approved + Other/Pending).
-2. **DEPLOY develop→main** — Order: BE first → FE → admin-dashboard. No migrations needed for P3b/G2.
-3. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);` in prod DB.
-4. **RUN P2 migrations** — `0003_csotabooking` + `0004_csotabooking_extra_fields` on prod.
-5. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
-6. *(Optional)* **UX-03** — rate-review 5-star default (P2).
+1. **MERGE G8 branch**: `feat/g8-ota-pdpa-gate` → develop (FE only, no BE changes).
+2. **VERIFY /my-trip end-to-end**: restart Django, hard-reload `/my-trip?token=...` → PDPA gate first visit → accept → both ticket cards visible (Cancellation/Approved + Other/Pending).
+3. **DEPLOY develop→main** — Order: BE first → FE → admin-dashboard. No migrations needed for P3b/G2/G8.
+4. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);` in prod DB.
+5. **RUN P2 migrations** — `0003_csotabooking` + `0004_csotabooking_extra_fields` on prod.
+6. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
 
 _(Sessions #153-#163 archived → `07-logs/session-history.md`.)_
 
@@ -61,7 +57,7 @@ _(Sessions #153-#163 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **G2-OTA-COPY-LINK** | Deploy BE `develop` (no migrations — views/urls only) + admin-dashboard `develop`. Verify: OTA Bookings tab visible, Copy Link returns `https://www.smartenplus.co.th/my-trip?token=...` in prod. | BE `cs/views.py`, `cs/urls.py` · admin-dashboard `command-centre/index.js`, `csApi.js` |
+| **FULL-DEPLOY** | Merge FE `feat/g8-ota-pdpa-gate` → develop. Then deploy develop→main all 3 repos (BE first, no migrations for P3b/G2/G8). Verify: PDPA gate on `/my-trip`, OTA Bookings tab + Copy Link in prod, ticket cards visible after accept. | All 3 repos on develop |
 | **CS-CHAT-PERF** | main deploy + seed `cs_chat` FeatureFlag row in prod DB. Storm mitigation (5-layer) built + merged all 3 repos 2026-06-23. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
 | **ISR-REVALIDATE-GAP** | verify prod env vars set (`FRONTEND_URL=https://www.smartenplus.co.th`, non-empty `REVALIDATION_SECRET`) + worker recreated (stale worker = unregistered task). Smoke-test: admin contract edit → `/activities/detail` updates <60s. | `operators/signals.py`, `operators/tasks.py`, FE `pages/api/revalidate.js` · [[celery-unregistered-task-stale-worker]] |
@@ -72,7 +68,7 @@ _(Sessions #153-#163 archived → `07-logs/session-history.md`.)_
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
-| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED (deploy pending). **P3a SHIPPED** (`/my-trip?token=`). **G2 SHIPPED** — admin OTA Bookings tab + Copy Link. **P3b IN PROGRESS 2026-06-25**: admin-dashboard ticket components OTA-guarded (CancelBooking/UpdatePassenger/UpdateTrip); ticket detail back button + Guest Request card + Resolution row + locked banner; BE `OtaTripView` returns `tickets[]`; FE `/my-trip` renders all ticket cards. Branches pushed, pending merge → develop. Remaining: G1 auto-email (P3c), G4 boarding feed, G5 expired-link, G8 consent. | **P3b in-progress — merge + verify** | [[ota-link-delivery-and-p3b-plan]] · [[ota-portal-overview]] · [[booking-command-centre-decision]] |
+| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED (deploy pending). **P3a SHIPPED** (`/my-trip?token=`). **G2 SHIPPED** — admin OTA Bookings tab + Copy Link. **P3b SHIPPED** — BE `tickets[]` array + FE renders all ticket cards + admin-dashboard OTA-guarded ticket components. **G8 SHIPPED** — PDPA consent gate on `/my-trip` (once per token, localStorage, Thai PDPA compliant). All branches merged → develop or ready to merge. Remaining: G1 auto-email (P3c), G4 boarding feed, G5 expired-link. G8 consent done. | **deploy queue — merge G8 + deploy all** | [[ota-link-delivery-and-p3b-plan]] · [[ota-portal-overview]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
