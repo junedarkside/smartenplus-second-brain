@@ -72,7 +72,7 @@ export const COMPANY_ADDRESS = {
 4. Wire `aggregateRating` to `lastTopReviewData` (live data)
 5. Add `sameAs: [FACEBOOK_URL, INSTAGRAM_URL, X_URL]`
 6. Add `logo` ImageObject
-7. Add `contactPoint` with `COMPANY_PHONE_NUMBER`, `contactType: "customer support"`, `availableLanguage: ["Thai", "English"]`
+7. Add `contactPoint` with `COMPANY_PHONE_NUMBER`, `contactType: "customer support"`, `availableLanguage: ["English"]` (en-only policy — site serves no Thai; was `["Thai","English"]` which contradicted the en-only decision, corrected 2026-06-25 alongside `homepagev2.js:244` fix)
 8. Replace hardcoded `lastReviewed` with `new Date().toISOString()`
 
 ### Other critical OG fixes
