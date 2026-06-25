@@ -35,7 +35,7 @@ Debated 4 options (staff-centre / customer-portal / request-spine / OTA-sync) vi
 ## Phased roadmap
 
 - **P0** — deploy built CS chat (USER action, prod); pin `TicketSerializer` explicit fields (103 `__all__` leak guard, hard precondition).
-- **P1** ★ first build — direct vertical slice: extend `tickets.Ticket` (`request_type`/`status`/`source`/`requested_value`, reuse `HistoricalRecords`); request create+transition endpoints (port `cs/` `VALID_TRANSITIONS` + reopen abuse-guard); admin `pages/command-centre/index.js` queue; FE "Request change" button on `pages/orders`+`pages/bookings`. **Direct only.**
+- **P1** ✅ **SHIPPED #164 (2026-06-24)** — direct vertical slice: `tickets.Ticket` extended (`request_type`/`request_status`/`source`/`requested_value`, migration `0004`); `CustomerTicketViewSet` + `RequestStatusViewSet` (`VALID_REQUEST_TRANSITIONS`, terminal auto-close); admin command-centre queue; FE "Request Change" modal + status cards wired on booking detail. **Direct only.** Status + file:line evidence: [[p1-direct-slice-impl-plan]]. Deferred (NOT P1): SES notify → P4; reopen guard → P4; nullable GenericFK → P3 (account-level tickets).
 - **P2** — OTA sync: `cs.CsOtaBooking` mirror + `sync_ota_bookings` task (`requests`+PostgREST, manual batch first per S5, Beat+`-Q sync` only if load demands); `SUPABASE_ANON_KEY` env; staff OTA view drops into same queue; OTA↔Account email-merge (probabilistic).
 - **P3** — customer portal (direct→OTA): magic-link (`cs/tokens.py` reuse); auto-provision guest Account; My Trip for OTA guests (tiered trip info); request submit; SERVICE email always (Tier 1); day-before trip-reminder SMS via AWS SNS (`boto3`, zero new dep); opt-in capture for WhatsApp/Line (Tier 2). **GATE:** confirm 12Go/Klook contracts allow operator→traveler service contact.
 - **P4** — harden request spine from validated P1-P3 ops (`RequestEvent` trail, full transition dict, 6 endpoints); bind `cs.Conversation`→request (chat = sub-channel); notify on resolve.
@@ -76,3 +76,4 @@ CS-cluster notes remain accurate for: chat transport (both-poll-Django, Supabase
 [[smarten-customer-os-thesis]] (parent) · [[cs-architecture-decision]] · [[cs-api-contract]] · [[supabase-ota-booking-store]] · [[cs-gap-debate-verdicts]] · [[cs-centralization-design-concept]] · [[cs-consent-gdpr-model]] · [[prod-capacity-celery-audit]] · [[cs-guest-storm-investigation]]
 
 Approved plan (session-local): `.claude/plans/check-vault-for-cs-clever-bonbon.md`.
+P1 impl plan: [[p1-direct-slice-impl-plan]] (created 2026-06-24, session #165).

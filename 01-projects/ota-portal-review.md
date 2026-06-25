@@ -234,6 +234,40 @@ P2 BE (sync + admin queue) and early P3a FE scaffolding (route, token parse, loa
 
 ---
 
+## Re-verification 2026-06-25 (post-P1-ship)
+
+3-agent re-run (BE-reuse / FE-reuse / simplicity-gating) against live code. P1 direct-slice
+shipped since this review (session #164). Confirmed: **P1 ship added the Ticket request spine but
+closed ZERO P3 blockers** — every OTA-guest seam below is still open. Code anchors re-checked today.
+
+| Blocker | Status 2026-06-25 | Code anchor (verified) |
+|---|---|---|
+| `CsOtaBooking` has no boarding-info field | **STILL OPEN** | `cs/models.py:102-158` — fields are `status`, `customer_name`, `email`, `destination`, `arrival` (string), `booking_date/time`, `passenger_names`, `vehicle_type`. No GPS / boarding-location. P3a boarding tier unbuildable. MVP = status + ref + passenger names (still closes CS-GUEST-EMAIL-GATE). |
+| `Ticket.created_by` non-nullable FK to User | **STILL OPEN** | `tickets/models.py:38-39`. OTA guest has no Account → P3b crashes on save. Fix = nullable + `guest_email`, OR thin guest Account. Highest-priority P1-prep fix. |
+| `CustomerTicketViewSet.create()` BookingItem-hardcoded | **STILL OPEN** | `tickets/views.py:210` `get_object_or_404(BookingItem, slug=…, user=request.user)`. OTA needs token→email-ownership→`CsOtaBooking` branch. Security-critical (email match or guest can request any booking). |
+| `Order.source` is event-log, not booking-channel | **STILL OPEN** | `orders/models.py:441` is `WebhookEvent.source` (`source:event_type:event_id`). `MarketingConsentManager` block on `source='ota'` has no anchor. Add real `Order.source` (default `direct`, backfill) IF consent enforcement ships. |
+
+**Gate correction reconfirmed:** `ota-consent-comms-pii-gate.md:21` "P2/P3a/P3b NOT blocked" is wrong
+for the email path — P3a magic-link is a Tier-1 SES email = proactive OTA outbound = under the
+contract gate. Gate the *send* (FeatureFlag `send_ota_proactive_email`, default `False`; test via
+console/locmem backend), not the code. Matches Architect "gate leak" finding above + OQ-2.
+
+**FE decision crystallized:** OTA auth = **separate `otaApi.js` RTK slice** (magic-link token in
+token-aware baseQuery). Do NOT mutate `bookingsApi.prepareHeaders` (`store/api/bookingsApi.js:11-18`)
+— HIGH prod risk to direct bookings. Reuse pure-UI `RequestCard` only; `ChangeRequestsSection.js:77-84`
+hard-skips on no-session so cannot serve OTA as-is. Matches [[rtk-query-dedicated-basequery-per-credential]].
+
+**Over-engineering cut-list (defer from P3 v1):** `DataErasureRequest` (→P3d, per OQ-8) ·
+`MarketingConsentManager` enforcement (→P5) · `consent_versions.py` (hardcode one string until OQ-6) ·
+SNS day-before SMS (→P4, OQ-5 unverified) · Tier-2 WhatsApp/Line UI (→P5, no spec, Q15) ·
+`Account(is_guest=True)` escalation (resolve in P1-prep, not new scaffolding).
+
+**Net:** review verdicts hold unchanged. No new blockers, none cleared. Build order: clear the 4
+P1-prep blockers → P3a MVP (status-only trip view + PII gate) → P3b (request submit) → P3c (consent
+infra ungated, send gated). Verdicts table below is authoritative.
+
+---
+
 ## Related
 [[ota-portal-overview]] · [[ota-sync-supabase-mirror]] · [[ota-magic-link-trip-view]] · [[ota-request-submit]] · [[ota-consent-comms-pii-gate]] · [[booking-command-centre-decision]] · [[cs-api-contract]] · [[cs-consent-gdpr-model]] · [[supabase-ota-booking-store]]
 

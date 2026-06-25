@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #167 — 2026-06-25 — G2 admin copy-link SHIPPED
+
+- **G2 SHIPPED** — admin-dashboard command-centre now has "OTA Bookings" tab. Each row has Copy Link button: calls `POST /api/cs/ota/trip-link/` → mints 7-day signed token → writes `/my-trip?token=` URL to clipboard. Disabled for no-email rows. Feedback: "Copied!" / "Failed" 3s.
+- **BE**: `GET /api/cs/ota/bookings/` + `POST /api/cs/ota/trip-link/` (both `IsAdminOrIsStaff`) → develop `f714ba8` (after revert `dbdc3ca`).
+- **Admin-dashboard**: OTA tab + `csApi.js` mutations → develop `f7cc7ee`.
+- **Django Admin action removed** (was interim stop-gap, replaced by dashboard).
+- **Local dev fix**: add `FRONTEND_URL=http://localhost:3000` to BE `.env` — without it, generated URLs point to prod.
+- **G1 auto-email deferred** by owner — gaps to be closed later. Next build: P3b.
+
+---
+
 ## Session #163 — 2026-06-24
 
 **Achieved:**
