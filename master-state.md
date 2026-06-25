@@ -44,10 +44,10 @@
 - `smartenplus-content` `master` → `3756e5b`
 
 **Resume point (EXACT):**
-1. **MERGE P3b branches → develop**: BE `fix/ota-trip-tickets-list` + FE `fix/my-trip-tickets-list` + admin-dashboard OTA ticket component changes (currently on `develop` directly — audit and clean).
-2. **VERIFY /my-trip end-to-end**: restart Django, hard-reload page → both ticket cards visible (Cancellation/Approved + Other/Pending).
-3. **DEPLOY develop→main** — Order: BE first (no new migrations) → FE → admin-dashboard.
-4. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);`
+1. **VERIFY /my-trip end-to-end**: restart Django, hard-reload `/my-trip?token=...` → both ticket cards visible (Cancellation/Approved + Other/Pending).
+2. **DEPLOY develop→main** — Order: BE first → FE → admin-dashboard. No migrations needed for P3b/G2.
+3. **SEED FeatureFlag** — `INSERT INTO cs_featureflag (name, enabled) VALUES ('cs_chat', true);` in prod DB.
+4. **RUN P2 migrations** — `0003_csotabooking` + `0004_csotabooking_extra_fields` on prod.
 5. **SCHEDULE Celery beat** — `cs.tasks.sync_ota_bookings` in Django admin beat schedule.
 6. *(Optional)* **UX-03** — rate-review 5-star default (P2).
 
