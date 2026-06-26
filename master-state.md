@@ -20,7 +20,7 @@
 **Workspace:** frontend develop→`63fd2b5` · backend develop→`f6eaf42` (unchanged) · admin develop→`3d5a3a4` (unchanged) · content master→`3756e5b` (unchanged) · vault master→`1c1763a`
 
 **Resume point (EXACT):**
-1. **DEPLOY r6-r9 → main/prod** (FE only; no BE/migrations) + post-deploy prod-verify (SEO-R6-R9-DEPLOY checklist).
+1. **USER deploys** develop→main (SEO-only cherry-pick of 6 commits, OR full 82 FE + 41 BE + migrations). Then prod-verify (SEO-R6-R9-DEPLOY checklist) + re-check title double-brand on prod.
 2. **Destinations root cause** (split out): ISR cache flush + backend deleted-station cleanup + koh-samui prod mystery (API-good, page-undefined).
 3. **Remaining SEO** (backend/content): C1-B server-sitemap deleted-entity filtering, M3 `/help/faqs` FAQ (WP), homepage FAQPage (content), H4 meta desc, H5 author page, H6 internal links, polish (apple-touch-icon/security.txt/llms.txt creds).
 
@@ -34,7 +34,7 @@ _(Sessions #165-#169 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **SEO-R6-R9-DEPLOY** | Deploy FE develop→main (`5bdcec1`, `3589c6a`, `5156f2e`, `6a7e9a1`, `63fd2b5`). No BE/migrations. Report was PROD; fixes dev-verified only. Post-deploy prod-verify: `/help/<missing>`→404; `/destinations/koh-samui` no "undefined" (needs ISR flush/redeploy); `/manifest.json` lang=en; `/` availableLanguage=`["en"]`; og:locale=en_US; `/activities` canonical; `sitemap-0.xml` 0×`/ref/article/`; blog single BlogPosting + 0 `blog.smartenplus.co.th`; `/about` TravelAgency + TAT; `/activities/detail/<slug>` FAQPage; 0 "Anonymous Traveler". | `smartenplus-frontend` develop→main |
+| **SEO-R6-R9-DEPLOY** | **USER-OWNED deploy** (handoff 2026-06-26, develop `455b094`). ⚠️ develop→main carries **82 FE + 41 BE commits** (G8/P3/CS + BE migrations) — NOT SEO-only. SEO commits: r6 `87e3c15`, r7 `3fa482f`, r8 `961c645`, r9 `b5867c7`, faqpage-fix `bc538ef`, r7-coverage `1fafa5f` (skip build-unblock `3a7748a` — main has no OtaPdpaGate). **SEO-only option**: cherry-pick those 6 off main. Post-deploy prod-verify: `/help/<missing>`→404, `/destinations/koh-samui` no "undefined", `/manifest.json` lang=en, og:locale=en_US, `/activities` canonical, `sitemap-0.xml` 0×`/ref/article/`, blog single BlogPosting, `/about` TravelAgency+TAT, `/activities/detail/<slug>` FAQPage, 0 "Anonymous Traveler"; **re-check title double-brand on prod** (latent in code — /grill found prod mostly single-brand). | `smartenplus-frontend` develop→main (**user**) |
 | **FULL-DEPLOY** | G8 (`feat/g8-ota-pdpa-gate`) already merged → develop. Deploy develop→main all 3 repos (BE first, no migrations for P3b/G2/G8). Verify: PDPA gate on `/my-trip`, OTA Bookings tab + Copy Link in prod, ticket cards visible after accept. | All 3 repos on develop |
 | **CS-CHAT-PERF** | main deploy + seed `cs_chat` FeatureFlag row in prod DB. Storm mitigation (5-layer) built + merged all 3 repos 2026-06-23. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
