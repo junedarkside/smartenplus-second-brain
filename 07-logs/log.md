@@ -1,5 +1,9 @@
 # Vault Log
 
+## [2026-06-26] session-end #178 | CS centralization status audit + full deploy vault sync. All 3 repos on main. CS workflow/stakeholder revision pending (team meeting happened, content next session). cs_chat FeatureFlag seed + P2-OTA-SYNC migrations still open.
+
+## [2026-06-26] session-end #177 | FULL DEPLOY — all 3 repos develop→main prod. FE 43299da · BE ebbb044 · admin 3d5a3a4. Includes CS chat Steps 5-7, G8 PDPA gate, P3a/P3b OTA portal, r12 SEO, CS-CHAT-PERF 5-layer polling, phone/checkout fixes. Chat FAB hidden until cs_chat FeatureFlag seeded in prod DB.
+
 ## [2026-06-26] session-end #176 | r10 audit (SEO 9.0·AEO 9.5·GEO 9.0·CWV 7.0·SD 7.0) + r12 fixes (numberOfItems, ISR TTL 3600, S3 preconnect, desc trim, currenciesAccepted) → develop 43299da. r11 re-audit: GEO/CWV 10.0, SD 9.0. All r12 verified ✅.
 
 ## [2026-06-26] session-end #175 | r9 5-specialist live-prod audit (SEO 8.3·AEO 6.5·GEO 6.8·CWV 6.8·SD 5.5) + r11 fixes deployed (dbdc097): soft-404 destinations, activities schema+title, llms.txt cross-border+activities+TAT/VAT, aggregateRating removed, TAT identifier, Penang addressCountry MY, description trimmed 233→152.

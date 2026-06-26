@@ -4,21 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-26 (session #176)
+**Updated:** 2026-06-26 (session #178)
 
-**Achieved (#176) — r10+r11 live-prod audits + r12 fixes deployed:**
-- **r10 5-specialist audit** (post r11): SEO 9.0·AEO 9.5·GEO 9.0·CWV 7.0·SD 7.0. Canonical: `/seo/seo-aeo-geo-prod-2026-06-26-r10.md`. Vault round note + README updated.
-- **r12 fixes** (`fix/seo-r12` `754dbc7`→develop `43299da`): ItemList `numberOfItems:6`, destination desc 204→140 chars, `REVALIDATE_SECONDS` 60→3600, S3 `preconnect` added, `currenciesAccepted:"THB"` (homepage+about).
-- **r11 5-specialist audit** (post r12): GEO 10.0·CWV 10.0·SD 9.0 — all r12 verified ✅.
-- **r13 backlog:** `/about` TravelAgency schema parity (P1), `/about` BreadcrumbList+WebPage (P2), `og:locale th_TH` alternate (P2).
+**Achieved (#177+#178) — FULL DEPLOY + CS audit + vault sync:**
+- All 3 repos deployed develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`.
+- CS centralization full status audited (Steps 1-7 FE, Steps 1-3 BE + P2/P3b OTA all shipped).
+- Chat widget live in prod code — FAB hidden until `cs_chat` FeatureFlag seeded in DB.
+- Team meeting on CS workflow/stakeholder revision happened — revision content pending next session.
+- Vault deploy queue updated (FULL-DEPLOY ✅, CS-CHAT-PERF code ✅ flag pending).
 
 **Workspace:** frontend main→`43299da` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
 
 **Resume point (EXACT):**
-1. **Deploy queue** — G8 + CS-CHAT-PERF + P2-OTA-SYNC still pending (Section 2).
-2. **r13 fixes** — `/about` schema parity when ready.
+1. **CS workflow + stakeholder revision** — team meeting happened 2026-06-26, revision not yet captured. Start next session by collecting meeting notes from user and updating `booking-command-centre-decision.md` + any stakeholder docs.
+2. **Seed `cs_chat` FeatureFlag** — via Django admin or SQL to activate chat FAB in prod.
+3. **Smoke test chat** — FAB visible → email → OTP → chat opens → poll runs.
+4. **P2-OTA-SYNC** — run BE migrations `0003_csotabooking` + `0004_csotabooking_extra_fields` + schedule Celery beat `cs.tasks.sync_ota_bookings`.
+5. **r13 SEO** — `/about` TravelAgency schema parity when ready.
 
-_(Session #175 archived → `07-logs/session-history.md`.)_
+_(Session #177 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -29,8 +33,8 @@ _(Session #175 archived → `07-logs/session-history.md`.)_
 | Item | What's pending | Where |
 |------|----------------|-------|
 | **SEO-R6-R9-DEPLOY** | **USER-OWNED deploy** (handoff 2026-06-26, develop `455b094`). ⚠️ develop→main carries **82 FE + 41 BE commits** (G8/P3/CS + BE migrations) — NOT SEO-only. SEO commits: r6 `87e3c15`, r7 `3fa482f`, r8 `961c645`, r9 `b5867c7`, faqpage-fix `bc538ef`, r7-coverage `1fafa5f` (skip build-unblock `3a7748a` — main has no OtaPdpaGate). **SEO-only option**: cherry-pick those 6 off main. Post-deploy prod-verify: `/help/<missing>`→404, `/destinations/koh-samui` no "undefined", `/manifest.json` lang=en, og:locale=en_US, `/activities` canonical, `sitemap-0.xml` 0×`/ref/article/`, blog single BlogPosting, `/about` TravelAgency+TAT, `/activities/detail/<slug>` FAQPage, 0 "Anonymous Traveler"; **re-check title double-brand on prod** (latent in code — /grill found prod mostly single-brand). | `smartenplus-frontend` develop→main (**user**) |
-| **FULL-DEPLOY** | G8 (`feat/g8-ota-pdpa-gate`) already merged → develop. Deploy develop→main all 3 repos (BE first, no migrations for P3b/G2/G8). Verify: PDPA gate on `/my-trip`, OTA Bookings tab + Copy Link in prod, ticket cards visible after accept. | All 3 repos on develop |
-| **CS-CHAT-PERF** | main deploy + seed `cs_chat` FeatureFlag row in prod DB. Storm mitigation (5-layer) built + merged all 3 repos 2026-06-23. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
+| **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
+| **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
 | **ISR-REVALIDATE-GAP** | verify prod env vars set (`FRONTEND_URL=https://www.smartenplus.co.th`, non-empty `REVALIDATION_SECRET`) + worker recreated (stale worker = unregistered task). Smoke-test: admin contract edit → `/activities/detail` updates <60s. | `operators/signals.py`, `operators/tasks.py`, FE `pages/api/revalidate.js` · [[celery-unregistered-task-stale-worker]] |
 | **TASK-1VCPU-MONITOR** | verify #139 prod incident resolved: CloudWatch CPU-credit stops draining, no `:00`/2 AM spike. | CloudWatch, `products/tasks.py` |
