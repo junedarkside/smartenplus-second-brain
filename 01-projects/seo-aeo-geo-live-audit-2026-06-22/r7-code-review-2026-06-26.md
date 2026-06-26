@@ -14,7 +14,7 @@ baseline: r3-synthesis (SEO 6.5 / AEO 3.5 / GEO 3.0)
 
 ## Headlines
 1. **All r6-r9 fixes FIXED** (file:line below). The `FaqJsonLd` regression is cleared repo-wide (0 refs).
-2. **2 coverage-miss regressions** found — the r6 og:locale / availableLanguage fixes were **incomplete** (missed `useDayTripSEO.js` + `useRouteSeo.js`). Both contradict the en-only policy on live templates.
+2. **2 coverage-miss sites** found (both **pre-existing**, blame-confirmed — NOT regressions introduced by r6-r9; the r6/r7 fixes were incomplete). **1 live** (`useRouteSeo.js:76` availableLanguage, every route listing) + **1 dead code** (`useDayTripSEO.js:166` locale — 0 callers, 0 live impact). **Both now FIXED `fix/seo-r7-coverage` (`455b094`).**
 3. **Re-scores: SEO 6.5→8.2 · AEO 3.5→6.5 · GEO 3.0→5.5.**
 
 ## Fix-verification (all FIXED)
@@ -35,13 +35,13 @@ baseline: r3-synthesis (SEO 6.5 / AEO 3.5 / GEO 3.0)
 | r9 | activity detail FAQPage | `pages/activities/detail/[...slug].js:131,143,153` → `DayTripDetailSEO.js:41-43` |
 | fix | FaqJsonLd→FAQPageJsonLd build-break | `FilterTripsSEO.js:2` (0 `FaqJsonLd` refs repo-wide) |
 
-## NEW findings / REGRESSIONS (actionable)
+## NEW findings (coverage-misses — pre-existing, NOT regressions; now FIXED)
 
-### 🔴 REGRESSION-1 (GEO, coverage-miss) — `availableLanguage` leak
-`hooks/useRouteSeo.js:76` — Organization `contactPoint.availableLanguage: ['English', 'Thai']`. The r6 fix hit `homepagev2.js:244` but **missed this route-detail template** (renders on every `/trips/{from}/{to}`). Contradicts en-only policy on a high-volume page type. **Fix: `['English']`.**
+### 🔴 COVERAGE-MISS (live, pre-existing) — `availableLanguage` — **FIXED `455b094`**
+`hooks/useRouteSeo.js:76` — Organization `contactPoint.availableLanguage: ['English', 'Thai']`. Pre-existing (blame `bd46bfc`, not an r6-r9 commit). The r6 fix hit `homepagev2.js:244` but **missed this route-detail template** (renders on every `/trips/{from}/{to}`) — incomplete coverage, not a regression. **Fixed `fix/seo-r7-coverage` → `['English']`.**
 
-### 🔴 REGRESSION-2 (GEO, coverage-miss) — `og:locale` leak
-`hooks/useDayTripSEO.js:166` — `locale: 'th_TH'`. The r7 og:locale fix hit 6 files but **missed `useDayTripSEO.js`**. Day-trip pages emit Thai locale. **Fix: `en_US`.**
+### 🔵 DEAD CODE (pre-existing, 0 live impact) — `og:locale` — **FIXED for consistency `455b094`**
+`hooks/useDayTripSEO.js:166` — `locale: 'th_TH'`. Pre-existing (blame `3fe82b9`). `useDayTripSEO.js` has **0 callers repo-wide** (dead code, like `SEOSection.js`) — the `th_TH` never renders. Fixed to `en_US` for en-only consistency so no future dev re-leaks it; deleting the dead hook is out of scope.
 
 ### 🟠 Title double-brand (SEO, pre-existing — newly documented)
 `pages/_app.js:40` `titleTemplate="%s | SmartEnPlus"` + pages passing titles already ending `| SmartEnPlus` → `… | SmartEnPlus | SmartEnPlus`. Affected: `pages/rate-review/index.js:51`, `pages/rate-review/submit-review/[...slug].js:28`, `pages/rate-review/[reviewSlug].js:116`, `pages/privacy/index.js:27`, `pages/blog/index.js:117`, `pages/forum/[...slug].js:46,130`. Fix: drop trailing `| SmartEnPlus` from those titles (template adds it) OR `titleTemplate={null}` per-page.

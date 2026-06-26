@@ -77,7 +77,7 @@ export const COMPANY_ADDRESS = {
 
 ### Other critical OG fixes
 - `og:site_name` missing from `Seo.js` — add `siteName: siteName` from constants
-- `og:locale` missing — add `locale: 'th_TH'`
+- `og:locale` missing — add `locale: 'en_US'` (en-only policy; was `th_TH`, corrected 2026-06-26)
 - `twitter:site` missing — add `site: '@smartenplus'`
 
 ## Tradeoffs
