@@ -5,8 +5,8 @@ status: open
 date: 2026-06-22
 scope: live-production
 target: https://www.smartenplus.co.th
-last-updated: 2026-06-25
-update-source: r4-peer-review + r5-live-reaudit + r6-external-reconciliation
+last-updated: 2026-06-26
+update-source: r4-peer-review + r5-live-reaudit + r6-external-reconciliation + r7-code-review
 ---
 
 # Live Production SEO / AEO / GEO Audit — 2026-06-22
@@ -14,6 +14,8 @@ update-source: r4-peer-review + r5-live-reaudit + r6-external-reconciliation
 > **Updated 2026-06-22** after live re-audit (r5) + peer review (r4). Several findings from the original audit were wrong. See [[r4-peer-review]] and [[r5-live-reaudit]] for full correction log. Struck-through items are superseded.
 
 > ⚠️ **r6 correction (2026-06-25):** **P0-A (AI crawler block) is now OBSOLETE.** A live robots.txt fetch on 2026-06-25 shows all 10 AI UAs `Allow: /` with no Cloudflare managed block — the CF "AI Scrapers and Crawlers" toggle was disabled since r5. The GEO ceiling is lifted; revise **3/10 → ~6–7/10**. Re-confirm with `curl /robots.txt` before closing. A third-party external audit was also reconciled against code in r6 — it corroborates r1–r5 and surfaces net-new defects (help `[...slug]` notFound, destinations `station_name` guard, manifest Thai, `availableLanguage:["en","th"]`), but ~50% of its fixes are wrong-as-written (assumes App Router; repo is Pages Router) and its `/operators` canonical claim is a false-positive. Full scorecard: [[r6-external-reconciliation-2026-06-25]].
+
+> **r7 code re-review (2026-06-26):** all r6-r9 fixes verified landed + correct; `FaqJsonLd` build-break regression cleared repo-wide. Re-scores **SEO 6.5→8.2 · AEO 3.5→6.5 · GEO 3.0→5.5**. 2 coverage-miss regressions found — r6/r7 fixes were incomplete: `useRouteSeo.js:76` still `availableLanguage:['English','Thai']`, `useDayTripSEO.js:166` still `locale:'th_TH'`. Plus title double-brand (6 pages) + vault doc line 80. Full table + backlog delta: [[r7-code-review-2026-06-26]].
 
 ## Summary
 
