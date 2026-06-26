@@ -4,25 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-26 (session #172)
+**Updated:** 2026-06-26 (session #173)
 
-**Achieved (#172) — r10 SEO fixes pushed + 9 branches pruned:**
-- **r10a** (`fix/seo-r10a`→develop `153ea1f`): `availableLanguage ['English']`→`['en']` (`useRouteSeo.js:76`); `BlogPosting` JSON-LD stripped from `components/trips/BlogPost.js`.
-- **r10b** (`fix/seo-r10b`→develop `50925b7`): 404 title de-branded; `rate-review/[reviewSlug].js` adds `openGraph.url`.
-- **Pushed** `origin/develop` → `8d505d9`.
-- **Pruned** 9 stale branches (fix/seo-r6 through r10b + ota-gate). Repo clean.
-- **Code-verified**: blog meta (`BlogPostHeader.js`), aggregateRating guard, destinations `notFound` — all already correct, no change needed.
-- **Scores:** live-prod r8 = SEO 8.4 · AEO 7.5 · GEO 6.5. r10 target: SEO 8.6+ · AEO 8.0+ · GEO 7.0+.
+**Achieved (#173) — production 500 hotfix: birthDate truncated year:**
+- **Bug:** order SRL9043592 crashed `/order-billing/` with `ValueError: time data '202-12-02' does not match format '%Y-%m-%d'`. User typed partial year `202` in MUI DatePicker → `getFullYear()===202` → `parseDateWithoutTimeZone()` emitted `'202-12-02'` (no year zero-padding) → backend `calculate_age()` `strptime` crash.
+- **Root cause trigger:** commit `a73b575` (2026-02-23) added `_get_sorted_passengers()` which calls `calculate_age()` on every passenger — previously that code path was never hit, so malformed years went unnoticed.
+- **FE fix** (`fix/birthdate-year-truncation` `3e71116`): `String(year).padStart(4,'0')` in `parseDateWithoutTimeZone()` · `helpers/getBillingAndOrder.js`.
+- **BE fix** (`fix/birthdate-year-truncation` `ebbb044`): guard in `calculate_age()` — if year segment `< 4` chars, log warning + return `30` (Adult) instead of 500 · `bookings/services.py`.
+- Both branches pushed + merged → develop + pushed. Deployed to production.
 
-**Workspace:** frontend main→`8d505d9` · backend main→`f6eaf42` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
+**Workspace:** frontend main→`3e71116` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
 
 **Resume point (EXACT):**
-1. **USER deploys** develop→main (82 FE + 41 BE pending; SEO cherry-pick = r6 `87e3c15` + r7 `3fa482f` + r8 `961c645` + r9 `b5867c7` + r9-fix `bc538ef` + r7-cov `1fafa5f` + r10a `153ea1f` + r10b `50925b7`).
-2. **PM live-prod audit (me)** after deploy — verify: trip route `availableLanguage:["en"]` + no BlogPosting; 404 single-brand; rate-review og:url; scores delta.
-3. **Phase C ops** — clear `smartenplus_next_cache` Docker volume → `/destinations/zzz-nonexistent` returns 404.
-4. **r11 backlog** — `/help/faqs` FAQPage (WP content), homepage TAT in schema, H5 author E-E-A-T, sameAs, llms.txt enrichment.
+1. **Monitor prod** — confirm no new `ValueError: time data` errors in `web_1` logs post-deploy.
+2. **Deploy queue** — SEO r6-r10 + G8 + CS-CHAT-PERF still pending develop→main (see Section 2).
+3. **r11 SEO backlog** — `/help/faqs` FAQPage (WP content), homepage TAT in schema, H5 author E-E-A-T, sameAs, llms.txt enrichment.
 
-_(Session #171 archived → `07-logs/session-history.md`.)_
+_(Session #172 archived → `07-logs/session-history.md`.)_
 
 ---
 

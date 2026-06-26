@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-26 (session #172) — _archived from master-state 2026-06-26_
+
+**Achieved (#172) — r10 SEO fixes pushed + 9 branches pruned:**
+- **r10a** (`fix/seo-r10a`→develop `153ea1f`): `availableLanguage ['English']`→`['en']` (`useRouteSeo.js:76`); `BlogPosting` JSON-LD stripped from `components/trips/BlogPost.js`.
+- **r10b** (`fix/seo-r10b`→develop `50925b7`): 404 title de-branded; `rate-review/[reviewSlug].js` adds `openGraph.url`.
+- **Pushed** `origin/develop` → `8d505d9`. **Pruned** 9 stale branches. Repo clean.
+- **Scores:** live-prod r8 = SEO 8.4 · AEO 7.5 · GEO 6.5. r10 target: SEO 8.6+.
+
+**Workspace:** frontend main→`8d505d9` · backend main→`f6eaf42` · admin main→`3d5a3a4` · content master→`3756e5b`
+
+---
+
 **Updated:** 2026-06-26 (session #171) — _archived from master-state 2026-06-26_
 
 **Achieved (#171) — r10 SEO TQM phased fixes + branch pruning:**

@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-26] session-end #173 | prod hotfix: birthDate truncated year → 500 on /order-billing/ (SRL9043592). FE year padStart(4), BE calculate_age guard. Both merged→develop→prod deployed.
+
 ## [2026-06-26] session-end #172 | r10 SEO fixes (availableLanguage ISO, BlogPosting entity-type, 404 de-brand, rate-review og:url) → develop pushed 8d505d9. 9 stale branches pruned. Scores: SEO 8.4→8.6+ target post-deploy. r11 backlog: /help/faqs FAQPage, homepage TAT schema, H5 author, llms.txt.
 
 ## [2026-06-26] session-end #170 | SEO/AEO/GEO audit reconcile (r6, 3-specialist vs live code) + r6-r9 fixes to develop (LOCAL/dev-verified, NOT prod): help 500→404, destinations undefined-fallback, manifest EN, availableLanguage, /activities canonical, help og:image, sitemap /ref/article exclude, dual-BlogPosting drop, og:locale 6 files, synthetic reviews removal, About org schema+TAT, FAQPage wiring (route+activity). Build unblock (OtaPdpaGate apostrophe). Verified help canonical + P0-A crawlers already-done. ⚠️ Report=PROD, fixes=LOCAL — deploy+prod-verify pending (SEO-R6-R9-DEPLOY). Atomized 4 (jsonld-@id-merge, pages-router-notFound, dev-stale-cache; extended nextseo-v6-jsonld-silent-drop).
