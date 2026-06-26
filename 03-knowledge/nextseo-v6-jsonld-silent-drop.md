@@ -11,7 +11,9 @@ next-seo v6 `NextSeo` (and `DefaultSeo`) props type has NO `jsonLd` field. Passi
 
 next-seo emits JSON-LD ONLY via dedicated components: `ArticleJsonLd`, `BreadcrumbJsonLd`, `WebPageJsonLd`, etc.
 
-**Important nuance (verified 2026-06-26):** the dedicated `*JsonLd` components (`FaqJsonLd`, `BreadcrumbJsonLd`, `OrganizationJsonLd`, `ProductJsonLd`, `ArticleJsonLd`, `WebPageJsonLd`, …) DO render in v6 — only the `jsonLd` prop on `NextSeo`/`DefaultSeo` is dropped. So the rule is: never use the `jsonLd` prop; use either a dedicated `*JsonLd` component OR a raw `<script type="application/ld+json">`. `components/trips/search/FilterTripsSEO.js` already uses `BreadcrumbJsonLd`/`OrganizationJsonLd`/`ProductJsonLd` successfully + added `FaqJsonLd` (r9).
+**Important nuance (verified 2026-06-26):** the dedicated `*JsonLd` components (`FAQPageJsonLd`, `BreadcrumbJsonLd`, `OrganizationJsonLd`, `ProductJsonLd`, `ArticleJsonLd`, `WebPageJsonLd`, …) DO render in v6 — only the `jsonLd` prop on `NextSeo`/`DefaultSeo` is dropped. So the rule is: never use the `jsonLd` prop; use either a dedicated `*JsonLd` component OR a raw `<script type="application/ld+json">`. `components/trips/search/FilterTripsSEO.js` uses `BreadcrumbJsonLd`/`OrganizationJsonLd`/`ProductJsonLd` + `FAQPageJsonLd` (r9).
+
+**⚠️ Gotcha — exact export names matter (r9 build break):** the FAQ component is `FAQPageJsonLd`, NOT `FaqJsonLd`. A wrong name imports `undefined`; `<UndefinedComponent>` throws **React #130 (`args[]=undefined`)** at render. It only fires when the conditional renders — r9's `{faqMainEntity?.length > 0 && <FaqJsonLd/>}` only crashed on FAQ-bearing routes (e.g. `/trips/hatyai/penang`), so local dev on a no-FAQ route (`bangkok/koh-samui`) missed it; `next build` (prerendering the real FAQ route) caught it. **Always verify the export name** (`node -e "console.log(typeof require('next-seo').FAQPageJsonLd)"`) + **test the populated-data path, not just any route.**
 
 ## Fix Pattern
 Replace `jsonLd` key with raw `<script>` tags, same pattern as `pages/homepagev2.js`:
