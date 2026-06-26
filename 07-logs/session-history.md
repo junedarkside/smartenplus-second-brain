@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-26 (session #175) — _archived from master-state 2026-06-26_
+
+**Achieved (#175) — r9 audit + r11 SEO fixes deployed:**
+- r9 5-specialist live-prod audit (SEO 8.3·AEO 6.5·GEO 6.8·CWV 6.8·SD 5.5). Canonical report: `/seo/seo-aeo-geo-prod-2026-06-26-r9.md`.
+- r11 fixes (`dbdc097`): soft-404 destinations, /activities schema+title, llms.txt cross-border+Activities+TAT/VAT, aggregateRating removed, TAT identifier, Penang addressCountry MY, description 233→152 chars.
+
+---
+
 **Updated:** 2026-06-26 (session #174) — _archived from master-state 2026-06-26_
 
 **Achieved (#174) — checkout phone input hardening + prefill fix:**

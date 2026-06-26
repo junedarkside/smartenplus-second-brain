@@ -4,26 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-26 (session #175)
+**Updated:** 2026-06-26 (session #176)
 
-**Achieved (#175) — r9 SEO/AEO/GEO/CWV/SD live-prod audit + r11 fixes deployed:**
-- **r9 5-specialist audit** (post r10a+r10b): SEO 8.3 · AEO 6.5 · GEO 6.8 · CWV 6.8 · SD 5.5. Canonical report: `/seo/seo-aeo-geo-prod-2026-06-26-r9.md`. Vault round note + README updated. Major new findings: `/activities` zero JSON-LD, soft-404 destinations, `aggregateRating` unsupported, `llms.txt` domestic-only factual error, Penang `addressCountry:TH`.
-- **r11 fixes** (`fix/seo-r11` `dbdc097`) — 8 fixes merged → develop → deployed to main:
-  - `/destinations/[slug].js`: `notFound:true` on backend 404; `capitalizeWords` on station name
-  - `/activities/index.js`: title double-brand removed; `getStaticProps` + SSR `BreadcrumbList`+`ItemList` schema
-  - `homepagev2.js`: `aggregateRating` removed (no Review objects); TAT `identifier` added
-  - `public/llms.txt`: cross-border correction, Activities section, Company/TAT/VAT
-  - `LocalBusinessSchema.js`: `COUNTRY_BY_SLUG` map (Penang→MY)
-  - `useHomeSeoData.js`: description trimmed 233→152 chars
-- **Waiting:** r10 live-prod audit (user will trigger after CDN propagation).
+**Achieved (#176) — r10+r11 live-prod audits + r12 fixes deployed:**
+- **r10 5-specialist audit** (post r11): SEO 9.0·AEO 9.5·GEO 9.0·CWV 7.0·SD 7.0. Canonical: `/seo/seo-aeo-geo-prod-2026-06-26-r10.md`. Vault round note + README updated.
+- **r12 fixes** (`fix/seo-r12` `754dbc7`→develop `43299da`): ItemList `numberOfItems:6`, destination desc 204→140 chars, `REVALIDATE_SECONDS` 60→3600, S3 `preconnect` added, `currenciesAccepted:"THB"` (homepage+about).
+- **r11 5-specialist audit** (post r12): GEO 10.0·CWV 10.0·SD 9.0 — all r12 verified ✅.
+- **r13 backlog:** `/about` TravelAgency schema parity (P1), `/about` BreadcrumbList+WebPage (P2), `og:locale th_TH` alternate (P2).
 
-**Workspace:** frontend main→`dbdc097` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
+**Workspace:** frontend main→`43299da` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
 
 **Resume point (EXACT):**
-1. **r10 live-prod audit** — user signals "go" → 5-specialist audit verifying r11 fixes on prod + new scores.
-2. **Deploy queue** — G8 + CS-CHAT-PERF + P2-OTA-SYNC still pending (Section 2).
+1. **Deploy queue** — G8 + CS-CHAT-PERF + P2-OTA-SYNC still pending (Section 2).
+2. **r13 fixes** — `/about` schema parity when ready.
 
-_(Session #174 archived → `07-logs/session-history.md`.)_
+_(Session #175 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -49,7 +44,7 @@ _(Session #174 archived → `07-logs/session-history.md`.)_
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
-| **SEO-P1-BACKLOG** | r6-r9 all DONE (develop). **r10a DONE 2026-06-26** (`fix/seo-r10a`→develop `153ea1f`): `availableLanguage ['English']`→`['en']` on trip routes (`useRouteSeo.js:76`); `BlogPosting` JSON-LD stripped from `components/trips/BlogPost.js` (entity mismatch on product pages). **r10b DONE 2026-06-26** (`fix/seo-r10b`→develop `50925b7`): 404 title `"Page Not Found - SmartEnPlus"`→`"Page Not Found"` (titleTemplate de-dup); `rate-review/[reviewSlug].js` adds `openGraph.url`. **NOT CODE (carry as ops):** aggregateRating guard already on real API data (no change); blog meta description handled in `BlogPostHeader.js` (no change); C2 destinations `notFound:true` already in code — ISR cache flush needed (ops). **Pending r11:** `/help/faqs` FAQPage (WP content), homepage TAT in schema, H5 author E-E-A-T, sameAs, llms.txt enrichment, Yoast @graph __NEXT_DATA__ bloat, polish. **All fixes develop-only — deploy→main then PM re-audits prod.** | **OPEN — deploy pending** | [[r6-external-reconciliation-2026-06-25]] · [[r7-code-review-2026-06-26]] · [[r8-live-prod-2026-06-26]] |
+| **SEO-P1-BACKLOG** | r6-r12 all DONE + prod-verified. **r11 prod** (`dbdc097`): soft-404, /activities schema+title, llms.txt, TAT identifier, aggregateRating removed, Penang MY, desc 152 chars. **r12 prod** (`43299da`): `numberOfItems:6`, desc 140 chars, ISR 3600s, S3 preconnect, `currenciesAccepted:THB`. **r10 audit** (post r11): SEO 9.0·AEO 9.5·GEO 9.0·CWV 7.0·SD 7.0. **r11 audit** (post r12): GEO/CWV 10.0, SD 9.0. **r13 open:** `/about` TravelAgency schema parity — missing `priceRange`, `openingHours`, `contactPoint`, `geo`, `image`, `logo` vs homepage (P1); `/about` missing BreadcrumbList+WebPage (P2); `og:locale th_TH` alternate (P2). `/help/faqs` FAQPage still ops-blocked (WP/GraphQL). | **r13 open** | [[r9-live-prod-2026-06-26]] · [[r10-live-prod-2026-06-26]] |
 | **SEO-P2-FIXES** | twitter:image:alt (`_app.js` + `Seo.js`); og:locale policy unify; meta desc ≤155 chars; blog robots dup. From r6: help relative `og:image`→abs prefix (`pages/help/[...slug].js:89,109`); **lint** `structured-data-schema-patterns.md` item 7 `availableLanguage:["Thai","English"]` contradicts en-only policy → `["English"]`. `#15 og:url` CLOSED `0aa748c`. | OPEN — low | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js`, `03-knowledge/structured-data-schema-patterns.md` |
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
