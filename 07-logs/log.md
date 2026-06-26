@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-27] ingest | cs-workflow-revised-2026-06-27 — 4-agent team (BD+UX+Arch+FE) + grill session. Stakeholder map, 3 triggers, Ticket state machine (6 statuses), TripNotification model, webhook+Celery hybrid sync, frontend gaps + new components. 6 open questions. Owner decisions locked.
+
 ## [2026-06-26] session-end #178 | CS centralization status audit + full deploy vault sync. All 3 repos on main. CS workflow/stakeholder revision pending (team meeting happened, content next session). cs_chat FeatureFlag seed + P2-OTA-SYNC migrations still open.
 
 ## [2026-06-26] session-end #177 | FULL DEPLOY — all 3 repos develop→main prod. FE 43299da · BE ebbb044 · admin 3d5a3a4. Includes CS chat Steps 5-7, G8 PDPA gate, P3a/P3b OTA portal, r12 SEO, CS-CHAT-PERF 5-layer polling, phone/checkout fixes. Chat FAB hidden until cs_chat FeatureFlag seeded in prod DB.
