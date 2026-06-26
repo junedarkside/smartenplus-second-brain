@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-26 (session #171) — _archived from master-state 2026-06-26_
+
+**Achieved (#171) — r10 SEO TQM phased fixes + branch pruning:**
+- **r10a** (`fix/seo-r10a`→develop `153ea1f`): `availableLanguage ['English']`→`['en']` on trip routes (`useRouteSeo.js:76`); removed `BlogPosting` JSON-LD from `components/trips/BlogPost.js` (entity-type mismatch on product pages).
+- **r10b** (`fix/seo-r10b`→develop `50925b7`): 404 title de-branded; `rate-review/[reviewSlug].js` adds `openGraph.url`.
+- **Pushed** develop to `origin/develop` (`8d505d9`).
+- **Pruned** 9 stale fix branches (r6/r7/r7-coverage/r8/r9/r9-faqpage-name/r10a/r10b/ota-gate) — all local deleted, 3 remote deleted.
+- **Verified (code)**: blog meta + aggregateRating + destinations notFound all already correct — no extra changes needed.
+- Live-prod r8 audit: SEO 8.4 · AEO 7.5 · GEO 6.5. r10 target: SEO 8.6+ · AEO 8.0+ · GEO 7.0+.
+
+**Workspace:** frontend main→`8d505d9` · backend main→`f6eaf42` · admin main→`3d5a3a4` · content master→`3756e5b`
+
+**Resume point:** USER deploys develop→main → ping me for live-prod r10 audit.
+
+---
+
 **Updated:** 2026-06-25 (session #169) — _archived from master-state 2026-06-26_
 
 **Achieved this session (#169) — G8 OTA PDPA consent gate:**
