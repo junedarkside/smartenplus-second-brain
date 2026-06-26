@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-26] session-end #175 | r9 5-specialist live-prod audit (SEO 8.3·AEO 6.5·GEO 6.8·CWV 6.8·SD 5.5) + r11 fixes deployed (dbdc097): soft-404 destinations, activities schema+title, llms.txt cross-border+activities+TAT/VAT, aggregateRating removed, TAT identifier, Penang addressCountry MY, description trimmed 233→152.
+
 ## [2026-06-26] session-end #174 | checkout phone hardening: MuiTelInput validation + normalizePhone legacy repair + prefill blank fix (bare "+66" junk in Redux blocked session phone). 3 branches→develop→prod. Frontend main dd2b763.
 
 ## [2026-06-26] session-end #173 | prod hotfix: birthDate truncated year → 500 on /order-billing/ (SRL9043592). FE year padStart(4), BE calculate_age guard. Both merged→develop→prod deployed.

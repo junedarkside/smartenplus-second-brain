@@ -4,22 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-26 (session #174)
+**Updated:** 2026-06-26 (session #175)
 
-**Achieved (#174) — checkout phone input hardening + prefill fix:**
-- **Phone validation** (`feat/checkout-phone-validation`): replaced bare regex with `matchIsValidTel` (mui-tel-input) in checkout `Passengers.js` Yup schema; added `MuiTelInput` with `forceCallingCode`, `defaultCountry="TH"`, `preferredCountries`; added birth year `minDate={new Date(1900,0,1)}` + Yup `.min()` guard. Declared `libphonenumber-js` as direct dep.
-- **Legacy phone repair** (`fix/phone-normalize-legacy`): new `helpers/normalizePhone.js` using `parsePhoneNumberFromString` — auto-repairs malformed `+660896669535`→`+66896669535` (trunk-0 strip). Applied in profile page + checkout prefill. Profile page Yup also migrated to `matchIsValidTel`.
-- **Blank phone prefill fix** (`fix/checkout-contact-prefill`): root cause — `MuiTelInput` emits bare `"+66"` on mount → `FormikValuesSync` treated it as truthy `hasContactData` → persisted to Redux → Redux `"+66"` blocked session phone backfill. Fixes: `FormikValuesSync.js` gates `hasContactData` on `matchIsValidTel(values.phone)`; `Passengers.js` gates all phone prefill paths on `matchIsValidTel` not truthiness. Session phone `"+66 089 666 9535"` now correctly normalizes → prefills `+66 89 666 9535`.
-- All 3 branches merged → develop → deployed to production (`dd2b763`).
+**Achieved (#175) — r9 SEO/AEO/GEO/CWV/SD live-prod audit + r11 fixes deployed:**
+- **r9 5-specialist audit** (post r10a+r10b): SEO 8.3 · AEO 6.5 · GEO 6.8 · CWV 6.8 · SD 5.5. Canonical report: `/seo/seo-aeo-geo-prod-2026-06-26-r9.md`. Vault round note + README updated. Major new findings: `/activities` zero JSON-LD, soft-404 destinations, `aggregateRating` unsupported, `llms.txt` domestic-only factual error, Penang `addressCountry:TH`.
+- **r11 fixes** (`fix/seo-r11` `dbdc097`) — 8 fixes merged → develop → deployed to main:
+  - `/destinations/[slug].js`: `notFound:true` on backend 404; `capitalizeWords` on station name
+  - `/activities/index.js`: title double-brand removed; `getStaticProps` + SSR `BreadcrumbList`+`ItemList` schema
+  - `homepagev2.js`: `aggregateRating` removed (no Review objects); TAT `identifier` added
+  - `public/llms.txt`: cross-border correction, Activities section, Company/TAT/VAT
+  - `LocalBusinessSchema.js`: `COUNTRY_BY_SLUG` map (Penang→MY)
+  - `useHomeSeoData.js`: description trimmed 233→152 chars
+- **Waiting:** r10 live-prod audit (user will trigger after CDN propagation).
 
-**Workspace:** frontend main→`dd2b763` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
+**Workspace:** frontend main→`dbdc097` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
 
 **Resume point (EXACT):**
-1. **Verify prod** — log in as user with stored `+660896669535` → checkout Contact Details → phone should prefill as `+66 89 666 9535` (normalized).
-2. **Re-save profile** once to write clean `+66896669535` to DB (current DB still has malformed value).
-3. **Deploy queue** — SEO r6-r10 + G8 + CS-CHAT-PERF still pending develop→main (see Section 2).
+1. **r10 live-prod audit** — user signals "go" → 5-specialist audit verifying r11 fixes on prod + new scores.
+2. **Deploy queue** — G8 + CS-CHAT-PERF + P2-OTA-SYNC still pending (Section 2).
 
-_(Session #173 archived → `07-logs/session-history.md`.)_
+_(Session #174 archived → `07-logs/session-history.md`.)_
 
 ---
 

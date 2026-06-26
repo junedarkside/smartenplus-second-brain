@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-26 (session #174) — _archived from master-state 2026-06-26_
+
+**Achieved (#174) — checkout phone input hardening + prefill fix:**
+- `matchIsValidTel` validation in checkout Yup schema; `MuiTelInput` with `forceCallingCode`; birth year `minDate` + Yup `.min()`.
+- `helpers/normalizePhone.js` — repairs legacy `+660896669535`→`+66896669535` via `parsePhoneNumberFromString`.
+- Blank phone prefill root cause: `MuiTelInput` bare `"+66"` poisoned Redux → gated `hasContactData` in `FormikValuesSync.js` on `matchIsValidTel`; gated all prefill paths in `Passengers.js`. Session phone now correctly prefills.
+- All 3 branches merged → develop → deployed (`dd2b763`).
+
+---
+
 **Updated:** 2026-06-26 (session #173) — _archived from master-state 2026-06-26_
 
 **Achieved (#173) — production 500 hotfix: birthDate truncated year:**
