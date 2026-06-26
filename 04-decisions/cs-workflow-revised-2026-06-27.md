@@ -478,7 +478,7 @@ Verdict: **fix-then-ship.** All blockers + majors below corrected inline above (
 **New gaps surfaced:**
 - **`partner_case_id` field on Ticket** (free-text, OTA case ref) — deduplication for Trigger 3, audit trail for disputes. 5-minute model change, prevents most common Trigger 3 failure.
 - Dedicated OTA forwarding channel needed with acknowledgment receipt + SLA (proposed: 2h business hours).
-- **Data processing agreement required before go-live** — Django storage of Klook-sourced customer data (name, email, phone) falls under PDPA + Klook operator DPA. Not optional.
+- ~~Data processing agreement required~~ — **CLOSED (2026-06-27 PM review).** Klook sends booking data TO SmartEnPlus as the hired operator. Storage in Django = same data, same service purpose, different DB. Contract performance basis (PDPA §24(3)) applies. No separate DPA required. Housekeeping only: check operator agreement for marketing-use restrictions, add PII retention/purge, add one-line privacy notice in portal.
 - **Channel conflict check required** — `/my-trip` must NOT show account creation prompt, newsletter opt-in, or "book direct" CTA. Written confirmation needed.
 - Resolution authority ambiguity — "Approved" in SmartEnPlus before OTA processes = premature confirmation. `awaiting_ota_update` is the right guard; the risk is admin bypassing it. Ties to Admin's resolve-block gap above.
 
@@ -513,8 +513,8 @@ These gaps were NOT in the doc before this meeting and require resolution:
 | **NEW-5** | Duty/on-call contact specification — who operator reaches at 4:30am | Operator | MAJOR | Ops/product |
 | **NEW-6** | Magic link email redesign — trust context (booking source + trip name) + fallback contact in footer | OTA Passenger | MAJOR | FE + comms |
 | **NEW-7** | i18n plan — English-only portal excludes major OTA customer segments | OTA Passenger | MAJOR | Product decision |
-| **NEW-8** | Data processing agreement — Django storage of OTA-sourced customer PII under PDPA | OTA Staff | **BLOCKER** (legal/commercial) | Legal/owner |
-| **NEW-9** | Channel conflict written confirmation — no account creation/upsell in `/my-trip` | OTA Staff | MAJOR | Owner |
+| **NEW-8** | ~~Data processing agreement blocker~~ → **CLOSED** — Klook sends data TO SmartEnPlus as operator. Contract performance basis (PDPA §24(3)). Housekeeping only: check contract clause, add retention/purge, add privacy notice in portal. | OTA Staff persona | ~~BLOCKER~~ → CLOSED | Legal/owner (housekeeping) |
+| **NEW-9** | Channel conflict — no upsell/account-creation in `/my-trip` | OTA Staff | MINOR (was MAJOR) | Owner policy decision |
 | **NEW-10** | Manifest push to operator on resolved seat-count ticket | Operator | MAJOR | BE + ops |
 | **NEW-11** | Supersede (M-6) confirmation modal spec — prevent misclick closing live customer request | Admin | MAJOR | FE + UX |
 | **NEW-12** | Bulk close for group cancellation events (multi-ticket supersede) | Admin | MAJOR | FE + BE |
@@ -525,17 +525,45 @@ These gaps were NOT in the doc before this meeting and require resolution:
 
 ---
 
-### Updated Open Questions (post-meeting)
+### Updated Open Questions (post-meeting, re-tiered 2026-06-27)
 
-| # | Question | Severity | Owner |
-|---|---|---|---|
-| OQ-1 | Supabase plan — supports pg_net webhooks? | **BLOCKER** | Owner/infra |
-| OQ-3 | `awaiting_ota_update` SLA — how long before admin alerted? Must surface to customer at submit. | **BLOCKER** (NEW-1 ties here) | Product |
-| OQ-6 | Magic link expiry — admin regenerate + self-serve re-request path? | **BLOCKER** | BE + FE |
-| OQ-8 (new) | Data processing agreement for OTA-sourced PII in Django (PDPA)? | **BLOCKER** (NEW-8) | Legal/owner |
-| OQ-7 | Request feasibility validation at API level? | MAJOR | BE |
-| OQ-5 | Quarantined booking + customer request — block or allow? | MAJOR | BE |
-| OQ-2 | SMS provider (Twilio/SNS)? | Minor | Infra |
+> **Re-tier rationale:** OQ-8 raised as blocker by OTA Staff persona (Klook) — but Klook already SENDS booking data to SmartEnPlus as the operator they hired. Storage in Django is same data, same purpose, different DB. Contract performance basis (PDPA §24(3)) applies. No separate DPA needed. Klook's concern is valid for MARKETING use — not for SERVICE operations. OQ-8 downgraded to housekeeping items only. Same logic applied to OQ-9 (channel conflict) and NEW-9 below.
+
+| # | Question | Severity | Owner | Notes |
+|---|---|---|---|---|
+| OQ-1 | Supabase plan — supports pg_net webhooks? | **BLOCKER** | Owner/infra | Determines primary sync path |
+| OQ-3 | SLA for `awaiting_ota_update` — define timeout + surface ETA to customer at submit | **BLOCKER** | Product | All 5 voices raised this. No bound = customer stuck forever. |
+| OQ-6 | Magic link expiry — admin regenerate + self-serve re-request path | **BLOCKER** | BE + FE | OTA guest can't see resolution if link expired |
+| NEW-1 | `awaiting_ota_update` resolve-block until `OtaBookingEvent` exists after status set | **BLOCKER** | BE | Prevents admin creating "Approved" lie on stale data |
+| OQ-7 | Request feasibility validation at API — reject impossible requests or let admin reject? | MAJOR | BE | Ops load question |
+| OQ-5 | Quarantined booking + customer request — block or allow? | MAJOR | BE | Guard missing |
+| NEW-4 | Emergency cancellation fast-track — bypasses state machine for weather/same-day | MAJOR | Product + BE | 90min to departure, 4 handoffs won't work |
+| NEW-5 | Duty/on-call contact — who operator reaches at 4:30am | MAJOR | Ops | Ops SLA, not engineering |
+| NEW-6 | Magic link email redesign — "You booked [Trip] via Klook" line 1 + fallback contact footer | MAJOR | FE + comms | Near-zero open rate without this for non-Thai pax |
+| NEW-7 | i18n plan — English-only excludes Thai, Japanese, Korean, Russian OTA customers | MAJOR | Product decision | Scope + priority call |
+| NEW-10 | Manifest push to operator on resolved seat-count ticket | MAJOR | BE + ops | Safety issue — stale manifests |
+| NEW-13 | Dedicated OTA forwarding channel (Trigger 3) + ack receipt + SLA | MAJOR | Ops/product | Currently "email admin" with no SLA |
+| **OQ-8** | ~~PDPA DPA required before storing Klook PII in Django~~ | ~~BLOCKER~~ → **CLOSED** | — | **Lawful as-is.** Klook sends data TO SmartEnPlus (operator). Contract performance basis (PDPA §24(3)). Same data already in Supabase. Django = same purpose, better system. Three housekeeping items only (see below). |
+| NEW-9 | Channel conflict — no upsell/account-creation in `/my-trip` | MINOR (was MAJOR) | Owner | Owner confirms intent. Simple policy decision, not a launch gate. |
+| NEW-2 | `partner_case_id` field on Ticket (OTA case ref) | MAJOR | BE — easy | 5-min model change, prevents Trigger 3 dedup failure |
+| NEW-3 | Automated SES on all ticket transitions — spec which fire | MAJOR | BE + product | Tied to OQ-3 SLA |
+| NEW-11 | Supersede (M-6) confirmation modal | MAJOR | FE + UX | One misclick closes live customer request |
+| NEW-12 | Bulk close for group cancellation | MAJOR | FE + BE | Ops efficiency |
+| NEW-14 | `resolution_note` mandatory on `closed_no_action` | MAJOR | BE validation | Easy — add `blank=False` when status = this |
+| NEW-15 | Escalation path if status stalls N days | MAJOR | Product | Ties to OQ-3 |
+| NEW-16 | Mixed-booking cancellation (direct + OTA pax on same boat) | Open | Product | Harder ops problem, deferred |
+| OQ-2 | SMS provider (Twilio/SNS)? | Minor | Infra | Additive, not blocking |
+
+---
+
+### OQ-8 Housekeeping Items (not blockers, do before prod at scale)
+
+| Item | Action | Who |
+|---|---|---|
+| Check Klook operator agreement for any secondary-storage restriction clause | Read signed contract — most restrict MARKETING not SERVICE | Owner |
+| PII retention + purge | Add `pii_purge_after` date field on `CsOtaBooking` or scheduled task (trip_date + 90 days) | BE |
+| Privacy notice in `/my-trip` | One sentence: "Your booking data was shared by [OTA] to enable your trip service" | FE |
+| Confirm `CsOtaBooking` not exposed via public API | Check `cs/urls.py` — all endpoints require `IsAdminOrIsStaff` | BE audit |
 | OQ-9 (new) | i18n scope for `/my-trip` portal — which languages, when? | MAJOR | Product |
 | OQ-10 (new) | Emergency duty channel — on-call policy and contact for operators? | MAJOR | Ops |
 | OQ-11 (new) | Channel conflict policy — written confirmation no upsell in OTA guest portal? | MAJOR (commercial) | Owner |
@@ -544,14 +572,17 @@ These gaps were NOT in the doc before this meeting and require resolution:
 
 ### PM Verdict After Meeting
 
-**Status stays `fix-then-ship`.** 3 new BLOCKERS surfaced (NEW-1 resolve-guard, NEW-8 PDPA DPA, OQ-8). These join the existing 5 blockers.
+**Status stays `fix-then-ship`.** ~~3~~ **2 new BLOCKERS** surfaced (NEW-1 resolve-guard, OQ-3 SLA). OQ-8 (PDPA DPA) **closed** — storing Klook data in Django is lawful, you're the operator they hired. These join existing 5 blockers (B-1 through B-5).
 
 **Highest-urgency before any code ships:**
-1. OQ-8 — PDPA data processing agreement. Legal, not engineering. Can't store Klook customer data without it.
-2. NEW-1 — resolve-block guard. Prevents admin from creating confirmed-lie state in customer portal.
-3. OQ-3 — SLA defined and surfaced to customer at submit. Without this, every status is theatre.
-4. NEW-6 — magic link email trust context. Without this, OTA passenger open rate is near zero.
-5. OQ-10 — emergency duty contact. Without this, operator has no path for weather cancellation.
+1. **NEW-1** — resolve-block guard. Admin can create "Approved" lie on stale data. BE fix, one guard clause.
+2. **OQ-3** — SLA defined + surfaced to customer at submit. Without this, every status label is meaningless.
+3. **OQ-1** — confirm Supabase plan (pg_net). Determines whether webhook or Celery-primary. No code until known.
+4. **OQ-6** — magic link regeneration. OTA guest dead-end on expired link blocks resolution visibility.
+5. **NEW-6** — magic link email trust context. First line must name the OTA + trip. Without it open rate near zero.
+6. **NEW-5** — duty/on-call contact. Operator needs a name + number. Ops decision, not engineering. Zero cost.
+
+**OQ-8 CLOSED — PM rationale:** Klook/12Go send booking data TO SmartEnPlus as the hired transport operator. This data sharing already happens today (email → Supabase). Mirroring to Django = same data, same operational purpose, better system. PDPA §24(3) contract-performance basis applies. No DPA needed. Three housekeeping items only (contract clause check, PII retention/purge, portal privacy notice) — none block go-live.
 
 **What can ship now (already built, no new blockers):** CS chat widget (pending `cs_chat` FeatureFlag seed), P3a OTA portal (read-only trip view, already deployed), existing ticket queue in admin.
 
