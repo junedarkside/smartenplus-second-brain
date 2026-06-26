@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-27] stakeholder-meeting | cs-workflow-revised-2026-06-27 — 5-voice simulation (Customer·OTA Passenger·Admin·OTA Staff·Operator). PM synthesis: 3 new BLOCKERs (resolve-guard integrity, PDPA DPA, OQ-8), 16 new action items. Top 5 pre-ship: PDPA agreement, resolve-block guard, SLA defined+surfaced, magic link email trust, emergency duty contact.
+
 ## [2026-06-27] scrutinize | cs-workflow-revised-2026-06-27 — 3-agent scrutiny (arch+workflow+codebase-verify). Verdict fix-then-ship. 5 blockers + 7 majors corrected inline (max_length truncation, duplicate FK vs GenericFK, cancellation terminal-state contradiction, direct-booking cancel gap, Supabase webhook free-tier contingency, admin_initiated boolean, dead matched_ticket, TripNotification constraint, ticket collision, customer notify). 1 doc claim REFUTED vs code. Status accepted→fix-then-ship. 7 open Qs re-tiered.
 
 ## [2026-06-27] ingest | cs-workflow-revised-2026-06-27 — 4-agent team (BD+UX+Arch+FE) + grill session. Stakeholder map, 3 triggers, Ticket state machine (6 statuses), TripNotification model, webhook+Celery hybrid sync, frontend gaps + new components. 6 open questions. Owner decisions locked.

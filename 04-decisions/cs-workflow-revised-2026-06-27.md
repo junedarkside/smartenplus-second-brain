@@ -412,6 +412,151 @@ Verdict: **fix-then-ship.** All blockers + majors below corrected inline above (
 
 ---
 
+## Stakeholder Meeting — PM Summary (2026-06-27)
+
+**Format:** 5-voice simulation (Customer · OTA Passenger · Admin/CS · OTA Staff · Operator Staff). Each read the full doc cold and gave unfiltered feedback. PM synthesis below. All voices available in full above this section.
+
+---
+
+### Cross-Cutting Themes (all 5 voices raised)
+
+| Theme | Who raised it | Current doc status |
+|---|---|---|
+| **No SLA on `awaiting_ota_update`** | Customer, OTA Passenger, Admin, OTA Staff | OQ-3 MAJOR — UNRESOLVED |
+| **Magic link expiry = customer dead-end** | Customer, OTA Passenger, Admin, OTA Staff | OQ-6 MAJOR — UNRESOLVED |
+| **Supabase sync lag visible to everyone** | Customer, OTA Staff, Admin | OQ-1 BLOCKER — UNRESOLVED |
+| **No notification channel defined** | OTA Passenger, Operator, OTA Staff | M-7 added but email copy + channel unspecified |
+| **Emergency/urgent cancellation path** | Operator, Admin, Customer | NOT IN DOC — new gap |
+
+---
+
+### Voice Summaries
+
+#### 🧑 Customer (Nanthawan — direct, Thai professional)
+**Core complaint:** "Waiting for Review" and "Being Reviewed" feel identical. No ETA. No escalation path. `awaiting_ota_update` = indefinite limbo with no customer recourse.
+
+**New gaps surfaced:**
+- `closed_no_action` label "No Change Needed" implies request was ignored — resolution_note must be mandatory here, not optional.
+- No confirmation that request was received (OTA portal has no polling bug confirmed — still not fixed in UX experience).
+- No escalation path if status doesn't move in N days.
+
+**Highest priority ask:** Mandatory expected-response-time shown at ticket submission. Ties directly to OQ-3.
+
+---
+
+#### ✈️ OTA Passenger (Yuki — Klook booker, Japan)
+**Core complaint:** The magic link email looks like phishing. No SmartEnPlus brand trust established. If link expires, complete dead-end.
+
+**New gaps surfaced:**
+- Email must state "You booked [Trip] through Klook — this is the operator portal" in line 1. Without this, open rate is near zero for non-Thai travellers.
+- No fallback contact (WhatsApp/LINE number) in magic link email footer — customer has nowhere to go on expiry.
+- "Cancellation Confirmed" in portal before Klook refunds creates credibility conflict — customer believes Klook, not SmartEnPlus portal.
+- **i18n completely absent from doc** — English-only portal excludes large OTA customer segments (Thai, Japanese, Korean, Russian).
+
+**Highest priority ask:** Magic link email redesign — trust context + fallback contact in first/last lines. Predates any feature work.
+
+---
+
+#### 🎧 Admin/CS Agent (Nong — CS Lead, 40-60 tickets/day)
+**Core complaint:** 8 manual steps per OTA ticket. No push when Supabase updates. Admin can resolve ticket before Supabase actually reflects the change — creates data lie in customer portal with no recovery path.
+
+**New gaps surfaced:**
+- **`awaiting_ota_update` must block resolve until at least one `OtaBookingEvent` is created after ticket entered that status.** Without this guard, admin can click Resolve on Klook's verbal confirmation before the sync lands — customer sees "Approved" on stale data.
+- Supersede (M-6) needs a confirmation modal UI spec — one wrong click closes a live customer request permanently.
+- No "Supabase last synced + field diff" banner on ticket detail = admin verifying blind.
+- Automated SES emails: doc only specifies M-7 trigger. All other transitions (pending→in_review→awaiting→resolved) are silent to customer unless admin emails manually. This must be specified.
+- Bulk close needed for multi-ticket group cancellation events.
+- Saved queue filters needed: "Awaiting OTA > 24h", "Pending not yet reviewed", "Admin-initiated unseen by customer".
+
+**Highest priority ask:** `OtaBookingEvent` banner on ticket detail + resolve-block guard. Without this the manual verification step is theatre.
+
+---
+
+#### 🏢 OTA Staff (Klook, Operator Relations Manager)
+**Core complaint:** No structured forwarding channel for Trigger 3 (OTA→SmartEnPlus). No Klook case ID field on Ticket = no deduplication when customer contacts both. Sync lag means "Approved" can appear before Klook actually processed the change.
+
+**New gaps surfaced:**
+- **`partner_case_id` field on Ticket** (free-text, OTA case ref) — deduplication for Trigger 3, audit trail for disputes. 5-minute model change, prevents most common Trigger 3 failure.
+- Dedicated OTA forwarding channel needed with acknowledgment receipt + SLA (proposed: 2h business hours).
+- **Data processing agreement required before go-live** — Django storage of Klook-sourced customer data (name, email, phone) falls under PDPA + Klook operator DPA. Not optional.
+- **Channel conflict check required** — `/my-trip` must NOT show account creation prompt, newsletter opt-in, or "book direct" CTA. Written confirmation needed.
+- Resolution authority ambiguity — "Approved" in SmartEnPlus before OTA processes = premature confirmation. `awaiting_ota_update` is the right guard; the risk is admin bypassing it. Ties to Admin's resolve-block gap above.
+
+**Highest priority ask:** `partner_case_id` field + data processing agreement signed before launch.
+
+---
+
+#### ⛵ Operator Staff (Andaman Sea Transport — join-in ferry/speed boat)
+**Core complaint:** Emergency cancellation (4:30am, weather, 90min to departure) is completely unaddressed. The full ticket state machine cannot execute in 90 minutes across 4 human handoffs. Mixed OTA+direct bookings on same boat = doc treats them as separate tracks but they are one physical departure.
+
+**New gaps surfaced:**
+- **No duty contact/emergency channel specified** — biggest real-world failure mode. Admin may be unreachable at 4:30am. Who is on call?
+- **Fast-track emergency cancellation path** needed — bypasses full state machine, fires SES to all affected pax immediately without waiting for Supabase sync.
+- **Manifest push to operator** when any seat-count-affecting Ticket resolves — operator currently receives nothing. Running departures on stale manifests is a safety issue.
+- Supersede (M-6) invisible to operator — if admin hesitates on supersede because they don't know the rule, emergency resolution stalls.
+- Mixed-booking cancellation (Klook + direct pax on same boat) requires simultaneous coordination with SmartEnPlus AND Klook ops — doc ignores this split-responsibility case.
+
+**Highest priority ask:** Single-page emergency ops card (duty phone + fast-track cancellation steps) before any code ships to production.
+
+---
+
+### PM-Identified New Action Items
+
+These gaps were NOT in the doc before this meeting and require resolution:
+
+| # | Gap | Raised by | Severity | Owner |
+|---|---|---|---|---|
+| **NEW-1** | `awaiting_ota_update` must block Resolve until `OtaBookingEvent` exists after ticket entered status | Admin | **BLOCKER** (data integrity) | BE |
+| **NEW-2** | `partner_case_id` field on Ticket (OTA case ref, free-text) | OTA Staff | MAJOR | BE — easy |
+| **NEW-3** | Automated SES on ALL ticket status transitions (not just M-7 trigger) — spec which ones | Admin, Customer | MAJOR | BE + product |
+| **NEW-4** | Emergency cancellation fast-track path — compresses state machine for same-day/weather cancel | Operator | MAJOR | Product + BE |
+| **NEW-5** | Duty/on-call contact specification — who operator reaches at 4:30am | Operator | MAJOR | Ops/product |
+| **NEW-6** | Magic link email redesign — trust context (booking source + trip name) + fallback contact in footer | OTA Passenger | MAJOR | FE + comms |
+| **NEW-7** | i18n plan — English-only portal excludes major OTA customer segments | OTA Passenger | MAJOR | Product decision |
+| **NEW-8** | Data processing agreement — Django storage of OTA-sourced customer PII under PDPA | OTA Staff | **BLOCKER** (legal/commercial) | Legal/owner |
+| **NEW-9** | Channel conflict written confirmation — no account creation/upsell in `/my-trip` | OTA Staff | MAJOR | Owner |
+| **NEW-10** | Manifest push to operator on resolved seat-count ticket | Operator | MAJOR | BE + ops |
+| **NEW-11** | Supersede (M-6) confirmation modal spec — prevent misclick closing live customer request | Admin | MAJOR | FE + UX |
+| **NEW-12** | Bulk close for group cancellation events (multi-ticket supersede) | Admin | MAJOR | FE + BE |
+| **NEW-13** | Dedicated OTA forwarding channel + acknowledgment receipt + SLA (Trigger 3) | OTA Staff | MAJOR | Ops/product |
+| **NEW-14** | `resolution_note` mandatory (not optional) on `closed_no_action` | Customer | MAJOR | BE validation |
+| **NEW-15** | Escalation path for customer when status stalls (N days with no movement) | Customer | MAJOR | Product |
+| **NEW-16** | Mixed-booking cancellation coordination (direct + OTA pax on same physical boat) | Operator | Open | Product |
+
+---
+
+### Updated Open Questions (post-meeting)
+
+| # | Question | Severity | Owner |
+|---|---|---|---|
+| OQ-1 | Supabase plan — supports pg_net webhooks? | **BLOCKER** | Owner/infra |
+| OQ-3 | `awaiting_ota_update` SLA — how long before admin alerted? Must surface to customer at submit. | **BLOCKER** (NEW-1 ties here) | Product |
+| OQ-6 | Magic link expiry — admin regenerate + self-serve re-request path? | **BLOCKER** | BE + FE |
+| OQ-8 (new) | Data processing agreement for OTA-sourced PII in Django (PDPA)? | **BLOCKER** (NEW-8) | Legal/owner |
+| OQ-7 | Request feasibility validation at API level? | MAJOR | BE |
+| OQ-5 | Quarantined booking + customer request — block or allow? | MAJOR | BE |
+| OQ-2 | SMS provider (Twilio/SNS)? | Minor | Infra |
+| OQ-9 (new) | i18n scope for `/my-trip` portal — which languages, when? | MAJOR | Product |
+| OQ-10 (new) | Emergency duty channel — on-call policy and contact for operators? | MAJOR | Ops |
+| OQ-11 (new) | Channel conflict policy — written confirmation no upsell in OTA guest portal? | MAJOR (commercial) | Owner |
+
+---
+
+### PM Verdict After Meeting
+
+**Status stays `fix-then-ship`.** 3 new BLOCKERS surfaced (NEW-1 resolve-guard, NEW-8 PDPA DPA, OQ-8). These join the existing 5 blockers.
+
+**Highest-urgency before any code ships:**
+1. OQ-8 — PDPA data processing agreement. Legal, not engineering. Can't store Klook customer data without it.
+2. NEW-1 — resolve-block guard. Prevents admin from creating confirmed-lie state in customer portal.
+3. OQ-3 — SLA defined and surfaced to customer at submit. Without this, every status is theatre.
+4. NEW-6 — magic link email trust context. Without this, OTA passenger open rate is near zero.
+5. OQ-10 — emergency duty contact. Without this, operator has no path for weather cancellation.
+
+**What can ship now (already built, no new blockers):** CS chat widget (pending `cs_chat` FeatureFlag seed), P3a OTA portal (read-only trip view, already deployed), existing ticket queue in admin.
+
+---
+
 ## Related
 
 [[booking-command-centre-decision]] (parent) · [[cs-architecture-decision]] · [[cs-api-contract]] · [[cs-consent-gdpr-model]] · [[cs-centralization-stack]] · [[supabase-ota-booking-store]] · [[cs-guest-storm-investigation]]
