@@ -20,6 +20,9 @@ Track what the public web + AI/answer engines actually receive from `https://www
 - `r4-peer-review.md` — peer review of synthesis
 - `r5-live-reaudit.md` — live HTTP-fetch verification (2026-06-22)
 - `r6-external-reconciliation-2026-06-25.md` — third-party (Hermes) audit reconciled vs code
+- `r7-code-review-2026-06-26.md` — code-level review post r6-r9 implementation
+- `r8-live-prod-2026-06-26.md` — live prod verification post r6-r9 deploy (SEO 8.4 · AEO 7.5 · GEO 6.5)
+- `r9-live-prod-2026-06-26.md` — 5-specialist live prod audit post r10a+r10b (SEO 8.3 · AEO 6.5 · GEO 6.8 · CWV 6.8 · SD 5.5)
 
 ## Architecture
 Pages Router + next-seo. Load-bearing gotchas: next-seo v6 silently drops the `jsonLd` prop ([[nextseo-v6-jsonld-silent-drop]]); page-level SEO utils override `DefaultSeo`; canonical must use `getSiteUrl()` (www, not apex) ([[seo-canonical-getsiteurl-pattern]]); `/ref/{slug}` is the live URL, `/ref/article/{slug}` 404s ([[ref-url-structure-live-vs-code]]). See [[structured-data-schema-patterns]].
@@ -28,9 +31,21 @@ Pages Router + next-seo. Load-bearing gotchas: next-seo v6 silently drops the `j
 - [x] r1 three-lens audit
 - [x] r3 synthesis + r4 peer review + r5 live re-audit
 - [x] r6 external-audit reconciliation (2026-06-25)
-- [ ] **Re-confirm `curl /robots.txt`** — AI-crawler block reported lifted in r6; verify then close r3 P0-A
-- [ ] SEO-P1 backlog: `/activities` canonical+NextSeo, help `[...slug]` notFound, destinations `station_name` guard, English `manifest.json`, `availableLanguage:["en"]`
-- [ ] Lint fix: [[structured-data-schema-patterns]] line 75 `availableLanguage:["Thai","English"]` contradicts en-only policy
+- [x] r7 code review (2026-06-26)
+- [x] r8 live prod verification post r6-r9 deploy (2026-06-26)
+- [x] r9 5-specialist live prod audit post r10a+r10b (2026-06-26)
+- [x] **`robots.txt` AI-crawler allowlist** — all 11 UAs confirmed Allow: / (r9 GEO-live)
+- [x] `availableLanguage: ["en"]` ISO — r10a fix confirmed live on trip routes (r9)
+- [x] BlogPosting stripped from trip routes — r10a fix confirmed live (r9)
+- [x] 404 title de-duped — r10b fix confirmed live (r9)
+- [ ] **r11 P0: `/activities` zero JSON-LD + double-brand title** — `pages/activities/index.js`
+- [ ] **r11 P0: `/destinations/[slug]` soft-404** — `return {notFound: true}` in catch block
+- [ ] **r11 P0: `/help/faqs` FAQPage** — WP/GraphQL ops issue
+- [ ] **r11 P1: Homepage `aggregateRating` unsupported** — remove or add Review objects
+- [ ] **r11 P1: Homepage `TravelAgency` missing TAT `identifier`** — `hooks/useRouteSeo.js`
+- [ ] **r11 P1: `public/llms.txt` factual error** — "domestic" → add cross-border routes, TAT/VAT
+- [ ] **r11 P1: Homepage meta description >155 chars** — `pages/_app.js` / `components/FrontPage/Seo.js`
+- [ ] **r11 P1: Cloudflare HTML caching** — `CF-Cache-Status: DYNAMIC` on all pages (ops)
 
 ## Decisions
 - External audits are reconciled against live code before trusting (precedent: [[seo-audit-reconciliation-2026-06-21]]). ~40–50% of external findings carry wrong root cause or wrong fix idiom.
