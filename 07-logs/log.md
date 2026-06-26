@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-27] scrutinize | cs-workflow-revised-2026-06-27 — 3-agent scrutiny (arch+workflow+codebase-verify). Verdict fix-then-ship. 5 blockers + 7 majors corrected inline (max_length truncation, duplicate FK vs GenericFK, cancellation terminal-state contradiction, direct-booking cancel gap, Supabase webhook free-tier contingency, admin_initiated boolean, dead matched_ticket, TripNotification constraint, ticket collision, customer notify). 1 doc claim REFUTED vs code. Status accepted→fix-then-ship. 7 open Qs re-tiered.
+
 ## [2026-06-27] ingest | cs-workflow-revised-2026-06-27 — 4-agent team (BD+UX+Arch+FE) + grill session. Stakeholder map, 3 triggers, Ticket state machine (6 statuses), TripNotification model, webhook+Celery hybrid sync, frontend gaps + new components. 6 open questions. Owner decisions locked.
 
 ## [2026-06-26] session-end #178 | CS centralization status audit + full deploy vault sync. All 3 repos on main. CS workflow/stakeholder revision pending (team meeting happened, content next session). cs_chat FeatureFlag seed + P2-OTA-SYNC migrations still open.
