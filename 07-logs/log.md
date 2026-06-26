@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-26] session-end #174 | checkout phone hardening: MuiTelInput validation + normalizePhone legacy repair + prefill blank fix (bare "+66" junk in Redux blocked session phone). 3 branches→develop→prod. Frontend main dd2b763.
+
 ## [2026-06-26] session-end #173 | prod hotfix: birthDate truncated year → 500 on /order-billing/ (SRL9043592). FE year padStart(4), BE calculate_age guard. Both merged→develop→prod deployed.
 
 ## [2026-06-26] session-end #172 | r10 SEO fixes (availableLanguage ISO, BlogPosting entity-type, 404 de-brand, rate-review og:url) → develop pushed 8d505d9. 9 stale branches pruned. Scores: SEO 8.4→8.6+ target post-deploy. r11 backlog: /help/faqs FAQPage, homepage TAT schema, H5 author, llms.txt.

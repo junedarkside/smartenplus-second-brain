@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-26 (session #173) — _archived from master-state 2026-06-26_
+
+**Achieved (#173) — production 500 hotfix: birthDate truncated year:**
+- **Bug:** order SRL9043592 crashed `/order-billing/` with `ValueError: time data '202-12-02' does not match format '%Y-%m-%d'`. User typed partial year `202` in MUI DatePicker → `getFullYear()===202` → `parseDateWithoutTimeZone()` emitted `'202-12-02'` (no year zero-padding) → backend `calculate_age()` `strptime` crash.
+- **Root cause trigger:** commit `a73b575` (2026-02-23) added `_get_sorted_passengers()` which calls `calculate_age()` on every passenger — previously that code path was never hit, so malformed years went unnoticed.
+- **FE fix** (`fix/birthdate-year-truncation` `3e71116`): `String(year).padStart(4,'0')` in `parseDateWithoutTimeZone()` · `helpers/getBillingAndOrder.js`.
+- **BE fix** (`fix/birthdate-year-truncation` `ebbb044`): guard in `calculate_age()` — if year segment `< 4` chars, log warning + return `30` (Adult) instead of 500 · `bookings/services.py`.
+- Both branches pushed + merged → develop + pushed. Deployed to production.
+
+**Workspace:** frontend main→`3e71116` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b`
+
+---
+
 **Updated:** 2026-06-26 (session #172) — _archived from master-state 2026-06-26_
 
 **Achieved (#172) — r10 SEO fixes pushed + 9 branches pruned:**

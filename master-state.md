@@ -4,23 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-26 (session #173)
+**Updated:** 2026-06-26 (session #174)
 
-**Achieved (#173) — production 500 hotfix: birthDate truncated year:**
-- **Bug:** order SRL9043592 crashed `/order-billing/` with `ValueError: time data '202-12-02' does not match format '%Y-%m-%d'`. User typed partial year `202` in MUI DatePicker → `getFullYear()===202` → `parseDateWithoutTimeZone()` emitted `'202-12-02'` (no year zero-padding) → backend `calculate_age()` `strptime` crash.
-- **Root cause trigger:** commit `a73b575` (2026-02-23) added `_get_sorted_passengers()` which calls `calculate_age()` on every passenger — previously that code path was never hit, so malformed years went unnoticed.
-- **FE fix** (`fix/birthdate-year-truncation` `3e71116`): `String(year).padStart(4,'0')` in `parseDateWithoutTimeZone()` · `helpers/getBillingAndOrder.js`.
-- **BE fix** (`fix/birthdate-year-truncation` `ebbb044`): guard in `calculate_age()` — if year segment `< 4` chars, log warning + return `30` (Adult) instead of 500 · `bookings/services.py`.
-- Both branches pushed + merged → develop + pushed. Deployed to production.
+**Achieved (#174) — checkout phone input hardening + prefill fix:**
+- **Phone validation** (`feat/checkout-phone-validation`): replaced bare regex with `matchIsValidTel` (mui-tel-input) in checkout `Passengers.js` Yup schema; added `MuiTelInput` with `forceCallingCode`, `defaultCountry="TH"`, `preferredCountries`; added birth year `minDate={new Date(1900,0,1)}` + Yup `.min()` guard. Declared `libphonenumber-js` as direct dep.
+- **Legacy phone repair** (`fix/phone-normalize-legacy`): new `helpers/normalizePhone.js` using `parsePhoneNumberFromString` — auto-repairs malformed `+660896669535`→`+66896669535` (trunk-0 strip). Applied in profile page + checkout prefill. Profile page Yup also migrated to `matchIsValidTel`.
+- **Blank phone prefill fix** (`fix/checkout-contact-prefill`): root cause — `MuiTelInput` emits bare `"+66"` on mount → `FormikValuesSync` treated it as truthy `hasContactData` → persisted to Redux → Redux `"+66"` blocked session phone backfill. Fixes: `FormikValuesSync.js` gates `hasContactData` on `matchIsValidTel(values.phone)`; `Passengers.js` gates all phone prefill paths on `matchIsValidTel` not truthiness. Session phone `"+66 089 666 9535"` now correctly normalizes → prefills `+66 89 666 9535`.
+- All 3 branches merged → develop → deployed to production (`dd2b763`).
 
-**Workspace:** frontend main→`3e71116` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
+**Workspace:** frontend main→`dd2b763` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
 
 **Resume point (EXACT):**
-1. **Monitor prod** — confirm no new `ValueError: time data` errors in `web_1` logs post-deploy.
-2. **Deploy queue** — SEO r6-r10 + G8 + CS-CHAT-PERF still pending develop→main (see Section 2).
-3. **r11 SEO backlog** — `/help/faqs` FAQPage (WP content), homepage TAT in schema, H5 author E-E-A-T, sameAs, llms.txt enrichment.
+1. **Verify prod** — log in as user with stored `+660896669535` → checkout Contact Details → phone should prefill as `+66 89 666 9535` (normalized).
+2. **Re-save profile** once to write clean `+66896669535` to DB (current DB still has malformed value).
+3. **Deploy queue** — SEO r6-r10 + G8 + CS-CHAT-PERF still pending develop→main (see Section 2).
 
-_(Session #172 archived → `07-logs/session-history.md`.)_
+_(Session #173 archived → `07-logs/session-history.md`.)_
 
 ---
 
