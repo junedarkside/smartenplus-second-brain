@@ -11,6 +11,8 @@ next-seo v6 `NextSeo` (and `DefaultSeo`) props type has NO `jsonLd` field. Passi
 
 next-seo emits JSON-LD ONLY via dedicated components: `ArticleJsonLd`, `BreadcrumbJsonLd`, `WebPageJsonLd`, etc.
 
+**Important nuance (verified 2026-06-26):** the dedicated `*JsonLd` components (`FaqJsonLd`, `BreadcrumbJsonLd`, `OrganizationJsonLd`, `ProductJsonLd`, `ArticleJsonLd`, `WebPageJsonLd`, …) DO render in v6 — only the `jsonLd` prop on `NextSeo`/`DefaultSeo` is dropped. So the rule is: never use the `jsonLd` prop; use either a dedicated `*JsonLd` component OR a raw `<script type="application/ld+json">`. `components/trips/search/FilterTripsSEO.js` already uses `BreadcrumbJsonLd`/`OrganizationJsonLd`/`ProductJsonLd` successfully + added `FaqJsonLd` (r9).
+
 ## Fix Pattern
 Replace `jsonLd` key with raw `<script>` tags, same pattern as `pages/homepagev2.js`:
 

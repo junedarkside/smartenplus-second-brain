@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-26] session-end #170 | SEO/AEO/GEO audit reconcile (r6, 3-specialist vs live code) + r6-r9 fixes to develop (LOCAL/dev-verified, NOT prod): help 500→404, destinations undefined-fallback, manifest EN, availableLanguage, /activities canonical, help og:image, sitemap /ref/article exclude, dual-BlogPosting drop, og:locale 6 files, synthetic reviews removal, About org schema+TAT, FAQPage wiring (route+activity). Build unblock (OtaPdpaGate apostrophe). Verified help canonical + P0-A crawlers already-done. ⚠️ Report=PROD, fixes=LOCAL — deploy+prod-verify pending (SEO-R6-R9-DEPLOY). Atomized 4 (jsonld-@id-merge, pages-router-notFound, dev-stale-cache; extended nextseo-v6-jsonld-silent-drop).
+
 ## [2026-06-25] session-end #169 | G8 OTA PDPA consent gate — 4-agent debate + grill audit; PDPA gate built (OtaPdpaGate.js + otaConsent.js + my-trip gate); once-per-token localStorage; flash-of-gate fixed with consentChecked flag. FE feat/g8-ota-pdpa-gate d0d2069 ready to merge.
 
 ## [2026-06-25] session-end #168 | P3b OTA ticket flow — debug + fix /my-trip ticket display. BE OtaTripView returns tickets[] array; FE renders all cards stacked; cache invalidated on submit; two-Django-process bug traced + fixed. BE fix/ota-trip-tickets-list f8e1f4b + FE fix/my-trip-tickets-list d18941e pushed.

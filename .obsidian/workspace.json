@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "00099d737662a602",
+        "id": "d9ae58be6291e21d",
         "type": "tabs",
         "children": [
           {
-            "id": "219dc9b58039cc70",
+            "id": "926a518c88efc5ae",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "08-archive/rate-review-uxui-audit-2026-06-06/r2-skeptic.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "r2-skeptic"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -73,12 +69,28 @@
               "icon": "lucide-bookmark",
               "title": "Bookmarks"
             }
+          },
+          {
+            "id": "219dc9b58039cc70",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "08-archive/rate-review-uxui-audit-2026-06-06/r2-skeptic.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "r2-skeptic"
+            }
           }
-        ]
+        ],
+        "currentTab": 3
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "6f05ac8c72b3d96c",
@@ -180,10 +192,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "219dc9b58039cc70",
+  "active": "926a518c88efc5ae",
   "lastOpenFiles": [
-    "08-archive/rate-review-uxui-audit-2026-06-06/r1-ux.md",
+    "03-knowledge/nextjs-dev-stale-module-cache.md",
+    "03-knowledge/pages-router-notfound-return-shape.md",
+    "03-knowledge/jsonld-id-entity-merge-pattern.md",
     "08-archive/rate-review-uxui-audit-2026-06-06/r2-skeptic.md",
+    "08-archive/rate-review-uxui-audit-2026-06-06/r1-ux.md",
     "08-archive/trip-detail-deep-review.md",
     "08-archive/trip-detail-page-review.md",
     "03-knowledge/rtk-query-dedicated-basequery-per-credential.md",
@@ -207,9 +222,6 @@
     "03-knowledge/payment-audit-bugs.md",
     "01-projects/homepage-ux-review.md",
     "01-projects/payment-deep-review.md",
-    "03-knowledge/omise-api-reference.md",
-    "01-projects/checkout-uxui-audit.md",
-    "01-projects/trip-page-full-audit.md",
     "08-archive/website-audit-full-2026-06-06",
     "08-archive/trip-detail-seo-aeo-geo-audit-2026-06-16",
     "08-archive/rate-review-uxui-audit-2026-06-06",

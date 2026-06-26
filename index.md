@@ -30,6 +30,9 @@ Global navigation catalog. Updated on every ingest.
 - [[help-faqs-wp-graphql-broken-prod]] — **BUG.** `/help/faqs` `getServerSideProps` calls `POSTS_BY_FAQ_CATEGORY` WP GraphQL → returns `[]` in prod. FAQPage schema renders `mainEntity:[]` — invalid. Plus answer text is client-only (DOMPurify in useEffect).
 - [[ref-url-structure-live-vs-code]] — **PATTERN / GOTCHA.** Next.js file at `pages/ref/article/[slug].js` serves public URL `/ref/{slug}` (no `/article/`). Multiple audits confused file path with public URL. `/ref/article/{slug}` 404s; sitemap-0.xml lists these wrong-format URLs.
 - [[trip-detail-server-side-seo-pattern]] — Pattern for moving client-side SEO hook to server-side `getStaticProps` on transport product pages. 5 pure util functions, thin renderer component, no hooks. Fixes AEO root cause (schema in SSR HTML). Key rule: JSON-LD payload functions return fields only — `CustomJsonLd` owns `@context`/`@type`.
+- [[jsonld-id-entity-merge-pattern]] — **PATTERN.** Same org/Person entity on >1 page → give every copy the same `@id` so Google/AI engines merge them. Omitting `@id` splits the entity → wrong-domain attribution (the dual-BlogPosting / blog.smartenplus.co.th trap). Used: About+homepage TravelAgency.
+- [[pages-router-notfound-return-shape]] — **PATTERN.** Pages Router 404 = `return { notFound: true }` from `getStaticProps`/`getServerSideProps` (NOT App Router `notFound()`). Guards both null-object AND missing-field cases; converts 500s/empty-200s to clean 404s.
+- [[nextjs-dev-stale-module-cache]] — **GOTCHA.** `npm run dev` caches compiled modules in `.next/`; a running dev server can serve stale output after an edit, making an SSR/JSON-LD fix look "not fixed". `rm -rf .next && npm run dev` before verifying SSR/SEO changes.
 
 ## Knowledge — UX/Design
 

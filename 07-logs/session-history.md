@@ -4,6 +4,39 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-25 (session #169) — _archived from master-state 2026-06-26_
+
+**Achieved this session (#169) — G8 OTA PDPA consent gate:**
+- **Debate**: 4-agent team (uxui/design/bd/frontend) debated G8 consent + OTA CS service access. Grill audit confirmed: chat widget already on `/my-trip` (`_app.js:88`); HMAC bypass not built yet; 1.5-day estimate low (2–3 days realistic); passive disclosure insufficient for Thai PDPA.
+- **Decision**: OTA user must accept PDPA before ANY trip content shown. Consent stored once per token in localStorage. Covers service features only (trip view, requests, CS chat). Marketing requires separate consent + contract gate.
+- **FE `feat/g8-ota-pdpa-gate`**: 3 files — `helpers/otaConsent.js` (localStorage read/write, SSR-safe), `components/bookings/OtaPdpaGate.js` (full-screen PDPA notice: controller, purpose, retention, rights, withdraw), `pages/my-trip/index.js` (early-return gate + `consentChecked` flag prevents flash-of-gate on return visits). `79bdd43` + `d0d2069`. Branch ready to merge → develop.
+
+**Achieved this session (#167) — G2 admin copy-link SHIPPED:**
+- **G2 SHIPPED** — admin-dashboard command-centre OTA Bookings tab + Copy Link button. BE `f714ba8`. Admin-dashboard `f7cc7ee`.
+
+**Achieved this session (#166) — P3a OTA trip view SHIPPED + gap audit + next plan:**
+- **Shipped P3 prereqs + P3a** (BE `feat/p3-prereq-ticket-guest-ota-trip` → develop `df13268`; FE `feat/p3a-ota-trip-view` → develop `9a99ab6`): `Ticket.guest_email`+nullable `created_by` (migration `0005`); `cs/tokens.py` parametrized + `make/load_ota_trip_token`; `OtaTripView` GET `/api/cs/ota/trip/`; FE `otaApi.js` slice + `/my-trip?token=` page (status-only, full UX pass, design-system tokens).
+- **Fixed** missing `/api/` prefix on otaApi endpoint (was 500 in browser).
+- **Big-view gap audit** (OTA-user + BD role-play): P3a = "window, no door". 7 gaps found; G1 (no link delivery) + G2 (no admin copy-link button) = blockers for real use. G2 designed nowhere.
+- **Created** [[ota-link-delivery-and-p3b-plan]]: Phase 1 admin copy-link (ungated keystone) → Phase 2 P3b request-submit (prereqs cleared). Updated [[ota-portal-overview]] gap table + phase status.
+
+---
+
+**Updated:** 2026-06-24 (session #165) — _archived from master-state 2026-06-26_
+
+**Achieved this session (#165) — CS-centralization vault audit + P1 status correction:**
+- **Vault audit** — asked "what's left for CS-centralization." Initial draft of `p1-direct-slice-impl-plan.md` framed P1 as future work. **Two `/scrutinize` passes vs live code proved P1 already SHIPPED in #164** (migration `0004`, `CustomerTicketViewSet`/`RequestStatusViewSet`, wired `RequestChangeModal`+`ChangeRequestsSection`, admin command-centre queue).
+- **Corrected** `p1-direct-slice-impl-plan.md` → now a STATUS NOTE (`status: shipped`) with file:line evidence + real open items (SES notify=P4, reopen guard=P4, nullable FK=P3 — none block P1).
+- **Corrected** resume point #5 (was "build P1, start BE migrations" → would rebuild shipped code).
+- **No code written** — vault-only session.
+
+**Previous session (#164) — admin-dashboard command-centre UX + ticket lifecycle:**
+- Command-centre confirm dialog, status filter fix, Booking Ref column, View order button, ticket lifecycle auto-sync, ticket editor locked on Completed. 6 commits.
+
+**Workspace (#164):** backend `fix/ticket-status-sync-on-terminal`→`e7d2e03` · frontend `develop`→`46e4550` · admin `feat/command-centre-confirm-dialog`→`8c2ee63` · content `master`→`3756e5b`
+
+---
+
 **Updated:** 2026-06-25 (session #168)
 
 **Achieved this session (#168) — P3b OTA ticket flow: debug + fix /my-trip ticket display:**
