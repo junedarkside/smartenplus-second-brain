@@ -4,7 +4,7 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-27 (session #182)
+**Updated:** 2026-06-27 (session #183 — FE OTA gaps FE-B1..B4 closed on `feat/cs-ticket-status-banner`)
 
 **Achieved (#182) — CS BE gaps closed + tests:**
 - ✅ Verified user's independent BE/FE work: 0 of 9 gaps closed (user worked on different branch)
@@ -20,17 +20,18 @@
 **Workspace:**
 - backend: `feat/cs-centralization-blockers` (`60176c5`) → **ready for PR**
 - admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → **ready for PR**
-- frontend: `feat/cs-ticket-status-banner` (`02bf22d`) → **ready for PR** (FE gaps still open)
+- frontend: `feat/cs-ticket-status-banner` (`02bf22d`+`835cb69`+`c968ffd`, 3 commits, 2 unpushed) → **ready for PR · FE-B1..B4 CLOSED**
 - vault: master · content: master (`3756e5b`)
 
 **Resume point (EXACT):**
-1. **FE OTA gaps** (4 items on `feat/cs-ticket-status-banner`):
-   - `my-trip/index.js:58` — fix re-submit guard: `existingTickets.length === 0` → filter by open statuses `['pending','in_review','awaiting_ota_update']`
-   - `otaApi.js` — add `pollingInterval: 60000` to `getOtaTrip` query
-   - `my-trip/index.js:7,232` — replace `OtaRequestCard` import+usage with `TicketStatusBanner`
-   - `bookingsApi.js` — add conditional poll to `getBookingDetail`
-2. **Pending migration 0007** — pre-existing OtaBookingEvent/TripNotification meta drift; run `makemigrations cs` with venv active before merging BE branch
-3. **Merge PRs** → develop: `feat/cs-centralization-blockers` + `feat/cs-workflow-revised-gaps` + `feat/cs-ticket-status-banner`
+1. ~~**FE OTA gaps** (4 items on `feat/cs-ticket-status-banner`)~~ ✅ **ALL CLOSED** (`835cb69` + `c968ffd`, session #183):
+   - ~~FE-B1: re-submit guard~~ ✅ `835cb69` — `openTickets.filter(['pending','in_review','awaiting_ota_update']).length === 0` in `pages/my-trip/index.js`
+   - ~~FE-B2: otaApi polling 60s~~ ✅ `c968ffd` — `pollingInterval: 60000` on `useGetOtaTripQuery` (`store/api/otaApi.js`)
+   - ~~FE-B3: OtaRequestCard → TicketStatusBanner in /my-trip~~ ✅ `835cb69` — import swap + render loop
+   - ~~FE-B4: conditional booking detail poll~~ ✅ `c968ffd` — `pollingInterval: hasActiveTicket ? 120000 : 0` in `pages/bookings/[bookingId].js`
+2. **Pending migration 0007** — pre-existing OtaBookingEvent/TripNotification meta drift; run `makemigrations cs` with venv active before merging BE branch (FE merges independently per session #183 — null-tolerant on `resolution_note`/`admin_initiated`/`is_emergency`)
+3. **Merge PRs** → develop: `feat/cs-centralization-blockers` + `feat/cs-workflow-revised-gaps` + `feat/cs-ticket-status-banner` (push 2 unpushed commits first: `git push origin feat/cs-ticket-status-banner`)
+4. **Post-merge follow-ups** (new branches, non-blocking): `test/cs-banner-coverage` (RTL tests), `fix/cs-banner-i18n`, `feat/cs-banner-analytics`, `fix/cs-banner-a11y`, `docs/cs-move-plan` (move `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` → `docs/features/cs-centralization.md`)
 
 _(Session #181 archived → `07-logs/session-history.md`.)_
 
@@ -65,7 +66,7 @@ _(Session #181 archived → `07-logs/session-history.md`.)_
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
 | **ADMIN-CS-CENTRALIZATION** | **Phase 1 SHIPPED** (`feat/cs-workflow-revised-gaps`): VALID_TRANSITIONS extended, SupabaseSyncBanner, SLA display, emergency toggle, resolution_note, admin_initiated, Resend Email. Admin FE buttons non-functional until BE gaps resolved (see CS-BE-GAPS below). Phase 2-4 pending. | **Phase 1 done · Phase 2-4 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-BE-GAPS** | ✅ All 5 gaps closed `feat/cs-centralization-blockers` (`3576edc`): magic_token+supabase_row_id fields+migration, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 30 tests added (104 total pass). **Pending:** migration 0007 (OtaBookingEvent/TripNotification meta drift) before PR merge. | **DONE — PR ready** | [[cs-centralization-gap-report-2026-06-27]] |
-| **CS-FE-OTA-GAPS** | 4 frontend OTA guest path gaps: (1) re-submit bug live (`my-trip/index.js:58` blocks on existingTickets.length instead of open status filter); (2) no polling on `useGetOtaTripQuery` (add pollingInterval:60000); (3) `OtaRequestCard` missing resolution_note + admin_initiated — replace with `TicketStatusBanner` in /my-trip; (4) no conditional polling on auth booking query. FE branch: `feat/cs-ticket-status-banner`. | **OPEN — HIGH** | [[cs-centralization-gap-report-2026-06-27]] |
+| **CS-FE-OTA-GAPS** | ✅ **RESOLVED** (`835cb69` + `c968ffd`, session #183) — FE-B1 re-submit guard by open-status filter, FE-B2 `pollingInterval:60000` on `getOtaTrip`, FE-B3 `TicketStatusBanner` replaces `OtaRequestCard` in `/my-trip`, FE-B4 conditional `pollingInterval:120s` on `useGetBookingDetailQuery` keyed on `hasActiveTicket`. Branch ahead of main by 3 commits (2 unpushed to origin). **Open follow-ups (non-blocking)**: (a) no RTL/e2e tests for banner or polling/re-submit guard; (b) hard-coded English strings + `'en-GB'` locale in `TicketStatusBanner` + `/my-trip` — no i18n; (c) no analytics events (banner impression, status transition, SLA stage advance, re-submit guard prevent); (d) a11y — `SLAProgress` opacity-only (no shape diff), status pill lacks `role="status"`/`aria-live`, emergency lacks `role="alert"`, `<time dateTime>` missing, color-as-primary-signal; (e) no runtime guards on BE contract fields (`resolution_stage`, `operator_deadline`, `ota_deadline`, `admin_contacted_ota_at/_note`, `admin_initiated`, `resolution_note`, `is_emergency`); (f) `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` at repo root — should move to `docs/features/`. | **RESOLVED · follow-up gaps tracked** | [[cs-centralization-gap-report-2026-06-27]] |
 
 ### Low-priority backlog
 
