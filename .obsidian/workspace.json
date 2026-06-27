@@ -11,14 +11,10 @@
             "id": "926a518c88efc5ae",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "01-projects/seo-aeo-geo-live-audit-2026-06-22/r10-live-prod-2026-06-26.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "r10-live-prod-2026-06-26"
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
         ]
@@ -198,13 +194,13 @@
   },
   "active": "926a518c88efc5ae",
   "lastOpenFiles": [
+    "01-projects/seo-aeo-geo-live-audit-2026-06-22/r10-live-prod-2026-06-26.md",
     "07-logs/log.md.tmp.25256.87c549ac595a",
     "04-decisions/cs-workflow-revised-2026-06-27.md.tmp.25256.399ffa2f0702",
     "04-decisions/cs-workflow-revised-2026-06-27.md.tmp.25256.6272d8cfa0db",
     "04-decisions/cs-workflow-revised-2026-06-27.md",
     "08-archive/rate-review-uxui-audit-2026-06-06/r1-ux.md",
     "01-projects/seo-aeo-geo-live-audit-2026-06-22/README.md.tmp.49313.2fd031be9014",
-    "01-projects/seo-aeo-geo-live-audit-2026-06-22/r10-live-prod-2026-06-26.md",
     "01-projects/seo-aeo-geo-live-audit-2026-06-22/r9-live-prod-2026-06-26.md",
     "01-projects/seo-aeo-geo-live-audit-2026-06-22/r7-code-review-2026-06-26.md",
     "03-knowledge/nextjs-dev-stale-module-cache.md",
@@ -233,7 +229,6 @@
     "08-archive/trip-detail-seo-aeo-geo-audit-2026-06-16",
     "08-archive/rate-review-uxui-audit-2026-06-06",
     "08-archive/help-faqs-landing-2026-06-07",
-    "08-archive/gyg-page-analysis-2026-06-04",
     "Untitled.canvas",
     "Untitled 1.canvas"
   ]

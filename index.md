@@ -51,6 +51,14 @@ Global navigation catalog. Updated on every ingest.
 - [[cs-guest-identity-best-practices]] — **RESEARCH 2026-06-23.** 3-agent debate: Zendesk/Intercom/Crisp + Booking.com/Airbnb/Klook patterns for guest→auth identity. Recommendation: Soft link (Option D) — `related_conversation_id` FK + agent-initiated merge gate. Auto-merge rejected: PDPA Article 18/22 breach + family-email false-positive. Soft link = PDPA-safe, reversible, Phase 4 OTA-ready. [[cs-centralization-review-2026-06-22]]
 - [[command-centre-ticket-booking-flow]] — **RESEARCH 2026-06-24 · quick-win DONE.** 3-agent audit of `/dashboard/command-centre`. Requested change = `requested_value` JSON (NOT `description`, which is just `str(requested_value)` — vault note corrected after scrutiny). Now surfaced in Review dialog (commit `4dee15c`). Booking-update has TWO disconnected systems: legacy `/tickets/[id]` (`TicketViewSet.partial_update` mutates date/passengers) vs command-centre (`RequestStatusViewSet` sets status flag only). Resolving still does NOT apply the change. Security: order-detail endpoint public. Open recs: bridge resolve→booking · lock order-detail auth.
 
+### Business Analysis Framework (2026-06-27)
+
+- [[cs-business-analysis-methodology]] — **FRAMEWORK.** Structured approach for analyzing customer service workflows from business perspective. Identifies workflow gaps, stakeholder concerns, and business risks. Outputs blocker identification and implementation priorities.
+- [[blocker-identification-framework]] — **FRAMEWORK.** Systematic approach for identifying, categorizing, and prioritizing project blockers with implementation cost estimates. Separates "must fix before launch" from "can defer post-launch."
+- [[stakeholder-concern-capture-pattern]] — **FRAMEWORK.** Method for capturing stakeholder perspectives during workflow analysis. Uses 5-voice simulation + direct quotes to reveal operational friction points and cross-cutting themes.
+- [[missing-business-rules-framework]] — **FRAMEWORK.** Structured approach for documenting business rule gaps identified during workflow analysis. Captures undefined decision points that could block implementation.
+- [[implementation-prioritization-matrix]] — **FRAMEWORK.** Systematic approach for sequencing implementation work, balancing business impact, technical dependencies, and resource constraints. Produces buildable sequence with effort estimates.
+
 ## Active Projects
 
 > **Note (2026-06-19):** Items marked **CLOSED / COMPLETED / MERGED** below were archived to `08-archive/` this session. Their `[[wikilinks]]` still resolve (Obsidian finds them in the archive folder). Pending a future pass to relocate these lines into `## Archive`.

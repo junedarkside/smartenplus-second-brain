@@ -4,25 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-26 (session #178)
+**Updated:** 2026-06-27 (session #179)
 
-**Achieved (#177+#178) — FULL DEPLOY + CS audit + vault sync:**
-- All 3 repos deployed develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`.
-- CS centralization full status audited (Steps 1-7 FE, Steps 1-3 BE + P2/P3b OTA all shipped).
-- Chat widget live in prod code — FAB hidden until `cs_chat` FeatureFlag seeded in DB.
-- Team meeting on CS workflow/stakeholder revision happened — revision content pending next session.
-- Vault deploy queue updated (FULL-DEPLOY ✅, CS-CHAT-PERF code ✅ flag pending).
+**Achieved (#179) — CS Centralization business analysis:**
+- Completed comprehensive business analysis of CS Centralization workflow
+- Identified 3 BLOCKERS (~30.5h effort) that must gate go-live: resolve-block guard, SLA display, emergency path
+- Catalogued 7 MAJOR gaps for production readiness
+- Documented 5 missing business rules requiring decisions (quarantined bookings, mixed-booking cancellation, etc.)
+- Captured stakeholder concerns (Staff, OTA, Operator, Customer) with direct quotes
+- Provided implementation priorities with cost estimates and ownership assignment
+- Analysis captured in vault docs: `cs-workflow-revised-2026-06-27.md` updated with scrutiny findings + stakeholder meeting PM synthesis
 
-**Workspace:** frontend main→`43299da` · backend main→`ebbb044` · admin main→`3d5a3a4` · content master→`3756e5b` · vault master→current
+**Workspace:** frontend main→`43299da` (clean) · backend main→`ebbb044` (uncommitted `tickets/models.py`) · admin main→`3d5a3a4` (clean) · content master→`3756e5b` (clean) · vault current (CS workflow docs updated)
 
 **Resume point (EXACT):**
-1. **CS workflow + stakeholder revision** — team meeting happened 2026-06-26, revision not yet captured. Start next session by collecting meeting notes from user and updating `booking-command-centre-decision.md` + any stakeholder docs.
-2. **Seed `cs_chat` FeatureFlag** — via Django admin or SQL to activate chat FAB in prod.
-3. **Smoke test chat** — FAB visible → email → OTP → chat opens → poll runs.
+1. **CS blocker implementation decision** — Review business analysis report. Decide on approach: (a) Build all 5 blockers first (~30.5h, gates OTA launch), (b) Phased approach (build 1-2 first), (c) Accept risk and launch partial. Decision drives next engineering work.
+2. **Commit backend `tickets/models.py`** — Uncommitted changes exist — review and commit if complete.
+3. **Seed `cs_chat` FeatureFlag** — via Django admin or SQL to activate chat FAB in prod.
 4. **P2-OTA-SYNC** — run BE migrations `0003_csotabooking` + `0004_csotabooking_extra_fields` + schedule Celery beat `cs.tasks.sync_ota_bookings`.
-5. **r13 SEO** — `/about` TravelAgency schema parity when ready.
 
-_(Session #177 archived → `07-logs/session-history.md`.)_
+_(Session #178 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -53,6 +54,7 @@ _(Session #177 archived → `07-logs/session-history.md`.)_
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
+| **CS-BLOCKER-DECISION** | Business analysis identified 3 BLOCKERS (~30.5h) that must gate go-live: (1) Resolve-block guard on `awaiting_ota_update` (6h), (2) SLA display (10h), (3) Emergency path (13.5h). Plus magic link fixes (4h) and admin-initiated notification (3h). **Decision needed:** Build all 5 blockers first? Phased approach? Accept risk and launch partial? Analysis captured in `cs-workflow-revised-2026-06-27.md` stakeholder meeting section. | **OWNER DECISION** | `cs-workflow-revised-2026-06-27.md` · [[booking-command-centre-decision]] |
 
 ### Low-priority backlog
 
