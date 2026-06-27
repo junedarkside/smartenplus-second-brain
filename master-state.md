@@ -4,36 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-27 (session #183 — FE OTA gaps FE-B1..B4 closed on `feat/cs-ticket-status-banner`)
+**Updated:** 2026-06-28 (session #184 — wrapup post FE-B1..B5 merge to develop)
 
-**Achieved (#182) — CS BE gaps closed + tests:**
-- ✅ Verified user's independent BE/FE work: 0 of 9 gaps closed (user worked on different branch)
-- ✅ 3-agent team (`cs-be-gaps`) closed all 5 BE gaps on `feat/cs-centralization-blockers`:
-  - B1: `magic_token` (UUID unique) + `supabase_row_id` on CsOtaBooking + migration `0006`
-  - B2: `POST /api/cs/ota/sync/` → queues celery task, 202
-  - B3: `POST /api/cs/ota/resend-magic-link/` → returns trip_link + email
-  - B4: `VALID_REQUEST_TRANSITIONS` extended (awaiting_ota_update, closed_no_action); RequestStatusViewSet accepts admin_contacted_ota_at/note/is_emergency
-  - B5: `sync_ota_bookings` creates `OtaBookingEvent(trigger=TRIGGER_SYNC, field_diffs=[old,new])`
-- ✅ 30 tests added `cs/tests/test_cs_gaps.py` — 104 total pass, 0 fail
-- Overall CS readiness: ~80%. BE gaps ✅ · Admin-dashboard Phase 1 ✅ · FE OTA path ❌
+**Achieved (#184) — wrapup after #183 ship:**
+- ✅ Confirmed `feat/cs-ticket-status-banner` merged to develop (`463a740`) and pushed to origin/develop
+- ✅ Vault master-state.md synced: Section 1 + Section 2 + session-history reflect FE-B1..B4 RESOLVED + #183 archived
+- ✅ SEO-R6-R9-DEPLOY closed (subsumed by FULL-DEPLOY 2026-06-26 — see closed-items)
+- Predecessor (#183) achievement: FE-B1..B5 closed (FE-B1 re-submit guard, FE-B2 otaApi polling 60s, FE-B3 TicketStatusBanner replaces OtaRequestCard in /my-trip, FE-B4 conditional booking detail poll 120s, FE-B5 lint apostrophe escape) → merged to develop
+- Overall CS readiness: ~90%. BE gaps ✅ · Admin-dashboard Phase 1 ✅ · FE OTA path ✅
 
 **Workspace:**
-- backend: `feat/cs-centralization-blockers` (`60176c5`) → **ready for PR**
+- backend: `feat/cs-centralization-blockers` (`60176c5`) → **ready for PR** (migration 0007 pending)
 - admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → **ready for PR**
-- frontend: `feat/cs-ticket-status-banner` (`02bf22d`+`835cb69`+`c968ffd`, 3 commits, 2 unpushed) → **ready for PR · FE-B1..B4 CLOSED**
-- vault: master · content: master (`3756e5b`)
+- frontend: `develop` (`463a740` after `feat/cs-ticket-status-banner` merge) → live on develop
+- vault: master (`3273e34`) · content: master (`3756e5b`)
 
 **Resume point (EXACT):**
-1. ~~**FE OTA gaps** (4 items on `feat/cs-ticket-status-banner`)~~ ✅ **ALL CLOSED** (`835cb69` + `c968ffd`, session #183):
-   - ~~FE-B1: re-submit guard~~ ✅ `835cb69` — `openTickets.filter(['pending','in_review','awaiting_ota_update']).length === 0` in `pages/my-trip/index.js`
-   - ~~FE-B2: otaApi polling 60s~~ ✅ `c968ffd` — `pollingInterval: 60000` on `useGetOtaTripQuery` (`store/api/otaApi.js`)
-   - ~~FE-B3: OtaRequestCard → TicketStatusBanner in /my-trip~~ ✅ `835cb69` — import swap + render loop
-   - ~~FE-B4: conditional booking detail poll~~ ✅ `c968ffd` — `pollingInterval: hasActiveTicket ? 120000 : 0` in `pages/bookings/[bookingId].js`
-2. **Pending migration 0007** — pre-existing OtaBookingEvent/TripNotification meta drift; run `makemigrations cs` with venv active before merging BE branch (FE merges independently per session #183 — null-tolerant on `resolution_note`/`admin_initiated`/`is_emergency`)
-3. **Merge PRs** → develop: `feat/cs-centralization-blockers` + `feat/cs-workflow-revised-gaps` + `feat/cs-ticket-status-banner` (push 2 unpushed commits first: `git push origin feat/cs-ticket-status-banner`)
-4. **Post-merge follow-ups** (new branches, non-blocking): `test/cs-banner-coverage` (RTL tests), `fix/cs-banner-i18n`, `feat/cs-banner-analytics`, `fix/cs-banner-a11y`, `docs/cs-move-plan` (move `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` → `docs/features/cs-centralization.md`)
+1. **Post-merge follow-up branches** (non-blocking, priority order):
+   - `test/cs-banner-coverage` — RTL tests for TicketStatusBanner + polling intervals + re-submit guard
+   - `fix/cs-banner-i18n` — i18n routing for banner strings + locale
+   - `fix/cs-banner-a11y` — semantic roles + `<time>` + shape diff for SLAProgress
+   - `feat/cs-banner-analytics` — GTM events for status transitions + SLA stage advances + re-submit guard prevent
+   - `docs/cs-move-plan` — move `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` → `docs/features/cs-centralization.md`
+2. **BE migration 0007** — run `makemigrations cs` with venv active on `feat/cs-centralization-blockers` before PR merge (OtaBookingEvent/TripNotification meta drift)
+3. **BE + admin-dashboard PRs** → develop (await migration 0007 closure)
+4. **OQ-3 awaiting_ota_update SLA** — BLOCKER (Product owes timeout + ETA surface)
+5. **Admin Phase 2-4** on admin-dashboard repo (depends on BE merge)
 
-_(Session #181 archived → `07-logs/session-history.md`.)_
+_(Session #183 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -43,7 +41,6 @@ _(Session #181 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **SEO-R6-R9-DEPLOY** | **USER-OWNED deploy** (handoff 2026-06-26, develop `455b094`). ⚠️ develop→main carries **82 FE + 41 BE commits** (G8/P3/CS + BE migrations) — NOT SEO-only. SEO commits: r6 `87e3c15`, r7 `3fa482f`, r8 `961c645`, r9 `b5867c7`, faqpage-fix `bc538ef`, r7-coverage `1fafa5f` (skip build-unblock `3a7748a` — main has no OtaPdpaGate). **SEO-only option**: cherry-pick those 6 off main. Post-deploy prod-verify: `/help/<missing>`→404, `/destinations/koh-samui` no "undefined", `/manifest.json` lang=en, og:locale=en_US, `/activities` canonical, `sitemap-0.xml` 0×`/ref/article/`, blog single BlogPosting, `/about` TravelAgency+TAT, `/activities/detail/<slug>` FAQPage, 0 "Anonymous Traveler"; **re-check title double-brand on prod** (latent in code — /grill found prod mostly single-brand). | `smartenplus-frontend` develop→main (**user**) |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |

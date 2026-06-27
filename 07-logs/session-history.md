@@ -4,6 +4,34 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-28 (session #183) — _archived from master-state 2026-06-28_
+
+**Achieved (#183) — FE-B1..B5 closed + merged to develop:**
+- ✅ FE-B1: open-status re-submit guard in `pages/my-trip/index.js` (filter by `['pending','in_review','awaiting_ota_update']`)
+- ✅ FE-B2: `pollingInterval: 60000` on `useGetOtaTripQuery` (`store/api/otaApi.js`)
+- ✅ FE-B3: `TicketStatusBanner` (264 LOC, 4 sub-components: SLAProgress, AwaitingOTAMessage, AdminInitiatedBanner, ResolutionNote) replaces `OtaRequestCard` in `/my-trip`
+- ✅ FE-B4: conditional `pollingInterval: hasActiveTicket ? 120000 : 0` on `useGetBookingDetailQuery` in `pages/bookings/[bookingId].js`
+- ✅ FE-B5: lint fix — escape apostrophe `TicketStatusBanner.js:149` (`We've` → `We&apos;ve`)
+- ✅ Lint + build clean (37 pre-existing test failures documented, zero touched by branch)
+- ✅ Vault master-state.md synced: Section 1 + Section 2 reflect FE-B1..B4 RESOLVED
+- ✅ feat/cs-ticket-status-banner merged to develop via `--no-ff` (merge commit `463a740`)
+- ✅ develop pushed to origin/develop
+- Overall CS readiness: ~90%. BE gaps ✅ · Admin-dashboard Phase 1 ✅ · FE OTA path ✅
+
+**Workspace (#183, pre-merge):**
+- backend: `feat/cs-centralization-blockers` (`60176c5`) → ready for PR
+- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → ready for PR
+- frontend: `feat/cs-ticket-status-banner` (`02bf22d`+`835cb69`+`c968ffd`+`ca64776`, 4 commits) → ready for PR · FE-B1..B4 CLOSED
+- vault: master · content: master (`3756e5b`)
+
+**Resume point (#183):**
+1. Push 2 unpushed commits on `feat/cs-ticket-status-banner`, then merge → develop
+2. BE migration 0007 (OtaBookingEvent/TripNotification meta drift) before merging `feat/cs-centralization-blockers`
+3. Post-merge follow-up branches (non-blocking): `test/cs-banner-coverage`, `fix/cs-banner-i18n`, `feat/cs-banner-analytics`, `fix/cs-banner-a11y`, `docs/cs-move-plan`
+4. OQ-3 awaiting_ota_update SLA — BLOCKER (Product owes timeout + ETA surface)
+
+---
+
 **Updated:** 2026-06-27 (session #181) — _archived from master-state 2026-06-27_
 
 **Achieved (#181) — CS-Centralization full session:**

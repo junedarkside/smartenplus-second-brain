@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-06-28 (session #184)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **SEO-R6-R9-DEPLOY** | session #184 (subsumed) | Originally USER-OWNED deploy handoff 2026-06-26 tracking SEO r6-r9 commits. Subsumed by **FULL-DEPLOY 2026-06-26** which shipped all 3 repos develop→main (FE `43299da` · BE `ebbb044` · admin `3d5a3a4`) including G8/P3a/P3b/CS chat Steps 5-7/CS-CHAT-PERF + r12 SEO. SEO commits r6 `87e3c15`, r7 `3fa482f`, r8 `961c645`, r9 `b5867c7`, faqpage-fix `bc538ef`, r7-coverage `1fafa5f` all included in full deploy. |
+
 ## Closed — 2026-06-25 (session #169)
 
 | Item | Closed | What shipped |
