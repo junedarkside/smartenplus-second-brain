@@ -18,10 +18,11 @@
 **Workspace:** frontend main→`02bf22d` (CS blockers committed) · backend main→`e60c61d` (CS blockers committed) · admin main→`3d5a3a4` (clean) · content master→`3756e5b` (clean) · vault current (CS implementation docs added)
 
 **Resume point (EXACT):**
-1. **Admin dashboard CS Centralization** — Implement 4-phase plan: ticket detail enhancement, list filters, OTA integration, help content. Backend blockers complete (31/31 tests passing), HTML help guide deployed to `/public/help/cs-centralization-admin-guide.html`.
-2. **Deploy backend + frontend blockers** — Both repos have committed changes, ready for production deployment after admin integration.
-3. **Seed `cs_chat` FeatureFlag** — via Django admin or SQL to activate chat FAB in prod.
-4. **P2-OTA-SYNC** — run BE migrations `0003_csotabooking` + `0004_csotabooking_extra_fields` + schedule Celery beat `cs.tasks.sync_ota_bookings`.
+1. **CS-centralization workflow analysis** — Agent performing comprehensive analysis of smartenplus-frontend + admin-dashboard implementation against revised workflow requirements. Waiting for analysis findings: blocker compliance verification, gap identification, production readiness assessment.
+2. **Admin dashboard CS Centralization** — Implement 4-phase plan pending analysis results: ticket detail enhancement, list filters, OTA integration, help content. Backend blockers complete (31/31 tests passing), HTML help guide deployed to `/public/help/cs-centralization-admin-guide.html`.
+3. **Deploy backend + frontend blockers** — Both repos have committed changes, ready for production deployment after admin integration.
+4. **Seed `cs_chat` FeatureFlag** — via Django admin or SQL to activate chat FAB in prod.
+5. **P2-OTA-SYNC** — run BE migrations `0003_csotabooking` + `0004_csotabooking_extra_fields` + schedule Celery beat `cs.tasks.sync_ota_bookings`.
 
 _(Session #178 archived → `07-logs/session-history.md`.)_
 
