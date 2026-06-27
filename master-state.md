@@ -4,27 +4,35 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-27 (session #181)
+**Updated:** 2026-06-27 (session #182)
 
-**Achieved (#181) — CS-Centralization full session:**
-- ✅ Vault review: checked `cs-workflow-revised-2026-06-27.md` against all 3 repos
-- ✅ Admin-dashboard Phase 1 on `feat/cs-workflow-revised-gaps`: VALID_TRANSITIONS extended (awaiting_ota_update + closed_no_action), SupabaseSyncBanner, SLA deadline display, emergency toggle (is_emergency), resolution_note display, admin_initiated header variant ("Update from SmartEnPlus"), Resend Email button in OTA Bookings tab, csApi mutations (resendMagicLink, syncOtaBookings, recordOtaContact)
-- ✅ 3-agent deep analysis (BE + FE + vault) → `cs-centralization-gap-report-2026-06-27.md`
-- ✅ All 4 repos pushed to feature branches; backend + frontend main reset to origin (no policy violations)
-- Overall CS readiness: ~65%. Backend models ✅ · 5 BE endpoint/field gaps · FE OTA path ❌
+**Achieved (#182) — CS BE gaps closed + tests:**
+- ✅ Verified user's independent BE/FE work: 0 of 9 gaps closed (user worked on different branch)
+- ✅ 3-agent team (`cs-be-gaps`) closed all 5 BE gaps on `feat/cs-centralization-blockers`:
+  - B1: `magic_token` (UUID unique) + `supabase_row_id` on CsOtaBooking + migration `0006`
+  - B2: `POST /api/cs/ota/sync/` → queues celery task, 202
+  - B3: `POST /api/cs/ota/resend-magic-link/` → returns trip_link + email
+  - B4: `VALID_REQUEST_TRANSITIONS` extended (awaiting_ota_update, closed_no_action); RequestStatusViewSet accepts admin_contacted_ota_at/note/is_emergency
+  - B5: `sync_ota_bookings` creates `OtaBookingEvent(trigger=TRIGGER_SYNC, field_diffs=[old,new])`
+- ✅ 30 tests added `cs/tests/test_cs_gaps.py` — 104 total pass, 0 fail
+- Overall CS readiness: ~80%. BE gaps ✅ · Admin-dashboard Phase 1 ✅ · FE OTA path ❌
 
 **Workspace:**
-- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → ready for PR
-- backend: `feat/cs-centralization-blockers` (`3777554`) → ready for PR
-- frontend: `feat/cs-ticket-status-banner` (`02bf22d`) → ready for PR
-- vault: master (`61ce6c0`) · content: master (`3756e5b`)
+- backend: `feat/cs-centralization-blockers` (`3576edc`) → **ready for PR**
+- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → **ready for PR**
+- frontend: `feat/cs-ticket-status-banner` (`02bf22d`) → **ready for PR** (FE gaps still open)
+- vault: master · content: master (`3756e5b`)
 
 **Resume point (EXACT):**
-1. **BE gaps** (unblock admin FE buttons): add magic_token/supabase_row_id fields to CsOtaBooking, `POST /api/cs/ota/sync/`, `POST /api/cs/ota/resend-magic-link/`, extend `RequestStatusViewSet.partial_update` to accept admin_contacted_ota_at/note/is_emergency, add OtaBookingEvent creation to `sync_ota_bookings` task
-2. **FE OTA gaps**: fix re-submit bug (`my-trip/index.js:58` → filter by open status), add `pollingInterval:60000` to `useGetOtaTripQuery`, replace `OtaRequestCard` with `TicketStatusBanner` in `/my-trip`, add conditional poll to auth booking query
-3. **Merge PRs** → develop: feat/cs-workflow-revised-gaps + feat/cs-centralization-blockers + feat/cs-ticket-status-banner
+1. **FE OTA gaps** (4 items on `feat/cs-ticket-status-banner`):
+   - `my-trip/index.js:58` — fix re-submit guard: `existingTickets.length === 0` → filter by open statuses `['pending','in_review','awaiting_ota_update']`
+   - `otaApi.js` — add `pollingInterval: 60000` to `getOtaTrip` query
+   - `my-trip/index.js:7,232` — replace `OtaRequestCard` import+usage with `TicketStatusBanner`
+   - `bookingsApi.js` — add conditional poll to `getBookingDetail`
+2. **Pending migration 0007** — pre-existing OtaBookingEvent/TripNotification meta drift; run `makemigrations cs` with venv active before merging BE branch
+3. **Merge PRs** → develop: `feat/cs-centralization-blockers` + `feat/cs-workflow-revised-gaps` + `feat/cs-ticket-status-banner`
 
-_(Session #180 archived → `07-logs/session-history.md`.)_
+_(Session #181 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -56,7 +64,7 @@ _(Session #180 archived → `07-logs/session-history.md`.)_
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
 | **ADMIN-CS-CENTRALIZATION** | **Phase 1 SHIPPED** (`feat/cs-workflow-revised-gaps`): VALID_TRANSITIONS extended, SupabaseSyncBanner, SLA display, emergency toggle, resolution_note, admin_initiated, Resend Email. Admin FE buttons non-functional until BE gaps resolved (see CS-BE-GAPS below). Phase 2-4 pending. | **Phase 1 done · Phase 2-4 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
-| **CS-BE-GAPS** | 5 backend gaps gating admin FE buttons: (1) CsOtaBooking missing magic_token/supabase_row_id fields; (2) no `POST /api/cs/ota/sync/` endpoint; (3) no `POST /api/cs/ota/resend-magic-link/` endpoint; (4) `RequestStatusViewSet.partial_update` ignores admin_contacted_ota_at/note/is_emergency; (5) `sync_ota_bookings` never creates OtaBookingEvent records → resolve-block guard always fails. BE branch: `feat/cs-centralization-blockers`. | **OPEN — BLOCKER** | [[cs-centralization-gap-report-2026-06-27]] |
+| **CS-BE-GAPS** | ✅ All 5 gaps closed `feat/cs-centralization-blockers` (`3576edc`): magic_token+supabase_row_id fields+migration, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 30 tests added (104 total pass). **Pending:** migration 0007 (OtaBookingEvent/TripNotification meta drift) before PR merge. | **DONE — PR ready** | [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-FE-OTA-GAPS** | 4 frontend OTA guest path gaps: (1) re-submit bug live (`my-trip/index.js:58` blocks on existingTickets.length instead of open status filter); (2) no polling on `useGetOtaTripQuery` (add pollingInterval:60000); (3) `OtaRequestCard` missing resolution_note + admin_initiated — replace with `TicketStatusBanner` in /my-trip; (4) no conditional polling on auth booking query. FE branch: `feat/cs-ticket-status-banner`. | **OPEN — HIGH** | [[cs-centralization-gap-report-2026-06-27]] |
 
 ### Low-priority backlog
