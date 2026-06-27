@@ -4,27 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-27 (session #180)
+**Updated:** 2026-06-27 (session #181)
 
-**Achieved (#180) — CS Centralization blockers implemented & tested:**
-- ✅ **All 3 blockers implemented** (~30.5h estimate → actual work completed): resolve-block guard validation, SLA display fields, emergency path logic
-- ✅ **Backend complete** — 11 blocker fields added to Ticket model + OtaBookingEvent + TripNotification models
-- ✅ **Frontend complete** — TicketStatusBanner component (632 lines, reusable) + ChangeRequestsSection integration
-- ✅ **Migrations applied** — 5 migrations (cs.0005, tickets.0006, tickets.0007, tickets.0008, tickets.0009) 
-- ✅ **Tests passing** — 31/31 tests (100% success) covering all blocker functionality + validation logic + SLA calculations + emergency workflows
-- ✅ **No tech debt** — Implementation follows existing patterns: simple, reusable, no over-engineering
-- Analysis captured in vault docs: `cs-centralization-blockers-implementation.md` created
+**Achieved (#181) — CS-Centralization full session:**
+- ✅ Vault review: checked `cs-workflow-revised-2026-06-27.md` against all 3 repos
+- ✅ Admin-dashboard Phase 1 on `feat/cs-workflow-revised-gaps`: VALID_TRANSITIONS extended (awaiting_ota_update + closed_no_action), SupabaseSyncBanner, SLA deadline display, emergency toggle (is_emergency), resolution_note display, admin_initiated header variant ("Update from SmartEnPlus"), Resend Email button in OTA Bookings tab, csApi mutations (resendMagicLink, syncOtaBookings, recordOtaContact)
+- ✅ 3-agent deep analysis (BE + FE + vault) → `cs-centralization-gap-report-2026-06-27.md`
+- ✅ All 4 repos pushed to feature branches; backend + frontend main reset to origin (no policy violations)
+- Overall CS readiness: ~65%. Backend models ✅ · 5 BE endpoint/field gaps · FE OTA path ❌
 
-**Workspace:** frontend main→`02bf22d` (CS blockers committed) · backend main→`e60c61d` (CS blockers committed) · admin main→`3d5a3a4` (clean) · content master→`3756e5b` (clean) · vault current (CS implementation docs added)
+**Workspace:**
+- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → ready for PR
+- backend: `feat/cs-centralization-blockers` (`3777554`) → ready for PR
+- frontend: `feat/cs-ticket-status-banner` (`02bf22d`) → ready for PR
+- vault: master (`61ce6c0`) · content: master (`3756e5b`)
 
 **Resume point (EXACT):**
-1. **CS-centralization workflow analysis** — Agent performing comprehensive analysis of smartenplus-frontend + admin-dashboard implementation against revised workflow requirements. Waiting for analysis findings: blocker compliance verification, gap identification, production readiness assessment.
-2. **Admin dashboard CS Centralization** — Implement 4-phase plan pending analysis results: ticket detail enhancement, list filters, OTA integration, help content. Backend blockers complete (31/31 tests passing), HTML help guide deployed to `/public/help/cs-centralization-admin-guide.html`.
-3. **Deploy backend + frontend blockers** — Both repos have committed changes, ready for production deployment after admin integration.
-4. **Seed `cs_chat` FeatureFlag** — via Django admin or SQL to activate chat FAB in prod.
-5. **P2-OTA-SYNC** — run BE migrations `0003_csotabooking` + `0004_csotabooking_extra_fields` + schedule Celery beat `cs.tasks.sync_ota_bookings`.
+1. **BE gaps** (unblock admin FE buttons): add magic_token/supabase_row_id fields to CsOtaBooking, `POST /api/cs/ota/sync/`, `POST /api/cs/ota/resend-magic-link/`, extend `RequestStatusViewSet.partial_update` to accept admin_contacted_ota_at/note/is_emergency, add OtaBookingEvent creation to `sync_ota_bookings` task
+2. **FE OTA gaps**: fix re-submit bug (`my-trip/index.js:58` → filter by open status), add `pollingInterval:60000` to `useGetOtaTripQuery`, replace `OtaRequestCard` with `TicketStatusBanner` in `/my-trip`, add conditional poll to auth booking query
+3. **Merge PRs** → develop: feat/cs-workflow-revised-gaps + feat/cs-centralization-blockers + feat/cs-ticket-status-banner
 
-_(Session #178 archived → `07-logs/session-history.md`.)_
+_(Session #180 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -55,7 +55,9 @@ _(Session #178 archived → `07-logs/session-history.md`.)_
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
-| **ADMIN-CS-CENTRALIZATION** | Backend blockers complete (31/31 tests passing), admin dashboard implementation needed. 4-phase plan: ticket detail enhancement (TicketStatusBanner + BlockerActions + ResolutionGuardModal), list filters (blocker columns + filters), OTA integration (detail view + admin panels), help content (HTML guide deployed). Admin repo: `/Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard`. | **IMPLEMENTATION START** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-blockers-implementation]] |
+| **ADMIN-CS-CENTRALIZATION** | **Phase 1 SHIPPED** (`feat/cs-workflow-revised-gaps`): VALID_TRANSITIONS extended, SupabaseSyncBanner, SLA display, emergency toggle, resolution_note, admin_initiated, Resend Email. Admin FE buttons non-functional until BE gaps resolved (see CS-BE-GAPS below). Phase 2-4 pending. | **Phase 1 done · Phase 2-4 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
+| **CS-BE-GAPS** | 5 backend gaps gating admin FE buttons: (1) CsOtaBooking missing magic_token/supabase_row_id fields; (2) no `POST /api/cs/ota/sync/` endpoint; (3) no `POST /api/cs/ota/resend-magic-link/` endpoint; (4) `RequestStatusViewSet.partial_update` ignores admin_contacted_ota_at/note/is_emergency; (5) `sync_ota_bookings` never creates OtaBookingEvent records → resolve-block guard always fails. BE branch: `feat/cs-centralization-blockers`. | **OPEN — BLOCKER** | [[cs-centralization-gap-report-2026-06-27]] |
+| **CS-FE-OTA-GAPS** | 4 frontend OTA guest path gaps: (1) re-submit bug live (`my-trip/index.js:58` blocks on existingTickets.length instead of open status filter); (2) no polling on `useGetOtaTripQuery` (add pollingInterval:60000); (3) `OtaRequestCard` missing resolution_note + admin_initiated — replace with `TicketStatusBanner` in /my-trip; (4) no conditional polling on auth booking query. FE branch: `feat/cs-ticket-status-banner`. | **OPEN — HIGH** | [[cs-centralization-gap-report-2026-06-27]] |
 
 ### Low-priority backlog
 

@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-27 (session #180) — _archived from master-state 2026-06-27_
+
+**Achieved (#180) — CS Centralization blockers implemented & tested:**
+- ✅ All 3 blockers implemented: resolve-block guard validation, SLA display fields, emergency path logic
+- ✅ Backend complete — 11 blocker fields added to Ticket model + OtaBookingEvent + TripNotification models
+- ✅ Frontend complete — TicketStatusBanner component (632 lines) + ChangeRequestsSection integration
+- ✅ Migrations applied — 5 migrations (cs.0005, tickets.0006–0009)
+- ✅ Tests passing — 31/31 (100% success)
+- Analysis captured: `cs-centralization-blockers-implementation.md`
+
+**Workspace (#180):** frontend main→`02bf22d` · backend main→`e60c61d` · admin main→`3d5a3a4` · content master→`3756e5b`
+
+---
+
 **Updated:** 2026-06-27 (session #178) — _archived from master-state 2026-06-27_
 
 **Achieved (#178) — FULL DEPLOY + CS audit + vault sync:**
