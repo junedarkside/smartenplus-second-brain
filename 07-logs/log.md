@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-27] session-end #182b | Migration 0006 fixed — backfill magic_token per-row before unique constraint (60176c5). Local DB migrated OK.
+
 ## [2026-06-27] session-end #182 | CS BE gaps closed — 3-agent team fixed B1–B5 on feat/cs-centralization-blockers (magic_token, sync+resend endpoints, admin fields, OtaBookingEvent). 30 tests added, 104 pass. FE OTA 4 gaps remain. BE + admin-dashboard PRs ready.
 
 ## [2026-06-27] session-end #179 | CS Centralization business analysis completed. Identified 3 BLOCKERS (~30.5h) gating go-live: resolve-block guard, SLA display, emergency path. Catalogued 7 MAJOR gaps, documented 5 missing business rules. Captured stakeholder concerns with quotes. Extracted 5 reusable analysis frameworks to 03-knowledge/. Added CS-BLOCKER-DECISION to master-state Section 2. Vault optimized — already following best practices.

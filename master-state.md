@@ -18,7 +18,7 @@
 - Overall CS readiness: ~80%. BE gaps ✅ · Admin-dashboard Phase 1 ✅ · FE OTA path ❌
 
 **Workspace:**
-- backend: `feat/cs-centralization-blockers` (`3576edc`) → **ready for PR**
+- backend: `feat/cs-centralization-blockers` (`60176c5`) → **ready for PR**
 - admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → **ready for PR**
 - frontend: `feat/cs-ticket-status-banner` (`02bf22d`) → **ready for PR** (FE gaps still open)
 - vault: master · content: master (`3756e5b`)
