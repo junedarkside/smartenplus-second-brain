@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-28] session-end #185 | CS Guide staff help — Thai guide + Mermaid workflow diagrams + sidebar nav wiring (admin-dashboard feat/cs-workflow-revised-gaps, uncommitted pending manual test). Phase 4 BUILT. #184 archived.
+
 ## [2026-06-28] session-end #184 | Wrapup after FE-B1..B5 ship — feat/cs-ticket-status-banner merged → develop (463a740). SEO-R6-R9-DEPLOY closed (subsumed by FULL-DEPLOY 2026-06-26). #183 archived to session-history. CS readiness ~90%.
 
 ## [2026-06-27] session-end #182b | Migration 0006 fixed — backfill magic_token per-row before unique constraint (60176c5). Local DB migrated OK.

@@ -3,6 +3,16 @@
 ## Summary
 Complete implementation of 3 critical blockers for CS Centralization unified booking operations workflow. All blockers implemented, tested (31/31 passing), and committed to main branches.
 
+> **⚠ FE Ship Status (2026-06-28):** The frontend blocker cluster that consumes these BE changes is now SHIPPED on branch `feat/cs-ticket-status-banner` (commits `835cb69`, `c968ffd`, `ca64776`):
+> - **FE-B1** my-trip open-status re-submit guard — `pages/my-trip/index.js:55-61`
+> - **FE-B2** OTA trip 60s poll — `store/api/otaApi.js:13`
+> - **FE-B3** `OtaRequestCard` → `TicketStatusBanner` in `/my-trip` (resolution_note + admin_initiated parity); `OtaRequestCard` deleted as dead code (2026-06-28, zero imports)
+> - **FE-B4** booking-detail conditional 120s poll — `pages/bookings/[bookingId].js:49`
+> - **FE-B5** lint (apostrophe escape) — `components/bookings/TicketStatusBanner.js:149`
+> - **Bonus:** `/my-trip` poll gated on open-ticket state (`pollingInterval: hasOpenTicket ? 60000 : 0`, `pages/my-trip/index.js`) — parity with FE-B4.
+>
+> **Open:** only `FE-M1` (InfoUpdateNotice — surfaces `TripNotification` to the customer) remains on the FE layer. **Auth-flow open-status re-submit guard intentionally NOT added** — BE `tickets/views.py:201-228` allows multiple open tickets per booking; a FE-only guard would contradict the source of truth. If single-open-per-booking is wanted, enforce at BE, not FE. Overall go-live still gated by backend `BE-B1–BE-B5`. → [[cs-centralization-gap-report-2026-06-27]]
+
 ## Context
 CS Centralization unified booking operations workflow identified 3 blockers that must gate go-live. Business analysis completed in session #179 showed ~30.5h effort estimate. Implementation completed in session #180 with 100% test success rate.
 

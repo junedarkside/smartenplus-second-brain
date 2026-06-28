@@ -4,34 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-28 (session #184 — wrapup post FE-B1..B5 merge to develop)
+**Updated:** 2026-06-28 (session #185 — CS Guide staff help: Thai + Mermaid diagrams)
 
-**Achieved (#184) — wrapup after #183 ship:**
-- ✅ Confirmed `feat/cs-ticket-status-banner` merged to develop (`463a740`) and pushed to origin/develop
-- ✅ Vault master-state.md synced: Section 1 + Section 2 + session-history reflect FE-B1..B4 RESOLVED + #183 archived
-- ✅ SEO-R6-R9-DEPLOY closed (subsumed by FULL-DEPLOY 2026-06-26 — see closed-items)
-- Predecessor (#183) achievement: FE-B1..B5 closed (FE-B1 re-submit guard, FE-B2 otaApi polling 60s, FE-B3 TicketStatusBanner replaces OtaRequestCard in /my-trip, FE-B4 conditional booking detail poll 120s, FE-B5 lint apostrophe escape) → merged to develop
-- Overall CS readiness: ~90%. BE gaps ✅ · Admin-dashboard Phase 1 ✅ · FE OTA path ✅
+**Achieved (#185) — Admin-dashboard CS Guide staff help (Phase 4) BUILT:**
+- ✅ Verified (vault): Phase 4 "Admin Help & Documentation" was planned but unbuilt — guide HTML existed (`public/help/cs-centralization-admin-guide.html`, 10.9KB, 2026-06-27) but NO sidebar nav wired it (unreachable by staff).
+- ✅ Wired CS Guide nav: `menuData.js` (CS Guide item + `HelpOutlineOutlined` icon + `external:true` flag) + `SideBarListMenu.js` (new `MenuLink` helper → `<a target="_blank">` when external, else next/link; DRY, regression-free — other items unaffected).
+- ✅ Fixed 404 bug: file lives in `public/help/` subdir → nav path needed `/help/` prefix. Verified 200.
+- ✅ Created Thai guide `public/help/cs-centralization-admin-guide-th.html` (lang=th, full Thai, system labels stay English/code, 3 Mermaid diagrams w/ Thai labels, `🌐 English version` toggle). Nav → Thai primary.
+- ✅ Upgraded English guide: Mermaid CDN + 3 diagrams (EN labels) + `🌐 เวอร์ชันภาษาไทย` toggle.
+- ✅ 3 diagrams each: Request Lifecycle (LR), Resolve-Block Guard (TD), Ticket Status Flow (TD).
+- ✅ Created `docs/operations/CS_CENTRALIZATION_E2E.md` — full staff manual E2E (9 sections; CS Guide Thai + toggle + diagram checks; backend BE-B1..B5 flagged expected-non-functional).
+- ✅ Verified live: TH + EN both HTTP 200, Mermaid script+init present, 3 flowcharts each, toggle links present, nav→TH confirmed.
 
-**Workspace:**
-- backend: `feat/cs-centralization-blockers` (`60176c5`) → **ready for PR** (migration 0007 pending)
-- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) → **ready for PR**
-- frontend: `develop` (`463a740` after `feat/cs-ticket-status-banner` merge) → live on develop
-- vault: master (`3273e34`) · content: master (`3756e5b`)
+**Workspace (#185):**
+- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) — **4 uncommitted (PENDING TEST)**: `M SideBarListMenu.js`, `M menuData.js`, `?? docs/operations/CS_CENTRALIZATION_E2E.md`, `?? public/help/` (en + th).
+- frontend: `feat/cs-ticket-status-banner` (`ca64776`) — pre-existing #183 leftovers uncommitted (`D OtaRequestCard.js`, `M my-trip/index.js`). NOT this session.
+- backend: `feat/cs-centralization-blockers` (`60176c5`) — clean, ready for PR.
+- vault: master · content: master (`3756e5b`) clean.
 
-**Resume point (EXACT):**
-1. **Post-merge follow-up branches** (non-blocking, priority order):
-   - `test/cs-banner-coverage` — RTL tests for TicketStatusBanner + polling intervals + re-submit guard
-   - `fix/cs-banner-i18n` — i18n routing for banner strings + locale
-   - `fix/cs-banner-a11y` — semantic roles + `<time>` + shape diff for SLAProgress
-   - `feat/cs-banner-analytics` — GTM events for status transitions + SLA stage advances + re-submit guard prevent
-   - `docs/cs-move-plan` — move `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` → `docs/features/cs-centralization.md`
-2. **BE migration 0007** — run `makemigrations cs` with venv active on `feat/cs-centralization-blockers` before PR merge (OtaBookingEvent/TripNotification meta drift)
-3. **BE + admin-dashboard PRs** → develop (await migration 0007 closure)
-4. **OQ-3 awaiting_ota_update SLA** — BLOCKER (Product owes timeout + ETA surface)
-5. **Admin Phase 2-4** on admin-dashboard repo (depends on BE merge)
+**Resume point (EXACT) — "we will test later":**
+1. **Test CS Guide** per `docs/operations/CS_CENTRALIZATION_E2E.md` §6 (admin-dashboard): reload → sidebar **CS Guide** → Thai page in new tab → 3 Mermaid diagrams render (need internet/CDN) → toggle EN↔TH → other nav unaffected.
+2. **Commit admin-dashboard CS Guide work** on `feat/cs-workflow-revised-gaps` after test passes: `menuData.js` + `SideBarListMenu.js` + `public/help/` + `CS_CENTRALIZATION_E2E.md`.
+3. **Update vault Phase 4 status → BUILT** (after commit): `admin-dashboard-cs-centralization-plan.md` Phase 4 + `cs-centralization-gap-report-2026-06-27.md` Layer 3 ADMIN-CS-CENTRALIZATION row.
+4. *(Carry-forward #184)* post-merge follow-up branches, BE migration 0007, BE+admin PRs, OQ-3 SLA, Admin Phase 2-3.
 
-_(Session #183 archived → `07-logs/session-history.md`.)_
+_(Session #184 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -61,7 +58,7 @@ _(Session #183 archived → `07-logs/session-history.md`.)_
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
-| **ADMIN-CS-CENTRALIZATION** | **Phase 1 SHIPPED** (`feat/cs-workflow-revised-gaps`): VALID_TRANSITIONS extended, SupabaseSyncBanner, SLA display, emergency toggle, resolution_note, admin_initiated, Resend Email. Admin FE buttons non-functional until BE gaps resolved (see CS-BE-GAPS below). Phase 2-4 pending. | **Phase 1 done · Phase 2-4 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
+| **ADMIN-CS-CENTRALIZATION** | **Phase 1 SHIPPED** (`feat/cs-workflow-revised-gaps`): VALID_TRANSITIONS extended, SupabaseSyncBanner, SLA display, emergency toggle, resolution_note, admin_initiated, Resend Email. **Phase 4 (Admin Help & Documentation) BUILT (#185)** — Thai + EN guide + 3 Mermaid diagrams + sidebar nav wired (`MenuLink` external-anchor helper); uncommitted on `feat/cs-workflow-revised-gaps`, PENDING manual test. Admin FE buttons non-functional until BE gaps resolved (see CS-BE-GAPS below). Phase 2-3 pending. | **Phase 1 done · Phase 4 help BUILT (uncommitted, pending test) · Phase 2-3 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-BE-GAPS** | ✅ All 5 gaps closed `feat/cs-centralization-blockers` (`3576edc`): magic_token+supabase_row_id fields+migration, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 30 tests added (104 total pass). **Pending:** migration 0007 (OtaBookingEvent/TripNotification meta drift) before PR merge. | **DONE — PR ready** | [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-FE-OTA-GAPS** | ✅ **RESOLVED** (`835cb69` + `c968ffd`, session #183) — FE-B1 re-submit guard by open-status filter, FE-B2 `pollingInterval:60000` on `getOtaTrip`, FE-B3 `TicketStatusBanner` replaces `OtaRequestCard` in `/my-trip`, FE-B4 conditional `pollingInterval:120s` on `useGetBookingDetailQuery` keyed on `hasActiveTicket`. Branch ahead of main by 3 commits (2 unpushed to origin). **Open follow-ups (non-blocking)**: (a) no RTL/e2e tests for banner or polling/re-submit guard; (b) hard-coded English strings + `'en-GB'` locale in `TicketStatusBanner` + `/my-trip` — no i18n; (c) no analytics events (banner impression, status transition, SLA stage advance, re-submit guard prevent); (d) a11y — `SLAProgress` opacity-only (no shape diff), status pill lacks `role="status"`/`aria-live`, emergency lacks `role="alert"`, `<time dateTime>` missing, color-as-primary-signal; (e) no runtime guards on BE contract fields (`resolution_stage`, `operator_deadline`, `ota_deadline`, `admin_contacted_ota_at/_note`, `admin_initiated`, `resolution_note`, `is_emergency`); (f) `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` at repo root — should move to `docs/features/`. | **RESOLVED · follow-up gaps tracked** | [[cs-centralization-gap-report-2026-06-27]] |
 

@@ -14,13 +14,17 @@ metadata:
 
 > **Reference:** [[cs-workflow-revised-2026-06-27]] (fix-then-ship, 4 blockers gating go-live). [[cs-centralization-blockers-implementation]] (31/31 tests passing, merged main).
 
+> **⚠ STATUS UPDATE 2026-06-28:** The FE blocker cluster (FE-B1–B5) is now **SHIPPED** on branch `feat/cs-ticket-status-banner`. This report's Layer 2 previously listed them MISSING — they are now resolved (see Layer 2 + Next Steps). **Only `FE-M1` (InfoUpdateNotice) remains open on the FE layer.** Overall go-live is now gated by **backend `BE-B1–BE-B5`**, not frontend.
+
 ---
 
 ## Summary
 
-Backend is in excellent shape — all 4 workflow blockers implemented, 31/31 tests passing, 5 migrations applied. The **critical gap cluster is in the frontend OTA guest path** (`/my-trip`) and **2 missing BE endpoints** (on-demand sync + resend magic link). Admin dashboard Phase 1 was shipped in the previous session (branch `feat/cs-workflow-revised-gaps`). Three "built" items from the workflow doc are **not yet in the backend** (CsOtaBooking magic link fields + supabase_row_id). OTA sync task exists but **does not yet create OtaBookingEvent records** — admin verifying blind.
+Backend is in excellent shape — all 4 workflow blockers implemented, 31/31 tests passing, 5 migrations applied. Admin dashboard Phase 1 was shipped in the previous session (branch `feat/cs-workflow-revised-gaps`). Three "built" items from the workflow doc are **not yet in the backend** (CsOtaBooking magic link fields + supabase_row_id). OTA sync task exists but **does not yet create OtaBookingEvent records** — admin verifying blind.
 
-**Overall readiness: ~65%. Backend models ✅ · Backend endpoints PARTIAL · Frontend auth ✅ · Frontend OTA ❌ · Admin PARTIAL**
+**Frontend OTA guest path (`/my-trip`) + auth booking-detail are now SHIPPED** — all FE blockers (FE-B1–B4) resolved on branch `feat/cs-ticket-status-banner` (2026-06-28); see Layer 2. The remaining go-live gates are **backend** `BE-B1–BE-B5` (magic-token fields, on-demand sync + resend endpoints, resolve-block PATCH fields, OtaBookingEvent creation) + admin dashboard functional gaps.
+
+**Overall readiness:** Backend models ✅ · Backend endpoints PARTIAL · Frontend auth ✅ · Frontend OTA ✅ (B1–B4 shipped) · Admin PARTIAL — overall still gated by backend `BE-B1–BE-B5`.
 
 ---
 
@@ -169,72 +173,31 @@ If `CsOtaBooking.status='quarantined'`, customer can submit a ticket. No guard a
 
 ---
 
-### Missing — BLOCKER ❌
+### Shipped ✅ (2026-06-28, branch `feat/cs-ticket-status-banner`)
 
-**FE-B1 — my-trip re-submit bug NOT fixed**
+All four FE blockers + FE-B5 (lint) resolved in commits `835cb69` (FE-B1+B3), `c968ffd` (FE-B2+B4), `ca64776` (FE-B5):
 
-`pages/my-trip/index.js:58`:
-```javascript
-const showForm = existingTickets.length === 0 && !localSubmitted
-// BUG: blocks re-submit even after ticket resolves
-```
+| Item | Fix | Evidence |
+|---|---|---|
+| **FE-B1** my-trip re-submit guard | Filter open tickets by `request_status`, not ticket count → re-submit works after resolve | `pages/my-trip/index.js:55-61` — `openTickets` + `showForm = openTickets.length === 0 && !localSubmitted` |
+| **FE-B2** OTA trip polling | `pollingInterval: 60000` on `getOtaTrip` | `store/api/otaApi.js:13` |
+| **FE-B3** TicketStatusBanner parity in /my-trip | Replaced `OtaRequestCard` with `TicketStatusBanner` (resolution_note + admin_initiated); `OtaRequestCard` deleted as dead code (2026-06-28, zero imports) | mount `pages/my-trip/index.js:235`; `components/bookings/OtaRequestCard.js` removed |
+| **FE-B4** booking detail conditional poll | `pollingInterval: hasActiveTicket ? 120000 : 0` | `pages/bookings/[bookingId].js:49` (gate `:31-33`) |
+| **FE-B5** lint | Escape apostrophe | `components/bookings/TicketStatusBanner.js:149` |
 
-Spec fix (verified refuted from codebase by Explore agent in original scrutiny pass):
-```javascript
-const openTickets = existingTickets.filter(t =>
-  ['pending','in_review','awaiting_ota_update'].includes(t.request_status)
-)
-const showForm = openTickets.length === 0 && !localSubmitted
-```
-
-**Impact:** OTA guest who had a ticket resolved can never submit a new request. Permanently locked.
-
----
-
-**FE-B2 — No polling on OTA trip query**
-
-`store/api/otaApi.js:10-13`:
-```javascript
-getOtaTrip: builder.query({
-  query: (token) => `/api/cs/ota/trip/?token=${encodeURIComponent(token)}`,
-  providesTags: ['OtaTrip'],
-  // ← no pollingInterval
-}),
-```
-
-OTA guest sees stale ticket status unless they manually refresh. Spec: add `pollingInterval: 60000`.
-
----
-
-**FE-B3 — `OtaRequestCard` missing resolution_note + admin_initiated**
-
-`components/bookings/OtaRequestCard.js`: does not accept or render `resolution_note` or `admin_initiated`. OTA guest sees no outcome note after resolution, and no "Update from SmartEnPlus" header for admin-initiated tickets.
-
-`TicketStatusBanner` has both — but is not used in `/my-trip` flow (uses `OtaRequestCard` instead).
-
----
-
-**FE-B4 — No polling on auth booking detail**
-
-`store/api/bookingsApi.js:76-85`: `useGetBookingDetailQuery` has no `pollingInterval`. Spec: conditional `pollingInterval: 120000` when booking has an active ticket.
+**Bonus cleanup (2026-06-28):** `/my-trip` poll now gated on open-ticket state (`pollingInterval: hasOpenTicket ? 60000 : 0`, `pages/my-trip/index.js`) — parity with the FE-B4 conditional-poll pattern; stops polling once all tickets reach a terminal state.
 
 ---
 
 ### Missing — MAJOR ⚠️
 
-**FE-M1 — `InfoUpdateNotice` component not built**
+**FE-M1 — `InfoUpdateNotice` component not built** ← ONLY remaining open FE item (2026-06-28)
 
-`TripNotification` model exists on BE. No FE component to surface it. Functionality partially embedded in `AwaitingOTAMessage` inside `TicketStatusBanner` but for a different purpose (OTA wait message, not admin info-push). Admin info updates (boarding point, weather) won't show to customer.
+`TripNotification` model exists on BE. No FE component to surface it. Functionality partially embedded in `AwaitingOTAMessage` inside `TicketStatusBanner` but for a different purpose (OTA wait message, not admin info-push). Admin info updates (boarding point, weather) won't show to customer. Still open — see Next Steps #13.
 
-**FE-M2 — `TicketStatusBanner` not in `/my-trip` flow**
+**~~FE-M2 — `TicketStatusBanner` not in `/my-trip` flow~~** ✅ DONE (2026-06-28) — superseded by FE-B3. `/my-trip` now mounts `TicketStatusBanner`; `OtaRequestCard` deleted.
 
-`/my-trip/index.js` uses `OtaRequestCard` — the simpler, feature-incomplete component. `TicketStatusBanner` (with all its sub-components) is never rendered for OTA guests. Fix = replace `OtaRequestCard` with `TicketStatusBanner` in my-trip, or extend `OtaRequestCard` to parity.
-
-Recommended: replace with `TicketStatusBanner` — it already has all required sub-components.
-
-**FE-M3 — No conditional polling wiring in `/bookings/[id]`**
-
-Even when `ChangeRequestsSection` uses `TicketStatusBanner` correctly, the booking detail query doesn't auto-refresh. Customer must reload page to see status change.
+**~~FE-M3 — No conditional polling wiring in `/bookings/[id]`~~** ✅ DONE (2026-06-28) — superseded by FE-B4 (`pages/bookings/[bookingId].js:49` conditional 120s poll).
 
 ---
 
@@ -311,10 +274,10 @@ Even when `ChangeRequestsSection` uses `TicketStatusBanner` correctly, the booki
 | 3 | **BE: Add `POST /api/cs/ota/resend-magic-link/`** `ResendMagicLinkView` → regenerates token + fires SES | BE | 2h | Admin Resend Email button |
 | 4 | **BE: Extend `RequestStatusViewSet.partial_update`** to accept + save `admin_contacted_ota_at`, `admin_contacted_ota_note`, `is_emergency` | BE | 1h | Resolve-block guard functional, emergency toggle |
 | 5 | **BE: `sync_ota_bookings` task — add `OtaBookingEvent` creation** on field changes | BE | 2h | Resolve-block guard can pass, admin sync history |
-| 6 | **FE: Fix my-trip re-submit bug** `pages/my-trip/index.js:58` — filter by open status, not length | FE | 30min | OTA re-submit after resolve |
-| 7 | **FE: Add pollingInterval to `useGetOtaTripQuery`** in `otaApi.js` | FE | 15min | OTA guest sees live status |
-| 8 | **FE: Replace `OtaRequestCard` with `TicketStatusBanner`** in `/my-trip`** — or extend OtaRequestCard to match TicketStatusBanner feature parity (resolution_note + admin_initiated) | FE | 2h | OTA guest sees full ticket state |
-| 9 | **FE: Add conditional pollingInterval to `useGetBookingDetailQuery`** | FE | 30min | Auth booking auto-refreshes |
+| ~~6~~ | ~~**FE: Fix my-trip re-submit bug**~~ ✅ DONE `835cb69` (FE-B1) | FE | — | OTA re-submit after resolve |
+| ~~7~~ | ~~**FE: Add pollingInterval to `useGetOtaTripQuery`**~~ ✅ DONE `c968ffd` (FE-B2) | FE | — | OTA guest sees live status |
+| ~~8~~ | ~~**FE: Replace `OtaRequestCard` with `TicketStatusBanner`**~~ ✅ DONE `835cb69` (FE-B3) + `OtaRequestCard` deleted 2026-06-28 | FE | — | OTA guest sees full ticket state |
+| ~~9~~ | ~~**FE: Add conditional pollingInterval to `useGetBookingDetailQuery`**~~ ✅ DONE `c968ffd` (FE-B4) | FE | — | Auth booking auto-refreshes |
 
 ### Near-term — pre-launch quality
 
