@@ -404,6 +404,17 @@ Global navigation catalog. Updated on every ingest.
 - [[business-development-new-site-diagram]] — Reference image (new site diagram.png) for [[business-development-thesis-2026]]. PNG stored outside vault, large file.
 - [[business-development-new-site-idea]] — Reference image (new site idea.png) for [[business-development-thesis-2026]]. PNG stored outside vault, large file.
 
+## Knowledge — Catalog Discovery
+
+- [[live-catalog-discovery-protocol]] — **NEW 2026-06-28.** Step-by-step recipe: sitemap.xml → public APIs (1 req/sec) → prod read-only Django shell. Field gotchas (`is_actived` vs `is_active`), station-type/airport/TRANSFER filter rules. Foundation for [[products-live-catalog-audit]].
+- [[thailand-location-coverage-framework]] — **NEW 2026-06-28.** Curated reference set: 21 IATA airports + SRT terminals + bus terminals + 8 ferry piers + 10 tourist islands + 4 cross-border hubs (Laos/Cambodia/Myanmar/Malaysia). Master "what should exist" layer.
+- [[three-layer-gap-coverage-matrix]] — **NEW 2026-06-28.** Reference/Live/Admin taxonomy + 5 coverage lenses (Join/Private/Charter/Experiences/Activities). Gap = Reference∖Live, Sub-gap = Admin∖Live. One gap can have multiple lens statuses.
+- [[operator-outreach-question-template]] — **NEW 2026-06-28.** Reusable grill skill input template (gap + demand signal + what we need + operator profile + commercial ask + compliance checklist + next step). Used by [[products-live-catalog-audit]] Phase 2.
+
+## Active Catalog Audit Projects
+
+- [[products-live-catalog-audit]] — **STARTED 2026-06-28 · PHASE 0 COMPLETE.** Systematic gap audit of live catalog at smartenplus.co.th. Coverage = 5 product types (Join/Private/Charter transport + Experiences + Activities). Scope = Thailand + cross-border. 3-layer matrix (Reference/Live/Admin) + 5-lens tagging. Data lives in `business-development/products-live-catalog/`. Phase 1 (polite scrape + Django shell admin queries) awaiting user approval. [[live-catalog-discovery-protocol]] · [[three-layer-gap-coverage-matrix]] · [[thailand-location-coverage-framework]] · [[operator-outreach-question-template]]
+
 ## Areas
 
 - [[business-development-thesis-2026]] — **NEW 2026-06-03.** SmartEnPlus strategic thesis: Thailand Travel Commerce Platform. Four-phase growth model (revenue per traveler → retention → AI intelligence → journey commerce). Competitive position: "travel connectivity" not inventory. B2B+B2C distribution. [[business]] updated.
