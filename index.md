@@ -410,6 +410,11 @@ Global navigation catalog. Updated on every ingest.
 - [[thailand-location-coverage-framework]] — **NEW 2026-06-28.** Curated reference set: 21 IATA airports + SRT terminals + bus terminals + 8 ferry piers + 10 tourist islands + 4 cross-border hubs (Laos/Cambodia/Myanmar/Malaysia). Master "what should exist" layer.
 - [[three-layer-gap-coverage-matrix]] — **NEW 2026-06-28.** Reference/Live/Admin taxonomy + 5 coverage lenses (Join/Private/Charter/Experiences/Activities). Gap = Reference∖Live, Sub-gap = Admin∖Live. One gap can have multiple lens statuses.
 - [[operator-outreach-question-template]] — **NEW 2026-06-28.** Reusable grill skill input template (gap + demand signal + what we need + operator profile + commercial ask + compliance checklist + next step). Used by [[products-live-catalog-audit]] Phase 2.
+- [[public-api-filter-silent-ignore]] — **NEW 2026-06-28.** SmartEnPlus public API silently ignores `?is_actived=false` and `?end_date__gte=` filters. Detection curl test pattern + admin-only filters table. Forces Django shell for sub-gap detection.
+- [[grill-skill-efficient-batch-pattern]] — **NEW 2026-06-28.** Two-pass grill for batch BD question docs: pre-fill clear sections from data, grill only unknowns. Saves 70-80% interactive rounds vs naive per-gap grill.
+- [[api-smartenplus-co-th-endpoint-inventory]] — **NEW 2026-06-28.** Verified public REST API endpoints (6 + 10 service_category enum + contract schema). What it CAN/CANNOT detect. Foundation for any future public-API audit work.
+- [[bd-commission-tier-framework]] — **NEW 2026-06-28.** Industry-standard commission rates per category (Transport 15-20% · Day tours 18-22% · Spa 20-25% · Hotels 12-18% · etc). Default for BD outreach — confirm with finance before contract.
+- [[live-catalog-audit-public-api-limitations]] — **NEW 2026-06-28.** Capability matrix: what public API audit CAN vs CANNOT detect. Prevents overclaiming audit completeness. Co-required with [[public-api-filter-silent-ignore]].
 
 ## Active Catalog Audit Projects
 
