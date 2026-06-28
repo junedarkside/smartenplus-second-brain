@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-28] session-end #186 | CS-Centralization cross-repo fix + ship — analyzed FE/BE/admin vs revised workflow; fixed 4 critical (BE resolve-block guard wired to API + emergency path + field-only PATCH; admin resend payload + emergency route); merged all 3 repos → develop (BE 424f72a, admin 69bde06, FE 4c0df60); pruned 12 stale branches. 64/64 BE tests green. #185 archived.
+
 ## [2026-06-28] session-end #185 | CS Guide staff help — Thai guide + Mermaid workflow diagrams + sidebar nav wiring (admin-dashboard feat/cs-workflow-revised-gaps, uncommitted pending manual test). Phase 4 BUILT. #184 archived.
 
 ## [2026-06-28] session-end #184 | Wrapup after FE-B1..B5 ship — feat/cs-ticket-status-banner merged → develop (463a740). SEO-R6-R9-DEPLOY closed (subsumed by FULL-DEPLOY 2026-06-26). #183 archived to session-history. CS readiness ~90%.

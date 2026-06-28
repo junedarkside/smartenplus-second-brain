@@ -4,6 +4,26 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-06-28 (session #185 — CS Guide staff help: Thai + Mermaid diagrams) — _archived from master-state 2026-06-28_
+
+**Achieved (#185) — Admin-dashboard CS Guide staff help (Phase 4) BUILT:**
+- ✅ Wired CS Guide nav (`menuData.js` + `SideBarListMenu.js` `MenuLink` external-anchor helper, regression-free). Fixed 404 (file in `public/help/`).
+- ✅ Created Thai guide `cs-centralization-admin-guide-th.html` (lang=th, 3 Mermaid diagrams w/ Thai labels, EN toggle). Upgraded EN guide with Mermaid + TH toggle.
+- ✅ 3 diagrams each (Request Lifecycle, Resolve-Block Guard, Ticket Status Flow).
+- ✅ Created `docs/operations/CS_CENTRALIZATION_E2E.md` staff manual E2E (9 sections). Verified live TH+EN HTTP 200.
+
+**Workspace (#185):**
+- admin-dashboard: `feat/cs-workflow-revised-gaps` (`d9413aa`) — 4 uncommitted PENDING TEST (sidebar, help, E2E doc).
+- frontend: `feat/cs-ticket-status-banner` (`ca64776`) — pre-existing #183 leftovers uncommitted.
+- backend: `feat/cs-centralization-blockers` (`60176c5`) — clean, ready for PR.
+
+**Resume point (EXACT):**
+1. Test CS Guide per E2E §6 → commit admin work → update Phase 4 status BUILT.
+
+_(Session #184 archived → `07-logs/session-history.md`.)_
+
+---
+
 **Updated:** 2026-06-28 (session #184 — wrapup post FE-B1..B5 merge to develop) — _archived from master-state 2026-06-28_
 
 **Achieved (#184) — wrapup after #183 ship:**
