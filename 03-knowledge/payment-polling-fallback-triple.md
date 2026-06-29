@@ -42,4 +42,4 @@ QR polling MUST use `setTimeout` recursion (not `setInterval`) → avoids reques
 
 ## Related
 - [[payment-deep-review]] — M8 finding (webhook reliability gap)
-- [[useQRPolling]] — frontend polling pattern (reused in chat widget)
+- `useQRPolling.js` (frontend) — polling pattern (reused in chat widget)

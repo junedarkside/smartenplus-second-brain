@@ -68,6 +68,6 @@ article (rounded-xl, bg-white, shadow-[0_4px_16px])
 - Extensible: `badgeText` slot can show rating, price range, or other data later
 
 ## Related
-- [[TravelThailandBetterSection]] — Travel Guide section (same pattern, shipped session #146)
-- [[destinations-section-homepage]] — parent `LocationsSection.js`
+- `TravelThailandBetterSection` — Travel Guide section (same pattern, shipped session #146)
+- `LocationsSection.js` — parent homepage component
 - `lib/homepage/data/destinationCopy.js` — editorial copy source

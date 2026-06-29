@@ -36,6 +36,10 @@ RULES = [
     ("[[webp-og-image-1200x630]]", "[[og-image-1200x630-webp]]"),
     # orphan redirects to real notes
     ("[[r2-skeptic-review]]", "[[customer-os-thesis-r2-skeptic-review]]"),  # alias -> full filename (8 linkers, false orphan)
+    ("[[blocker-prioritization-matrix]]", "[[implementation-prioritization-matrix]]"),  # cs-business-analysis-methodology.md:92
+    ("[[stakeholder-analysis-framework]]", "[[stakeholder-concern-capture-pattern]]"),  # cs-business-analysis-methodology.md:90
+    ("[[workflow-gap-identification]]", "[[blocker-identification-framework]]"),  # cs-business-analysis-methodology.md:91
+    ("[[design_system-audit]]", "[[design-system-audit]]"),  # typo: underscore -> dash (3 linkers)
     ("[[thailand-platform-analysis]]", "[[business-development-thailand-platform-analysis]]"),
     ("[[thailand-bundle-architecture]]", "[[business-development-thailand-bundle-architecture]]"),
     ("[[zeitrip-mvp-product-spec]]", "[[business-development-zeitrip-mvp]]"),

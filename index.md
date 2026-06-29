@@ -433,6 +433,7 @@ Global navigation catalog. Updated on every ingest.
 - [[adr-template]] — Architecture Decision Record template
 - [[atomic-note]] — Single-concept note template for extracted atoms
 - [[adr-info-fields-casing]] — `info_fields` casing boundary: backend fully-lowercase keys, frontend camelCase, single conversion in `checkoutPersistence.js:normalizeTripData()`. Documents lowercase-t vs capital-T `arrivalFlightTime` split.
+- [[new-2-partner-case-id-closed]] — Partner case ADR closed 2026-06-27 (back-link stub added 2026-06-29 during stray-file cleanup).
 
 ## Archive
 

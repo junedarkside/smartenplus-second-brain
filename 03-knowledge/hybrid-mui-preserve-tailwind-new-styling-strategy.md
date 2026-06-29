@@ -47,5 +47,5 @@ padding="8px"  // Inline, fine
 Don't create "utility" tokens for 1-2 uses. Token library bloats fast. Audit before adding: grep usage count first.
 
 ## Related
-- [[design_system-audit]] — parent audit (debate outcomes, 5-phase roadmap)
+- [[design-system-audit]] — parent audit (debate outcomes, 5-phase roadmap)
 - [[mui-tailwind-breakpoint-mismatch-sm-600-vs-640]] — companion breakpoint fix

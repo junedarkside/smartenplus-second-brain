@@ -49,4 +49,4 @@ const theme = createTheme({
 Global change. Affects ALL MUI/Tailwind混合 components. Test responsive at 600-640px width range thoroughly.
 
 ## Related
-- [[design_system-audit]] — parent audit (token coverage, violations, 5-phase roadmap)
+- [[design-system-audit]] — parent audit (token coverage, violations, 5-phase roadmap)

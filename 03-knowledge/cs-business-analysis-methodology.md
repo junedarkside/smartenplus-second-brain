@@ -87,6 +87,6 @@ Analysis supports "should we build this" decisions by providing:
 - Testing requirements
 
 ## Related
-- [[stakeholder-analysis-framework]]
-- [[workflow-gap-identification]]
-- [[blocker-prioritization-matrix]]
+- [[stakeholder-concern-capture-pattern]]
+- [[blocker-identification-framework]]
+- [[implementation-prioritization-matrix]]

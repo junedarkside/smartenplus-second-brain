@@ -48,5 +48,5 @@ const P_3 = '0.75rem'; const P_5_LG = '1.25rem';  // Bloat
 Exceptions: spacing tied to DESIGN SYSTEM (8px grid, 4px baseline) → token even if <5 uses (e.g., icon spacing, touch targets 44px).
 
 ## Related
-- [[design_system-audit]] — parent audit (debate #1)
+- [[design-system-audit]] — parent audit (debate #1)
 - [[hybrid-mui-preserve-tailwind-new-styling-strategy]] — companion strategy
