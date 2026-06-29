@@ -36,7 +36,7 @@
 1. **Commit + push all 3 repos** (BE: `cs/views.py` + `tickets/views.py`; FE: `RequestChangeModal.js` + new test guide; admin: `ActionDialog.jsx` + `command-centre/index.js` + `lightTheme.js`) on feature branches → merge to develop
 2. **Fix `NEXTAUTH_SECRET` mismatch** — set `admin-dashboard/.env.local` `NEXTAUTH_SECRET` to match frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin dev server + clear cookies
 3. **Continue manual testing** — B-6 complete (type note → No Action Needed → verify `closed_no_action`), then B-7 (emergency toggle), B-8 (cancellation sync), Flow C (OTA /my-trip — needs seeded data), Flow D (chat widget), Flow E (OTA sync)
-4. **Redesign admin dialog UX** — staff find too many buttons confusing; 2-step flow or grouped layout needed
+4. ✅ **Redesign admin dialog UX** — DONE #192 (admin `4af50b1` on develop). ActionDialog tone-grouped zones (hero Resolve green / Reject red destructive / No Action Needed blue neutral / Awaiting OTA orange). Terminal transitions (resolved/rejected/closed_no_action) route through reused `ConfirmDialog` w/ `resolution_note` (required reject/closed_no_action per BE `clean()`; optional resolved — shown to customer). Copy Email → utility row. `ConfirmDialog` +children slot +confirmDisabled (backward-safe, 3 callers unaffected). Conformance-checked vs `cs-workflow-revised-2026-06-27` + audit; BE Tier-1 #8 (`closed_no_action` unreachable) already fixed on develop. **Follow-up:** FE `CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` flows B-3/B-6 need 2-step update (separate FE commit).
 5. **Deploy CS-Centralization → main** (all 3 repos) once manual test complete
 
 _(Session #190 archived → `07-logs/session-history.md`.)_
@@ -71,6 +71,9 @@ _(Session #185 archived → `07-logs/session-history.md`.)_
 ---
 
 ## Section 2 — Loose Ends (Open)
+
+> **REASSESSMENT 2026-06-30** — Tier-1 criticals FIXED on BE develop (`58872d5`, spot-verified #1/#3/#7/#8). Admin dialog redesign shipped (`4af50b1`). So the "BLOCKED until Tier-1 land" notes in Deploy Queue + CS-CENTRALIZATION row below are **STALE — Tier-1 landed**. Remaining for main deploy: **(A)** commit #191 uncommitted (BE `cs/views.py`+`tickets/views.py`, FE `RequestChangeModal.js`+test guide) + `NEXTAUTH_SECRET` fix; **(B)** finish manual test B-7/B-8/C/D/E (B-7b needs OTA seed); **(C)** Tier-2/3 + 3 workflow blockers (NEW-1 visibility, OQ-3 SLA unbuilt, Emergency partial); **(D)** admin Phase 2-3. Stale Tier-2 also resolved: `check_sla_breaches` NameError FIXED (`ticket_numbers` plural); `cs_chat` FeatureFlag fail-open True (`FeatureFlagView get_or_create defaults enabled=True`) → chat ON by default, no seed needed (kill-switch-inert only). **B-7 emergency bypass already works** (`tickets/models.py:119-123` clean() Blocker 3) — no FE fix. Full remaining-work map → `~/.claude/plans/check-vaault-and-continue-witty-lake.md`.
+
 
 ### Deploy Queue — merged → develop, needs main deploy + verify
 
