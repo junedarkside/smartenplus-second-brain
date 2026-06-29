@@ -14,6 +14,8 @@ metadata:
 
 > **⚠️ Scrutinize pass 2026-06-27 (3-agent: arch + workflow + codebase-verify).** Verdict: **fix-then-ship.** 5 blockers + 7 majors found and corrected inline below (each tagged `[FIX B-n]` / `[FIX M-n]`). Status dropped `accepted → fix-then-ship` until blockers land in implementation. Full findings recorded at bottom (§Scrutiny Findings). Codebase fact-check: 1 doc claim REFUTED (OTA re-submit logic — see §Frontend Surfaces).
 
+> **📋 Audit 2026-06-29:** Cross-layer deep audit completed. BE-B2/B4/B5 closed (#186). NEW defects found: 10 Tier-1 criticals (signals dead, beat absent, resend dead token, one-open-ticket missing, magic-link TTL, resolution side-effect, trip_id missing, closed_no_action unreachable, OTP JWT scope, requested_value unbounded). See [[cs-centralization-audit-2026-06-29]].
+
 > **[UPDATE 2026-06-27]** NEW-2 (`partner_case_id` field) CLOSED. Not needed — `(source, booking_id)` on `CsOtaBooking` already provides OTA case tracking. `Ticket.content_object` → `CsOtaBooking` links tickets to OTA bookings.
 
 ## Summary

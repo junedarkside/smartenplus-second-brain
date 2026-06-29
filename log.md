@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-06-29] audit | CS-centralization deep cross-layer re-audit — gap report 2026-06-27 superseded. 10 new Tier-1 criticals found (signals dead, beat absent, resend dead token, no one-open-ticket guard, magic-link TTL, resolution side-effect, trip_id missing, closed_no_action unreachable, OTP JWT scope, requested_value unbounded). 3 files created: `01-projects/cs-centralization-audit-2026-06-29.md`, `03-knowledge/django-signals-ready-import-gotcha.md`, `03-knowledge/genericfk-one-open-ticket-guard.md`. → [[cs-centralization-audit-2026-06-29]]
+
 ## [2026-06-29] session-end | catalog audit (#187-#188) + vault stray cleanup (#189) + BD report v2 (#190) wrap-up
 Combined wrap-up of sessions #187-#190 (this vault was last updated in #186). #187: products-live-catalog-audit Phase 0+1 — 4 atomic notes + 1 project page + Phase 1 Public API Snapshot (1224 contracts, 7/10 categories empty, 6 charter routes, SPA single-operator). #188: Phase 2 — 10 BD grill question docs + 5 atoms. #189: vault stray cleanup — 16 → 0 strays. #190: BD reports (English + Thai + v2 revision via 6 parallel agents). Files: `business-development/products-live-catalog/{README,methodology,gap-inventory,snapshots-2026-06-28,bd-report-2026-06-29,bd-report-th-2026-06-29}.md` + 10 grill docs + `bd-report.html` + `bd-report-th.html`. Vault commits this session: `dfc581a` (#187), `9cd1988` (#188), `e18efa5` (#189). **Resume:** validate BD revenue estimates with Finance; BD team begin operator outreach per gap-001/008/009; resolve gap-002/007/010 owner decisions; Phase 1.5 Django shell when DB access available.
 

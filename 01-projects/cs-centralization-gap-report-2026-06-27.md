@@ -3,10 +3,12 @@ name: cs-centralization-gap-report-2026-06-27
 description: Cross-layer implementation gap report for CS-Centralization. Compares actual codebase state (BE/FE/admin) against cs-workflow-revised-2026-06-27. Written by 3-agent deep analysis + synthesis. Single source of truth for what's built vs what must ship.
 metadata:
   type: project
-  status: active
+  status: superseded
   date: 2026-06-27
   parent: cs-workflow-revised-2026-06-27
 ---
+
+> ⚠️ **SUPERSEDED 2026-06-29** — Stale in 4 ways: (1) FE chat+OTP built 2026-06-23 unreported; (2) BE-B2/B4/B5 shipped and no longer missing; (3) admin mutations now backed by BE (#186); (4) 10 new criticals missed entirely. See [[cs-centralization-audit-2026-06-29]] for current state. This file kept as historical snapshot — do not delete.
 
 # CS-Centralization — Implementation Gap Report (2026-06-27)
 

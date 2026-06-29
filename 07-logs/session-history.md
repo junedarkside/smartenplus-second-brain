@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #190 (archived)
+
+**Updated:** 2026-06-29 (session #190 — BD Report v2 + vault stray cleanup wrap-up)
+
+**Achieved since #186 (sessions #187-#190):**
+- **#187** — 4 atoms + catalog audit project page. Phase 1 Public API Snapshot: 1224 contracts, 176 stations, 10 BD gaps. Commit `dfc581a`.
+- **#188** — 10 BD grill docs. 5 atoms. Commit `9cd1988`.
+- **#189** — vault stray cleanup: 0 strays. Commit `e18efa5`.
+- **#190** — BD Report v1+v2 + Thai translation + 6-agent feedback round. Files in `business-development/` only.
+
+**Workspace (#190):** vault master `e18efa5` · BE develop `58872d5` · FE develop `4c0df60` · admin develop `69bde06` · content master `3756e5b` — all clean.
+
+---
+
 **Updated:** 2026-06-28 (session #185 — CS Guide staff help: Thai + Mermaid diagrams) — _archived from master-state 2026-06-28_
 
 **Achieved (#185) — Admin-dashboard CS Guide staff help (Phase 4) BUILT:**

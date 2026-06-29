@@ -4,30 +4,42 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-29 (session #190 — BD Report v2 + vault stray cleanup wrap-up)
+**Updated:** 2026-06-29 (session #191 — CS manual test + bug fixes)
 
-**Achieved since #186 (sessions #187-#190):**
+**Achieved this session (#191):**
+- ✅ Created CS-Centralization manual testing guide: `smartenplus-frontend/docs/testing/CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` (5 flows A–E, step-by-step, curl commands included)
+- ✅ Fixed CORS `localhost:3001` blocked — added to `CORS_ALLOWED_ORIGINS` + `CSRF_TRUSTED_ORIGINS` in BE `.env`
+- ✅ Fixed `JWT_SESSION_ERROR` root cause identified — `NEXTAUTH_SECRET` mismatch between frontend + admin-dashboard
+- ✅ Ran manual testing Flow A + B (partial):
+  - A-1 ✅ Submit ticket — pass
+  - A-2 ✅ Duplicate guard — fixed 500→400 (`full_clean()` Django→DRF error conversion in `tickets/views.py` + `cs/views.py`) + FE error extractor updated (`RequestChangeModal.js`)
+  - B-1 ✅ Command Centre shows ticket — pass
+  - B-2 ✅ pending→in_review — pass
+  - B-3 ✅ direct: in_review→resolved — pass
+  - B-6 ✅ closed_no_action guard fires — error shows correctly after fixing object→string crash in admin (`command-centre/index.js`); resolution note field added to dialog
+- ✅ Fixed admin-dashboard bugs found during testing:
+  - `lightTheme.js` — added missing `warning` + `info` palette (MUI Button crash `theme.palette[color].main`)
+  - `STATUS_COLOR` — `'default'` → `'inherit'` (invalid MUI v5 Button color)
+  - `dialogAllowed` filter — hide `awaiting_ota_update` for direct bookings (FE-only guard)
+  - `ActionDialog.jsx` — redesigned: `maxWidth="sm"`, flex-wrap buttons, utility actions split to bottom row (`Open Editor` / `View Order`)
+  - `handleTransition` error flattener — `Object.values(errData).flat().join(' ')` prevents React child crash
+  - Resolution note `TextField` added to dialog (shown only when `closed_no_action`/`rejected` in allowed transitions)
 
-- **#187 (catalog audit Phase 0+1)** — Created 4 atomic notes (`live-catalog-discovery-protocol`, `thailand-location-coverage-framework`, `three-layer-gap-coverage-matrix`, `operator-outreach-question-template`) + 1 project page (`01-projects/products-live-catalog-audit.md`). Phase 1 Public API Snapshot: 13 API fetches + 3 sitemap fetches → 1224 contracts, 176 stations, 7/10 categories empty, 6 charter routes, SPA single-operator. 10 BD gaps logged. **Commit `dfc581a`.**
-- **#188 (catalog audit Phase 2 + atomize)** — 10 BD-ready grill question docs at `business-development/products-live-catalog/grill-questions/`. 5 new atoms atomized: `public-api-filter-silent-ignore`, `grill-skill-efficient-batch-pattern`, `api-smartenplus-co-th-endpoint-inventory`, `bd-commission-tier-framework`, `live-catalog-audit-public-api-limitations`. **Commit `9cd1988`.**
-- **#189 (vault stray cleanup)** — Read-only scan found 16 strays (1 orphan + 15 broken wikilinks). Fixed: 1 stub for `customer-os-thesis-r2-skeptic-review.md`, 4 stubs in `01-projects/customer-os-thesis/`, 4 alias map entries in `vault-broken-links-repair.py`, 3 code-style ref conversions, 1 orphan back-link. Re-scan: 0 strays. **Commit `e18efa5`.**
-- **#190 (BD Report v1 + v2 + Thai translation)** — Created BD-readable report from Phase 1+2 findings (executive summary + 5 prioritized gaps + outreach playbook + revenue opportunity + Monday action plan). Extended with 4 Thai-specific sections (Thai Operator Landscape, Competitive Analysis, Outreach Scripts, Business Culture). Translated to Thai. User feedback round applied via 6 parallel agents (revenue formulas, competitive matrix restructure, supplier categorization, operational feasibility tables, exec summary rewrite, Thai naturalness) → v2. **Files in `business-development/` only — no vault commits.**
-
-**Workspace (#190):**
-- vault: master (`e18efa5`) — clean.
-- backend: develop (`424f72a`) — clean.
-- frontend: develop (`4c0df60`) — clean.
-- admin-dashboard: develop (`69bde06`) — clean.
-- content: master (`3756e5b`) — clean.
+**Workspace (#191):**
+- vault: master (uncommitted — this update)
+- backend: develop (`58872d5`) — **2 files uncommitted** (`cs/views.py`, `tickets/views.py`)
+- frontend: develop (`4c0df60`) — **1 file uncommitted** (`RequestChangeModal.js`) + 1 untracked (`CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md`)
+- admin-dashboard: develop (`69bde06`) — **3 files uncommitted** (`ActionDialog.jsx`, `command-centre/index.js`, `lightTheme.js`)
+- content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Validate BD report revenue estimates with Finance** (currently order-of-magnitude only).
-2. **BD team begin operator outreach** per gap-001/008/009 priorities (Charter / Andaman Day Tours / Spa Diversification).
-3. **Resolve owner decisions** for gap-002 (Airport Transfers intentional?) + gap-007 (Accommodation?) + gap-010 (Other Services?).
-4. **Phase 1.5 — Django shell queries** if user provides prod DB access (deferred from Phase 1; would enable station FK pivot + query_count demand signal + sub-gap detection).
-5. **Regenerate `products-live-catalog/snapshot-2026-06-28.md`** with Django shell data when available.
+1. **Commit + push all 3 repos** (BE: `cs/views.py` + `tickets/views.py`; FE: `RequestChangeModal.js` + new test guide; admin: `ActionDialog.jsx` + `command-centre/index.js` + `lightTheme.js`) on feature branches → merge to develop
+2. **Fix `NEXTAUTH_SECRET` mismatch** — set `admin-dashboard/.env.local` `NEXTAUTH_SECRET` to match frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin dev server + clear cookies
+3. **Continue manual testing** — B-6 complete (type note → No Action Needed → verify `closed_no_action`), then B-7 (emergency toggle), B-8 (cancellation sync), Flow C (OTA /my-trip — needs seeded data), Flow D (chat widget), Flow E (OTA sync)
+4. **Redesign admin dialog UX** — staff find too many buttons confusing; 2-step flow or grouped layout needed
+5. **Deploy CS-Centralization → main** (all 3 repos) once manual test complete
 
-_(Sessions #187-#190 detailed in `07-logs/log.md` — see commit references. Session #186 archived → `07-logs/session-history.md`.)_
+_(Session #190 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -64,7 +76,7 @@ _(Session #185 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop 2026-06-28 (NOT yet main)** — BE `424f72a` · admin `69bde06` · FE `4c0df60`. Deploy all 3 develop→main + run BE migrations `0005`-`0009` (cs `0005_add_event_and_notification_models`, `0006_add_magic_token_supabase_row_id`; tickets `0006_add_blocker_fields`, `0007`/`0008`/`0009` auto) on prod + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. Verify resolve-block guard + emergency path + Resend Email + emergency toggle end-to-end. | `tickets/views.py`, `tickets/models.py`, `cs/tasks.py` · [[cs-centralization-gap-report-2026-06-27]] |
+| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop 2026-06-28 (NOT yet main)** — BE `424f72a` · admin `69bde06` · FE `4c0df60`. **⚠️ BLOCKED — audit 2026-06-29 found 10 Tier-1 criticals. Fix before deploying to main.** When unblocked: deploy all 3 develop→main + run BE migrations `0005`-`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. Priority fixes first: signals `ready()` (tickets/apps.py), beat schedule (celery.py), resend token (cs/views.py:595). | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
@@ -76,7 +88,7 @@ _(Session #185 archived → `07-logs/session-history.md`.)_
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
-| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** All branches merged → develop. **#186: CS-BE gaps + 4 critical fixes + admin/FE work all → develop** (BE `424f72a`, admin `69bde06`, FE `4c0df60`). Remaining 🟡: BE-B1 (3 magic-link fields), BE-B3 (resend regen+SES), FE-M1 (InfoUpdateNotice). G1 auto-email (P3c), G4 boarding feed, G5 expired-link still open. | **deploy queue — CS work needs main deploy** | [[ota-link-delivery-and-p3b-plan]] · [[ota-portal-overview]] · [[booking-command-centre-decision]] |
+| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** All branches merged → develop. **#186: CS-BE gaps + 4 critical fixes + admin/FE work all → develop** (BE `424f72a`, admin `69bde06`, FE `4c0df60`). **⚠️ AUDIT 2026-06-29: NOT PRODUCTION-READY — 10 Tier-1 criticals found (see [[cs-centralization-audit-2026-06-29]]). Must fix before deploy to main.** Remaining: Tier-1 #1–#10 (signals dead, beat absent, resend dead token, no one-open-ticket guard, magic-link TTL, resolution side-effect, trip_id missing, closed_no_action, OTP JWT, requested_value). Plus FE-M1 (InfoUpdateNotice). | **BLOCKED — do NOT deploy to main until Tier-1 fixes land** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |

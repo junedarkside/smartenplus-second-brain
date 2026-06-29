@@ -1,5 +1,9 @@
 # Vault Log
 
+## [2026-06-29] session-end #191 | CS manual test + bug fixes — created test guide (5 flows), fixed 500→400 duplicate guard, admin theme crash, dialog UX + resolution note field. BE/FE/admin all have uncommitted fixes. Resume: commit all 3 repos → finish manual test → deploy.
+
+## [2026-06-29] audit | CS-centralization deep cross-layer re-audit — 6 Explore agents + 6 direct reads. Gap report 2026-06-27 superseded (stale 4 ways: FE chat+OTP built unreported; BE-B2/B4/B5 shipped; 3/4 admin mutations now functional; 10 new criticals missed). Tier-1 blockers: signals dead (tickets/apps.py no ready()), beat schedule absent (no sync_ota_bookings/check_sla_breaches), resend emits dead UUID token (cs/views.py:595), no one-open-ticket guard, resolution side-effect absent, magic-link fixed-7d, trip_id missing, closed_no_action unreachable, OTP issues full-site JWT, requested_value unbounded. Files: `01-projects/cs-centralization-audit-2026-06-29.md` + `03-knowledge/django-signals-ready-import-gotcha.md` + `03-knowledge/genericfk-one-open-ticket-guard.md`. Gap report marked ⚠️ SUPERSEDED. Workflow spec updated with audit pointer.
+
 ## [2026-06-28] session-end #186 | CS-Centralization cross-repo fix + ship — analyzed FE/BE/admin vs revised workflow; fixed 4 critical (BE resolve-block guard wired to API + emergency path + field-only PATCH; admin resend payload + emergency route); merged all 3 repos → develop (BE 424f72a, admin 69bde06, FE 4c0df60); pruned 12 stale branches. 64/64 BE tests green. #185 archived.
 
 ## [2026-06-28] session-end #185 | CS Guide staff help — Thai guide + Mermaid workflow diagrams + sidebar nav wiring (admin-dashboard feat/cs-workflow-revised-gaps, uncommitted pending manual test). Phase 4 BUILT. #184 archived.
