@@ -4,7 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-28 (session #186 — CS-Centralization cross-repo fix + ship + prune)
+**Updated:** 2026-06-29 (session #190 — BD Report v2 + vault stray cleanup wrap-up)
+
+**Achieved since #186 (sessions #187-#190):**
+
+- **#187 (catalog audit Phase 0+1)** — Created 4 atomic notes (`live-catalog-discovery-protocol`, `thailand-location-coverage-framework`, `three-layer-gap-coverage-matrix`, `operator-outreach-question-template`) + 1 project page (`01-projects/products-live-catalog-audit.md`). Phase 1 Public API Snapshot: 13 API fetches + 3 sitemap fetches → 1224 contracts, 176 stations, 7/10 categories empty, 6 charter routes, SPA single-operator. 10 BD gaps logged. **Commit `dfc581a`.**
+- **#188 (catalog audit Phase 2 + atomize)** — 10 BD-ready grill question docs at `business-development/products-live-catalog/grill-questions/`. 5 new atoms atomized: `public-api-filter-silent-ignore`, `grill-skill-efficient-batch-pattern`, `api-smartenplus-co-th-endpoint-inventory`, `bd-commission-tier-framework`, `live-catalog-audit-public-api-limitations`. **Commit `9cd1988`.**
+- **#189 (vault stray cleanup)** — Read-only scan found 16 strays (1 orphan + 15 broken wikilinks). Fixed: 1 stub for `customer-os-thesis-r2-skeptic-review.md`, 4 stubs in `01-projects/customer-os-thesis/`, 4 alias map entries in `vault-broken-links-repair.py`, 3 code-style ref conversions, 1 orphan back-link. Re-scan: 0 strays. **Commit `e18efa5`.**
+- **#190 (BD Report v1 + v2 + Thai translation)** — Created BD-readable report from Phase 1+2 findings (executive summary + 5 prioritized gaps + outreach playbook + revenue opportunity + Monday action plan). Extended with 4 Thai-specific sections (Thai Operator Landscape, Competitive Analysis, Outreach Scripts, Business Culture). Translated to Thai. User feedback round applied via 6 parallel agents (revenue formulas, competitive matrix restructure, supplier categorization, operational feasibility tables, exec summary rewrite, Thai naturalness) → v2. **Files in `business-development/` only — no vault commits.**
+
+**Workspace (#190):**
+- vault: master (`e18efa5`) — clean.
+- backend: develop (`424f72a`) — clean.
+- frontend: develop (`4c0df60`) — clean.
+- admin-dashboard: develop (`69bde06`) — clean.
+- content: master (`3756e5b`) — clean.
+
+**Resume point (EXACT):**
+1. **Validate BD report revenue estimates with Finance** (currently order-of-magnitude only).
+2. **BD team begin operator outreach** per gap-001/008/009 priorities (Charter / Andaman Day Tours / Spa Diversification).
+3. **Resolve owner decisions** for gap-002 (Airport Transfers intentional?) + gap-007 (Accommodation?) + gap-010 (Other Services?).
+4. **Phase 1.5 — Django shell queries** if user provides prod DB access (deferred from Phase 1; would enable station FK pivot + query_count demand signal + sub-gap detection).
+5. **Regenerate `products-live-catalog/snapshot-2026-06-28.md`** with Django shell data when available.
+
+_(Sessions #187-#190 detailed in `07-logs/log.md` — see commit references. Session #186 archived → `07-logs/session-history.md`.)_
+
+---
 
 **Achieved (#186) — CS-Centralization: cross-repo conformance fix + ship to develop + branch prune:**
 - ✅ Analyzed CS-Centralization across FE/BE/admin vs `cs-workflow-revised-2026-06-27` (3 Explore agents). Found BE "close 5 gaps" partial + dead core (#1 resolve-block guard never fired via API) + 2 admin→BE API breaks. Full report → `~/.claude/plans/noble-watching-waffle.md`.
