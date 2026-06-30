@@ -4,33 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-01 (session #201)
+**Updated:** 2026-07-01 (session #202)
 
-**Achieved this session (#201):**
-- ✅ **ALL CS-CENTRALIZATION MANUAL TESTS COMPLETE** — C6 ✅ C8 ✅ B7-5 ✅ Flow E ✅
-- ✅ **Admin-initiated OTA ticket creation** — 3-repo feature built + committed on `feat/admin-ota-ticket-create`. Admin can create OTA tickets directly (no guest action). BE `270dd44` · admin `3dc1d3a` · FE `46abb617`.
-- ✅ **B7-5 emergency bypass** — `is_emergency=True` → `Ticket.clean():122` returns early → resolve bypasses OTA wait block. Test passed.
-- ✅ **Flow E idempotency** — sync run twice: `upserted:59` then `upserted:0 skipped:59`. No duplicates.
-- ✅ **Error message improved** — `tickets/models.py:163` now hints "(4) Toggle Emergency ON". BE `a430ce9`.
-- ⚠️ **Emergency checkbox silent-fail** — `/tickets/[id].js` `handleToggleEmergency` catch is console-only. PATCH may fail silently with no UI feedback. Needs error state added to toggle handler.
+**Achieved this session (#202):**
+- ✅ **Fix 2 — Emergency toggle error alert** — `admin-dashboard/pages/tickets/[id].js` — `emergencyError` state + Alert renders below Paper Box on PATCH fail. `61f5509`.
+- ✅ **Fix 3 — otaConsent token security** — `helpers/otaConsent.js:4` — `token.slice(0,8)` → full token. `8f9ab107`.
+- ✅ **Fix 4 — my-trip canceled banner** — `pages/my-trip/index.js` — split into 2 blocks: always show ticket banners, only show OtaRequestForm when not canceled. `8f9ab107`.
+- ✅ **Fix 5 — OtaTripView SLA fields** — `cs/views.py` inline dict — added `resolution_stage`, `operator_deadline`, `ota_deadline`, `resolution_deadline`, `admin_initiated`. SLAProgress now visible for all OTA guest links. `64297d6`.
+- ✅ All `fix/cs-deferred-fixes` merged → develop + pushed all 3 repos.
 
-**Workspace (#201):**
+**Workspace (#202):**
 - vault: master — updating now
-- backend: `feat/admin-ota-ticket-create` (`a430ce9`) — clean
-- frontend: `feat/admin-ota-ticket-create` (`46abb617`) — clean
-- admin-dashboard: `feat/admin-ota-ticket-create` (`3dc1d3a`) — clean
+- backend: develop (`64297d6`) — clean
+- frontend: develop (`8f9ab107`) — clean
+- admin-dashboard: develop (`61f5509`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Merge `feat/admin-ota-ticket-create` → develop** in all 3 repos (BE + admin + FE)
-2. **Prod deploy** — develop→main all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`
-3. **Fix emergency checkbox silent-fail** — `/tickets/[id].js:handleToggleEmergency` — add `setError` state, show Alert on catch
-4. **Fix `otaConsent.js:3`** — 8-char token prefix → full token key (1-line security fix)
-5. **Fix `my-trip:238` UX gap** — show "Cancellation Confirmed" banner when `booking.status=canceled`
-6. **Fix Bug 4** — `OtaTripView` add SLA fields to serializer (`cs/views.py:519-527`)
-7. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — still deferred
+1. **Prod deploy** — develop→main all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`
+2. **FE-M1 `InfoUpdateNotice`** — guest notification when admin updates booking details
+3. **Admin Phase 2-3** — bulk actions + analytics views
 
-_(Sessions #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Sessions #201 + #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -46,7 +41,7 @@ _(Sessions #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 archived
 | Item | What's pending | Where |
 |------|----------------|-------|
 | **OTA-FLOW-BUGS** | ✅ **MERGED → develop `413eb41e`.** 3 commits shipped. 3 commits: `c96b1724` (COLORS crash + image guard) · `09e3f955` (polling anti-pattern) · `0657c6fb` (TDZ crash). Merge → develop first, then include in OTA deploy. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix → full token). | `components/bookings/TicketStatusBanner.js`, `BookingDetail/TripRoute.js`, `ChangeRequestsSection.js`, `pages/my-trip/index.js` · [[ota-flow-e2e-scan-2026-06-30]] |
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **ALL MANUAL TESTS PASS (#201). Admin-initiated OTA ticket creation built on `feat/admin-ota-ticket-create` (unmerged).** Next: merge feature branch → develop all 3 repos → develop→main deploy + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. Feature branch tips: BE `a430ce9` · admin `3dc1d3a` · FE `46abb617`. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
+| **CS-CENTRALIZATION-DEPLOY** | ⏳ **ALL FIXES ON DEVELOP (#202). BE `64297d6` · FE `8f9ab107` · admin `61f5509`.** Next: develop→main deploy all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |

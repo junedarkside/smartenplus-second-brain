@@ -263,3 +263,4 @@
 
 ## [2026-06-30] session-end | CS chat UX polish (#193) — sender attribution fix (ownership-gated widget `sender:'customer'` hint, spoof→403; BE `1c49deb` + FE `d36fcc29`), role labels both surfaces (FE `bb472227` + admin `8c5f7aa`), unread badge read-on-open + active-conv auto-read (BE `Conversation.cs_last_read_at` + migration `0008` + mark-read endpoint `3a264bb`; admin `02ff9a5`+`0ca0edd`). NEXTAUTH_SECRET matched admin=FE; Flow D chat re-verified 200. All → develop: BE `4642b23` · FE `03a78f2b` · admin `a4be478`.
 ## [2026-07-01] session-end | CS-CENTRALIZATION all manual tests PASS (#201) — admin-initiated OTA ticket creation built (3-repo feat/admin-ota-ticket-create), B7-5 emergency bypass ✅, Flow E idempotency ✅, error message improved, emergency checkbox silent-fail noted
+## [2026-07-01] session-end | fix/cs-deferred-fixes merged develop all 3 repos — emergency alert, otaConsent token, my-trip canceled banner, OtaTripView SLA fields
