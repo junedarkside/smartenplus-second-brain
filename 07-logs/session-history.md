@@ -4,6 +4,23 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #192 (archived 2026-06-30)
+
+**CS dialog redesign + manual-test bug fixes.** All → develop.
+
+- Redesigned command-centre `ActionDialog` (admin `4af50b1`): tone-grouped zones + 2-step `ConfirmDialog` for terminal transitions w/ `resolution_note`.
+- Hid emergency toggle for direct bookings (admin `1a3ef2a`) — OTA-only bypass.
+- Fixed `resolution_note` transmit bug (admin `9ac7089`) — mutation now sends it.
+- 3-agent team → click-by-click manual-test guide `[[cs-manual-test-flows-b7-e-2026-06-30]]`.
+- FE `TicketStatusBanner` shows submitted request (FE `36aab76`) — `requested_value` surfaced.
+- BE `Account.get_full_name` fix (`f675ddc`) — `Account(AbstractBaseUser)` lacked it → 500 on chat inbox.
+- Reassessed CS-Centralization: Tier-1 criticals LANDED; `check_sla_breaches` NameError fixed; `cs_chat` fail-open; B-7 emergency bypass already works.
+- Manual test: B-8 (cancellation→Canceled) PASSED; date-change status flow passed (date-apply = System A gap → follow-up).
+
+Workspace: BE `3fdcb33` · FE `f915fc2` · admin `9ac7089` · content `3756e5b` — all clean.
+
+---
+
 ## Session #191 (archived 2026-06-30)
 
 **Updated:** 2026-06-29 (session #191 — CS manual test + bug fixes)

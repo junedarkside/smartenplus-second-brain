@@ -4,40 +4,38 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-30 (session #192 — CS dialog redesign + manual-test bug fixes)
+**Updated:** 2026-06-30 (session #193 — CS chat UX polish: sender attribution + role labels + read-on-open badge)
 
-**Achieved this session (#192):**
-- ✅ **Redesigned command-centre ActionDialog** (admin `4af50b1`): tone-grouped zones (hero Resolve green / Reject red destructive / No Action Needed blue neutral / Awaiting OTA orange) + 2-step reused `ConfirmDialog` for terminal transitions (resolved/rejected/closed_no_action) w/ `resolution_note` (required reject/closed_no_action per BE `clean()`; optional resolved). Copy Email → utility row. `ConfirmDialog` +children/+confirmDisabled (backward-safe). Conformance-checked vs `cs-workflow-revised-2026-06-27` + audit.
-- ✅ **Hid emergency toggle for direct bookings** (admin `1a3ef2a`) — OTA-only bypass.
-- ✅ **Fixed `resolution_note` transmit bug** (admin `9ac7089`) — `updateRequestStatus` mutation dropped it (body `{request_status}` only) → ConfirmDialog note was cosmetic + `closed_no_action` unreachable via FE.
-- ✅ **3-agent team** (FE-UI + admin-UI + BE/data) traced real components → click-by-click manual-test guide saved `[[cs-manual-test-flows-b7-e-2026-06-30]]`.
-- ✅ **FE TicketStatusBanner shows submitted request** (FE `36aab76`) — `requested_value` was stored but never surfaced; customer now sees "Your request: …". Verified.
-- ✅ **BE Account.get_full_name fix** (BE `f675ddc`) — `Account(AbstractBaseUser)` lacked `get_full_name()` → `cs/serializers.py:31` AttributeError → 500 on `/api/cs/conversations/list/` (Flow D chat inbox). Added `get_full_name`/`get_short_name` (Django convention).
-- ✅ **Reassessed CS-Centralization** (Section 2 REASSESSMENT note): Tier-1 criticals verified LANDED on develop (master-state "BLOCKED until Tier-1" stale); `check_sla_breaches` NameError fixed; `cs_chat` fail-open (no seed); B-7 emergency bypass already works (`clean()` Blocker 3).
-- ✅ **Manual test:** B-8 (cancellation→Canceled) PASSED + resolution_note fix validated; date-change status flow passed (date-apply = System A gap → follow-up); FE banner note verified.
+**Achieved this session (#193):** all merged → develop + pushed.
+- ✅ **`NEXTAUTH_SECRET` matched + Flow D chat re-verified** — admin `.env.local` set to FE value (`548d665d…2fb5e7c`); BE `Account.get_full_name` (`f675ddc`) live → `GET /api/cs/conversations/list/` → 200 (no AttributeError). Resume pt 1+2 from #192 closed.
+- ✅ **Chat role labels** — FE `ChatPanel.js` (You/Support/System) + admin `ConversationDetail.js` (Customer/Support/System). Standard layout: own msg right, other party left. FE `bb472227`, admin `8c5f7aa`.
+- ✅ **Chat sender attribution fix** — customer-typed msgs mislabeled "Support" when staff/admin session bled onto customer widget (BE derived `sender` from HTTP session). Fix: widget sends `sender:'customer'` hint; BE `MessageCreateView` honors it ONLY w/ customer-ownership proof (authed owner OR guest token) → spoof → 403. Admin path unchanged. BE `1c49deb`, FE `d36fcc29`. See `[[chat-sender-session-bleed]]` (if written).
+- ✅ **CS unread badge read-on-open** — badge was "unanswered customer msgs" (cleared on reply, never on open). BE: `Conversation.cs_last_read_at` + migration `0008` + `POST /api/cs/conversations/<pk>/mark-read/` (`IsAdminOrIsStaff`); `get_unread_count` = customer msgs since `cs_last_read_at`. Admin: `onSelect` marks read + `ConversationDetail` auto-marks-read active conv on new customer msg. BE `3a264bb`, admin `02ff9a5` + `0ca0edd`.
+- ✅ All 3 CS-chat fixes verified by user in running dev (FE `:3000` + admin `:3001` + BE `:8000`).
 
-**Workspace (#192):**
-- vault: master — committed + pushed through session
-- backend: develop (`3fdcb33`) — **clean** (#191 dup-ticket 400 committed)
-- frontend: develop (`f915fc2`) — **clean** (#191 error extractor + test guide committed)
-- admin-dashboard: develop (`9ac7089`) — **clean**
+**Workspace (#193):**
+- vault: master (`595df86`) — clean pre-wrap-up
+- backend: develop (`4642b23`) — **clean**
+- frontend: develop (`03a78f2b`) — **clean**
+- admin-dashboard: develop (`a4be478`) — **clean**
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. ✅ **#191 committed + merged → develop** (BE `3fdcb33` dup-ticket 400 conversion; FE `f915fc2` error extractor + test guide). ⏳ **Fix `NEXTAUTH_SECRET`** — admin `.env.local` = frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin + clear cookies (manual env step).
-2. **Restart BE + re-verify Flow D chat** — `Account.get_full_name` fix shipped (`f675ddc`); restart BE → admin chat inbox `/api/cs/conversations/list/` should 200 (no AttributeError). Complete Flow D (Chrome FAB → Safari inbox reply).
-3. **Finish manual test:** Flow C (OTA `/my-trip` — targeted Django-shell `CsOtaBooking.update_or_create`, NOT destructive `seed_ota_fake_data`), Flow E (OTA sync — Celery worker or `manage.py sync_ota_bookings`), B-7 emergency bypass (needs OTA ticket in `awaiting_ota_update`).
-4. **Follow-up features:** inline date-apply in command-centre (vault rec #2, `[[command-centre-ticket-booking-flow]]` — resolve is status-only; UpdateTrip redirect too many steps); FE-M1 `InfoUpdateNotice`; admin Phase 2-3.
-5. **3 go-live blockers (product-owned):** NEW-1 resolve-block visibility, OQ-3 SLA (unbuilt), Emergency path (NEW-4 fast-track + NEW-10 manifest + `trip_id`).
-6. **Deploy CS → main** (all 3 repos develop→main) once manual test + blockers clear. Run BE migrations `0005`–`0009` + Celery beat (already in `celery.py`).
+1. **Finish manual test** (master-state S1 #192 pt 3, still open): Flow C (OTA `/my-trip` — targeted Django-shell `CsOtaBooking.update_or_create`, NOT destructive `seed_ota_fake_data`), Flow E (OTA sync — Celery worker or `manage.py sync_ota_bookings`), B-7 emergency bypass (needs OTA ticket in `awaiting_ota_update`).
+2. **Follow-up features:** inline date-apply in command-centre (`[[command-centre-ticket-booking-flow]]` — resolve is status-only; UpdateTrip redirect too many steps); FE-M1 `InfoUpdateNotice`; admin Phase 2-3.
+3. **3 go-live blockers (product-owned):** NEW-1 resolve-block visibility, OQ-3 SLA (unbuilt), Emergency path (NEW-4 fast-track + NEW-10 manifest + `trip_id`).
+4. **Deploy CS → main** (all 3 repos develop→main) once manual test + blockers clear. Run BE migrations `0005`–**`0008`** (`0008_cs_last_read_at` new this session) + Celery beat (already in `celery.py`) + seed `cs_chat` flag (fail-open, but seed for clean kill-switch).
+5. **CS chat UX DONE this session** — sender attribution + role labels + read-on-open badge all on develop. No open CS-chat code follow-ups unless new issue reported.
 
-_(Sessions #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Sessions #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 
 ## Section 2 — Loose Ends (Open)
 
 > **REASSESSMENT 2026-06-30** — Tier-1 criticals FIXED on BE develop (`58872d5`, spot-verified #1/#3/#7/#8). Admin dialog redesign shipped (`4af50b1`). So the "BLOCKED until Tier-1 land" notes in Deploy Queue + CS-CENTRALIZATION row below are **STALE — Tier-1 landed**. Remaining for main deploy: **(A)** commit #191 uncommitted (BE `cs/views.py`+`tickets/views.py`, FE `RequestChangeModal.js`+test guide) + `NEXTAUTH_SECRET` fix; **(B)** finish manual test B-7/B-8/C/D/E (B-7b needs OTA seed); **(C)** Tier-2/3 + 3 workflow blockers (NEW-1 visibility, OQ-3 SLA unbuilt, Emergency partial); **(D)** admin Phase 2-3. Stale Tier-2 also resolved: `check_sla_breaches` NameError FIXED (`ticket_numbers` plural); `cs_chat` FeatureFlag fail-open True (`FeatureFlagView get_or_create defaults enabled=True`) → chat ON by default, no seed needed (kill-switch-inert only). **B-7 emergency bypass already works** (`tickets/models.py:119-123` clean() Blocker 3) — no FE fix. Full remaining-work map → `~/.claude/plans/check-vaault-and-continue-witty-lake.md`.
+
+> **UPDATE 2026-06-30 (#193):** CS chat UX polish shipped → develop — sender attribution (ownership-gated widget `sender:'customer'` hint, spoof→403), role labels (FE You/Support/System + admin Customer/Support/System), unread badge read-on-open + active-conv auto-read (BE `Conversation.cs_last_read_at` + migration `0008` + `POST /conversations/<pk>/mark-read/`). Flow D chat verified live (200). `NEXTAUTH_SECRET` matched admin=FE. No new Section-2 items opened; CS-CENTRALIZATION deploy queue unchanged (develop-only; manual test C/E + B-7 + 3 go-live blockers still pending).
 
 
 ### Deploy Queue — merged → develop, needs main deploy + verify
