@@ -18,13 +18,13 @@
 
 **Workspace (#192):**
 - vault: master — committed + pushed through session
-- backend: develop (`f675ddc`) — **2 files uncommitted** (`cs/views.py`, `tickets/views.py` = #191 DRF error conversion)
-- frontend: develop (`36aab76`) — `RequestChangeModal.js` uncommitted + `CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` untracked (#191)
+- backend: develop (`3fdcb33`) — **clean** (#191 dup-ticket 400 committed)
+- frontend: develop (`f915fc2`) — **clean** (#191 error extractor + test guide committed)
 - admin-dashboard: develop (`9ac7089`) — **clean**
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Commit #191 uncommitted** (BE `cs/views.py`+`tickets/views.py`; FE `RequestChangeModal.js`+test guide) on feature branches → develop. **Fix `NEXTAUTH_SECRET`** — admin `.env.local` = frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin + clear cookies.
+1. ✅ **#191 committed + merged → develop** (BE `3fdcb33` dup-ticket 400 conversion; FE `f915fc2` error extractor + test guide). ⏳ **Fix `NEXTAUTH_SECRET`** — admin `.env.local` = frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin + clear cookies (manual env step).
 2. **Restart BE + re-verify Flow D chat** — `Account.get_full_name` fix shipped (`f675ddc`); restart BE → admin chat inbox `/api/cs/conversations/list/` should 200 (no AttributeError). Complete Flow D (Chrome FAB → Safari inbox reply).
 3. **Finish manual test:** Flow C (OTA `/my-trip` — targeted Django-shell `CsOtaBooking.update_or_create`, NOT destructive `seed_ota_fake_data`), Flow E (OTA sync — Celery worker or `manage.py sync_ota_bookings`), B-7 emergency bypass (needs OTA ticket in `awaiting_ota_update`).
 4. **Follow-up features:** inline date-apply in command-centre (vault rec #2, `[[command-centre-ticket-booking-flow]]` — resolve is status-only; UpdateTrip redirect too many steps); FE-M1 `InfoUpdateNotice`; admin Phase 2-3.
