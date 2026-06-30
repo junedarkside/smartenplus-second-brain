@@ -4,6 +4,23 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #198 — 2026-06-30
+
+**Achieved:**
+- ✅ BE fix — `POST /api/cs/ota/change-request/` 400 on blank description. `cs/views.py:588`. BE `259c0d8`.
+- ✅ Admin: `awaiting_ota_update` orange → grey + View Order hidden for OTA — `06dc0ff`.
+- ✅ Admin: "Processing with OTA" → "Mark In Review" — unified label, dead ternary removed. `7b73650`.
+- ✅ Admin: Thai button guide — `extraContent` table in OTA dialog (ความหมายของปุ่ม). `830cfec`.
+- ✅ FE: OTA banner shows correct provider name — `TicketStatusBanner` `source` prop → "We've contacted 12Go" not hardcoded "Klook/12Go". FE `80714750`.
+- ✅ Manual tests C1–C5 PASS, B7-4 PASS, Path A (TEST-12GO-0004 + 0007) PASS — full cancellation E2E confirmed. `booking_status=canceled`, ticket `resolved`, sync event guard working.
+- ⏳ UX gap (not fixed) — `my-trip:238` hides ticket section when `booking.status=canceled` → customer misses "Cancellation Confirmed" banner.
+- ⏳ Remaining tests — C6 (poll 60s), C8 (bad token), B7-5 (emergency bypass), Flow E (idempotent sync).
+- ⏳ Bug 4 deferred — `OtaTripView` missing SLA fields in ticket serialization.
+
+**Workspace:** backend develop `259c0d8` · frontend develop `80714750` · admin develop `830cfec` · vault master
+
+---
+
 ## Session #194 (archived 2026-06-30)
 
 **CS cancel flow fixes + manual test date/cancel ✅.** booking_outcome from request (BE `20ae04b`), GFK stale cache fix (`798f151`), FE terminal badges + overlay real labels (`0aa1bde9`+`822a0efb`), FE refetch on cancel resolve (`23eea41b`), admin outcome dropdown + Apply Change button + UpdatePassenger UX. Manual tested VGR9349116: date_change ✅, cancellation Fully Refund ✅. pax_change pending (#195).

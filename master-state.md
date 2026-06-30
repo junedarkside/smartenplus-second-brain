@@ -4,39 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-30 (session #198 — Path A ✅ + admin/FE UX fixes)
+**Updated:** 2026-06-30 (session #199)
 
-**Achieved this session (#198):**
-- ✅ **BE fix** — `POST /api/cs/ota/change-request/` 400 on blank description. `cs/views.py:588`. BE `259c0d8`.
-- ✅ **Admin: `awaiting_ota_update` orange → grey + View Order hidden for OTA** — `06dc0ff`.
-- ✅ **Admin: "Processing with OTA" → "Mark In Review"** — unified label, dead ternary removed. `7b73650`.
-- ✅ **Admin: Thai button guide** — `extraContent` table in OTA dialog (ความหมายของปุ่ม). `830cfec`.
-- ✅ **FE: OTA banner shows correct provider name** — `TicketStatusBanner` `source` prop → "We've contacted 12Go" not hardcoded "Klook/12Go". FE `80714750`.
-- ✅ **Manual tests C1–C5 PASS**, **B7-4 PASS**, **Path A (TEST-12GO-0004 + 0007) PASS** — full cancellation E2E confirmed. `booking_status=canceled`, ticket `resolved`, sync event guard working.
-- ⏳ **UX gap (not fixed)** — `my-trip:238` hides ticket section when `booking.status=canceled` → customer misses "Cancellation Confirmed" banner.
-- ⏳ **Remaining tests** — C6 (poll 60s), C8 (bad token), B7-5 (emergency bypass), Flow E (idempotent sync).
-- ⏳ **Bug 4 deferred** — `OtaTripView` missing SLA fields in ticket serialization.
+**Achieved this session (#199):**
+- ✅ **All 3 repos merged develop→main** — BE `259c0d8` · admin `830cfec` · FE `80714750` all on main
+- ✅ **Context resumed** after compaction — all prior fixes confirmed in place (Thai guide, banner source fix, Mark In Review label, Path A E2E ✅)
+- ⚠️ **Prod deploy pending** — BE migrations `0005`–`0009` must run on prod server + schedule Celery beat tasks
 
-**Workspace (#198):**
+**Workspace (#199):**
 - vault: master — updating now
-- backend: develop (`259c0d8`) — clean
-- frontend: develop (`80714750`) — clean, OTA source label fix merged
-- admin-dashboard: develop (`830cfec`) — clean, Thai guide + label fixes merged
+- backend: main + develop (`259c0d8`) — clean
+- frontend: main + develop (`80714750`) — clean
+- admin-dashboard: main + develop (`830cfec`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
 1. **Remaining manual tests**:
-   - C6: DevTools Network → poll fires every 60s while ticket open
+   - C6: DevTools Network → confirm poll fires every 60s while ticket open
    - C8: `http://localhost:3000/my-trip?token=invalid` → error state, no crash
-   - B7-5: ticket `awaiting_ota_update` → Emergency ON → resolve succeeds (bypass `tickets/models.py:122`)
+   - B7-5: OTA ticket in `awaiting_ota_update` → toggle Emergency ON → resolve succeeds (bypass `tickets/models.py:122`)
    - Flow E: `python manage.py sync_ota_bookings --source 12go` → events created → run again → no duplicates
-2. **Deploy CS-CENTRALIZATION → main** — BE migrations `0005`–`0009` + Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. All 3 repos develop→main.
-3. **Fix `otaConsent.js:3`** — 8-char token prefix → full token key (1-line security fix).
-4. **Fix `my-trip:238` UX gap** — show "Cancellation Confirmed" banner even when `booking.status=canceled`.
-5. **Fix Bug 4** — `OtaTripView` add SLA fields to serializer.
-6. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — still deferred.
+2. **Prod server deploy** — run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`
+3. **Fix `otaConsent.js:3`** — 8-char token prefix → full token key (1-line security fix)
+4. **Fix `my-trip:238` UX gap** — show "Cancellation Confirmed" banner even when `booking.status=canceled`
+5. **Fix Bug 4** — `OtaTripView` add SLA fields to serializer
+6. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — still deferred
 
-_(Sessions #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Sessions #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 
