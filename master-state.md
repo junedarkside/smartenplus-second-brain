@@ -4,30 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-30 (session #193 — CS chat UX polish: sender attribution + role labels + read-on-open badge)
+**Updated:** 2026-06-30 (session #194 — CS cancel flow fixes + manual test date/cancel ✅)
 
-**Achieved this session (#193):** all merged → develop + pushed.
-- ✅ **`NEXTAUTH_SECRET` matched + Flow D chat re-verified** — admin `.env.local` set to FE value (`548d665d…2fb5e7c`); BE `Account.get_full_name` (`f675ddc`) live → `GET /api/cs/conversations/list/` → 200 (no AttributeError). Resume pt 1+2 from #192 closed.
-- ✅ **Chat role labels** — FE `ChatPanel.js` (You/Support/System) + admin `ConversationDetail.js` (Customer/Support/System). Standard layout: own msg right, other party left. FE `bb472227`, admin `8c5f7aa`.
-- ✅ **Chat sender attribution fix** — customer-typed msgs mislabeled "Support" when staff/admin session bled onto customer widget (BE derived `sender` from HTTP session). Fix: widget sends `sender:'customer'` hint; BE `MessageCreateView` honors it ONLY w/ customer-ownership proof (authed owner OR guest token) → spoof → 403. Admin path unchanged. BE `1c49deb`, FE `d36fcc29`. See `[[chat-sender-session-bleed]]` (if written).
-- ✅ **CS unread badge read-on-open** — badge was "unanswered customer msgs" (cleared on reply, never on open). BE: `Conversation.cs_last_read_at` + migration `0008` + `POST /api/cs/conversations/<pk>/mark-read/` (`IsAdminOrIsStaff`); `get_unread_count` = customer msgs since `cs_last_read_at`. Admin: `onSelect` marks read + `ConversationDetail` auto-marks-read active conv on new customer msg. BE `3a264bb`, admin `02ff9a5` + `0ca0edd`.
-- ✅ All 3 CS-chat fixes verified by user in running dev (FE `:3000` + admin `:3001` + BE `:8000`).
+**Achieved this session (#194):** all merged → develop + pushed (all 3 repos clean).
+- ✅ **`booking_outcome` from request** — BE `RequestStatusViewSet` reads admin-chosen outcome instead of hardcoding `'Canceled'`. Supports Fully Refund / Partially Refund / No Show / Canceled. BE `20ae04b`.
+- ✅ **GFK stale cache fix** — `instance.refresh_from_db(fields=['content_type','object_id'])` before GFK access on cancellation resolve. Fixes `booking_status` not updating after ticket save. BE `798f151`.
+- ✅ **FE terminal status badges** — all 5 badge sites + 2 overlay sites now show real `booking_status` label (was hardcoded `'Canceled'`). `Fully Refund` / `Partially Refund` / `No Show` display correctly, buttons disabled. FE `0aa1bde9` + `822a0efb`.
+- ✅ **FE refetch on cancel resolve** — `[bookingId].js` detects cancellation ticket transitioning to `resolved` → forces `refetchBooking()`. FE `23eea41b`.
+- ✅ **Admin booking outcome dropdown** — Command Centre ConfirmDialog shows outcome selector for cancellation resolve. Admin `465bc9f` (prev session), `ordersApi` updated.
+- ✅ **"Apply Change" new-tab button** — `date_change`/`pax_change` tickets show "Apply Change" (opens `/tickets/<id>` in new tab, dialog stays open). Was "Open Editor" → same-tab nav. Admin `374ac55`.
+- ✅ **UpdatePassenger UX** — guidance text + empty state + error Alert. Admin `ae12c9f`.
+- ✅ **Manual tested VGR9349116:** date_change full loop ✅, cancellation with Fully Refund outcome ✅. FE badge + overlay show "Fully Refund" (red), buttons disabled.
+- ⏳ **pax_change manual test** — not completed this session (VGR9349116 still Confirmed, 1 passenger).
 
-**Workspace (#193):**
-- vault: master (`595df86`) — clean pre-wrap-up
-- backend: develop (`4642b23`) — **clean**
-- frontend: develop (`03a78f2b`) — **clean**
-- admin-dashboard: develop (`a4be478`) — **clean**
+**Workspace (#194):**
+- vault: master — updating now
+- backend: develop (`798f151`) — **clean**
+- frontend: develop (`822a0efb`) — **clean**
+- admin-dashboard: develop (`ae12c9f`) — **clean**
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Finish manual test** (master-state S1 #192 pt 3, still open): Flow C (OTA `/my-trip` — targeted Django-shell `CsOtaBooking.update_or_create`, NOT destructive `seed_ota_fake_data`), Flow E (OTA sync — Celery worker or `manage.py sync_ota_bookings`), B-7 emergency bypass (needs OTA ticket in `awaiting_ota_update`).
-2. **Follow-up features:** inline date-apply in command-centre (`[[command-centre-ticket-booking-flow]]` — resolve is status-only; UpdateTrip redirect too many steps); FE-M1 `InfoUpdateNotice`; admin Phase 2-3.
-3. **3 go-live blockers (product-owned):** NEW-1 resolve-block visibility, OQ-3 SLA (unbuilt), Emergency path (NEW-4 fast-track + NEW-10 manifest + `trip_id`).
-4. **Deploy CS → main** (all 3 repos develop→main) once manual test + blockers clear. Run BE migrations `0005`–**`0008`** (`0008_cs_last_read_at` new this session) + Celery beat (already in `celery.py`) + seed `cs_chat` flag (fail-open, but seed for clean kill-switch).
-5. **CS chat UX DONE this session** — sender attribution + role labels + read-on-open badge all on develop. No open CS-chat code follow-ups unless new issue reported.
+1. **Complete pax_change manual test** on VGR9349116 — submit pax_change FE → admin "Apply Change" tab → UpdatePassenger toggle → resolve. Verify "Update Passenger" radio pre-selected (key fix `a52a849`).
+2. **OTA flows deferred** — Flow C (`/my-trip`), Flow E (sync), B-7 (emergency OTA bypass) — OTA ships separately, not in this deploy.
+3. **Deploy CS → main** — all tests pass (date_change ✅, cancellation ✅, pax_change pending). BE migrations `0005`–`0008` + Celery beat restart. No cs_chat seed needed (fail-open).
+4. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — deferred.
 
-_(Sessions #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Sessions #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 

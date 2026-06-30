@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #193 (archived 2026-06-30)
+
+**CS chat UX polish: sender attribution + role labels + read-on-open badge.** All → develop.
+- NEXTAUTH_SECRET matched admin=FE; BE Account.get_full_name fixed; Flow D chat re-verified.
+- Chat role labels: FE (You/Support/System) + admin (Customer/Support/System). FE `bb472227`, admin `8c5f7aa`.
+- Sender attribution fix: widget sends `sender:'customer'` hint; BE honors only with ownership proof (spoof→403). BE `1c49deb`, FE `d36fcc29`.
+- CS unread badge read-on-open: `Conversation.cs_last_read_at` + migration `0008` + `POST mark-read/`. BE `3a264bb`, admin `02ff9a5`+`0ca0edd`.
+
+---
+
 ## Session #192 (archived 2026-06-30)
 
 **CS dialog redesign + manual-test bug fixes.** All → develop.
