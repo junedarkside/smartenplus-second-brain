@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-06-30] session-end #195 | pax_change full flow + command centre bugs — UpdatePassenger editable fields (BE 8a9ff51, admin 1e7ec93), checkbox confirm fix send selectedRows not editableRows (1497cf6), isDirty Submit button, closed_no_action Chip crash fix 'inherit'→'default' (c60086c), resolution_note shown in View dialog (e7f613d). All 3 direct flows tested ✅. CS-CENTRALIZATION READY for main deploy.
+
 ## [2026-06-30] session-end #194 | CS cancel flow fixes + manual test date/cancel ✅ — booking_outcome from request (BE 20ae04b), GFK refresh fix (798f151), FE terminal status badges real label (0aa1bde9+822a0efb), refetch on cancel resolve (23eea41b), UpdatePassenger UX guidance+empty+error (admin ae12c9f), Apply Change new-tab button (374ac55). Manual tested VGR9349116: date_change ✅ cancellation ✅. pax_change not yet tested. Deploy gate: OTA flows + pax_change test remaining.
 
 ## [2026-06-30] session-end #192 | CS command-centre dialog redesign + manual-test bug fixes — ActionDialog tone-grouped zones + 2-step ConfirmDialog (admin 4af50b1); emergency toggle OTA-only (1a3ef2a); resolution_note transmit bug fix (9ac7089); FE TicketStatusBanner shows requested_value (FE 36aab76); BE Account.get_full_name fix (f675ddc) for chat inbox 500. 3-agent team → test guide vault note. B-8 cancellation + resolution_note fix verified. Tier-1 verified landed (master-state "BLOCKED" stale). Resume: commit #191 uncommitted + NEXTAUTH_SECRET; restart BE → re-verify Flow D; finish C/E; deploy CS → main.

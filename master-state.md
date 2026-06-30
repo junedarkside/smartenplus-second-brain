@@ -4,33 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-30 (session #194 — CS cancel flow fixes + manual test date/cancel ✅)
+**Updated:** 2026-06-30 (session #195 — pax_change full flow + command centre bugs)
 
-**Achieved this session (#194):** all merged → develop + pushed (all 3 repos clean).
-- ✅ **`booking_outcome` from request** — BE `RequestStatusViewSet` reads admin-chosen outcome instead of hardcoding `'Canceled'`. Supports Fully Refund / Partially Refund / No Show / Canceled. BE `20ae04b`.
-- ✅ **GFK stale cache fix** — `instance.refresh_from_db(fields=['content_type','object_id'])` before GFK access on cancellation resolve. Fixes `booking_status` not updating after ticket save. BE `798f151`.
-- ✅ **FE terminal status badges** — all 5 badge sites + 2 overlay sites now show real `booking_status` label (was hardcoded `'Canceled'`). `Fully Refund` / `Partially Refund` / `No Show` display correctly, buttons disabled. FE `0aa1bde9` + `822a0efb`.
-- ✅ **FE refetch on cancel resolve** — `[bookingId].js` detects cancellation ticket transitioning to `resolved` → forces `refetchBooking()`. FE `23eea41b`.
-- ✅ **Admin booking outcome dropdown** — Command Centre ConfirmDialog shows outcome selector for cancellation resolve. Admin `465bc9f` (prev session), `ordersApi` updated.
-- ✅ **"Apply Change" new-tab button** — `date_change`/`pax_change` tickets show "Apply Change" (opens `/tickets/<id>` in new tab, dialog stays open). Was "Open Editor" → same-tab nav. Admin `374ac55`.
-- ✅ **UpdatePassenger UX** — guidance text + empty state + error Alert. Admin `ae12c9f`.
-- ✅ **Manual tested VGR9349116:** date_change full loop ✅, cancellation with Fully Refund outcome ✅. FE badge + overlay show "Fully Refund" (red), buttons disabled.
-- ⏳ **pax_change manual test** — not completed this session (VGR9349116 still Confirmed, 1 passenger).
+**Achieved this session (#195):** all merged → develop + pushed (admin + BE clean).
+- ✅ **UpdatePassenger editable fields** — `first_name`, `last_name`, `nationality`, `datofbirth`, `passportid` now editable inline in DataGrid. BE `PATCH /tickets/<id>/` extended to write field values alongside `confirm` toggle. BE `8a9ff51` · Admin `1e7ec93`.
+- ✅ **Checkbox confirm bug fixed** — payload was sending ALL rows (`editableRows`) → backend set all `confirm=True`. Fixed: send only `selectedRows` (checked). Uncheck passenger → removed from FE. Admin `1497cf6`.
+- ✅ **`isDirty` Submit button** — replaced broken `checkChanged`/`areArraysEqual` with simple `isDirty` flag. Set on any checkbox change or cell edit, cleared after save. Admin `1497cf6`.
+- ✅ **`closed_no_action` Chip crash** — `STATUS_COLOR['closed_no_action']` was `'inherit'` (invalid MUI Chip color → TypeError). Fixed to `'default'`. Admin `c60086c`.
+- ✅ **Resolution note visible in View dialog** — `resolution_note` now shown in ActionDialog details when admin clicks "View" on resolved/rejected ticket. Admin `e7f613d`.
+- ✅ **pax_change manual test** — all 3 direct booking flows (date_change ✅, cancellation ✅, pax_change ✅) verified. Reject flow works via existing `resolution_note` → `TicketStatusBanner` — no code needed.
 
-**Workspace (#194):**
+**Workspace (#195):**
 - vault: master — updating now
-- backend: develop (`798f151`) — **clean**
+- backend: develop (`8a9ff51`) — **clean**
 - frontend: develop (`822a0efb`) — **clean**
-- admin-dashboard: develop (`ae12c9f`) — **clean**
+- admin-dashboard: develop (`e7f613d`) — **clean**
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Complete pax_change manual test** on VGR9349116 — submit pax_change FE → admin "Apply Change" tab → UpdatePassenger toggle → resolve. Verify "Update Passenger" radio pre-selected (key fix `a52a849`).
-2. **OTA flows deferred** — Flow C (`/my-trip`), Flow E (sync), B-7 (emergency OTA bypass) — OTA ships separately, not in this deploy.
-3. **Deploy CS → main** — all tests pass (date_change ✅, cancellation ✅, pax_change pending). BE migrations `0005`–`0008` + Celery beat restart. No cs_chat seed needed (fail-open).
-4. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — deferred.
+1. **Deploy CS-CENTRALIZATION → main** — all 3 direct flows tested ✅. BE migrations `0005`–`0009` + Celery beat restart (`sync_ota_bookings` 15min + `check_sla_breaches`). All 3 repos develop→main.
+2. **OTA flows deferred** — Flow C (`/my-trip`), Flow E (sync), B-7 (emergency OTA bypass) — OTA ships separately.
+3. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — deferred.
 
-_(Sessions #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Sessions #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -45,7 +41,7 @@ _(Sessions #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop 2026-06-28 (NOT yet main)** — BE `424f72a` · admin `69bde06` · FE `4c0df60`. **⚠️ BLOCKED — audit 2026-06-29 found 10 Tier-1 criticals. Fix before deploying to main.** When unblocked: deploy all 3 develop→main + run BE migrations `0005`-`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. Priority fixes first: signals `ready()` (tickets/apps.py), beat schedule (celery.py), resend token (cs/views.py:595). | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
+| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop. Tier-1 criticals FIXED (#194). Direct flows tested ✅ (#195). READY for main deploy.** Deploy all 3 develop→main + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. BE `8a9ff51` · admin `e7f613d` · FE `822a0efb` current develop tips. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
@@ -57,7 +53,7 @@ _(Sessions #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
-| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** All branches merged → develop. **#186: CS-BE gaps + 4 critical fixes + admin/FE work all → develop** (BE `424f72a`, admin `69bde06`, FE `4c0df60`). **⚠️ AUDIT 2026-06-29: NOT PRODUCTION-READY — 10 Tier-1 criticals found (see [[cs-centralization-audit-2026-06-29]]). Must fix before deploy to main.** Remaining: Tier-1 #1–#10 (signals dead, beat absent, resend dead token, no one-open-ticket guard, magic-link TTL, resolution side-effect, trip_id missing, closed_no_action, OTP JWT, requested_value). Plus FE-M1 (InfoUpdateNotice). | **BLOCKED — do NOT deploy to main until Tier-1 fixes land** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
+| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct booking flows (date_change ✅ cancellation ✅ pax_change ✅) tested (#195). **READY for main deploy.** Remaining open: FE-M1 (InfoUpdateNotice) + admin Phase 2-3 + OTA manual tests (C/E/B-7). | **READY — deploy develop→main** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |

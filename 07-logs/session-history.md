@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #194 (archived 2026-06-30)
+
+**CS cancel flow fixes + manual test date/cancel ✅.** booking_outcome from request (BE `20ae04b`), GFK stale cache fix (`798f151`), FE terminal badges + overlay real labels (`0aa1bde9`+`822a0efb`), FE refetch on cancel resolve (`23eea41b`), admin outcome dropdown + Apply Change button + UpdatePassenger UX. Manual tested VGR9349116: date_change ✅, cancellation Fully Refund ✅. pax_change pending (#195).
+
+---
+
 ## Session #193 (archived 2026-06-30)
 
 **CS chat UX polish: sender attribution + role labels + read-on-open badge.** All → develop.
