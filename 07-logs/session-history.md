@@ -4,6 +4,29 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #191 (archived 2026-06-30)
+
+**Updated:** 2026-06-29 (session #191 — CS manual test + bug fixes)
+
+**Achieved this session (#191):**
+- ✅ Created CS-Centralization manual testing guide: `smartenplus-frontend/docs/testing/CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` (5 flows A–E, step-by-step, curl commands included)
+- ✅ Fixed CORS `localhost:3001` blocked — added to `CORS_ALLOWED_ORIGINS` + `CSRF_TRUSTED_ORIGINS` in BE `.env`
+- ✅ Fixed `JWT_SESSION_ERROR` root cause identified — `NEXTAUTH_SECRET` mismatch between frontend + admin-dashboard
+- ✅ Manual testing Flow A + B (partial): A-1 submit, A-2 dup-guard (500→400 fixed), B-1/B-2/B-3, B-6 closed_no_action guard.
+- ✅ Admin-dashboard fixes: `lightTheme` warning/info palette, STATUS_COLOR default→inherit, OTA dialogAllowed guard, ActionDialog maxWidth sm + split utility row, handleTransition error flattener, resolution note TextField.
+
+**Workspace (#191):** BE develop `58872d5` (2 uncommitted: cs/views.py, tickets/views.py) · FE develop `4c0df60` (RequestChangeModal.js uncommitted + test guide untracked) · admin develop `69bde06` (3 uncommitted: ActionDialog.jsx, command-centre/index.js, lightTheme.js) · content master `3756e5b` clean.
+
+**Resume (superseded by #192):** commit #191 work → develop; fix NEXTAUTH_SECRET; continue manual test B-7/B-8/C/D/E; redesign admin dialog (#192 ✅); deploy CS → main.
+
+---
+
+## Session #186 (archived 2026-06-30 — was inline in master-state)
+
+CS-Centralization cross-repo conformance fix + ship to develop + branch prune. 3-Explore-agent analysis vs `cs-workflow-revised-2026-06-27`; fixed 4 critical (BE resolve-block guard via API + emergency path + field-only PATCH; admin resend `{booking_id,source}` + emergency toggle route). Merged all 3 → develop: BE `424f72a`, admin `69bde06`, FE `4c0df60`. Pruned 12 stale branches. 64/64 BE tests green. Full record in `~/.claude/plans/noble-watching-waffle.md`.
+
+---
+
 ## Session #190 (archived)
 
 **Updated:** 2026-06-29 (session #190 — BD Report v2 + vault stray cleanup wrap-up)

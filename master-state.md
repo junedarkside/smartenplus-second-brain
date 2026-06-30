@@ -4,69 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-29 (session #191 — CS manual test + bug fixes)
+**Updated:** 2026-06-30 (session #192 — CS dialog redesign + manual-test bug fixes)
 
-**Achieved this session (#191):**
-- ✅ Created CS-Centralization manual testing guide: `smartenplus-frontend/docs/testing/CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` (5 flows A–E, step-by-step, curl commands included)
-- ✅ Fixed CORS `localhost:3001` blocked — added to `CORS_ALLOWED_ORIGINS` + `CSRF_TRUSTED_ORIGINS` in BE `.env`
-- ✅ Fixed `JWT_SESSION_ERROR` root cause identified — `NEXTAUTH_SECRET` mismatch between frontend + admin-dashboard
-- ✅ Ran manual testing Flow A + B (partial):
-  - A-1 ✅ Submit ticket — pass
-  - A-2 ✅ Duplicate guard — fixed 500→400 (`full_clean()` Django→DRF error conversion in `tickets/views.py` + `cs/views.py`) + FE error extractor updated (`RequestChangeModal.js`)
-  - B-1 ✅ Command Centre shows ticket — pass
-  - B-2 ✅ pending→in_review — pass
-  - B-3 ✅ direct: in_review→resolved — pass
-  - B-6 ✅ closed_no_action guard fires — error shows correctly after fixing object→string crash in admin (`command-centre/index.js`); resolution note field added to dialog
-- ✅ Fixed admin-dashboard bugs found during testing:
-  - `lightTheme.js` — added missing `warning` + `info` palette (MUI Button crash `theme.palette[color].main`)
-  - `STATUS_COLOR` — `'default'` → `'inherit'` (invalid MUI v5 Button color)
-  - `dialogAllowed` filter — hide `awaiting_ota_update` for direct bookings (FE-only guard)
-  - `ActionDialog.jsx` — redesigned: `maxWidth="sm"`, flex-wrap buttons, utility actions split to bottom row (`Open Editor` / `View Order`)
-  - `handleTransition` error flattener — `Object.values(errData).flat().join(' ')` prevents React child crash
-  - Resolution note `TextField` added to dialog (shown only when `closed_no_action`/`rejected` in allowed transitions)
+**Achieved this session (#192):**
+- ✅ **Redesigned command-centre ActionDialog** (admin `4af50b1`): tone-grouped zones (hero Resolve green / Reject red destructive / No Action Needed blue neutral / Awaiting OTA orange) + 2-step reused `ConfirmDialog` for terminal transitions (resolved/rejected/closed_no_action) w/ `resolution_note` (required reject/closed_no_action per BE `clean()`; optional resolved). Copy Email → utility row. `ConfirmDialog` +children/+confirmDisabled (backward-safe). Conformance-checked vs `cs-workflow-revised-2026-06-27` + audit.
+- ✅ **Hid emergency toggle for direct bookings** (admin `1a3ef2a`) — OTA-only bypass.
+- ✅ **Fixed `resolution_note` transmit bug** (admin `9ac7089`) — `updateRequestStatus` mutation dropped it (body `{request_status}` only) → ConfirmDialog note was cosmetic + `closed_no_action` unreachable via FE.
+- ✅ **3-agent team** (FE-UI + admin-UI + BE/data) traced real components → click-by-click manual-test guide saved `[[cs-manual-test-flows-b7-e-2026-06-30]]`.
+- ✅ **FE TicketStatusBanner shows submitted request** (FE `36aab76`) — `requested_value` was stored but never surfaced; customer now sees "Your request: …". Verified.
+- ✅ **BE Account.get_full_name fix** (BE `f675ddc`) — `Account(AbstractBaseUser)` lacked `get_full_name()` → `cs/serializers.py:31` AttributeError → 500 on `/api/cs/conversations/list/` (Flow D chat inbox). Added `get_full_name`/`get_short_name` (Django convention).
+- ✅ **Reassessed CS-Centralization** (Section 2 REASSESSMENT note): Tier-1 criticals verified LANDED on develop (master-state "BLOCKED until Tier-1" stale); `check_sla_breaches` NameError fixed; `cs_chat` fail-open (no seed); B-7 emergency bypass already works (`clean()` Blocker 3).
+- ✅ **Manual test:** B-8 (cancellation→Canceled) PASSED + resolution_note fix validated; date-change status flow passed (date-apply = System A gap → follow-up); FE banner note verified.
 
-**Workspace (#191):**
-- vault: master (uncommitted — this update)
-- backend: develop (`58872d5`) — **2 files uncommitted** (`cs/views.py`, `tickets/views.py`)
-- frontend: develop (`4c0df60`) — **1 file uncommitted** (`RequestChangeModal.js`) + 1 untracked (`CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md`)
-- admin-dashboard: develop (`69bde06`) — **3 files uncommitted** (`ActionDialog.jsx`, `command-centre/index.js`, `lightTheme.js`)
+**Workspace (#192):**
+- vault: master — committed + pushed through session
+- backend: develop (`f675ddc`) — **2 files uncommitted** (`cs/views.py`, `tickets/views.py` = #191 DRF error conversion)
+- frontend: develop (`36aab76`) — `RequestChangeModal.js` uncommitted + `CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` untracked (#191)
+- admin-dashboard: develop (`9ac7089`) — **clean**
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Commit + push all 3 repos** (BE: `cs/views.py` + `tickets/views.py`; FE: `RequestChangeModal.js` + new test guide; admin: `ActionDialog.jsx` + `command-centre/index.js` + `lightTheme.js`) on feature branches → merge to develop
-2. **Fix `NEXTAUTH_SECRET` mismatch** — set `admin-dashboard/.env.local` `NEXTAUTH_SECRET` to match frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin dev server + clear cookies
-3. **Continue manual testing** — B-6 complete (type note → No Action Needed → verify `closed_no_action`), then B-7 (emergency toggle), B-8 (cancellation sync), Flow C (OTA /my-trip — needs seeded data), Flow D (chat widget), Flow E (OTA sync)
-4. ✅ **Redesign admin dialog UX** — DONE #192 (admin `4af50b1` on develop). ActionDialog tone-grouped zones (hero Resolve green / Reject red destructive / No Action Needed blue neutral / Awaiting OTA orange). Terminal transitions (resolved/rejected/closed_no_action) route through reused `ConfirmDialog` w/ `resolution_note` (required reject/closed_no_action per BE `clean()`; optional resolved — shown to customer). Copy Email → utility row. `ConfirmDialog` +children slot +confirmDisabled (backward-safe, 3 callers unaffected). Conformance-checked vs `cs-workflow-revised-2026-06-27` + audit; BE Tier-1 #8 (`closed_no_action` unreachable) already fixed on develop. **Follow-up:** FE `CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md` flows B-3/B-6 need 2-step update (separate FE commit).
-5. **Deploy CS-Centralization → main** (all 3 repos) once manual test complete
+1. **Commit #191 uncommitted** (BE `cs/views.py`+`tickets/views.py`; FE `RequestChangeModal.js`+test guide) on feature branches → develop. **Fix `NEXTAUTH_SECRET`** — admin `.env.local` = frontend value `548d665db327c717e607eed1cc7d12e6ec151bfec69b4cc218de9a9272fb5e7c`; restart admin + clear cookies.
+2. **Restart BE + re-verify Flow D chat** — `Account.get_full_name` fix shipped (`f675ddc`); restart BE → admin chat inbox `/api/cs/conversations/list/` should 200 (no AttributeError). Complete Flow D (Chrome FAB → Safari inbox reply).
+3. **Finish manual test:** Flow C (OTA `/my-trip` — targeted Django-shell `CsOtaBooking.update_or_create`, NOT destructive `seed_ota_fake_data`), Flow E (OTA sync — Celery worker or `manage.py sync_ota_bookings`), B-7 emergency bypass (needs OTA ticket in `awaiting_ota_update`).
+4. **Follow-up features:** inline date-apply in command-centre (vault rec #2, `[[command-centre-ticket-booking-flow]]` — resolve is status-only; UpdateTrip redirect too many steps); FE-M1 `InfoUpdateNotice`; admin Phase 2-3.
+5. **3 go-live blockers (product-owned):** NEW-1 resolve-block visibility, OQ-3 SLA (unbuilt), Emergency path (NEW-4 fast-track + NEW-10 manifest + `trip_id`).
+6. **Deploy CS → main** (all 3 repos develop→main) once manual test + blockers clear. Run BE migrations `0005`–`0009` + Celery beat (already in `celery.py`).
 
-_(Session #190 archived → `07-logs/session-history.md`.)_
-
----
-
-**Achieved (#186) — CS-Centralization: cross-repo conformance fix + ship to develop + branch prune:**
-- ✅ Analyzed CS-Centralization across FE/BE/admin vs `cs-workflow-revised-2026-06-27` (3 Explore agents). Found BE "close 5 gaps" partial + dead core (#1 resolve-block guard never fired via API) + 2 admin→BE API breaks. Full report → `~/.claude/plans/noble-watching-waffle.md`.
-- ✅ Fixed 4 🔴 critical:
-  - **BE** (`feat/cs-centralization-blockers`): resolve-block guard now enforced via API (`RequestStatusViewSet.partial_update` calls `instance.clean()`, `ValidationError`→400); emergency path works (bypass-first `clean()` reorder + `pending→resolved` for emergency + `old_ticket=None` NameError fix); field-only PATCH allowed (transition check gated on `request_status` present); guard Check 1 uses `old_ticket.status_changed_at` (awaiting-entry) so Supabase-event branch works. +3 tests, 1 adjusted. **64/64 green.**
-  - **Admin** (`feat/cs-workflow-revised-gaps`): resend sends `{booking_id, source}` (was Django PK `booking.id` → 400); emergency toggle → `request-status/` via new `setEmergencyFlag` mutation (was raw axios to `tickets-set-status/` which ignored `is_emergency`).
-- ✅ Merged all 3 repos → develop + pushed: **BE `424f72a`**, **admin `69bde06`**, **FE `4c0df60`** (stranded FE-B3 `OtaRequestCard` delete + `/my-trip` conditional-poll that PR #183 missed).
-- ✅ Pruned **12 stale branches** (local + remote): BE 3 (`feat/cs-centralization-blockers`, `fix/birthdate-year-truncation`, `feat/my-trip-show-ticket-status` [superseded by `f8e1f4b`]), admin 1 (`feat/cs-workflow-revised-gaps`), FE 8 (checkout-phone-validation, cs-ticket-status-banner, birthdate-year-truncation/validation, checkout-contact-prefill, phone-normalize-legacy, seo-r11, seo-r12).
-
-**Workspace (#186):**
-- backend: `develop` (`424f72a`) — clean.
-- admin-dashboard: `develop` (`69bde06`) — clean.
-- frontend: `develop` (`4c0df60`) — clean.
-- vault: master · content: master (`3756e5b`) clean.
-- All CS feature branches pruned (local + remote). Only `develop` + `main` remain per repo.
-
-**Resume point (EXACT):**
-1. **DEPLOY CS work → main** (all 3 repos develop→main) + run BE migrations `0005`–`0009` (cs `0005`/`0006`, tickets `0006`–`0009`) on prod + schedule Celery beat `sync_ota_bookings`. See Deploy Queue.
-2. **🟡 BE-B1** add 3 magic-link fields (`magic_token_generated_at`, `auto_send_magic_link`, `is_magic_link_valid`) — magic links valid forever (no expiry).
-3. **🟡 BE-B3** resend: regenerate `magic_token` + SES send (currently read-only, returns existing link).
-4. **🟢 FE-M1** `InfoUpdateNotice` component (surface `TripNotification`) — only remaining FE item.
-5. Update vault `cs-centralization-gap-report-2026-06-27.md` Layer status (BE-B1..B5 + admin breaks now resolved on develop; 🟡 remaining).
-6. *(Carry-forward)* OQ-3 `awaiting_ota_update` SLA (Product owes timeout + ETA surface); Admin Phase 2-3; post-merge follow-up branches (RTL/i18n/a11y/analytics) per #184.
-
-_(Session #185 archived → `07-logs/session-history.md`.)_
+_(Sessions #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 
