@@ -4,35 +4,36 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-30 (session #197 — OTA manual test C1–C7 Path A, BE blank-desc fix, admin dialog UX)
+**Updated:** 2026-06-30 (session #198 — Path A ✅ + admin/FE UX fixes)
 
-**Achieved this session (#197):**
-- ✅ **BE fix** — `POST /api/cs/ota/change-request/` 400 on blank description. `cs/views.py:588` fallback `f'{request_type} request'`. Branch `fix/ota-change-request-blank-description` → merged develop `259c0d8`.
-- ✅ **Admin UX fix** — `awaiting_ota_update` button color orange → grey (`'warning'` → `'inherit'`). `View Order` hidden for OTA source. `command-centre/index.js`. Branch `fix/ota-dialog-ux` → merged develop `06dc0ff`.
-- ✅ **Manual tests C1–C5 PASS** — PDPA gate → trip loads → ticket submitted → banner shows `pending` → reload hides form.
-- ✅ **Manual test B7-4 PASS** — 400 "Cannot resolve awaiting OTA ticket" guard confirmed at `tickets/models.py:159`.
-- ✅ **Path A (Supabase sync simulate) PASS** — manual `OtaBookingEvent` row created → `clean()` allowed resolve → `CsOtaBooking.status` auto-set `canceled` → `/my-trip` shows "Canceled" chip.
-- ⏳ **UX gap found (not fixed)** — `my-trip/index.js:238` hides ticket section when `booking.status === 'canceled'`. Customer sees "Canceled" chip but misses "Cancellation Confirmed" banner from `TicketStatusBanner`.
-- ⏳ **Remaining tests** — C6 (poll 60s network tab), C8 (bad token), B7-5 (emergency bypass resolve), Flow E (idempotent sync).
-- ⏳ **Bug 4 still deferred** — `OtaTripView` missing SLA fields in ticket serialization.
+**Achieved this session (#198):**
+- ✅ **BE fix** — `POST /api/cs/ota/change-request/` 400 on blank description. `cs/views.py:588`. BE `259c0d8`.
+- ✅ **Admin: `awaiting_ota_update` orange → grey + View Order hidden for OTA** — `06dc0ff`.
+- ✅ **Admin: "Processing with OTA" → "Mark In Review"** — unified label, dead ternary removed. `7b73650`.
+- ✅ **Admin: Thai button guide** — `extraContent` table in OTA dialog (ความหมายของปุ่ม). `830cfec`.
+- ✅ **FE: OTA banner shows correct provider name** — `TicketStatusBanner` `source` prop → "We've contacted 12Go" not hardcoded "Klook/12Go". FE `80714750`.
+- ✅ **Manual tests C1–C5 PASS**, **B7-4 PASS**, **Path A (TEST-12GO-0004 + 0007) PASS** — full cancellation E2E confirmed. `booking_status=canceled`, ticket `resolved`, sync event guard working.
+- ⏳ **UX gap (not fixed)** — `my-trip:238` hides ticket section when `booking.status=canceled` → customer misses "Cancellation Confirmed" banner.
+- ⏳ **Remaining tests** — C6 (poll 60s), C8 (bad token), B7-5 (emergency bypass), Flow E (idempotent sync).
+- ⏳ **Bug 4 deferred** — `OtaTripView` missing SLA fields in ticket serialization.
 
-**Workspace (#197):**
+**Workspace (#198):**
 - vault: master — updating now
-- backend: develop (`259c0d8`) — clean, blank-desc fix merged
-- frontend: develop (`413eb41e`) — clean
-- admin-dashboard: develop (`06dc0ff`) — clean, dialog UX fix merged
+- backend: develop (`259c0d8`) — clean
+- frontend: develop (`80714750`) — clean, OTA source label fix merged
+- admin-dashboard: develop (`830cfec`) — clean, Thai guide + label fixes merged
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
 1. **Remaining manual tests**:
-   - C6: DevTools Network tab → confirm poll fires every 60s while ticket open
+   - C6: DevTools Network → poll fires every 60s while ticket open
    - C8: `http://localhost:3000/my-trip?token=invalid` → error state, no crash
-   - B7-5: OTA ticket in `awaiting_ota_update` → toggle Emergency ON → resolve succeeds (bypass at `tickets/models.py:122`)
-   - Flow E: `python manage.py sync_ota_bookings --source 12go` → events created → run again → no duplicates (idempotent)
+   - B7-5: ticket `awaiting_ota_update` → Emergency ON → resolve succeeds (bypass `tickets/models.py:122`)
+   - Flow E: `python manage.py sync_ota_bookings --source 12go` → events created → run again → no duplicates
 2. **Deploy CS-CENTRALIZATION → main** — BE migrations `0005`–`0009` + Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. All 3 repos develop→main.
 3. **Fix `otaConsent.js:3`** — 8-char token prefix → full token key (1-line security fix).
-4. **Fix `my-trip:238` UX gap** — guard `booking.status !== 'canceled'` prevents resolved cancellation ticket banner showing. Scope: pass through when `resolved` cancellation ticket exists.
-5. **Fix Bug 4** — `OtaTripView` missing SLA fields. Add `resolution_stage`, `operator_deadline`, `ota_deadline`, `admin_contacted_ota_at`, `admin_contacted_ota_note`, `admin_initiated`, `is_emergency` to serializer.
+4. **Fix `my-trip:238` UX gap** — show "Cancellation Confirmed" banner even when `booking.status=canceled`.
+5. **Fix Bug 4** — `OtaTripView` add SLA fields to serializer.
 6. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — still deferred.
 
 _(Sessions #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
@@ -51,7 +52,7 @@ _(Sessions #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session
 | Item | What's pending | Where |
 |------|----------------|-------|
 | **OTA-FLOW-BUGS** | ✅ **MERGED → develop `413eb41e`.** 3 commits shipped. 3 commits: `c96b1724` (COLORS crash + image guard) · `09e3f955` (polling anti-pattern) · `0657c6fb` (TDZ crash). Merge → develop first, then include in OTA deploy. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix → full token). | `components/bookings/TicketStatusBanner.js`, `BookingDetail/TripRoute.js`, `ChangeRequestsSection.js`, `pages/my-trip/index.js` · [[ota-flow-e2e-scan-2026-06-30]] |
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop. Tier-1 criticals FIXED (#194). Direct flows tested ✅ (#195). OTA manual test C1-C5/B7-4/Path A ✅ (#197). READY for main deploy.** Deploy all 3 develop→main + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. BE `259c0d8` · admin `06dc0ff` · FE `413eb41e` current develop tips. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
+| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop. Tier-1 criticals FIXED (#194). Direct flows tested ✅ (#195). OTA manual test C1-C5/B7-4/Path A ✅ (#198). READY for main deploy.** Deploy all 3 develop→main + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. BE `259c0d8` · admin `830cfec` · FE `80714750` current develop tips. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
