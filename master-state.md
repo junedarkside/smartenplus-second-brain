@@ -4,33 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-06-30 (session #199)
+**Updated:** 2026-07-01 (session #201)
 
-**Achieved this session (#199):**
-- ✅ **All 3 repos merged develop→main** — BE `259c0d8` · admin `830cfec` · FE `80714750` all on main
-- ✅ **Context resumed** after compaction — all prior fixes confirmed in place (Thai guide, banner source fix, Mark In Review label, Path A E2E ✅)
-- ⚠️ **Prod deploy pending** — BE migrations `0005`–`0009` must run on prod server + schedule Celery beat tasks
+**Achieved this session (#201):**
+- ✅ **ALL CS-CENTRALIZATION MANUAL TESTS COMPLETE** — C6 ✅ C8 ✅ B7-5 ✅ Flow E ✅
+- ✅ **Admin-initiated OTA ticket creation** — 3-repo feature built + committed on `feat/admin-ota-ticket-create`. Admin can create OTA tickets directly (no guest action). BE `270dd44` · admin `3dc1d3a` · FE `46abb617`.
+- ✅ **B7-5 emergency bypass** — `is_emergency=True` → `Ticket.clean():122` returns early → resolve bypasses OTA wait block. Test passed.
+- ✅ **Flow E idempotency** — sync run twice: `upserted:59` then `upserted:0 skipped:59`. No duplicates.
+- ✅ **Error message improved** — `tickets/models.py:163` now hints "(4) Toggle Emergency ON". BE `a430ce9`.
+- ⚠️ **Emergency checkbox silent-fail** — `/tickets/[id].js` `handleToggleEmergency` catch is console-only. PATCH may fail silently with no UI feedback. Needs error state added to toggle handler.
 
-**Workspace (#199):**
+**Workspace (#201):**
 - vault: master — updating now
-- backend: main + develop (`259c0d8`) — clean
-- frontend: main + develop (`80714750`) — clean
-- admin-dashboard: main + develop (`830cfec`) — clean
+- backend: `feat/admin-ota-ticket-create` (`a430ce9`) — clean
+- frontend: `feat/admin-ota-ticket-create` (`46abb617`) — clean
+- admin-dashboard: `feat/admin-ota-ticket-create` (`3dc1d3a`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Remaining manual tests**:
-   - C6: DevTools Network → confirm poll fires every 60s while ticket open
-   - C8: `http://localhost:3000/my-trip?token=invalid` → error state, no crash
-   - B7-5: OTA ticket in `awaiting_ota_update` → toggle Emergency ON → resolve succeeds (bypass `tickets/models.py:122`)
-   - Flow E: `python manage.py sync_ota_bookings --source 12go` → events created → run again → no duplicates
-2. **Prod server deploy** — run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`
-3. **Fix `otaConsent.js:3`** — 8-char token prefix → full token key (1-line security fix)
-4. **Fix `my-trip:238` UX gap** — show "Cancellation Confirmed" banner even when `booking.status=canceled`
-5. **Fix Bug 4** — `OtaTripView` add SLA fields to serializer
-6. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — still deferred
+1. **Merge `feat/admin-ota-ticket-create` → develop** in all 3 repos (BE + admin + FE)
+2. **Prod deploy** — develop→main all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`
+3. **Fix emergency checkbox silent-fail** — `/tickets/[id].js:handleToggleEmergency` — add `setError` state, show Alert on catch
+4. **Fix `otaConsent.js:3`** — 8-char token prefix → full token key (1-line security fix)
+5. **Fix `my-trip:238` UX gap** — show "Cancellation Confirmed" banner when `booking.status=canceled`
+6. **Fix Bug 4** — `OtaTripView` add SLA fields to serializer (`cs/views.py:519-527`)
+7. **FE-M1 `InfoUpdateNotice`** + admin Phase 2-3 — still deferred
 
-_(Sessions #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Sessions #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -46,7 +46,7 @@ _(Sessions #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/
 | Item | What's pending | Where |
 |------|----------------|-------|
 | **OTA-FLOW-BUGS** | ✅ **MERGED → develop `413eb41e`.** 3 commits shipped. 3 commits: `c96b1724` (COLORS crash + image guard) · `09e3f955` (polling anti-pattern) · `0657c6fb` (TDZ crash). Merge → develop first, then include in OTA deploy. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix → full token). | `components/bookings/TicketStatusBanner.js`, `BookingDetail/TripRoute.js`, `ChangeRequestsSection.js`, `pages/my-trip/index.js` · [[ota-flow-e2e-scan-2026-06-30]] |
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **merged → develop. Tier-1 criticals FIXED (#194). Direct flows tested ✅ (#195). OTA manual test C1-C5/B7-4/Path A ✅ (#198). READY for main deploy.** Deploy all 3 develop→main + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. BE `259c0d8` · admin `830cfec` · FE `80714750` current develop tips. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
+| **CS-CENTRALIZATION-DEPLOY** | ⏳ **ALL MANUAL TESTS PASS (#201). Admin-initiated OTA ticket creation built on `feat/admin-ota-ticket-create` (unmerged).** Next: merge feature branch → develop all 3 repos → develop→main deploy + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. Feature branch tips: BE `a430ce9` · admin `3dc1d3a` · FE `46abb617`. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
@@ -58,7 +58,7 @@ _(Sessions #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
-| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct booking flows (date_change ✅ cancellation ✅ pax_change ✅) tested (#195). **READY for main deploy.** Remaining open: FE-M1 (InfoUpdateNotice) + admin Phase 2-3 + OTA manual tests (C/E/B-7). | **READY — deploy develop→main** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
+| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#201): C6 ✅ C8 ✅ B7-5 ✅ Flow E ✅. Admin-initiated OTA ticket creation built `feat/admin-ota-ticket-create`. **Remaining:** (1) merge feature branch → develop, (2) develop→main deploy, (3) emergency checkbox silent-fail fix, (4) deferred: FE-M1 + admin Phase 2-3. | **MERGE + DEPLOY NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |

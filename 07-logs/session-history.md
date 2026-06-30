@@ -4,6 +4,34 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #201 — 2026-07-01
+
+**Achieved:**
+- ✅ **B7-5 PASS** — admin-initiated OTA ticket emergency bypass verified. `is_emergency=True` → `Ticket.clean()` Blocker 3 (`models.py:122`) returns early → resolve bypasses OTA wait block.
+- ✅ **Flow E PASS** — OTA sync idempotency confirmed. `sync_ota_bookings --source 12go` run twice: first `upserted:59`, second `upserted:0 skipped:59`. No duplicates.
+- ✅ **Admin-initiated OTA ticket creation built** — 3-repo feature `feat/admin-ota-ticket-create`. Admin → OTA Bookings tab → "Create Request" → ticket created `pending/admin_initiated=True/source=ota`. No guest action needed.
+  - BE: `AdminOtaTicketCreateView` + URL (`cs/views.py` + `cs/urls.py`). Commit `270dd44`.
+  - Admin: `createAdminOtaTicket` mutation + "Create Request" button + ActionDialog in `OtaBookingsTab`. Commit `3dc1d3a`.
+  - FE: `TicketStatusBanner` — "Being Processed" label for admin-initiated pending, hide "Your request:" section. Commit `46abb617`.
+- ✅ **Emergency bypass error message improved** — `tickets/models.py:163` now includes "(4) Toggle Emergency ON on the ticket detail page to bypass." Commit `a430ce9`.
+- ✅ **All CS-CENTRALIZATION manual tests COMPLETE** — C6 ✅ C8 ✅ B7-5 ✅ Flow E ✅.
+- ⚠️ **Emergency checkbox silent-fail** — `handleToggleEmergency` on `/tickets/[id].js` catches error silently (console only). Toggle didn't save during test; had to set via Django shell. Root cause unconfirmed (likely network/PATCH error with no UI feedback).
+
+**Workspace:** backend `feat/admin-ota-ticket-create` `a430ce9` · frontend `feat/admin-ota-ticket-create` `46abb617` · admin `feat/admin-ota-ticket-create` `3dc1d3a` · vault master
+
+---
+
+## Session #200 — 2026-06-30
+
+**Achieved:**
+- ✅ C6 code-verified — `pages/my-trip/index.js:55-57` inline pollingInterval derivation correct.
+- ✅ C8 code-verified — `pages/my-trip/index.js:114-127` ErrorCard handles 400/404/5xx.
+- ✅ `check_sla_breaches` runtime verified clean — `tickets/tasks.py` confirmed: `if 1` gone, `ticket_numbers` plural. Silent-fail bug FIXED.
+
+**Workspace:** backend develop `259c0d8` · frontend develop `80714750` · admin develop `830cfec` · vault master
+
+---
+
 ## Session #198 — 2026-06-30
 
 **Achieved:**
