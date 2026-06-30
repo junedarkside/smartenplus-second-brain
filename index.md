@@ -45,6 +45,10 @@ Global navigation catalog. Updated on every ingest.
 - [[mui-button-vs-iconbutton-mobile]] — **PATTERN.** `IconButton + Tooltip` is invisible on touch (tooltip needs hover, no tap). Any action a mobile user must discover → `Button` + `startIcon` + text label.
 - [[rtk-query-refetch-via-ref]] — **PATTERN.** When `invalidatesTags` alone doesn't trigger re-render (stale-cache edge case post-mutation), expose `refetch` via prop callback + `useRef` in parent.
 
+- [[rtk-query-self-correcting-polling-pattern]] — **PATTERN 2026-06-30.** RTK Query reads `pollingInterval` from hook options each render — derive inline from previous render's `useRef` value instead of `useState`/`useEffect`. No state, no effect, self-corrects one cycle after data loads. Child components sharing same cache key must NOT add their own `pollingInterval` — parent's timer cannot be stopped by child. Case: `/my-trip` OTA + `ChangeRequestsSection`. [[ota-flow-e2e-scan-2026-06-30]]
+
+- [[ota-flow-e2e-scan-2026-06-30]] — **SCAN 2026-06-30 · UPDATED (#197).** E2E scan + 4-agent audit + manual test run. 5 original issues + 2 additional polling bugs found by audit. All 5 FE fixes (3 commits): `COLORS.gray[400]` crash, `data.image` guard, `ChangeRequestsSection` redundant poll, OTA `/my-trip` useRef gate, TDZ crash fixed. 2 BE deferred (API data gap + duplicate-ticket guard). **#197:** BE blank-desc fix (`cs/views.py:588`, `259c0d8`), admin dialog UX fix (`06dc0ff`). Manual tests C1-C5/B7-4/Path A ✅. UX gap: `my-trip:238` hides ticket when `booking.status=canceled` → customer misses "Cancellation Confirmed" banner (not fixed). Remaining: C6/C8/B7-5/Flow E. [[cs-centralization-audit-2026-06-29]] · [[genericfk-one-open-ticket-guard]]
+
 ## Knowledge — CS Platform
 
 - [[cs-guest-storm-investigation]] — **SCRUTINIZE 2026-06-23.** Storm risk (100 guests = 2× Gunicorn ceiling), 4 critical blockers in kill switch design, 5-layer mitigation plan, FeatureFlag model + Django admin kill switch. 8-step build order. [[cs-architecture-decision]] · [[cs-gap-debate-verdicts]]
