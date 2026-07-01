@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #205 — 2026-07-01
+
+**Achieved:**
+- ✅ Command-centre direct-notify team debate (3 debaters + synthesizer) → `command-centre-direct-notify-redesign.md`. Decision: Hybrid (extract NotifyDialog). Leader-verified `content_object.id` already serialized → zero BE change for retrofit path.
+- ✅ Direct Bookings tab built (command-centre 3rd tab — notify + admin-initiated request): BE `feat/cs-direct-bookings-tab` (`BookingItemListView`+`BookingItemTicketCreateView`+routes+7 tests), admin `feat/admin-direct-bookings-tab` (csApi hooks + `NotifyDialog.jsx` + `DirectBookingsTab`). Route→Service (`contract_name`) column fix.
+- ✅ Constraints held: OTA tab + `/bookings/[slug]` untouched; `NotifyDialog` direct-only; every piece mirrors an OTA equivalent.
+- ✅ Atoms: `cs-flat-dict-list-endpoint-pattern`, `shared-dialog-extraction-trigger`.
+
+**Workspace:** backend `feat/cs-direct-bookings-tab` · frontend `feat/fe-m1-info-update-notice` · admin `feat/admin-direct-bookings-tab` — all UNCOMMITTED, pending merge develop. Vault committed `5c81bea`.
+
+---
+
 ## Session #204 — 2026-07-01
 
 **Achieved:**
