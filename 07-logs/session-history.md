@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #206 — 2026-07-01
+
+**Achieved:**
+- ✅ Bug fix: customer booking page never showed TripNotifications — `BookingDetailsViewSet` uses `orders.serializers.BookingItemSerializer` (4-way name collision) which lacked `notifications` (#205/#204 added to wrong serializer). Fix: `orders/serializers.py` +2 lines + regression test. 8/8 BE tests pass, live-verified.
+- ✅ InfoUpdateNotice CSS/placement (`feat/fe-m1-info-update-notice`): moved to top, design-system card width (`mx-2 md:mx-3 xl:mx-0`, `p-4`, label `px-2 md:px-3 xl:px-0`).
+- ✅ Atom: `booking-item-serializer-name-collision`.
+
+**Workspace:** 3 feature branches UNCOMMITTED → merged develop next session. Vault committed `ef0c086`.
+
+---
+
 ## Session #205 — 2026-07-01
 
 **Achieved:**
