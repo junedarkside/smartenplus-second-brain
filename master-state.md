@@ -4,29 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-01 (session #203)
+**Updated:** 2026-07-01 (session #205)
 
-**Achieved this session (#203):**
-- ✅ **OTA manual testing ALL PASS** — A1/A1b/A2/A3/B/C/D/F/A9 all passed. E deferred to prod.
-- ✅ **Fix: form hidden after resolve** — `pages/my-trip/index.js:255` — removed `allTickets.length === 0 &&` (redundant, `showForm` already gates on open tickets). `5617b137` FE develop.
-- ✅ **Fix: time-based OTA resolve guard removed** — `tickets/models.py clean()` — deleted 4h/12h `admin_contacted_ota_at` block. Only Supabase event + `ota_manually_confirmed` + emergency remain. `6cb2328` BE develop.
-- ✅ **Fix: Copy Link clipboard fallback** — `command-centre/index.js handleCopyLink` — `execCommand` fallback for HTTP localhost (clipboard API blocked on non-HTTPS). `0e5727b` admin develop.
-- ✅ All 3 repos pushed to origin/develop.
-- ✅ New vault atom: `03-knowledge/ota-resolve-guard-patterns.md`
+**Achieved this session (#205):**
+- ✅ **Command-centre direct-notify redesign — team debate** (3 debaters parallel + synthesizer) → `01-projects/command-centre-direct-notify-redesign.md`. **Decision: Hybrid** — extract shared `NotifyDialog`. Leader-verified `content_object.id` already serialized (`tickets/serializers.py:48-50`, `BookingItemSerializer __all__`) → zero BE change for the retrofit path.
+- ✅ **Direct Bookings tab built** (command-centre 3rd tab — notify + admin-initiated request for direct bookings, parity w/ OTA tab):
+  - **BE** `feat/cs-direct-bookings-tab` (UNCOMMITTED): `BookingItemListView` `GET /api/cs/bookings/` + `BookingItemTicketCreateView` `POST /api/cs/bookings/<pk>/ticket/` (mirror `OtaBookingListView` + `AdminOtaTicketCreateView`) + routes. Null-guarded helpers. **7 tests pass** (`cs/tests/test_direct_booking_endpoints.py`). Live GET = 617 rows, flat 9-key dict.
+  - **Admin** `feat/admin-direct-bookings-tab` (UNCOMMITTED): `csApi` hooks (`getDirectBookings`, `createDirectAdminTicket`, `DirectBookings` tag) + NEW `components/cs/NotifyDialog.jsx` (reusable, direct-only, faithful lift) + `DirectBookingsTab` (3rd tab). eslint clean, page compiles (HTTP 200).
+  - **Route→Service fix:** "Route" column transport-only across 10 service categories → `contract_name` (denormalized on model, no join, universal). 497/617 populated.
+- ✅ **Constraints held:** OTA tab + `/bookings/[slug]` notify **untouched** (no break). `NotifyDialog` direct-only (no over-engineering). Every new piece mirrors an OTA equivalent (reuse).
 
-**Workspace (#203):**
-- vault: master — updating now
-- backend: develop (`6cb2328`) — clean
-- frontend: develop (`5617b137`) — clean
-- admin-dashboard: develop (`0e5727b`) — clean
+**Workspace (#205):**
+- vault: master — updating now (will commit)
+- backend: `feat/cs-direct-bookings-tab` — **UNCOMMITTED** (`cs/urls.py`, `cs/views.py`, + `cs/tests/test_direct_booking_endpoints.py`) → review + merge develop
+- frontend: `feat/fe-m1-info-update-notice` (`3ba4ea46`) — clean (#204, still pending merge develop)
+- admin-dashboard: `feat/admin-direct-bookings-tab` — **UNCOMMITTED** (`command-centre/index.js`, `csApi.js`, + `components/cs/NotifyDialog.jsx`) → review + merge develop
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Prod deploy** — develop→main all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`
-2. **FE-M1 `InfoUpdateNotice`** — guest notification when admin updates booking details
-3. **Admin Phase 2-3** — bulk actions + analytics views
+1. **Review diff + merge 2 new feature branches → develop** (BE `feat/cs-direct-bookings-tab`, admin `feat/admin-direct-bookings-tab`)
+2. **Manual UI smoke** — admin `:3001` command-centre 3rd tab: row Notify (NotifyDialog → send → customer `:3000` banner) + Create Request (→ Direct Requests tab). Regression: OTA tab + `/bookings/[slug]`.
+3. **Merge prior #204 branches → develop** (verify if already merged): `feat/trip-notification-api` (BE), `feat/fe-m1-info-update-notice` (FE), `feat/admin-phase2-command-centre` (admin)
+4. **Retrofit `NotifyDialog`** into OTA tab (`command-centre/index.js` ~L713-810) + `/bookings/[slug]` (~L421-518) — separate task, now safe (component proven in new tab)
+5. **Bug:** `TicketViewSet.get_queryset` (`tickets/views.py:122-143`) ignores `admin_initiated`/`is_emergency` query params — Direct Requests tab chips client-side only. Wire BE filter.
+6. **Prod deploy** — develop→main all 3 repos + BE migrations + Celery beat
 
-_(Sessions #201 + #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 archived → `07-logs/session-history.md`.)_
+_(Session #204 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -53,8 +56,9 @@ _(Sessions #201 + #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 a
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **DIRECT-BOOKINGS-TAB** | Command-centre 3rd tab "Direct Bookings" — notify + admin-initiated request for direct bookings (parity w/ OTA tab). **BUILT (#205)** on 2 branches, **UNCOMMITTED**: BE `feat/cs-direct-bookings-tab` (`BookingItemListView` + `BookingItemTicketCreateView` + 7 tests), admin `feat/admin-direct-bookings-tab` (`csApi` hooks + `NotifyDialog.jsx` + `DirectBookingsTab`). Column "Service" (`contract_name`, not Route). Decision report [[command-centre-direct-notify-redesign]]. | **REVIEW + MERGE develop → manual smoke** | [[command-centre-direct-notify-redesign]] · [[direct-booking-notify-plan]] |
 | **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
-| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203): A1/A1b/A2/A3/B/C/D/F/A9 ✅ E deferred. 3 bug fixes shipped (#203): form-reshow + time-guard removal + clipboard fallback. **Remaining:** (1) develop→main deploy, (2) deferred: FE-M1 + admin Phase 2-3. | **DEPLOY NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
+| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203). **FE-M1 InfoUpdateNotice BUILT (#204)** — `feat/fe-m1-info-update-notice`. **Admin Phase 2 BUILT (#204)** — `feat/admin-phase2-command-centre`. **29/29 BE unit tests pass.** **Remaining:** (1) merge 3 branches → develop, (2) E2E manual test, (3) Admin Phase 3, (4) develop→main deploy. | **MERGE + TEST NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
@@ -63,7 +67,7 @@ _(Sessions #201 + #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 a
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
-| **ADMIN-CS-CENTRALIZATION** | **Phase 1 + Phase 4 SHIPPED → develop `69bde06` (#186)** incl. API conformance fixes (resend `{booking_id,source}`, emergency toggle → `request-status/`). VALID_TRANSITIONS extended, SupabaseSyncBanner, SLA display, emergency toggle, resolution_note, admin_initiated, Resend Email all on develop. Phase 4 (CS Guide Thai+EN help + Mermaid + sidebar nav) committed + merged. **Phase 2-3 pending.** Admin buttons now backed by BE (BE-B2/B4 on develop). | **Phase 1+4 on develop (deploy pending) · Phase 2-3 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
+| **ADMIN-CS-CENTRALIZATION** | **Phase 1 + Phase 4 SHIPPED → develop `69bde06` (#186)**. **Phase 2 BUILT (#204)** → `feat/admin-phase2-command-centre`: Emergency/AdminInitiated filter chips, Age + Stage + Emergency flag columns, shared `constants/ticketConstants.js`. **Phase 3 pending** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`. | **Phase 2 branch ready merge · Phase 3 pending** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-BE-GAPS** | ✅ **All 5 gaps closed + merged → develop `424f72a` (#186)** incl. resolve-block guard wired to API + emergency path + field-only PATCH. magic_token+supabase_row_id, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 33 gap tests. **🟡 Remaining:** BE-B1 (add `magic_token_generated_at`/`auto_send_magic_link`/`is_magic_link_valid` — no link expiry), BE-B3 (resend doesn't regen token / send SES). | **on develop — deploy + 🟡 remaining** | [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-FE-OTA-GAPS** | ✅ **RESOLVED + fully → develop `4c0df60` (#186)** — FE-B1..B5 + stranded FE-B3 `OtaRequestCard` delete + `/my-trip` conditional-poll (parity w/ FE-B4). All FE CS work on develop. **Open follow-ups (non-blocking):** (a) no RTL/e2e tests; (b) hard-coded EN strings in `TicketStatusBanner` + `/my-trip` — no i18n; (c) no analytics events; (d) a11y gaps (SLAProgress opacity-only, status pill lacks `role="status"`/`aria-live`, emergency lacks `role="alert"`); (e) `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` at repo root → move to `docs/features/`. | **RESOLVED · on develop** | [[cs-centralization-gap-report-2026-06-27]] |
 | **PRODUCTS-LIVE-CATALOG-AUDIT** | **PHASE 1 FINAL 2026-06-28 · Public API Snapshot.** 1224 contracts · 176 stations · 7/10 service categories empty (TRANSFER · MULTI_DAY_TOUR · EVENT_TICKET · ATTRACTION_TICKET · FOOD_DINING · ACCOMMODATION · OTHER). Only 6 charter routes live (4 unique — Chiang Mai + Khao Lak only). SPA_WELLNESS = 100% Salisa Resort (single-operator risk). DAY_TOUR northern bias (5/5 ops in Chiang Rai/Chiang Mai/Hat Yai; Andaman islands absent). **10 BD gaps logged** (`business-development/products-live-catalog/gap-inventory.md`): gap-001 charter routes near-zero · gap-002 transfer empty · gap-003 MULTI_DAY_TOUR empty [Experiences lens 100% uncovered] · gap-004/005/006/007/010 service_categories empty · gap-008 day-tour geographic skew · gap-009 SPA concentration risk. **Django shell deferred (Phase 1.5)** — API filters `?is_actived=false`/`?end_date__gte=` silently ignored, no station FK IDs exposed via public API. **Next:** Phase 2 = `grill` skill × 10 gaps → BD-ready question docs. | **PHASE 1 FINAL · Phase 2 next** | [[products-live-catalog-audit]] · `business-development/products-live-catalog/snapshots-2026-06-28.md` |

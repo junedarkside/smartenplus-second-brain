@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-01] session #204 | FE-M1 InfoUpdateNotice built + BE TripNotification API (29/29 tests) + Admin Phase 2 filters/columns — all 3 feature branches ready → merge develop
+
 ## [2026-07-01] session-end #203 | OTA manual testing ALL PASS (9/9) + 3 fixes: form-reshow, time-guard removal, clipboard fallback — all pushed develop
 
 ## [2026-06-30] session-end #199 | all 3 repos merged develop→main — BE 259c0d8 · admin 830cfec · FE 80714750 on main. Context resumed post-compaction. Prod deploy pending: migrations 0005-0009 + Celery beat. Remaining tests: C6/C8/B7-5/Flow E.
@@ -266,3 +268,5 @@
 ## [2026-06-30] session-end | CS chat UX polish (#193) — sender attribution fix (ownership-gated widget `sender:'customer'` hint, spoof→403; BE `1c49deb` + FE `d36fcc29`), role labels both surfaces (FE `bb472227` + admin `8c5f7aa`), unread badge read-on-open + active-conv auto-read (BE `Conversation.cs_last_read_at` + migration `0008` + mark-read endpoint `3a264bb`; admin `02ff9a5`+`0ca0edd`). NEXTAUTH_SECRET matched admin=FE; Flow D chat re-verified 200. All → develop: BE `4642b23` · FE `03a78f2b` · admin `a4be478`.
 ## [2026-07-01] session-end | CS-CENTRALIZATION all manual tests PASS (#201) — admin-initiated OTA ticket creation built (3-repo feat/admin-ota-ticket-create), B7-5 emergency bypass ✅, Flow E idempotency ✅, error message improved, emergency checkbox silent-fail noted
 ## [2026-07-01] session-end | fix/cs-deferred-fixes merged develop all 3 repos — emergency alert, otaConsent token, my-trip canceled banner, OtaTripView SLA fields
+
+## [2026-07-01] session-end | Direct Bookings tab built (#205) — command-centre 3rd tab (notify + admin-initiated request for direct BookItems). 2 feature branches UNCOMMITTED (BE `feat/cs-direct-bookings-tab`, admin `feat/admin-direct-bookings-tab`) → merge develop. Hybrid decision ([[command-centre-direct-notify-redesign]]): NotifyDialog direct-only, OTA/[slug] retrofit deferred. Route→Service column (`contract_name`, universal). 7 BE tests pass. Bug noted: `TicketViewSet.get_queryset` ignores admin_initiated/is_emergency params. Atoms: cs-flat-dict-list-endpoint-pattern, shared-dialog-extraction-trigger.

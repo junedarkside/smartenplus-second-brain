@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #204 — 2026-07-01
+
+**Achieved:**
+- ✅ FE-M1 InfoUpdateNotice — `feat/fe-m1-info-update-notice` (`3ba4ea46`). `components/bookings/InfoUpdateNotice.js` (dismissible blue cards, 5 category icons). Mounted `/my-trip/index.js` (OTA) + `BookingDetailMain.js` (direct).
+- ✅ BE TripNotification API — `feat/trip-notification-api` (`53d9794`). `TripNotification`+`OtaBookingEvent` admin reg, serializer, `notifications[]` on `GET /api/cs/ota/trip/` + `BookingItemDetailSerializer`, `prefetch_related` both. 29/29 tests.
+- ✅ Admin Phase 2 — `feat/admin-phase2-command-centre` (`71bdadc`). Emergency+AdminInitiated filter chips, 3 columns (Emergency/Age/Stage), `getCustomerRequests` params, shared `constants/ticketConstants.js`.
+- ✅ Grill + code-review audit fixes across 3 repos.
+
+**Workspace:** backend `feat/trip-notification-api` · frontend `feat/fe-m1-info-update-notice` · admin `feat/admin-phase2-command-centre` · content master — all clean, pending merge develop.
+
+---
+
 ## Session #202 — 2026-07-01
 
 **Achieved:**
