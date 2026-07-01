@@ -4,20 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-01 (session #202)
+**Updated:** 2026-07-01 (session #203)
 
-**Achieved this session (#202):**
-- ✅ **Fix 2 — Emergency toggle error alert** — `admin-dashboard/pages/tickets/[id].js` — `emergencyError` state + Alert renders below Paper Box on PATCH fail. `61f5509`.
-- ✅ **Fix 3 — otaConsent token security** — `helpers/otaConsent.js:4` — `token.slice(0,8)` → full token. `8f9ab107`.
-- ✅ **Fix 4 — my-trip canceled banner** — `pages/my-trip/index.js` — split into 2 blocks: always show ticket banners, only show OtaRequestForm when not canceled. `8f9ab107`.
-- ✅ **Fix 5 — OtaTripView SLA fields** — `cs/views.py` inline dict — added `resolution_stage`, `operator_deadline`, `ota_deadline`, `resolution_deadline`, `admin_initiated`. SLAProgress now visible for all OTA guest links. `64297d6`.
-- ✅ All `fix/cs-deferred-fixes` merged → develop + pushed all 3 repos.
+**Achieved this session (#203):**
+- ✅ **OTA manual testing ALL PASS** — A1/A1b/A2/A3/B/C/D/F/A9 all passed. E deferred to prod.
+- ✅ **Fix: form hidden after resolve** — `pages/my-trip/index.js:255` — removed `allTickets.length === 0 &&` (redundant, `showForm` already gates on open tickets). `5617b137` FE develop.
+- ✅ **Fix: time-based OTA resolve guard removed** — `tickets/models.py clean()` — deleted 4h/12h `admin_contacted_ota_at` block. Only Supabase event + `ota_manually_confirmed` + emergency remain. `6cb2328` BE develop.
+- ✅ **Fix: Copy Link clipboard fallback** — `command-centre/index.js handleCopyLink` — `execCommand` fallback for HTTP localhost (clipboard API blocked on non-HTTPS). `0e5727b` admin develop.
+- ✅ All 3 repos pushed to origin/develop.
+- ✅ New vault atom: `03-knowledge/ota-resolve-guard-patterns.md`
 
-**Workspace (#202):**
+**Workspace (#203):**
 - vault: master — updating now
-- backend: develop (`64297d6`) — clean
-- frontend: develop (`8f9ab107`) — clean
-- admin-dashboard: develop (`61f5509`) — clean
+- backend: develop (`6cb2328`) — clean
+- frontend: develop (`5617b137`) — clean
+- admin-dashboard: develop (`0e5727b`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
@@ -41,7 +42,7 @@ _(Sessions #201 + #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 a
 | Item | What's pending | Where |
 |------|----------------|-------|
 | **OTA-FLOW-BUGS** | ✅ **MERGED → develop `413eb41e`.** 3 commits shipped. 3 commits: `c96b1724` (COLORS crash + image guard) · `09e3f955` (polling anti-pattern) · `0657c6fb` (TDZ crash). Merge → develop first, then include in OTA deploy. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix → full token). | `components/bookings/TicketStatusBanner.js`, `BookingDetail/TripRoute.js`, `ChangeRequestsSection.js`, `pages/my-trip/index.js` · [[ota-flow-e2e-scan-2026-06-30]] |
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **ALL FIXES ON DEVELOP (#202). BE `64297d6` · FE `8f9ab107` · admin `61f5509`.** Next: develop→main deploy all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
+| **CS-CENTRALIZATION-DEPLOY** | ⏳ **ALL FIXES + MANUAL TESTS DONE (#203). BE `6cb2328` · FE `5617b137` · admin `0e5727b`.** Manual tests: A1/A1b/A2/A3/B/C/D/F/A9 ALL PASS. E deferred to prod. Next: develop→main deploy all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
@@ -53,7 +54,7 @@ _(Sessions #201 + #200 + #199 + #198 + #195 + #194 + #193 + #192 + #191 + #186 a
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
-| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#201): C6 ✅ C8 ✅ B7-5 ✅ Flow E ✅. Admin-initiated OTA ticket creation built `feat/admin-ota-ticket-create`. **Remaining:** (1) merge feature branch → develop, (2) develop→main deploy, (3) emergency checkbox silent-fail fix, (4) deferred: FE-M1 + admin Phase 2-3. | **MERGE + DEPLOY NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
+| **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203): A1/A1b/A2/A3/B/C/D/F/A9 ✅ E deferred. 3 bug fixes shipped (#203): form-reshow + time-guard removal + clipboard fallback. **Remaining:** (1) develop→main deploy, (2) deferred: FE-M1 + admin Phase 2-3. | **DEPLOY NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |

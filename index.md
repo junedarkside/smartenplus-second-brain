@@ -19,6 +19,7 @@ Global navigation catalog. Updated on every ingest.
 - [[dangling-export-import-bug-pattern]] — **BUG PATTERN.** Call site imports a name not exported (agent-worktree drift) or wrong shape (default vs named) → build break. Case: `getOptimalImageQuality is not a function` across 13 SSG pages.
 - [[feature-flag-kill-switch-pattern]] — **PATTERN.** Django `FeatureFlag` model + admin toggle to disable a frontend feature (e.g. CS chat) instantly without redeploy. Fail-open: feature stays enabled if BE unreachable. Built for CS guest-storm mitigation.
 - [[polling-backoff-jitter-pattern]] — **PATTERN.** Fixed-interval polling × N clients = linear request growth → server overload. Exponential backoff + jitter: auto-throttle idle, instant resume on activity, stop on close. Protects Gunicorn ceiling.
+- [[ota-resolve-guard-patterns]] — **PATTERN.** 3 bypass paths for `awaiting_ota_update→resolved`: Supabase event (auto), `ota_manually_confirmed` flag (admin button), emergency toggle. Time-based 4h/12h guards removed session #203 — unnecessary friction.
 
 ## Knowledge — SEO/AEO
 

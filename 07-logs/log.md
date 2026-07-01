@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-01] session-end #203 | OTA manual testing ALL PASS (9/9) + 3 fixes: form-reshow, time-guard removal, clipboard fallback — all pushed develop
+
 ## [2026-06-30] session-end #199 | all 3 repos merged develop→main — BE 259c0d8 · admin 830cfec · FE 80714750 on main. Context resumed post-compaction. Prod deploy pending: migrations 0005-0009 + Celery beat. Remaining tests: C6/C8/B7-5/Flow E.
 
 ## [2026-06-30] session-end #198 | Path A ✅ + admin/FE UX fixes — Admin: "Processing with OTA" → "Mark In Review" (dead ternary, unanimous 3-agent debate, `7b73650`). Thai button guide via extraContent prop OTA-only (`830cfec`). FE: TicketStatusBanner `source` prop → correct provider name "12Go" not hardcoded "Klook/12Go" (`80714750`). Path A (TEST-12GO-0007) PASS: sync event guard timestamp verified, resolve succeeded, booking_status=canceled, ticket resolved. Workflow design decision: manual resolve (not auto) for this version — simpler, no over-engineering. Remaining: C6/C8/B7-5/Flow E.
