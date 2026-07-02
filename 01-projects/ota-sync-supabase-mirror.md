@@ -44,6 +44,7 @@ OTA `email` ↔ `Account.email`. 20–40% noise (booker ≠ traveler). Document 
 - **Probabilistic merge** — 20–40% miss; acceptable for ops, not for "one customer" promises.
 - **Manual sync lag** — bookings can be stale until next batch run; acceptable pre-portal-launch.
 - **Anon-key exposure** — anon key stays server-side only; never ships to client (RLS on Supabase must permit anon read of `view_information` only).
+- **Date filter at fetch layer (decision 2026-07-02)** — `?Date=gte.{today}` applied in `_fetch_schema()`. Past bookings excluded permanently from mirror; full re-sync needed to recover historical data. Intentional: command-centre OTA tab shows upcoming + today only.
 
 ## Review focus
 - Is `(source, booking_id)` the correct upsert key, or should it be `booking_id` alone (Bookaway shares `12GO*` prefix)?

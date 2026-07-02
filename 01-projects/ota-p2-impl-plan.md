@@ -138,7 +138,7 @@ class CsSyncLog(models.Model):
 ## `cs/supabase_client.py` — function spec
 
 - **`_headers()`** — reads `settings.SUPABASE_URL` / `settings.SUPABASE_ANON_KEY` at call time (not import). **Must fix**: assert `SUPABASE_URL.startswith('https://')` — raise `ImproperlyConfigured` if not.
-- **`fetch_ota_bookings(source=None) -> list[dict]`** — paginated loop with `Range` header + `Prefer: count=exact`. Use `requests.Session()` in `try/finally`. Per page: `Range: {offset}-{offset+page_size-1}`, 30s timeout. Assert `booking_id` and `source` sentinel fields on every row — **must fix #8**: use explicit `if not row.get('booking_id'): raise ValueError(...)`, not `assert`. Column allowlist: drop unexpected columns before returning rows.
+- **`fetch_ota_bookings(source=None) -> list[dict]`** — paginated loop with `Range` header + `Prefer: count=exact`. Use `requests.Session()` in `try/finally`. Per page: `Range: {offset}-{offset+page_size-1}`, 30s timeout. Assert `booking_id` and `source` sentinel fields on every row — **must fix #8**: use explicit `if not row.get('booking_id'): raise ValueError(...)`, not `assert`. Column allowlist: drop unexpected columns before returning rows. **Date filter (decision 2026-07-02):** add `params={'Date': f'gte.{date.today().isoformat()}'}` to the `requests.get()` call — past rows excluded at source. Recovery requires full re-sync.
 - **`assert_ota_view_accessible() -> bool`** — fetches `Range: 0-0`. Raises `RuntimeError` on 401/403 or network failure.
 
 ---

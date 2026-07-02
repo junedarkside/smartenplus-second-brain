@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #211 — 2026-07-02
+
+**Achieved:**
+- ✅ Gap audit review + triage: reviewed all 16 issues from #210 audit, cut to 7 real tasks, deferred email/SLA/concurrency.
+- ✅ H8: `resolution_note` exposed to OTA customer in `OtaTripView` — terminal statuses only.
+- ✅ H9: `TicketDetailSerializer` adds `latest_ota_event_at` from real `OtaBookingEvent` query; no N+1.
+- ✅ C7: `CustomerTicketViewSet` filter changed to booking ownership — admin-initiated tickets visible to customer.
+- ✅ C1: PUT blocked on `TicketViewSet` + `RequestStatusViewSet`; workflow fields `read_only_fields`.
+- ✅ C3: `ConversationCreateView` returns 403 `OTP_REQUIRED` when existing open/pending conv found for guest email.
+- ✅ C6: Explicit OTA confirm checkbox in admin resolve dialog; `ota_manually_confirmed_at/by` persisted; migration `0010` generated.
+- Branches `fix/command-centre-gaps-1` + `fix/command-centre-gaps-2` → merged develop (BE `4690fcb` · admin `1aea2e4`).
+
+---
+
 ## Session #210 — 2026-07-02
 
 **Achieved:**

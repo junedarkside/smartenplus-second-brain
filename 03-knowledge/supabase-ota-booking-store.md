@@ -91,6 +91,10 @@ Traveler-contact asset r2 ([[customer-os-thesis-r2-skeptic-review]]) assumed did
 - **Cross-system identity merge** — email-match probabilistic; `smarten_order_id` (P2) makes it deterministic.
 - **Rebooking economics unmeasured** — contacts confirmed ≠ proven direct rebooking. See [[cs-p0-measurement-protocol]].
 
+## Sync filter (architectural decision 2026-07-02)
+
+Sync fetches only `Date >= today` (PostgREST `?Date=gte.{today}`). Past bookings excluded at fetch time — never land in Django mirror. Recovery requires full re-sync. Cutoff uses `gte` so today's departures are included. Command-centre OTA tab shows upcoming + today only; historical bookings permanently excluded from the mirror.
+
 ## Planned role (CS Centralization — [[cs-centralization-stack]])
 
 Keep Supabase separate, read-sync to Django via REST API (anon key). Read-only; no Django schema change; Supabase stays standalone. Query `public.view_information` for unified cross-OTA data.

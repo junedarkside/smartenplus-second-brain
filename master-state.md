@@ -4,31 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-02 (session #211)
+**Updated:** 2026-07-02 (session #212)
 
-**Achieved this session (#211):**
-- ✅ **Gap audit review + triage**: reviewed all 16 issues from #210 audit, cut to 7 real tasks, deferred email/SLA/concurrency (no user-facing promises broken).
-- ✅ **H8**: `resolution_note` exposed to OTA customer in `OtaTripView` — terminal statuses only (won't leak draft mid-workflow).
-- ✅ **H9**: `TicketDetailSerializer` adds `latest_ota_event_at` from real `OtaBookingEvent` query; list views keep `TicketSerializer` (no N+1). Admin "No Supabase events yet" now shows real data.
-- ✅ **C7**: `CustomerTicketViewSet` filter changed from `created_by=user` → booking ownership — admin-initiated tickets now visible to customer.
-- ✅ **C1**: PUT blocked on `TicketViewSet` + `RequestStatusViewSet` via `http_method_names`; workflow fields marked `read_only_fields` in serializer.
-- ✅ **C3**: `ConversationCreateView` returns 403 `OTP_REQUIRED` when existing open/pending conversation found for guest email — no free token without OTP.
-- ✅ **C6**: Explicit OTA confirm checkbox in admin resolve dialog (replaces hidden always-true flag); `ota_manually_confirmed_at/by` persisted to DB; migration `0010` generated.
-- Branches: `fix/command-centre-gaps-1` + `fix/command-centre-gaps-2` → merged develop (BE + admin).
+**Achieved this session (#212):**
+- ✅ Deleted 19 TEST- OTA booking rows (24 cascade) from dev BE — surgical `booking_id__startswith='TEST-'` filter, 565 real rows intact.
+- ✅ OTA bookings filter/search/pagination shipped (BE + admin-dashboard):
+  - BE `cs/views.py`: server-side `date_from`/`date_to`/`source`/`status`/`search` (Q OR) + `page`/`page_size` → `{count, results}` response. Ascending `booking_date`. Branch `feat/ota-bookings-filter-api` (`f393a98`) → merged develop.
+  - admin `csApi.js` + `command-centre/index.js`: debounced search (500ms), source/status dropdowns, DateRangeFilter (default today-onwards), TablePagination (25/50/100). Branch `feat/ota-bookings-filter-ui` (`c68fbf3`) → merged develop.
+  - 3-agent team researched "today-default + history browsable" pattern → FE owns default, BE stays unfiltered.
+- ✅ Fixed runtime crash: `formatDate` named export imported as default → `{ formatDate }`.
 
-**Workspace (#211):**
+**Workspace (#212):**
 - vault: master — uncommitted (this update)
-- backend: `develop` (`4690fcb`) — clean
+- backend: `develop` (`f393a98`) — clean
 - frontend: `develop` (`50fb201e`) — clean
-- admin-dashboard: `develop` (`1aea2e4`) — clean
+- admin-dashboard: `develop` (`c68fbf3`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
 1. **Prod deploy** — develop→main all 3 repos + run BE migration `0010` (`ota_manually_confirmed_at/by`) + Celery beat (`sync_ota_bookings` 15min + `check_sla_breaches`).
-2. **Remaining gaps deferred** — C4 email (SES backend), H2 concurrency, H3 race, H4 notify, H5 manifest — revisit when email promised to users.
-3. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
+2. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
+3. **Remaining gaps deferred** — C4 email (SES backend), H2 concurrency, H3 race, H4 notify, H5 manifest.
 
-_(Session #210 archived → `07-logs/session-history.md`.)_
+_(Session #211 archived → `07-logs/session-history.md`.)_
 
 ---
 
