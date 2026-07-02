@@ -11,10 +11,14 @@
             "id": "926a518c88efc5ae",
             "type": "leaf",
             "state": {
-              "type": "graph",
-              "state": {},
-              "icon": "lucide-git-fork",
-              "title": "Graph view"
+              "type": "markdown",
+              "state": {
+                "file": "08-archive/rate-review-uxui-audit-2026-06-06/r2-skeptic.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "r2-skeptic"
             }
           }
         ]

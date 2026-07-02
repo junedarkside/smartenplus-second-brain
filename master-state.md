@@ -4,25 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-03 (session #214)
+**Updated:** 2026-07-03 (session #215)
 
-**Achieved this session (#214):**
-- ✅ Fixed `TypeError: Object of type date is not JSON serializable` in booking dispatch — `orders/services.py` lines 67 + 135: raw `booking.traveling_date` → `.strftime("%Y-%m-%d")`. Matched existing pattern from `bookings/views.py:426`. Commit `61c10f2` merged → develop.
+**Achieved this session (#215):**
+- ✅ Fixed OTA "Send Trip Link" never sending email — `OtaResendMagicLinkView` on `develop` was generating token + returning 200 but never calling `send_html_email`. Applied fix directly to `develop` (skipped stale branch merge): wired `send_html_email()`, null guard on `booking.email`, `magic_link_last_sent_at` tracking, `email_sent: bool` in response. Added `ota_trip_link_email.html` template + migration `0009`. Committed `5f452e6` on `fix/ota-resend-email-send-v2` → merged → develop `647f3b5`. SES delivery to hotmail confirmed (MessageId logged). Root cause of inbox miss: Hotmail junk filter (SES send identical to booking confirmation path).
 
-**Workspace (#214):**
+**Workspace (#215):**
 - vault: master — uncommitted (this update)
-- backend: `develop` (`61c10f2`) — clean
+- backend: `develop` (`647f3b5`) — clean
 - frontend: `develop` (`50fb201e`) — clean
 - admin-dashboard: `fix/ota-resend-email-ui` (`517a62c`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Merge email branches** — `fix/ota-resend-email-send` → develop (BE) + `fix/ota-resend-email-ui` → develop (admin). Run migration `0009` on prod.
-2. **Verify `FRONTEND_URL`** — confirm prod BE `.env` has `FRONTEND_URL=https://www.smartenplus.co.th` (trip_link in email was localhost in dev).
-3. **Prod deploy** — develop→main all 3 repos + run BE migrations `0009`+`0010` + Celery beat.
-4. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
+1. **Run migration `0009` on prod** — `python manage.py migrate cs` (adds `magic_link_last_sent_at` to `CsOtaBooking`)
+2. **Merge admin `fix/ota-resend-email-ui` → develop** — shows `trip_link` inline after send; already committed `517a62c`
+3. **Prod deploy** — develop→main all 3 repos + run BE migrations `0009`+`0010` + Celery beat
+4. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` pending
 
-_(Session #213 archived → `07-logs/session-history.md`.)_
+_(Sessions #213 + #214 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -62,7 +62,7 @@ _(Session #213 archived → `07-logs/session-history.md`.)_
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
 | **ADMIN-CS-CENTRALIZATION** | **Phase 1 + Phase 4 SHIPPED → develop `69bde06` (#186)**. **Phase 2 SHIPPED (`ce873f9`)** — UI cleanup + SLA countdown. **Gap fixes SHIPPED (#211)** — H8/H9/C7/C1/C3/C6 all merged develop. **Phase 3 pending** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`. | **Phase 3 pending · prod deploy pending** | [[admin-dashboard-cs-centralization-plan]] · [[command-centre-gap-audit]] |
-| **CS-BE-GAPS** | ✅ **All 5 gaps closed + merged → develop `424f72a` (#186)** incl. resolve-block guard wired to API + emergency path + field-only PATCH. magic_token+supabase_row_id, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 33 gap tests. **🟡 Remaining:** BE-B1 (add `magic_token_generated_at`/`auto_send_magic_link`/`is_magic_link_valid` — no link expiry), BE-B3 (resend doesn't regen token / send SES). | **on develop — deploy + 🟡 remaining** | [[cs-centralization-gap-report-2026-06-27]] |
+| **CS-BE-GAPS** | ✅ **All 5 gaps closed + merged → develop `424f72a` (#186)** incl. resolve-block guard wired to API + emergency path + field-only PATCH. magic_token+supabase_row_id, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 33 gap tests. **🟡 Remaining:** BE-B1 (add `magic_token_generated_at`/`auto_send_magic_link`/`is_magic_link_valid` — no link expiry). ✅ BE-B3 FIXED (#215) — `OtaResendMagicLinkView` now calls `send_html_email()` + `magic_link_last_sent_at` tracking. `647f3b5` → develop. | **on develop — deploy + BE-B1 remaining** | [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-FE-OTA-GAPS** | ✅ **RESOLVED + fully → develop `4c0df60` (#186)** — FE-B1..B5 + stranded FE-B3 `OtaRequestCard` delete + `/my-trip` conditional-poll (parity w/ FE-B4). All FE CS work on develop. **Open follow-ups (non-blocking):** (a) no RTL/e2e tests; (b) hard-coded EN strings in `TicketStatusBanner` + `/my-trip` — no i18n; (c) no analytics events; (d) a11y gaps (SLAProgress opacity-only, status pill lacks `role="status"`/`aria-live`, emergency lacks `role="alert"`); (e) `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` at repo root → move to `docs/features/`. | **RESOLVED · on develop** | [[cs-centralization-gap-report-2026-06-27]] |
 | **PRODUCTS-LIVE-CATALOG-AUDIT** | **PHASE 1 FINAL 2026-06-28 · Public API Snapshot.** 1224 contracts · 176 stations · 7/10 service categories empty (TRANSFER · MULTI_DAY_TOUR · EVENT_TICKET · ATTRACTION_TICKET · FOOD_DINING · ACCOMMODATION · OTHER). Only 6 charter routes live (4 unique — Chiang Mai + Khao Lak only). SPA_WELLNESS = 100% Salisa Resort (single-operator risk). DAY_TOUR northern bias (5/5 ops in Chiang Rai/Chiang Mai/Hat Yai; Andaman islands absent). **10 BD gaps logged** (`business-development/products-live-catalog/gap-inventory.md`): gap-001 charter routes near-zero · gap-002 transfer empty · gap-003 MULTI_DAY_TOUR empty [Experiences lens 100% uncovered] · gap-004/005/006/007/010 service_categories empty · gap-008 day-tour geographic skew · gap-009 SPA concentration risk. **Django shell deferred (Phase 1.5)** — API filters `?is_actived=false`/`?end_date__gte=` silently ignored, no station FK IDs exposed via public API. **Next:** Phase 2 = `grill` skill × 10 gaps → BD-ready question docs. | **PHASE 1 FINAL · Phase 2 next** | [[products-live-catalog-audit]] · `business-development/products-live-catalog/snapshots-2026-06-28.md` |
 

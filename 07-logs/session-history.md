@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #214 — 2026-07-03
+
+**Achieved:**
+- ✅ Fixed `TypeError: Object of type date is not JSON serializable` in booking dispatch — `orders/services.py` lines 67 + 135: raw `booking.traveling_date` → `.strftime("%Y-%m-%d")`. Commit `61c10f2` merged → develop.
+
+---
+
 ## Session #213 — 2026-07-03
 
 **Achieved:**
