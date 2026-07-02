@@ -4,20 +4,14 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-03 (session #213)
+**Updated:** 2026-07-03 (session #214)
 
-**Achieved this session (#213):**
-- 🔄 OTA magic link email send — **partially complete**:
-  - BE: `OtaResendMagicLinkView` now calls `send_html_email()` with `ota_trip_link_email` template. Added null email guard (400), exception wrapping, `email_sent: bool` in response, `magic_link_last_sent_at` tracking. Branch `fix/ota-resend-email-send` (`3873806`) — **NOT merged to develop yet**.
-  - Admin: `handleResendEmail` captures `trip_link` from response, shows inline copyable link + "Send Trip Link" label. Branch `fix/ota-resend-email-ui` (`517a62c`) — **NOT merged to develop yet**.
-  - Email template `bookings/emails/ota_trip_link_email.html` created (black/white, table layout, VML CTA fallback).
-  - Migration `0009_add_magic_link_last_sent_at` applied to dev DB.
-  - SES send verified live: `june_pinkfloyd@hotmail.com` received email (`msg_id=0101019f23dcaf8a`).
-- ⚠️ **Remaining gap**: `trip_link` in dev email points to `http://localhost:3000` — `FRONTEND_URL` env var needs to be set to `https://www.smartenplus.co.th` in prod `.env`.
+**Achieved this session (#214):**
+- ✅ Fixed `TypeError: Object of type date is not JSON serializable` in booking dispatch — `orders/services.py` lines 67 + 135: raw `booking.traveling_date` → `.strftime("%Y-%m-%d")`. Matched existing pattern from `bookings/views.py:426`. Commit `61c10f2` merged → develop.
 
-**Workspace (#213):**
+**Workspace (#214):**
 - vault: master — uncommitted (this update)
-- backend: `fix/ota-resend-email-send` (`3873806`) — clean
+- backend: `develop` (`61c10f2`) — clean
 - frontend: `develop` (`50fb201e`) — clean
 - admin-dashboard: `fix/ota-resend-email-ui` (`517a62c`) — clean
 - content: master (`3756e5b`) — clean
@@ -28,7 +22,7 @@
 3. **Prod deploy** — develop→main all 3 repos + run BE migrations `0009`+`0010` + Celery beat.
 4. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
 
-_(Session #212 archived → `07-logs/session-history.md`.)_
+_(Session #213 archived → `07-logs/session-history.md`.)_
 
 ---
 

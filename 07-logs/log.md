@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-03] session-end #214 | Fix traveling_date JSON serialize crash in booking dispatch — orders/services.py 2 lines, commit 61c10f2 merged develop.
+
 ## [2026-07-03] session-end #213 | OTA magic link email: BE wired SES send + null guard + tracking (fix/ota-resend-email-send 3873806), admin inline trip_link display (fix/ota-resend-email-ui 517a62c), ota_trip_link_email.html template — SES verified live. Branches not yet merged. FRONTEND_URL gap noted.
 
 ## [2026-07-02] session-end #212 | OTA bookings filter+search+pagination: BE server-side params (`feat/ota-bookings-filter-api` f393a98) + admin DateRangeFilter+TablePagination (`feat/ota-bookings-filter-ui` c68fbf3) — both merged develop. TEST- rows deleted (19 rows, 565 real intact). formatDate named import crash fixed.
