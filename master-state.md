@@ -11,7 +11,7 @@
 - ✅ **Fixed OTA /my-trip banner gap** (`pages/my-trip/index.js:238`): added `mt-4` to InfoUpdateNotice wrapper → consistent with all sibling sections (Next Steps, ticket banners, OtaRequestForm all use `mt-4`). Branch `fix/ota-trip-update-notice-gap` (`50fb201e`) merged → develop.
 
 **Workspace (#208):**
-- vault: master — updating now (will commit)
+- vault: master (`8f4a465`) — clean
 - backend: `develop` (`757bc90`) — clean
 - frontend: `develop` (`50fb201e`) — clean ✅ no outstanding banner bugs
 - admin-dashboard: `develop` (`465226f`) — clean
