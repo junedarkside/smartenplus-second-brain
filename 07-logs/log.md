@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-02] session #210 | admin command-centre Direct Requests cleanup (ce873f9) + 3-agent gap audit → 7 CRITICAL (SLA dead, PUT bypass, guest-token leak, no email backend, resend sends nothing, OTA gate bypass, admin tickets invisible). → [[command-centre-gap-audit]]
+
 ## [2026-07-02] session #209 | Celery fix: task name mismatch (cs.sync_ota_bookings→cs.tasks.sync_ota_bookings) + broker retry deprecation warning — merged → develop `85a4850`
 
 ## [2026-07-02] session #208 | InfoUpdateNotice width fix (BookingDetailMain desktop 1200px centered) + OTA /my-trip gap fix (mt-4) — both merged → develop `50fb201e`

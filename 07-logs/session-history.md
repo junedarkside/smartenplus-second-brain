@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #209 (2026-07-02):**
+- ✅ Fixed Celery unregistered task error: `cs/tasks.py:61` name mismatch → `name='cs.tasks.sync_ota_bookings'`
+- ✅ Fixed Celery broker retry deprecation warning: `CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True`
+- Branch `fix/celery-task-name-broker-retry` (`85a4850`) → merged develop + pushed
+- admin-dashboard: `develop` (`465226f`) — clean
+
+---
+
 ## Session #208 — 2026-07-02
 
 **Achieved:**
