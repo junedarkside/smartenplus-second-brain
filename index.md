@@ -7,6 +7,7 @@ Global navigation catalog. Updated on every ingest.
 ## Meta
 
 - [[master-state|Master State]] — Live session state: branches, loose ends, API contract, architecture guardrails
+- [[multi-repo-gap-audit-methodology]] — **PATTERN.** Auditing complex features across multiple repos: fan out 3 specialized agents (Backend/Frontend/Integration) → adversarial verification → synthesized report. Single-agent review misses cross-cutting gaps. Template: CRITICAL/HIGH/MEDIUM prioritized with fix order.
 
 ## Knowledge — Backend / Celery
 
@@ -20,6 +21,10 @@ Global navigation catalog. Updated on every ingest.
 - [[feature-flag-kill-switch-pattern]] — **PATTERN.** Django `FeatureFlag` model + admin toggle to disable a frontend feature (e.g. CS chat) instantly without redeploy. Fail-open: feature stays enabled if BE unreachable. Built for CS guest-storm mitigation.
 - [[polling-backoff-jitter-pattern]] — **PATTERN.** Fixed-interval polling × N clients = linear request growth → server overload. Exponential backoff + jitter: auto-throttle idle, instant resume on activity, stop on close. Protects Gunicorn ceiling.
 - [[ota-resolve-guard-patterns]] — **PATTERN.** 3 bypass paths for `awaiting_ota_update→resolved`: Supabase event (auto), `ota_manually_confirmed` flag (admin button), emergency toggle. Time-based 4h/12h guards removed session #203 — unnecessary friction.
+- [[django-serializer-n1-pattern]] — **PATTERN.** When DRF serializers include computed fields that query relations (e.g., `SerializerMethodField` → related model), list views become N+1 bombs. Solution: separate `TicketListSerializer` (no computed fields) + `TicketDetailSerializer` (adds computed fields). Detail view gets one extra query; list view stays O(1).
+- [[drf-put-bypass-vulnerability]] — **PATTERN.** DRF's `UpdateModelMixin` enables both PATCH and PUT by default. If viewset only overrides `partial_update`, PUT still works via default DRF `update()` — bypassing all guards (transition checks, `clean()`, validations). Fix: `http_method_names = ['patch', 'head', 'options']`.
+- [[manual-confirmation-audit-trail]] — **PATTERN.** When staff manually confirm external actions (OTAs, operators), record WHO + WHEN. Anti-pattern: transient flag that bypasses guard but disappears (zero audit trail). Pattern: persist `confirmed_at/by` fields + explicit UI checkbox + transient flag for guard only.
+- [[guest-chat-token-security]] — **PATTERN.** Guest support chat tokens: email → OTP → token. Vulnerability: if endpoint hands out tokens for existing conversations without OTP, anyone reads any guest's chat. Fix: return 403 `OTP_REQUIRED` when existing open/pending conv found. Authenticated path unaffected.
 
 ## Knowledge — SEO/AEO
 

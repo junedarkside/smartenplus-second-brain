@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #210 — 2026-07-02
+
+**Achieved:**
+- ✅ Command-centre Direct Requests tab cleanup (`ce873f9`): removed dead Emergency + Admin Initiated filter chips, blank flag column, unused `WarningIcon` import.
+- ✅ Age → SLA countdown transform: `slaCountdown()` + `pickDeadline()` helpers; color-coded deadline countdown in Age + Stage chip columns.
+- ✅ 3-agent gap audit (BE/FE/Integration) → 7 CRITICAL + 9 HIGH gaps → `01-projects/command-centre-gap-audit.md`.
+
+---
+
 **Session #209 (2026-07-02):**
 - ✅ Fixed Celery unregistered task error: `cs/tasks.py:61` name mismatch → `name='cs.tasks.sync_ota_bookings'`
 - ✅ Fixed Celery broker retry deprecation warning: `CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True`

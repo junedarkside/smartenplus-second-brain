@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-02] session-end #211 | command-centre gap fixes: H8 (resolution_note OTA customer), H9 (latest_ota_event_at detail serializer), C7 (customer queryset booking ownership), C1 (PUT blocked + read_only_fields), C3 (OTP gate 403), C6 (OTA confirm checkbox + audit trail). 6/7 tasks done, H1 deferred (UUID unique). Backend `develop` `4690fcb` · admin `develop` `1aea2e4`. 5 knowledge atoms extracted: serializer N+1 pattern, PUT bypass, guest token security, audit trail pattern, multi-repo audit methodology.
+
 ## [2026-07-02] session #210 | admin command-centre Direct Requests cleanup (ce873f9) + 3-agent gap audit → 7 CRITICAL (SLA dead, PUT bypass, guest-token leak, no email backend, resend sends nothing, OTA gate bypass, admin tickets invisible). → [[command-centre-gap-audit]]
 
 ## [2026-07-02] session #209 | Celery fix: task name mismatch (cs.sync_ota_bookings→cs.tasks.sync_ota_bookings) + broker retry deprecation warning — merged → develop `85a4850`

@@ -4,29 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-02 (session #210)
+**Updated:** 2026-07-02 (session #211)
 
-**Achieved this session (#210):**
-- ✅ **Command-centre Direct Requests tab cleanup** (admin-dashboard `ce873f9`): removed dead Emergency + Admin Initiated filter chips (backend never filtered these params), removed blank emergency-flag column (`is_emergency` OTA-only, never set on direct tickets), removed unused `WarningIcon` import.
-- ✅ **Age → SLA countdown transform**: added `slaCountdown()` + `pickDeadline()` helpers; Age column now shows color-coded deadline countdown (green "Xh Ym left" / red bold "OVERDUE") using deadline fields already in API payload; falls back to raw age when deadlines null.
-- ✅ **Stage chip → deadline-aware**: Stage chip now appends `· Xh Ym left` or `· OVERDUE` for current stage deadline; turns red on breach.
-- ✅ **3-agent gap audit** (BE/FE/Integration) of full Booking Command Centre: found 7 CRITICAL + 9 HIGH gaps. Report → `01-projects/command-centre-gap-audit.md` (indexed + logged). Top finding: **SLA machinery 100% dead** (`calculate_sla_deadlines()` zero callers) — means today's SLA UI falls back to raw age until backend wired.
-- ✅ Branch `fix/command-centre-direct-requests-cleanup` (`ce873f9`) → merged develop + pushed.
+**Achieved this session (#211):**
+- ✅ **Gap audit review + triage**: reviewed all 16 issues from #210 audit, cut to 7 real tasks, deferred email/SLA/concurrency (no user-facing promises broken).
+- ✅ **H8**: `resolution_note` exposed to OTA customer in `OtaTripView` — terminal statuses only (won't leak draft mid-workflow).
+- ✅ **H9**: `TicketDetailSerializer` adds `latest_ota_event_at` from real `OtaBookingEvent` query; list views keep `TicketSerializer` (no N+1). Admin "No Supabase events yet" now shows real data.
+- ✅ **C7**: `CustomerTicketViewSet` filter changed from `created_by=user` → booking ownership — admin-initiated tickets now visible to customer.
+- ✅ **C1**: PUT blocked on `TicketViewSet` + `RequestStatusViewSet` via `http_method_names`; workflow fields marked `read_only_fields` in serializer.
+- ✅ **C3**: `ConversationCreateView` returns 403 `OTP_REQUIRED` when existing open/pending conversation found for guest email — no free token without OTP.
+- ✅ **C6**: Explicit OTA confirm checkbox in admin resolve dialog (replaces hidden always-true flag); `ota_manually_confirmed_at/by` persisted to DB; migration `0010` generated.
+- Branches: `fix/command-centre-gaps-1` + `fix/command-centre-gaps-2` → merged develop (BE + admin).
 
-**Workspace (#210):**
-- vault: master — uncommitted (gap audit note + index + log)
-- backend: `develop` (`85a4850`) — clean
+**Workspace (#211):**
+- vault: master — uncommitted (this update)
+- backend: `develop` (`4690fcb`) — clean
 - frontend: `develop` (`50fb201e`) — clean
-- admin-dashboard: `develop` (`ce873f9`) — clean
+- admin-dashboard: `develop` (`1aea2e4`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **SLA backend wiring** (CRITICAL C2 from gap audit): call `calculate_sla_deadlines()` in all 4 ticket-creation paths (`CustomerTicketViewSet.create`, `OtaChangeRequestView`, `AdminOtaTicketCreateView`, `BookingItemTicketCreateView`) + advance `resolution_stage` on status transitions in `RequestStatusViewSet` — this makes today's SLA countdown UI actually show real times.
-2. **Security triad** (gap audit priority order): C3 guest-token-no-OTP (`ConversationCreateView`) → C1 PUT bypass (`RequestStatusViewSet` `http_method_names=['patch']` + serializer `read_only_fields`) → C6 OTA resolve gate (persist `ota_manually_confirmed_at/by`, FE explicit checkbox).
-3. **Email foundation** (C4): configure SES-backed `EMAIL_BACKEND` in settings — unblocks resolution emails, admin-initiated emails, emergency notify, SLA breach alerts.
-4. **Prod deploy** — develop→main all 3 repos + BE migrations + Celery beat (still pending from #209).
+1. **Prod deploy** — develop→main all 3 repos + run BE migration `0010` (`ota_manually_confirmed_at/by`) + Celery beat (`sync_ota_bookings` 15min + `check_sla_breaches`).
+2. **Remaining gaps deferred** — C4 email (SES backend), H2 concurrency, H3 race, H4 notify, H5 manifest — revisit when email promised to users.
+3. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
 
-_(Session #209 archived → `07-logs/session-history.md`.)_
+_(Session #210 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -55,7 +57,7 @@ _(Session #209 archived → `07-logs/session-history.md`.)_
 |---|-------|--------|-------|
 | **DIRECT-BOOKINGS-TAB** | Command-centre 3rd tab "Direct Bookings" — notify + admin-initiated request for direct bookings (parity w/ OTA tab). **BUILT (#205) + customer-display fix (#206)** on 3 branches, **UNCOMMITTED**: BE `feat/cs-direct-bookings-tab` (list+ticket endpoints+routes+8 tests + `orders/serializers.py` notifications fix), admin `feat/admin-direct-bookings-tab` (csApi hooks + `NotifyDialog.jsx` + `DirectBookingsTab`), FE `feat/fe-m1-info-update-notice` (banner moved to top + design-system card width). Column "Service" (`contract_name`). Customer page now shows sent notifications. Decision report [[command-centre-direct-notify-redesign]]. | **REVIEW + MERGE develop → manual smoke** | [[command-centre-direct-notify-redesign]] · [[direct-booking-notify-plan]] · [[booking-item-serializer-name-collision]] |
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |
-| **CS-GUEST-EMAIL-GATE** | Guest can type any email before OTP — no verification on conv creation. Risk LOW now (no booking data shown). MUST add OTP gate before Phase 4 OTA data shown to CS agents. | **OPEN — Phase 4 prereq** | `cs/views.py` `ConversationCreateView` |
+| **CS-GUEST-EMAIL-GATE** | ✅ **FIXED #211** — `ConversationCreateView` now returns 403 `OTP_REQUIRED` when existing open/pending conv found for guest email. No free token without OTP. Merged → develop `4690fcb`. | **CLOSED** | `cs/views.py` `ConversationCreateView` |
 | **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203). **FE-M1 InfoUpdateNotice BUILT (#204)** — `feat/fe-m1-info-update-notice`. **Admin Phase 2 BUILT (#204)** — `feat/admin-phase2-command-centre`. **29/29 BE unit tests pass.** **Remaining:** (1) merge 3 branches → develop, (2) E2E manual test, (3) Admin Phase 3, (4) develop→main deploy. | **MERGE + TEST NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
@@ -65,7 +67,7 @@ _(Session #209 archived → `07-logs/session-history.md`.)_
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
 | **CROSS-SELL-BD-INVENTORY** | BD creates Koh Lipe inventory to activate cross-sell. Needs: return route Koh Lipe→Hat Yai Airport, DAY_TOUR + SPA_WELLNESS contracts at Koh Lipe. All 4 FE surfaces live 2026-06-13. Sole open eng item: multi-item post-booking (`bookingContext.js:33`, Sprint 2). | BD action | [[cross-sell-integration-status-2026-06-13]] |
-| **ADMIN-CS-CENTRALIZATION** | **Phase 1 + Phase 4 SHIPPED → develop `69bde06` (#186)**. **Phase 2 SHIPPED (#210 `ce873f9`)** — Direct Requests UI cleanup: dead Emergency/AdminInitiated chips removed, blank flag column removed, Age→SLA countdown (color-coded, deadline-aware), Stage→deadline chip. SLA UI falls back to raw age until CRITICAL C2 (SLA backend wiring) fixed. **Phase 3 pending** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`. | **Phase 2 merged develop · Phase 3 pending · SLA backend wiring CRITICAL** | [[admin-dashboard-cs-centralization-plan]] · [[cs-centralization-gap-report-2026-06-27]] · [[command-centre-gap-audit]] |
+| **ADMIN-CS-CENTRALIZATION** | **Phase 1 + Phase 4 SHIPPED → develop `69bde06` (#186)**. **Phase 2 SHIPPED (`ce873f9`)** — UI cleanup + SLA countdown. **Gap fixes SHIPPED (#211)** — H8/H9/C7/C1/C3/C6 all merged develop. **Phase 3 pending** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`. | **Phase 3 pending · prod deploy pending** | [[admin-dashboard-cs-centralization-plan]] · [[command-centre-gap-audit]] |
 | **CS-BE-GAPS** | ✅ **All 5 gaps closed + merged → develop `424f72a` (#186)** incl. resolve-block guard wired to API + emergency path + field-only PATCH. magic_token+supabase_row_id, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 33 gap tests. **🟡 Remaining:** BE-B1 (add `magic_token_generated_at`/`auto_send_magic_link`/`is_magic_link_valid` — no link expiry), BE-B3 (resend doesn't regen token / send SES). | **on develop — deploy + 🟡 remaining** | [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-FE-OTA-GAPS** | ✅ **RESOLVED + fully → develop `4c0df60` (#186)** — FE-B1..B5 + stranded FE-B3 `OtaRequestCard` delete + `/my-trip` conditional-poll (parity w/ FE-B4). All FE CS work on develop. **Open follow-ups (non-blocking):** (a) no RTL/e2e tests; (b) hard-coded EN strings in `TicketStatusBanner` + `/my-trip` — no i18n; (c) no analytics events; (d) a11y gaps (SLAProgress opacity-only, status pill lacks `role="status"`/`aria-live`, emergency lacks `role="alert"`); (e) `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` at repo root → move to `docs/features/`. | **RESOLVED · on develop** | [[cs-centralization-gap-report-2026-06-27]] |
 | **PRODUCTS-LIVE-CATALOG-AUDIT** | **PHASE 1 FINAL 2026-06-28 · Public API Snapshot.** 1224 contracts · 176 stations · 7/10 service categories empty (TRANSFER · MULTI_DAY_TOUR · EVENT_TICKET · ATTRACTION_TICKET · FOOD_DINING · ACCOMMODATION · OTHER). Only 6 charter routes live (4 unique — Chiang Mai + Khao Lak only). SPA_WELLNESS = 100% Salisa Resort (single-operator risk). DAY_TOUR northern bias (5/5 ops in Chiang Rai/Chiang Mai/Hat Yai; Andaman islands absent). **10 BD gaps logged** (`business-development/products-live-catalog/gap-inventory.md`): gap-001 charter routes near-zero · gap-002 transfer empty · gap-003 MULTI_DAY_TOUR empty [Experiences lens 100% uncovered] · gap-004/005/006/007/010 service_categories empty · gap-008 day-tour geographic skew · gap-009 SPA concentration risk. **Django shell deferred (Phase 1.5)** — API filters `?is_actived=false`/`?end_date__gte=` silently ignored, no station FK IDs exposed via public API. **Next:** Phase 2 = `grill` skill × 10 gaps → BD-ready question docs. | **PHASE 1 FINAL · Phase 2 next** | [[products-live-catalog-audit]] · `business-development/products-live-catalog/snapshots-2026-06-28.md` |
