@@ -4,16 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-02 (session #208)
+**Updated:** 2026-07-02 (session #209)
 
-**Achieved this session (#208):**
-- ✅ **Fixed InfoUpdateNotice desktop width** (`BookingDetailMain.js:210`): added `max-w-[1200px] mx-auto w-full` to banner mount wrapper → banner now self-contained at 1200px centered, matching BookingDetail/ChangeRequestsSection. Branch `fix/info-update-notice-banner-width` (`f400585f`) merged → develop.
-- ✅ **Fixed OTA /my-trip banner gap** (`pages/my-trip/index.js:238`): added `mt-4` to InfoUpdateNotice wrapper → consistent with all sibling sections (Next Steps, ticket banners, OtaRequestForm all use `mt-4`). Branch `fix/ota-trip-update-notice-gap` (`50fb201e`) merged → develop.
+**Achieved this session (#209):**
+- ✅ **Fixed Celery unregistered task error**: `cs/tasks.py:61` `name='cs.sync_ota_bookings'` → `name='cs.tasks.sync_ota_bookings'` (mismatch with beat schedule `cs.tasks.sync_ota_bookings` in `celery.py:59`). Beat fires every 15min — was discarded silently.
+- ✅ **Fixed Celery broker retry deprecation warning**: added `CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True` to `settings.py:557`. Silences `CPendingDeprecationWarning` ahead of Celery 6.0.
+- Branch `fix/celery-task-name-broker-retry` (`85a4850`) → merged develop + pushed.
 
-**Workspace (#208):**
-- vault: master (`8f4a465`) — clean
-- backend: `develop` (`757bc90`) — clean
-- frontend: `develop` (`50fb201e`) — clean ✅ no outstanding banner bugs
+**Workspace (#209):**
+- vault: master — clean (this commit)
+- backend: `develop` (`85a4850`) — clean
+- frontend: `develop` (`50fb201e`) — clean
 - admin-dashboard: `develop` (`465226f`) — clean
 - content: master (`3756e5b`) — clean
 
@@ -21,9 +22,9 @@
 1. **Manual UI smoke** — admin `:3001` 3rd tab Notify/Create Request; customer `:3000` banner `/bookings/<slug>` + `/my-trip` OTA gap. Regression check OTA tab.
 2. **Retrofit `NotifyDialog`** into OTA tab + `/bookings/[slug]` (component proven, now safe)
 3. **Bug:** `TicketViewSet.get_queryset` (`tickets/views.py:122-143`) ignores `admin_initiated`/`is_emergency` query params — Direct Requests tab chips client-side only
-4. **Prod deploy** — develop→main all 3 repos + BE migrations + Celery beat (after smoke)
+4. **Prod deploy** — develop→main all 3 repos + BE migrations + Celery beat (after smoke). Celery now fixed — safe to deploy.
 
-_(Session #207 archived → `07-logs/session-history.md`.)_
+_(Session #208 archived → `07-logs/session-history.md`.)_
 
 ---
 

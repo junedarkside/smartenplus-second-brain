@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-02] session #209 | Celery fix: task name mismatch (cs.sync_ota_bookings→cs.tasks.sync_ota_bookings) + broker retry deprecation warning — merged → develop `85a4850`
+
 ## [2026-07-02] session #208 | InfoUpdateNotice width fix (BookingDetailMain desktop 1200px centered) + OTA /my-trip gap fix (mt-4) — both merged → develop `50fb201e`
 
 ## [2026-07-01] session #204 | FE-M1 InfoUpdateNotice built + BE TripNotification API (29/29 tests) + Admin Phase 2 filters/columns — all 3 feature branches ready → merge develop

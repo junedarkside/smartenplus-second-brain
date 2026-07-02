@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #208 — 2026-07-02
+
+**Achieved:**
+- ✅ Fixed Celery `sync_ota_bookings` "unregistered task" error: `cs/tasks.py:61` `name='cs.sync_ota_bookings'` → `name='cs.tasks.sync_ota_bookings'` (mismatch with beat schedule entry in `celery.py:59`).
+- ✅ Fixed `CPendingDeprecationWarning` broker retry: added `CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True` to `settings.py`. Branch `fix/celery-task-name-broker-retry` (`85a4850`) → merged develop.
+
+**Workspace:** backend `develop` (`85a4850`) · frontend `develop` (`50fb201e`) · admin `develop` (`465226f`) · content `master` (`3756e5b`) — all clean. Vault committed this session.
+
+---
+
 ## Session #206 — 2026-07-01
 
 **Achieved:**
