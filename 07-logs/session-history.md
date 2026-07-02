@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #212 — 2026-07-02
+
+**Achieved:**
+- ✅ Deleted 19 TEST- OTA booking rows (24 cascade) from dev BE — surgical `booking_id__startswith='TEST-'` filter, 565 real rows intact.
+- ✅ OTA bookings filter/search/pagination shipped (BE + admin-dashboard): BE server-side filters + `{count, results}` response (`f393a98` → develop), admin debounced search + dropdowns + DateRangeFilter + TablePagination (`c68fbf3` → develop).
+- ✅ Fixed runtime crash: `formatDate` named export imported as default → `{ formatDate }`.
+
+---
+
 ## Session #211 — 2026-07-02
 
 **Achieved:**

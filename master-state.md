@@ -4,29 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-02 (session #212)
+**Updated:** 2026-07-03 (session #213)
 
-**Achieved this session (#212):**
-- ✅ Deleted 19 TEST- OTA booking rows (24 cascade) from dev BE — surgical `booking_id__startswith='TEST-'` filter, 565 real rows intact.
-- ✅ OTA bookings filter/search/pagination shipped (BE + admin-dashboard):
-  - BE `cs/views.py`: server-side `date_from`/`date_to`/`source`/`status`/`search` (Q OR) + `page`/`page_size` → `{count, results}` response. Ascending `booking_date`. Branch `feat/ota-bookings-filter-api` (`f393a98`) → merged develop.
-  - admin `csApi.js` + `command-centre/index.js`: debounced search (500ms), source/status dropdowns, DateRangeFilter (default today-onwards), TablePagination (25/50/100). Branch `feat/ota-bookings-filter-ui` (`c68fbf3`) → merged develop.
-  - 3-agent team researched "today-default + history browsable" pattern → FE owns default, BE stays unfiltered.
-- ✅ Fixed runtime crash: `formatDate` named export imported as default → `{ formatDate }`.
+**Achieved this session (#213):**
+- 🔄 OTA magic link email send — **partially complete**:
+  - BE: `OtaResendMagicLinkView` now calls `send_html_email()` with `ota_trip_link_email` template. Added null email guard (400), exception wrapping, `email_sent: bool` in response, `magic_link_last_sent_at` tracking. Branch `fix/ota-resend-email-send` (`3873806`) — **NOT merged to develop yet**.
+  - Admin: `handleResendEmail` captures `trip_link` from response, shows inline copyable link + "Send Trip Link" label. Branch `fix/ota-resend-email-ui` (`517a62c`) — **NOT merged to develop yet**.
+  - Email template `bookings/emails/ota_trip_link_email.html` created (black/white, table layout, VML CTA fallback).
+  - Migration `0009_add_magic_link_last_sent_at` applied to dev DB.
+  - SES send verified live: `june_pinkfloyd@hotmail.com` received email (`msg_id=0101019f23dcaf8a`).
+- ⚠️ **Remaining gap**: `trip_link` in dev email points to `http://localhost:3000` — `FRONTEND_URL` env var needs to be set to `https://www.smartenplus.co.th` in prod `.env`.
 
-**Workspace (#212):**
+**Workspace (#213):**
 - vault: master — uncommitted (this update)
-- backend: `develop` (`f393a98`) — clean
+- backend: `fix/ota-resend-email-send` (`3873806`) — clean
 - frontend: `develop` (`50fb201e`) — clean
-- admin-dashboard: `develop` (`c68fbf3`) — clean
+- admin-dashboard: `fix/ota-resend-email-ui` (`517a62c`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Prod deploy** — develop→main all 3 repos + run BE migration `0010` (`ota_manually_confirmed_at/by`) + Celery beat (`sync_ota_bookings` 15min + `check_sla_breaches`).
-2. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
-3. **Remaining gaps deferred** — C4 email (SES backend), H2 concurrency, H3 race, H4 notify, H5 manifest.
+1. **Merge email branches** — `fix/ota-resend-email-send` → develop (BE) + `fix/ota-resend-email-ui` → develop (admin). Run migration `0009` on prod.
+2. **Verify `FRONTEND_URL`** — confirm prod BE `.env` has `FRONTEND_URL=https://www.smartenplus.co.th` (trip_link in email was localhost in dev).
+3. **Prod deploy** — develop→main all 3 repos + run BE migrations `0009`+`0010` + Celery beat.
+4. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` still pending.
 
-_(Session #211 archived → `07-logs/session-history.md`.)_
+_(Session #212 archived → `07-logs/session-history.md`.)_
 
 ---
 
