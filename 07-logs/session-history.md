@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #216 — 2026-07-03
+
+**Achieved:**
+- ✅ Merged admin `fix/ota-resend-email-ui` → develop (`8746b41`) — `trip_link` inline after OTA resend, silent email guard fixed
+- ✅ Deployed all 3 repos develop→main (prod): frontend `50fb201e` · backend `647f3b5` · admin `8746b41`
+- ✅ Closed CS-CENTRALIZATION-DEPLOY + OTA-FLOW-BUGS + OTA-RESEND-EMAIL
+- ✅ Discovered + documented OTA Auto-Sync toggle (`pages/dashboard/settings/settings.js:66-91`) — vault `63c8ae3`
+
+---
+
 ## Session #215 — 2026-07-03
 
 **Achieved:**

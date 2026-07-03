@@ -4,14 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-03 (session #216)
+**Updated:** 2026-07-03 (session #217)
 
-**Achieved this session (#216):**
-- ✅ Merged admin `fix/ota-resend-email-ui` → develop (`8746b41`) — `trip_link` shows inline after OTA resend, silent email guard fixed
-- ✅ Deployed all 3 repos develop→main (prod): frontend `50fb201e` · backend `647f3b5` · admin `8746b41`
-- ✅ Closed CS-CENTRALIZATION-DEPLOY + OTA-FLOW-BUGS + OTA-RESEND-EMAIL (all shipped to prod)
+**Achieved this session (#217):**
+- ✅ Confirmed OTA Auto-Sync kill-switch already built — `pages/dashboard/settings/settings.js:66-91`. Toggle in Admin → Settings → OTA Auto-Sync. BE gate: `cs/tasks.py:75` `FeatureFlag(key='ota_sync')`. Vault documented `63c8ae3`.
+- ✅ Celery beat schedule confirmed: `crontab(minute='*/15')` in `Smartenplus/celery.py:59`. Disable via flag = task no-ops within next 15-min cycle.
 
-**Workspace (#216):**
+**Workspace (#217):**
 - vault: master — uncommitted (this update)
 - backend: `main` (`647f3b5`) — clean
 - frontend: `main` (`50fb201e`) — clean
@@ -23,7 +22,7 @@
 2. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted on BE/admin/FE; review + merge → develop
 3. **BE-B1** — add `magic_token_generated_at` / `auto_send_magic_link` / `is_magic_link_valid` (link expiry)
 
-_(Sessions #215 archived → `07-logs/session-history.md`.)_
+_(Sessions #216 archived → `07-logs/session-history.md`.)_
 
 ---
 
