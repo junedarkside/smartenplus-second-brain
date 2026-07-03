@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-03] session-end #216 | Merged admin fix/ota-resend-email-ui → develop (8746b41). Deployed all 3 repos develop→main prod. Closed CS-CENTRALIZATION-DEPLOY + OTA-FLOW-BUGS + OTA-RESEND-EMAIL.
+
 ## [2026-07-03] session-end #215 | Fix OTA Send Trip Link never emailing — wired send_html_email into OtaResendMagicLinkView, migration 0009, template; 647f3b5 merged develop. SES confirmed. Hotmail inbox miss = junk filter.
 
 ## [2026-07-03] session-end #214 | Fix traveling_date JSON serialize crash in booking dispatch — orders/services.py 2 lines, commit 61c10f2 merged develop.

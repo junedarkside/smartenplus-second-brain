@@ -4,25 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-03 (session #215)
+**Updated:** 2026-07-03 (session #216)
 
-**Achieved this session (#215):**
-- ✅ Fixed OTA "Send Trip Link" never sending email — `OtaResendMagicLinkView` on `develop` was generating token + returning 200 but never calling `send_html_email`. Applied fix directly to `develop` (skipped stale branch merge): wired `send_html_email()`, null guard on `booking.email`, `magic_link_last_sent_at` tracking, `email_sent: bool` in response. Added `ota_trip_link_email.html` template + migration `0009`. Committed `5f452e6` on `fix/ota-resend-email-send-v2` → merged → develop `647f3b5`. SES delivery to hotmail confirmed (MessageId logged). Root cause of inbox miss: Hotmail junk filter (SES send identical to booking confirmation path).
+**Achieved this session (#216):**
+- ✅ Merged admin `fix/ota-resend-email-ui` → develop (`8746b41`) — `trip_link` shows inline after OTA resend, silent email guard fixed
+- ✅ Deployed all 3 repos develop→main (prod): frontend `50fb201e` · backend `647f3b5` · admin `8746b41`
+- ✅ Closed CS-CENTRALIZATION-DEPLOY + OTA-FLOW-BUGS + OTA-RESEND-EMAIL (all shipped to prod)
 
-**Workspace (#215):**
+**Workspace (#216):**
 - vault: master — uncommitted (this update)
-- backend: `develop` (`647f3b5`) — clean
-- frontend: `develop` (`50fb201e`) — clean
-- admin-dashboard: `fix/ota-resend-email-ui` (`517a62c`) — clean
+- backend: `main` (`647f3b5`) — clean
+- frontend: `main` (`50fb201e`) — clean
+- admin-dashboard: `main` (`8746b41`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Run migration `0009` on prod** — `python manage.py migrate cs` (adds `magic_link_last_sent_at` to `CsOtaBooking`)
-2. **Merge admin `fix/ota-resend-email-ui` → develop** — shows `trip_link` inline after send; already committed `517a62c`
-3. **Prod deploy** — develop→main all 3 repos + run BE migrations `0009`+`0010` + Celery beat
-4. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js` pending
+1. **Admin Phase 3** — build `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`
+2. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted on BE/admin/FE; review + merge → develop
+3. **BE-B1** — add `magic_token_generated_at` / `auto_send_magic_link` / `is_magic_link_valid` (link expiry)
 
-_(Sessions #213 + #214 archived → `07-logs/session-history.md`.)_
+_(Sessions #215 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -37,8 +38,8 @@ _(Sessions #213 + #214 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **OTA-FLOW-BUGS** | ✅ **MERGED → develop `413eb41e`.** 3 commits shipped. 3 commits: `c96b1724` (COLORS crash + image guard) · `09e3f955` (polling anti-pattern) · `0657c6fb` (TDZ crash). Merge → develop first, then include in OTA deploy. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix → full token). | `components/bookings/TicketStatusBanner.js`, `BookingDetail/TripRoute.js`, `ChangeRequestsSection.js`, `pages/my-trip/index.js` · [[ota-flow-e2e-scan-2026-06-30]] |
-| **CS-CENTRALIZATION-DEPLOY** | ⏳ **ALL FIXES + MANUAL TESTS DONE (#203). BE `6cb2328` · FE `5617b137` · admin `0e5727b`.** Manual tests: A1/A1b/A2/A3/B/C/D/F/A9 ALL PASS. E deferred to prod. Next: develop→main deploy all 3 repos + run BE migrations `0005`–`0009` + schedule Celery beat `sync_ota_bookings` (15min) + `check_sla_breaches`. | `tickets/apps.py`, `Smartenplus/celery.py`, `cs/views.py` · [[cs-centralization-audit-2026-06-29]] |
+| **OTA-FLOW-BUGS** | ✅ **DEPLOYED TO PROD 2026-07-03** — 3 commits: `c96b1724` · `09e3f955` · `0657c6fb`. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix). → closed-items.md | — |
+| **CS-CENTRALIZATION-DEPLOY** | ✅ **DEPLOYED TO PROD 2026-07-03** — BE `6cb2328` · FE `5617b137` · admin `0e5727b`. All manual tests PASS. Celery beat scheduled. → closed-items.md | — |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
 | **CS-CHAT-PERF** | ✅ **CODE DEPLOYED 2026-06-26**. ⚠️ Widget still hidden — must seed `cs_chat=True` FeatureFlag row in prod DB via Django admin or SQL to activate FAB. | `hooks/useChatPolling.js`, `hooks/useFeatureFlag.js`, `cs/views.py`, `cs/models.py` · [[cs-guest-storm-investigation]] |
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |

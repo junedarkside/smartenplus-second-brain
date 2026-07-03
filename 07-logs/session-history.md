@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #215 — 2026-07-03
+
+**Achieved:**
+- ✅ Fixed OTA "Send Trip Link" never sending email — `OtaResendMagicLinkView` on `develop` was generating token + returning 200 but never calling `send_html_email`. Applied fix directly to `develop` (skipped stale branch merge): wired `send_html_email()`, null guard on `booking.email`, `magic_link_last_sent_at` tracking, `email_sent: bool` in response. Added `ota_trip_link_email.html` template + migration `0009`. Committed `5f452e6` on `fix/ota-resend-email-send-v2` → merged → develop `647f3b5`. SES delivery to hotmail confirmed (MessageId logged). Root cause of inbox miss: Hotmail junk filter.
+
+---
+
 ## Session #214 — 2026-07-03
 
 **Achieved:**

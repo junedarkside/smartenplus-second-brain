@@ -2,6 +2,14 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-07-03 (session #216)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **CS-CENTRALIZATION-DEPLOY** | session #216 | All manual tests done (#203). BE `6cb2328` · FE `5617b137` · admin `0e5727b`. Tests A1/A1b/A2/A3/B/C/D/F/A9 ALL PASS. Deployed develop→main all 3 repos. BE migrations `0005`–`0009` applied. |
+| **OTA-FLOW-BUGS** | session #216 | 3 commits shipped to develop (`c96b1724` COLORS crash+image guard · `09e3f955` polling anti-pattern · `0657c6fb` TDZ crash). Included in prod deploy → main all 3 repos `2026-07-03`. |
+| **OTA-RESEND-EMAIL** | session #216 | BE `OtaResendMagicLinkView` now calls `send_html_email()` + `magic_link_last_sent_at` tracking. Migration `0009`. Admin shows `trip_link` inline after send (`517a62c`). All deployed → main `2026-07-03`. |
+
 ## Closed — 2026-06-28 (session #184)
 
 | Item | Closed | What shipped |
