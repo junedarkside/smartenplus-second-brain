@@ -426,3 +426,5 @@ Manual-test-driven fixes shipped to develop. **FE** (`36aab76`): `TicketStatusBa
 ## [2026-07-01] session-end | merged 3 feature branches → develop (BE 757bc90, FE 98273c00, admin 465226f) + diagnosed InfoUpdateNotice desktop width bug (banner 1280 full-viewport vs BookingDetail 1200 centered; root cause: banner lacks self-contained max-w wrapper). NOT fixed — stopped per user. Fix next session: add max-w-[1200px] mx-auto w-full to banner mount.
 
 ## [2026-07-02] audit | command-centre gap audit (3-agent BE/FE/integration) — 7 CRITICAL + 9 HIGH. SLA machinery dead (zero callers), PUT state-machine bypass, guest-token no-OTP leak, no EMAIL_BACKEND, resend-link never sends, OTA gate auto-bypass, admin tickets invisible to customer. → [[command-centre-gap-audit]]
+
+## [2026-07-03] audit | SEO/AEO/GEO live-prod r12 round — 5-specialist audit. All r12 P1s confirmed fixed. Scores: SEO 9.1 · AEO 9.6 · GEO 9.0 · CWV 7.5 · SD 7.5. 15 new r13 findings (1 P1, 9 P2, 5 P3). → [[seo-aeo-geo-live-audit-2026-06-22/r12-live-prod-2026-07-03]]

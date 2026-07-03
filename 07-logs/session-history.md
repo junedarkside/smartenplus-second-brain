@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #217 — 2026-07-03
+
+**Achieved:**
+- ✅ Confirmed OTA Auto-Sync kill-switch built — `pages/dashboard/settings/settings.js:66-91`
+- ✅ Celery beat schedule confirmed — `crontab(minute='*/15')` in `Smartenplus/celery.py:59`
+
+---
+
 ## Session #216 — 2026-07-03
 
 **Achieved:**

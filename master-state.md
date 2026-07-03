@@ -4,25 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-03 (session #217)
+**Updated:** 2026-07-03 (session #218)
 
-**Achieved this session (#217):**
-- ✅ Confirmed OTA Auto-Sync kill-switch already built — `pages/dashboard/settings/settings.js:66-91`. Toggle in Admin → Settings → OTA Auto-Sync. BE gate: `cs/tasks.py:75` `FeatureFlag(key='ota_sync')`. Vault documented `63c8ae3`.
-- ✅ Celery beat schedule confirmed: `crontab(minute='*/15')` in `Smartenplus/celery.py:59`. Disable via flag = task no-ops within next 15-min cycle.
+**Achieved this session (#218):**
+- ✅ SEO/AEO/GEO r12 live-prod audit — 5-specialist team against `https://www.smartenplus.co.th`. All r12 P1s confirmed fixed. Scores: SEO 9.1 · AEO 9.6 · GEO 9.0 · CWV 7.5 · SD 7.5. Report: `seo/seo-aeo-geo-prod-2026-07-03.md`.
+- ✅ /grill on audit report — caught 4 AI specialist errors before they became bad fixes: CWV-3 wrong component (no hero Image on /activities), SD-NEW-2 wrong layer (seller.name is backend data), SD-NEW-4 not hardcoded (already dynamic), CWV-5 unsafe without cookie bypass. `/ref` + `/forum` sitemap exclusion also caught as wrong.
+- ✅ r13 fixes implemented + merged → develop `c2920a81` (8 files): TouristDestination schema + @id on destinations, BreadcrumbList on destinations, /activities LCP (first DayTripCard eager), false priority removed from DestinationsEditorialGrid, GEO-1 Service.name, OAI-SearchBot+DuckAssistant+YouBot in robots.txt, twitter.handle global, sitemap cleanup.
+- ✅ Vault r12 round note + index.md + log.md updated.
 
-**Workspace (#217):**
+**Workspace (#218):**
 - vault: master — uncommitted (this update)
 - backend: `main` (`647f3b5`) — clean
-- frontend: `main` (`50fb201e`) — clean
+- frontend: `develop` (`c2920a81`) — clean (fix/seo-r13 merged)
 - admin-dashboard: `main` (`8746b41`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **Admin Phase 3** — build `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`
-2. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted on BE/admin/FE; review + merge → develop
-3. **BE-B1** — add `magic_token_generated_at` / `auto_send_magic_link` / `is_magic_link_valid` (link expiry)
+1. **SEO r13 verify on prod** — deploy develop→main then re-audit next week. r13 remaining open: `/about` TravelAgency schema parity (priceRange, openingHours, geo, contactPoint missing vs homepage), `/about` missing BreadcrumbList+WebPage, CWV-5 CF HTML cache (needs cookie bypass plan first), SD-NEW-2/4 ops (operator_name + contract end_date in Django admin).
+2. **Admin Phase 3** — build `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`
+3. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted on BE/admin/FE; review + merge → develop
 
-_(Sessions #216 archived → `07-logs/session-history.md`.)_
+_(Sessions #217 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -56,7 +58,7 @@ _(Sessions #216 archived → `07-logs/session-history.md`.)_
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
-| **SEO-P1-BACKLOG** | r6-r12 all DONE + prod-verified. **r13 open:** `/about` TravelAgency schema parity — missing `priceRange`, `openingHours`, `contactPoint`, `geo`, `image`, `logo` vs homepage (P1); `/about` missing BreadcrumbList+WebPage (P2); `og:locale th_TH` alternate (P2). `/help/faqs` FAQPage still ops-blocked (WP/GraphQL). | **r13 open** | [[r9-live-prod-2026-06-26]] · [[r10-live-prod-2026-06-26]] |
+| **SEO-P1-BACKLOG** | r6-r13 code DONE. **r13 merged → develop `c2920a81`** — TouristDestination+@id+BreadcrumbList on destinations, /activities LCP, CWV-4, GEO-1, OAI-SearchBot, sitemap. **Pending prod deploy + next-week re-audit.** Post-r13 open: `/about` TravelAgency parity (priceRange/openingHours/geo/contactPoint missing), `/about` BreadcrumbList+WebPage, CWV-5 CF HTML cache (needs cookie bypass), SD-NEW-2/4 ops (Django admin data), `/help/faqs` FAQPage ops-blocked. | **Deploy develop→main, then re-audit next week** | [[seo-aeo-geo-live-audit-2026-06-22/r12-live-prod-2026-07-03]] |
 | **SEO-P2-FIXES** | twitter:image:alt (`_app.js` + `Seo.js`); og:locale policy unify; meta desc ≤155 chars; blog robots dup. From r6: help relative `og:image`→abs prefix (`pages/help/[...slug].js:89,109`); **lint** `structured-data-schema-patterns.md` item 7 `availableLanguage:["Thai","English"]` contradicts en-only policy → `["English"]`. `#15 og:url` CLOSED `0aa748c`. | OPEN — low | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js`, `03-knowledge/structured-data-schema-patterns.md` |
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |
