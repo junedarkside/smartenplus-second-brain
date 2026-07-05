@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #218 — 2026-07-03
+
+**Achieved:**
+- ✅ SEO/AEO/GEO r12 live-prod audit — 5-specialist team against `https://www.smartenplus.co.th`. All r12 P1s confirmed fixed. Scores: SEO 9.1 · AEO 9.6 · GEO 9.0 · CWV 7.5 · SD 7.5. Report: `seo/seo-aeo-geo-prod-2026-07-03.md`.
+- ✅ /grill on audit report — caught 4 AI specialist errors before they became bad fixes: CWV-3 wrong component (no hero Image on /activities), SD-NEW-2 wrong layer (seller.name is backend data), SD-NEW-4 not hardcoded (already dynamic), CWV-5 unsafe without cookie bypass. `/ref` + `/forum` sitemap exclusion also caught as wrong.
+- ✅ r13 fixes implemented + merged → develop `c2920a81` (8 files): TouristDestination schema + @id on destinations, BreadcrumbList on destinations, /activities LCP (first DayTripCard eager), false priority removed from DestinationsEditorialGrid, GEO-1 Service.name, OAI-SearchBot+DuckAssistant+YouBot in robots.txt, twitter.handle global, sitemap cleanup.
+- ✅ Vault r12 round note + index.md + log.md updated.
+
+**Workspace:** vault master · backend `main` (`647f3b5`) clean · frontend `develop` (`c2920a81`) clean · admin `main` (`8746b41`) clean · content master (`3756e5b`) clean.
+
 ## Session #217 — 2026-07-03
 
 **Achieved:**

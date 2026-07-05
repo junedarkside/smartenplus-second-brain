@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-05] session-end #219 | Chat→Supabase Realtime offload: prepared-path draft ADR + 7-phase migration plan + 23-task model-cost card (6 Haiku/14 Sonnet/3 Opus). GATED on >30 req/s trigger. Vault-only, commits 3515e62 + 8626e80. Next: SEO r13 prod deploy + re-audit.
+
 ## [2026-07-03] session-end #218 | r12 SEO audit (SEO 9.1 · AEO 9.6 · GEO 9.0 · CWV 7.5 · SD 7.5) + /grill caught 4 AI specialist errors + r13 9-item fix sprint merged → FE develop c2920a81. Next: deploy develop→main + re-audit next week.
 
 ## [2026-07-03] session-end #217 | Confirmed OTA Auto-Sync toggle built (settings.js:66-91, cs/tasks.py:75 FeatureFlag gate, 15-min Celery beat). Vault doc committed 63c8ae3.
