@@ -96,6 +96,7 @@ Sustained **concurrent customer widgets in the hundreds** — when widget pollin
 - Token fix is a standalone follow-up issue, doesn't block CS build.
 
 ## Related
+- [[cs-chat-supabase-offload]] — **prepared flip-path design (draft 2026-07-05)** for the trigger defined above: full decoupling to Supabase Realtime + batch archive sync. Pre-answers R1/R2/R3 for that architecture. This ADR stays accepted until the trigger fires.
 - [[cs-centralization-stack]] — superseded transport section
 - [[cs-centralization-doc-review]] — the 6 risks + polling-ceiling math
 - [[cs-api-contract]] — built on this decision
