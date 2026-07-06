@@ -64,6 +64,22 @@ Bonus: eliminates the **guest-storm failure mode** entirely ([[cs-guest-storm-in
 4. **Free-tier limits** — verify at activation time: concurrent Realtime connections, messages/month, Realtime rows-per-second on the current Supabase project (shared with OTA store [[supabase-ota-booking-store]]). If limits bind, chat gets its own project.
 5. **Vendor coupling** — chat availability now = Supabase availability. Mitigation: kill switch falls back to Django polling path (kept intact).
 
+## Free-tier limits verdict (added P1, 2026-07-05)
+
+Checked against supabase.com/pricing + supabase.com/docs/guides/realtime/limits:
+
+| Metric | Free tier | Pro tier |
+|---|---|---|
+| Concurrent peak connections | **200** | 500 |
+| Messages / month | **2M** | custom |
+| Messages / second (project-wide) | **100** | 500 |
+| Channel joins / second | 100 | 500 |
+
+Current CS chat load: tens of concurrent open widgets — safely under limits.
+Projected load at trigger (>30 req/s polling → cutover): hundreds of concurrent widgets → **hits the 200-connection cap**.
+
+**Decision: dedicated Supabase project for CS chat** before cutover activation. Do NOT share with the OTA store project ([[supabase-ota-booking-store]]). Provision the dedicated project at P6 (backfill + cutover), not before.
+
 ## Decision
 
 Adopt as the **prepared flip path**. No build now. At trigger: flip this ADR to `accepted`, add `supersedes` banner on the transport section of [[cs-architecture-decision]], execute [[chat-supabase-migration-plan]].

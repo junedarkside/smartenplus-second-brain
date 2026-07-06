@@ -4,29 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-05 (session #219)
+**Updated:** 2026-07-07 (session #220)
 
-**Achieved this session (#219):**
-- ✅ Chat→Supabase Realtime offload analyzed vs accepted polling ADR — user proposal (full decoupling + batch archive sync) is NOT rejected Option B; kills recorded R1/R2/R3 (single write path, Django-minted Supabase JWT + RLS). Eliminates guest-storm failure mode; WS terminates at Supabase, not the 256MB box.
-- ✅ Prepared-path draft ADR `04-decisions/cs-chat-supabase-offload.md` — polling ADR stays accepted; activates at its flip trigger (>~30 req/s sustained widget polling or committed staff-inbox build).
-- ✅ 7-phase migration plan `01-projects/chat-supabase-migration-plan.md` (schema+RLS → JWT mint → widget swap → admin-dashboard inbox → batch sync + manual admin trigger → backfill/cutover → flag rollback).
-- ✅ 23-task model-cost breakdown `01-projects/chat-supabase-impl-tasks.md` — 6 Haiku / 14 Sonnet / 3 Opus (Opus only: 2 security reviews + cutover go/no-go); one-phase-one-session discipline rules.
-- ✅ Vault commits pushed: `3515e62` (ADR + plan) + `8626e80` (task card). Document-only — zero code touched.
+**Achieved this session (#220):**
+- ✅ Chat→Supabase Realtime P1-P5 SHIPPED and verified — FE widget + admin-dashboard both send/receive <1s via Supabase Realtime. Django polling eliminated for chat. Curl test: `POST cs_messages` → HTTP 201.
+- ✅ Root cause fixed: `SUPABASE_JWT_SECRET` was wrong field (UUID placeholder, then `sb_secret_` new key). Correct value = **Legacy JWT Secret** from Dashboard → Settings → JWT Keys → Legacy JWT Secret tab → Reveal. Long base64 HS256 secret.
+- ✅ Supabase auth pattern fixed: `createClient` with `accessToken` callback (not `auth.setSession()` — GoTrue rejects Django JWTs). `setSupabaseToken()` + `supabase.realtime.setAuth()` pattern.
+- ✅ Sequence + INSERT grants applied: `GRANT USAGE, SELECT ON SEQUENCE public.cs_messages_id_seq TO authenticated` + `GRANT INSERT ON TABLE public.cs_messages TO authenticated`.
+- ✅ `upsert_cs_conversation()` in `SupabaseTokenView` ensures FK row exists before first message.
+- ✅ React StrictMode double-OTP fix: `useRef` guard in `ChatGuestForm.js`.
+- ✅ Vault updated: `chat-supabase-impl-tasks.md` P1-P4 marked done + critical gotchas section added.
+- ⚠️ **Prod Celery beat NOT yet registered** — must do manually in prod Django admin (see below).
 
-**Workspace (#219):**
-- vault: master (`8626e80`) — this update pending
-- backend: `main` (`647f3b5`) — clean
-- frontend: `main` (`c2920a81`) — clean
-- admin-dashboard: `main` (`8746b41`) — clean
+**Workspace (#220):**
+- vault: master — committed this session
+- backend: `fix/chat-send-supabase` (`0d143d2`) — clean
+- frontend: `develop` (`c0bd87ca`) — clean
+- admin-dashboard: `develop` (`5a948b0`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point (EXACT):**
-1. **SEO r13 verify on prod** — deploy develop→main then re-audit next week. r13 remaining open: `/about` TravelAgency schema parity (priceRange, openingHours, geo, contactPoint missing vs homepage), `/about` missing BreadcrumbList+WebPage, CWV-5 CF HTML cache (needs cookie bypass plan first), SD-NEW-2/4 ops (operator_name + contract end_date in Django admin).
-2. **Admin Phase 3** — build `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`
-3. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted on BE/admin/FE; review + merge → develop
-4. **CHAT-SUPABASE (gated)** — no action until trigger; when it fires, execute [[chat-supabase-impl-tasks]] phase-per-session.
+1. **PROD CELERY BEAT** — register `cs.tasks.sync_chat_messages` in prod Django admin (Periodic Tasks → Add → every 15 min). Without this messages never archive to Django. See [[chat-supabase-impl-tasks]] gotchas section.
+2. **CHAT P6** — GitHub Actions secrets + deploy.yml update. Checklist in [[chat-supabase-impl-tasks]] § P6 pre-deploy.
+3. **SEO r13 verify on prod** — deploy develop→main then re-audit. r13 remaining: `/about` TravelAgency parity, CWV-5 CF HTML cache, SD-NEW-2/4 ops.
+4. **Admin Phase 3** — `ota-booking-detail.js` + `OtaBookingTimeline.js` + `OtaBookingAdminPanel.js`
+5. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted on BE/admin/FE; review + merge → develop
 
-_(Session #218 archived → `07-logs/session-history.md`.)_
+_(Session #219 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -57,7 +61,7 @@ _(Session #218 archived → `07-logs/session-history.md`.)_
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |
 | **CS-GUEST-EMAIL-GATE** | ✅ **FIXED #211** — `ConversationCreateView` now returns 403 `OTP_REQUIRED` when existing open/pending conv found for guest email. No free token without OTP. Merged → develop `4690fcb`. | **CLOSED** | `cs/views.py` `ConversationCreateView` |
 | **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203). **FE-M1 InfoUpdateNotice BUILT (#204)** — `feat/fe-m1-info-update-notice`. **Admin Phase 2 BUILT (#204)** — `feat/admin-phase2-command-centre`. **29/29 BE unit tests pass.** **Remaining:** (1) merge 3 branches → develop, (2) E2E manual test, (3) Admin Phase 3, (4) develop→main deploy. | **MERGE + TEST NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
-| **CHAT-SUPABASE-OFFLOAD** | Chat→Supabase Realtime prepared path (#219) — **GATED**, no build. Activate at [[cs-architecture-decision]] flip trigger: sustained widget polling >~30 req/s (hundreds concurrent widgets) OR committed staff-inbox build. Then: flip ADR to accepted, execute [[chat-supabase-impl-tasks]] (23 tasks, 7 phases, model-cost mapped) per [[chat-supabase-migration-plan]]. | **GATED — watch trigger** | [[cs-chat-supabase-offload]] · [[chat-supabase-impl-tasks]] |
+| **CHAT-SUPABASE-OFFLOAD** | **P1-P5 SHIPPED 2026-07-07** — FE↔admin Realtime messaging live and verified. Both sides send/receive <1s. JWT secret fixed (Legacy HS256 from JWT Keys page). P6 pending: GitHub Actions secrets + deploy.yml update + prod Celery beat registration. **Prod beat required:** Django admin → Periodic Tasks → `cs.tasks.sync_chat_messages` every 15 min (DatabaseScheduler — NOT in code). P6 pre-deploy checklist in [[chat-supabase-impl-tasks]]. | **P6 NEXT — prod deploy** | [[cs-chat-supabase-offload]] · [[chat-supabase-impl-tasks]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
