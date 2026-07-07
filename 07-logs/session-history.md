@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #226 — 2026-07-08
+
+**Achieved:**
+- OTA realtime chat fully implemented + audit hardened → all 3 repos merged → develop.
+- BE: `ota_token` path in `ConversationCreateView` (type guard, booking validation, get-or-create), `ota_booking_id`/`ota_source` on `Conversation`, migration `0011`, serializer exposure. `47e1022`.
+- FE: `ChatWidget.js` OTA path, localStorage 23h TTL guard, leave/close cleanup. Audit fixes: type guard, TTL, stale key. Auth identity switch: 3 bugs (A/B/C) fixed → `cd6874d6`.
+- AD: OTA chip in ConversationList/Detail, CS inbox deep-link, command-centre Chat button, tab deep-link fix. `3d0b4a6`.
+- `python manage.py migrate` applied locally → `cs.0011` OK.
+
+---
+
 ## Session #224 — 2026-07-07
 
 **Achieved:**

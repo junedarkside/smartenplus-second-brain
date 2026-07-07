@@ -4,30 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-07 (session #225)
+**Updated:** 2026-07-08 (session #226)
 
-**Achieved this session (#225):**
-- CS realtime unread badge full fix — verified working end-to-end.
-- Root causes fixed: double GET (RTK cache key mismatch `undefined` vs `{ status: undefined }`), badge race (auto-select markRead), badge wipe (client-authoritative — removed destructive `invalidateTags` from `onEvent` + `markRead` in realtime mode patches cache directly).
-- Sidebar CS icon badge via Supabase payload (SideList global subscription, `updateQueryData` optimistic patch).
-- Inbox row pill + preview + "just now" timestamp update instantly from Supabase INSERT payload (no Django round-trip needed — Django offloaded by design).
-- `seenUnreadRef` mount-guard: badge stays visible until staff clicks; clears on auto-select and explicit click; auto-clears when new msg arrives while conv open.
-- CHAT-SUPABASE-OFFLOAD closed → `07-logs/closed-items.md`.
-- admin-dashboard `develop` → `9316997` (6 fix branches merged).
+**Achieved this session (#226):**
+- OTA realtime chat — implementation + 8 audit fixes → all 3 repos merged → develop (BE `47e1022`, FE `1868c557`, AD `3d0b4a6`)
+- Auth identity switch analysis: 6 scenarios mapped, 3 bugs found + all fixed → FE `cd6874d6`
+- `python manage.py migrate` applied → `cs.0011_add_ota_fields_to_conversation` OK
 
-**Workspace (#225):**
+**Workspace (#226):**
 - vault: master — updated this session
-- backend: `develop` (`f48f8a8`) — clean
-- frontend: `develop` (`c70a38b0`) — clean
-- admin-dashboard: `develop` (`9316997`) — clean
+- backend: `develop` (`47e1022`) — clean
+- frontend: `develop` (`cd6874d6`) — clean
+- admin-dashboard: `develop` (`3d0b4a6`) — clean
 - content: master (`3756e5b`) — clean
 
-**Resume point — next session: CHAT P6 PROD DEPLOY.**
-1. E2E manual test (T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md`) if not done.
-2. CHAT P6: develop→main for all 3 repos + GitHub Actions secrets + deploy.yml.
-3. Next major task: **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
+**Resume point — next session:**
+1. **CHAT P6 PROD DEPLOY** — E2E manual test (T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md`) then develop→main all 3 repos + server migrate if not already on prod.
+2. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -53,6 +48,8 @@ _(Sessions #221–#224 archived → `07-logs/session-history.md`.)_
 ### Active
 
 | # | Issue | Status | Where |
+|---|-------|--------|-------|
+| **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
 |---|-------|--------|-------|
 | **DIRECT-BOOKINGS-TAB** | Command-centre 3rd tab "Direct Bookings" — notify + admin-initiated request for direct bookings (parity w/ OTA tab). **BUILT (#205) + customer-display fix (#206)** on 3 branches, **UNCOMMITTED**: BE `feat/cs-direct-bookings-tab` (list+ticket endpoints+routes+8 tests + `orders/serializers.py` notifications fix), admin `feat/admin-direct-bookings-tab` (csApi hooks + `NotifyDialog.jsx` + `DirectBookingsTab`), FE `feat/fe-m1-info-update-notice` (banner moved to top + design-system card width). Column "Service" (`contract_name`). Customer page now shows sent notifications. Decision report [[command-centre-direct-notify-redesign]]. | **REVIEW + MERGE develop → manual smoke** | [[command-centre-direct-notify-redesign]] · [[direct-booking-notify-plan]] · [[booking-item-serializer-name-collision]] |
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |
