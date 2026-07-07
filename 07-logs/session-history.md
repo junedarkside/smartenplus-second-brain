@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #224 — 2026-07-07
+
+**Achieved:**
+- CHAT-409 resolved (carried from #223): staff/superuser token scope fix, debug logs reverted, stale `.next` cache cleared.
+- Guest chat UX: `ConversationLeaveView` (BE `694ae39`) — `POST /api/cs/conversations/<pk>/leave/`, guest+auth owner, sends Supabase system message, 8 tests pass.
+- "End conversation" button in `ChatPanel.js` — guest-only, below input row.
+- Login-while-chatting hard reset: `useEffect` on `session?.accessToken` in `ChatWidget.js` — null→token transition while guest conv open → `clearGuestEmail()` + RESET.
+- All merged → develop: BE `f48f8a8` · FE `c70a38b0`.
+
+---
+
 ## Session #223 — 2026-07-07
 
 **Achieved:**

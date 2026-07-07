@@ -4,33 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-07 (session #224)
+**Updated:** 2026-07-07 (session #225)
 
-**Achieved this session (#224):**
-- CHAT-409 resolved (carried from #223): staff/superuser token scope fix, debug logs reverted, stale `.next` cache cleared.
-- Guest chat UX: `ConversationLeaveView` (BE `694ae39`) — `POST /api/cs/conversations/<pk>/leave/`, guest+auth owner, sends Supabase system message, 8 tests pass.
-- "End conversation" button in `ChatPanel.js` — guest-only, below input row.
-- Login-while-chatting hard reset: `useEffect` on `session?.accessToken` in `ChatWidget.js` — null→token transition while guest conv open → `clearGuestEmail()` + RESET.
-- All merged → develop: BE `f48f8a8` · FE `c70a38b0`.
-- User to test browser E2E manually (deferred).
+**Achieved this session (#225):**
+- CS realtime unread badge full fix — verified working end-to-end.
+- Root causes fixed: double GET (RTK cache key mismatch `undefined` vs `{ status: undefined }`), badge race (auto-select markRead), badge wipe (client-authoritative — removed destructive `invalidateTags` from `onEvent` + `markRead` in realtime mode patches cache directly).
+- Sidebar CS icon badge via Supabase payload (SideList global subscription, `updateQueryData` optimistic patch).
+- Inbox row pill + preview + "just now" timestamp update instantly from Supabase INSERT payload (no Django round-trip needed — Django offloaded by design).
+- `seenUnreadRef` mount-guard: badge stays visible until staff clicks; clears on auto-select and explicit click; auto-clears when new msg arrives while conv open.
+- CHAT-SUPABASE-OFFLOAD closed → `07-logs/closed-items.md`.
+- admin-dashboard `develop` → `9316997` (6 fix branches merged).
 
-**Workspace (#224):**
+**Workspace (#225):**
 - vault: master — updated this session
 - backend: `develop` (`f48f8a8`) — clean
 - frontend: `develop` (`c70a38b0`) — clean
-- admin-dashboard: `develop` (`509927e`) — clean
+- admin-dashboard: `develop` (`9316997`) — clean
 - content: master (`3756e5b`) — clean
 
-**Resume point — next session: BROWSER E2E CONFIRM + DEPLOY PREP.**
-1. Browser confirm (user doing manually):
-   - Guest (incognito) → email+OTP → chat → "End conversation" → widget resets to bubble → FAB → email form again ✓
-   - Guest mid-chat → log in → widget auto-resets ✓
-   - Auth user (`junedarkside@gmail.com`) → chat → 5+ sends, no 409 ✓
-   - Admin dashboard staff realtime still works (`scope='staff'` sent by hooks) ✓
-2. Run T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md`.
-3. After PASS → CHAT P6: GitHub Actions secrets + deploy.yml update for prod deploy.
+**Resume point — next session: CHAT P6 PROD DEPLOY.**
+1. E2E manual test (T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md`) if not done.
+2. CHAT P6: develop→main for all 3 repos + GitHub Actions secrets + deploy.yml.
+3. Next major task: **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#223 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -61,7 +58,7 @@ _(Sessions #221–#223 archived → `07-logs/session-history.md`.)_
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |
 | **CS-GUEST-EMAIL-GATE** | ✅ **FIXED #211** — `ConversationCreateView` now returns 403 `OTP_REQUIRED` when existing open/pending conv found for guest email. No free token without OTP. Merged → develop `4690fcb`. | **CLOSED** | `cs/views.py` `ConversationCreateView` |
 | **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203). **FE-M1 InfoUpdateNotice BUILT (#204)** — `feat/fe-m1-info-update-notice`. **Admin Phase 2 BUILT (#204)** — `feat/admin-phase2-command-centre`. **29/29 BE unit tests pass.** **Remaining:** (1) merge 3 branches → develop, (2) E2E manual test, (3) Admin Phase 3, (4) develop→main deploy. | **MERGE + TEST NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
-| **CHAT-SUPABASE-OFFLOAD** | **P1-P5 + deep-review 18 bugs SHIPPED 2026-07-07** — 3-repo fix merged → develop. FE↔admin Realtime messaging live. Zero BE hits during active chat (realtime bypass complete). E2E test guide: [[chat-review-e2e-manual-test-2026-07-07]] (14 cases). **Next: run E2E tests with login** (T1–T14), then P6 prod deploy. Beat: Django admin → Periodic Tasks → `cs.tasks.sync_chat_messages` every 15 min (already registered via admin). | **E2E TEST NEXT → then P6 prod deploy** | [[cs-chat-supabase-offload]] · [[chat-supabase-impl-tasks]] · [[chat-review-e2e-manual-test-2026-07-07]] |
+| **CHAT-SUPABASE-OFFLOAD** | ✅ **CLOSED #225** — realtime unread badge verified working. Sidebar icon + inbox row pill + preview + timestamp all update via Supabase payload. Client-authoritative (no Django round-trip). 6 fix branches → admin-dashboard `develop` `9316997`. → closed-items.md | **CLOSED** | [[chat-review-e2e-manual-test-2026-07-07]] |
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |

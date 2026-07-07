@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-07-07 (session #225)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **CHAT-SUPABASE-OFFLOAD** | session #225 | Full realtime unread badge system verified working. AD CS inbox: sidebar icon badge + conv row pill + tab title all update via Supabase payload (client-authoritative, no Django round-trip). Fixes across 8 branches: `fix/cs-unread-badge-realtime`, `fix/cs-sidebar-badge-realtime`, `fix/cs-unread-badge-markread`, `fix/cs-inbox-realtime-preview`, `fix/cs-unread-client-authoritative`, `fix/cs-auto-select-markread`. Admin-dashboard `develop` → `9316997`. |
+
 ## Closed — 2026-07-07 (session #223)
 
 | Item | Closed | What shipped |
