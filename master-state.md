@@ -4,32 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-07 (session #222)
+**Updated:** 2026-07-07 (session #223)
 
-**Achieved this session (#222):**
-- Chat 409 customer-tier: `POST /rest/v1/cs_messages 409` → `code: '23503', details: 'Key (conversation_id)=(3) is not present in table "cs_conversations".'`. RC pinned: BE `upsert_cs_conversation` silently no-op on Supabase project `npehhtcobshckhefrqhw`.
-- Refuted H1 (PK seq drift), H3 (UNIQUE drift), H4 (text-index collation) via SQL. Confirmed via P1/P2/P3: Supabase `cs_conversations` has 1 row (id=4, guest), no id=3.
-- BE branch `fix/chat-conv-upsert-conflict`: `?on_conflict=id` + `Prefer: return=representation` + INFO log (`70c9103`); Django `LOGGING` exposes `cs` logger at INFO (`c6a12e3`). **Neither verified end-to-end** — log line never observed in stdout.
-- FE branch `debug/chat-409-console-log`: instrumented `ChatPanel.handleSend` (`da69cef1 → 94fb2552 → bc80be88`); try/catch around `auth.getSession()` (was throwing AuthSessionMissingError). Captured real error object → confirmed 23503 with stale `conversationId: 3`.
+**Achieved this session (#223):**
+- **CHAT-409 RESOLVED.** H5 refuted — upsert never ran. Real RC: `junedarkside@gmail.com` is staff/superuser → `SupabaseTokenView` STAFF tier matched first, skipped `upsert_cs_conversation` + `conversation_id` claim → conv 3 never mirrored → FK 23503. Explains missing log line (call site unreached), guest conv 4 present (guest tier upserts), RLS pass (staff JWT). Real (non-staff) customers were never affected.
+- BE fix `5071926`: staff tier requires `scope='staff'` body param; staff users without it fall through to customer tier (upsert + conversation_id claim). +2 regression tests — 17 token tests pass (1 pre-existing unrelated failure in `test_cs_gaps` RequestStatusViewSet).
+- Admin-dashboard `4a766af`: both staff hooks (`useStaffChatRealtime`, `useStaffInboxRealtime`) now send `{scope:'staff'}` on mint.
+- FE `91485ac6`: reverted all DEBUG-409 instrumentation in `ChatPanel.js` (baseline kept 23503 self-heal).
+- Verified live via DRF factory: no-scope mint for user 1 → `upsert_cs_conversation id=3 status=201`, row landed in Supabase, claims `{sub:'1', conversation_id:'3'}` no app_role; `scope='staff'` mint → `app_role:'staff'`, no conversation_id. Duplicate open conv 5 closed in Django (conv 3 kept open).
+- All three repos merged → develop: BE `da88aed` · FE `dd1df3da` · admin `509927e`.
 
-**Workspace (#222):**
-- vault: master — committed this session
-- backend: `develop` (`9528293`) — branch `fix/chat-conv-upsert-conflict` `@ c6a12e3` UNVERIFIED
-- frontend: `develop` (`088347c2`) — branch `debug/chat-409-console-log` `@ bc80be88` active
-- admin-dashboard: `develop` (`4bad661`) — clean
+**Workspace (#223):**
+- vault: master — updated this session
+- backend: `develop` (`da88aed`) — clean
+- frontend: `develop` (`dd1df3da`) — clean
+- admin-dashboard: `develop` (`509927e`) — clean
 - content: master (`3756e5b`) — clean
 
-**Resume point (EXACT) — next session: GET THE SUPABASE UPSERT RESPONSE.**
-1. Verify BE serves c6a12e3. Bounce `python manage.py runserver` cleanly. `git -C smartenplus-backend log --oneline -1` shows c6a12e3.
-2. Re-trigger customer send. Grep BE stdout for `upsert_cs_conversation id=3 status=<...> body=<...>`.
-3. If log line visible: paste status + body back. Decides next move:
-   - `status=201 + body=[{...id:3...}]` → row landed. Decode JWT at jwt.io; read `conversation_id` claim. If mismatch with actual row id → RLS check or schema mismatch.
-   - `status=200 + body=[]` → PostgREST didn't apply. Pivot to plain INSERT (drop `resolution=merge-duplicates`, keep `return=representation`).
-   - `status=4xx + body=<err>` → paste body; likely RLS or payload shape.
-4. If log line still missing after bounce: switch `logger.info` → `print(...)` inside `upsert_cs_conversation` (1-line, same branch). Single edit. Bypass Django LOGGING entirely.
-5. Once log line visible → resolve RC → merge fix/chat-conv-upsert-conflict → revert FE debug logs (4 blocks) on `debug/chat-409-console-log` → merge both to develop → run T1-T14 of `chat-review-e2e-manual-test-2026-07-07.md`.
+**Resume point — next session: BROWSER E2E CONFIRM + DEPLOY PREP.**
+1. Browser confirm: login `junedarkside@gmail.com` → chat widget → 5+ consecutive sends, no 409 in Network tab; admin dashboard staff inbox + per-conv realtime still work (staff hooks now send `scope='staff'`).
+2. Run T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md` (setup in archived #220 resume).
+3. After PASS → CHAT P6: GitHub Actions secrets + deploy.yml update for prod deploy.
 
-_(Session #221 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#222 archived → `07-logs/session-history.md`.)_
 
 
 **Resume point (EXACT) — next session: TEST WITH LOGIN:**
@@ -84,7 +81,6 @@ _(Session #220 archived → `07-logs/session-history.md`.)_
 | **CS-BE-GAPS** | ✅ **All 5 gaps closed + merged → develop `424f72a` (#186)** incl. resolve-block guard wired to API + emergency path + field-only PATCH. magic_token+supabase_row_id, POST ota/sync/, POST ota/resend-magic-link/, RequestStatusViewSet admin fields, OtaBookingEvent creation in sync task. 33 gap tests. **🟡 Remaining:** BE-B1 (add `magic_token_generated_at`/`auto_send_magic_link`/`is_magic_link_valid` — no link expiry). ✅ BE-B3 FIXED (#215) — `OtaResendMagicLinkView` now calls `send_html_email()` + `magic_link_last_sent_at` tracking. `647f3b5` → develop. | **on develop — deploy + BE-B1 remaining** | [[cs-centralization-gap-report-2026-06-27]] |
 | **CS-FE-OTA-GAPS** | ✅ **RESOLVED + fully → develop `4c0df60` (#186)** — FE-B1..B5 + stranded FE-B3 `OtaRequestCard` delete + `/my-trip` conditional-poll (parity w/ FE-B4). All FE CS work on develop. **Open follow-ups (non-blocking):** (a) no RTL/e2e tests; (b) hard-coded EN strings in `TicketStatusBanner` + `/my-trip` — no i18n; (c) no analytics events; (d) a11y gaps (SLAProgress opacity-only, status pill lacks `role="status"`/`aria-live`, emergency lacks `role="alert"`); (e) `CS_BLOCKERS_IMPLEMENTATION_PLAN.md` at repo root → move to `docs/features/`. | **RESOLVED · on develop** | [[cs-centralization-gap-report-2026-06-27]] |
 | **PRODUCTS-LIVE-CATALOG-AUDIT** | **PHASE 1 FINAL 2026-06-28 · Public API Snapshot.** 1224 contracts · 176 stations · 7/10 service categories empty (TRANSFER · MULTI_DAY_TOUR · EVENT_TICKET · ATTRACTION_TICKET · FOOD_DINING · ACCOMMODATION · OTHER). Only 6 charter routes live (4 unique — Chiang Mai + Khao Lak only). SPA_WELLNESS = 100% Salisa Resort (single-operator risk). DAY_TOUR northern bias (5/5 ops in Chiang Rai/Chiang Mai/Hat Yai; Andaman islands absent). **10 BD gaps logged** (`business-development/products-live-catalog/gap-inventory.md`): gap-001 charter routes near-zero · gap-002 transfer empty · gap-003 MULTI_DAY_TOUR empty [Experiences lens 100% uncovered] · gap-004/005/006/007/010 service_categories empty · gap-008 day-tour geographic skew · gap-009 SPA concentration risk. **Django shell deferred (Phase 1.5)** — API filters `?is_actived=false`/`?end_date__gte=` silently ignored, no station FK IDs exposed via public API. **Next:** Phase 2 = `grill` skill × 10 gaps → BD-ready question docs. | **PHASE 1 FINAL · Phase 2 next** | [[products-live-catalog-audit]] · `business-development/products-live-catalog/snapshots-2026-06-28.md` |
-| **CHAT-409-DIAGNOSIS** | Customer login → 409 on `cs_messages`, FK `code:'23503' details:'Key (conversation_id)=(3) is not present in table "cs_conversations".'`. **P1/P2/P3 verified** Supabase project `npehhtcobshckhefrqhw` `cs_conversations` has 1 row (id=4, guest) — no id=3. BE `upsert_cs_conversation` silent-no-op unverified (INFO log line never observed after `c6a12e3`). Branches: BE `fix/chat-conv-upsert-conflict` (`70c9103` + `c6a12e3`) · FE `debug/chat-409-console-log` (`da69cef1` → `bc80be88`). **Next:** see Section 1 resume point + [[chat-409-diagnosis-handoff-2026-07-07]]. | **OPEN — needs Supabase upsert response visibility** | [[chat-409-diagnosis-handoff-2026-07-07]] · `cs/supabase_client.py:114-141` · `Smartenplus/settings.py:536` · `components/chat/ChatPanel.js` |
 
 ### Low-priority backlog
 

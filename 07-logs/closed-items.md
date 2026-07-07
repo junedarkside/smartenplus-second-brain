@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-07-07 (session #223)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **CHAT-409-DIAGNOSIS** | session #223 | RC: `SupabaseTokenView` STAFF tier matched staff/superuser test account first and skipped `upsert_cs_conversation` — conversation row never mirrored to Supabase → FK 23503 on every send. H5 (PostgREST silent no-op) refuted; real customers never affected. Fix: staff tier gated behind `scope='staff'` body param (BE `5071926`), admin-dashboard hooks send it (`4a766af`), FE DEBUG-409 logs reverted (`91485ac6`). Verified live: `upsert_cs_conversation id=3 status=201`, row landed; customer + staff claims correct. Duplicate open conv 5 closed. Merged develop: BE `da88aed` · FE `dd1df3da` · admin `509927e`. Full trail: [[chat-409-diagnosis-handoff-2026-07-07]]. |
+
 ## Closed — 2026-07-03 (session #216)
 
 | Item | Closed | What shipped |

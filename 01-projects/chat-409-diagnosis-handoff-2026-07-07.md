@@ -1,6 +1,6 @@
 # Chat 409 Handoff — 2026-07-07 (#222)
 
-## Summary
+> **RESOLVED 2026-07-07 (#223).** H5 was wrong — the upsert never ran at all. Real RC: test account `junedarkside@gmail.com` is `is_staff/is_admin/is_superuser`, so `SupabaseTokenView`'s STAFF tier matched first and returned a conversation-less staff JWT **without calling `upsert_cs_conversation`** — conv 3 never mirrored to Supabase → FK 23503 on every send. Explains all anomalies: no log line (call site never reached), guest conv 4 landed (guest tier does upsert), staff JWT passed RLS. Fix: staff tier now requires explicit `scope='staff'` (BE `5071926`); admin-dashboard hooks send it (`4a766af`); FE debug logs reverted (`91485ac6`). All merged → develop. Verified live: `upsert_cs_conversation id=3 status=201`, row landed, customer-tier claims correct, staff-scope tier intact. Real (non-staff) customers were never affected. Duplicate open conv 5 closed in Django.
 Customer login → POST `/rest/v1/cs_messages` → HTTP 409 → `code:'23503', details:'Key (conversation_id)=(3) is not present in table "cs_conversations".'`. RC pinned: BE `upsert_cs_conversation` is silently no-op'ing on Supabase project `npehhtcobshckhefrqhw`. **Not yet fixed** — log line never observed in BE stdout despite patches. Resume point = obtain real Supabase response for the upsert call, then either JWT-claim fix or pivot to INSERT-not-UPSERT.
 
 ## Symptom

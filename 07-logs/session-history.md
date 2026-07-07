@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #222 — 2026-07-07
+
+**Achieved:**
+- Chat 409 customer-tier diagnosis: `POST /rest/v1/cs_messages 409` → FK `23503`, `conversation_id=3` missing from Supabase `cs_conversations`. RC hypothesis (later refuted in #223): BE `upsert_cs_conversation` silently no-op.
+- Refuted H1 (PK seq drift), H3 (UNIQUE drift), H4 (collation) via SQL. P1/P2/P3 confirmed Supabase had 1 row (id=4 guest), no id=3.
+- BE `fix/chat-conv-upsert-conflict`: `?on_conflict=id` + `return=representation` + INFO log (`70c9103`); `cs` logger exposed at INFO (`c6a12e3`). Log line never observed — explained in #223: staff tier skipped the upsert call entirely.
+- FE `debug/chat-409-console-log`: ChatPanel.handleSend instrumentation (`da69cef1 → bc80be88`) — captured the 23503 evidence.
+- Handoff: [[chat-409-diagnosis-handoff-2026-07-07]]. **Resolved next session (#223).**
+
 ## Session #220 — 2026-07-07
 
 **Achieved:**

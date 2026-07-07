@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-07] session-end #223 | CHAT-409 RESOLVED. RC: staff/superuser test account hit `SupabaseTokenView` STAFF tier → upsert never called → conv row never mirrored → FK 23503. Fix: staff tier requires `scope='staff'` (BE `5071926`), admin hooks send it (`4a766af`), FE debug logs reverted (`91485ac6`). Verified live: upsert id=3 status=201. All merged develop (BE `da88aed` · FE `dd1df3da` · admin `509927e`). Next: browser E2E + T1-T14 + CHAT P6 deploy. Note: `01-projects/chat-409-diagnosis-handoff-2026-07-07.md`.
+
 ## [2026-07-07] session-end #222 | Chat customer 409 — RC pinned to FK 23503 on missing cs_conversations row. BE `fix/chat-conv-upsert-conflict` + FE `debug/chat-409-console-log` shipped unverified. Handoff: get visible Supabase upsert response, then either decode JWT claim mismatch or pivot to plain INSERT-not-UPSERT. Full note: `01-projects/chat-409-diagnosis-handoff-2026-07-07.md`.
 
 ## [2026-07-07] session-end #220 | Chat→Supabase Realtime P1-P5 SHIPPED. FE↔admin both send/receive <1s. Fixed: SUPABASE_JWT_SECRET (Legacy JWT Secret tab, not API Keys page), supabase-js accessToken callback pattern, schema routing headers, sequence grants. Atom: supabase-jwt-secret-location.md. Prod beat still needs manual Django admin registration. Next: P6 prod deploy checklist.
