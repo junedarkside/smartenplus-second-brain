@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #220 — 2026-07-07
+
+**Achieved:**
+- ✅ Chat feature 3-repo deep review (FE + BE + admin-dashboard) — 18 bugs identified and fixed on `fix/chat-review-issues` branches.
+- ✅ BE fixes: plaintext OTP log deleted (BE-S1), broken `get_or_create` 500 fixed (BE-B1), Supabase JWT TTL 24h→15min (BE-S3), N+1 inbox serializer replaced with Subquery annotations (BE-D1), auto-reopen wrapped in `transaction.atomic()+select_for_update` (BE-B2), guest token `conversation_id` normalized to int (BE-B6), pagination guard (BE-B5), `has_more` flag (BE-D2), throttle on SupabaseTokenView (BE-S5), OTP generate atomic (BE-B4).
+- ✅ FE fixes: `ADD_MSGS` dedupes by id (FE-B2), `useChatRealtime` token refresh via refs no channel teardown (FE-B8/D3), `ChatGuestForm` loading/error states (FE-B5/B6/B7).
+- ✅ Admin fixes: isolated Supabase client per hook (AD-B1), subscribe status callback (AD-B3), sign-out clears Supabase token (AD-S2), `.env.sample` 3 chat vars (AD-D1), send error Snackbar (AD-D2), shared singleton `setSupabaseToken` synced for send path.
+- ✅ Celery: `sync_chat_messages` unregistered task error fixed (worker restart). Beat managed via Django admin DatabaseScheduler.
+- ✅ Admin 401 fix: `enabled` guards `!!accessToken` — hooks skip `mintStaffToken` until Redux hydrates from `AuthSync`.
+- ✅ Realtime BE bypass: eliminated all per-message Django hits — `refetchOnWindowFocus`, polling, `markRead` all disabled in realtime mode. `useStaffInboxRealtime` updates last-message preview locally from Supabase payload. Only Django hits remaining: page mount + status changes.
+- ✅ E2E manual test guide created in vault: `chat-review-e2e-manual-test-2026-07-07.md` (14 test cases T1–T14).
+- ✅ All 3 `fix/chat-review-issues` branches merged → develop and pushed.
+
+**Workspace:** vault master · backend `develop` (`67079cd`) clean · frontend `develop` (`c3a990d6`) clean · admin `develop` (`4bad661`) clean · content master (`3756e5b`) clean.
+
 ## Session #218 — 2026-07-03
 
 **Achieved:**

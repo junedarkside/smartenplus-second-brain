@@ -3,6 +3,7 @@
 ## [2026-07-07] session-end #220 | Chat→Supabase Realtime P1-P5 SHIPPED. FE↔admin both send/receive <1s. Fixed: SUPABASE_JWT_SECRET (Legacy JWT Secret tab, not API Keys page), supabase-js accessToken callback pattern, schema routing headers, sequence grants. Atom: supabase-jwt-secret-location.md. Prod beat still needs manual Django admin registration. Next: P6 prod deploy checklist.
 
 ## [2026-07-05] session-end #219 | Chat→Supabase Realtime offload: prepared-path draft ADR + 7-phase migration plan + 23-task model-cost card (6 Haiku/14 Sonnet/3 Opus). GATED on >30 req/s trigger. Vault-only, commits 3515e62 + 8626e80. Next: SEO r13 prod deploy + re-audit.
+## [2026-07-07] session-end | Chat deep review 18 bugs fixed + realtime BE bypass — 3 repos merged develop, E2E test guide created
 
 ## [2026-07-03] session-end #218 | r12 SEO audit (SEO 9.1 · AEO 9.6 · GEO 9.0 · CWV 7.5 · SD 7.5) + /grill caught 4 AI specialist errors + r13 9-item fix sprint merged → FE develop c2920a81. Next: deploy develop→main + re-audit next week.
 
