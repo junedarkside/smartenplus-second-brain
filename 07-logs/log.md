@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-07] session-end #224 | Chat UX: guest leave button + login-while-chatting reset + CHAT-409 browser verified. BE `f48f8a8` · FE `c70a38b0`. User to confirm E2E manually then CHAT P6 prod deploy.
+
 ## [2026-07-07] session-end #223 | CHAT-409 RESOLVED. RC: staff/superuser test account hit `SupabaseTokenView` STAFF tier → upsert never called → conv row never mirrored → FK 23503. Fix: staff tier requires `scope='staff'` (BE `5071926`), admin hooks send it (`4a766af`), FE debug logs reverted (`91485ac6`). Verified live: upsert id=3 status=201. All merged develop (BE `da88aed` · FE `dd1df3da` · admin `509927e`). Next: browser E2E + T1-T14 + CHAT P6 deploy. Note: `01-projects/chat-409-diagnosis-handoff-2026-07-07.md`.
 
 ## [2026-07-07] session-end #222 | Chat customer 409 — RC pinned to FK 23503 on missing cs_conversations row. BE `fix/chat-conv-upsert-conflict` + FE `debug/chat-409-console-log` shipped unverified. Handoff: get visible Supabase upsert response, then either decode JWT claim mismatch or pivot to plain INSERT-not-UPSERT. Full note: `01-projects/chat-409-diagnosis-handoff-2026-07-07.md`.

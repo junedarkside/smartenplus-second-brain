@@ -4,40 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-07 (session #223)
+**Updated:** 2026-07-07 (session #224)
 
-**Achieved this session (#223):**
-- **CHAT-409 RESOLVED.** H5 refuted — upsert never ran. Real RC: `junedarkside@gmail.com` is staff/superuser → `SupabaseTokenView` STAFF tier matched first, skipped `upsert_cs_conversation` + `conversation_id` claim → conv 3 never mirrored → FK 23503. Explains missing log line (call site unreached), guest conv 4 present (guest tier upserts), RLS pass (staff JWT). Real (non-staff) customers were never affected.
-- BE fix `5071926`: staff tier requires `scope='staff'` body param; staff users without it fall through to customer tier (upsert + conversation_id claim). +2 regression tests — 17 token tests pass (1 pre-existing unrelated failure in `test_cs_gaps` RequestStatusViewSet).
-- Admin-dashboard `4a766af`: both staff hooks (`useStaffChatRealtime`, `useStaffInboxRealtime`) now send `{scope:'staff'}` on mint.
-- FE `91485ac6`: reverted all DEBUG-409 instrumentation in `ChatPanel.js` (baseline kept 23503 self-heal).
-- Verified live via DRF factory: no-scope mint for user 1 → `upsert_cs_conversation id=3 status=201`, row landed in Supabase, claims `{sub:'1', conversation_id:'3'}` no app_role; `scope='staff'` mint → `app_role:'staff'`, no conversation_id. Duplicate open conv 5 closed in Django (conv 3 kept open).
-- All three repos merged → develop: BE `da88aed` · FE `dd1df3da` · admin `509927e`.
+**Achieved this session (#224):**
+- CHAT-409 resolved (carried from #223): staff/superuser token scope fix, debug logs reverted, stale `.next` cache cleared.
+- Guest chat UX: `ConversationLeaveView` (BE `694ae39`) — `POST /api/cs/conversations/<pk>/leave/`, guest+auth owner, sends Supabase system message, 8 tests pass.
+- "End conversation" button in `ChatPanel.js` — guest-only, below input row.
+- Login-while-chatting hard reset: `useEffect` on `session?.accessToken` in `ChatWidget.js` — null→token transition while guest conv open → `clearGuestEmail()` + RESET.
+- All merged → develop: BE `f48f8a8` · FE `c70a38b0`.
+- User to test browser E2E manually (deferred).
 
-**Workspace (#223):**
+**Workspace (#224):**
 - vault: master — updated this session
-- backend: `develop` (`da88aed`) — clean
-- frontend: `develop` (`dd1df3da`) — clean
+- backend: `develop` (`f48f8a8`) — clean
+- frontend: `develop` (`c70a38b0`) — clean
 - admin-dashboard: `develop` (`509927e`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session: BROWSER E2E CONFIRM + DEPLOY PREP.**
-1. Browser confirm: login `junedarkside@gmail.com` → chat widget → 5+ consecutive sends, no 409 in Network tab; admin dashboard staff inbox + per-conv realtime still work (staff hooks now send `scope='staff'`).
-2. Run T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md` (setup in archived #220 resume).
+1. Browser confirm (user doing manually):
+   - Guest (incognito) → email+OTP → chat → "End conversation" → widget resets to bubble → FAB → email form again ✓
+   - Guest mid-chat → log in → widget auto-resets ✓
+   - Auth user (`junedarkside@gmail.com`) → chat → 5+ sends, no 409 ✓
+   - Admin dashboard staff realtime still works (`scope='staff'` sent by hooks) ✓
+2. Run T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md`.
 3. After PASS → CHAT P6: GitHub Actions secrets + deploy.yml update for prod deploy.
 
-_(Sessions #221–#222 archived → `07-logs/session-history.md`.)_
-
-
-**Resume point (EXACT) — next session: TEST WITH LOGIN:**
-1. **Run E2E manual tests** — follow `chat-review-e2e-manual-test-2026-07-07.md` T1–T14. Start servers: BE `:8000` + FE `:3000` + admin `:3001` + Celery worker. Set `NEXT_PUBLIC_CHAT_REALTIME=true` both FE + admin `.env.local`.
-2. **T1 guest OTP** — Chrome incognito → FAB → email → OTP flow. Verify loading states, no stuck button, resend error on network fail.
-3. **T2 auth customer** — log in as customer → chat opens without OTP gate. Verify token re-mint at 14min (shortcut: `TOKEN_TTL_MS=30_000`).
-4. **T7 BE first-time auth** — `POST /api/cs/conversations/` with fresh token for user with no conversation → must return 200 not 500.
-5. **T14 full E2E happy path** — Chrome customer sends, Safari admin sees <2s, reply appears in Chrome <2s, zero console errors.
-6. After all tests PASS → **CHAT P6**: GitHub Actions secrets + deploy.yml update for prod deploy.
-
-_(Session #220 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#223 archived → `07-logs/session-history.md`.)_
 
 ---
 

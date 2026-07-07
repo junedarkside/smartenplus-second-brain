@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #223 — 2026-07-07
+
+**Achieved:**
+- CHAT-409 resolved. RC: `junedarkside@gmail.com` staff/superuser → `SupabaseTokenView` STAFF tier matched first, skipped `upsert_cs_conversation` → conv row never mirrored → FK 23503 on every send. Real customers unaffected.
+- BE `5071926`: staff tier gated behind `scope='staff'` body param. +2 regression tests, 17 token tests pass.
+- Admin-dashboard `4a766af`: both staff hooks send `{scope:'staff'}` on mint.
+- FE `91485ac6`: DEBUG-409 instrumentation reverted; 23503 self-heal kept.
+- Verified live: upsert id=3 status=201, row landed. Duplicate conv 5 closed.
+- All merged → develop: BE `da88aed` · FE `dd1df3da` · admin `509927e`.
+- Guest chat UX fixes: `ConversationLeaveView` (POST `/leave/`, guest+auth owner, 8 tests), "End conversation" button in ChatPanel (guest-only), login-while-chatting hard reset via `useEffect` on `session?.accessToken`.
+- All merged → develop: BE `f48f8a8` · FE `c70a38b0`.
+- Stale `.next` cache cleared + FE dev server hard-restarted (debug logs visible in browser despite clean file on disk).
+
 ## Session #222 — 2026-07-07
 
 **Achieved:**
