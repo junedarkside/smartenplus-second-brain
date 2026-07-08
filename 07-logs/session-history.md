@@ -7,6 +7,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 ## Session #226 — 2026-07-08
 
 **Achieved:**
+- OTA realtime chat — implementation + 8 audit fixes → all 3 repos merged → develop (BE `47e1022`, FE `1868c557`, AD `3d0b4a6`)
+- Auth identity switch analysis: 6 scenarios mapped, 3 bugs found + all fixed → FE `cd6874d6`
+- `python manage.py migrate` applied → `cs.0011_add_ota_fields_to_conversation` OK
+
+**Workspace:** backend `develop` `47e1022` · frontend `develop` `cd6874d6` · admin `develop` `3d0b4a6` · content `master` `3756e5b`
+
+---
+
+## Session #226 — 2026-07-08
+
+**Achieved:**
 - OTA realtime chat fully implemented + audit hardened → all 3 repos merged → develop.
 - BE: `ota_token` path in `ConversationCreateView` (type guard, booking validation, get-or-create), `ota_booking_id`/`ota_source` on `Conversation`, migration `0011`, serializer exposure. `47e1022`.
 - FE: `ChatWidget.js` OTA path, localStorage 23h TTL guard, leave/close cleanup. Audit fixes: type guard, TTL, stale key. Auth identity switch: 3 bugs (A/B/C) fixed → `cd6874d6`.

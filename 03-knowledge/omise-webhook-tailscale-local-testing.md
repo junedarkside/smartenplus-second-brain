@@ -100,6 +100,20 @@ All 5 steps PASS:
 | Webhook finalizes order | PASS | `evnt_test_67zrckorm42kmojdy8k` → order `AUL3348232` paid at `2026-06-12 11:01:44`, `payment_finalized_at` set, 1 BookingItem confirmed, zero FE involvement |
 | Dedupe on replay | PASS | 200 `already_processed`, `payment_finalized_at` unchanged |
 
+## ⚠️ Funnel Exposure Rule (incident 2026-07-08)
+
+Funnel left running after a test session → internet scanners probed local BE for secret files (`/.aws/credentials`, `/laravel/.env`, `/.vultr-cli.yaml`, …). All 404 — no leak — but DEBUG=True 404 pages (~52KB) disclosed the full URL-pattern map to the scanner.
+
+**Rules:**
+1. **Funnel ON only while actively testing webhooks. `tailscale funnel reset` immediately after.**
+2. Prefer path-scoped funnel over whole-server (`/` → :8000 exposes everything, including Django admin):
+   ```bash
+   tailscale funnel --bg --set-path /admin-dashboard-orders/payments/webhook http://127.0.0.1:8000/admin-dashboard-orders/payments/webhook
+   ```
+   (verify syntax with `tailscale funnel --help` — varies by version)
+3. Never widen funnel beyond the webhook path. DEBUG=True + full exposure = URL map + exception-page settings leak.
+4. Check state anytime: `tailscale funnel status` → must show `No serve config` when not testing.
+
 ## Known Gotchas
 
 - `OMISE_SEC_KEY` in BE `.env` has quotes + possible CR (`\r`) — strip before curl: `tr -d '"' | tr -d $'\r'`

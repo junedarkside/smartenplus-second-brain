@@ -4,23 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-08 (session #226)
+**Updated:** 2026-07-08 (session #227)
 
-**Achieved this session (#226):**
-- OTA realtime chat — implementation + 8 audit fixes → all 3 repos merged → develop (BE `47e1022`, FE `1868c557`, AD `3d0b4a6`)
-- Auth identity switch analysis: 6 scenarios mapped, 3 bugs found + all fixed → FE `cd6874d6`
-- `python manage.py migrate` applied → `cs.0011_add_ota_fields_to_conversation` OK
+**Achieved this session (#227):**
+- CS realtime chat identity-switch manual test — all 10 scenarios PASS (Guest↔Login↔OTA)
+- 4 bugs found + fixed during testing, all merged → develop:
+  - AD: unread badge stuck on tab-hidden conv → `visibilitychange` markRead (`fix/cs-markread-visibility`)
+  - AD: reopened conv shows "closed" chip → `invalidateTags` on reopen signal (`fix/cs-reopen-status-robust`)
+  - AD: reopened conv not surfacing in Active inbox → subscribe all senders not just customer (`fix/cs-inbox-reopen-status`)
+  - FE: ✕ close button didn't clear `ota_conv_*` localStorage → Audit #5 coverage (`fix/ota-chat-close-cleanup`)
+- Comeback hybrid + soft-link + merge gate fully implemented + tested (BE `943cabe`, AD `1b62ed3`)
+- All 3 repos pushed to develop: FE `436499b0` · BE `943cabe` · AD `1b62ed3`
 
-**Workspace (#226):**
+**Workspace (#227):**
 - vault: master — updated this session
-- backend: `develop` (`47e1022`) — clean
-- frontend: `develop` (`cd6874d6`) — clean
-- admin-dashboard: `develop` (`3d0b4a6`) — clean
+- backend: `develop` (`943cabe`) — clean
+- frontend: `develop` (`436499b0`) — clean
+- admin-dashboard: `develop` (`1b62ed3`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT P6 PROD DEPLOY** — E2E manual test (T1–T14 of `chat-review-e2e-manual-test-2026-07-07.md`) then develop→main all 3 repos + server migrate if not already on prod.
+1. **CHAT PROD DEPLOY** — develop→main all 3 repos + `python manage.py migrate` on prod (migration `0012_conversation_related_conversation`). Verify OTA comeback + soft-link chip in prod.
 2. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
+3. **Celery beat** — schedule `sync_chat_messages` task (unread baseline = 0 on page load until this runs; not blocking but operational risk).
 
 _(Sessions #221–#224, #226 archived → `07-logs/session-history.md`.)_
 

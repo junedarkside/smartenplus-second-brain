@@ -1,8 +1,8 @@
 # OTA Chat Realtime — Implementation + Audit Fixes
 
 **Date:** 2026-07-08  
-**Status:** All merged → develop (BE `47e1022` · FE `1868c557` · AD `3d0b4a6`)  
-**Linked notes:** [[chat-supabase-migration-plan]] · [[ota-magic-link-trip-view]] · [[cs-guest-identity-best-practices]]
+**Status:** ✅ FULLY TESTED + EXTENDED 2026-07-08. All merged → develop (BE `943cabe` · FE `436499b0` · AD `1b62ed3`). Comeback hybrid + soft-link + merge gate implemented. 10/10 identity-switch scenarios PASS.  
+**Linked notes:** [[chat-supabase-migration-plan]] · [[ota-magic-link-trip-view]] · [[cs-guest-identity-best-practices]] · [[cs-realtime-be-traffic-design-verdict-2026-07-08]]
 
 ---
 

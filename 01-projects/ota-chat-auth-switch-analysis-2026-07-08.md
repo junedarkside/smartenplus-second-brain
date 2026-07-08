@@ -1,8 +1,8 @@
 # OTA Chat — Auth Identity Switch Analysis
 
 **Date:** 2026-07-08  
-**Status:** Analysis only — no fixes implemented yet. Queued for audit team.  
-**Linked notes:** [[ota-chat-realtime-impl-2026-07-08]] · [[cs-guest-identity-best-practices]] · [[chat-supabase-migration-plan]]
+**Status:** ✅ ALL 10 SCENARIOS PASS 2026-07-08. Fixes merged → develop (FE `436499b0` · AD `1b62ed3`). 4 bugs found + fixed during testing (see Bugs Found section below).  
+**Linked notes:** [[ota-chat-realtime-impl-2026-07-08]] · [[cs-guest-identity-best-practices]] · [[chat-supabase-migration-plan]] · [[cs-realtime-be-traffic-design-verdict-2026-07-08]]
 
 ---
 

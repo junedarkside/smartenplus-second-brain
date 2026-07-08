@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-08] session-end #227 | CS realtime chat identity-switch 10/10 PASS — comeback hybrid + soft-link + merge gate tested. 4 bugs fixed (AD badge, reopen status, inbox filter, FE ✕ cleanup). FE `436499b0` · BE `943cabe` · AD `1b62ed3`.
+
 ## [2026-07-07] session-end #225 | CS realtime unread badge verified working — sidebar icon + inbox row pill + preview/timestamp via Supabase payload, client-authoritative, CHAT-SUPABASE-OFFLOAD closed. admin `9316997`.
 
 ## [2026-07-07] session-end #224 | Chat UX: guest leave button + login-while-chatting reset + CHAT-409 browser verified. BE `f48f8a8` · FE `c70a38b0`. User to confirm E2E manually then CHAT P6 prod deploy.
