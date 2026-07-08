@@ -4,30 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-08 (session #228)
+**Updated:** 2026-07-08 (session #229)
 
-**Achieved this session (#228):**
-- Built staff Web Push notifications for admin-dashboard (BE + AD)
-  - BE: `StaffPushSubscription` model + migration `cs.0013` + `cs/push.py` helper + `cs/signals.py` (new conv) + `tickets/signals.py` (new ticket) + `PushSubscriptionView` API + VAPID settings
-  - AD: `public/sw.js` service worker + `public/manifest.json` PWA manifest + `hooks/usePushSubscription.js` + Enable banner in `pages/cs/index.js` + background push in `SideList.js` onEvent
-  - Error handling: try/catch in subscribe hook, res.ok check, sw showNotification .catch(), logger.warning in push.py
-  - Migration applied locally (`cs.0013_staff_push_subscription`)
-  - Commits: BE `8c00267` · AD `842752b` → develop
-- Added `pywebpush>=2.0.0` to BE `requirements.txt`
+**Achieved this session (#229):**
+- Added Supabase + chat realtime env vars to all 4 GitHub Actions deploy layers:
+  - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_CHAT_REALTIME`
+  - Dockerfile ARG/ENV · deploy.yml build-args · deploy.yml VPS exports · deploy-ghcr.sh `.env.deploy` heredoc
+  - Opus review caught critical missing step: `.env.deploy` heredoc in `deploy-ghcr.sh`
+  - FE `8220c8b8` → develop (branch `feat/supabase-chat-deploy-vars`)
+- Analyzed `NEXT_PUBLIC_CHAT_REALTIME` — polling mode is dead code, flag always `true`. Decision: keep as-is (not worth refactor risk).
 
-**Workspace (#228):**
+**Workspace (#229):**
 - vault: master — updated this session
 - backend: `develop` (`8c00267`) — clean
-- frontend: `develop` (`436499b0`) — clean
+- frontend: `develop` (`8220c8b8`) — clean
 - admin-dashboard: `develop` (`842752b`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **STAFF-PUSH-PROD-SETUP** — generate VAPID keys (`npx web-push generate-vapid-keys`), add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env`, add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD `.env.local`, `pip install pywebpush` on server, `python manage.py migrate` on server.
-2. **CHAT PROD DEPLOY** — develop→main all 3 repos. Verify OTA comeback + soft-link chip in prod.
-3. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
+1. **GITHUB-SECRETS-ADD** — add 3 secrets in GitHub repo Settings → Secrets → Actions: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_CHAT_REALTIME=true`. Must do BEFORE merging develop→main or deploy bakes empty strings → SSR 500.
+2. **STAFF-PUSH-PROD-SETUP** — generate VAPID keys (`npx web-push generate-vapid-keys`), add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env`, add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD `.env.local`, `pip install pywebpush` on server, `python manage.py migrate` (cs.0013).
+3. **CHAT PROD DEPLOY** — develop→main all 3 repos. Verify OTA comeback + soft-link chip in prod.
+4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224, #226–#227 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226–#228 archived → `07-logs/session-history.md`.)_
 
 ---
 

@@ -4,6 +4,17 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #228 — 2026-07-08
+
+**Achieved:**
+- Staff Web Push notifications built + merged → develop (BE `8c00267` · AD `842752b`)
+- Added Supabase + chat realtime vars to all 4 deploy layers for GitHub Actions deploy: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_CHAT_REALTIME` → Dockerfile ARG/ENV + deploy.yml build-args + deploy.yml VPS exports + deploy-ghcr.sh `.env.deploy` heredoc. FE `8220c8b8` → develop
+- Analyzed `NEXT_PUBLIC_CHAT_REALTIME` — confirmed polling mode dead code, flag always `true`. Decision: keep as-is.
+
+**Workspace:** backend `develop` `8c00267` · frontend `develop` `8220c8b8` · admin `develop` `842752b` · content `master` `3756e5b`
+
+---
+
 ## Session #227 — 2026-07-08
 
 **Achieved:**

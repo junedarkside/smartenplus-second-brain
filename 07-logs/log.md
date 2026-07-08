@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-08] session-end #229 | Added Supabase+chat vars to all 4 GitHub Actions deploy layers (Dockerfile, deploy.yml ×2, deploy-ghcr.sh heredoc). FE `8220c8b8`. Next: add 3 GitHub Secrets before prod deploy.
+
 ## [2026-07-08] session-end #228 | Staff Web Push notifications built + merged → develop. BE: StaffPushSubscription + signals + push helper + VAPID. AD: sw.js + manifest + hook + Enable banner + background push in SideList. BE `8c00267` · AD `842752b`.
 
 ## [2026-07-08] session-end #227 | CS realtime chat identity-switch 10/10 PASS — comeback hybrid + soft-link + merge gate tested. 4 bugs fixed (AD badge, reopen status, inbox filter, FE ✕ cleanup). FE `436499b0` · BE `943cabe` · AD `1b62ed3`.
