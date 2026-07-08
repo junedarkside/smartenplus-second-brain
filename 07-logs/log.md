@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-08] session-end #228 | Staff Web Push notifications built + merged → develop. BE: StaffPushSubscription + signals + push helper + VAPID. AD: sw.js + manifest + hook + Enable banner + background push in SideList. BE `8c00267` · AD `842752b`.
+
 ## [2026-07-08] session-end #227 | CS realtime chat identity-switch 10/10 PASS — comeback hybrid + soft-link + merge gate tested. 4 bugs fixed (AD badge, reopen status, inbox filter, FE ✕ cleanup). FE `436499b0` · BE `943cabe` · AD `1b62ed3`.
 
 ## [2026-07-07] session-end #225 | CS realtime unread badge verified working — sidebar icon + inbox row pill + preview/timestamp via Supabase payload, client-authoritative, CHAT-SUPABASE-OFFLOAD closed. admin `9316997`.

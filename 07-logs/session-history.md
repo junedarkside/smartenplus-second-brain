@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #227 — 2026-07-08
+
+**Achieved:**
+- CS realtime chat identity-switch manual test — all 10 scenarios PASS (Guest↔Login↔OTA)
+- 4 bugs fixed: AD badge stuck on tab-hidden conv, reopened conv shows "closed" chip, reopened conv not in Active inbox, FE ✕ close didn't clear ota_conv_* localStorage
+- Comeback hybrid + soft-link + merge gate fully implemented + tested (BE `943cabe`, AD `1b62ed3`)
+- All 3 repos pushed to develop: FE `436499b0` · BE `943cabe` · AD `1b62ed3`
+
+**Workspace:** backend `develop` `943cabe` · frontend `develop` `436499b0` · admin `develop` `1b62ed3` · content `master` `3756e5b`
+
+---
+
 ## Session #226 — 2026-07-08
 
 **Achieved:**

@@ -2,6 +2,10 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-07-08] adr | staff-push-notification — Web Push API: chat push via AD frontend (Supabase realtime onEvent → service worker), conv+ticket push via Django signal → Celery → pywebpush. 4-agent team (UX+Next.js+Django+Leader). Vault: [[staff-push-notification-adr]]. Impl pending.
+
+## [2026-07-08] adr | supabase-config-single-source-of-truth — BE .env canonical; FE+AD fetch URL+anon key via GET /api/cs/config/ at runtime; secrets stay BE-only. Vault doc: [[supabase-config-single-source-of-truth]]. Impl pending per-repo.
+
 ## [2026-07-08] impl | OTA chat realtime — full impl + audit fixes merged all 3 repos. Guest on `/my-trip?token=` now opens chat without OTP via new `ota_token` path in `ConversationCreateView` (validates `CsOtaBooking`, get-or-create conv by `(guest_email, ota_booking_id)`, returns `guest_token`). 2 new fields on `Conversation` model (`ota_booking_id`, `ota_source`), migration `0011`. FE: `ChatWidget.js` reads `router.query.token` on `/my-trip`, localStorage persistence with 23h TTL guard. AD: OTA source chip + booking_id in ConversationList/Detail, Chat button in command-centre, CS inbox deep-link `?ota_booking_id=`. 8 audit findings fixed (type guards, booking validation, duplicate token guard, localStorage TTL, hydration bugs). All 3 repos → develop: BE `47e1022` · FE `1868c557` · AD `3d0b4a6`. **Pending:** `python manage.py migrate` on server. → [[ota-chat-realtime-impl-2026-07-08]]
 
 ## [2026-07-08] session-end | OTA realtime chat impl + audit fixes + auth identity switch hardening — all 3 repos → develop, migration applied

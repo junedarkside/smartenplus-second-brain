@@ -4,31 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-08 (session #227)
+**Updated:** 2026-07-08 (session #228)
 
-**Achieved this session (#227):**
-- CS realtime chat identity-switch manual test — all 10 scenarios PASS (Guest↔Login↔OTA)
-- 4 bugs found + fixed during testing, all merged → develop:
-  - AD: unread badge stuck on tab-hidden conv → `visibilitychange` markRead (`fix/cs-markread-visibility`)
-  - AD: reopened conv shows "closed" chip → `invalidateTags` on reopen signal (`fix/cs-reopen-status-robust`)
-  - AD: reopened conv not surfacing in Active inbox → subscribe all senders not just customer (`fix/cs-inbox-reopen-status`)
-  - FE: ✕ close button didn't clear `ota_conv_*` localStorage → Audit #5 coverage (`fix/ota-chat-close-cleanup`)
-- Comeback hybrid + soft-link + merge gate fully implemented + tested (BE `943cabe`, AD `1b62ed3`)
-- All 3 repos pushed to develop: FE `436499b0` · BE `943cabe` · AD `1b62ed3`
+**Achieved this session (#228):**
+- Built staff Web Push notifications for admin-dashboard (BE + AD)
+  - BE: `StaffPushSubscription` model + migration `cs.0013` + `cs/push.py` helper + `cs/signals.py` (new conv) + `tickets/signals.py` (new ticket) + `PushSubscriptionView` API + VAPID settings
+  - AD: `public/sw.js` service worker + `public/manifest.json` PWA manifest + `hooks/usePushSubscription.js` + Enable banner in `pages/cs/index.js` + background push in `SideList.js` onEvent
+  - Error handling: try/catch in subscribe hook, res.ok check, sw showNotification .catch(), logger.warning in push.py
+  - Migration applied locally (`cs.0013_staff_push_subscription`)
+  - Commits: BE `8c00267` · AD `842752b` → develop
+- Added `pywebpush>=2.0.0` to BE `requirements.txt`
 
-**Workspace (#227):**
+**Workspace (#228):**
 - vault: master — updated this session
-- backend: `develop` (`943cabe`) — clean
+- backend: `develop` (`8c00267`) — clean
 - frontend: `develop` (`436499b0`) — clean
-- admin-dashboard: `develop` (`1b62ed3`) — clean
+- admin-dashboard: `develop` (`842752b`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT PROD DEPLOY** — develop→main all 3 repos + `python manage.py migrate` on prod (migration `0012_conversation_related_conversation`). Verify OTA comeback + soft-link chip in prod.
-2. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
-3. **Celery beat** — schedule `sync_chat_messages` task (unread baseline = 0 on page load until this runs; not blocking but operational risk).
+1. **STAFF-PUSH-PROD-SETUP** — generate VAPID keys (`npx web-push generate-vapid-keys`), add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env`, add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD `.env.local`, `pip install pywebpush` on server, `python manage.py migrate` on server.
+2. **CHAT PROD DEPLOY** — develop→main all 3 repos. Verify OTA comeback + soft-link chip in prod.
+3. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224, #226 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226–#227 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -56,6 +55,7 @@ _(Sessions #221–#224, #226 archived → `07-logs/session-history.md`.)_
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
+| **STAFF-PUSH-NOTIFICATIONS** | Web Push built + merged → develop (BE `8c00267` · AD `842752b`). **Pending prod setup:** generate VAPID keys (`npx web-push generate-vapid-keys`), add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env`, add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD `.env.local`, `pip install pywebpush` on server, `python manage.py migrate` (cs.0013). Then test Enable banner at `/cs`. | **PROD SETUP PENDING** | `cs/push.py` · `cs/signals.py` · `tickets/signals.py` · `public/sw.js` · `hooks/usePushSubscription.js` |
 |---|-------|--------|-------|
 | **DIRECT-BOOKINGS-TAB** | Command-centre 3rd tab "Direct Bookings" — notify + admin-initiated request for direct bookings (parity w/ OTA tab). **BUILT (#205) + customer-display fix (#206)** on 3 branches, **UNCOMMITTED**: BE `feat/cs-direct-bookings-tab` (list+ticket endpoints+routes+8 tests + `orders/serializers.py` notifications fix), admin `feat/admin-direct-bookings-tab` (csApi hooks + `NotifyDialog.jsx` + `DirectBookingsTab`), FE `feat/fe-m1-info-update-notice` (banner moved to top + design-system card width). Column "Service" (`contract_name`). Customer page now shows sent notifications. Decision report [[command-centre-direct-notify-redesign]]. | **REVIEW + MERGE develop → manual smoke** | [[command-centre-direct-notify-redesign]] · [[direct-booking-notify-plan]] · [[booking-item-serializer-name-collision]] |
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |
