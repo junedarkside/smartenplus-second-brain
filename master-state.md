@@ -4,29 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-09 (session #230)
+**Updated:** 2026-07-09 (session #231)
 
-**Achieved this session (#230):**
-- Diagnosed STAFF-PUSH-NOTIFICATIONS prod setup — VAPID env vars missing from AD Vercel env (`NEXT_PUBLIC_VAPID_PUBLIC_KEY` not set → banner never renders). Explained full iOS PWA + Android flow.
-- Fixed FE nginx CSP `connect-src` missing Supabase origins — added `https://npehhtcobshckhefrqhw.supabase.co` + `wss://npehhtcobshckhefrqhw.supabase.co` → FE `06470540` → develop
-- Fixed FE nginx CSP `img-src` missing GTM pixel domain — added `*.googletagmanager.com` → FE `7a982f18` → develop
-- User shipped all repos to production
-- Next: test realtime chat + push notifications in prod; complete STAFF-PUSH-PROD-SETUP (VAPID in Vercel + BE .env + migration + nginx reload)
+**Achieved this session (#231):**
+- Diagnosed STAFF-PUSH-NOTIFICATIONS: `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing from AD Vercel env → banner never rendered
+- Fixed FE nginx CSP `connect-src` — Supabase REST + WebSocket (`06470540`)
+- Fixed FE nginx CSP `img-src` — GTM pixel (`7a982f18`)
+- Fixed chat silent close for registered-user OTP path — `handleOtpVerified` access_token branch (`2fbf7813`)
+- Fixed BE guest email case gate — `__iexact` + lowercase (`d0b6a97`)
+- Added "Change" link on OTP screen + `autoComplete="one-time-code"` (`0556a46f`)
+- All repos deployed to production (BE main `d0b6a97` · FE main `0556a46f` · AD main `842752b`)
 
-**Workspace (#230):**
+**Workspace (#231):**
 - vault: master — updated this session
-- backend: main (`8c00267`) — clean
-- frontend: develop (`7a982f18`) — clean
+- backend: main (`d0b6a97`) — clean
+- frontend: main (`0556a46f`) — clean
 - admin-dashboard: main (`842752b`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env` on VPS → restart BE. Run `python manage.py migrate cs 0013`. Then test banner at `/cs`.
-2. **CSP-NGINX-RELOAD** — apply updated FE nginx conf on VPS (`sudo nginx -t && sudo nginx -s reload`) to activate Supabase + GTM CSP fixes from `7a982f18`.
-3. **REALTIME CHAT TEST** — in prod, open chat on FE + AD simultaneously, send message → verify arrives without refresh via Supabase Realtime.
+1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env` on VPS → restart BE. Run `python manage.py migrate cs 0013`. Test banner at `/cs`.
+2. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
+3. **REALTIME CHAT TEST** — open chat FE + AD simultaneously → send message → verify arrives without refresh.
 4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224, #226–#229 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226–#230 archived → `07-logs/session-history.md`.)_
 
 ---
 

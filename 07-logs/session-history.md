@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #230 — 2026-07-09
+
+**Achieved:**
+- Diagnosed STAFF-PUSH-NOTIFICATIONS: `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing from AD Vercel env → banner never rendered. Explained iOS PWA + Android flow.
+- Fixed FE nginx CSP `connect-src` — Supabase REST + Realtime WebSocket (`06470540`)
+- Fixed FE nginx CSP `img-src` — GTM tracking pixel (`7a982f18`)
+- Fixed chat silent close for registered-user email after OTP verify — `handleOtpVerified` now handles `access_token` branch (`2fbf7813`)
+- Fixed BE `ConversationCreateView` guest email case gate — `__iexact` + lowercase input (`d0b6a97`)
+- Added "Change" link on OTP screen + `autoComplete="one-time-code"` — Stripe/Clerk/Auth0 pattern (`0556a46f`)
+- All repos deployed to production
+
+---
+
 ## Session #229 — 2026-07-08
 
 **Achieved:**
