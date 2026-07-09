@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-09] session-end #230 | Fixed FE nginx CSP: Supabase connect-src + GTM img-src. Diagnosed STAFF-PUSH missing VAPID in Vercel. All repos shipped to prod. Next: nginx reload on VPS + VAPID prod setup + realtime chat test.
+
 ## [2026-07-08] session-end #229 | Added Supabase+chat vars to all 4 GitHub Actions deploy layers (Dockerfile, deploy.yml ×2, deploy-ghcr.sh heredoc). FE `8220c8b8`. Next: add 3 GitHub Secrets before prod deploy.
 
 ## [2026-07-08] session-end #228 | Staff Web Push notifications built + merged → develop. BE: StaffPushSubscription + signals + push helper + VAPID. AD: sw.js + manifest + hook + Enable banner + background push in SideList. BE `8c00267` · AD `842752b`.

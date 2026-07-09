@@ -4,30 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-08 (session #229)
+**Updated:** 2026-07-09 (session #230)
 
-**Achieved this session (#229):**
-- Added Supabase + chat realtime env vars to all 4 GitHub Actions deploy layers:
-  - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_CHAT_REALTIME`
-  - Dockerfile ARG/ENV · deploy.yml build-args · deploy.yml VPS exports · deploy-ghcr.sh `.env.deploy` heredoc
-  - Opus review caught critical missing step: `.env.deploy` heredoc in `deploy-ghcr.sh`
-  - FE `8220c8b8` → develop (branch `feat/supabase-chat-deploy-vars`)
-- Analyzed `NEXT_PUBLIC_CHAT_REALTIME` — polling mode is dead code, flag always `true`. Decision: keep as-is (not worth refactor risk).
+**Achieved this session (#230):**
+- Diagnosed STAFF-PUSH-NOTIFICATIONS prod setup — VAPID env vars missing from AD Vercel env (`NEXT_PUBLIC_VAPID_PUBLIC_KEY` not set → banner never renders). Explained full iOS PWA + Android flow.
+- Fixed FE nginx CSP `connect-src` missing Supabase origins — added `https://npehhtcobshckhefrqhw.supabase.co` + `wss://npehhtcobshckhefrqhw.supabase.co` → FE `06470540` → develop
+- Fixed FE nginx CSP `img-src` missing GTM pixel domain — added `*.googletagmanager.com` → FE `7a982f18` → develop
+- User shipped all repos to production
+- Next: test realtime chat + push notifications in prod; complete STAFF-PUSH-PROD-SETUP (VAPID in Vercel + BE .env + migration + nginx reload)
 
-**Workspace (#229):**
+**Workspace (#230):**
 - vault: master — updated this session
-- backend: `develop` (`8c00267`) — clean
-- frontend: `develop` (`8220c8b8`) — clean
-- admin-dashboard: `develop` (`842752b`) — clean
+- backend: main (`8c00267`) — clean
+- frontend: develop (`7a982f18`) — clean
+- admin-dashboard: main (`842752b`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **GITHUB-SECRETS-ADD** — add 3 secrets in GitHub repo Settings → Secrets → Actions: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_CHAT_REALTIME=true`. Must do BEFORE merging develop→main or deploy bakes empty strings → SSR 500.
-2. **STAFF-PUSH-PROD-SETUP** — generate VAPID keys (`npx web-push generate-vapid-keys`), add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env`, add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD `.env.local`, `pip install pywebpush` on server, `python manage.py migrate` (cs.0013).
-3. **CHAT PROD DEPLOY** — develop→main all 3 repos. Verify OTA comeback + soft-link chip in prod.
+1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env` on VPS → restart BE. Run `python manage.py migrate cs 0013`. Then test banner at `/cs`.
+2. **CSP-NGINX-RELOAD** — apply updated FE nginx conf on VPS (`sudo nginx -t && sudo nginx -s reload`) to activate Supabase + GTM CSP fixes from `7a982f18`.
+3. **REALTIME CHAT TEST** — in prod, open chat on FE + AD simultaneously, send message → verify arrives without refresh via Supabase Realtime.
 4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224, #226–#228 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226–#229 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -55,7 +54,7 @@ _(Sessions #221–#224, #226–#228 archived → `07-logs/session-history.md`.)_
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
-| **STAFF-PUSH-NOTIFICATIONS** | Web Push built + merged → develop (BE `8c00267` · AD `842752b`). **Pending prod setup:** generate VAPID keys (`npx web-push generate-vapid-keys`), add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env`, add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD `.env.local`, `pip install pywebpush` on server, `python manage.py migrate` (cs.0013). Then test Enable banner at `/cs`. | **PROD SETUP PENDING** | `cs/push.py` · `cs/signals.py` · `tickets/signals.py` · `public/sw.js` · `hooks/usePushSubscription.js` |
+| **STAFF-PUSH-NOTIFICATIONS** | Web Push built + merged → develop (BE `8c00267` · AD `842752b`). **Root cause diagnosed (#230):** `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing from AD Vercel env → banner never renders. **Remaining:** (1) add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to Vercel env → redeploy AD; (2) add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env` on VPS → restart BE; (3) `python manage.py migrate cs 0013`; (4) test Enable banner at `/cs`. | **PROD SETUP PENDING** | `cs/push.py` · `cs/signals.py` · `tickets/signals.py` · `public/sw.js` · `hooks/usePushSubscription.js` |
 |---|-------|--------|-------|
 | **DIRECT-BOOKINGS-TAB** | Command-centre 3rd tab "Direct Bookings" — notify + admin-initiated request for direct bookings (parity w/ OTA tab). **BUILT (#205) + customer-display fix (#206)** on 3 branches, **UNCOMMITTED**: BE `feat/cs-direct-bookings-tab` (list+ticket endpoints+routes+8 tests + `orders/serializers.py` notifications fix), admin `feat/admin-direct-bookings-tab` (csApi hooks + `NotifyDialog.jsx` + `DirectBookingsTab`), FE `feat/fe-m1-info-update-notice` (banner moved to top + design-system card width). Column "Service" (`contract_name`). Customer page now shows sent notifications. Decision report [[command-centre-direct-notify-redesign]]. | **REVIEW + MERGE develop → manual smoke** | [[command-centre-direct-notify-redesign]] · [[direct-booking-notify-plan]] · [[booking-item-serializer-name-collision]] |
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |

@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #229 — 2026-07-08
+
+**Achieved:**
+- Added Supabase + chat realtime env vars to all 4 GitHub Actions deploy layers: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_CHAT_REALTIME` → Dockerfile ARG/ENV · deploy.yml build-args · deploy.yml VPS exports · deploy-ghcr.sh `.env.deploy` heredoc. FE `8220c8b8` → develop
+- Analyzed `NEXT_PUBLIC_CHAT_REALTIME` — polling mode dead code, flag always `true`. Decision: keep as-is.
+
+---
+
 ## Session #228 — 2026-07-08
 
 **Achieved:**
