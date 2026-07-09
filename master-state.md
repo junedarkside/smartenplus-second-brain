@@ -4,31 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-09 (session #231)
+**Updated:** 2026-07-09 (session #232)
 
-**Achieved this session (#231):**
-- Diagnosed STAFF-PUSH-NOTIFICATIONS: `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing from AD Vercel env → banner never rendered
-- Fixed FE nginx CSP `connect-src` — Supabase REST + WebSocket (`06470540`)
-- Fixed FE nginx CSP `img-src` — GTM pixel (`7a982f18`)
-- Fixed chat silent close for registered-user OTP path — `handleOtpVerified` access_token branch (`2fbf7813`)
-- Fixed BE guest email case gate — `__iexact` + lowercase (`d0b6a97`)
-- Added "Change" link on OTP screen + `autoComplete="one-time-code"` (`0556a46f`)
-- All repos deployed to production (BE main `d0b6a97` · FE main `0556a46f` · AD main `842752b`)
+**Achieved this session (#232):**
+- Staff push notifications verified working end-to-end locally (Supabase → SideList → SW → Chrome → macOS banner)
+- Fixed `renotify` bug: tag-collapsed notification replacement was silent → `renotify: true` added to `SideList.js` + `public/sw.js` (`63ef3f4` → `fix/push-renotify` → merged to develop → main)
+- 2 atomic vault notes: [[web-push-renotify-tag-collapse-bug]] + [[macos-notification-testing-gotchas]]
+- ADR [[staff-push-notification-adr]] updated to SHIPPED locally
 
-**Workspace (#231):**
+**Workspace (#232):**
 - vault: master — updated this session
-- backend: main (`d0b6a97`) — clean
+- backend: main (`d0b6a97`) — clean (resources.txt modified, non-critical)
 - frontend: main (`0556a46f`) — clean
-- admin-dashboard: main (`842752b`) — clean
+- admin-dashboard: main (`63ef3f4`) — clean
 - content: master (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env` on VPS → restart BE. Run `python manage.py migrate cs 0013`. Test banner at `/cs`.
+1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`.
 2. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
 3. **REALTIME CHAT TEST** — open chat FE + AD simultaneously → send message → verify arrives without refresh.
 4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224, #226–#230 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226–#231 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -56,7 +53,7 @@ _(Sessions #221–#224, #226–#230 archived → `07-logs/session-history.md`.)_
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
-| **STAFF-PUSH-NOTIFICATIONS** | Web Push built + merged → develop (BE `8c00267` · AD `842752b`). **Root cause diagnosed (#230):** `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing from AD Vercel env → banner never renders. **Remaining:** (1) add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to Vercel env → redeploy AD; (2) add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE `.env` on VPS → restart BE; (3) `python manage.py migrate cs 0013`; (4) test Enable banner at `/cs`. | **PROD SETUP PENDING** | `cs/push.py` · `cs/signals.py` · `tickets/signals.py` · `public/sw.js` · `hooks/usePushSubscription.js` |
+| **STAFF-PUSH-NOTIFICATIONS** | **LOCAL VERIFIED #232.** Full stack confirmed working (Supabase → SideList → SW → Chrome → macOS banner). `renotify: true` bug fixed `63ef3f4` → main. See [[web-push-renotify-tag-collapse-bug]]. **Remaining prod setup:** (1) add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy; (2) add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE; (3) `python manage.py migrate cs 0013`; (4) test Enable banner at prod `/cs`. | **PROD SETUP PENDING** | `cs/push.py` · `tickets/signals.py` · `public/sw.js` · `hooks/usePushSubscription.js` |
 |---|-------|--------|-------|
 | **DIRECT-BOOKINGS-TAB** | Command-centre 3rd tab "Direct Bookings" — notify + admin-initiated request for direct bookings (parity w/ OTA tab). **BUILT (#205) + customer-display fix (#206)** on 3 branches, **UNCOMMITTED**: BE `feat/cs-direct-bookings-tab` (list+ticket endpoints+routes+8 tests + `orders/serializers.py` notifications fix), admin `feat/admin-direct-bookings-tab` (csApi hooks + `NotifyDialog.jsx` + `DirectBookingsTab`), FE `feat/fe-m1-info-update-notice` (banner moved to top + design-system card width). Column "Service" (`contract_name`). Customer page now shows sent notifications. Decision report [[command-centre-direct-notify-redesign]]. | **REVIEW + MERGE develop → manual smoke** | [[command-centre-direct-notify-redesign]] · [[direct-booking-notify-plan]] · [[booking-item-serializer-name-collision]] |
 | **INFO-UPDATE-NOTICE-WIDTH** | ✅ **FIXED #208** — added `max-w-[1200px] mx-auto w-full` to banner mount (`BookingDetailMain.js:210`). Also fixed OTA `/my-trip` gap: added `mt-4` to InfoUpdateNotice wrapper (`pages/my-trip/index.js:238`). Both merged → develop `50fb201e`. | **CLOSED** | [[command-centre-direct-notify-redesign]] |

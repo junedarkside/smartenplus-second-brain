@@ -415,6 +415,24 @@ iOS 16.4+ requires PWA install (Add to Home Screen) before Web Push works. `mani
 
 ---
 
+## Implementation Status — 2026-07-09
+
+SHIPPED locally. All infrastructure verified working end-to-end:
+- VAPID keys set in BE `.env` + AD `.env.local`
+- `StaffPushSubscription` migration `0013` applied
+- `pywebpush` installed
+- SW `activated`, PushSubscription stored in DB, chat push fires on tab hide
+
+**Bug fixed during testing:** `renotify: true` added to `showNotification()` in both `SideList.js` (chat push) and `public/sw.js` (ticket push). Without it, tag-collapsed notification replacement shows no banner. Commit `63ef3f4` → `fix/push-renotify` → merged to develop 2026-07-09. See [[web-push-renotify-tag-collapse-bug]].
+
+**Prod setup still needed:**
+- AD Vercel env: add `NEXT_PUBLIC_VAPID_PUBLIC_KEY`
+- BE VPS `.env`: add `VAPID_PRIVATE_KEY`, `VAPID_PUBLIC_KEY`, `VAPID_CLAIMS_EMAIL`
+- Run `python manage.py migrate cs 0013` on VPS
+- Restart BE
+
+---
+
 ## Related
 
 - [[cs-chat-supabase-offload]] — Supabase is chat write path; push for chat fires from AD not Django
@@ -422,3 +440,5 @@ iOS 16.4+ requires PWA install (Add to Home Screen) before Web Push works. `mani
 - [[feature-flag-kill-switch-pattern]] — wrap `send_push_to_subscriptions` in `FeatureFlag.get('staff_push')` for kill switch
 - [[prod-capacity-celery-audit]] — no new Celery task added by design; ticket push is synchronous in signal
 - [[cs-architecture-decision]] — Django owns ticket lifecycle; signal fires on Django-side creates only
+- [[web-push-renotify-tag-collapse-bug]] — renotify fix found during local test
+- [[macos-notification-testing-gotchas]] — Focus/DND + pileup + visibility gotchas discovered during test
