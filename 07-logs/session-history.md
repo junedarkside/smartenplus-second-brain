@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #234 — 2026-07-11
+
+**Achieved:**
+- Updated support email `support@smartenplus.co.th` → `booking.smartenplus@gmail.com` in booking + order confirm templates (6 spots). `fix/email-support-address` → develop `c585c46`.
+- Merged `fix/orderdetails-reconcile-payment-pending` → develop `52c153d` — PAYMENT-RECONCILE-FIX on develop.
+- Rebuilt `review_invitation_template.html` to design system (black-and-white, Inter, flat CTA, dark footer). `fix/review-email-design-system` → develop `7067a30`.
+- Sent test review invitation via Django shell + SES to `june_pinkfloyd@hotmail.com` — confirmed (SES `0101019f4d70919e`).
+
+**Workspace (#234):**
+- backend: `develop` (`7067a30`) — `resources.txt` uncommitted (VAPID scratch, do not commit)
+- frontend: `feat/passenger-age-ssot` (`c25dcd44`) — clean
+- admin-dashboard: `feat/passenger-age-ssot` (`037a3f9`) — clean
+- content: `master` (`3756e5b`) — clean
+
+---
+
 ## Session #233 — 2026-07-11
 
 **Achieved:**
