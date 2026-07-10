@@ -291,6 +291,7 @@ Global navigation catalog. Updated on every ingest.
 - [[checkout-state-persistence]] — useCartSync 6-effect ordering, ghost trip detection, dual persistence strategy, guest→backend migration, debounced auto-save
 - [[checkout-formdata-time-fields]] — frontend lowercase-t vs backend capital-T time field boundary, HH:MM:SS format, 3 conversion helpers
 - [[checkout-step-flow]] — hasMixedPassengerCounts step branching (4 vs 5 steps), payment init idempotency key, CONTRACT_INACTIVE auto-redirect
+- [[passenger-age-classification]] — **SCAN 2026-07-10.** Age boundaries = code convention only (rate cards store no age), duplicated in 5 classifiers + UI copy across FE/BE/AD. Planned change: Child 3–8, Adult ≥9 (was 3–11/≥12). Full change checklist with file:line. 3 pre-existing mismatches found (dateHelper infant <2 bug, search copy, AD "2-12").
 - [[frontend-debug-utilities]] — useRateLimitedQuery global singleton (5 types, jitter), DevToolsProvider disabled by default, useAuth 100ms redirect delay
 - [[payment-integration]] — Thai payment methods, Omise source types, webhook flows, checkout architecture principles (28 use cases), centralized payment error detection, expiry paths (Celery+view+mgmt), C1/C2 fixed in cb817d9
 - [[payment-audit-bugs]] — 4 confirmed bugs (2 MEDIUM cart-sync dead code, 2 LOW stable_id cleanup), 2 fixed candidates (formData restore, transient error nuking cartId, both cb817d9)
