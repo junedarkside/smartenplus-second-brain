@@ -456,3 +456,6 @@ Broke [[chat-supabase-migration-plan]] into executable task card [[chat-supabase
 
 ## [2026-07-10] knowledge | passenger-age-classification — child-age change scan (Child 3-8, Adult 9+)
 Full 3-repo scan (FE/BE/AD) for child age touchpoints ahead of planned boundary change (adult 12→9, infant stays <3). Found 5 duplicated classifier implementations + hardcoded UI copy in 6 files + 2 test files. 3 pre-existing mismatches: FE dateHelper.js infant <2 (vs <3 everywhere else — 2-year-old classifies differently within same checkout flow), FE search Passenger.js copy "Ages 2 to <12", AD rateCardConstants.js "2-12". Vault-only session, zero code changes. → [[passenger-age-classification]]
+
+## [2026-07-10] recheck | passenger-age-classification — 2nd scan pass, 9 new copy locations added
+Recheck found items missed in pass 1: adult "12+ years" labels (DayTripBookingWidget:426, EditableCartItem:245, InlinePassengerSelector:239), AD infant "under 2" copy in 4 files (rateCardConstants:76, RateCardFields:106, SetDefaultRate:276, RateCardEditModal:377), PassengerCounter JSDoc. Confirmed: AD has no classifier code (display-only, months<36), content repo clean, discover.js calculateAge unrelated. → [[passenger-age-classification]]

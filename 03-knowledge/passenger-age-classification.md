@@ -15,7 +15,7 @@ Passenger age boundaries (Adult/Child/Infant) are pure code convention — rate 
 
 1. **5 duplicated classifiers** — no single source of truth. Any boundary change must touch all 5 or FE/BE disagree.
 2. **Pre-existing bug:** FE `helpers/dateHelper.js` uses infant boundary **< 2** while everywhere else uses < 3. A 2-year-old classifies as "Child" in checkout Step 1 validation and account display, but "Infant" in passenger assignment validation and BE booking records — *within the same checkout flow*.
-3. **Copy drift:** FE search `Passenger.js` says "Ages 2 to <12"/"Under 2" (matches the dateHelper bug); AD `rateCardConstants.js` says "2-12" (matches neither).
+3. **Copy drift:** FE search `Passenger.js` says "Ages 2 to <12"/"Under 2" (matches the dateHelper bug); AD `rateCardConstants.js` says "Child (2-12)" + "Infant (under 2)" (matches neither); AD "under 2 years old" helper text repeated in 3 more files (RateCardFields, SetDefaultRate, RateCardEditModal).
 
 ## Details — Change Checklist
 
@@ -40,12 +40,15 @@ Passenger age boundaries (Adult/Child/Infant) are pure code convention — rate 
 
 | File | Current | New |
 |------|---------|-----|
-| FE `components/activities/detail/DayTripBookingWidget.js:435,444` | "Children (3-11 years)" / "Infants (0-2 years)" | "Children (3-8 years)" / unchanged |
-| FE `components/cart/EditableCartItem.js:253,260` | same | same fix |
-| FE `components/forms/checkout/InlinePassengerSelector.js:255,271` | "3-11 years" / "0-2 years" | "3-8 years" / unchanged |
+| FE `components/activities/detail/DayTripBookingWidget.js:426,435,444` | "Adults (12+ years)" / "Children (3-11 years)" / "Infants (0-2 years)" | "Adults (9+ years)" / "Children (3-8 years)" / unchanged |
+| FE `components/cart/EditableCartItem.js:245,253,260` | same 3 labels | same fix |
+| FE `components/forms/checkout/InlinePassengerSelector.js:239,255,271` | "12+ years" / "3-11 years" / "0-2 years" | "9+ years" / "3-8 years" / unchanged |
 | FE `components/search/Passenger.js:256,263,270` | "12 and up" / "Ages 2 to <12" / "Under 2" | "9 and up" / "Ages 3 to 8" / "Under 3" |
-| AD `components/contracts/rateCardConstants.js:70-71` | "Child (2-12 years)" / "ages 2-12" | "Child (3-8 years)" / "ages 3-8" |
-| AD `components/forms/contract/RateCardFields.js:19-20` | "typically 3-11" / "typically 0-2" | "typically 3-8" / unchanged |
+| FE `components/shared/PassengerCounter.js:11` | JSDoc example "Adults (12+ years)" | cosmetic, update with labels |
+| AD `components/contracts/rateCardConstants.js:70-71,76` | "Child (2-12 years)" / "ages 2-12" / "Infant (under 2 years)" | "Child (3-8 years)" / "ages 3-8" / "Infant (under 3 years)" |
+| AD `components/forms/contract/RateCardFields.js:19-20,106` | "typically 3-11" / "typically 0-2" / "free (0) for children under 2 years old" | "typically 3-8" / unchanged / "under 3 years old" |
+| AD `components/calendar/SetDefaultRate.js:276` | "INFANT rates are commonly free (0) for children under 2 years old" | "under 3 years old" |
+| AD `components/contracts/modals/RateCardEditModal.jsx:377` | same "under 2" string | same fix |
 
 ### Tests
 
@@ -53,7 +56,9 @@ Passenger age boundaries (Adult/Child/Infant) are pure code convention — rate 
 
 ### Does NOT change
 
-- AD `components/booking/BookingItemEditor.js:14-18` + `components/booking/PassengerDetails.js:69-73` — months/days display switches at age 3 (infant boundary unchanged)
+- AD `components/booking/BookingItemEditor.js` + `components/booking/PassengerDetails.js` — months/days display switches at `months < 36` (age 3, infant boundary unchanged). AD has **no classifier code** — display formatting only.
+- `smartenplus-content` repo — recheck 2026-07-10: zero age-range mentions
+- FE `pages/api/debug/discover.js` — has own local `calculateAge` for session timestamps, unrelated to passengers
 - BE `operators/models.py:749-750` `child_rate`/`infant_rate` + `RateCard` values — no age stored
 - Cart `adult`/`child`/`infant` fields — counts, not ages
 - BE `bookings/tasks.py:257` — reads stored `age_category`, safe
