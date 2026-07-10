@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-11] session-end #233 | Payment debug: Funnel off + dead poll gate for payment_pending. Recovered order UUR5314673. BE fix 3a178cd (reconcile gate). 348/348 tests pass. Merge pending.
+
 ## [2026-07-09] session-end #232 | Staff push notifications verified locally + renotify bug fixed (63ef3f4 → main). 2 atomic notes: web-push-renotify-tag-collapse-bug + macos-notification-testing-gotchas. Prod VPS setup pending.
 
 ## [2026-07-09] session-end #231 | 5 chat fixes shipped to prod: CSP Supabase+GTM, registered-user OTP silent close, BE email case gate, OTP Change link + autofill. All repos main updated.

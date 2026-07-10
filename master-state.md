@@ -4,28 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-09 (session #232)
+**Updated:** 2026-07-11 (session #233)
 
-**Achieved this session (#232):**
-- Staff push notifications verified working end-to-end locally (Supabase → SideList → SW → Chrome → macOS banner)
-- Fixed `renotify` bug: tag-collapsed notification replacement was silent → `renotify: true` added to `SideList.js` + `public/sw.js` (`63ef3f4` → `fix/push-renotify` → merged to develop → main)
-- 2 atomic vault notes: [[web-push-renotify-tag-collapse-bug]] + [[macos-notification-testing-gotchas]]
-- ADR [[staff-push-notification-adr]] updated to SHIPPED locally
+**Achieved this session (#233):**
+- Diagnosed credit card stuck pending (order UUR5314673): Tailscale Funnel was off + orderdetails poll gate dead for `payment_pending` since `986fc30` (May 16)
+- Recovered order UUR5314673 via manual reconcile → `status:paid`
+- BE `3a178cd` on `fix/orderdetails-reconcile-payment-pending`: reconcile gate extended to `ordering|payment_pending` + 3 new tests; 348/348 pass
+- Verified 4-layer payment redundancy (webhook → poll ≤5s → celery ≤10min → manual); all idempotent
+- Clarified `source funnel.sh on` is manual step before payment testing (not in activate.sh)
 
-**Workspace (#232):**
-- vault: master — updated this session
-- backend: main (`d0b6a97`) — clean (resources.txt modified, non-critical)
-- frontend: main (`0556a46f`) — clean
-- admin-dashboard: main (`63ef3f4`) — clean
-- content: master (`3756e5b`) — clean
+**Workspace (#233):**
+- backend: `fix/orderdetails-reconcile-payment-pending` (`3a178cd`) — `resources.txt` modified (pre-existing, ignore)
+- frontend: `feat/passenger-age-ssot` (`c25dcd44`) — clean
+- admin-dashboard: `feat/passenger-age-ssot` (`037a3f9`) — clean
+- content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`.
-2. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
-3. **REALTIME CHAT TEST** — open chat FE + AD simultaneously → send message → verify arrives without refresh.
+1. **PAYMENT-RECONCILE-FIX** — merge `fix/orderdetails-reconcile-payment-pending` → develop → main on BE.
+2. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`.
+3. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
 4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 
-_(Sessions #221–#224, #226–#231 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#224, #226–#232 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -52,6 +52,8 @@ _(Sessions #221–#224, #226–#231 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **PAYMENT-RECONCILE-FIX** | BE `3a178cd` on `fix/orderdetails-reconcile-payment-pending` — extends orderdetails poll gate to include `payment_pending` orders so missed webhooks self-heal in ≤5s. 348/348 tests pass. **Needs:** merge → develop → main. Root cause: since `986fc30` (May 16) orders sit in `payment_pending` while charge is pending, making the old `status == 'ordering'` gate a dead branch. | **MERGE PENDING** | `orders/views.py:650` · `orders/tests/test_order_views.py` |
+| **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
 | **STAFF-PUSH-NOTIFICATIONS** | **LOCAL VERIFIED #232.** Full stack confirmed working (Supabase → SideList → SW → Chrome → macOS banner). `renotify: true` bug fixed `63ef3f4` → main. See [[web-push-renotify-tag-collapse-bug]]. **Remaining prod setup:** (1) add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy; (2) add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE; (3) `python manage.py migrate cs 0013`; (4) test Enable banner at prod `/cs`. | **PROD SETUP PENDING** | `cs/push.py` · `tickets/signals.py` · `public/sw.js` · `hooks/usePushSubscription.js` |
 |---|-------|--------|-------|

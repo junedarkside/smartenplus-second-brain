@@ -4,7 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
-## Session #231 — 2026-07-09
+## Session #233 — 2026-07-11
+
+**Achieved:**
+- Diagnosed credit card stuck pending (order UUR5314673): Tailscale Funnel was off + orderdetails poll gate dead for `payment_pending` since `986fc30` (May 16)
+- Recovered order UUR5314673 via manual reconcile → `{"status":"paid","charge_status":"paid","is_final":true}`
+- BE commit `3a178cd` on `fix/orderdetails-reconcile-payment-pending`: extended reconcile gate to `'ordering' | 'payment_pending'` + 3 new tests; 348/348 pass
+- Verified 4-layer payment redundancy: webhook → poll-reconcile (≤5s) → celery sweep (≤10min) → manual reconcile; all idempotent
+- Clarified `source funnel.sh on` = manual required step before payment testing (not in activate.sh)
+
+**Workspace (#233):**
+- backend: `fix/orderdetails-reconcile-payment-pending` (`3a178cd`) — `resources.txt` modified (pre-existing)
+- frontend: `feat/passenger-age-ssot` (`c25dcd44`) — clean
+- admin-dashboard: `feat/passenger-age-ssot` (`037a3f9`) — clean
+- content: `master` (`3756e5b`) — clean
+
+## Session #232 — 2026-07-09
 
 **Achieved:**
 - Diagnosed STAFF-PUSH-NOTIFICATIONS: `NEXT_PUBLIC_VAPID_PUBLIC_KEY` missing from AD Vercel env → banner never rendered
