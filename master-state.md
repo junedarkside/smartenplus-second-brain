@@ -4,27 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-11 (session #234)
+**Updated:** 2026-07-11 (session #235)
 
-**Achieved this session (#234):**
-- Updated support contact email `support@smartenplus.co.th` → `booking.smartenplus@gmail.com` in `booking_confirmation_template.html` + `order_email_template_pro.html` (6 spots total — mailto hrefs + visible text). Branch `fix/email-support-address` → develop (`431794f`, `c585c46`).
-- Merged `fix/orderdetails-reconcile-payment-pending` → develop (`52c153d`) — PAYMENT-RECONCILE-FIX closed.
-- Rebuilt `review_invitation_template.html` from old blue-brand design to black-and-white design system: black header, Inter font, flat CTA + VML Outlook fallback, dark footer, `booking.smartenplus@gmail.com` support. Branch `fix/review-email-design-system` → develop (`28ed777`, `7067a30`).
-- Sent test review invitation email via Django shell + AWS SES to `june_pinkfloyd@hotmail.com` — confirmed delivery (SES msg `0101019f4d70919e`).
+**Achieved this session (#235):**
+- Diagnosed prod Celery crash blocking booking-confirm dispatch: `send_booking_data` (`bookings/tasks.py`) POSTed booking JSON to targets in order `AUTO_SMARTENPLUS_API_URL` → `N8N_WEBHOOK_URL`. AUTO endpoint (`auto.smartenplus.co.th`) decommissioned — DNS `Name does not resolve`; its `ConnectionError` → `raise self.retry()` aborted the target loop BEFORE n8n was reached, so booking data never hit n8n and the task retried to exhaustion. Only fires because prod `.env` still sets the dead URL (local `.env` empty → skipped → n8n worked locally).
+- Fix `46a8be2` on `fix/booking-dispatch-dead-auto-target` → merged develop `6a9ea11`. Collapsed `send_booking_data` to a single n8n POST (dropped multi-target list + loop + dead Api-Key auth branch). Removed dead `AUTO_SMARTENPLUS_API_URL`/`AUTO_SMARTENPLUS_API_KEY` settings. Added `SendBookingDataTest` (2 tests pass): n8n POST payload + skip-when-unset guard.
+- Backend-architect agent reviewed plan → PROCEED-WITH-CHANGES; corrections folded (root cause conditional on prod env; non-200 no-retry deferred as separate concern; simplified to direct POST instead of keeping single-iteration loop).
 
-**Workspace (#234):**
-- backend: `develop` (`7067a30`) — `resources.txt` modified (pre-existing VAPID key scratch notes, uncommitted, DO NOT commit)
+**Workspace (#235):**
+- backend: `develop` (`6a9ea11`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
 - frontend: `feat/passenger-age-ssot` (`c25dcd44`) — clean
 - admin-dashboard: `feat/passenger-age-ssot` (`037a3f9`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`. ⚠️ VAPID private key currently in `resources.txt` (uncommitted) — move to `.env` + discard from file first.
-2. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
-3. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
-4. **BE develop → main deploy** — includes email support fix + payment reconcile fix + review template rebuild.
+1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`. OR same-day hotfix (no deploy): unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker (env cached at process start).
+2. **BOOKING-DISPATCH-DOCS** — `docs/` path blocked by permission settings this session. Hand-edit: `docs/operations/ENV.md:20-21` (remove `AUTO_SMARTENPLUS_API_URL`/`KEY` lines) + `docs/n8n-webhook-resend-operator.md` (n8n now sole target; drop multi-target + retry-shared-target notes). Stale AUTO refs could mislead a future dev into re-adding.
+3. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`. ⚠️ VAPID private key currently in `resources.txt` (uncommitted) — move to `.env` + discard from file first.
+4. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
+5. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
+6. **BE develop → main deploy** — now includes email support fix + payment reconcile fix + review template rebuild + booking dispatch fix.
 
-_(Sessions #221–#224, #226–#233 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#234 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -39,6 +40,7 @@ _(Sessions #221–#224, #226–#233 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
+| **BOOKING-DISPATCH-N8N** | ✅ **MERGED → develop `6a9ea11` (#235)** — dead `AUTO_SMARTENPLUS_API_URL` target removed; `send_booking_data` now POSTs only to `N8N_WEBHOOK_URL`. Booking-confirm data reaches n8n again. **Needs:** develop→main deploy, OR same-day hotfix = unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker. Docs cleanup still pending (`docs/` blocked this session). | **DEPLOY PENDING** | `bookings/tasks.py:128` · [[backend-n8n-resend-webhook]] |
 | **OTA-FLOW-BUGS** | ✅ **DEPLOYED TO PROD 2026-07-03** — 3 commits: `c96b1724` · `09e3f955` · `0657c6fb`. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix). → closed-items.md | — |
 | **CS-CENTRALIZATION-DEPLOY** | ✅ **DEPLOYED TO PROD 2026-07-03** — BE `6cb2328` · FE `5617b137` · admin `0e5727b`. All manual tests PASS. Celery beat scheduled. → closed-items.md | — |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |

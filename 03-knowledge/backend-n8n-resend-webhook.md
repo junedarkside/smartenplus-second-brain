@@ -5,6 +5,8 @@
 **Commits:** `fa687cb`, `4285e70`, `8d88ba3`, `2bdf31b`
 **Status:** Merged to develop
 
+> **UPDATE 2026-07-11 (#235):** `AUTO_SMARTENPLUS_API_URL` target **REMOVED** — endpoint `auto.smartenplus.co.th` decommissioned (DNS `Name does not resolve`); its `ConnectionError` aborted the target loop before n8n was reached, so prod booking-confirm data never reached n8n. `send_booking_data` (`bookings/tasks.py`) collapsed to a **single n8n POST**; `AUTO_SMARTENPLUS_API_URL`/`AUTO_SMARTENPLUS_API_KEY` settings deleted; regression test `SendBookingDataTest` added. `6a9ea11` → develop. The Architecture + Retry Behavior sections below are **HISTORICAL** (pre-#235, multi-target era). See [[master-state]] BOOKING-DISPATCH-N8N.
+
 ---
 
 ## Summary

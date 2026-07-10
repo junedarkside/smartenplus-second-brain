@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-11] session-end #235 | Booking-confirm dispatch fix. Dead AUTO_SMARTENPLUS_API_URL target (auto.smartenplus.co.th DNS dead) aborted send_booking_data loop before n8n. Collapsed to single n8n POST, removed AUTO settings, added test. 46a8be2 → develop 6a9ea11. Docs cleanup blocked (permission). Deploy pending.
+
 ## [2026-07-11] session-end #234 | Email support → booking.smartenplus@gmail.com (booking+order templates). PAYMENT-RECONCILE-FIX merged develop. Review invitation template rebuilt to design system. Test email sent SES confirmed.
 
 ## [2026-07-11] session-end #233 | Payment debug: Funnel off + dead poll gate for payment_pending. Recovered order UUR5314673. BE fix 3a178cd (reconcile gate). 348/348 tests pass. Merge pending.
