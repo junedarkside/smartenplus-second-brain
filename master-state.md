@@ -19,7 +19,7 @@
 
 **Resume point — next session:**
 1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`. OR same-day hotfix (no deploy): unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker (env cached at process start).
-2. **BOOKING-DISPATCH-DOCS** — `docs/` path blocked by permission settings this session. Hand-edit: `docs/operations/ENV.md:20-21` (remove `AUTO_SMARTENPLUS_API_URL`/`KEY` lines) + `docs/n8n-webhook-resend-operator.md` (n8n now sole target; drop multi-target + retry-shared-target notes). Stale AUTO refs could mislead a future dev into re-adding.
+2. ~~**BOOKING-DISPATCH-DOCS**~~ ✅ DONE `a750ab5` — `docs/operations/ENV.md` (AUTO → `N8N_WEBHOOK_URL`) + `docs/n8n-webhook-resend-operator.md` (historical banner). `docs/` permission granted globally.
 3. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`. ⚠️ VAPID private key currently in `resources.txt` (uncommitted) — move to `.env` + discard from file first.
 4. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
 5. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
@@ -40,7 +40,7 @@ _(Sessions #221–#234 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
-| **BOOKING-DISPATCH-N8N** | ✅ **MERGED → develop `6a9ea11` (#235)** — dead `AUTO_SMARTENPLUS_API_URL` target removed; `send_booking_data` now POSTs only to `N8N_WEBHOOK_URL`. Booking-confirm data reaches n8n again. **Needs:** develop→main deploy, OR same-day hotfix = unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker. Docs cleanup still pending (`docs/` blocked this session). | **DEPLOY PENDING** | `bookings/tasks.py:128` · [[backend-n8n-resend-webhook]] |
+| **BOOKING-DISPATCH-N8N** | ✅ **MERGED → develop `6a9ea11` (#235)** — dead `AUTO_SMARTENPLUS_API_URL` target removed; `send_booking_data` now POSTs only to `N8N_WEBHOOK_URL`. Booking-confirm data reaches n8n again. **Needs:** develop→main deploy, OR same-day hotfix = unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker. Docs cleanup shipped `a750ab5` (ENV.md + n8n banner; `docs/` permission granted). | **DEPLOY PENDING** | `bookings/tasks.py:128` · [[backend-n8n-resend-webhook]] |
 | **OTA-FLOW-BUGS** | ✅ **DEPLOYED TO PROD 2026-07-03** — 3 commits: `c96b1724` · `09e3f955` · `0657c6fb`. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix). → closed-items.md | — |
 | **CS-CENTRALIZATION-DEPLOY** | ✅ **DEPLOYED TO PROD 2026-07-03** — BE `6cb2328` · FE `5617b137` · admin `0e5727b`. All manual tests PASS. Celery beat scheduled. → closed-items.md | — |
 | **FULL-DEPLOY** | ✅ **DEPLOYED 2026-06-26** — all 3 repos develop→main. FE `43299da` · BE `ebbb044` · admin `3d5a3a4`. Includes G8, P3a/P3b, CS chat Steps 5-7, CS-CHAT-PERF, r12 SEO. | ✅ Done |
