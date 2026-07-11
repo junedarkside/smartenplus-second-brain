@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-07-11 (session #236)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **COMMAND-CENTRE-BADGE** | session #236 | Pending-count pill on sidemenu "Command Centre" icon + "Direct Requests" tab label. Spec reviewed (2-agent), vault docs updated, 2 edits in admin-dashboard: `SideList.js` (badge key added to `badgeCounts`), `command-centre/index.js` (`<Badge>` wrapping tab label). Pill-clip fix (`pr:1.5, right:-6, top:6`). Merged `feat/command-centre-pending-badge` → develop `8653679`. Zero backend change. |
+
 ## Closed — 2026-07-07 (session #225)
 
 | Item | Closed | What shipped |

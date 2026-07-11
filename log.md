@@ -2,6 +2,11 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-07-11] review+impl-doc | command-centre pending badge — spec verified vs code, 2 corrections, impl doc created
+2-agent review: spec sound, no blockers. Corrections: "~3 edits" → 2 edits; shared-cache dedupe holds only at default `pending` filter. 2 simplifications adopted (plain `badgeCounts` object, no `|| 0` on tab Badge). Review section appended to spec; dev-ready edit list → [[command-centre-pending-badge-implementation]].
+
+## [2026-07-11] spec | command-centre-pending-badge — handoff for dev team. Pending direct-request count pill on Direct Requests tab + Command Centre sidemenu item. Sidemenu badge UI already exists (`SideBarListMenu.js`); only wiring missing. ~3 FE edits, zero BE change. Refresh = mount + RTK `'Ticket'` tag-invalidation (no polling/realtime). → [[command-centre-pending-badge]]
+
 ## [2026-07-09] fix | web-push renotify bug + local test verified — `renotify: true` added to `showNotification()` in `SideList.js` + `public/sw.js`. Tag-collapsed notification replacement was silent (no banner). `63ef3f4` → develop. 2 atomic notes: [[web-push-renotify-tag-collapse-bug]] · [[macos-notification-testing-gotchas]]. Prod VPS deploy still pending.
 
 ## [2026-07-08] adr | staff-push-notification — Web Push API: chat push via AD frontend (Supabase realtime onEvent → service worker), conv+ticket push via Django signal → Celery → pywebpush. 4-agent team (UX+Next.js+Django+Leader). Vault: [[staff-push-notification-adr]]. Impl pending.

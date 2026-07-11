@@ -1,5 +1,8 @@
 # Vault Log
 
+## [2026-07-11] session-end #236 | command-centre pending-badge spec reviewed + implemented + merged → develop 8653679
+2-agent review confirmed spec line-number claims exact. 2 corrections (edits 3→2; shared-cache dedupe only at default filter). Vault: Review section appended to spec, impl doc created, atom `mui-badge-in-tab-label-clip-fix` extracted. AD: `SideList.js` + `command-centre/index.js` edited, pill-clip fixed (`pr:1.5`), feat branch merged → develop.
+
 ## [2026-07-11] scan | age-ssot 3-repo audit + RATE_CARD_AGES dead const removed (a3c88d88)
 
 ## [2026-07-11] docs-cleanup #235b | BOOKING-DISPATCH-DOCS done. docs/operations/ENV.md: AUTO vars → N8N_WEBHOOK_URL. docs/n8n-webhook-resend-operator.md: historical banner (AUTO removed, n8n sole target). a750ab5 → develop. Note: removed global `Read(./docs/**)` deny from ~/.claude/settings.json to unblock.

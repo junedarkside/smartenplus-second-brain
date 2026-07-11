@@ -4,28 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-11 (session #235)
+**Updated:** 2026-07-11 (session #236)
 
-**Achieved this session (#235):**
-- Diagnosed prod Celery crash blocking booking-confirm dispatch: `send_booking_data` (`bookings/tasks.py`) POSTed booking JSON to targets in order `AUTO_SMARTENPLUS_API_URL` → `N8N_WEBHOOK_URL`. AUTO endpoint (`auto.smartenplus.co.th`) decommissioned — DNS `Name does not resolve`; its `ConnectionError` → `raise self.retry()` aborted the target loop BEFORE n8n was reached, so booking data never hit n8n and the task retried to exhaustion. Only fires because prod `.env` still sets the dead URL (local `.env` empty → skipped → n8n worked locally).
-- Fix `46a8be2` on `fix/booking-dispatch-dead-auto-target` → merged develop `6a9ea11`. Collapsed `send_booking_data` to a single n8n POST (dropped multi-target list + loop + dead Api-Key auth branch). Removed dead `AUTO_SMARTENPLUS_API_URL`/`AUTO_SMARTENPLUS_API_KEY` settings. Added `SendBookingDataTest` (2 tests pass): n8n POST payload + skip-when-unset guard.
-- Backend-architect agent reviewed plan → PROCEED-WITH-CHANGES; corrections folded (root cause conditional on prod env; non-200 no-retry deferred as separate concern; simplified to direct POST instead of keeping single-iteration loop).
+**Achieved this session (#236):**
+- Command-centre pending-badge: 2-agent spec review, vault docs updated (`## Review` + impl doc), implemented on admin-dashboard (`SideList.js` sidemenu pill + `command-centre/index.js` tab Badge), pill-clip fix (`pr:1.5`), merged feat/command-centre-pending-badge → develop `8653679`.
 
-**Workspace (#235):**
-- backend: `develop` (`6a9ea11`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
-- frontend: `develop` (`a3c88d88`) — clean  ← age SSOT merged + RATE_CARD_AGES dead const removed
-- admin-dashboard: `feat/passenger-age-ssot` (`037a3f9`) — clean
+**Workspace (#236):**
+- backend: `develop` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
+- frontend: `main` (`a3c88d88`) — clean
+- admin-dashboard: `develop` (`8653679`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`. OR same-day hotfix (no deploy): unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker (env cached at process start).
-2. ~~**BOOKING-DISPATCH-DOCS**~~ ✅ DONE `a750ab5` — `docs/operations/ENV.md` (AUTO → `N8N_WEBHOOK_URL`) + `docs/n8n-webhook-resend-operator.md` (historical banner). `docs/` permission granted globally.
-3. **STAFF-PUSH-PROD-SETUP** — add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` to AD Vercel env → redeploy AD. Add `VAPID_PRIVATE_KEY`/`VAPID_PUBLIC_KEY`/`VAPID_CLAIMS_EMAIL` to BE VPS `.env` → restart BE. Run `python manage.py migrate cs 0013`. Test Enable banner at prod `/cs`. ⚠️ VAPID private key currently in `resources.txt` (uncommitted) — move to `.env` + discard from file first.
-4. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS to activate Supabase + GTM CSP fixes.
-5. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
-6. **BE develop → main deploy** — now includes email support fix + payment reconcile fix + review template rebuild + booking dispatch fix.
+1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
+2. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
+3. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS.
+4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
+5. **BE develop → main deploy** — email support fix + payment reconcile fix + booking dispatch fix.
 
-_(Sessions #221–#234 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#235 archived → `07-logs/session-history.md`.)_
 
 ---
 

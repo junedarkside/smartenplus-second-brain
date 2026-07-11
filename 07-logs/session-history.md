@@ -4,6 +4,24 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #236 — 2026-07-11
+
+**Achieved:**
+- Command-centre pending-badge: 2-agent spec review (code-reviewer verified all line-number claims exact; 2 doc-accuracy corrections: "~3 edits"→2, shared-cache dedupe only at default filter). Vault updated: `## Review (2026-07-11)` appended to spec note; `command-centre-pending-badge-implementation.md` created (dev-ready, 2 simplified code snippets). index.md + log.md updated.
+- Implemented on admin-dashboard `feat/command-centre-pending-badge`: Edit 1 `SideList.js` (sidemenu pill via `useGetCustomerRequestsQuery` + simplified `badgeCounts` plain object), Edit 2 `command-centre/index.js` (tab `<Badge>` wrapping "Direct Requests"). Fixed pill-clip bug (`pr:1.5, right:-6, top:6`). Merged → develop `8653679`.
+
+**Workspace:**
+- backend: `develop` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID notes, do not commit)
+- frontend: `main` (`a3c88d88`) — clean
+- admin-dashboard: `develop` (`8653679`) — clean
+- content: `master` (`3756e5b`) — clean
+
+**Resume point:**
+1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
+2. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
+
+---
+
 ## Session #234 — 2026-07-11
 
 **Achieved:**
