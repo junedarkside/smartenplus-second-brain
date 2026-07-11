@@ -33,11 +33,11 @@
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
-2. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-3. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities (MUI+RTK SPA risk); can't score above 8.0 without field data.
-4. **SEO-11** — internal link graph audit: /ref, /forum, /destinations/* nav/footer coverage.
-5. **SD-NEW-2/4** — Django admin: fix `operator_name` "Smart En Plus"→"SmartEnPlus"; renew `priceValidUntil` before Oct 2026.
+1. **CHAT-IMAGE-SEND implement** — design DONE + reviewed, ready to code. 4-step order: (1) Supabase `ALTER TABLE cs_messages ADD COLUMN image_url text` → (2) BE (model+migration, `MessageImageCreateView`, `insert_cs_message`, throttle, sync map, tests) → (3) AD (csApi mutation, ConversationDetail attach+render, realtime hooks +image_url, SideList preview) → (4) FE (ChatPanel attach+render, chatImage.js helper, useChatRealtime +image_url). Full spec: `01-projects/chat-image-send/design-2026-07-12.md`
+2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
+3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
+4. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities; can't score above 8.0 without field data.
+5. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
 _(Sessions #221–#238 archived → `07-logs/session-history.md`.)_
 
@@ -67,6 +67,7 @@ _(Sessions #221–#238 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **CHAT-IMAGE-SEND** | **DESIGNED 2026-07-12** — image send for guest/OTA/logged-in + admin. Single nullable `image_url` column (Django Message + Supabase cs_messages) + one multipart endpoint `POST /api/cs/messages/send-image/`; server-side upload converges both transports (Django→Supabase service-role insert fires realtime free). Reuses `process_review_image()` (WebP ≤120KB, HEIC server-decoded), S3 `cs_chat/`, existing auth tiers. 5 critical corrections baked in (supabase_id backfill dedup, reopen-before-broadcast, preview fallback, render allowlist, no client HEIC). Zero breaking changes; 4-step deploy (Supabase SQL → BE → AD → FE), each independently revertable. Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **READY TO IMPLEMENT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
 | **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
