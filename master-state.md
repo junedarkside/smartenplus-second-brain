@@ -4,15 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-11 (session #236)
+**Updated:** 2026-07-11 (session #237)
 
-**Achieved this session (#236):**
-- Command-centre pending-badge: 2-agent spec review, vault docs updated (`## Review` + impl doc), implemented on admin-dashboard (`SideList.js` sidemenu pill + `command-centre/index.js` tab Badge), pill-clip fix (`pr:1.5`), merged feat/command-centre-pending-badge → develop `8653679`.
+**Achieved this session (#237):**
+- Renamed "ReSend Operator" column header → "Support SEP" in admin-dashboard bookings table (`DataGridComp.js:232`). Branch `fix/bookings-resend-op-label` → merged → develop `4d67885` → pushed origin.
 
-**Workspace (#236):**
-- backend: `develop` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
+**Workspace (#237):**
+- backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
 - frontend: `main` (`a3c88d88`) — clean
-- admin-dashboard: `develop` (`8653679`) — clean
+- admin-dashboard: `develop` (`4d67885`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
@@ -22,7 +22,7 @@
 4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 5. **BE develop → main deploy** — email support fix + payment reconcile fix + booking dispatch fix.
 
-_(Sessions #221–#235 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#236 archived → `07-logs/session-history.md`.)_
 
 ---
 

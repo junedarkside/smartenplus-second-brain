@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-11] session-end #237 | admin-dashboard bookings column "ReSend Operator" → "Support SEP" (4d67885 → develop → pushed)
+
 ## [2026-07-11] session-end #236 | command-centre pending-badge spec reviewed + implemented + merged → develop 8653679
 2-agent review confirmed spec line-number claims exact. 2 corrections (edits 3→2; shared-cache dedupe only at default filter). Vault: Review section appended to spec, impl doc created, atom `mui-badge-in-tab-label-clip-fix` extracted. AD: `SideList.js` + `command-centre/index.js` edited, pill-clip fixed (`pr:1.5`), feat branch merged → develop.
 
