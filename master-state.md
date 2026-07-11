@@ -4,36 +4,42 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-11 (session #238)
+**Updated:** 2026-07-12 (session #239)
 
-**Achieved this session (#238):**
-- Command-centre UI redesign — admin-dashboard `pages/dashboard/command-centre/index.js` (UI-only, zero logic changes):
-  - Responsive page padding (xs/sm), page header with `SupportAgentIcon` + bold title
-  - Tabs: `borderBottom`, `textTransform: none`, bold active state, 44px min-height
-  - Replaced misaligned `<Badge>` with inline `<Chip>` for pending count
-  - All table action buttons: unified `variant="outlined" color="primary"` across all 3 tabs (was warning/info/secondary/primary mix)
-  - Removed `startIcon` from Copy Link (was breaking column width rhythm)
-  - Filter toolbars wrapped in `Paper variant="outlined"` card
-  - `TableHead`: bold 12px headers, `action.hover` bg, `whiteSpace: nowrap`
-  - `TableContainer`: `overflowX: auto` + `borderRadius` for mobile scroll
-  - Loading spinners: `minHeight: 180` to prevent collapse
-  - Empty states: `borderRadius: 2`
-  - 2 commits on `feat/command-centre-ui-redesign` → merged → `develop` `6ce8e8b` → pushed origin
+**Achieved this session (#239):**
+- r14 weekly SEO/AEO/GEO audit (5-lens live-prod: curl + Googlebot UA + header inspection)
+  - 3-agent Opus specialist review applied — corrected scores vs inflated initial:
+    SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0
+  - r13 backlog: 5/9 fixed, CWV-3 partial, GEO-2 not deployed (corrected)
+  - Key correction: /ref /ref/route /forum are LEGITIMATE indexable content (not sitemap pollution)
+  - 5 new vault knowledge notes: faqpage-rich-results-deprecated-2023, oai-searchbot-robots-pattern,
+    llmstxt-spec-linked-entries, howto-schema-booking-flow, inp-cwv-mui-nextjs-risk
+  - Full report: `/seo/seo-aeo-geo-prod-2026-07-11.md`
+- r15 FE — all 6 changes implemented, committed (`5b3669dd`), pushed main + merged develop (`dfefbed9`)
+  - GEO-2: OAI-SearchBot + DuckAssistant + YouBot → robots.txt + next-sitemap.config.js
+  - AEO-1: HowTo JSON-LD block (4-step booking flow) → homepagev2.js
+  - openingHours: Mo-Su 00:00-23:59 → 00:00-24:00
+  - GEO-4: GBP sameAs added to homepage + about page TravelAgency
+  - SD-NEW-6: about page TravelAgency enriched (priceRange, openingHours, geo, contactPoint, hasOfferCatalog)
+  - CWV-3 (partial): /activities SSR hero Image with priority (fetchpriority=high confirmed live)
+  - GEO-5: llms.txt rewritten with markdown hyperlinks + Reference section
+  - SD-NEW-5: WebPage.name added to homepage WebPageJsonLd
+- Prod verification: 7/7 checks green (OAI-SearchBot, HowTo, 00:00-24:00, GBP, fetchpriority, llms.txt links, all 3 bots)
 
-**Workspace (#238):**
+**Workspace (#239):**
 - backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
-- frontend: `main` (`a3c88d88`) — clean
+- frontend: `main` (`5b3669dd`) — clean (r15 shipped)
 - admin-dashboard: `develop` (`6ce8e8b`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
 1. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 2. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-3. **CSP-NGINX-RELOAD** — `sudo nginx -t && sudo nginx -s reload` on VPS.
-4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
-5. **BE develop → main deploy** — email support fix + payment reconcile fix + booking dispatch fix.
+3. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities (MUI+RTK SPA risk); can't score above 8.0 without field data.
+4. **SEO-11** — internal link graph audit: /ref, /forum, /destinations/* nav/footer coverage.
+5. **SD-NEW-2/4** — Django admin: fix `operator_name` "Smart En Plus"→"SmartEnPlus"; renew `priceValidUntil` before Oct 2026.
 
-_(Sessions #221–#237 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#238 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -74,7 +80,7 @@ _(Sessions #221–#237 archived → `07-logs/session-history.md`.)_
 | **BE-HOMEPAGE-PRICE** | REC-engine `get_contract_price` (`services.py:74`), `RecommendationSerializer.get_lowest_price` (`serializers.py:~1105`), 6 finder `Min(selling_rate)` annotations — all still unfiltered. Homepage "From" price shipped #136, same-class bug remains. | **OPEN — REC-engine price bug** | `products/services.py`, `products/serializers.py:~1105` |
 | **REC-SLOT-WASTE** | ESSENTIAL zone renders short (1 not 2) when cart item overlaps backend rec: FE excludes cart ids AFTER backend applied per-zone caps. Fix: API `exclude_ids` param threaded into finders before cap slice; cache key includes sorted exclude set. | OPEN #133 — deferred | `products/services.py` get_recommendations · [[recommendation-engine-completion-roadmap]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
-| **SEO-P1-BACKLOG** | r6-r13 code DONE. **r13 merged → develop `c2920a81`** — TouristDestination+@id+BreadcrumbList on destinations, /activities LCP, CWV-4, GEO-1, OAI-SearchBot, sitemap. **Pending prod deploy + next-week re-audit.** Post-r13 open: `/about` TravelAgency parity (priceRange/openingHours/geo/contactPoint missing), `/about` BreadcrumbList+WebPage, CWV-5 CF HTML cache (needs cookie bypass), SD-NEW-2/4 ops (Django admin data), `/help/faqs` FAQPage ops-blocked. | **Deploy develop→main, then re-audit next week** | [[seo-aeo-geo-live-audit-2026-06-22/r12-live-prod-2026-07-03]] |
+| **SEO-P1-BACKLOG** | r14 audit DONE + r15 **DEPLOYED 2026-07-12** (`5b3669dd`). **Scores post-r14: SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0.** r15 shipped: GEO-2 (OAI-SearchBot+DuckAssistant+YouBot), AEO-1 (HowTo), GEO-4 (GBP sameAs), SD-NEW-5/6, CWV-3 partial (SSR hero), GEO-5 (llms.txt). **r16 P1 remaining:** CWV-7 (INP — run PageSpeed CrUX); SEO-11 (internal link audit); SD-NEW-2/4 (operator_name + priceValidUntil). Full report: `/seo/seo-aeo-geo-prod-2026-07-11.md` | **r16 next** | [[seo-aeo-geo-live-audit-2026-06-22/r14-live-prod-2026-07-11]] |
 | **SEO-P2-FIXES** | twitter:image:alt (`_app.js` + `Seo.js`); og:locale policy unify; meta desc ≤155 chars; blog robots dup. From r6: help relative `og:image`→abs prefix (`pages/help/[...slug].js:89,109`); **lint** `structured-data-schema-patterns.md` item 7 `availableLanguage:["Thai","English"]` contradicts en-only policy → `["English"]`. `#15 og:url` CLOSED `0aa748c`. | OPEN — low | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js`, `03-knowledge/structured-data-schema-patterns.md` |
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
 | **DURATION-DAYS-CARDS** | Day-tour browse cards omit duration: LIST `ContractSerializer` doesn't expose `tour_duration_days`. Option B: add to list serializer fields. One-line, low risk (read-only int); needs BE deploy + ISR cache clear. | OPEN #130 — optional low | `operators/serializers.py` (ContractSerializer) · [[category-aware-duration-formatter]] |

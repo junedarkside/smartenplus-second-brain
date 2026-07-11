@@ -4,6 +4,30 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #238 — 2026-07-11
+
+**Achieved:**
+- Command-centre UI redesign — admin-dashboard `pages/dashboard/command-centre/index.js` (UI-only, zero logic changes):
+  - Responsive page padding (xs/sm), page header with `SupportAgentIcon` + bold title
+  - Tabs: `borderBottom`, `textTransform: none`, bold active state, 44px min-height
+  - Replaced misaligned `<Badge>` with inline `<Chip>` for pending count
+  - All table action buttons: unified `variant="outlined" color="primary"` across all 3 tabs (was warning/info/secondary/primary mix)
+  - Removed `startIcon` from Copy Link (was breaking column width rhythm)
+  - Filter toolbars wrapped in `Paper variant="outlined"` card
+  - `TableHead`: bold 12px headers, `action.hover` bg, `whiteSpace: nowrap`
+  - `TableContainer`: `overflowX: auto` + `borderRadius` for mobile scroll
+  - Loading spinners: `minHeight: 180` to prevent collapse
+  - Empty states: `borderRadius: 2`
+  - 2 commits on `feat/command-centre-ui-redesign` → merged → `develop` `6ce8e8b` → pushed origin
+
+**Workspace:**
+- backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
+- frontend: `main` (`a3c88d88`) — clean
+- admin-dashboard: `develop` (`6ce8e8b`) — clean
+- content: `master` (`3756e5b`) — clean
+
+---
+
 ## Session #237 — 2026-07-11
 
 **Achieved:**

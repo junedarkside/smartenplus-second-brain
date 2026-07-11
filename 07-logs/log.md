@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-12] session-end #239 | r14 audit (SEO 8.7/AEO 9.6/GEO 9.0/CWV 7.5/SD 8.0) + r15 deployed (HowTo+OAI-SearchBot+GBP+llms.txt+SSR hero) — 7/7 prod checks green
+
 ## [2026-07-11] session-end #238 | command-centre UI redesign: unified buttons/tabs/layout → develop 6ce8e8b
 
 ## [2026-07-11] session-end #237 | admin-dashboard bookings column "ReSend Operator" → "Support SEP" (4d67885 → develop → pushed)
