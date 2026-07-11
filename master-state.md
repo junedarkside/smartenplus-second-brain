@@ -4,15 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-11 (session #237)
+**Updated:** 2026-07-11 (session #238)
 
-**Achieved this session (#237):**
-- Renamed "ReSend Operator" column header → "Support SEP" in admin-dashboard bookings table (`DataGridComp.js:232`). Branch `fix/bookings-resend-op-label` → merged → develop `4d67885` → pushed origin.
+**Achieved this session (#238):**
+- Command-centre UI redesign — admin-dashboard `pages/dashboard/command-centre/index.js` (UI-only, zero logic changes):
+  - Responsive page padding (xs/sm), page header with `SupportAgentIcon` + bold title
+  - Tabs: `borderBottom`, `textTransform: none`, bold active state, 44px min-height
+  - Replaced misaligned `<Badge>` with inline `<Chip>` for pending count
+  - All table action buttons: unified `variant="outlined" color="primary"` across all 3 tabs (was warning/info/secondary/primary mix)
+  - Removed `startIcon` from Copy Link (was breaking column width rhythm)
+  - Filter toolbars wrapped in `Paper variant="outlined"` card
+  - `TableHead`: bold 12px headers, `action.hover` bg, `whiteSpace: nowrap`
+  - `TableContainer`: `overflowX: auto` + `borderRadius` for mobile scroll
+  - Loading spinners: `minHeight: 180` to prevent collapse
+  - Empty states: `borderRadius: 2`
+  - 2 commits on `feat/command-centre-ui-redesign` → merged → `develop` `6ce8e8b` → pushed origin
 
-**Workspace (#237):**
+**Workspace (#238):**
 - backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
 - frontend: `main` (`a3c88d88`) — clean
-- admin-dashboard: `develop` (`4d67885`) — clean
+- admin-dashboard: `develop` (`6ce8e8b`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
@@ -22,7 +33,7 @@
 4. **DIRECT-BOOKINGS-TAB** — 3 branches uncommitted (BE + admin + FE), review + merge → develop → smoke test.
 5. **BE develop → main deploy** — email support fix + payment reconcile fix + booking dispatch fix.
 
-_(Sessions #221–#236 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#237 archived → `07-logs/session-history.md`.)_
 
 ---
 

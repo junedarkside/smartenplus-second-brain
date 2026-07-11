@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-11] session-end #238 | command-centre UI redesign: unified buttons/tabs/layout → develop 6ce8e8b
+
 ## [2026-07-11] session-end #237 | admin-dashboard bookings column "ReSend Operator" → "Support SEP" (4d67885 → develop → pushed)
 
 ## [2026-07-11] session-end #236 | command-centre pending-badge spec reviewed + implemented + merged → develop 8653679
