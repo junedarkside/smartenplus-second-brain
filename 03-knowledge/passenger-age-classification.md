@@ -45,6 +45,17 @@ Future boundary change = edit these 3 files + FE test boundary assertions. Every
 - AD `components/contracts/constants.js:85-86` trip restrictions `MIN_AGE_5`/`MIN_AGE_12` — does "Minimum age 12" still make sense when adults start at 9? Consider `MIN_AGE_9`.
 - AD `BookingItemEditor.js`/`PassengerDetails.js` show months/days for age < 3 (`months < 36`) — display formatting conceptually tied to infant boundary; consider `< 24`. Not changed.
 
+## Dead Code Removed (2026-07-11)
+
+`RATE_CARD_AGES` in `constants/dayTripApi.js` (lines 73-78) — spec residue from commit `9b0ca270` (2026-01-27).
+Defined adult boundary as 13 (contradicting SSOT 9). Zero callers across all 3 repos.
+`DAY_TRIP_CONSTANTS` aggregate bundle also had zero consumers anywhere.
+Removed in `a3c88d88` → merged `develop` → pushed `origin/develop`.
+
+**Why different from SSOT?** Originated from IATA tourism-industry convention (adult=12+) used in initial day-trip API spec. Superseded by business decision 2026-07-10/11 (adult=9+). Never wired to actual logic.
+
+**Verification:** `grep -rn "RATE_CARD_AGES" constants/ components/ pages/` → zero results.
+
 ## Related
 
 - [[README]] — SmartEnPlus 4-repo ecosystem

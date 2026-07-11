@@ -13,7 +13,7 @@
 
 **Workspace (#235):**
 - backend: `develop` (`6a9ea11`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
-- frontend: `feat/passenger-age-ssot` (`c25dcd44`) — clean
+- frontend: `develop` (`a3c88d88`) — clean  ← age SSOT merged + RATE_CARD_AGES dead const removed
 - admin-dashboard: `feat/passenger-age-ssot` (`037a3f9`) — clean
 - content: `master` (`3756e5b`) — clean
 

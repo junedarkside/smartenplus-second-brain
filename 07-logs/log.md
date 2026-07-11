@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-11] scan | age-ssot 3-repo audit + RATE_CARD_AGES dead const removed (a3c88d88)
+
 ## [2026-07-11] docs-cleanup #235b | BOOKING-DISPATCH-DOCS done. docs/operations/ENV.md: AUTO vars → N8N_WEBHOOK_URL. docs/n8n-webhook-resend-operator.md: historical banner (AUTO removed, n8n sole target). a750ab5 → develop. Note: removed global `Read(./docs/**)` deny from ~/.claude/settings.json to unblock.
 
 ## [2026-07-11] session-end #235 | Booking-confirm dispatch fix. Dead AUTO_SMARTENPLUS_API_URL target (auto.smartenplus.co.th DNS dead) aborted send_booking_data loop before n8n. Collapsed to single n8n POST, removed AUTO settings, added test. 46a8be2 → develop 6a9ea11. Docs cleanup blocked (permission). Deploy pending.
