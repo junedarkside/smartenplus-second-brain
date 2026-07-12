@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-12] audit | chat image-send v2 — 3-agent expert audit: private presigned storage (PDPA), token-keyed throttle, lifecycle rule dropped, delete signal deferred, 16 corrections verified against code
+
 ## [2026-07-12] design | chat image-send designed (3 Explore + 1 Plan agent review) — single image_url column + server-convergence endpoint, 5 corrections baked in, READY TO IMPLEMENT
 
 ## [2026-07-12] session-end #239 | r14 audit (SEO 8.7/AEO 9.6/GEO 9.0/CWV 7.5/SD 8.0) + r15 deployed (HowTo+OAI-SearchBot+GBP+llms.txt+SSR hero) — 7/7 prod checks green
