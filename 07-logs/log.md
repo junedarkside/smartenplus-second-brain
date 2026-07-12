@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-12] session-end #240 | chat image-send design→audit→implementation-plan complete (v2.1: private presigned storage, token throttle, guest gate) — READY TO IMPLEMENT next session
+
 ## [2026-07-12] design | chat image-send v2.1 — plain guests blocked from image send (OTA+login only); gate via conv.ota_booking_id + FE canSendImage flag
 
 ## [2026-07-12] audit | chat image-send v2 — 3-agent expert audit: private presigned storage (PDPA), token-keyed throttle, lifecycle rule dropped, delete signal deferred, 16 corrections verified against code

@@ -4,42 +4,35 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-12 (session #239)
+**Updated:** 2026-07-12 (session #240)
 
-**Achieved this session (#239):**
-- r14 weekly SEO/AEO/GEO audit (5-lens live-prod: curl + Googlebot UA + header inspection)
-  - 3-agent Opus specialist review applied — corrected scores vs inflated initial:
-    SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0
-  - r13 backlog: 5/9 fixed, CWV-3 partial, GEO-2 not deployed (corrected)
-  - Key correction: /ref /ref/route /forum are LEGITIMATE indexable content (not sitemap pollution)
-  - 5 new vault knowledge notes: faqpage-rich-results-deprecated-2023, oai-searchbot-robots-pattern,
-    llmstxt-spec-linked-entries, howto-schema-booking-flow, inp-cwv-mui-nextjs-risk
-  - Full report: `/seo/seo-aeo-geo-prod-2026-07-11.md`
-- r15 FE — all 6 changes implemented, committed (`5b3669dd`), pushed main + merged develop (`dfefbed9`)
-  - GEO-2: OAI-SearchBot + DuckAssistant + YouBot → robots.txt + next-sitemap.config.js
-  - AEO-1: HowTo JSON-LD block (4-step booking flow) → homepagev2.js
-  - openingHours: Mo-Su 00:00-23:59 → 00:00-24:00
-  - GEO-4: GBP sameAs added to homepage + about page TravelAgency
-  - SD-NEW-6: about page TravelAgency enriched (priceRange, openingHours, geo, contactPoint, hasOfferCatalog)
-  - CWV-3 (partial): /activities SSR hero Image with priority (fetchpriority=high confirmed live)
-  - GEO-5: llms.txt rewritten with markdown hyperlinks + Reference section
-  - SD-NEW-5: WebPage.name added to homepage WebPageJsonLd
-- Prod verification: 7/7 checks green (OAI-SearchBot, HowTo, 00:00-24:00, GBP, fetchpriority, llms.txt links, all 3 bots)
+**Achieved this session (#240):**
+- **Chat image-send: designed → audited → implementation-ready** (no code yet — next session implements)
+  - Storage/cost review (2 agents): S3 vs Supabase Storage vs R2 — S3 chosen (existing infra; cost noise at chat volume)
+  - 3-agent expert audit (code-reviewer BE, nextjs-architect FE/AD, backend-architect) → **design v2**:
+    - MUST-FIX 1: private storage — `Message.image` ImageField + `ChatMediaStorage` (private ACL, querystring_auth) + presigned URLs (serializer fresh / Supabase 7-day TTL / realtime history via Django MessageListView). v1 public-read = PDPA risk, rejected
+    - MUST-FIX 2: throttle keyed by guest-token/user-id not IP (Thai shared-WiFi false 429s)
+    - REVERSALS: 90-day lifecycle rule dropped (broken bubbles in old disputes); delete signal deferred (nothing hard-deletes convs)
+    - Image spec: WebP ≤80KB, ladder (1200,1000,800) — resolution>quality for text screenshots
+    - 16 corrections verified against live code
+  - **v2.1: plain guests BLOCKED from image send** (OTA+login only per spec) — BE gate via `conv.ota_booking_id` + FE `canSendImage` flag
+  - **`implementation-plan.md` created** — step-by-step checkbox checklist w/ acceptance criteria, branch names, pre-merge 16-correction gate
+- Vault: design doc v2.1 + implementation plan + convergence pattern atom; commits pushed
 
-**Workspace (#239):**
+**Workspace (#240):** unchanged from #239
 - backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
 - frontend: `main` (`5b3669dd`) — clean (r15 shipped)
 - admin-dashboard: `develop` (`6ce8e8b`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT-IMAGE-SEND implement** — design DONE + reviewed, ready to code. 4-step order: (1) Supabase `ALTER TABLE cs_messages ADD COLUMN image_url text` → (2) BE (model+migration, `MessageImageCreateView`, `insert_cs_message`, throttle, sync map, tests) → (3) AD (csApi mutation, ConversationDetail attach+render, realtime hooks +image_url, SideList preview) → (4) FE (ChatPanel attach+render, chatImage.js helper, useChatRealtime +image_url). Full spec: `01-projects/chat-image-send/design-2026-07-12.md`
+1. **CHAT-IMAGE-SEND implement** — follow `01-projects/chat-image-send/implementation-plan.md` step-by-step (checkboxes + acceptance criteria). Order: Supabase SQL → BE (`feat/chat-image-send`) → AD (`feat/ad-chat-image`) → FE (`feat/fe-chat-image`). Spec: `design-2026-07-12.md` v2.1. Gate before merge: 16 audit corrections.
 2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
 4. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities; can't score above 8.0 without field data.
 5. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
-_(Sessions #221–#238 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#239 archived → `07-logs/session-history.md`.)_
 
 ---
 

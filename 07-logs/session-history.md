@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #239 — 2026-07-12
+
+**Achieved:**
+- r14 weekly SEO/AEO/GEO audit (5-lens live-prod) + 3-agent Opus specialist review — corrected scores: SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0. r13 backlog: 5/9 fixed, CWV-3 partial, GEO-2 not deployed. Key correction: /ref /ref/route /forum = legitimate indexable content. 5 new knowledge notes. Report: `/seo/seo-aeo-geo-prod-2026-07-11.md`
+- r15 FE — 6 changes implemented, committed `5b3669dd`, pushed main + merged develop `dfefbed9`: GEO-2 (OAI-SearchBot+DuckAssistant+YouBot), AEO-1 (HowTo JSON-LD), openingHours 00:00-24:00, GEO-4 (GBP sameAs homepage+about), SD-NEW-6 (about TravelAgency enriched), CWV-3 partial (/activities SSR hero priority), GEO-5 (llms.txt markdown links), SD-NEW-5 (WebPage.name)
+- Prod verification: 7/7 checks green
+
+**Workspace:**
+- backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch, DO NOT commit)
+- frontend: `main` (`5b3669dd`) — clean (r15 shipped)
+- admin-dashboard: `develop` (`6ce8e8b`) — clean
+- content: `master` (`3756e5b`) — clean
+
+---
+
 ## Session #238 — 2026-07-11
 
 **Achieved:**
