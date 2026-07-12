@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-12] design | chat image-send v2.1 — plain guests blocked from image send (OTA+login only); gate via conv.ota_booking_id + FE canSendImage flag
+
 ## [2026-07-12] audit | chat image-send v2 — 3-agent expert audit: private presigned storage (PDPA), token-keyed throttle, lifecycle rule dropped, delete signal deferred, 16 corrections verified against code
 
 ## [2026-07-12] design | chat image-send designed (3 Explore + 1 Plan agent review) — single image_url column + server-convergence endpoint, 5 corrections baked in, READY TO IMPLEMENT
