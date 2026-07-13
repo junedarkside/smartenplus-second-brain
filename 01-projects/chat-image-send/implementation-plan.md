@@ -1,5 +1,15 @@
 # Chat Image-Send — Implementation Plan (from design v2.1)
 
+> **STATUS: IMPLEMENTED 2026-07-13 — all 3 repos merged → develop.**
+> BE `0bd8adf` · AD `f473a7f` · FE `53f30576`. 20 new BE tests green; full cs suite green
+> (1 pre-existing unrelated failure). Steps 2-4 complete incl. 16-correction gate.
+> **Extra fix found during impl:** `ChatMediaStorage.custom_domain = None` — global
+> `AWS_S3_CUSTOM_DOMAIN` makes S3Boto3Storage.url() return UNSIGNED URLs, silently
+> bypassing querystring_auth (private objects would 403 for every viewer).
+> **Deviation:** sync task does NOT map image_url (ImageField holds S3 key, not URL;
+> image rows are always Django-created first w/ supabase_id backfill — documented in code).
+> **REMAINING (user):** Step 1 Supabase SQL + deploys + prod smoke (see bottom).
+
 **Spec:** `design-2026-07-12.md` (v2.1 — audited). Read it first; this doc = execution checklist only.
 **Deploy order:** Supabase SQL → BE → AD → FE. Each step independently deployable + revertable.
 **Branches:** BE `feat/chat-image-send` · AD `feat/ad-chat-image` · FE `feat/fe-chat-image`

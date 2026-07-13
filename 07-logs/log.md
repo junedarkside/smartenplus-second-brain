@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-13] impl | chat image-send IMPLEMENTED all 3 repos → develop (BE 0bd8adf · AD f473a7f · FE 53f30576) — 20 tests green; extra fix custom_domain=None presigning; remaining: Supabase SQL + deploy + smoke
+
 ## [2026-07-12] session-end #240 | chat image-send design→audit→implementation-plan complete (v2.1: private presigned storage, token throttle, guest gate) — READY TO IMPLEMENT next session
 
 ## [2026-07-12] design | chat image-send v2.1 — plain guests blocked from image send (OTA+login only); gate via conv.ota_booking_id + FE canSendImage flag
