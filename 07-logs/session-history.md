@@ -4,6 +4,29 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #240 — 2026-07-12
+
+**Achieved:**
+- Chat image-send: designed → audited → implementation-ready (no code yet — next session implements)
+  - Storage/cost review (2 agents): S3 vs Supabase Storage vs R2 — S3 chosen (existing infra; cost noise at chat volume)
+  - 3-agent expert audit (code-reviewer BE, nextjs-architect FE/AD, backend-architect) → design v2:
+    - MUST-FIX 1: private storage — `Message.image` ImageField + `ChatMediaStorage` (private ACL, querystring_auth) + presigned URLs (serializer fresh / Supabase 7-day TTL / realtime history via Django MessageListView). v1 public-read = PDPA risk, rejected
+    - MUST-FIX 2: throttle keyed by guest-token/user-id not IP (Thai shared-WiFi false 429s)
+    - REVERSALS: 90-day lifecycle rule dropped (broken bubbles in old disputes); delete signal deferred (nothing hard-deletes convs)
+    - Image spec: WebP ≤80KB, ladder (1200,1000,800) — resolution>quality for text screenshots
+    - 16 corrections verified against live code
+  - v2.1: plain guests BLOCKED from image send (OTA+login only per spec) — BE gate via `conv.ota_booking_id` + FE `canSendImage` flag
+  - `implementation-plan.md` created — step-by-step checkbox checklist w/ acceptance criteria, branch names, pre-merge 16-correction gate
+- Vault: design doc v2.1 + implementation plan + convergence pattern atom; commits pushed
+
+**Workspace:**
+- backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch, DO NOT commit)
+- frontend: `main` (`5b3669dd`) — clean (r15 shipped)
+- admin-dashboard: `develop` (`6ce8e8b`) — clean
+- content: `master` (`3756e5b`) — clean
+
+---
+
 ## Session #239 — 2026-07-12
 
 **Achieved:**

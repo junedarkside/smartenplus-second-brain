@@ -4,35 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-12 (session #240)
+**Updated:** 2026-07-13 (session #241)
 
-**Achieved this session (#240):**
-- **Chat image-send: designed → audited → implementation-ready** (no code yet — next session implements)
-  - Storage/cost review (2 agents): S3 vs Supabase Storage vs R2 — S3 chosen (existing infra; cost noise at chat volume)
-  - 3-agent expert audit (code-reviewer BE, nextjs-architect FE/AD, backend-architect) → **design v2**:
-    - MUST-FIX 1: private storage — `Message.image` ImageField + `ChatMediaStorage` (private ACL, querystring_auth) + presigned URLs (serializer fresh / Supabase 7-day TTL / realtime history via Django MessageListView). v1 public-read = PDPA risk, rejected
-    - MUST-FIX 2: throttle keyed by guest-token/user-id not IP (Thai shared-WiFi false 429s)
-    - REVERSALS: 90-day lifecycle rule dropped (broken bubbles in old disputes); delete signal deferred (nothing hard-deletes convs)
-    - Image spec: WebP ≤80KB, ladder (1200,1000,800) — resolution>quality for text screenshots
-    - 16 corrections verified against live code
-  - **v2.1: plain guests BLOCKED from image send** (OTA+login only per spec) — BE gate via `conv.ota_booking_id` + FE `canSendImage` flag
-  - **`implementation-plan.md` created** — step-by-step checkbox checklist w/ acceptance criteria, branch names, pre-merge 16-correction gate
-- Vault: design doc v2.1 + implementation plan + convergence pattern atom; commits pushed
+**Achieved this session (#241):**
+- **CS chat → GetStream migration debate + ADR + audit-ready plan** — debate verdict ([[getstream-migration-debate-2026-07-13]]) = STAY, but user-reported urgent pain (5 bugs + no prod notification + FE/AD history broken) REVERSES call to hybrid migrate. Vault deliverables: 3 new notes ([[cs-chat-getstream-hybrid-2026-07-13]] ADR + [[cs-chat-getstream-migration/README]] + [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] 6-phase audit-ready plan). Hybrid scope: new convs → GetStream Build free tier; old convs stay Django; Supabase kept for OTA mirror only. ~6.5 sprints + 4-6wk shadow = 3mo calendar. NO code shipped. Other team audits before implementation.
+- **6 BLOCKING gates before Phase 1 commit:** Build tier = $0 confirmed, MAU counter definition, message retention, webhook availability, PDPA data region (APAC?), DPA obtained.
 
-**Workspace (#240):** unchanged from #239
+**Workspace (#241):** unchanged from #240
 - backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
 - frontend: `main` (`5b3669dd`) — clean (r15 shipped)
 - admin-dashboard: `develop` (`6ce8e8b`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT-IMAGE-SEND implement** — follow `01-projects/chat-image-send/implementation-plan.md` step-by-step (checkboxes + acceptance criteria). Order: Supabase SQL → BE (`feat/chat-image-send`) → AD (`feat/ad-chat-image`) → FE (`feat/fe-chat-image`). Spec: `design-2026-07-12.md` v2.1. Gate before merge: 16 audit corrections.
-2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
-3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-4. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities; can't score above 8.0 without field data.
-5. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
+1. **CS-CHAT-GETSTREAM-AUDIT** — other team reviews [[cs-chat-getstream-migration/implementation-plan-2026-07-13]]. Audit checklist at end of plan doc. Gating sign-off: 2+ engineers + 1 ops + 1 legal/PDPA.
+2. **CHAT-IMAGE-SEND deploy** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin, guest no-attach, raw S3 URL 403). See [[chat-image-send]].
+3. **PHASE-0-SPIKE** (if audit passes) — tier qualification + POC, 1 sprint. BLOCKING gates: Build $0 confirmed + PDPA region acceptable + POC end-to-end works.
+4. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
+5. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
+6. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities; can't score above 8.0 without field data.
+7. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
-_(Sessions #221–#239 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#240 archived → `07-logs/session-history.md`.)_
 
 ---
 

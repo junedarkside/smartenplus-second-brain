@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-13] session-end #241 | CS chat → GetStream hybrid ADR + audit-ready 6-phase plan (vault-only) — debate STAY reversed by user-reported pain (5 bugs + no prod notification + FE/AD history broken); new convs → GetStream Build free tier, old convs stay Django, Supabase kept for OTA mirror. Other team audits before implementation. NO code shipped. Files: [[cs-chat-getstream-hybrid-2026-07-13]] + [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] + [[getstream-migration-debate-2026-07-13]]. Workspace unchanged.
+
 ## [2026-07-13] impl | chat image-send IMPLEMENTED all 3 repos → develop (BE 0bd8adf · AD f473a7f · FE 53f30576) — 20 tests green; extra fix custom_domain=None presigning; remaining: Supabase SQL + deploy + smoke
 
 ## [2026-07-12] session-end #240 | chat image-send design→audit→implementation-plan complete (v2.1: private presigned storage, token throttle, guest gate) — READY TO IMPLEMENT next session

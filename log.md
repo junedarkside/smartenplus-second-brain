@@ -2,6 +2,10 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-07-13] adr+plan | cs-chat-getstream-hybrid — REVERSAL of debate STAY verdict. User-reported pain (5 bugs + no prod notification + FE/AD history broken) flips call to hybrid migrate GetStream Build free tier. New convs → GetStream; old convs stay Django. 6-phase audit-ready plan written. Vault: [[cs-chat-getstream-hybrid-2026-07-13]] + [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] + [[cs-chat-getstream-migration/README]]. No code. Audit pending (other team).
+
+## [2026-07-13] decision | getstream-migration-debate-2026-07-13 — 4-agent debate (FE+BE+ops-cost+vendor-lockin). Vote: 2 STAY / 2 CONDITIONAL / 0 MIGRATE. Verdict STAY TODAY. GetStream = +$4.8k/yr OPEX for features (staff inbox, moderation, presence) not committed to; Supabase-offload path ([[cs-chat-supabase-offload]]) achieves same WS-off-EC2 win at ~$0 marginal. Trigger = leadership commits staff inbox OR Supabase free-tier exhausted OR PDPA+DPA executed. No code changes. → [[getstream-migration-debate-2026-07-13]]
+
 ## [2026-07-11] review+impl-doc | command-centre pending badge — spec verified vs code, 2 corrections, impl doc created
 2-agent review: spec sound, no blockers. Corrections: "~3 edits" → 2 edits; shared-cache dedupe holds only at default `pending` filter. 2 simplifications adopted (plain `badgeCounts` object, no `|| 0` on tab Badge). Review section appended to spec; dev-ready edit list → [[command-centre-pending-badge-implementation]].
 
