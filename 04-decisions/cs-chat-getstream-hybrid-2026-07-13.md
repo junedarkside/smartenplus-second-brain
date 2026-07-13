@@ -3,7 +3,7 @@ name: cs-chat-getstream-hybrid-2026-07-13
 description: ADR — migrate CS chat hot path to GetStream Build (free tier) with hybrid scope. New conversations route through GetStream; old conversations stay on Django. Supabase retained for OTA mirror. Other team audits before implementation.
 metadata:
   type: decision
-  status: draft
+  status: audit-conditional
   date: 2026-07-13
   parent: cs-architecture-decision
   supersedes: cs-chat-supabase-offload (for chat only; OTA mirror continues on Supabase)
@@ -17,7 +17,7 @@ metadata:
 
 Migrate CS chat hot path from current stack (Django + Supabase Realtime + custom JWT + Channels-dormant) to **GetStream Build free tier** with **hybrid scope** (new convs on GetStream; old convs stay on Django). Decision driven by user-reported pain (reconnect/gap-fill bug, token refresh silent fail, OTA auth-switch race, image-send broken, no prod notification, FE/AD history display broken) and in-house fix cost (3-6 sprints). Free tier = $0/mo, 1k MAU, 100 concurrent — sufficient for current + 12-18mo growth.
 
-**Status:** DRAFT — audit-pending. No code shipped. Other team audits before implementation.
+**Status:** CONDITIONAL (audit-complete 2026-07-13, session #242). See [[audit-2026-07-13]]. No code shipped. 4 blockers (B1–B4) + Python 3.9↔SDK≥3.10 conflict must clear before Phase 1.
 
 ## Decision
 
@@ -54,7 +54,7 @@ In-house fix cost estimated at 3-6 sprints of careful rework.
 **REVERSAL:** User decision overrides debate verdict on grounds of:
 - Current malfunction = urgent operational pain (not theoretical trigger)
 - In-house fix cost (3-6 sprints) ≈ migration cost (~6.5 sprints)
-- Migration ships features (staff inbox, moderation, presence, typing, read-receipts) for free
+- Migration ships features (moderation, presence, typing, read-receipts) for free. ⚠️ **audit B3:** "staff inbox" already EXISTS (MUI, `pages/cs/index.js`) — migration swaps transport under it, doesn't build from scratch. Partially weakens this reversal driver.
 
 ## Architecture
 
@@ -85,18 +85,18 @@ In-house fix cost estimated at 3-6 sprints of careful rework.
 
 | Tier | Price | MAU | Concurrent | Eligibility |
 |---|---|---|---|---|
-| **Build** | **$0/mo** | **1,000/mo** | **100** | Default free |
-| Maker | $0 + $100 credit | 1,000 | 100 | <5 team + <$10k/mo rev (likely fails) |
-| Start 10K | $399-499/mo | 10,000 | 500 | Paid |
-| Enterprise | Custom | 1M+ | 750k+ | SLA + 24/7 |
+| **Build** | **$0/mo** | **1,000/mo** | **100** | Free dev tier, hard-capped ("Limits Apply") — SmartEnPlus uses this |
+| Maker | $0 + $100 credit | n/a (account type) | n/a | Separate free ACCOUNT type, <5 team + <$10k/mo rev — SmartEnPlus ineligible, **red herring** |
+| Start 10K | **$499/mo** ($5,988/yr list) | 10,000 | 500 | Paid — only path past Build hard cap (no Build-tier paid overage) |
+| Enterprise | Custom | 1M+ | Custom | SLA + 24/7 |
 
-**6 BLOCKING CHECKS before Phase 1:**
-1. Sign up Build plan; verify price = $0 (NOT auto-bumped to paid)
-2. Confirm Maker credit NOT required (free eligibility already on Build)
-3. Verify MAU counter definition (active user past 30d?)
-4. Confirm message retention (free tier = indefinite? 30d?)
-5. Verify webhook availability on Build
-6. Confirm PDPA data region (US/EU default — APAC option?)
+**BLOCKING CHECKS before Phase 1 (audit-2026-07-13 status):**
+1. ✅ Sign up Build plan = $0, no CC — CONFIRMED (getstream.io/chat/pricing)
+2. ✅ Maker NOT required — Build is the free tier; Maker is a red herring (SmartEnPlus ineligible anyway)
+3. ⚠️ MAU counter definition — still verify in Phase 0
+4. ✅ Message retention = indefinite ("as long as plan active") — CONFIRMED
+5. ⚠️ Webhook on Build — public docs don't state tier; stays Phase-0 empirical POC gate
+6. ✅ PDPA region: **Singapore selectable on Build at provisioning** (default us-east must NOT be left) — CONFIRMED not paid-gated. Remaining: sign DPA, lock SG region, draft Sec 29 SCC
 
 **If any check fails → STOP, escalate.**
 
@@ -118,9 +118,9 @@ See [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] for full deta
 
 | Item | Cost |
 |---|---|
-| GetStream Build | $0/mo |
-| Overage risk (1k MAU cap hit) | $0.09/user, $0.99/concurrent |
-| Engineering | 6.5 sprints |
+| GetStream Build | $0/mo (hard-capped: 1k MAU / 100 concurrent — **rate-limits/errors on exceed, NOT paid overage**) |
+| Paid overage ($0.09/user, $0.99/concurrent) | Applies only AFTER upgrading to Start ($499/mo) — NOT on Build |
+| Engineering | 6.5 sprints (audit: likely understated — AD Phase 3 + FE transport-field work) |
 | Vendor count after | 2 (Supabase + GetStream) |
 
 ## Risk
@@ -129,7 +129,7 @@ See [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] for full deta
 |---|---|
 | Build tier MAU cap (1k) hit | Overage rates known; CloudWatch alarm; quarterly tier review |
 | Webhook drops | Idempotency on `stream_id`; nightly reconcile task |
-| PDPA data region = US/EU (not APAC) | BLOCKING gate before Phase 1 |
+| PDPA data region = US/EU (not APAC) | SOFT-BLOCK (audit): Singapore selectable on Build; sign DPA + lock SG + Sec 29 SCC before Phase 1 |
 | Sender-spoof | Stream server-side auth + role-based perms; webhook trusts `event.user.role` only |
 | Free tier auto-bump | NO Stripe on signup; quarterly tier review |
 | Django schema divergence | `Message.stream_id` canonical join; `custom_data` JSON field |
@@ -159,7 +159,7 @@ See [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] for full deta
 ## Critical files
 
 ### Backend (`smartenplus-backend`)
-- `cs/views.py:990-1025` — `SupabaseTokenView` pattern (mirror for `StreamTokenView`)
+- `cs/views.py:1334-1406` — `SupabaseTokenView` pattern (mirror for `StreamTokenView`)
 - `cs/supabase_jwt.py` — `mint_supabase_jwt()` pattern (mirror for `mint_stream_jwt`)
 - `cs/models.py` — `Conversation`, `Message` schemas
 - `cs/tasks.py` — `sync_chat_messages` Celery pattern
@@ -180,6 +180,6 @@ See [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] for full deta
 ## Status timeline
 
 - **2026-07-13:** ADR drafted, plan written, audit-pending
-- **TBD:** Audit verdict (other team)
-- **TBD:** Phase 0 spike start (if audit passes)
+- **2026-07-13 (session #242):** 6-agent audit COMPLETE — **VERDICT: CONDITIONAL** (see [[audit-2026-07-13]]). 4 blockers (B1 FeatureFlag cutover, B2 AD system-msg path, B3 staff-inbox value-prop, B4 pricing-table) + Python 3.9↔SDK≥3.10 conflict. Sign-off gate met conditionally (2 eng + ops + legal/PDPA). Clear blockers + Phase-0 POC → Phase 1.
+- **TBD:** Phase 0 spike start (after blockers cleared)
 - **TBD:** Phase 6 cutover (if Phase 0-5 succeed)

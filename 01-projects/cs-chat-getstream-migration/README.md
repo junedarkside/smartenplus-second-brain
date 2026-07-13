@@ -1,6 +1,6 @@
 # CS Chat → GetStream Migration (Hybrid, Free Tier)
 
-> **STATUS:** AUDIT-PENDING. Plan written 2026-07-13. NO code shipped. Other team audits before implementation.
+> **STATUS:** AUDIT-COMPLETE · **CONDITIONAL** · 2026-07-13 (session #242). See [[audit-2026-07-13]]. NO code shipped. 4 blockers (B1–B4) + Python 3.9↔SDK≥3.10 conflict clear before Phase 1.
 
 ## Summary
 
@@ -20,7 +20,7 @@ Current realtime chat malfunctioning on multiple fronts (per user report 2026-07
 3. OTA guest / auth-switch race (wrong conv shown on identity change)
 4. Image-send broken (just-shipped `53f30576`, deploy pending)
 5. **No prod notification** when new message arrives
-6. **FE + AD chat history display broken** (messages don't render properly)
+6. **Chat history display** — FE fixed (Django pagination, `useChatRealtime.js:91-115`); AD works (`ConversationDetail.js:44-47`) — **stale, drop or narrow** (audit)
 
 In-house fix cost = 3-6 sprints of careful rework. GetStream ships all of this out-of-box.
 
@@ -42,14 +42,14 @@ In-house fix cost = 3-6 sprints of careful rework. GetStream ships all of this o
 
 ## Tier qualification — BLOCKING before Phase 1
 
-| Check | Status |
+| Check | Status (audit-2026-07-13) |
 |---|---|
-| 1. Build plan = $0 (not auto-bumped) | ⚠️ Verify in Phase 0 spike |
-| 2. Maker credit NOT required | ✅ Build tier default free |
-| 3. MAU definition (active past 30d?) | ⚠️ Verify in Phase 0 |
-| 4. Message retention on free tier | ⚠️ Verify in Phase 0 |
-| 5. Webhook availability on Build | ⚠️ Verify in Phase 0 |
-| 6. PDPA data region (APAC option?) | ⚠️ BLOCKING — US/EU default may not satisfy Thai PDPA |
+| 1. Build plan = $0 (no CC) | ✅ CONFIRMED |
+| 2. Maker credit NOT required | ✅ Build = free tier; Maker = red herring |
+| 3. MAU definition | ⚠️ Phase 0 |
+| 4. Message retention | ✅ Indefinite ("as long as plan active") |
+| 5. Webhook on Build | ⚠️ Phase-0 POC (public docs silent) |
+| 6. PDPA region | ✅ Singapore selectable on Build — sign DPA + lock SG + Sec 29 SCC |
 
 **If any check fails → STOP + escalate.** Use vendor-lockin-critic must-haves from [[getstream-migration-debate-2026-07-13]].
 
@@ -93,7 +93,7 @@ See [[implementation-plan-2026-07-13]] for full detail.
 | Item | Cost |
 |---|---|
 | GetStream Build (free tier) | $0/mo |
-| Overage risk (1000 MAU cap hit) | $0.09/user, $0.99/concurrent (from GetStream pricing page 2026-07-13) |
+| Overage risk | Build is HARD-CAPPED (rate-limits on exceed, no paid overage). $0.09/user + $0.99/concurrent = Start PAID tier ($499/mo) only |
 | Engineering time | 6.5 sprints (~13 weeks for 1-2 engineers) |
 | Vendor count after migration | 2 (Supabase + GetStream) — same risk surface as today |
 
@@ -115,8 +115,8 @@ See [[implementation-plan-2026-07-13]] for full detail.
 ## Critical files (3 repos, read for planning)
 
 ### Backend (`smartenplus-backend`)
-- `cs/views.py:990-1025` — `SupabaseTokenView` pattern (mirror for `StreamTokenView`)
-- `cs/views.py:1-50` — auth resolution helpers (mirror for Stream auth)
+- `cs/views.py:1334-1406` — `SupabaseTokenView` pattern (mirror for `StreamTokenView`)
+- `cs/views.py:62` (`_resolve_guest_token`) + `cs/views.py:426` (`_resolve_message_sender`) — auth resolution helpers
 - `cs/models.py` — `Conversation`, `Message` schemas
 - `cs/supabase_jwt.py` — `mint_supabase_jwt()` pattern (mirror for `mint_stream_jwt`)
 - `cs/tasks.py` — `sync_chat_messages` Celery pattern

@@ -13,6 +13,8 @@ metadata:
 
 # CS Chat → GetStream Migration Debate (2026-07-13)
 
+> **AUDIT CORRECTIONS 2026-07-13 (session #242):** three claims in this debate were found inaccurate by [[audit-2026-07-13]]: (1) "~200 lines of ChatWidget reducer branchy logic" → reducer is **43 lines** (`ChatWidget.js:26-68`, ~140 total identity/transport logic); (2) "9 open legal gates block ANY vendor" is a **misattribution** — the 9 are owner questions about SmartEnPlus's OWN consent model (`cs-consent-gdpr-model` §6), only Q7 cross-border is material; (3) Start tier is **$499/mo ($5,988/yr)** not $399 (~$4.8k/yr understates). Verdict reasoning otherwise stands.
+
 ## Summary
 
 4-agent structured debate on migrating CS chat from current stack (Django + Supabase Realtime + 256MB EC2) to **GetStream Chat SDK** (React + Python). Verdict: **STAY TODAY**. Both Supabase-Realtime-offload path ([[cs-chat-supabase-offload]]) and GetStream path achieve the same architectural win (offload WS from EC2); GetStream adds ~$4.8k/yr OPEX for features the team has not committed to building (staff inbox, moderation, presence, typing). Activation trigger unchanged: >~30 req/s widget polling OR staff-inbox UI commit.

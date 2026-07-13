@@ -4,28 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-13 (session #241)
+**Updated:** 2026-07-13 (session #242)
 
-**Achieved this session (#241):**
-- **CS chat → GetStream migration debate + ADR + audit-ready plan** — debate verdict ([[getstream-migration-debate-2026-07-13]]) = STAY, but user-reported urgent pain (5 bugs + no prod notification + FE/AD history broken) REVERSES call to hybrid migrate. Vault deliverables: 3 new notes ([[cs-chat-getstream-hybrid-2026-07-13]] ADR + [[cs-chat-getstream-migration/README]] + [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] 6-phase audit-ready plan). Hybrid scope: new convs → GetStream Build free tier; old convs stay Django; Supabase kept for OTA mirror only. ~6.5 sprints + 4-6wk shadow = 3mo calendar. NO code shipped. Other team audits before implementation.
-- **6 BLOCKING gates before Phase 1 commit:** Build tier = $0 confirmed, MAU counter definition, message retention, webhook availability, PDPA data region (APAC?), DPA obtained.
+**Achieved this session (#242):**
+- **CS-CHAT-GETSTREAM-AUDIT — COMPLETE · CONDITIONAL.** 6-agent Workflow (329k tokens, 470s): 3 code-ref verifiers (BE/FE/AD) + GetStream tier/cost web + PDPA/legal web + adversarial synthesizer. Read-only, vault-only. New: [[audit-2026-07-13]]. 16 corrections applied inline to [[implementation-plan-2026-07-13]] + [[cs-chat-getstream-hybrid-2026-07-13]] + README + [[getstream-migration-debate-2026-07-13]].
+- **Verdict CONDITIONAL (not PASS/FAIL):** Build tier genuinely free ($0/1k MAU/100 concurrent/indefinite retention — confirmed on getstream.io) + PDPA soft-block (Singapore selectable on Build, DPA published Feb 2024, `deleteUsers` erasure) — both ADR load-bearing claims survive. Sign-off gate met conditionally (2 eng + ops + legal/PDPA).
+- **4 blockers must clear before Phase 1:** B1 FeatureFlag cutover impossible (model has no `value` field, `cs/models.py:128-140`) · B2 AD system-message status-transition path lost under Stream swap (`useStaffInboxRealtime` in `SideList.js:116`; Stream `notification.message_new` = customer msgs only) · B3 "no staff inbox today" value-prop FALSE (MUI inbox exists, `pages/cs/index.js`) · B4 pricing-table errors (Build hard-capped not paid-overage; Start $499/mo not $399). Plus Python 3.9↔getstream SDK ≥3.10 conflict (undocumented bump).
 
-**Workspace (#241):** unchanged from #240
+**Workspace (#242):** unchanged from #241 — vault-only audit, no code/branches/commits in 3 repos.
 - backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
 - frontend: `main` (`5b3669dd`) — clean (r15 shipped)
 - admin-dashboard: `develop` (`6ce8e8b`) — clean
 - content: `master` (`3756e5b`) — clean
+- vault: `master` (`2d60add` → this session)
 
 **Resume point — next session:**
-1. **CS-CHAT-GETSTREAM-AUDIT** — other team reviews [[cs-chat-getstream-migration/implementation-plan-2026-07-13]]. Audit checklist at end of plan doc. Gating sign-off: 2+ engineers + 1 ops + 1 legal/PDPA.
+1. **GETSTREAM BLOCKERS B1–B4** — clear before Phase 1: pick transport-selector mechanism (B1: FeatureFlag.value migration / CsTransportConfig model / NEXT_PUBLIC_CHAT_TRANSPORT env), design AD system-msg path (B2: keep Supabase/Django sub for SYSTEM msgs OR Stream system channel), reframe Phase 3 goal + re-evaluate cost vs effort (B3), re-anchor OPEX to $499/mo Start (B4), resolve Python 3.9↔SDK≥3.10 (bump or fallback). Vault decision or Phase-0 spike.
 2. **CHAT-IMAGE-SEND deploy** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin, guest no-attach, raw S3 URL 403). See [[chat-image-send]].
-3. **PHASE-0-SPIKE** (if audit passes) — tier qualification + POC, 1 sprint. BLOCKING gates: Build $0 confirmed + PDPA region acceptable + POC end-to-end works.
+3. **PHASE-0-SPIKE** (if blockers clear) — tier/POC, 1 sprint. BLOCKING: Build $0 + SG region locked + webhook POC round-trip + Python/SDK install on 3.9 + 2-tab echo.
 4. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 5. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
 6. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities; can't score above 8.0 without field data.
 7. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
-_(Sessions #221–#240 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#241 archived → `07-logs/session-history.md`.)_
 
 ---
 

@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #241 — 2026-07-13
+
+**Achieved:**
+- CS chat → GetStream migration debate + ADR + 6-phase audit-ready plan (vault-only, no code). Debate verdict STAY reversed by user on urgent-pain grounds → hybrid migrate. Deliverables: [[cs-chat-getstream-hybrid-2026-07-13]] ADR + [[cs-chat-getstream-migration/README]] + [[implementation-plan-2026-07-13]] + [[getstream-migration-debate-2026-07-13]]. Hybrid: new convs → GetStream Build free; old convs → Django; Supabase kept for OTA mirror. ~6.5 sprints + 4-6wk shadow. 6 BLOCKING gates before Phase 1.
+
+**Workspace:** unchanged from #240 — backend main `a750ab5` (resources.txt modified, do not commit), FE main `5b3669dd`, AD develop `6ce8e8b`, content master `3756e5b`.
+
+---
+
 ## Session #240 — 2026-07-12
 
 **Achieved:**

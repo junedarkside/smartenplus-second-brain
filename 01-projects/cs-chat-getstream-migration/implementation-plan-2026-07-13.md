@@ -1,8 +1,10 @@
 # CS Chat → GetStream Migration Implementation Plan
 
-> **STATUS:** AUDIT-PENDING · 2026-07-13 · vault-only deliverable
+> **STATUS:** AUDIT-COMPLETE · **CONDITIONAL** · 2026-07-13 (session #242). See [[audit-2026-07-13]].
 >
 > **Scope:** 6 phases + tier-qualification spike. Read top-down before audit.
+>
+> **⚠️ 4 blockers (B1–B4) + Python 3.9↔SDK≥3.10 conflict must clear before Phase 1.** Corrections below applied inline by audit.
 > **Mirror of:** `/Users/charuwatnaranong/.claude/plans/check-vault-and-cs-fluffy-hejlsberg.md` (vault-clean formatting)
 
 ---
@@ -10,6 +12,8 @@
 ## Phase 0 — Spike + Tier Qualification (1 sprint) — BLOCKING
 
 **Goal:** Prove Build tier = $0/mo, webhook available, PDPA region acceptable, end-to-end POC works.
+
+> **AUDIT-2026-07-13 additions (BLOCKING):** (a) **Python conflict** — prod = `python:3.9-alpine`, but `getstream==3.5.*` `requires_python >=3.10,<4.0`. Verify install on 3.9; if it fails, add a Python bump + Dockerfile task (undocumented effort). (b) **PDPA gate simplified** — Singapore region IS selectable on Build at provisioning (NOT US/EU-forced, NOT paid-gated): lock SG, sign DPA, draft Sec 29 SCC. (c) **Webhook-on-Build** stays an empirical POC gate (public docs don't confirm it explicitly).
 
 ### Tasks
 
@@ -78,8 +82,8 @@
 ### Tasks
 
 1. **Dependencies**
-   - `requirements.txt`: add `getstream==<latest stable 5.x>` (verify version before commit)
-   - Verify Python 3.11+ compatibility (current prod = 3.11 per repo)
+   - `requirements.txt`: add `getstream==3.5.*` (PyPI 3.5.0, `requires_python >=3.10,<4.0` — NO 5.x line)
+   - **Python conflict (audit):** prod = `python:3.9-alpine`, NOT 3.11. SDK requires ≥3.10. Resolve in Phase 0 (bump Python + Dockerfile, or SDK-incompat fallback).
 
 2. **`cs/stream_jwt.py` (new file)**
    ```python
@@ -99,15 +103,15 @@
        client = get_stream_client()
        return client.create_token(user_id=user_id, expiration=ttl)
    ```
-   - Mirror pattern from `cs/supabase_jwt.py:1-50`
+   - **Audit correction:** `mint_supabase_jwt` (`cs/supabase_jwt.py:14`) takes a **claims dict** (TTL default 900s), not positional args — do NOT mirror its signature. Use the getstream SDK `client.create_token(user_id, expiration)` directly (above). 24h TTL ≠ supabase_jwt's 15min default; document the divergence.
    - Type hints + docstring
 
 3. **`cs/views.py` — `StreamTokenView` (new class)**
-   - Mirror `SupabaseTokenView` (`cs/views.py:990-1025`) line-for-line
+   - Mirror `SupabaseTokenView` (`cs/views.py:1334-1406`) line-for-line
    - Auth check via existing `_resolve_guest_token` + `_resolve_message_sender` helpers
    - Returns `{token, conversation_id}` for customer/guest; `{token, scope: 'staff'}` for staff
    - `staff` branch requires explicit `scope='staff'` (defensive against admin→customer leakage)
-   - Throttle: reuse `cs_throttles.cs_otp` rate class
+   - Throttle: reuse `CsPollThrottle` (`cs/throttles.py:8`) — mirrors `SupabaseTokenView`'s throttle (`views.py:1337`). No `cs_otp` class exists.
    - URL: `POST /api/cs/stream-token/`
 
 4. **`cs/views.py` — `StreamWebhookView` (new class)**
@@ -152,9 +156,9 @@
    - Document migration path in model docstring
 
 7. **`cs/serializers.py` — add `transport` field**
-   - `ConversationListSerializer`: include `transport`
-   - `ConversationDetailSerializer`: include `transport`
-   - `MessageSerializer`: include `stream_id` (nullable)
+   - `ConversationSerializer` (`cs/serializers.py:10`): include `transport`
+   - `ConversationInboxSerializer` (`cs/serializers.py:17`): include `transport`
+   - `MessageSerializer` (`cs/serializers.py:78`): include `stream_id` (nullable) in `Meta.fields` (`:84`)
 
 8. **BE tests** (`cs/tests/test_stream.py`)
    - `test_mint_token_for_authenticated_user` — Bearer token → 200 + JWT decodes
@@ -175,9 +179,11 @@
 
 10. **`Smartenplus/settings.py`**
     ```python
-    STREAM_API_KEY = os.environ.get('STREAM_API_KEY', '')
-    STREAM_API_SECRET = os.environ.get('STREAM_API_SECRET', '')
-    STREAM_WEBHOOK_SECRET = os.environ.get('STREAM_WEBHOOK_SECRET', '')
+    # python-decouple config() — match SUPABASE_JWT_SECRET pattern (settings.py:595-598),
+    # NOT os.environ.get() (breaks the project's .env-loading convention)
+    STREAM_API_KEY = config('STREAM_API_KEY', default='')
+    STREAM_API_SECRET = config('STREAM_API_SECRET')
+    STREAM_WEBHOOK_SECRET = config('STREAM_WEBHOOK_SECRET')
     ```
 
 11. **Supabase `cs_messages` mirror unchanged**
@@ -239,7 +245,7 @@
 
 ### Sprint 2B — Integration + image send
 
-5. **Branch in `ChatWidget.js:175-176`**
+5. **Branch in `ChatWidget.js:175-176`** (⚠️ **audit:** current code is a 2-way `USE_REALTIME` boolean split — no `state.transport` field exists. The snippet below is the TARGET after you add `transport` to the conversation API response + a `SET_CONV` reducer action. Do not assume `state.transport` works today.)
    ```javascript
    const transport = state.transport ?? 'legacy';
    const useStream = transport === 'stream';
@@ -256,6 +262,7 @@
    - Django returns `{image_url, message_id}`
    - Client sends Stream message: `channel.sendMessage({ text: body, attachments: [{ type: 'image', image_url, asset_url: presigned }], custom_data: { sender_type: 'customer', django_message_id } })`
    - Webhook fires → `cs.Message` row created with `stream_id` + `image` field populated
+   - **Text-send path (audit correction):** also replace the `else if (USE_REALTIME)` Supabase-direct-insert branch (`ChatPanel.js:68-81`) with a Stream `sendMessage` call for stream-transport convs. AD side: remove `supabase.from('cs_messages').insert` staff-send branch (`ConversationDetail.js:134-148`) — current realtime-mode staff send bypasses Django entirely, so the webhook becomes the only staff-send archive path.
 
 7. **`.env.local` + `.env.sample`**
    ```
@@ -285,7 +292,7 @@
 
 ## Phase 3 — Admin Staff Hook (1 sprint)
 
-**Goal:** Staff-side Stream integration with custom UI.
+**Goal:** Staff-side Stream integration under the EXISTING MUI inbox (⚠️ **audit B3:** a full staff inbox EXISTS at `pages/cs/index.js` — this phase swaps realtime source + adds Stream presence/typing, NOT "build staff inbox"). Custom UI.
 
 ### Tasks
 
@@ -307,10 +314,11 @@
    - Replace Supabase `postgres_changes` subscription with Stream event subscription
    - `streamClient.on('notification.message_new', (event) => { ... })` → dispatch RTK `getConversations` cache patch
    - OS push notification: same as today (existing service worker)
+   - **⚠️ AUDIT BLOCKER B2:** `useStaffInboxRealtime` is mounted GLOBALLY in `pages/dashboard/SideList.js:116` (NOT `pages/cs/index.js`) and is load-bearing for closed-conv auto-reopen mirroring + system-message status transitions (reopen/close/ended) + Web Push. Stream `notification.message_new` fires only for customer messages, NOT system status rows. Must EITHER keep a Supabase/Django subscription for SYSTEM messages alongside Stream, OR re-route status transitions through a Stream system channel — else status propagation silently breaks.
 
 5. **`components/cs/StreamConversationDetail.js` (new)**
    - Wraps `<Channel>` with staff-side custom UI
-   - Reuse message bubble component pattern from `GetStreamPanel.js` (extract to shared? — NO, premature; copy with adaptation if needed)
+   - **⚠️ audit:** AD CS module is **MUI sx-prop styled, NOT Tailwind** (zero `className=` in `components/cs/`). Reimplement the bubble in MUI (Box sx) — do NOT reuse the FE's Tailwind `GetStreamPanel.js` bubble. Real AD risk: stream-chat-react CSS-in-JS conflicts with MUI `CssBaseline`/theme (not "Tailwind override").
    - Status change / merge / mark-read buttons → still POST to Django endpoints (orthogonal to transport)
 
 6. **`store/api/csApi.js` — add `getStreamToken` mutation**
@@ -385,10 +393,10 @@
 
 1. **`.env.local`** — set `NEXT_PUBLIC_CHAT_TRANSPORT=stream` (default for new builds)
 
-2. **Django `cs_chat_transport` FeatureFlag** (new)
-   - `FeatureFlag(key='cs_chat_transport', value='stream'|'legacy')`
+2. **Transport selector — ⚠️ AUDIT BLOCKER B1 (`FeatureFlag` cannot hold value):**
+   `FeatureFlag` (`cs/models.py:128-140`) has only `key/enabled/updated_by/updated_at` — no `value` field; `FeatureFlagView` (`views.py:725`) only accepts `PATCH {enabled}`. Pick ONE before Phase 5 freezes: (a) migration adding `FeatureFlag.value` CharField (nullable, coexist with `enabled`); (b) dedicated `CsTransportConfig` model; or (c) settings/env `NEXT_PUBLIC_CHAT_TRANSPORT` (Phase 2/5 already reference it). Also note: `cs_chat` kill switch is **FE-ONLY** (no backend FeatureFlag).
    - Default: `'legacy'` until Phase 6 validation passes
-   - After validation: flip to `'stream'` in Django admin
+   - After validation: flip to `'stream'` via the chosen mechanism
 
 3. **`ConversationCreateView` — populate `transport`**
    - New conv: read FeatureFlag → set `Conversation.transport = flag_value`
@@ -499,14 +507,17 @@ Per [[chat-sender-session-bleed]] pattern:
 
 | Risk | Probability | Impact | Mitigation |
 |---|---|---|---|
-| Build tier MAU cap (1k) hit unexpectedly | Medium | Medium | Overage $0.09/user; CloudWatch alarm on Stream quota; quarterly tier review |
+| Build tier MAU cap (1k) hit unexpectedly | Medium | Medium | Build is HARD-CAPPED (rate-limits/errors, no paid overage); CloudWatch alarm on Stream quota; quarterly tier review; upgrade to Start ($499/mo) only path past cap |
 | Webhook drops / ordering issues | Low | High | Idempotency on `stream_id`; nightly reconcile task |
 | PDPA data region = US/EU (not APAC) | High | Critical | BLOCKING gate before Phase 1 commit; escalate to paid tier if no APAC on Build |
 | Sender-spoof bypasses ownership gate | Low | High | Stream server-side auth + role-based perms; webhook trusts `event.user.role` only |
 | Free tier auto-bump to paid | Low | High | NO Stripe on signup; quarterly tier review calendar reminder |
 | Django `Message` schema divergence (Stream custom fields vs Django fields) | Medium | Medium | `Message.stream_id` = canonical join; `custom_data` JSON field for flexibility |
-| React 18 incompatibility with `stream-chat-react` | Low | High | Verify in Phase 0 spike; pin version |
-| Tailwind styling override conflict | Medium | Low | Custom `<MessageInput>` + custom message bubble (no Stream default UI) |
+| React 18 incompatibility with `stream-chat-react` | RESOLVED | — | `stream-chat-react` 14.8.0 peer-deps include `^18.0.0`; pin `stream-chat ^9.49.0` |
+| Tailwind styling override conflict (FE only) | Medium | Low | Custom `<MessageInput>` + custom message bubble (no Stream default UI) |
+| **AD MUI/CSS-in-JS conflict** (audit new) | Medium | Medium | AD uses MUI sx (NOT Tailwind); stream-chat-react CSS-in-JS may clash with MUI `CssBaseline`/theme — verify in Phase 3 |
+| **getstream Python SDK requires ≥3.10; prod = 3.9** (audit new) | Medium | High | Phase 0: install on `python:3.9-alpine`; if fails, Python bump + Dockerfile (undocumented effort) |
+| **AD system-message status-transition path lost** (audit B2) | High | High | Keep Supabase/Django sub for SYSTEM msgs OR Stream system channel; preserve `SideList.js:116` mount + all-status RTK patch |
 
 ---
 
