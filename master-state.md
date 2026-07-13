@@ -4,28 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-13 (session #242)
+**Updated:** 2026-07-14 (session #243)
 
-**Achieved this session (#242):**
-- **CS-CHAT-GETSTREAM-AUDIT — COMPLETE · CONDITIONAL.** 6-agent Workflow (329k tokens, 470s): 3 code-ref verifiers (BE/FE/AD) + GetStream tier/cost web + PDPA/legal web + adversarial synthesizer. Read-only, vault-only. New: [[audit-2026-07-13]]. 16 corrections applied inline to [[implementation-plan-2026-07-13]] + [[cs-chat-getstream-hybrid-2026-07-13]] + README + [[getstream-migration-debate-2026-07-13]].
-- **Verdict CONDITIONAL (not PASS/FAIL):** Build tier genuinely free ($0/1k MAU/100 concurrent/indefinite retention — confirmed on getstream.io) + PDPA soft-block (Singapore selectable on Build, DPA published Feb 2024, `deleteUsers` erasure) — both ADR load-bearing claims survive. Sign-off gate met conditionally (2 eng + ops + legal/PDPA).
-- **4 blockers must clear before Phase 1:** B1 FeatureFlag cutover impossible (model has no `value` field, `cs/models.py:128-140`) · B2 AD system-message status-transition path lost under Stream swap (`useStaffInboxRealtime` in `SideList.js:116`; Stream `notification.message_new` = customer msgs only) · B3 "no staff inbox today" value-prop FALSE (MUI inbox exists, `pages/cs/index.js`) · B4 pricing-table errors (Build hard-capped not paid-overage; Start $499/mo not $399). Plus Python 3.9↔getstream SDK ≥3.10 conflict (undocumented bump).
+**Achieved this session (#243):**
+- **CS REALTIME CHAT — 5 BUGS FIXED, ALL 3 REPOS → DEVELOP.** GetStream migration deferred; fixed Supabase realtime instead.
+- Root causes + fixes:
+  1. **Empty AD history** — mint gating history fetch; reordered: Django history first, mint second (`useStaffChatRealtime.js`)
+  2. **Duplicate messages** — Supabase row ids ≠ Django PKs; direct payload render caused dedup collisions; switched to trigger-only: INSERT event → `scheduleFetchNew()` → cursor fetch from Django
+  3. **Send button stuck** — `useState` async; rapid Enter fired concurrent sends; `sendingRef = useRef(false)` synchronous guard (`ChatPanel.js`)
+  4. **AD history lost on navigate** — staff used direct Supabase INSERT bypassing Django; routed all text through `sendMessage().unwrap()` (`ConversationDetail.js`)
+  5. **FE no realtime events** — shared Supabase singleton; `useChatTyping` joined presence null-token, cleanup called `setAuth(null)` deauthorizing postgres_changes; fix: isolated `createClient()` per effect in `useChatRealtime.js`
+- BE: `MessageCreateView` mirrors every text send to Supabase via `insert_cs_message()`
+- Tests: 68 FE chat tests pass; `useChatRealtime.test.js` mock updated to `@supabase/supabase-js` createClient
+- Debug logs removed all 3 repos (chore/remove-cs-debug-logs)
+- **Commits:** BE `faff358` · FE `9b5f43ad` · AD `4c20fb1` (all develop)
 
-**Workspace (#242):** unchanged from #241 — vault-only audit, no code/branches/commits in 3 repos.
-- backend: `main` (`a750ab5`) — `resources.txt` modified (pre-existing VAPID scratch notes, DO NOT commit)
-- frontend: `main` (`5b3669dd`) — clean (r15 shipped)
-- admin-dashboard: `develop` (`6ce8e8b`) — clean
+**Workspace (#243):**
+- backend: `develop` (`faff358`) — `resources.txt` modified (VAPID scratch, DO NOT commit)
+- frontend: `develop` (`9b5f43ad`) — clean
+- admin-dashboard: `develop` (`4c20fb1`) — clean
 - content: `master` (`3756e5b`) — clean
-- vault: `master` (`2d60add` → this session)
 
 **Resume point — next session:**
-1. **GETSTREAM BLOCKERS B1–B4** — clear before Phase 1: pick transport-selector mechanism (B1: FeatureFlag.value migration / CsTransportConfig model / NEXT_PUBLIC_CHAT_TRANSPORT env), design AD system-msg path (B2: keep Supabase/Django sub for SYSTEM msgs OR Stream system channel), reframe Phase 3 goal + re-evaluate cost vs effort (B3), re-anchor OPEX to $499/mo Start (B4), resolve Python 3.9↔SDK≥3.10 (bump or fallback). Vault decision or Phase-0 spike.
-2. **CHAT-IMAGE-SEND deploy** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin, guest no-attach, raw S3 URL 403). See [[chat-image-send]].
-3. **PHASE-0-SPIKE** (if blockers clear) — tier/POC, 1 sprint. BLOCKING: Build $0 + SG region locked + webhook POC round-trip + Python/SDK install on 3.9 + 2-tab echo.
-4. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
-5. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-6. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities; can't score above 8.0 without field data.
-7. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
+1. **CHAT-IMAGE-SEND + REALTIME DEPLOY** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin, guest no-attach, raw S3 URL 403, realtime both directions). See [[chat-image-send]].
+2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
+3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
+4. **GETSTREAM BLOCKERS B1–B4** — if revisiting migration: B1 FeatureFlag.value field, B2 system-msg path, B3 inbox value-prop, B4 $499 pricing, Python 3.9↔SDK conflict.
+5. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities.
+6. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
 _(Sessions #221–#241 archived → `07-logs/session-history.md`.)_
 
@@ -55,7 +61,7 @@ _(Sessions #221–#241 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CHAT-IMAGE-SEND** | **DESIGNED + AUDITED v2 2026-07-12** — 3-agent expert audit applied. **2 must-fix baked in:** (1) PRIVATE storage — `Message.image` ImageField + `ChatMediaStorage` (private ACL, querystring_auth) + presigned URLs (serializer fresh / Supabase 7-day TTL / realtime history via Django MessageListView) — v1 public-read = PDPA risk, rejected; (2) throttle keyed by guest-token/user-id not IP (Thai shared-WiFi false 429s). **Reversals:** 90-day lifecycle rule dropped (broken bubbles in old disputes; cost noise); delete signal deferred (nothing hard-deletes convs — dead code). Image spec: WebP ≤80KB, ladder (1200,1000,800) — resolution>quality for text screenshots. 16 verified corrections in doc. **v2.1: plain guests blocked from image send (OTA+login only, per spec).** **✅ IMPLEMENTED 2026-07-13 — all 3 repos merged → develop:** BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; extra fix: `custom_domain=None` — global AWS_S3_CUSTOM_DOMAIN silently disables presigning), AD `f473a7f` (mutation+attach UI+render+realtime history via Django+SideList preview), FE `53f30576` (canSendImage gate+attach+multipart+render+realtime history via Django). Deviation: sync task skips image_url map (ImageField holds key not URL; Django-first + backfill covers it). **Remaining:** (1) run Supabase migration 003 SQL, (2) deploy develop→prod BE→AD→FE, (3) prod smoke (OTA photo→admin, guest no-attach, raw S3 URL 403). Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
+| **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **Remaining:** (1) run Supabase SQL migration 003, (2) deploy develop→prod BE→AD→FE, (3) prod smoke (OTA photo→admin realtime, guest no-attach, raw S3 URL 403, FE↔AD realtime both directions). Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
 | **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |

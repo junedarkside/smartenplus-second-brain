@@ -4,6 +4,31 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #242 — 2026-07-13
+
+**Achieved:**
+- CS chat realtime fixed across all 3 repos — 5 bugs root-caused and resolved, all merged → develop.
+- GetStream ADR pivot: user confirmed "fix Supabase realtime, not migrate" after session #241 plan. Vault audit (session #241) was research-only; this session = implementation.
+- Bugs fixed:
+  1. **Empty AD history on open** — Supabase mint gated Django history fetch; reordered: history FIRST, mint second (`useStaffChatRealtime.js`)
+  2. **Duplicate messages** — realtime payloads used Supabase row ids (different sequence from Django PKs); direct render caused dedup collisions; switched to trigger-only pattern: events call `scheduleFetchNew()` → cursor fetch from Django
+  3. **Send button stuck** — `useState` async can't block rapid Enter presses before re-render; added `sendingRef = useRef(false)` synchronous guard (`ChatPanel.js`)
+  4. **AD history lost on navigate** — staff used direct Supabase INSERT; Django never got the row; history fetch dropped all staff replies on remount; routed all text through `sendMessage().unwrap()` (`ConversationDetail.js`)
+  5. **FE receives no realtime events** — root cause: shared Supabase singleton; `useChatTyping` joined presence channel with null token, cleanup called `setAuth(null)`, deauthorizing postgres_changes subscription; fix: isolated `createClient()` per effect in `useChatRealtime.js` (same pattern as AD)
+- BE mirror: `MessageCreateView` mirrors to Supabase via `insert_cs_message()` after every Django text send
+- Tests: 68 FE chat tests pass; `useChatRealtime.test.js` updated (mock target → `@supabase/supabase-js` createClient factory; old buffer tests → new event-triggered Django fetch tests)
+- Debug logs removed all 3 repos (chore/remove-cs-debug-logs → merged develop each repo)
+
+**Commits:** BE `faff358` · FE `9b5f43ad` · AD `4c20fb1` (all on develop)
+
+**Workspace:**
+- backend: `develop` (`faff358`) — `resources.txt` modified (VAPID scratch, DO NOT commit)
+- frontend: `develop` (`9b5f43ad`) — clean
+- admin-dashboard: `develop` (`4c20fb1`) — clean
+- content: `master` (`3756e5b`) — clean
+
+---
+
 ## Session #241 — 2026-07-13
 
 **Achieved:**

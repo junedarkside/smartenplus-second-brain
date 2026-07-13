@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-14] session-end #243 | CS realtime chat fixed — 5 bugs root-caused + resolved all 3 repos → develop (BE faff358 · FE 9b5f43ad · AD 4c20fb1): empty AD history, duplicate messages, stuck send button, AD history lost on navigate, FE no events (shared-client auth interference). Isolated createClient per hook, trigger-only events → Django cursor fetch, sendingRef guard. 68 tests pass. Debug logs removed. Deploy + prod smoke next.
+
 ## [2026-07-13] session-end #241 | CS chat → GetStream hybrid ADR + audit-ready 6-phase plan (vault-only) — debate STAY reversed by user-reported pain (5 bugs + no prod notification + FE/AD history broken); new convs → GetStream Build free tier, old convs stay Django, Supabase kept for OTA mirror. Other team audits before implementation. NO code shipped. Files: [[cs-chat-getstream-hybrid-2026-07-13]] + [[cs-chat-getstream-migration/implementation-plan-2026-07-13]] + [[getstream-migration-debate-2026-07-13]]. Workspace unchanged.
 
 ## [2026-07-13] impl | chat image-send IMPLEMENTED all 3 repos → develop (BE 0bd8adf · AD f473a7f · FE 53f30576) — 20 tests green; extra fix custom_domain=None presigning; remaining: Supabase SQL + deploy + smoke
