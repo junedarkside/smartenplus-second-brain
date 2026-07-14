@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #243 — 2026-07-14
+
+**Achieved:**
+- CS realtime chat — 5 bugs fixed, all 3 repos → develop. GetStream migration deferred; fixed Supabase realtime instead.
+  1. **Empty AD history** — mint gating history fetch; reordered: Django history first, mint second (`useStaffChatRealtime.js`)
+  2. **Duplicate messages** — Supabase row ids ≠ Django PKs; direct payload render caused dedup collisions; trigger-only: INSERT event → `scheduleFetchNew()` → cursor fetch from Django
+  3. **Send button stuck** — `useState` async; rapid Enter fired concurrent sends; `sendingRef = useRef(false)` synchronous guard (`ChatPanel.js`)
+  4. **AD history lost on navigate** — staff used direct Supabase INSERT bypassing Django; routed all text through `sendMessage().unwrap()` (`ConversationDetail.js`)
+  5. **FE no realtime events** — shared Supabase singleton; `useChatTyping` joined presence null-token, cleanup called `setAuth(null)` deauthorizing postgres_changes; fix: isolated `createClient()` per effect in `useChatRealtime.js`
+- BE: `MessageCreateView` mirrors every text send to Supabase via `insert_cs_message()`
+- 68 FE chat tests pass; debug logs removed all 3 repos
+- **Commits:** BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`
+
+---
+
 ## Session #242 — 2026-07-13
 
 **Achieved:**

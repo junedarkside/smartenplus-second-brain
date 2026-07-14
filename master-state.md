@@ -4,36 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-14 (session #243)
+**Updated:** 2026-07-14 (session #244)
 
-**Achieved this session (#243):**
-- **CS REALTIME CHAT — 5 BUGS FIXED, ALL 3 REPOS → DEVELOP.** GetStream migration deferred; fixed Supabase realtime instead.
-- Root causes + fixes:
-  1. **Empty AD history** — mint gating history fetch; reordered: Django history first, mint second (`useStaffChatRealtime.js`)
-  2. **Duplicate messages** — Supabase row ids ≠ Django PKs; direct payload render caused dedup collisions; switched to trigger-only: INSERT event → `scheduleFetchNew()` → cursor fetch from Django
-  3. **Send button stuck** — `useState` async; rapid Enter fired concurrent sends; `sendingRef = useRef(false)` synchronous guard (`ChatPanel.js`)
-  4. **AD history lost on navigate** — staff used direct Supabase INSERT bypassing Django; routed all text through `sendMessage().unwrap()` (`ConversationDetail.js`)
-  5. **FE no realtime events** — shared Supabase singleton; `useChatTyping` joined presence null-token, cleanup called `setAuth(null)` deauthorizing postgres_changes; fix: isolated `createClient()` per effect in `useChatRealtime.js`
-- BE: `MessageCreateView` mirrors every text send to Supabase via `insert_cs_message()`
-- Tests: 68 FE chat tests pass; `useChatRealtime.test.js` mock updated to `@supabase/supabase-js` createClient
-- Debug logs removed all 3 repos (chore/remove-cs-debug-logs)
-- **Commits:** BE `faff358` · FE `9b5f43ad` · AD `4c20fb1` (all develop)
+**Achieved this session (#244):**
+- **CS CHAT HEIC IMAGE UPLOAD — 3 ROOT CAUSES FIXED, BE → DEVELOP.**
+  - `"File is not a valid image."` 400 on FE + AD for iPhone HEIC photos
+  - Root causes + fixes:
+    1. **pillow_heif not registered in workers** — `AppConfig.ready()` is process-level; Gunicorn pre-fork workers never got HEIC decoder. Fix: `import pillow_heif; pillow_heif.register_heif_opener()` at import time in `operators/utils.py`
+    2. **No-extension filename** — clipboard paste / iOS blob sends no `.heic` ext; ext check rejected with `"Unsupported file type: ."`. Fix: MIME_TO_EXT fallback from `content_type` when ext missing
+    3. **pillow-heif 0.15.0 bundled old libheif** — real iPhone HEIC metadata layout (`"Metadata not correctly assigned to image"`) not supported. Fix: upgraded `pillow-heif 0.15.0→1.1.1`, `Pillow 9.5.0→11.3.0` — no deprecated API in codebase, all image tests pass
+  - Verified FE + AD both send real iPhone `IMG_2443.heic` (957KB → 52KB WebP)
+  - Debug logs added for diagnosis, reverted after confirmation (never committed)
+- **Commits:** BE `f528404` · `8b3610e` · `63688d6` · `d71db74` (all develop)
 
-**Workspace (#243):**
-- backend: `develop` (`faff358`) — `resources.txt` modified (VAPID scratch, DO NOT commit)
+**Workspace (#244):**
+- backend: `develop` (`d71db74`) — `resources.txt` modified (VAPID scratch, DO NOT commit)
 - frontend: `develop` (`9b5f43ad`) — clean
 - admin-dashboard: `develop` (`4c20fb1`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT-IMAGE-SEND + REALTIME DEPLOY** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin, guest no-attach, raw S3 URL 403, realtime both directions). See [[chat-image-send]].
+1. **CHAT-IMAGE-SEND + REALTIME DEPLOY** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin realtime, guest no-attach, raw S3 URL 403, FE↔AD realtime both directions). **Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). See [[chat-image-send]].
 2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
 4. **GETSTREAM BLOCKERS B1–B4** — if revisiting migration: B1 FeatureFlag.value field, B2 system-msg path, B3 inbox value-prop, B4 $499 pricing, Python 3.9↔SDK conflict.
 5. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities.
 6. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
-_(Sessions #221–#241 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#243 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -61,7 +59,7 @@ _(Sessions #221–#241 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **Remaining:** (1) run Supabase SQL migration 003, (2) deploy develop→prod BE→AD→FE, (3) prod smoke (OTA photo→admin realtime, guest no-attach, raw S3 URL 403, FE↔AD realtime both directions). Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
+| **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **✅ HEIC FIXED 2026-07-14** — pillow-heif 0.15→1.1.1 + Pillow 9.5→11.3 + import-time registration + MIME fallback. BE `d71db74` → develop. FE+AD verified with real iPhone HEIC. **⚠️ Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). **Remaining:** (1) run Supabase SQL migration 003, (2) deploy develop→prod BE→AD→FE, (3) prod smoke (OTA photo→admin realtime, guest no-attach, raw S3 URL 403, FE↔AD realtime both directions). Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
 | **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
