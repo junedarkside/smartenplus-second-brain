@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-14] session-end #246 | allow_image_send flag kill switch shipped — 3-agent debate → BE+AD+FE all merged develop. Staff unaffected; default enabled=True.
+
 ## [2026-07-14] session-end #245 | chat bubble unread badge fixed — transport gate bug root-caused + fixed, orange pill shipped, FE develop `01d8d617`. Vault badge doc updated.
 
 ## [2026-07-14] knowledge | cs-chat-bubble-badge-decision — 3-agent debate verdict: orange pill, 99+ cap correct, staff-only gate correct. 1-line FE change `bg-red-500` → `bg-orange-500`. 3 items deferred.

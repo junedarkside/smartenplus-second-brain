@@ -4,32 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-14 (session #245)
+**Updated:** 2026-07-14 (session #246)
 
-**Achieved this session (#245):**
-- **CHAT BUBBLE UNREAD BADGE — ROOT CAUSE FIXED + SHIPPED → FE develop `01d8d617`**
-  - Transport hooks (`useChatRealtime`/`useChatPolling`) were gated on `status === 'open'` — closing chat stopped transport, `unreadCount` stayed 0, badge never appeared
-  - Fix: `transportActive = !!conversationId && status !== 'need_email/otp'` — transport runs open OR closed
-  - Also: `bg-red-500` → `bg-orange-500` (informational not error semantic)
-  - 3-agent debate validated: 99+ cap correct, staff-only gate correct, geometry correct
-  - Vault note: `03-knowledge/cs-chat-bubble-badge-decision.md` updated with root bug + fix
-  - Verified: staff reply in AD for junedarkside@gmail.com → orange pill appears on FE bubble ✓
+**Achieved this session (#246):**
+- **CHAT IMAGE SEND — allow_image_send FEATURE FLAG KILL SWITCH SHIPPED → all 3 repos develop**
+  - 3-agent debate: BE-only kill switch via existing FeatureFlag model, AD Settings toggle, FE error handler
+  - BE `feat/cs-image-send-flag` → develop `6f7af85`: +6 lines in `MessageImageCreateView.post()` — checks `allow_image_send` flag before auth gate, returns `FEATURE_DISABLED` (403) when off; default `enabled=True`
+  - AD `feat/ad-image-send-toggle` → develop `21d03eb`: "Customer Image Send" toggle in Settings page, exact pattern as cs_chat + ota_sync toggles; uses existing `useGetFeatureFlagQuery`/`useUpdateFeatureFlagMutation`
+  - FE `fix/chat-image-feature-disabled-error` → develop `6cc42979`: +1 token — `FEATURE_DISABLED` added to existing image error handler (line 129 ChatPanel.js)
+  - Staff image send unaffected (flag only checks `sender == SENDER_CUSTOMER`)
+  - No new DB models, no new API endpoints, no migration needed (`get_or_create` handles first use)
 
-**Workspace (#245):**
-- backend: `develop` (`08d6767`) — `resources.txt` modified (VAPID scratch, DO NOT commit)
-- frontend: `develop` (`01d8d617`) — clean
-- admin-dashboard: `develop` (`4c20fb1`) — clean
+**Workspace (#246):**
+- backend: `develop` (`6f7af85`) — clean
+- frontend: `develop` (`6cc42979`) — clean
+- admin-dashboard: `develop` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT-IMAGE-SEND + REALTIME DEPLOY** — Supabase SQL migration 003 → develop→prod BE→AD→FE → prod smoke (OTA photo→admin realtime, guest no-attach, raw S3 URL 403, FE↔AD realtime both directions). **Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). See [[chat-image-send]].
+1. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
 2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-4. **GETSTREAM BLOCKERS B1–B4** — if revisiting migration: B1 FeatureFlag.value field, B2 system-msg path, B3 inbox value-prop, B4 $499 pricing, Python 3.9↔SDK conflict.
+4. **DIRECT-BOOKINGS-TAB** — review + merge 3 branches → develop, manual smoke.
 5. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities.
 6. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
-_(Sessions #221–#244 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#245 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -57,7 +57,7 @@ _(Sessions #221–#244 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **✅ HEIC FIXED 2026-07-14** — pillow-heif 0.15→1.1.1 + Pillow 9.5→11.3 + import-time registration + MIME fallback. BE `d71db74` → develop. FE+AD verified with real iPhone HEIC. **✅ UNREAD BADGE FIXED 2026-07-14** — transport gate bug fixed, FE `01d8d617` → develop. **⚠️ Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). **Remaining:** (1) run Supabase SQL migration 003, (2) deploy develop→prod BE→AD→FE, (3) prod smoke (OTA photo→admin realtime, guest no-attach, raw S3 URL 403, FE↔AD realtime both directions). Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
+| **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **✅ HEIC FIXED 2026-07-14** — pillow-heif 0.15→1.1.1 + Pillow 9.5→11.3 + import-time registration + MIME fallback. BE `d71db74` → develop. FE+AD verified with real iPhone HEIC. **✅ UNREAD BADGE FIXED 2026-07-14** — transport gate bug fixed, FE `01d8d617` → develop. **⚠️ Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). **✅ KILL SWITCH ADDED 2026-07-14** — `allow_image_send` FeatureFlag + AD Settings toggle + FE `FEATURE_DISABLED` error handler. BE develop `6f7af85` · AD develop `21d03eb` · FE develop `6cc42979`. Staff unaffected; default `enabled=True`. **Remaining:** (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions. Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
 | **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |
