@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #244 — 2026-07-14
+CS CHAT HEIC IMAGE UPLOAD — 3 root causes fixed: pillow_heif import-time registration + MIME fallback + pillow-heif 0.15→1.1.1/Pillow 9.5→11.3 upgrade. BE `d71db74` → develop. FE+AD verified with real iPhone HEIC.
+
+---
+
 ## Session #243 — 2026-07-14
 
 **Achieved:**

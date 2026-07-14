@@ -1,5 +1,9 @@
 # Vault Log
 
+## [2026-07-14] session-end #245 | chat bubble unread badge fixed — transport gate bug root-caused + fixed, orange pill shipped, FE develop `01d8d617`. Vault badge doc updated.
+
+## [2026-07-14] knowledge | cs-chat-bubble-badge-decision — 3-agent debate verdict: orange pill, 99+ cap correct, staff-only gate correct. 1-line FE change `bg-red-500` → `bg-orange-500`. 3 items deferred.
+
 ## [2026-07-14] session-end #244 | HEIC CS-chat image upload fixed — 3 root causes: pillow_heif import-time registration + MIME fallback + pillow-heif 0.15→1.1.1/Pillow 9.5→11.3 upgrade. BE d71db74 → develop. FE+AD both verified with real iPhone HEIC. Deploy + prod smoke still pending.
 
 ## [2026-07-14] session-end #243 | CS realtime chat fixed — 5 bugs root-caused + resolved all 3 repos → develop (BE faff358 · FE 9b5f43ad · AD 4c20fb1): empty AD history, duplicate messages, stuck send button, AD history lost on navigate, FE no events (shared-client auth interference). Isolated createClient per hook, trigger-only events → Django cursor fetch, sendingRef guard. 68 tests pass. Debug logs removed. Deploy + prod smoke next.
