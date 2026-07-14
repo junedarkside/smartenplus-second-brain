@@ -4,32 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-14 (session #246)
+**Updated:** 2026-07-14 (session #247)
 
-**Achieved this session (#246):**
-- **CHAT IMAGE SEND — allow_image_send FEATURE FLAG KILL SWITCH SHIPPED → all 3 repos develop**
-  - 3-agent debate: BE-only kill switch via existing FeatureFlag model, AD Settings toggle, FE error handler
-  - BE `feat/cs-image-send-flag` → develop `6f7af85`: +6 lines in `MessageImageCreateView.post()` — checks `allow_image_send` flag before auth gate, returns `FEATURE_DISABLED` (403) when off; default `enabled=True`
-  - AD `feat/ad-image-send-toggle` → develop `21d03eb`: "Customer Image Send" toggle in Settings page, exact pattern as cs_chat + ota_sync toggles; uses existing `useGetFeatureFlagQuery`/`useUpdateFeatureFlagMutation`
-  - FE `fix/chat-image-feature-disabled-error` → develop `6cc42979`: +1 token — `FEATURE_DISABLED` added to existing image error handler (line 129 ChatPanel.js)
-  - Staff image send unaffected (flag only checks `sender == SENDER_CUSTOMER`)
-  - No new DB models, no new API endpoints, no migration needed (`get_or_create` handles first use)
+**Achieved this session (#247):**
+- **FE CHAT IMAGE BUTTON — hides when allow_image_send flag OFF → FE develop `5c2353f6`**
+  - `_app.js`: added `useFeatureFlag('allow_image_send')` (same pattern as `cs_chat`), passes `imageSendEnabled` prop to `ChatWidget`
+  - `ChatWidget.js:84`: accepts `imageSendEnabled = true` prop (fail-open default)
+  - `ChatWidget.js:358`: `canSendImage` now `(Boolean(state.token) || Boolean(otaToken)) && imageSendEnabled`
+  - Button fully hidden (not just disabled) when flag OFF — no more click→error UX
+  - Auth gate unchanged: guests still blocked regardless of flag
 
-**Workspace (#246):**
+**Workspace (#247):**
 - backend: `develop` (`6f7af85`) — clean
-- frontend: `develop` (`6cc42979`) — clean
+- frontend: `develop` (`5c2353f6`) — clean
 - admin-dashboard: `develop` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
+1. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, AD toggle hides btn on FE, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
 2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
 4. **DIRECT-BOOKINGS-TAB** — review + merge 3 branches → develop, manual smoke.
 5. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities.
 6. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
 
-_(Sessions #221–#245 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#246 archived → `07-logs/session-history.md`.)_
 
 ---
 

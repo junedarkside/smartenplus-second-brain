@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #246 — 2026-07-14
+CHAT IMAGE SEND — allow_image_send FeatureFlag kill switch shipped → all 3 repos develop. BE `6f7af85` (MessageImageCreateView flag check + FEATURE_DISABLED 403), AD `21d03eb` (Customer Image Send toggle in Settings), FE `6cc42979` (FEATURE_DISABLED mapped to error handler). Staff unaffected; default enabled=True.
+
+---
+
 ## Session #245 — 2026-07-14
 CHAT BUBBLE UNREAD BADGE — transport gate bug fixed. Transport hooks gated on `status === 'open'` stopped running when chat closed → badge stayed 0. Fix: `transportActive = !!conversationId && status !== 'need_email/otp'`. Also `bg-red-500` → `bg-orange-500`. FE develop `01d8d617`.
 
