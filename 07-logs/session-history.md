@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #248 — 2026-07-15
+REC ENGINE — 5 phases shipped across FE + BE, all → develop. Phase 1 (`fix/rec-quick-wins`): 2s timeout on recommendationsApi · `recommendation_modal_open` GTM · `chidren` typo fix · sessionStorage Safari guard. Phase 2 (`feat/rec-purchase-event`): purchase attribution — `markRecSourcedContract` + `fireRecommendationPurchaseEvents` in `helpers/gtmUtils.js`; wired in `RecommendationBookingModal.js` + `hooks/useOmisePayment.js`. Funnel complete: view→click→modal→add_cart→purchase. Phase 3 (`fix/rec-checkout-filter`): `filterValidRecommendations` applied at checkout rec list. Phase 4 (`chore/rec-remove-ratecard-hook`): deleted `hooks/useRecommendationRatecards.js` (−138 lines). Phase 5 (`feat/rec-never-empty-fallback`): `find_global_fallback()` in `products/services.py`; hybrid dedupe; `booked_count` default 10→0; migration `operators/0064` applied locally. 28/29 BE tests pass (1 pre-existing failure `test_find_similar_contracts`). FE develop: `9fd5b0a5` · BE develop: `f0aea8c`.
+
+---
+
 ## Session #247 — 2026-07-14
 FE CHAT IMAGE BUTTON — hides when allow_image_send flag OFF. `_app.js`: added `useFeatureFlag('allow_image_send')`, passes `imageSendEnabled` prop to `ChatWidget`. `ChatWidget.js:84`: accepts `imageSendEnabled = true` prop (fail-open default). `ChatWidget.js:358`: `canSendImage` now gates on flag. Button fully hidden when flag OFF. FE develop `5c2353f6`.
 

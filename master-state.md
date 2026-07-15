@@ -4,33 +4,34 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-15 (session #248)
+**Updated:** 2026-07-15 (session #249)
 
-**Achieved this session (#248):**
-- **REC ENGINE — 5 phases shipped across FE + BE, all → develop**
-  - Phase 1 (`fix/rec-quick-wins`): 2s timeout on recommendationsApi · `recommendation_modal_open` GTM · `chidren` typo fix · sessionStorage Safari guard
-  - Phase 2 (`feat/rec-purchase-event`): purchase attribution — `markRecSourcedContract` + `fireRecommendationPurchaseEvents` in `helpers/gtmUtils.js`; wired in `RecommendationBookingModal.js` + `hooks/useOmisePayment.js`. Funnel complete: view→click→modal→add_cart→purchase
-  - Phase 3 (`fix/rec-checkout-filter`): `filterValidRecommendations` applied at checkout rec list (pure reuse)
-  - Phase 4 (`chore/rec-remove-ratecard-hook`): deleted `hooks/useRecommendationRatecards.js` (−138 lines); prod API confirmed returns full ratecard
-  - Phase 5 (`feat/rec-never-empty-fallback`): `find_global_fallback()` in `products/services.py`; hybrid dedupe; `booked_count` default 10→0; migration `operators/0064` applied locally
-  - **28/29 BE tests pass** (1 pre-existing failure `test_find_similar_contracts` on clean develop — unrelated)
-  - **FE develop: `9fd5b0a5` · BE develop: `f0aea8c`**
+**Achieved this session (#249):**
+- **BE-HOMEPAGE-PRICE FIXED** — all 8 `Min(selling_rate)` finder annotations in `products/services.py` now filter `contract_ratecard__is_active=True` (inactive ratecards could win Min → unbookable "From" prices on rec cards). Branch `fix/rec-price-active-filter` → develop `06423c5`, pushed to origin. Pre-existing `test_find_similar_contracts` failure confirmed unrelated (fails on clean develop).
+- **4-AGENT AUDIT** (BD/UX/BE/FE) of rec-engine report → [[rec-engine-report-audit]]:
+  - Fix CONFIRMED complete — all other price paths already `is_active`-filtered
+  - **DEPLOY GOTCHA:** Redis `recommendations:*` flush MANDATORY post-deploy — skip-if-fresh guard (`products/tasks.py:66-75`, skip when TTL>22h) serves stale prices up to 24h otherwise
+  - **REC-SLOT-WASTE OVERTURNED → CLOSED DO-NOTHING** — near-zero incidence, empty zone arguably correct UX, `checkout_recommendation_empty` GTM already measures it
+  - Option A `exclude_ids` REJECTED unanimously (unbounded cache keys on 1-vCPU box + RTK churn + solves only half the drain)
+  - Sub-project verdict NO confirmed; +1 revisit trigger (GTM attribution data, ~30 days)
+- Vault: audit note + master-state rows committed `eea2c7f` → master, pushed. Atom extracted: [[precompute-cache-stale-after-logic-fix]].
 
-**Workspace (#248):**
-- backend: `develop` (`f0aea8c`) — clean, NOT pushed to origin
-- frontend: `develop` (`9fd5b0a5`) — clean, NOT pushed to origin
-- admin-dashboard: `develop` (`21d03eb`) — clean
+**Workspace (#249):**
+- backend: `main` (`06423c5` at HEAD — develop merged to main locally) — clean
+- frontend: `main` (`9fd5b0a5`) — clean
+- admin-dashboard: `main` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **REC ENGINE E2E + PUSH** — run E2E matrix (GTM spy → prices → modal_open → rec_sourced_ids → fallback curl → BE tests), then push FE + BE develop to origin. BE deploy needs `manage.py migrate` (0064).
+1. **REC-PRICE-FIX PROD** — BE main already has `06423c5`; deploy to prod host, then **MANDATORY** `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del` + verify a rec "From" price against active ratecard. Also `manage.py migrate` (operators/0064 from #248).
 2. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, AD toggle hides btn on FE, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
 3. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
 4. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
 5. **DIRECT-BOOKINGS-TAB** — review + merge 3 branches → develop, manual smoke.
-6. **EDITOR-PICK CURATION** — separate session: `is_editor_pick` migration + `suggest_editor_picks` management command + Django admin. Deferred from this session.
+6. **EDITOR-PICK CURATION** — separate session: `is_editor_pick` migration + `suggest_editor_picks` management command + Django admin.
+7. **REC GTM BASELINE** — ~30 days post 2026-07-15: review funnel attribution + `checkout_recommendation_empty` rate before further rec-engine investment.
 
-_(Sessions #221–#247 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#248 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -71,7 +72,7 @@ _(Sessions #221–#247 archived → `07-logs/session-history.md`.)_
 | **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203). **FE-M1 InfoUpdateNotice BUILT (#204)** — `feat/fe-m1-info-update-notice`. **Admin Phase 2 BUILT (#204)** — `feat/admin-phase2-command-centre`. **29/29 BE unit tests pass.** **Remaining:** (1) merge 3 branches → develop, (2) E2E manual test, (3) Admin Phase 3, (4) develop→main deploy. | **MERGE + TEST NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **CHAT-SUPABASE-OFFLOAD** | ✅ **CLOSED #225** — realtime unread badge verified working. Sidebar icon + inbox row pill + preview + timestamp all update via Supabase payload. Client-authoritative (no Django round-trip). 6 fix branches → admin-dashboard `develop` `9316997`. → closed-items.md | **CLOSED** | [[chat-review-e2e-manual-test-2026-07-07]] |
 | **BE-HOMEPAGE-PRICE** | ✅ **FIXED #249** — all 8 `Min(selling_rate)` finder annotations now filter `contract_ratecard__is_active=True`. BE develop `06423c5`, pushed to origin. 4-agent audit confirmed complete (other price paths already clean). **⚠️ Prod deploy MUST flush rec cache** or stale prices persist up to 24h (skip-if-fresh guard `tasks.py:66-75`): `redis-cli --scan --pattern "recommendations:*" \| xargs redis-cli del`. BE docs edit skipped (docs/ permission denied) — flush step lives here. | **DEPLOY PENDING + Redis flush** | `products/services.py` · [[rec-engine-report-audit]] |
-| **REC-SLOT-WASTE** | ✅ **CLOSED #249 — DO NOTHING per 4-agent audit.** Severity overturned: near-zero incidence (collision inventory doesn't exist), empty ESSENTIAL zone arguably correct UX (user already has transport), `checkout_recommendation_empty` GTM already measures it. Option A `exclude_ids` REJECTED unanimously (unbounded cache keys + RTK churn + solves only half the drain — `filterValidRecommendations` drains too). Monitor GTM empty-event ~30 days; revisit only if correlates w/ abandonment. If ever fixed: 1-line finder over-fetch `[:limit*2]`, NOT exclude_ids. | **CLOSED — monitor GTM** | [[rec-engine-report-audit]] |
+| **REC-SLOT-WASTE** | ✅ **CLOSED #249 — DO NOTHING per 4-agent audit.** Monitor `checkout_recommendation_empty` GTM ~30 days. → closed-items.md | **CLOSED** | [[rec-engine-report-audit]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
 | **SEO-P1-BACKLOG** | r14 audit DONE + r15 **DEPLOYED 2026-07-12** (`5b3669dd`). **Scores post-r14: SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0.** r15 shipped: GEO-2 (OAI-SearchBot+DuckAssistant+YouBot), AEO-1 (HowTo), GEO-4 (GBP sameAs), SD-NEW-5/6, CWV-3 partial (SSR hero), GEO-5 (llms.txt). **r16 P1 remaining:** CWV-7 (INP — run PageSpeed CrUX); SEO-11 (internal link audit); SD-NEW-2/4 (operator_name + priceValidUntil). Full report: `/seo/seo-aeo-geo-prod-2026-07-11.md` | **r16 next** | [[seo-aeo-geo-live-audit-2026-06-22/r14-live-prod-2026-07-11]] |
 | **SEO-P2-FIXES** | twitter:image:alt (`_app.js` + `Seo.js`); og:locale policy unify; meta desc ≤155 chars; blog robots dup. From r6: help relative `og:image`→abs prefix (`pages/help/[...slug].js:89,109`); **lint** `structured-data-schema-patterns.md` item 7 `availableLanguage:["Thai","English"]` contradicts en-only policy → `["English"]`. `#15 og:url` CLOSED `0aa748c`. | OPEN — low | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js`, `03-knowledge/structured-data-schema-patterns.md` |
