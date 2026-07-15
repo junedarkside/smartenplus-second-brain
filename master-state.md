@@ -4,34 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-15 (session #249)
+**Updated:** 2026-07-15 (session #250)
 
-**Achieved this session (#249):**
-- **BE-HOMEPAGE-PRICE FIXED** — all 8 `Min(selling_rate)` finder annotations in `products/services.py` now filter `contract_ratecard__is_active=True` (inactive ratecards could win Min → unbookable "From" prices on rec cards). Branch `fix/rec-price-active-filter` → develop `06423c5`, pushed to origin. Pre-existing `test_find_similar_contracts` failure confirmed unrelated (fails on clean develop).
-- **4-AGENT AUDIT** (BD/UX/BE/FE) of rec-engine report → [[rec-engine-report-audit]]:
-  - Fix CONFIRMED complete — all other price paths already `is_active`-filtered
-  - **DEPLOY GOTCHA:** Redis `recommendations:*` flush MANDATORY post-deploy — skip-if-fresh guard (`products/tasks.py:66-75`, skip when TTL>22h) serves stale prices up to 24h otherwise
-  - **REC-SLOT-WASTE OVERTURNED → CLOSED DO-NOTHING** — near-zero incidence, empty zone arguably correct UX, `checkout_recommendation_empty` GTM already measures it
-  - Option A `exclude_ids` REJECTED unanimously (unbounded cache keys on 1-vCPU box + RTK churn + solves only half the drain)
-  - Sub-project verdict NO confirmed; +1 revisit trigger (GTM attribution data, ~30 days)
-- Vault: audit note + master-state rows committed `eea2c7f` → master, pushed. Atom extracted: [[precompute-cache-stale-after-logic-fix]].
+**Achieved this session (#250):**
+- **TRIP-CARD-V2** — built flight-OTA style card from scratch (`TripCardV2.js` + `TripItemLayoutV2.js`). Env flag `NEXT_PUBLIC_TRIP_CARD_V2` (unset=V2, `false`=V1 rollback). 2-agent UX/Design audit → scorecard V2 7/7 vs V1 4.5/5. P1 batch: stops text under arrow, JOIN chip, amenity icons, station `line-clamp-2`, `max-w-[560px]`, 44px chevron. `SkeletonSection` rewritten to V2 anatomy; `TripSearchResults` inline skeleton replaced. Mobile compact legs breakpoint-split (`hidden sm:flex` full / `flex sm:hidden` compact). 8 commits → develop, pushed `f70dbe5d`. `NEXT_PUBLIC_TRIP_CARD_V2` row needs adding to ENV.md (docs/ permission denied this session).
+- **VAULT AUDIT** — `01-projects/trip-card-v2-flight-style-audit.md` created; `index.md` + `log.md` updated (3 entries mid-session, uncommitted → committed this wrap-up).
 
-**Workspace (#249):**
-- backend: `main` (`06423c5` at HEAD — develop merged to main locally) — clean
-- frontend: `main` (`9fd5b0a5`) — clean
+**Workspace (#250):**
+- frontend: `main` (`f70dbe5d`) — clean
+- backend: `main` (`06423c5`) — clean
 - admin-dashboard: `main` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **REC-PRICE-FIX PROD** — BE main already has `06423c5`; deploy to prod host, then **MANDATORY** `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del` + verify a rec "From" price against active ratecard. Also `manage.py migrate` (operators/0064 from #248).
-2. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, AD toggle hides btn on FE, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
-3. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
-4. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-5. **DIRECT-BOOKINGS-TAB** — review + merge 3 branches → develop, manual smoke.
-6. **EDITOR-PICK CURATION** — separate session: `is_editor_pick` migration + `suggest_editor_picks` management command + Django admin.
-7. **REC GTM BASELINE** — ~30 days post 2026-07-15: review funnel attribution + `checkout_recommendation_empty` rate before further rec-engine investment.
+1. **TRIP-CARD-V2 PROD DEPLOY** — ISR cache clear (`smartenplus_next_cache` Docker volume) + add `NEXT_PUBLIC_TRIP_CARD_V2` to `docs/operations/ENV.md` (docs/ write permission needed). P2 batch deferred (see audit note).
+2. **REC-PRICE-FIX PROD** — BE main already has `06423c5`; deploy, MANDATORY Redis flush `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del` + verify rec "From" price. Also `manage.py migrate` (operators/0064 from #248).
+3. **CHAT-IMAGE-SEND PROD** — (1) Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy BE→AD→FE, (4) smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions.
 
-_(Sessions #221–#248 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#249 archived → `07-logs/session-history.md`.)_
 
 ---
 

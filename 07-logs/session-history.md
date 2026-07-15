@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #249 — 2026-07-15
+BE-HOMEPAGE-PRICE FIXED — all 8 `Min(selling_rate)` finder annotations in `products/services.py` now filter `contract_ratecard__is_active=True` (inactive ratecards could win Min → unbookable "From" prices on rec cards). Branch `fix/rec-price-active-filter` → develop `06423c5`, pushed to origin. 4-agent audit (BD/UX/BE/FE) confirmed fix complete; other price paths already `is_active`-filtered. DEPLOY GOTCHA: Redis `recommendations:*` flush mandatory post-deploy (skip-if-fresh guard `tasks.py:66-75` serves stale prices up to 24h). REC-SLOT-WASTE closed DO-NOTHING per 4-agent audit — near-zero incidence, `checkout_recommendation_empty` GTM monitors it. Vault: `01-projects/rec-engine-report-audit.md` created, atom extracted `[[precompute-cache-stale-after-logic-fix]]`. Vault commit `eea2c7f` pushed.
+
+---
+
 ## Session #248 — 2026-07-15
 REC ENGINE — 5 phases shipped across FE + BE, all → develop. Phase 1 (`fix/rec-quick-wins`): 2s timeout on recommendationsApi · `recommendation_modal_open` GTM · `chidren` typo fix · sessionStorage Safari guard. Phase 2 (`feat/rec-purchase-event`): purchase attribution — `markRecSourcedContract` + `fireRecommendationPurchaseEvents` in `helpers/gtmUtils.js`; wired in `RecommendationBookingModal.js` + `hooks/useOmisePayment.js`. Funnel complete: view→click→modal→add_cart→purchase. Phase 3 (`fix/rec-checkout-filter`): `filterValidRecommendations` applied at checkout rec list. Phase 4 (`chore/rec-remove-ratecard-hook`): deleted `hooks/useRecommendationRatecards.js` (−138 lines). Phase 5 (`feat/rec-never-empty-fallback`): `find_global_fallback()` in `products/services.py`; hybrid dedupe; `booked_count` default 10→0; migration `operators/0064` applied locally. 28/29 BE tests pass (1 pre-existing failure `test_find_similar_contracts`). FE develop: `9fd5b0a5` · BE develop: `f0aea8c`.
 

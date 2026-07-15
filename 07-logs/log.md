@@ -1,5 +1,9 @@
 # Vault Log
 
+## [2026-07-15] session-end #250 | trip-card-v2 flight-style built — V2 default, env rollback flag, P1 batch, skeleton rewritten, mobile compact legs. 8 commits FE develop f70dbe5d. Vault audit synced.
+
+## [2026-07-15] session-end #249 | BE-homepage-price fixed — Min(selling_rate) × 8 annotations now is_active-filtered. 4-agent audit confirmed. Redis flush gotcha documented. REC-SLOT-WASTE closed DO-NOTHING.
+
 ## [2026-07-15] session-end #248 | rec-engine 5 phases shipped — timeout+GTM+typo+sessionStorage+purchase attribution+checkout filter+ratecard hook deleted(−138 lines)+never-empty fallback+booked_count 10→0+migration 0064. FE 9fd5b0a5 · BE f0aea8c → develop (not pushed). Vault synced mid-session.
 
 ## [2026-07-14] session-end #247 | FE image button hides when allow_image_send flag OFF — imageSendEnabled prop wired _app.js→ChatWidget→canSendImage. FE develop 5c2353f6.
