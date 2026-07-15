@@ -4,31 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-14 (session #247)
+**Updated:** 2026-07-15 (session #248)
 
-**Achieved this session (#247):**
-- **FE CHAT IMAGE BUTTON — hides when allow_image_send flag OFF → FE develop `5c2353f6`**
-  - `_app.js`: added `useFeatureFlag('allow_image_send')` (same pattern as `cs_chat`), passes `imageSendEnabled` prop to `ChatWidget`
-  - `ChatWidget.js:84`: accepts `imageSendEnabled = true` prop (fail-open default)
-  - `ChatWidget.js:358`: `canSendImage` now `(Boolean(state.token) || Boolean(otaToken)) && imageSendEnabled`
-  - Button fully hidden (not just disabled) when flag OFF — no more click→error UX
-  - Auth gate unchanged: guests still blocked regardless of flag
+**Achieved this session (#248):**
+- **REC ENGINE — 5 phases shipped across FE + BE, all → develop**
+  - Phase 1 (`fix/rec-quick-wins`): 2s timeout on recommendationsApi · `recommendation_modal_open` GTM · `chidren` typo fix · sessionStorage Safari guard
+  - Phase 2 (`feat/rec-purchase-event`): purchase attribution — `markRecSourcedContract` + `fireRecommendationPurchaseEvents` in `helpers/gtmUtils.js`; wired in `RecommendationBookingModal.js` + `hooks/useOmisePayment.js`. Funnel complete: view→click→modal→add_cart→purchase
+  - Phase 3 (`fix/rec-checkout-filter`): `filterValidRecommendations` applied at checkout rec list (pure reuse)
+  - Phase 4 (`chore/rec-remove-ratecard-hook`): deleted `hooks/useRecommendationRatecards.js` (−138 lines); prod API confirmed returns full ratecard
+  - Phase 5 (`feat/rec-never-empty-fallback`): `find_global_fallback()` in `products/services.py`; hybrid dedupe; `booked_count` default 10→0; migration `operators/0064` applied locally
+  - **28/29 BE tests pass** (1 pre-existing failure `test_find_similar_contracts` on clean develop — unrelated)
+  - **FE develop: `9fd5b0a5` · BE develop: `f0aea8c`**
 
-**Workspace (#247):**
-- backend: `develop` (`6f7af85`) — clean
-- frontend: `develop` (`5c2353f6`) — clean
+**Workspace (#248):**
+- backend: `develop` (`f0aea8c`) — clean, NOT pushed to origin
+- frontend: `develop` (`9fd5b0a5`) — clean, NOT pushed to origin
 - admin-dashboard: `develop` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, AD toggle hides btn on FE, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
-2. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
-3. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
-4. **DIRECT-BOOKINGS-TAB** — review + merge 3 branches → develop, manual smoke.
-5. **CWV-7** — run PageSpeed Insights CrUX for INP on /activities.
-6. **SEO-11 + SD-NEW-2/4** — internal link graph audit; `operator_name` fix; `priceValidUntil` renew before Oct 2026.
+1. **REC ENGINE E2E + PUSH** — run E2E matrix (GTM spy → prices → modal_open → rec_sourced_ids → fallback curl → BE tests), then push FE + BE develop to origin. BE deploy needs `manage.py migrate` (0064).
+2. **CHAT-IMAGE-SEND PROD DEPLOY** — (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, AD toggle hides btn on FE, raw S3 URL 403, FE↔AD realtime both directions. See [[chat-image-send]].
+3. **BOOKING-DISPATCH-DEPLOY** — develop→main deploy for `6a9ea11`, OR hotfix: unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker.
+4. **STAFF-PUSH-PROD-SETUP** — VAPID keys to AD Vercel + BE VPS `.env`, `migrate cs 0013`, test Enable banner at prod `/cs`.
+5. **DIRECT-BOOKINGS-TAB** — review + merge 3 branches → develop, manual smoke.
+6. **EDITOR-PICK CURATION** — separate session: `is_editor_pick` migration + `suggest_editor_picks` management command + Django admin. Deferred from this session.
 
-_(Sessions #221–#246 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#247 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -56,6 +58,7 @@ _(Sessions #221–#246 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **REC-ENGINE** | ✅ **PHASES 1-5 SHIPPED 2026-07-15 → develop.** FE 4 branches merged (`fix/rec-quick-wins` · `feat/rec-purchase-event` · `fix/rec-checkout-filter` · `chore/rec-remove-ratecard-hook`). BE 1 branch (`feat/rec-never-empty-fallback`). FE `9fd5b0a5` · BE `f0aea8c`. Vault synced mid-session (4 bug docs shipped, roadmap corrected, anchor-transport-rule archived). 28/29 BE tests pass (1 pre-existing). **Remaining:** E2E verification + push to origin + BE `manage.py migrate` (0064). Editor-pick curation = separate future session. | **E2E + PUSH NEXT** | `products/services.py` · `helpers/gtmUtils.js` · [[recommendation-engine-completion-roadmap]] |
 | **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **✅ HEIC FIXED 2026-07-14** — pillow-heif 0.15→1.1.1 + Pillow 9.5→11.3 + import-time registration + MIME fallback. BE `d71db74` → develop. FE+AD verified with real iPhone HEIC. **✅ UNREAD BADGE FIXED 2026-07-14** — transport gate bug fixed, FE `01d8d617` → develop. **⚠️ Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). **✅ KILL SWITCH ADDED 2026-07-14** — `allow_image_send` FeatureFlag + AD Settings toggle + FE `FEATURE_DISABLED` error handler. BE develop `6f7af85` · AD develop `21d03eb` · FE develop `6cc42979`. Staff unaffected; default `enabled=True`. **Remaining:** (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions. Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
 | **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |

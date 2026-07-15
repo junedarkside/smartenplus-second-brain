@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-15] session-end #248 | rec-engine 5 phases shipped — timeout+GTM+typo+sessionStorage+purchase attribution+checkout filter+ratecard hook deleted(−138 lines)+never-empty fallback+booked_count 10→0+migration 0064. FE 9fd5b0a5 · BE f0aea8c → develop (not pushed). Vault synced mid-session.
+
 ## [2026-07-14] session-end #247 | FE image button hides when allow_image_send flag OFF — imageSendEnabled prop wired _app.js→ChatWidget→canSendImage. FE develop 5c2353f6.
 
 ## [2026-07-14] session-end #246 | allow_image_send flag kill switch shipped — 3-agent debate → BE+AD+FE all merged develop. Staff unaffected; default enabled=True.
