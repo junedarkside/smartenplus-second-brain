@@ -3,7 +3,7 @@ name: recommendation-anchor-priority-experience-before-transport
 description: Anchor priority inversion — TRANSPORTATION=100 > DAY_TOUR=80 is wrong. Experience-first marketplace means activities should have higher anchor priority. Reference to stale [[recommendation-anchor-first-transport-rule]] to retire.
 metadata:
   type: knowledge
-  status: active
+  status: shipped
   date: 2026-06-22
   parent: recommendation-engine-completion-roadmap
 ---
@@ -46,3 +46,6 @@ Update `people-also-book` algorithm to respect new priorities. Sort by: `anchor_
 ## Related
 - [[recommendation-flat-score-finder-pollution]] — companion score issue
 - [[recommendation-engine-completion-roadmap]] — parent (strategy update)
+
+## Resolution
+Shipped 2026-06-18 (#133). `CheckoutRelatedTrips.js` `ANCHOR_PRIORITY`: DAY_TOUR/MULTI_DAY_TOUR=100 … TRANSPORTATION=30, TRANSFER=20. Verified by 3-agent audit 2026-07-15.

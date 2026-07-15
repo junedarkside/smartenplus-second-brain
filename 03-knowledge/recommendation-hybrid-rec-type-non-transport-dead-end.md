@@ -3,7 +3,7 @@ name: recommendation-hybrid-rec-type-non-transport-dead-end
 description: `hybrid` `rec_type` kills non-transport recommendations when `trip.route` is null. Regression: activity/attraction recommendations return zero because hybrid filter depends on route existence. Cross-sell revenue loss.
 metadata:
   type: knowledge
-  status: active
+  status: shipped
   date: 2026-06-22
   parent: recommendation-engine-completion-roadmap
 ---
@@ -44,3 +44,6 @@ Catalog data: many activity/attraction bookings have NO linked route (standalone
 ## Related
 - [[recommendation-flat-score-finder-pollution]] — companion correctness issue
 - [[recommendation-engine-completion-roadmap]] — parent (P0 regression, gap table)
+
+## Resolution
+Shipped 2026-06-18 (BE `841e59f`/`ae31f1f`, FE `0877d23`, on main). `get_recommendations` hybrid path falls through to `find_transport_at_location` + `find_nearby_activities` when source has no `trip.route` (`products/services.py` zone path). Verified by 3-agent audit 2026-07-15.

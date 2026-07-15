@@ -3,7 +3,7 @@ name: recommendation-mincartprice-floor-suppresses-complementary
 description: `minCartPrice` floor bug suppresses cheap complementary add-ons. Cart minimum threshold prevents recommending low-cost extras (SIM cards, snacks). Lost revenue from impulse buys.
 metadata:
   type: knowledge
-  status: active
+  status: shipped
   date: 2026-06-22
   parent: recommendation-engine-completion-roadmap
 ---
@@ -48,3 +48,6 @@ Don't over-recommend cheap items → limit to top 5. Use relevance score (past p
 
 ## Related
 - [[recommendation-engine-completion-roadmap]] — parent (P0 revenue gap)
+
+## Resolution
+Shipped 2026-06-18 (#133, FE `5777f84a`). Floor removed entirely — `CheckoutRelatedTrips.js` now comments "NO price floor". Verified by 3-agent audit 2026-07-15.

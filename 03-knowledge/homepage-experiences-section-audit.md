@@ -4,7 +4,7 @@
 Assessed adding "Explore Experiences" carousel to homepage alongside Popular Routes. Three-agent research (frontend, backend, vault) + one scrutinize pass. Corrected 3 critical wrong claims.
 
 ## Verdict
-**VIABLE — after AT-1 completes + inventory check. All design decisions locked (grill pass 2026-05-30).**
+**SHIPPED — live in production.** `ExploreExperiencesSection.js` renders at `homepagev2.js:407` via `popular_experiences` from `/front-page/` (audit-verified 2026-07-15). Original gate/design decisions below kept for context.
 
 ---
 

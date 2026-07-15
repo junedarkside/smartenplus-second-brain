@@ -3,7 +3,7 @@ name: recommendation-booked-count-default-10-inflates-new-contracts
 description: `booked_count` default=10 inflates new contracts. New contracts with 0 real bookings appear popular due to synthetic floor. Misleads customers, harms sort fidelity.
 metadata:
   type: knowledge
-  status: active
+  status: shipped
   date: 2026-06-22
   parent: recommendation-engine-completion-roadmap
 ---
@@ -48,3 +48,6 @@ def booked_count(self):
 ## Related
 - [[precompute-popular-contracts-audit]] — popularity computation
 - [[recommendation-engine-completion-roadmap]] — parent (data quality)
+
+## Resolution
+Fixed 2026-07-15. `operators/models.py` `booked_count` default 10→0, migration `0064_alter_contract_booked_count_and_more`. Existing rows untouched (no backfill — audit legacy counts separately if popularity ranking looks off). New contracts no longer fake-popular in tiebreaks.

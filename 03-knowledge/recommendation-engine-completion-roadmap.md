@@ -186,6 +186,7 @@ FE groups by item.type, renders each non-empty zone:
 Scoring fixes shipped: dropped the `+30 same-category` bonus (it rewarded "more day tours"); excluded zero/free-infant rates from `lowest_price` Min (was showing "Price on request").
 
 Verified (Phuket demo anchor 185): ESSENTIAL 2 + POPULAR 4 + SIMILAR 1 = 7 cards, all priced.
+**Correction 2026-07-15:** POPULAR cap later tuned 4→3 (BE `90707a3`); shipped `ZONE_LIMITS = {essential:2, popular:3, similar:1}` = max 6 cards.
 
 ### Best-practice verdict
 **Correct / aligned with travel cross-sell norms:**
@@ -276,3 +277,20 @@ External doc: when cart has multiple items, use ONE primary-intent anchor + ONE 
 - [[recommendation-mincartprice-floor-suppresses-complementary]] — `minCartPrice` floor suppresses cheap add-ons.
 - [[recommendation-booked-count-default-10-inflates-new-contracts]] — `booked_count` default=10 inflates new contracts.
 - [[fake-scarcity-eu-us-trust-risk-policy]] — EU/US trust risk: fabricated scarcity violates consumer-protection laws.
+
+
+---
+
+## Addendum 2026-07-15 — P1 batch SHIPPED (post-audit)
+
+3-agent audit verified all P0s live, then closed the remaining P1/P2 eng gaps in one session (all merged to develop, FE + BE):
+
+- **GTM funnel complete:** `recommendation_modal_open` (modal open effect) + `recommendation_purchase` (sessionStorage `rec_sourced_ids` marks at add-to-cart, intersected with ordered contract ids in `useOmisePayment` at charge creation). Full impression→CTR→modal→add_cart→purchase attribution now live.
+- **2s timeout:** `recommendationsApi.js` fetchBaseQuery `timeout: 2000` — recs fail fast, never block checkout.
+- **Never-empty fallback:** BE `find_global_fallback()` — location bestsellers else sitewide, flat score 30, tagged `popular` (renders in existing zone, zero FE change). **Hybrid only** — explicit type queries keep their API contract. No `is_editor_pick` yet (deferred to editor-pick task; ordering upgrades to `-is_editor_pick, -score` when it lands).
+- **Hybrid dedupe:** non-zone path keeps highest-scored occurrence per contract (was: same contract from similar+alternatives shown twice).
+- **`booked_count` default 10→0:** migration `operators/0064`. Existing rows untouched.
+- **Ratecard workaround DELETED:** `useRecommendationRatecards.js` removed (−138 lines) — BE serializer confirmed returning full ratecard for all rec types (prod-verified). One fewer request per rec on trip detail.
+- **Checkout availability filter:** `CheckoutRelatedTrips` now runs `filterValidRecommendations` (advance-hr/capacity/stop-sale/seats) — same rules as post-booking; no more cards the modal rejects.
+
+**Still open:** flat-score finder pollution (P2, needs `rank_contract()` unification), editor-pick curation (separate task), Koh Lipe BD inventory, pre-existing BE test failure `test_find_similar_contracts` (fails on clean develop, unrelated).
