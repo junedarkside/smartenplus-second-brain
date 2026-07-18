@@ -1,5 +1,7 @@
 # Vault Log
 
+## [2026-07-18] session-end #251 | destinations-page-redesign shipped — image-overlay cards, go-TO H1, a11y pass, mobile sticky filter bar, CTA pin, sitewide 44px touch-target. 4 commits FE develop 354889f1. Vault synced 37f890d. 2 a11y atoms extracted (gradient-contrast, empty-alt-adjacent-text).
+
 ## [2026-07-15] session-end #250 | trip-card-v2 flight-style built — V2 default, env rollback flag, P1 batch, skeleton rewritten, mobile compact legs. 8 commits FE develop f70dbe5d. Vault audit synced.
 
 ## [2026-07-15] session-end #249 | BE-homepage-price fixed — Min(selling_rate) × 8 annotations now is_active-filtered. 4-agent audit confirmed. Redis flush gotcha documented. REC-SLOT-WASTE closed DO-NOTHING.

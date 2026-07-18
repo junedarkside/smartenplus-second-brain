@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #250 — 2026-07-15
+TRIP-CARD-V2 — built flight-OTA style card from scratch (`TripCardV2.js` + `TripItemLayoutV2.js`). Env flag `NEXT_PUBLIC_TRIP_CARD_V2` (unset=V2, `false`=V1 rollback). 2-agent UX/Design audit → scorecard V2 7/7 vs V1 4.5/5. P1 batch: stops text under arrow, JOIN chip, amenity icons, station `line-clamp-2`, `max-w-[560px]`, 44px chevron. `SkeletonSection` rewritten to V2 anatomy; `TripSearchResults` inline skeleton replaced. Mobile compact legs breakpoint-split (`hidden sm:flex` full / `flex sm:hidden` compact). 8 commits → develop, pushed `f70dbe5d`. `NEXT_PUBLIC_TRIP_CARD_V2` row still needs adding to ENV.md (docs/ permission denied this session). VAULT AUDIT — `01-projects/trip-card-v2-flight-style-audit.md` created; `index.md` + `log.md` updated. Workspace: frontend `main` `f70dbe5d` · backend `main` `06423c5` · admin `main` `21d03eb` · content `master` `3756e5b` — all clean. Resume: (1) TRIP-CARD-V2 prod deploy — ISR cache clear (`smartenplus_next_cache` Docker volume) + add `NEXT_PUBLIC_TRIP_CARD_V2` to ENV.md; (2) REC-PRICE-FIX prod — BE main has `06423c5`, deploy + MANDATORY Redis flush `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del` + `manage.py migrate` (operators/0064); (3) CHAT-IMAGE-SEND prod — Supabase SQL 003 + `pip install -r requirements.txt` (Pillow bump) + deploy BE→AD→FE + smoke.
+
+---
+
 ## Session #249 — 2026-07-15
 BE-HOMEPAGE-PRICE FIXED — all 8 `Min(selling_rate)` finder annotations in `products/services.py` now filter `contract_ratecard__is_active=True` (inactive ratecards could win Min → unbookable "From" prices on rec cards). Branch `fix/rec-price-active-filter` → develop `06423c5`, pushed to origin. 4-agent audit (BD/UX/BE/FE) confirmed fix complete; other price paths already `is_active`-filtered. DEPLOY GOTCHA: Redis `recommendations:*` flush mandatory post-deploy (skip-if-fresh guard `tasks.py:66-75` serves stale prices up to 24h). REC-SLOT-WASTE closed DO-NOTHING per 4-agent audit — near-zero incidence, `checkout_recommendation_empty` GTM monitors it. Vault: `01-projects/rec-engine-report-audit.md` created, atom extracted `[[precompute-cache-stale-after-logic-fix]]`. Vault commit `eea2c7f` pushed.
 

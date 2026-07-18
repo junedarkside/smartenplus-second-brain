@@ -4,24 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-15 (session #250)
+**Updated:** 2026-07-18 (session #251)
 
-**Achieved this session (#250):**
-- **TRIP-CARD-V2** — built flight-OTA style card from scratch (`TripCardV2.js` + `TripItemLayoutV2.js`). Env flag `NEXT_PUBLIC_TRIP_CARD_V2` (unset=V2, `false`=V1 rollback). 2-agent UX/Design audit → scorecard V2 7/7 vs V1 4.5/5. P1 batch: stops text under arrow, JOIN chip, amenity icons, station `line-clamp-2`, `max-w-[560px]`, 44px chevron. `SkeletonSection` rewritten to V2 anatomy; `TripSearchResults` inline skeleton replaced. Mobile compact legs breakpoint-split (`hidden sm:flex` full / `flex sm:hidden` compact). 8 commits → develop, pushed `f70dbe5d`. `NEXT_PUBLIC_TRIP_CARD_V2` row needs adding to ENV.md (docs/ permission denied this session).
-- **VAULT AUDIT** — `01-projects/trip-card-v2-flight-style-audit.md` created; `index.md` + `log.md` updated (3 entries mid-session, uncommitted → committed this wrap-up).
+**Achieved this session (#251):**
+- **DESTINATIONS-PAGE-REDESIGN** — full visual redesign of `/destinations` index shipped → develop. 3-agent team (design-review auditor → designer w/ 12Go/Booking/GYG/Klook research → react-specialist impl). Image-forward overlay cards (`location.image || DEFAULT_ROUTE_IMAGE`), go-TO intent H1 "Where in Thailand Do You Want to Go?", full a11y pass. 2-agent mobile debate (verdict YES-WITH-FIXES) → sticky FilterControls (`top-0 md:top-20`), mobile SearchBar moved hero→sticky bar, responsive MUI select widths, Book CTA pinned card-bottom (`mt-auto`). 4 commits → merge `354889f1` → develop (pushed): `943deb7d` redesign · `6d89c875` CTA pin · `24c92257` mobile sticky · `1e4f2f46` hero pill buttons 36→44px sitewide (16 non-destinations files). 22 files total. Lint clean. Build skipped (trivial touch-target change). Full design+debate record: `01-projects/destinations-page-redesign.md`.
+- **VAULT** — project doc created + `1e4f2f46` addendum + `index.md`/`log.md`. Vault `37f890d` → master.
 
-**Workspace (#250):**
-- frontend: `main` (`f70dbe5d`) — clean
+**Workspace (#251):**
+- frontend: `develop` (`354889f1`) — clean. Branch `feat/destinations-page-redesign` kept on remote.
 - backend: `main` (`06423c5`) — clean
 - admin-dashboard: `main` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **TRIP-CARD-V2 PROD DEPLOY** — ISR cache clear (`smartenplus_next_cache` Docker volume) + add `NEXT_PUBLIC_TRIP_CARD_V2` to `docs/operations/ENV.md` (docs/ write permission needed). P2 batch deferred (see audit note).
-2. **REC-PRICE-FIX PROD** — BE main already has `06423c5`; deploy, MANDATORY Redis flush `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del` + verify rec "From" price. Also `manage.py migrate` (operators/0064 from #248).
-3. **CHAT-IMAGE-SEND PROD** — (1) Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy BE→AD→FE, (4) smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions.
+1. **DESTINATIONS LIVE TEST** — grid/card interactions (search/filter/expand/CTA route) untested live; local dev backend returned 0 locations. Test with backend up or post-deploy. Deferred: fallback image variety (content-ops — upload 21 location photos), multi-expand accordion Set, ShareButton popover overlap, `router.back()` on SEO entry.
+2. **Carry-forward prod-deploy queue (all still open, none deployed):** TRIP-CARD-V2 prod (ISR `smartenplus_next_cache` flush + `NEXT_PUBLIC_TRIP_CARD_V2` ENV.md row); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064); CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke).
 
-_(Sessions #221–#249 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#250 archived → `07-logs/session-history.md`.)_
 
 ---
 
