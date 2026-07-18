@@ -4,23 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-18 (session #251)
+**Updated:** 2026-07-18 (session #252)
 
-**Achieved this session (#251):**
-- **DESTINATIONS-PAGE-REDESIGN** — full visual redesign of `/destinations` index shipped → develop. 3-agent team (design-review auditor → designer w/ 12Go/Booking/GYG/Klook research → react-specialist impl). Image-forward overlay cards (`location.image || DEFAULT_ROUTE_IMAGE`), go-TO intent H1 "Where in Thailand Do You Want to Go?", full a11y pass. 2-agent mobile debate (verdict YES-WITH-FIXES) → sticky FilterControls (`top-0 md:top-20`), mobile SearchBar moved hero→sticky bar, responsive MUI select widths, Book CTA pinned card-bottom (`mt-auto`). 4 commits → merge `354889f1` → develop (pushed): `943deb7d` redesign · `6d89c875` CTA pin · `24c92257` mobile sticky · `1e4f2f46` hero pill buttons 36→44px sitewide (16 non-destinations files). 22 files total. Lint clean. Build skipped (trivial touch-target change). Full design+debate record: `01-projects/destinations-page-redesign.md`.
-- **VAULT** — project doc created + `1e4f2f46` addendum + `index.md`/`log.md`. Vault `37f890d` → master.
+**Achieved this session (#252):**
+- **LOCATIONS-PAGE-REDESIGN** — visual redesign of `/locations` index page on branch `feat/locations-page-redesign`. Mirror of destinations redesign: image-forward `LocationCard`, hero with H1 "Where in Thailand Do You Want to Travel?", back+share overlay (`top-2 z-40 pointer-events-none/auto`), `SearchBar` + `FilterControls` + `StatsDisplay` extracted into `components/locations/`. Two new hooks: `useLocationsFiltering(allLocations, searchTerm, sortOption)` (memoised filter+sort) and `useLocationsStructuredData(allLocations, domainURL, lastReviewedTimestamp)` (returns `seo`, `itemListElements` for `ItemList` JSON-LD `TouristDestination`, `breadcrumbItems`, `organizationSchema`, `CollectionPage` schema with `lastReviewed`). `pages/locations/index.js` reduced to composition. **Status: UNCOMMITTED.** Diff: `M pages/locations/index.js`, `?? components/locations/{EmptyState,FilterControls,LocationCard,SearchBar,StatsDisplay}.js`, `?? hooks/useLocationsFiltering.js`, `?? hooks/useLocationsStructuredData.js`. Branch not yet pushed.
 
-**Workspace (#251):**
-- frontend: `develop` (`354889f1`) — clean. Branch `feat/destinations-page-redesign` kept on remote.
+**Workspace (#252):**
+- frontend: `feat/locations-page-redesign` (`354889f1`) — UNCOMMITTED locations work
 - backend: `main` (`06423c5`) — clean
 - admin-dashboard: `main` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **DESTINATIONS LIVE TEST** — grid/card interactions (search/filter/expand/CTA route) untested live; local dev backend returned 0 locations. Test with backend up or post-deploy. Deferred: fallback image variety (content-ops — upload 21 location photos), multi-expand accordion Set, ShareButton popover overlap, `router.back()` on SEO entry.
+1. **LOCATIONS REDESIGN — commit + push + verify** (`feat/locations-page-redesign`). Stage + commit + push. Then on `localhost:3000/locations`: confirm `useLocationsStructuredData` JSON-LD renders (`ItemList` of `TouristDestination` + `CollectionPage` with `lastReviewed` + `BreadcrumbList`), `PageSeo` OG/Twitter correct, H1 + back+share overlay show, search/sort/empty-state work. Mobile/responsive QA at 375/768/1280. Parity check vs `feat/destinations-page-redesign` (sticky filter bar pattern, 44px touch targets, pinned CTA).
 2. **Carry-forward prod-deploy queue (all still open, none deployed):** TRIP-CARD-V2 prod (ISR `smartenplus_next_cache` flush + `NEXT_PUBLIC_TRIP_CARD_V2` ENV.md row); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064); CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke).
 
-_(Sessions #221–#250 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#251 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -43,6 +42,13 @@ _(Sessions #221–#250 archived → `07-logs/session-history.md`.)_
 | **P2-OTA-SYNC** | run migrations on prod (`0003_csotabooking`, `0004_csotabooking_extra_fields`) + schedule Celery beat `cs.tasks.sync_ota_bookings`. 563 rows synced idempotent. | `cs/tasks.py`, `cs/supabase_client.py` · [[ota-sync-supabase-mirror]] |
 | **ISR-REVALIDATE-GAP** | verify prod env vars set (`FRONTEND_URL=https://www.smartenplus.co.th`, non-empty `REVALIDATION_SECRET`) + worker recreated (stale worker = unregistered task). Smoke-test: admin contract edit → `/activities/detail` updates <60s. | `operators/signals.py`, `operators/tasks.py`, FE `pages/api/revalidate.js` · [[celery-unregistered-task-stale-worker]] |
 | **TASK-1VCPU-MONITOR** | verify #139 prod incident resolved: CloudWatch CPU-credit stops draining, no `:00`/2 AM spike. | CloudWatch, `products/tasks.py` |
+
+### Active
+
+| # | Issue | Status | Where |
+|---|-------|--------|-------|
+| **LOCATIONS-PAGE-REDESIGN** | **✅ REDESIGN BUILT #252 — uncommitted on `feat/locations-page-redesign`.** Components extracted: `components/locations/{SearchBar,FilterControls,StatsDisplay,LocationCard,EmptyState}.js`. Hooks: `useLocationsFiltering` (memoised filter+sort), `useLocationsStructuredData` (returns `seo` + `ItemList` of `TouristDestination` + `BreadcrumbList` + `Organization` + `CollectionPage` w/ `lastReviewed`). Hero H1 "Where in Thailand Do You Want to Travel?", back+share overlay top-2 z-40. **Remaining:** (1) `git add -A && git commit -m "feat(locations): full visual redesign — image-forward cards + extracted hooks" && git push -u origin feat/locations-page-redesign`; (2) open `localhost:3000/locations` → verify JSON-LD `ItemList` + `CollectionPage.lastReviewed` + OG/Twitter in devtools; (3) mobile QA at 375/768/1280 (sticky filter, back+share overlay, 44px touch targets); (4) parity diff vs `feat/destinations-page-redesign` (just merged `354889f1`) — confirm same pattern. Then merge → develop. | **COMMIT + PUSH + VERIFY NEXT** | `pages/locations/index.js`, `components/locations/*`, `hooks/useLocations*.js` |
+| **LOCATIONS-FALLBACK-IMG** | Locations have no `image` field like destinations. `LocationCard` must fall back to `bgDefault` (or per-region gradient). Audit any per-card broken-image state — add `onError` swap. | OPEN — low (after redesign merge) | `components/locations/LocationCard.js` |
 
 ### Active
 

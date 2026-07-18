@@ -101,3 +101,27 @@ On `/operators/[slug]` (shipped #124) the rating is deliberately rendered in **F
 - [[homepage-ux-review]] — review section render order
 - [[nextjs-patterns]] — ISR patterns
 - [[operator-detail-seo-aeo-geo-audit]] — source of the aggregateRating-placement rule + operator schema pattern
+
+---
+
+## PATTERN — `useXStructuredData` hook per index page (#252)
+
+Each list/index page gets its own hook (`useLocationsStructuredData`, `useDestinationsStructuredData`, `useActivitiesStructuredData`). Returns a single memoised bundle:
+
+```js
+return { seo, itemListElements, breadcrumbItems, organizationSchema, collectionPageSchema }
+```
+
+Page consumes via `<PageSeo {...structuredData} />`. The hook owns: canonical URL, OG/Twitter cards, `ItemList` of `ListItem`s pointing at detail URLs, `BreadcrumbList`, `Organization`/`CollectionPage` schema with `lastReviewed`.
+
+### Why fork instead of generic `useStructuredData(list)`?
+- Index pages differ in `@type` of list item (`TouristDestination` for /locations, `Place`/etc for others), `url` template (`/locations/${slug}` vs `/destinations/${slug}`), and which optional fields live on the source object (locations lack `slug` → derived via `slugify(name)` at build time).
+- Forking keeps each hook's contract local + readable. Cost: ~80 LOC duplication. Worth it when schema differs in 3+ places.
+
+### Reusable bits
+- `Organization` block (`url`, `logo: ${domain}${bgDefault.src}`, `name: 'SmartEnPlus'`) — identical across pages, candidate for extraction once a 3rd page adopts.
+- `bgDefault.src` for OG image — stable, read once at module scope (not per render).
+- `lastReviewed` timestamp wired to `getStaticProps`-fetched data freshness.
+
+### When to extend, not fork
+If a 3rd index page wants the same `CollectionPage + ItemList` shape with same `@type`, promote the common scaffold into `useIndexPageSEO({ items, urlFor, itemType, title, description, lastReviewed })`. Keep forked only the parts that genuinely differ.
