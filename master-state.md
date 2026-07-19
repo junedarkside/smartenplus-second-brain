@@ -4,22 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-19 (session #253)
+**Updated:** 2026-07-19 (session #254)
 
-**Achieved this session (#253):**
-- **TRIPS-PAGE-REDESIGN** — `/trips` index redesigned via 3-agent team (UX auditor → designer → frontend implementer). `pages/trips/index.js` rewritten 733→162 lines: `getStaticProps` + ISR revalidate:3600, `PageSeo`, reuses `components/locations/{SearchBar,FilterControls,StatsDisplay,EmptyState}` unchanged. New: `components/trips/RouteCard.js` (image-forward, `TouristTrip` schema, gradient overlay, `departure → arrival` text), `hooks/useTripsFiltering.js` (memoised search+sort on joined route string), `hooks/useTripsStructuredData.js` (`ItemList` of `TouristTrip` + `BreadcrumbList` + `CollectionPage` with `speakable`). First page in codebase with `hreflang="en"` + `hreflang="x-default"`. Projected SEO 8.5 / AEO 8.5 / GEO 7.0. **Status: COMMITTED `db5982be`, not yet pushed.** Branch `feat/trips-page-redesign`.
+**Achieved this session (#254):**
+- **BRANCH CLEANUP** — Pruned 45 merged branches across all 3 repos. Frontend: 24 branches (chat fixes, trips redesign, destinations/locations redesigns, SEO fixes). Backend: 12 branches (chat image, HEIC, OTA sync, rec fixes). Admin: 9 branches (chat image, command centre). All repos now clean: `develop`, `main` only.
+- **CHAT BUBBLE DESIGN TOKENS** — Fixed ScrollTop overlap (moved `right: 32px` → `left: 32px`). Added `CHAT` token group to `designSystem.js` (positioning, colors, shadow, sizing). Refactored `ChatBubble.js` and `ChatPanel.js` to use tokens. Commit `4957f22b` → develop.
 
-**Workspace (#253):**
-- frontend: `feat/trips-page-redesign` (`db5982be`) — committed, not pushed
+**Workspace (#254):**
+- frontend: `main` (`4957f22b`) — clean
 - backend: `main` (`06423c5`) — clean
 - admin-dashboard: `main` (`21d03eb`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **TRIPS REDESIGN — push + verify** (`feat/trips-page-redesign`). `git push -u origin feat/trips-page-redesign`. Then `localhost:3000/trips`: confirm image cards render, search filters live, sort works, empty state shows, JSON-LD `ItemList TouristTrip` + `CollectionPage speakable` + `BreadcrumbList` in DevTools. `hreflang` links in `<head>`. Mobile QA 375/768/1280 (sticky filter bar, 1→4 col grid). Merge → develop.
-2. **Carry-forward prod-deploy queue (all still open, none deployed):** TRIP-CARD-V2 prod (ISR `smartenplus_next_cache` flush + `NEXT_PUBLIC_TRIP_CARD_V2` ENV.md row); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064); CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke).
+1. **TRIPS REDESIGN QA** — `feat/trips-page-redesign` committed `db5982be` (session #253). Push to origin, then `localhost:3000/trips` QA: image cards render, search filters live, sort works, empty state shows, JSON-LD `ItemList TouristTrip` + `CollectionPage speakable` + `BreadcrumbList` in DevTools, `hreflang` links in `<head>`. Mobile QA 375/768/1280. Merge → develop.
+2. **Carry-forward prod-deploy queue:** TRIP-CARD-V2 prod (ISR `smartenplus_next_cache` flush + `NEXT_PUBLIC_TRIP_CARD_V2` ENV.md row); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064); CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke).
 
-_(Sessions #221–#251 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#253 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -67,7 +68,7 @@ _(Sessions #221–#251 archived → `07-logs/session-history.md`.)_
 | **CS-GUEST-EMAIL-GATE** | ✅ **FIXED #211** — `ConversationCreateView` now returns 403 `OTP_REQUIRED` when existing open/pending conv found for guest email. No free token without OTP. Merged → develop `4690fcb`. | **CLOSED** | `cs/views.py` `ConversationCreateView` |
 | **CS-CENTRALIZATION** | RESCOPED 2026-06-23 → Unified Booking Command Centre. P0 chat + P1 direct + P2 OTA-sync SHIPPED. **P3a/P3b/G2/G8 SHIPPED.** Tier-1 criticals FIXED (#194). Direct flows ✅ (#195). OTA manual tests ALL PASS (#203). **FE-M1 InfoUpdateNotice BUILT (#204)** — `feat/fe-m1-info-update-notice`. **Admin Phase 2 BUILT (#204)** — `feat/admin-phase2-command-centre`. **29/29 BE unit tests pass.** **Remaining:** (1) merge 3 branches → develop, (2) E2E manual test, (3) Admin Phase 3, (4) develop→main deploy. | **MERGE + TEST NEXT** | [[cs-centralization-audit-2026-06-29]] · [[ota-link-delivery-and-p3b-plan]] · [[booking-command-centre-decision]] |
 | **CHAT-SUPABASE-OFFLOAD** | ✅ **CLOSED #225** — realtime unread badge verified working. Sidebar icon + inbox row pill + preview + timestamp all update via Supabase payload. Client-authoritative (no Django round-trip). 6 fix branches → admin-dashboard `develop` `9316997`. → closed-items.md | **CLOSED** | [[chat-review-e2e-manual-test-2026-07-07]] |
-| **BE-HOMEPAGE-PRICE** | ✅ **FIXED #249** — all 8 `Min(selling_rate)` finder annotations now filter `contract_ratecard__is_active=True`. BE develop `06423c5`, pushed to origin. 4-agent audit confirmed complete (other price paths already clean). **⚠️ Prod deploy MUST flush rec cache** or stale prices persist up to 24h (skip-if-fresh guard `tasks.py:66-75`): `redis-cli --scan --pattern "recommendations:*" \| xargs redis-cli del`. BE docs edit skipped (docs/ permission denied) — flush step lives here. | **DEPLOY PENDING + Redis flush** | `products/services.py` · [[rec-engine-report-audit]] |
+| **BE-HOMEPAGE-PRICE** | ✅ **FIXED #249** — all 8 `Min(selling_rate)` finder annotations now filter `contract_ratecard__is_active=True`. BE develop `06423c5`, pushed to origin. 4-agent audit confirmed complete (other price paths already clean). **⚠️ Prod deploy MUST flush rec cache** or stale prices persist up to 24h (skip-if-fresh guard `tasks.py:66-75`): `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del`. BE docs edit skipped (docs/ permission denied) — flush step lives here. | **DEPLOY PENDING + Redis flush** | `products/services.py` · [[rec-engine-report-audit]] |
 | **REC-SLOT-WASTE** | ✅ **CLOSED #249 — DO NOTHING per 4-agent audit.** Monitor `checkout_recommendation_empty` GTM ~30 days. → closed-items.md | **CLOSED** | [[rec-engine-report-audit]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
 | **SEO-P1-BACKLOG** | r14 audit DONE + r15 **DEPLOYED 2026-07-12** (`5b3669dd`). **Scores post-r14: SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0.** r15 shipped: GEO-2 (OAI-SearchBot+DuckAssistant+YouBot), AEO-1 (HowTo), GEO-4 (GBP sameAs), SD-NEW-5/6, CWV-3 partial (SSR hero), GEO-5 (llms.txt). **r16 P1 remaining:** CWV-7 (INP — run PageSpeed CrUX); SEO-11 (internal link audit); SD-NEW-2/4 (operator_name + priceValidUntil). Full report: `/seo/seo-aeo-geo-prod-2026-07-11.md` | **r16 next** | [[seo-aeo-geo-live-audit-2026-06-22/r14-live-prod-2026-07-11]] |
