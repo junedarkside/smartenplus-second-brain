@@ -4,23 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-19 (session #254)
+**Updated:** 2026-07-21 (session #256)
 
-**Achieved this session (#254):**
-- **BRANCH CLEANUP** — Pruned 45 merged branches across all 3 repos. Frontend: 24 branches (chat fixes, trips redesign, destinations/locations redesigns, SEO fixes). Backend: 12 branches (chat image, HEIC, OTA sync, rec fixes). Admin: 9 branches (chat image, command centre). All repos now clean: `develop`, `main` only.
-- **CHAT BUBBLE DESIGN TOKENS** — Fixed ScrollTop overlap (moved `right: 32px` → `left: 32px`). Added `CHAT` token group to `designSystem.js` (positioning, colors, shadow, sizing). Refactored `ChatBubble.js` and `ChatPanel.js` to use tokens. Commit `4957f22b` → develop.
+**Achieved this session (#256):**
+- **SUPABASE 406 DEBUG** — Diagnosed transient Supabase 406 on `gmail12go` schema via debug-mantra + knob isolation. Root cause: momentary PostgREST blip (all curl variants return 200 now). Added `HTTPError` body logging to `_fetch_schema` in `cs/supabase_client.py` so next occurrence logs status + schema + body[:500]. Committed `fix/cs-supabase-error-logging` → BE develop `26ae731`.
+- **STATION MAPPING + AD FEATURE COMMIT** — Committed all pre-existing station-mapping AD changes on `feat/station-mapping` → develop `b0edcd2`: `SeatAvailabilityChecker.js`, `station-mapping/index.js`, `menuData.js`, `[slug].js`, `contractsApi.js`, `operatorsApi.js` (6 files, 489 insertions).
 
-**Workspace (#254):**
+**Workspace (#256):**
 - frontend: `main` (`4957f22b`) — clean
-- backend: `main` (`06423c5`) — clean
-- admin-dashboard: `main` (`21d03eb`) — clean
+- backend: `develop` (`26ae731`) — untracked: `operators/migrations/0066_add_operator_station_mapping.py`
+- admin-dashboard: `develop` (`b0edcd2`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **TRIPS REDESIGN QA** — `feat/trips-page-redesign` committed `db5982be` (session #253). Push to origin, then `localhost:3000/trips` QA: image cards render, search filters live, sort works, empty state shows, JSON-LD `ItemList TouristTrip` + `CollectionPage speakable` + `BreadcrumbList` in DevTools, `hreflang` links in `<head>`. Mobile QA 375/768/1280. Merge → develop.
-2. **Carry-forward prod-deploy queue:** TRIP-CARD-V2 prod (ISR `smartenplus_next_cache` flush + `NEXT_PUBLIC_TRIP_CARD_V2` ENV.md row); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064); CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke).
+1. **COMMIT BE operators changes** — `operators/models.py`, `serializers.py`, `urls.py`, `views.py`, `admin.py` + migration `0066` still uncommitted on BE. Commit + merge → develop.
+2. **TRIPS REDESIGN QA** — `feat/trips-page-redesign` on develop `24e3104b`. Open `localhost:3000/trips` QA: image cards, search filters, sort, empty state, JSON-LD + hreflang DevTools. Mobile 375/768/1280. Then prod deploy (ISR `smartenplus_next_cache` flush).
+3. **Carry-forward prod-deploy queue:** CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064).
 
-_(Sessions #221–#253 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#254 archived → `07-logs/session-history.md`.)_
 
 ---
 

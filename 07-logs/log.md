@@ -1,3 +1,7 @@
+## [2026-07-20] session-end #256 | diagnosed Supabase 406 (transient), added HTTPError body logging to BE supabase_client, merged AD station-mapping feature to develop.
+
+## [2026-07-20] session-end #255 | check external operator seat availability (Phase 1 AD) — OperatorStationMapping model+migration+CRUD, check_seat_availability action on ContractDetailViewSet, n8n seatStatus parsing, SeatAvailabilityChecker component, station-mapping page, AD nav entry. Verified live: 135 seats left Chumphon→Koh Tao.
+
 ## [2026-07-19] session-end | branch cleanup + chat design tokens
 # Vault Log
 

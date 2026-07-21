@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #255 — 2026-07-20
+STATION-MAPPING + SUPABASE-ERROR-LOGGING — Diagnosed Supabase 406 (transient outage, not code bug). Added HTTPError body logging to `_fetch_schema`. Committed + merged BE fix (`fix/cs-supabase-error-logging` → develop). Committed + merged AD station-mapping feature (`feat/station-mapping` → develop): SeatAvailabilityChecker, station-mapping page, nav entry, CRUD API endpoints.
+
+---
+
+## Session #254 — 2026-07-20
+BRANCH-CLEANUP + CHAT-DESIGN-TOKENS — Pruned 45 merged branches across all 3 repos. Fixed ScrollTop overlap. Added CHAT design tokens. Refactored ChatBubble + ChatPanel to use tokens. Commit `4957f22b` → develop.
+
+---
+
 ## Session #253 — 2026-07-19
 TRIPS-PAGE-REDESIGN — `/trips` index redesigned via 3-agent team (UX auditor → designer → frontend implementer). `pages/trips/index.js` rewritten 733→162 lines: `getStaticProps` + ISR revalidate:3600, `PageSeo`, reuses `components/locations/{SearchBar,FilterControls,StatsDisplay,EmptyState}` unchanged. New: `components/trips/RouteCard.js` (image-forward, `TouristTrip` schema, gradient overlay, `departure → arrival` text), `hooks/useTripsFiltering.js` (memoised search+sort on joined route string), `hooks/useTripsStructuredData.js` (`ItemList` of `TouristTrip` + `BreadcrumbList` + `CollectionPage` with `speakable`). First page in codebase with `hreflang="en"` + `hreflang="x-default"`. Projected SEO 8.5 / AEO 8.5 / GEO 7.0. **Status: COMMITTED `db5982be`, not yet pushed.** Branch `feat/trips-page-redesign`.
 
