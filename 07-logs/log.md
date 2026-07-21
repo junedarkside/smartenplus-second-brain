@@ -1,3 +1,5 @@
+## [2026-07-22] session-end #259 | FAQ CSS fix on trip detail page: mx-auto conflict + padding split + spacing tighten. Merged develop 4758b4b1. 1 atom: tailwind-mx-auto-conflict-pattern.
+
 ## [2026-07-21] session-end #258 | Trips QA+prod deploy, CHAT-IMAGE-SEND prod deploy (Supabase SQL 003+Pillow bump+smoke), seat-availability migrate 0066-0068 prod. 3 items closed.
 
 ## [2026-07-21] session-end #257 | rebuilt BE seat-availability-checker + committed+pushed both repos: BE c535dd3 (7 files, migrations 0066-0068), AD b1996c7 (4 files). All clean.

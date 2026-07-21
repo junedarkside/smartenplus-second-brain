@@ -448,6 +448,7 @@ Global navigation catalog. Updated on every ingest.
 - [[designsystem-shadow-border-tokens]] — SHADOWS, BORDERS, BORDER_RADIUS_CLASSES token definitions for helpers/designSystem.js. Replaces hardcoded rgba() across card/dropdown components
 - [[airport-transfer-at1-redesign-spec]] — AT-1 full redesign spec: image card + IATA badge + carousel mobile + serializer expansion (station_name, iata_code). Zero impact on other components
 - [[layout-spacing-consistency-audit]] — Cross-page layout audit: activities vs homepage vs trips. 3 inconsistencies: h-padding `p-2` wrong, grid gap mismatch (spacing=1 vs 2), `sm:py-8` minor. LAY-1 + LAY-2 fixes needed before merge.
+- [[tailwind-mx-auto-conflict-pattern]] — `mx-auto` + `mx-{n}` on same element = centering broken (last wins). Fix: keep `mx-auto` on outer, use `px-2 md:px-3 xl:px-0` for edge breathing. Site-wide spacing pattern table included.
 - [[nextjs-hydration-rules]] — 6 rules preventing hydration mismatches + PersistGate SSR blocker pattern. Mismatch in _app.js triggers HMR infinite refresh
 - [[payment-checkout-5-principles]] — 5 core checkout architecture principles: webhook SSOT, single attempt, immutable snapshot, cart lock, explicit cancel-recreate
 - [[nextjs-static-path-prop-divergence]] — getStaticPaths + getStaticProps constant divergence = silent routing failure. Module-level constant mandatory

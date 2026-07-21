@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #258 — 2026-07-21
+TRIPS QA + PROD DEPLOY + CHAT-IMAGE-SEND + SEAT-AVAILABILITY MIGRATE — Trips redesign QA passed, prod deployed (ISR cache flushed). CHAT-IMAGE-SEND prod deploy: Supabase SQL 003, Pillow bump, BE→AD→FE deployed, smoke passed. manage.py migrate 0066/0067/0068 on prod.
+
+---
+
 ## Session #257 — 2026-07-21
 SEAT-AVAILABILITY commit+push — Committed BE (`c535dd3`: 4 files + migrations 0066-0068) + AD (`b1996c7`: 4 files) to develop. Then completed: Trips Redesign QA, CHAT-IMAGE-SEND prod deploy, `manage.py migrate` 0066-0068 on prod.
 

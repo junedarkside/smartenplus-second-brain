@@ -4,15 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-21 (session #258)
+**Updated:** 2026-07-22 (session #259)
 
-**Achieved this session (#258):**
-- **TRIPS REDESIGN QA** — QA passed at localhost:3000/trips. Prod deployed (ISR `smartenplus_next_cache` flushed).
-- **CHAT-IMAGE-SEND prod deploy** — Supabase SQL 003 run, `pip install -r requirements.txt` (Pillow bump), deployed BE→AD→FE, prod smoke passed.
-- **SEAT-AVAILABILITY prod migrate** — `manage.py migrate` 0066/0067/0068 applied on prod BE.
+**Achieved this session (#259):**
+- **FAQ CSS FIX** — Trip detail page FAQ section alignment + spacing fixed. Removed conflicting `mx-auto mx-2` → `mx-auto px-2 md:px-3 xl:px-0` pattern. Fixed padding conflict (`p-4` on outer → extracted to inner `<div className="p-4 md:p-5">`). Tightened heading `mb-3→mb-2`, item padding `py-2→py-3`. Also fixed `rounded-md md:rounded-lg` → `rounded-md` (design token `rounded-container`). Committed `1e6eaec0` on `fix/faq-spacing-alignment` → merged develop → pushed `4758b4b1`.
 
-**Workspace (#258):**
-- frontend: `main` (`4957f22b`) — clean
+**Workspace (#259):**
+- frontend: `develop` (`4758b4b1`) — clean
 - backend: `develop` (`c535dd3`) — clean
 - admin-dashboard: `develop` (`b1996c7`) — clean
 - content: `master` (`3756e5b`) — clean
@@ -20,9 +18,9 @@
 **Resume point — next session:**
 1. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` to origin + E2E verify; `manage.py migrate` operators/0064 on prod.
 2. **STAFF-PUSH-NOTIFICATIONS prod setup** — (1) `NEXT_PUBLIC_VAPID_PUBLIC_KEY` → AD Vercel env + redeploy; (2) `VAPID_*` keys → BE VPS `.env` + restart; (3) `python manage.py migrate cs 0013`; (4) smoke test at prod `/cs`.
-3. **TRIPS REDESIGN** — mark CLOSED in Section 2 (QA + deploy done).
+3. **LOCATIONS-PAGE-REDESIGN** — commit + push + verify JSON-LD + mobile QA → merge develop.
 
-_(Sessions #221–#256 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#257 archived → `07-logs/session-history.md`.)_
 
 ---
 
