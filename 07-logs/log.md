@@ -1,3 +1,5 @@
+## [2026-07-21] session-end #257 | rebuilt BE seat-availability-checker from scratch (station-mapping lost): OperatorStationMapping model+CRUD viewset+check-seat-availability @action, migrations 0066-0068, seatStatus parse fix, contract-level API URL override in AD. Uncommitted.
+
 ## [2026-07-20] session-end #256 | diagnosed Supabase 406 (transient), added HTTPError body logging to BE supabase_client, merged AD station-mapping feature to develop.
 
 ## [2026-07-20] session-end #255 | check external operator seat availability (Phase 1 AD) — OperatorStationMapping model+migration+CRUD, check_seat_availability action on ContractDetailViewSet, n8n seatStatus parsing, SeatAvailabilityChecker component, station-mapping page, AD nav entry. Verified live: 135 seats left Chumphon→Koh Tao.

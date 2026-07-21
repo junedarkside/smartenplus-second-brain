@@ -4,24 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-21 (session #256)
+**Updated:** 2026-07-21 (session #257)
 
-**Achieved this session (#256):**
-- **SUPABASE 406 DEBUG** — Diagnosed transient Supabase 406 on `gmail12go` schema via debug-mantra + knob isolation. Root cause: momentary PostgREST blip (all curl variants return 200 now). Added `HTTPError` body logging to `_fetch_schema` in `cs/supabase_client.py` so next occurrence logs status + schema + body[:500]. Committed `fix/cs-supabase-error-logging` → BE develop `26ae731`.
-- **STATION MAPPING + AD FEATURE COMMIT** — Committed all pre-existing station-mapping AD changes on `feat/station-mapping` → develop `b0edcd2`: `SeatAvailabilityChecker.js`, `station-mapping/index.js`, `menuData.js`, `[slug].js`, `contractsApi.js`, `operatorsApi.js` (6 files, 489 insertions).
+**Achieved this session (#257):**
+- **SEAT-AVAILABILITY-CHECKER-REBUILD** — BE station-mapping feature (lost after previous session) fully rebuilt: `OperatorStationMapping` model + CRUD `OperatorStationMappingViewSet` + `check-seat-availability` @action on `ContractDetailViewSet`. Added `seat_availability_api_url` to `Operator` + `Contract` models (migrations 0067+0068). Priority chain: contract URL > operator URL. Fixed `seatStatus` parse bug (was `== 'Available'` exact match; fixed to `!= 'Sold Out'`). AD: added API URL field to OperatorForm, ContractFormFields, useContractFormData, contractUtils.
+- **Still uncommitted:** BE `operators/models.py` + `serializers.py` + `urls.py` + `views.py` + migrations `0066`/`0067`/`0068`; AD `ContractFormFields.js` + `OperatorForm.js` + `contractUtils.js` + `useContractFormData.js`.
 
-**Workspace (#256):**
+**Workspace (#257):**
 - frontend: `main` (`4957f22b`) — clean
-- backend: `develop` (`26ae731`) — untracked: `operators/migrations/0066_add_operator_station_mapping.py`
-- admin-dashboard: `develop` (`b0edcd2`) — clean
+- backend: `develop` (`26ae731`) — modified: 4 operators files; untracked: 3 migrations (0066/0067/0068)
+- admin-dashboard: `develop` (`b0edcd2`) — modified: 4 files
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **COMMIT BE operators changes** — `operators/models.py`, `serializers.py`, `urls.py`, `views.py`, `admin.py` + migration `0066` still uncommitted on BE. Commit + merge → develop.
+1. **COMMIT BE + AD seat-availability changes** — BE: stage `operators/models.py` `serializers.py` `urls.py` `views.py` + migrations `0066`/`0067`/`0068` → commit `feat(operators): rebuild station-mapping + seat-availability-checker` → merge develop. AD: stage 4 files → commit `feat(contracts): contract-level seat availability API URL` → merge develop.
 2. **TRIPS REDESIGN QA** — `feat/trips-page-redesign` on develop `24e3104b`. Open `localhost:3000/trips` QA: image cards, search filters, sort, empty state, JSON-LD + hreflang DevTools. Mobile 375/768/1280. Then prod deploy (ISR `smartenplus_next_cache` flush).
 3. **Carry-forward prod-deploy queue:** CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064).
 
-_(Sessions #221–#254 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#255 archived → `07-logs/session-history.md`.)_
 
 ---
 
