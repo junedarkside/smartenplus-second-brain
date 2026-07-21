@@ -4,24 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-21 (session #257)
+**Updated:** 2026-07-21 (session #258)
 
-**Achieved this session (#257):**
-- **SEAT-AVAILABILITY-CHECKER-REBUILD** — BE station-mapping feature (lost after previous session) fully rebuilt: `OperatorStationMapping` model + CRUD `OperatorStationMappingViewSet` + `check-seat-availability` @action on `ContractDetailViewSet`. Added `seat_availability_api_url` to `Operator` + `Contract` models (migrations 0067+0068). Priority chain: contract URL > operator URL. Fixed `seatStatus` parse bug (was `== 'Available'` exact match; fixed to `!= 'Sold Out'`). AD: added API URL field to OperatorForm, ContractFormFields, useContractFormData, contractUtils.
-- **Still uncommitted:** BE `operators/models.py` + `serializers.py` + `urls.py` + `views.py` + migrations `0066`/`0067`/`0068`; AD `ContractFormFields.js` + `OperatorForm.js` + `contractUtils.js` + `useContractFormData.js`.
+**Achieved this session (#258):**
+- **TRIPS REDESIGN QA** — QA passed at localhost:3000/trips. Prod deployed (ISR `smartenplus_next_cache` flushed).
+- **CHAT-IMAGE-SEND prod deploy** — Supabase SQL 003 run, `pip install -r requirements.txt` (Pillow bump), deployed BE→AD→FE, prod smoke passed.
+- **SEAT-AVAILABILITY prod migrate** — `manage.py migrate` 0066/0067/0068 applied on prod BE.
 
-**Workspace (#257):**
+**Workspace (#258):**
 - frontend: `main` (`4957f22b`) — clean
 - backend: `develop` (`c535dd3`) — clean
 - admin-dashboard: `develop` (`b1996c7`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **TRIPS REDESIGN QA** — `feat/trips-page-redesign` on develop `24e3104b`. Open `localhost:3000/trips` QA: image cards, search filters, sort, empty state, JSON-LD + hreflang DevTools. Mobile 375/768/1280. Then prod deploy (ISR `smartenplus_next_cache` flush).
-2. **Carry-forward prod-deploy queue:** CHAT-IMAGE-SEND prod (Supabase SQL 003 + `pip install` Pillow bump + deploy BE→AD→FE + smoke); REC-PRICE-FIX prod (Redis `recommendations:*` flush + `manage.py migrate` operators/0064).
-3. **SEAT-AVAILABILITY prod deploy** — run `manage.py migrate` (0066/0067/0068) on prod BE.
+1. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` to origin + E2E verify; `manage.py migrate` operators/0064 on prod.
+2. **STAFF-PUSH-NOTIFICATIONS prod setup** — (1) `NEXT_PUBLIC_VAPID_PUBLIC_KEY` → AD Vercel env + redeploy; (2) `VAPID_*` keys → BE VPS `.env` + restart; (3) `python manage.py migrate cs 0013`; (4) smoke test at prod `/cs`.
+3. **TRIPS REDESIGN** — mark CLOSED in Section 2 (QA + deploy done).
 
-_(Sessions #221–#255 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#256 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -49,7 +50,7 @@ _(Sessions #221–#255 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **TRIPS-PAGE-REDESIGN** | **✅ MERGED → develop `24e3104b` #253.** Redesign (`bffb532f`): image-forward RouteCards, ISR, PageSeo, ItemList TouristTrip + speakable + hreflang, reuses locations components unchanged. Image fix (`316a284a`): arrival→departure→default location image. Scale fix (`f3e0e7fc`, prod=297 routes verified): slim `{id,from,to,image,price}` payload (~150KB @1000 routes vs ~1MB), progressive reveal 24-batch IntersectionObserver, JSON-LD capped 100. **Remaining:** QA localhost + mobile 375/768/1280, then prod deploy (ISR `smartenplus_next_cache` flush). | **QA + PROD DEPLOY NEXT** | `pages/trips/index.js`, `components/trips/RouteCard.js`, `hooks/useTrips*.js` · [[trips-page-redesign]] |
+| **TRIPS-PAGE-REDESIGN** | **✅ DEPLOYED TO PROD 2026-07-21 #258** — QA passed, ISR cache flushed. → closed-items.md | **CLOSED** | `pages/trips/index.js`, `components/trips/RouteCard.js`, `hooks/useTrips*.js` · [[trips-page-redesign]] |
 | **LOCATIONS-PAGE-REDESIGN** | **✅ MERGED → develop `a25ff23d` (stale "uncommitted" corrected at #253 wrap-up — git log confirms merge).** Components extracted: `components/locations/{SearchBar,FilterControls,StatsDisplay,LocationCard,EmptyState}.js`. Hooks: `useLocationsFiltering` (memoised filter+sort), `useLocationsStructuredData` (returns `seo` + `ItemList` of `TouristDestination` + `BreadcrumbList` + `Organization` + `CollectionPage` w/ `lastReviewed`). Hero H1 "Where in Thailand Do You Want to Travel?", back+share overlay top-2 z-40. **Remaining:** (1) `git add -A && git commit -m "feat(locations): full visual redesign — image-forward cards + extracted hooks" && git push -u origin feat/locations-page-redesign`; (2) open `localhost:3000/locations` → verify JSON-LD `ItemList` + `CollectionPage.lastReviewed` + OG/Twitter in devtools; (3) mobile QA at 375/768/1280 (sticky filter, back+share overlay, 44px touch targets); (4) parity diff vs `feat/destinations-page-redesign` (just merged `354889f1`) — confirm same pattern. Then merge → develop. | **COMMIT + PUSH + VERIFY NEXT** | `pages/locations/index.js`, `components/locations/*`, `hooks/useLocations*.js` |
 | **LOCATIONS-FALLBACK-IMG** | Locations have no `image` field like destinations. `LocationCard` must fall back to `bgDefault` (or per-region gradient). Audit any per-card broken-image state — add `onError` swap. | OPEN — low (after redesign merge) | `components/locations/LocationCard.js` |
 
@@ -58,7 +59,7 @@ _(Sessions #221–#255 archived → `07-logs/session-history.md`.)_
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
 | **REC-ENGINE** | ✅ **PHASES 1-5 SHIPPED 2026-07-15 → develop.** FE 4 branches merged (`fix/rec-quick-wins` · `feat/rec-purchase-event` · `fix/rec-checkout-filter` · `chore/rec-remove-ratecard-hook`). BE 1 branch (`feat/rec-never-empty-fallback`). FE `9fd5b0a5` · BE `f0aea8c`. Vault synced mid-session (4 bug docs shipped, roadmap corrected, anchor-transport-rule archived). 28/29 BE tests pass (1 pre-existing). **Remaining:** E2E verification + push to origin + BE `manage.py migrate` (0064). Editor-pick curation = separate future session. | **E2E + PUSH NEXT** | `products/services.py` · `helpers/gtmUtils.js` · [[recommendation-engine-completion-roadmap]] |
-| **CHAT-IMAGE-SEND + REALTIME** | **✅ IMPLEMENTED 2026-07-13 — all 3 repos → develop.** Image: BE `0bd8adf` (model+storage+endpoint+throttle+20 tests; `custom_domain=None` fix for presigning), AD `f473a7f` (mutation+attach UI+render), FE `53f30576` (canSendImage gate+attach+multipart+render). **✅ REALTIME FIXED 2026-07-14 — 5 bugs** (empty history, duplicates, stuck send, AD history lost, FE no events): BE `faff358` · FE `9b5f43ad` · AD `4c20fb1`. Architecture: isolated `createClient` per hook, trigger-only events → Django cursor fetch, `sendingRef` guard, all sends via Django. 68 tests pass. **✅ HEIC FIXED 2026-07-14** — pillow-heif 0.15→1.1.1 + Pillow 9.5→11.3 + import-time registration + MIME fallback. BE `d71db74` → develop. FE+AD verified with real iPhone HEIC. **✅ UNREAD BADGE FIXED 2026-07-14** — transport gate bug fixed, FE `01d8d617` → develop. **⚠️ Prod deploy must `pip install -r requirements.txt`** (Pillow major bump). **✅ KILL SWITCH ADDED 2026-07-14** — `allow_image_send` FeatureFlag + AD Settings toggle + FE `FEATURE_DISABLED` error handler. BE develop `6f7af85` · AD develop `21d03eb` · FE develop `6cc42979`. Staff unaffected; default `enabled=True`. **Remaining:** (1) run Supabase SQL migration 003, (2) `pip install -r requirements.txt` (Pillow bump), (3) deploy develop→prod BE→AD→FE, (4) prod smoke: OTA photo→admin realtime, guest no-attach gate, raw S3 URL 403, FE↔AD realtime both directions. Full design: `01-projects/chat-image-send/design-2026-07-12.md` | **DEPLOY + SMOKE NEXT** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
+| **CHAT-IMAGE-SEND + REALTIME** | **✅ DEPLOYED TO PROD 2026-07-21 #258** — Supabase SQL 003 run, `pip install -r requirements.txt` (Pillow bump), BE→AD→FE deployed, prod smoke passed. → closed-items.md | **CLOSED** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
 | **FUNNEL-DEV-REMINDER** | `source funnel.sh on` (backend repo) required before any payment webhook testing — Omise test-mode webhook URL `https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/` already configured. Not in `activate.sh`. Add to dev runbook or activate.sh optional arg. | **OPEN — low** | `funnel.sh`, `activate.sh` |
 | **AUTH-SWITCH-BUGS** | ✅ **FIXED** — 3 identity-switch edge cases fixed. (A) Guest→OTA wrong conv — reset effect on `[otaToken]` clears non-OTA conv. (B) Realtime silent fail on auth loss — `refreshToken` 403 now calls `onConversationClosed()`. (C) Stale OTA localStorage key on login — cleared in login-while-chatting RESET. FE `develop` `cd6874d6`. | **CLOSED** | [[ota-chat-auth-switch-analysis-2026-07-08]] |

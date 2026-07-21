@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #257 — 2026-07-21
+SEAT-AVAILABILITY commit+push — Committed BE (`c535dd3`: 4 files + migrations 0066-0068) + AD (`b1996c7`: 4 files) to develop. Then completed: Trips Redesign QA, CHAT-IMAGE-SEND prod deploy, `manage.py migrate` 0066-0068 on prod.
+
+---
+
 ## Session #256 — 2026-07-21
 SEAT-AVAILABILITY-CHECKER-REBUILD — BE station-mapping feature was never committed (migration existed, model/views/serializer lost). Rebuilt from scratch: `OperatorStationMapping` model + CRUD viewset + `check-seat-availability` @action on `ContractDetailViewSet`. Wired n8n webhook (`https://n8n.smartenplus.co.th/webhook/search`). Added `seat_availability_api_url` field to Operator + Contract models (migrations 0067+0068) with priority chain: contract > operator. Fixed `seatStatus` parsing bug (`== 'Available'` exact match → `!= 'Sold Out'` logic). Added API URL fields in AD: OperatorForm + ContractFormFields + useContractFormData + contractUtils. All uncommitted (BE 4 files + 3 migrations; AD 4 files).
 

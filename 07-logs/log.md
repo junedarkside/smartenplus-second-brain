@@ -1,3 +1,5 @@
+## [2026-07-21] session-end #258 | Trips QA+prod deploy, CHAT-IMAGE-SEND prod deploy (Supabase SQL 003+Pillow bump+smoke), seat-availability migrate 0066-0068 prod. 3 items closed.
+
 ## [2026-07-21] session-end #257 | rebuilt BE seat-availability-checker + committed+pushed both repos: BE c535dd3 (7 files, migrations 0066-0068), AD b1996c7 (4 files). All clean.
 
 ## [2026-07-20] session-end #256 | diagnosed Supabase 406 (transient), added HTTPError body logging to BE supabase_client, merged AD station-mapping feature to develop.
