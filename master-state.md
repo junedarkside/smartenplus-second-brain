@@ -4,24 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-22 (session #261)
+**Updated:** 2026-07-22 (session #262)
 
-**Achieved this session (#261):**
-- **SEAT-CHECK Part B SHIPPED** — Supabase `RouteID` autocomplete for `operator_station_id` in the Station Mapping dialog. **Unblocks #260's deferred item** — turns out **no BE proxy needed** (contrary to #260's assumption that anon key can't read RouteID). Discovery trick: PostgREST leaks the full exposed-schema list in the error `hint` on any invalid `Accept-Profile` — hook probes `schema('__probe__')`, parses hint, matches an operator schema by **name-prefix** (longest wins, denylist non-operator schemas), then **confirms** rows via the `Operator` column. `Lomprayah` → schema `lompraya` (lowercased 8-char truncation — NOT derivable), `RouteID` cols `Route`/`ID`/`Operator`, 39 rows. Option label `"Route (ID)"`, saves `ID`; `freeSolo` preserves stale saved ids; operators without a schema fall back to free-text. New files: `helpers/operatorRouteIds.js` (pure `parseExposedSchemas` + `pickSchemaForOperator`) + `hooks/useOperatorRouteIds.js` (module-cached schema discovery). AD `8780af4`.
-- **STATION-MAPPING SORT** — mapping DataGrid defaults to `id` ascending (`initialState.sorting`).
-- **AD + BE DEPLOYED → main** — user merged + pushed both repos to `main` this session.
+**Achieved this session (#262) — prod seat-check debugging (real Lomprayah operator live):**
+- **Diagnosed prod MAPPING_NOT_FOUND = station-record mismatch.** Contract `bangkok-khao-san-to-koh-tao-1220` seat-check op = Lomprayah High Speed Catamaran (correct), but the route's **departure_station** record is `"boonsiri counter khaosan bangkok"` while the user's mapping row targets a *different* record `"Lomprayah Bangkok khao san"` (id 43). Backend matches by station **FK**, so no row → error. Arrival (Koh Tao=9) matched fine. Data-entry issue, not code. (Also confirmed real prod operator name = `Lomprayah High Speed Catamaran`; RouteID `Operator` col = `Lomprayah` → the #261 bidirectional-prefix row-confirm fix `c5d7df5` is what lets that longer name still resolve schema `lompraya`.)
+- **BE debug block on `check-seat-availability`** (`operators/views.py`) — returns operator, dep/arr station id+name, resolved `from`/`to`/`date`/`time`, the full n8n URL, and all the operator's mappings. Always on for MAPPING_NOT_FOUND; `?debug=1`-gated elsewhere. **AD panel** (`SeatAvailabilityChecker.js`) renders it under the warning so the mismatch is visible on screen. BE `feat/seat-check-debug` · AD `feat/seat-check-debug-panel`.
+- **Timeout 15→25s** (`views.py`) — n8n `/webhook/search` latency measured **10-19s, variable** (upstream operator API); 15s caught the slow tail → intermittent `OPERATOR_API_ERROR` 502. The "browser-first then works" ritual was timing luck (landing on the fast side of the distribution), not a real fix. `fix/seat-check-timeout-25s`.
+- **Fixed HTTP 500** (`views.py:1098`) — n8n returns `{"data": "no trip"}` (a **string**) when no service for the id pair/date. Parser did `data_list[0]` (→ first char) then `.get` on it → `AttributeError: 'str' object has no attribute 'get'`. Now only treats `data[0]` as a result when `data` is a non-empty **list of dicts**; string `data` → `available:null`, `seat_status:"no trip"`. `fix/seat-check-no-trip-parse`. Verified 4 payload shapes.
+- **All merged → develop → deployed to main** (BE `073623b`, AD `ef41c7b`).
 
-**Workspace (#261):**
+**Workspace (#262):**
 - frontend: `main` (`4758b4b1`) — clean
-- backend: `main` (`5baebe8`) — clean, **deployed**
-- admin-dashboard: `main` (`8780af4`) — clean, **deployed** (RouteID autocomplete included)
+- backend: `main` (`073623b`) — clean, **deployed** (debug + timeout 25s + no-trip parse)
+- admin-dashboard: `main` (`ef41c7b`) — clean, **deployed** (debug panel; RouteID autocomplete + prefix fix)
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **SEAT-CHECK prod E2E + migrate** — BE+AD now on `main`. On prod: `manage.py migrate operators` (applies `0069`+`0070`). ⚠️ "lomprayah" operator row + its station mappings are **local test data** — recreate on prod with the real operator name + real Supabase `RouteID` station IDs (autocomplete now sources them). Then set a reseller contract `seat_check_operator` → verify live seat-check.
-2. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` to origin + E2E verify; `manage.py migrate` operators/0064 on prod.
+1. **Fix the station mapping DATA (prod).** Delete the wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against the route's real departure station **"boonsiri counter khaosan bangkok"** → operator id **43** (normal bus ฿1250) or **44** (VIP bus ฿1550) — pick to match the contract's vehicle/price. Our-Station field is `disabled` on edit → must delete+recreate. Then re-run seat check → expect live seats (n8n verified `43→9`/`44→9` return dicts). Use the deployed debug panel to confirm resolved `from`/`to`.
+2. **SEAT-CHECK migrate on prod** — `manage.py migrate operators` (0069+0070) if not already applied.
+3. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
 
-_(Sessions #221–#260 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#261 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -57,7 +60,7 @@ _(Sessions #221–#260 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
-| **SEAT-CHECK-RESELLER** | ✅ **SHIPPED + DEPLOYED → main (#261).** Reseller contracts seat-check against a source operator via `Contract.seat_check_operator` FK. Station Mapping page shows operator/API (chip + `Seat API` grid col + `?our_station=` filter), sorts by id. **Part B DONE** — `operator_station_id` is now a Supabase `RouteID` autocomplete (schema discovered via PostgREST hint, no BE proxy; see [[postgrest-exposed-schema-hint-discovery]] · [[supabase-per-operator-schema-routeid]]). Redundant `Contract.seat_availability_api_url` removed (migration `0070`); resolution strips URL whitespace. BE `5baebe8` (migrations `0069`+`0070`) · AD `8780af4`, both on **main**. **Remaining (prod):** (1) `manage.py migrate operators` on prod (0069+0070); (2) ⚠️ "lomprayah" op + mappings are **local test data** — recreate on prod w/ real operator name + real Supabase `RouteID` station IDs (autocomplete sources them); (3) prod E2E: set a reseller contract `seat_check_operator` → live seat-check. | **PROD MIGRATE + DATA + E2E PENDING** | [[seat-availability-reseller-operator-gap]] · [[station-mapping-multi-operator-design]] |
+| **SEAT-CHECK-RESELLER** | ✅ **SHIPPED + DEPLOYED → main (#261).** Reseller contracts seat-check against a source operator via `Contract.seat_check_operator` FK. Station Mapping page shows operator/API (chip + `Seat API` grid col + `?our_station=` filter), sorts by id. **Part B DONE** — `operator_station_id` is now a Supabase `RouteID` autocomplete (schema discovered via PostgREST hint, no BE proxy; see [[postgrest-exposed-schema-hint-discovery]] · [[supabase-per-operator-schema-routeid]]). Redundant `Contract.seat_availability_api_url` removed (migration `0070`); resolution strips URL whitespace. **#262: real Lomprayah operator live on prod + 3 seat-check code fixes deployed** — BE debug block on `check-seat-availability` + AD debug panel; timeout 15→25s (n8n 10-19s variable latency); **500 fix** — n8n `data:"no trip"` string crashed the parser (`.get` on a char), now guarded. BE `073623b` · AD `ef41c7b`, both on **main**. **Remaining (prod):** (1) `manage.py migrate operators` (0069+0070) if not applied; (2) **DATA: fix the wrong station mapping** — route dep station is `"boonsiri counter khaosan bangkok"` but mapping targets a different record `"Lomprayah Bangkok khao san"`; delete+recreate mapping against the correct dep station → id **43** (normal) or **44** (VIP); Our-Station is `disabled` on edit so delete+recreate required; (3) re-run seat check → live seats (n8n `43→9`/`44→9` verified). | **PROD DATA FIX + E2E PENDING** | [[seat-availability-reseller-operator-gap]] · [[station-mapping-multi-operator-design]] · [[n8n-seat-search-response-contract]] |
 | **REC-ENGINE** | ✅ **PHASES 1-5 SHIPPED 2026-07-15 → develop.** FE 4 branches merged (`fix/rec-quick-wins` · `feat/rec-purchase-event` · `fix/rec-checkout-filter` · `chore/rec-remove-ratecard-hook`). BE 1 branch (`feat/rec-never-empty-fallback`). FE `9fd5b0a5` · BE `f0aea8c`. Vault synced mid-session (4 bug docs shipped, roadmap corrected, anchor-transport-rule archived). 28/29 BE tests pass (1 pre-existing). **Remaining:** E2E verification + push to origin + BE `manage.py migrate` (0064). Editor-pick curation = separate future session. | **E2E + PUSH NEXT** | `products/services.py` · `helpers/gtmUtils.js` · [[recommendation-engine-completion-roadmap]] |
 | **CHAT-IMAGE-SEND + REALTIME** | **✅ DEPLOYED TO PROD 2026-07-21 #258** — Supabase SQL 003 run, `pip install -r requirements.txt` (Pillow bump), BE→AD→FE deployed, prod smoke passed. → closed-items.md | **CLOSED** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |
