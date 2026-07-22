@@ -4,21 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-22 (session #259)
+**Updated:** 2026-07-22 (session #260)
 
-**Achieved this session (#259):**
-- **FAQ CSS FIX** — Trip detail page FAQ section alignment + spacing fixed. Removed conflicting `mx-auto mx-2` → `mx-auto px-2 md:px-3 xl:px-0` pattern. Fixed padding conflict (`p-4` on outer → extracted to inner `<div className="p-4 md:p-5">`). Tightened heading `mb-3→mb-2`, item padding `py-2→py-3`. Also fixed `rounded-md md:rounded-lg` → `rounded-md` (design token `rounded-container`). Committed `1e6eaec0` on `fix/faq-spacing-alignment` → merged develop → pushed `4758b4b1`.
+**Achieved this session (#260):**
+- **SEAT-CHECK-RESELLER** — enabled seat-availability checks for reseller contracts (agency operator reselling another operator's transport, e.g. Silaphat resells "lomprayah"). Root cause: `check_seat_availability` hardcoded `operator = contract.operator`, so a reseller hit `MAPPING_NOT_FOUND` or sent wrong IDs to the source API. Added nullable `Contract.seat_check_operator` FK → resolution `operator = contract.seat_check_operator or contract.operator` covers both station-mapping lookups + api_url fallback. BE migration `0069`. AD: "Seat Check Operator" Autocomplete on contract form + camel→snake transform. Committed on `feat/seat-check-operator` → merged develop.
+- **STATION-MAPPING-SEAT-API-VISIBILITY** — Station Mapping page now shows which operator/API a mapping serves. `OperatorSerializer` exposes `seat_availability_api_url`; `OperatorStationMappingSerializer` adds `operator_has_api`/`operator_seat_api_url`. Dialog shows Seat API chip on operator pick; grid `Seat API` column (Live/None); new **Filter by station** dropdown (BE `?our_station=`) to see all operators mapped to one pier. `feat/mapping-dialog-supabase` → merged develop.
+- **DROP-CONTRACT-SEAT-API-URL** — removed redundant `Contract.seat_availability_api_url` (only 1/81 contracts set it, redundant test row; `seat_check_operator` + operator-level URL supersede it). BE migration `0070`. Resolution simplified to `(operator.seat_availability_api_url or '').strip() or None` — **also strips whitespace, fixing a broken GET from a trailing-space URL**. `chore/drop-contract-seat-api-url` → merged develop → **pushed** (BE `5baebe8`, AD `3fc14e0`).
 
-**Workspace (#259):**
-- frontend: `develop` (`4758b4b1`) — clean
-- backend: `develop` (`c535dd3`) — clean
-- admin-dashboard: `develop` (`b1996c7`) — clean
+**Workspace (#260):**
+- frontend: `main` (`4758b4b1`) — clean
+- backend: `develop` (`5baebe8`) — clean, **pushed** (all 3 features + removal)
+- admin-dashboard: `develop` (`3fc14e0`) — clean, **pushed**
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` to origin + E2E verify; `manage.py migrate` operators/0064 on prod.
-2. **STAFF-PUSH-NOTIFICATIONS prod setup** — (1) `NEXT_PUBLIC_VAPID_PUBLIC_KEY` → AD Vercel env + redeploy; (2) `VAPID_*` keys → BE VPS `.env` + restart; (3) `python manage.py migrate cs 0013`; (4) smoke test at prod `/cs`.
-3. **LOCATIONS-PAGE-REDESIGN** — commit + push + verify JSON-LD + mobile QA → merge develop.
+1. **SEAT-CHECK-RESELLER E2E + deploy** — on develop, not on main. Test: set contract 24 (`dKcnALtHIo-24`) `seat_check_operator=lomprayah`, run seat-check → expect live result (lomprayah URL now space-stripped). Then develop→main deploy: `manage.py migrate operators` (applies 0069+0070). ⚠️ "lomprayah" operator row + its station mappings were created as **local test data** — replicate on prod (real operator name + real Supabase station IDs).
+2. **SEAT-CHECK Part B (deferred)** — Supabase autocomplete for `operator_station_id` in mapping dialog. Blocked on real `RouteID` table name + columns (anon key can't introspect: schema `api`, zero grants; service-role withheld). Needs a BE proxy (service-role, `Accept-Profile: public`, mirror `cs/supabase_client.py`). See [[station-mapping-multi-operator-design]].
+3. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` to origin + E2E verify; `manage.py migrate` operators/0064 on prod.
 
 _(Sessions #221–#257 archived → `07-logs/session-history.md`.)_
 
@@ -56,6 +58,7 @@ _(Sessions #221–#257 archived → `07-logs/session-history.md`.)_
 
 | # | Issue | Status | Where |
 |---|-------|--------|-------|
+| **SEAT-CHECK-RESELLER** | ✅ **SHIPPED → develop (#260), pushed.** Reseller contracts can seat-check against a source operator via `Contract.seat_check_operator` FK. Station Mapping page shows operator/API (chip + `Seat API` grid col + `?our_station=` filter). Redundant `Contract.seat_availability_api_url` removed (migration `0070`); resolution strips URL whitespace. BE `5baebe8` (migrations `0069`+`0070`) · AD `3fc14e0`. **Remaining:** (1) E2E test contract `dKcnALtHIo-24` set `seat_check_operator=lomprayah` → live result; (2) develop→main deploy + `migrate operators`; (3) ⚠️ "lomprayah" op + mappings are **local test data** — recreate on prod w/ real operator name + Supabase station IDs; (4) Part B (Supabase id autocomplete) deferred — blocked on `RouteID` table shape. | **E2E + DEPLOY PENDING** | [[seat-availability-reseller-operator-gap]] · [[station-mapping-multi-operator-design]] |
 | **REC-ENGINE** | ✅ **PHASES 1-5 SHIPPED 2026-07-15 → develop.** FE 4 branches merged (`fix/rec-quick-wins` · `feat/rec-purchase-event` · `fix/rec-checkout-filter` · `chore/rec-remove-ratecard-hook`). BE 1 branch (`feat/rec-never-empty-fallback`). FE `9fd5b0a5` · BE `f0aea8c`. Vault synced mid-session (4 bug docs shipped, roadmap corrected, anchor-transport-rule archived). 28/29 BE tests pass (1 pre-existing). **Remaining:** E2E verification + push to origin + BE `manage.py migrate` (0064). Editor-pick curation = separate future session. | **E2E + PUSH NEXT** | `products/services.py` · `helpers/gtmUtils.js` · [[recommendation-engine-completion-roadmap]] |
 | **CHAT-IMAGE-SEND + REALTIME** | **✅ DEPLOYED TO PROD 2026-07-21 #258** — Supabase SQL 003 run, `pip install -r requirements.txt` (Pillow bump), BE→AD→FE deployed, prod smoke passed. → closed-items.md | **CLOSED** | [[chat-image-send/design-2026-07-12]] · [[chat-image-send-server-convergence]] |
 | **PAYMENT-RECONCILE-FIX** | ✅ **MERGED → develop `52c153d` (#234)** — reconcile gate extended to `ordering\|payment_pending`. 348/348 tests pass. **Needs:** develop → main deploy. → closed-items.md | **DEPLOY PENDING** | `orders/views.py:650` |

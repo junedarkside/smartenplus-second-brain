@@ -4,6 +4,9 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #259 — 2026-07-22
+FAQ CSS FIX — Trip detail page FAQ section alignment + spacing fixed. Removed conflicting `mx-auto mx-2` → `mx-auto px-2 md:px-3 xl:px-0`. Fixed padding conflict (`p-4` outer → inner `<div className="p-4 md:p-5">`). Tightened heading `mb-3→mb-2`, item padding `py-2→py-3`, `rounded-md md:rounded-lg` → `rounded-md`. Committed `1e6eaec0` on `fix/faq-spacing-alignment` → merged develop → pushed `4758b4b1`.
+
 ## Session #258 — 2026-07-21
 TRIPS QA + PROD DEPLOY + CHAT-IMAGE-SEND + SEAT-AVAILABILITY MIGRATE — Trips redesign QA passed, prod deployed (ISR cache flushed). CHAT-IMAGE-SEND prod deploy: Supabase SQL 003, Pillow bump, BE→AD→FE deployed, smoke passed. manage.py migrate 0066/0067/0068 on prod.
 

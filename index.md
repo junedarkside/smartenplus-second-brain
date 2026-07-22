@@ -45,6 +45,12 @@ Global navigation catalog. Updated on every ingest.
 - [[jsonld-itemlist-cap-pattern]] — **PATTERN #253.** Cap `ItemList.itemListElement` + `CollectionPage.keywords` at top ~100 — full-list JSON-LD bloats HTML (vs <100KB budget) with zero SEO gain past top entries; detail pages carry their own schema. Slice before client-side sort to keep API popularity order.
 - [[nextjs-dev-stale-module-cache]] — **GOTCHA.** `npm run dev` caches compiled modules in `.next/`; a running dev server can serve stale output after an edit, making an SSR/JSON-LD fix look "not fixed". `rm -rf .next && npm run dev` before verifying SSR/SEO changes.
 
+## Knowledge — Admin Dashboard
+
+- [[station-mapping-multi-operator-design]] — **DECISION 2026-07-22.** `operator_station_id` (single string) sufficient while all operators route through n8n proxy. Supabase `RouteID` table = source of Lomprayah station IDs. When to add `param_name`/`extra_params` fields. 4 UX fixes applied.
+- [[seat-availability-reseller-operator-gap]] — **SHIPPED → develop 2026-07-22 (#260)** (migration `0069`). Reseller contracts couldn't seat-check: `check_seat_availability` hardcoded `contract.operator`. Fix = nullable `seat_check_operator` FK → `operator = contract.seat_check_operator or contract.operator`. Follow-up: `Contract.seat_availability_api_url` REMOVED (migration `0070`, redundant) + URL whitespace-strip fix.
+- [[station-mapping-seat-api-visibility]] — **SHIPPED 2026-07-22 (#260).** Station Mapping page shows which operator/API a mapping serves: Seat API chip on operator pick + `Seat API` grid column (`operator_has_api` serializer field) + `?our_station=` filter to see all operators mapped to one pier. Part B (Supabase id autocomplete) deferred — `RouteID` anon-unreadable, needs BE proxy.
+
 ## Knowledge — UX/Design
 
 - [[slim-isr-payload-pattern]] — **PATTERN #253.** Trim nested API objects to card-shape fields inside `getStaticProps` before returning props — ~10x `__NEXT_DATA__` payload cut on index pages (147B vs 1KB+/item). Case: /trips 297→1000 routes.
