@@ -25,7 +25,9 @@ metadata:
 
 **`Operator` column now LIVE (shipped 2026-07-22).** Table is now multi-operator, filterable by operator name. Current rows all populated **`Lomprayah`** — canonical operator name finalized by Supabase team (earlier drafts wrote "Lomphaya"/"Lompraya"; "Lomprayah" is correct). Match the exact `Operator` model row when implementing. Example rows (Lomprayah): `10` = Koh Phangan, `11` = Koh Samui (Pralarn Pier), `14` = Hua Hin, `15` = Phuket, `16` = Surat Thani (Tapee Pier), `39` = Bangkok (Pinklao) (VIP BUS). Route names encode transport mode ("(VIP BUS)" vs pier) — one operator spans modes.
 
-**Auto-sync now unblocked (not yet built).** With the `Operator` column live, `OperatorStationMapping` rows could be auto-synced from Supabase (filter `Operator=X` → pull that operator's `ID`s) instead of manual entry — removing the hand-entry step. Manual entry is still the current path. Revisit building a sync job when a second operator's rows are populated in Supabase.
+**Autocomplete shipped 2026-07-22 (#261).** `operator_station_id` in the mapping dialog is now a Supabase `RouteID` autocomplete instead of free-text. Discovery needs **no BE proxy / service-role** (earlier assumption was wrong): the table lives in a **per-operator Supabase schema** (`Lomprayah` → `lompraya`, 8-char truncation), reachable with the anon key + `Accept-Profile`. The schema name is discovered at runtime by parsing the PostgREST exposed-schema **error hint** → matched to the operator by name-prefix → confirmed via the `Operator` column. Full pattern: [[postgrest-exposed-schema-hint-discovery]] · [[supabase-per-operator-schema-routeid]]. Files: `helpers/operatorRouteIds.js` (pure) + `hooks/useOperatorRouteIds.js`. Operators without a schema keep free-text; `freeSolo` preserves stale ids.
+
+**Full auto-sync still not built.** Rows could be batch-synced (filter a schema's `RouteID` → upsert `OperatorStationMapping`) to remove even the pick step. Revisit when a second operator's schema is populated in Supabase.
 
 ## When to Revisit
 

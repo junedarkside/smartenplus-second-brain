@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #261 — 2026-07-22
+SEAT-CHECK Part B SHIPPED → main — `operator_station_id` in Station Mapping dialog is now a Supabase `RouteID` autocomplete (unblocks #260's deferred item; **no BE proxy needed**). PostgREST leaks the exposed-schema list in the error `hint` on any invalid `Accept-Profile` → hook probes `schema('__probe__')`, parses hint, matches operator schema by name-prefix (longest, denylisted non-operator schemas), confirms via `Operator` col. `Lomprayah`→`lompraya` (lowercased 8-char truncation, not derivable); `RouteID` cols `Route`/`ID`/`Operator`, 39 rows. Label `"Route (ID)"`, saves `ID`; `freeSolo` preserves stale ids; no schema → free-text fallback. New `helpers/operatorRouteIds.js` (pure) + `hooks/useOperatorRouteIds.js` (module-cached discovery). Grid sorts by id asc. AD+BE deployed → main (AD `8780af4`, BE `5baebe8`). Prod remaining: `migrate operators` 0069+0070; recreate "lomprayah" op+mappings as real data. 2 atoms extracted. → [[postgrest-exposed-schema-hint-discovery]] · [[supabase-per-operator-schema-routeid]] · [[station-mapping-multi-operator-design]]
+
+---
+
+## Session #260 — 2026-07-22
+SEAT-CHECK-RESELLER — `Contract.seat_check_operator` FK lets a reseller contract check seat availability against a source operator (Silaphat resells "lomprayah"). Resolution `operator = contract.seat_check_operator or contract.operator` covers mapping lookups + api_url. BE migration `0069`, AD form Autocomplete + transform. STATION-MAPPING-SEAT-API-VISIBILITY: page shows operator/API per mapping (chip + `Seat API` grid col via `operator_has_api` serializer field + `?our_station=` filter). DROP-CONTRACT-SEAT-API-URL: removed redundant `Contract.seat_availability_api_url` (1/81 usage, migration `0070`) + URL `.strip()` fix. All merged → develop + pushed (BE `5baebe8`, AD `3fc14e0`). Part B (Supabase id autocomplete) deferred — assumed `RouteID` anon-unreadable, needs BE proxy. → [[seat-availability-reseller-operator-gap]] [[station-mapping-multi-operator-design]]
+
+---
+
 ## Session #259 — 2026-07-22
 FAQ CSS FIX — Trip detail page FAQ section alignment + spacing fixed. Removed conflicting `mx-auto mx-2` → `mx-auto px-2 md:px-3 xl:px-0`. Fixed padding conflict (`p-4` outer → inner `<div className="p-4 md:p-5">`). Tightened heading `mb-3→mb-2`, item padding `py-2→py-3`, `rounded-md md:rounded-lg` → `rounded-md`. Committed `1e6eaec0` on `fix/faq-spacing-alignment` → merged develop → pushed `4758b4b1`.
 
