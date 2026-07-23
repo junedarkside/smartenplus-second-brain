@@ -4,28 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-23 (session #263)
+**Updated:** 2026-07-24 (session #264)
 
-**Achieved this session (#263) — cart 400 + FE 401 storm + effective-station fixes:**
-- **Cart 400 fixed (production regression since `c00c87a`).** `carts/serializers.py` `get_departure_station`/`get_arrival_station` called `StationSerializer(station).data` → `ReturnDict(<string>)` → `ValueError` → 400 on every transport cart. Fixed: return `station.station_name` directly.
-- **FE stale-token 401 fixed.** Extended `publicEndpoints` skip-list in `store/api/tripsApi.js` + `store/api/api-slice.js` — stale Bearer no longer attached to `tripfilter`/`carts` (AllowAny) endpoints.
-- **B1 effective-station in recommendations + detail:** `ContractRecommendationSerializer.get_route` returns nested `{station_name: eff.station_name}` (FE reads `.station_name`); `ProductDetailSerializer.to_representation` patches `route.departure_station`/`route.arrival_station` strings.
-- **B2 admin trip search fixed:** `route__departure_station__icontains` (FK int, never matched) → `route__departure_station__station_name__icontains` + OR-branch on override `departure_station__station_name__icontains`.
-- **N+1 prevented** via `select_related('trip__departure_station', 'trip__arrival_station')` in 5 service chains + `ProductDetailViewSet.retrieve`.
-- **All merged → develop** (BE `8d03b30`, FE `b3ee0fdf`). Develop-only; not yet deployed to main.
+**Achieved this session (#264) — space-insensitive search for route management pages:**
+- **Normalized search added to 6 admin viewsets** (`products/views.py` + `stations/views.py`). Pattern: `normalize_search(s)` strips spaces/hyphens + lowercases → annotate FK fields with `Replace(Lower(F(...)), output_field=CharField())` → filter on annotated fields. Now "hatyai" / "hat yai" / "hatyaiairport" all resolve to same form → match.
+- **Viewsets patched:** `RouteViewSet`, `TripDashBoardViewSet`, `migration_audit`, `PlaceViewset`, `DashBoardStationViewSet`, `DashBoardLocationViewSet`.
+- **FieldError fix:** Added `output_field=CharField()` to all `Replace(...)` annotations traversing FK joins — required by Django 3.2 when expression type can't be inferred from nullable FK.
+- **Backend verified via curl** — all 6 endpoints return correct results; `hatyai` = `hat yai` counts match (trips: 19, routes: 11, stations: 4, locations: 1, places: 1, migration audit: 19). No 500s.
+- **Backend only — no frontend changes, no migrations.**
+- **Uncommitted** — `products/views.py` + `stations/views.py` modified on `develop`.
 
-**Workspace (#263):**
+**Workspace (#264):**
 - frontend: `develop` (`b3ee0fdf`) — clean
-- backend: `develop` (`8d03b30`) — clean
+- backend: `develop` (`8d03b30`) — **modified** (`products/views.py`, `stations/views.py`)
 - admin-dashboard: `develop` (`5415185`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Fix the station mapping DATA (prod).** Delete the wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against the route's real departure station **"boonsiri counter khaosan bangkok"** → operator id **43** (normal bus ฿1250) or **44** (VIP bus ฿1550). Our-Station is `disabled` on edit → delete+recreate required. Re-run seat check → live seats. Use debug panel to confirm resolved `from`/`to`.
-2. **Deploy develop→main** (BE + FE + AD) when ready.
-3. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
+1. **Commit + push backend search fix** — `git -C smartenplus-backend add products/views.py stations/views.py && git commit -m "feat(search): space-insensitive normalize on 6 admin viewsets"`.
+2. **Fix the station mapping DATA (prod).** Delete wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) or **44** (VIP). Delete+recreate (Our-Station disabled on edit).
+3. **Deploy develop→main** (BE + FE + AD) when ready.
+4. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
 
-_(Sessions #221–#261 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#263 archived → `07-logs/session-history.md`.)_
 
 ---
 

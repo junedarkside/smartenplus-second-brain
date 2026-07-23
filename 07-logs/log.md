@@ -1,3 +1,5 @@
+## [2026-07-24] session-end #264 | space-insensitive search: normalize_search + output_field=CharField() on 6 admin viewsets. BE verified, uncommitted.
+
 ## [2026-07-23] session-end #263 | cart 400 fix + FE stale-token 401 + effective-station B1/B2 + N+1 prevention → BE+FE develop. No new atoms.
 
 ## [2026-07-22] session-end #259 | FAQ CSS fix on trip detail page: mx-auto conflict + padding split + spacing tighten. Merged develop 4758b4b1. 1 atom: tailwind-mx-auto-conflict-pattern.

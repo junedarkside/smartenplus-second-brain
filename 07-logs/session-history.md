@@ -5,6 +5,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 ---
 
 ## Session #263 — 2026-07-23
+
+**Achieved:**
+- **Cart 400 fixed.** `carts/serializers.py` `get_departure_station`/`get_arrival_station` returned `ReturnDict(<string>)` → `ValueError` → 400 on every transport cart. Fixed: return `station.station_name` directly.
+- **FE stale-token 401 storm fixed.** Extended `publicEndpoints` skip-list in `store/api/tripsApi.js` + `store/api/api-slice.js`.
+- **B1 effective-station in recommendations + detail** — `ContractRecommendationSerializer.get_route` + `ProductDetailSerializer.to_representation` patched.
+- **B2 admin trip search fixed** — `route__departure_station__icontains` (FK int) → `route__departure_station__station_name__icontains` + OR-branch for override stations.
+- **N+1 prevented** via `select_related` in 5 service chains.
+- **All merged → develop** (BE `8d03b30`, FE `b3ee0fdf`).
+
+---
+
+## Session #263 — 2026-07-23
 CART + FE FIXES. Fixed universal cart 400 (`GET /carts/{uuid}/` broken for all transport trips since `c00c87a` merge): `carts/serializers.py` `get_departure_station`/`get_arrival_station` called `StationSerializer(station).data` → `ReturnDict(<string>)` → `ValueError 400`; fixed by returning `station.station_name` directly. Fixed FE 401 storm on public endpoints (tripfilter, carts): extended existing `publicEndpoints` skip-list in `store/api/tripsApi.js` + `store/api/api-slice.js` so stale Bearer never attached to AllowAny endpoints. Also fixed B1/B2 effective-station: `ContractRecommendationSerializer.get_route` + `ProductDetailSerializer.to_representation` now use `effective_*_station` override; admin trip search fixed (`route__departure_station__icontains` FK-int bug → `__station_name__icontains`); N+1 prevented via `select_related` in services.py + views.py. All merged → develop (BE `8d03b30`, FE `b3ee0fdf`). → [[operator-scoped-trip-station]] · [[guest-cart-401-refresh-storm]]
 
 ---
