@@ -4,24 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-22 (session #262)
+**Updated:** 2026-07-23 (session #263)
 
-**Achieved this session (#262) — prod seat-check debugging (real Lomprayah operator live):**
-- **Diagnosed prod MAPPING_NOT_FOUND = station-record mismatch.** Contract `bangkok-khao-san-to-koh-tao-1220` seat-check op = Lomprayah High Speed Catamaran (correct), but the route's **departure_station** record is `"boonsiri counter khaosan bangkok"` while the user's mapping row targets a *different* record `"Lomprayah Bangkok khao san"` (id 43). Backend matches by station **FK**, so no row → error. Arrival (Koh Tao=9) matched fine. Data-entry issue, not code. (Also confirmed real prod operator name = `Lomprayah High Speed Catamaran`; RouteID `Operator` col = `Lomprayah` → the #261 bidirectional-prefix row-confirm fix `c5d7df5` is what lets that longer name still resolve schema `lompraya`.)
-- **BE debug block on `check-seat-availability`** (`operators/views.py`) — returns operator, dep/arr station id+name, resolved `from`/`to`/`date`/`time`, the full n8n URL, and all the operator's mappings. Always on for MAPPING_NOT_FOUND; `?debug=1`-gated elsewhere. **AD panel** (`SeatAvailabilityChecker.js`) renders it under the warning so the mismatch is visible on screen. BE `feat/seat-check-debug` · AD `feat/seat-check-debug-panel`.
-- **Timeout 15→25s** (`views.py`) — n8n `/webhook/search` latency measured **10-19s, variable** (upstream operator API); 15s caught the slow tail → intermittent `OPERATOR_API_ERROR` 502. The "browser-first then works" ritual was timing luck (landing on the fast side of the distribution), not a real fix. `fix/seat-check-timeout-25s`.
-- **Fixed HTTP 500** (`views.py:1098`) — n8n returns `{"data": "no trip"}` (a **string**) when no service for the id pair/date. Parser did `data_list[0]` (→ first char) then `.get` on it → `AttributeError: 'str' object has no attribute 'get'`. Now only treats `data[0]` as a result when `data` is a non-empty **list of dicts**; string `data` → `available:null`, `seat_status:"no trip"`. `fix/seat-check-no-trip-parse`. Verified 4 payload shapes.
-- **All merged → develop → deployed to main** (BE `073623b`, AD `ef41c7b`).
+**Achieved this session (#263) — cart 400 + FE 401 storm + effective-station fixes:**
+- **Cart 400 fixed (production regression since `c00c87a`).** `carts/serializers.py` `get_departure_station`/`get_arrival_station` called `StationSerializer(station).data` → `ReturnDict(<string>)` → `ValueError` → 400 on every transport cart. Fixed: return `station.station_name` directly.
+- **FE stale-token 401 fixed.** Extended `publicEndpoints` skip-list in `store/api/tripsApi.js` + `store/api/api-slice.js` — stale Bearer no longer attached to `tripfilter`/`carts` (AllowAny) endpoints.
+- **B1 effective-station in recommendations + detail:** `ContractRecommendationSerializer.get_route` returns nested `{station_name: eff.station_name}` (FE reads `.station_name`); `ProductDetailSerializer.to_representation` patches `route.departure_station`/`route.arrival_station` strings.
+- **B2 admin trip search fixed:** `route__departure_station__icontains` (FK int, never matched) → `route__departure_station__station_name__icontains` + OR-branch on override `departure_station__station_name__icontains`.
+- **N+1 prevented** via `select_related('trip__departure_station', 'trip__arrival_station')` in 5 service chains + `ProductDetailViewSet.retrieve`.
+- **All merged → develop** (BE `8d03b30`, FE `b3ee0fdf`). Develop-only; not yet deployed to main.
 
-**Workspace (#262):**
-- frontend: `main` (`4758b4b1`) — clean
-- backend: `main` (`073623b`) — clean, **deployed** (debug + timeout 25s + no-trip parse)
-- admin-dashboard: `main` (`ef41c7b`) — clean, **deployed** (debug panel; RouteID autocomplete + prefix fix)
+**Workspace (#263):**
+- frontend: `develop` (`b3ee0fdf`) — clean
+- backend: `develop` (`8d03b30`) — clean
+- admin-dashboard: `develop` (`5415185`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Fix the station mapping DATA (prod).** Delete the wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against the route's real departure station **"boonsiri counter khaosan bangkok"** → operator id **43** (normal bus ฿1250) or **44** (VIP bus ฿1550) — pick to match the contract's vehicle/price. Our-Station field is `disabled` on edit → must delete+recreate. Then re-run seat check → expect live seats (n8n verified `43→9`/`44→9` return dicts). Use the deployed debug panel to confirm resolved `from`/`to`.
-2. **SEAT-CHECK migrate on prod** — `manage.py migrate operators` (0069+0070) if not already applied.
+1. **Fix the station mapping DATA (prod).** Delete the wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against the route's real departure station **"boonsiri counter khaosan bangkok"** → operator id **43** (normal bus ฿1250) or **44** (VIP bus ฿1550). Our-Station is `disabled` on edit → delete+recreate required. Re-run seat check → live seats. Use debug panel to confirm resolved `from`/`to`.
+2. **Deploy develop→main** (BE + FE + AD) when ready.
 3. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
 
 _(Sessions #221–#261 archived → `07-logs/session-history.md`.)_

@@ -1,3 +1,5 @@
+## [2026-07-23] session-end #263 | cart 400 fix + FE stale-token 401 + effective-station B1/B2 + N+1 prevention → BE+FE develop. No new atoms.
+
 ## [2026-07-22] session-end #259 | FAQ CSS fix on trip detail page: mx-auto conflict + padding split + spacing tighten. Merged develop 4758b4b1. 1 atom: tailwind-mx-auto-conflict-pattern.
 
 ## [2026-07-21] session-end #258 | Trips QA+prod deploy, CHAT-IMAGE-SEND prod deploy (Supabase SQL 003+Pillow bump+smoke), seat-availability migrate 0066-0068 prod. 3 items closed.

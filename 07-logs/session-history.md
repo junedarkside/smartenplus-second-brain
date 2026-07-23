@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #263 — 2026-07-23
+CART + FE FIXES. Fixed universal cart 400 (`GET /carts/{uuid}/` broken for all transport trips since `c00c87a` merge): `carts/serializers.py` `get_departure_station`/`get_arrival_station` called `StationSerializer(station).data` → `ReturnDict(<string>)` → `ValueError 400`; fixed by returning `station.station_name` directly. Fixed FE 401 storm on public endpoints (tripfilter, carts): extended existing `publicEndpoints` skip-list in `store/api/tripsApi.js` + `store/api/api-slice.js` so stale Bearer never attached to AllowAny endpoints. Also fixed B1/B2 effective-station: `ContractRecommendationSerializer.get_route` + `ProductDetailSerializer.to_representation` now use `effective_*_station` override; admin trip search fixed (`route__departure_station__icontains` FK-int bug → `__station_name__icontains`); N+1 prevented via `select_related` in services.py + views.py. All merged → develop (BE `8d03b30`, FE `b3ee0fdf`). → [[operator-scoped-trip-station]] · [[guest-cart-401-refresh-storm]]
+
+---
+
 ## Session #262 — 2026-07-22
 PROD SEAT-CHECK DEBUGGING (real Lomprayah live). Diagnosed prod MAPPING_NOT_FOUND = station-record mismatch: contract `bangkok-khao-san-to-koh-tao-1220` route dep station = `"boonsiri counter khaosan bangkok"` but mapping row targets a different record `"Lomprayah Bangkok khao san"` (backend matches by station FK) — data-entry issue. Built BE debug block on `check-seat-availability` (operator, dep/arr station id+name, from/to/date/time, n8n URL, all operator mappings; always-on for MAPPING_NOT_FOUND, `?debug=1` elsewhere) + AD panel to render it. Timeout 15→25s (n8n `/webhook/search` latency 10-19s variable; "browser-first then works" = timing luck). Fixed HTTP 500: n8n returns `{"data":"no trip"}` STRING when no service → parser did `data_list[0]`.get on a char → `AttributeError`; now guards `data` type. 4 branches merged develop → deployed main (BE `073623b`, AD `ef41c7b`). Atom [[n8n-seat-search-response-contract]]. Resume: fix prod mapping data (delete+recreate against correct dep station → id 43/44), then E2E. → [[seat-availability-reseller-operator-gap]] · [[station-mapping-multi-operator-design]] · [[n8n-seat-search-response-contract]]
 
