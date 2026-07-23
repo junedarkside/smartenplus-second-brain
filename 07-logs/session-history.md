@@ -4,6 +4,16 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #264 (2026-07-24) — space-insensitive search on 6 admin viewsets:**
+- Normalized search added to `RouteViewSet`, `TripDashBoardViewSet`, `migration_audit`, `PlaceViewset`, `DashBoardStationViewSet`, `DashBoardLocationViewSet`
+- Pattern: `normalize_search(s)` strips spaces/hyphens + lowercases → annotate FK fields with `Replace(Lower(F(...)), output_field=CharField())` → filter annotated fields
+- `output_field=CharField()` fix for Django 3.2 nullable FK expression inference
+- Backend curl-verified (trips 19, routes 11, stations 4, locations 1, places 1, migration audit 19)
+- Backend only — no frontend changes, no migrations
+- Uncommitted at session end (`products/views.py` + `stations/views.py`)
+
+---
+
 ## Session #263 — 2026-07-23
 
 **Achieved:**

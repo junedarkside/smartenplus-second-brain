@@ -4,20 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-24 (session #264)
+**Updated:** 2026-07-24 (session #265)
 
-**Achieved this session (#264) — space-insensitive search for route management pages:**
-- **Normalized search added to 6 admin viewsets** (`products/views.py` + `stations/views.py`). Pattern: `normalize_search(s)` strips spaces/hyphens + lowercases → annotate FK fields with `Replace(Lower(F(...)), output_field=CharField())` → filter on annotated fields. Now "hatyai" / "hat yai" / "hatyaiairport" all resolve to same form → match.
-- **Viewsets patched:** `RouteViewSet`, `TripDashBoardViewSet`, `migration_audit`, `PlaceViewset`, `DashBoardStationViewSet`, `DashBoardLocationViewSet`.
-- **FieldError fix:** Added `output_field=CharField()` to all `Replace(...)` annotations traversing FK joins — required by Django 3.2 when expression type can't be inferred from nullable FK.
-- **Backend verified via curl** — all 6 endpoints return correct results; `hatyai` = `hat yai` counts match (trips: 19, routes: 11, stations: 4, locations: 1, places: 1, migration audit: 19). No 500s.
-- **Backend only — no frontend changes, no migrations.**
-- **Uncommitted** — `products/views.py` + `stations/views.py` modified on `develop`.
+**Achieved this session (#265) — AD route management: auto-name + duplicate detection:**
+- **Auto-default route name** from departure → arrival station names on create (`"DepName → ArrName"`). Stops auto-filling once user manually edits name (`nameEditedByUser` ref). Resets on dialog close.
+- **Station-pair duplicate check** on station select (lazy RTK query `useLazyGetRoutesQuery`). Inline MUI `Alert` warning.
+- **Route-name duplicate check** at submit time (case-insensitive). Both checks merged.
+- **Confirm dialog** required to override any duplicate (either station-pair or name match). Edit mode excludes self from match. Cancel restores Formik submitting=false.
+- `FormControl` replaced with `Field`+`TextField` for `route_name` to fix Formik onChange override bug.
+- `useLazyGetRoutesQuery` exported from `store/api/routesApi.js`.
+- **Committed `e02fff3` → AD `develop`, pushed to `origin/develop`. Clean.**
+- Backend: `products/views.py` + `stations/views.py` still uncommitted from #264.
 
-**Workspace (#264):**
+**Workspace (#265):**
 - frontend: `develop` (`b3ee0fdf`) — clean
-- backend: `develop` (`8d03b30`) — **modified** (`products/views.py`, `stations/views.py`)
-- admin-dashboard: `develop` (`5415185`) — clean
+- backend: `develop` (`8d03b30`) — **modified** (`products/views.py`, `stations/views.py`) — uncommitted from #264
+- admin-dashboard: `develop` (`e02fff3`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
