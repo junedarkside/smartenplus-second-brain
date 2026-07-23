@@ -21,7 +21,7 @@
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Commit + push backend search fix** — `git -C smartenplus-backend add products/views.py stations/views.py && git commit -m "feat(search): space-insensitive normalize on 6 admin viewsets"`.
+1. **Commit + push backend search fix** — `git -C smartenplus-backend add products/views.py stations/views.py && git commit -m "feat(search): space-insensitive normalize on 6 admin viewsets"`. ✅ Backend curl-verified: trips 19, routes 11, stations 4, locations 1, places 1, migration audit 19 — all match "hatyai"="hat yai".
 2. **Fix the station mapping DATA (prod).** Delete wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) or **44** (VIP). Delete+recreate (Our-Station disabled on edit).
 3. **Deploy develop→main** (BE + FE + AD) when ready.
 4. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
