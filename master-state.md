@@ -4,32 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-24 (session #268)
+**Updated:** 2026-07-24 (session #269)
 
-**Achieved this session (#268) — AD locations: soft duplicate warning (FE-only):**
-- **Feature.** `/routemanagement/locations` create+edit now warns when a location duplicates an existing one (same normalized name + city/province) with a **"Save Anyway"** override. Soft guard — **no backend change**.
-- **Investigation (2 Explore agents + vault + FE/BE safety grep):** NO dup prevention anywhere — BE `DashBoardLocationWriteSerializer` has no `validate()`, Location model no `unique_together`; prod dupes already exist (admin `show_duplicates`). Station serializer HAS the iexact-validate pattern; Location lacked it. User chose FE-soft (BE `unique_together` migration would FAIL on existing prod dupes; avoid shared-path risk).
-- **New shared modules (one impl, both dialogs):** `components/location/locationDuplicateUtils.js` — `normalizeLocationName()` (mirrors BE `normalize_location`: lower + strip space/hyphen) + `findDuplicateLocations()`. `components/location/useLocationDuplicateCheck.js` — `useLazyGetLocationsQuery` + detect, **fails open** on error (network error never blocks save).
-- **Modified:** `store/api/locationsApi.js` (+`useLazyGetLocationsQuery` export), `locationEdit.js` + `LocationCreateDialog.js` (split submit→`doSubmit` + pre-check wrapper; warning `Alert` listing matches; Save Anyway/Cancel; edit passes `excludeId` so no self-flag; `LocationCreateDialog.doSubmit` now `setStatus` — fixed pre-existing dead `{error}` return).
-- **Reuse/safety:** pattern from `route/routeEdit.js` runDuplicateCheck + confirm dialog; no copy-paste between dialogs (shared util); NO touch to `useFilters.js` display-dedup / route / station / contract / backend.
-- **Shipped:** lint clean (eslint exit 0), commit `f5ec0a6` → merged `--no-ff` → AD develop `1923124`, pushed. `migration.js` wip stashed during merge, restored after.
+**Achieved this session (#269) — AD contracts: Trip/Route column + grouped trip picker:**
+- **Trip/Route column in contracts grid.** `ContractSerializer` now exposes nested `trip` (using existing `TripWithRouteSerializer`). Moved `RouteWithStationsSerializer` + `TripWithRouteSerializer` above `ContractSerializer` to fix forward-ref ordering. Extended `ContractViewSet.queryset` `select_related` to cover `trip__route__departure_station/arrival_station` (no N+1). BE `ae68e51` → develop pushed.
+- **AD `ContractsDataGrid.jsx`:** new "Trip / Route" col (`flex:1, minWidth:220`) shows `departure_station → arrival_station`; non-transport = `-`; `Tooltip` surfaces full text when clipped. Desktop only. AD `feat/trip-picker-shared-operator` → merged `--no-ff` → develop `0484eac` pushed.
 - ⏳ Manual QA NOT run.
 
-**Workspace (#268):**
+**Workspace (#269):**
 - frontend: `develop` (`b3ee0fdf`) — clean
-- backend: `develop` (`d39ca6d`) — clean
-- admin-dashboard: **develop `1923124`** (feature merged + pushed). Live branch left on `feat/location-duplicate-warning` (`f5ec0a6`) with `migration.js` uncommitted wip (pre-existing, unrelated).
+- backend: `develop` (`ae68e51`) — clean
+- admin-dashboard: **develop `0484eac`** — `migration.js` uncommitted wip (pre-existing, unrelated)
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Manual QA location dup-warning** at `localhost:3001/routemanagement/locations` — create dup name (vary case/space/hyphen → proves normalize), expect warning + Save Anyway/Cancel; unique name → no warning; edit-save-no-rename → no self-flag; inline `LocationCreateDialog` (contract editor) same behavior; offline → fails open (save proceeds).
-2. **Manual QA Support SEP resend** (#267 carry) at `localhost:3001/bookings` — Resend → `(N+1)` live + persist. Decide `user=request.user` scope question.
-3. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips` — checklist in `~/.claude/plans/check-vault-and-scan-kind-hickey.md`.
-4. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP). Delete+recreate (Our-Station disabled on edit).
-5. **Deploy develop→main** (BE + FE + AD) when ready.
-6. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
+1. **Manual QA contracts Trip/Route col** at `localhost:3001/routemanagement/contracts?page=2&pageSize=10&operators=1` — transport rows show station pair; non-transport shows `-`; hover tooltip shows full text.
+2. **Manual QA location dup-warning** (#268 carry) at `localhost:3001/routemanagement/locations`.
+3. **Manual QA Support SEP resend** (#267 carry) at `localhost:3001/bookings`.
+4. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips`.
+5. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
+6. **Deploy develop→main** (BE + FE + AD) when ready.
 
-_(Sessions #221–#267 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#268 archived → `07-logs/session-history.md`.)_
 
 ---
 

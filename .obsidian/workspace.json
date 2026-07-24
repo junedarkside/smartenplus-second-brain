@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "0747098c523b5520",
+        "id": "1f7da77a36fc7adf",
         "type": "tabs",
         "children": [
           {
-            "id": "57c49ca9e38d33f4",
+            "id": "ba5bdb5c0d57c151",
             "type": "leaf",
             "state": {
               "type": "graph",
@@ -80,8 +80,7 @@
               "title": "Graph view"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "horizontal",
@@ -187,7 +186,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "57c49ca9e38d33f4",
+  "active": "ba5bdb5c0d57c151",
   "lastOpenFiles": [
     "08-archive/rate-review-uxui-audit-2026-06-06/r2-skeptic.md",
     "01-projects/seo-aeo-geo-live-audit-2026-06-22/r10-live-prod-2026-06-26.md",

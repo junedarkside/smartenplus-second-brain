@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #268 (2026-07-24) — AD locations: soft duplicate warning (FE-only):**
+- `/routemanagement/locations` create+edit warns on duplicate name (normalized). Save Anyway override. No BE change.
+- Shared utils: `locationDuplicateUtils.js` + `useLocationDuplicateCheck.js`. Pattern from route duplicate check.
+- Modified: `locationsApi.js`, `locationEdit.js`, `LocationCreateDialog.js`.
+- Shipped: `f5ec0a6` → merged `--no-ff` → AD develop `1923124`. ⏳ Manual QA not run.
+
+---
+
 **Session #267 (2026-07-24) — AD bookings: Support SEP resend counter live update:**
 - **Root cause traced end-to-end.** "Support SEP" col (`DataGridComp.js:230`) → `renderResendOp` → `ResendOp` `Resend (N)` button (`number=row.added`). N stuck at (0) despite backend working.
 - **Backend CORRECT (untouched):** POST `/admin-dashboard/booking-send/` → `SendBookingViewSet.create` → `booking.added += 1; booking.save()` (`bookings/views.py:406`). `added` in `BookingSummarySerializer` (`serializers.py:191`). DB increment persists.
