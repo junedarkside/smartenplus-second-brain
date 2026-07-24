@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #267 (2026-07-24) — AD bookings: Support SEP resend counter live update:**
+- **Root cause traced end-to-end.** "Support SEP" col (`DataGridComp.js:230`) → `renderResendOp` → `ResendOp` `Resend (N)` button (`number=row.added`). N stuck at (0) despite backend working.
+- **Backend CORRECT (untouched):** POST `/admin-dashboard/booking-send/` → `SendBookingViewSet.create` → `booking.added += 1; booking.save()` (`bookings/views.py:406`). `added` in `BookingSummarySerializer` (`serializers.py:191`). DB increment persists.
+- **Bug 1 (primary):** `ResendOp` POSTed via raw `clientFetchDataFromApi` — no cache invalidation → RTK held stale `added:0` for the session. **Fix:** new `resendBookingToOperator` mutation in `ordersApi.js` (`invalidatesTags:['Booking','BookingSummary']`); `ResendOp` rewritten to `useResendBookingToOperatorMutation` — same props (no ripple to `DataGridComp`), added error branch + `disabled` while sending. Grid auto-refetches → N updates live.
+- **Bug 2 (latent):** `getBookingSummary` missing `transformResponse` that every sibling query has (BE paginated `{results}`). Added `(r) => r?.results ?? r` — one-liner, so `added`/all fields reach rows.
+- **Files:** `store/api/ordersApi.js`, `components/booking/ResendOp.js`. Committed `7aea52c` → merged `--no-ff` → AD develop (`36ec8ea`), pushed. No lint/build run this session.
+- ⏳ Manual QA NOT run — click Resend, expect (N+1) live + persist on reload.
+- **⚠️ Flagged (out of scope):** `BookingSummaryViewSet.get_queryset` filters `user=request.user` + `order__status='paid'` (`bookings/views.py:48-52`) — admin page scoped to logged-in admin's own paid bookings. If admin should see ALL users' bookings, that endpoint is wrong. User's call.
+- ✅ Backend #264 search fix COMMITTED this session — `d39ca6d` → develop, pushed. All 4 repos now clean.
+
+---
+
 **Session #266 (2026-07-24) — AD trips: Copy Trip + time-aware duplicate warning:**
 - **Copy Trip** — `ContentCopyOutlined` row action opens dialog in create-mode prefilled from source row. Frontend-only (no backend endpoint — trip has no deep children). "Copy Trip — {route}" title.
 - **Time-aware duplicate warning** (frontend-only, non-blocking). 3-way rule: scheduled = route+operator+dep_time+arr_time; timeless charter/transfer = route+operator+override stations. Operator NULL (shared) normalized both sides (`?? ''`). Confirm dialog names matched trip(s) + 100-row-cap disclosure. Ports the `routeEdit.js` lazy-query pattern from #265.

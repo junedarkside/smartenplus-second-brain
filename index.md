@@ -191,6 +191,7 @@ Global navigation catalog. Updated on every ingest.
 - [[docker-production|Docker Production]] — docker-compose-rds.yml, memory budgets, deploy
 - [[coupons|Coupons]] — Coupon model, times_used F()+1, restrictions
 - [[stations|Stations]] — Station, Location, Place, Timeline, RouteByLocationInfo
+- [[location-duplicate-soft-guard]] — **NEW 2026-07-24 (#268).** AD `/routemanagement/locations` FE-only soft dup warning + Save Anyway. `normalizeLocationName` mirrors BE `normalize_location`; shared util both dialogs. BE `unique_together` skipped — existing prod dupes block migration. Merged `1923124` → AD develop.
 - [[policies|Policies]] — CancellationPolicy, CancellationPolicies, BaggagePolicy, GeneralInformation
 - [[dialogue|Dialogue]] — Review, Thread, Post, Comment, Reaction (WordPress), GenericForeignKey patterns
 - [[recommendation-system|Recommendation System]] — precompute tasks, cache warming, beat schedule, Popular Routes admin analytics page

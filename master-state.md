@@ -4,32 +4,32 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-24 (session #267)
+**Updated:** 2026-07-24 (session #268)
 
-**Achieved this session (#267) — AD bookings: Support SEP resend counter live update:**
-- **Root cause traced end-to-end.** "Support SEP" col (`DataGridComp.js:230`) → `renderResendOp` → `ResendOp` `Resend (N)` button (`number=row.added`). N stuck at (0) despite backend working.
-- **Backend CORRECT (untouched):** POST `/admin-dashboard/booking-send/` → `SendBookingViewSet.create` → `booking.added += 1; booking.save()` (`bookings/views.py:406`). `added` in `BookingSummarySerializer` (`serializers.py:191`). DB increment persists.
-- **Bug 1 (primary):** `ResendOp` POSTed via raw `clientFetchDataFromApi` — no cache invalidation → RTK held stale `added:0` for the session. **Fix:** new `resendBookingToOperator` mutation in `ordersApi.js` (`invalidatesTags:['Booking','BookingSummary']`); `ResendOp` rewritten to `useResendBookingToOperatorMutation` — same props (no ripple to `DataGridComp`), added error branch + `disabled` while sending. Grid auto-refetches → N updates live.
-- **Bug 2 (latent):** `getBookingSummary` missing `transformResponse` that every sibling query has (BE paginated `{results}`). Added `(r) => r?.results ?? r` — one-liner, so `added`/all fields reach rows.
-- **Files:** `store/api/ordersApi.js`, `components/booking/ResendOp.js`. Committed `7aea52c` → merged `--no-ff` → AD develop (`36ec8ea`), pushed. No lint/build run this session.
-- ⏳ Manual QA NOT run — click Resend, expect (N+1) live + persist on reload.
-- **⚠️ Flagged (out of scope):** `BookingSummaryViewSet.get_queryset` filters `user=request.user` + `order__status='paid'` (`bookings/views.py:48-52`) — admin page scoped to logged-in admin's own paid bookings. If admin should see ALL users' bookings, that endpoint is wrong. User's call.
-- ✅ Backend #264 search fix COMMITTED this session — `d39ca6d` → develop, pushed. All 4 repos now clean.
+**Achieved this session (#268) — AD locations: soft duplicate warning (FE-only):**
+- **Feature.** `/routemanagement/locations` create+edit now warns when a location duplicates an existing one (same normalized name + city/province) with a **"Save Anyway"** override. Soft guard — **no backend change**.
+- **Investigation (2 Explore agents + vault + FE/BE safety grep):** NO dup prevention anywhere — BE `DashBoardLocationWriteSerializer` has no `validate()`, Location model no `unique_together`; prod dupes already exist (admin `show_duplicates`). Station serializer HAS the iexact-validate pattern; Location lacked it. User chose FE-soft (BE `unique_together` migration would FAIL on existing prod dupes; avoid shared-path risk).
+- **New shared modules (one impl, both dialogs):** `components/location/locationDuplicateUtils.js` — `normalizeLocationName()` (mirrors BE `normalize_location`: lower + strip space/hyphen) + `findDuplicateLocations()`. `components/location/useLocationDuplicateCheck.js` — `useLazyGetLocationsQuery` + detect, **fails open** on error (network error never blocks save).
+- **Modified:** `store/api/locationsApi.js` (+`useLazyGetLocationsQuery` export), `locationEdit.js` + `LocationCreateDialog.js` (split submit→`doSubmit` + pre-check wrapper; warning `Alert` listing matches; Save Anyway/Cancel; edit passes `excludeId` so no self-flag; `LocationCreateDialog.doSubmit` now `setStatus` — fixed pre-existing dead `{error}` return).
+- **Reuse/safety:** pattern from `route/routeEdit.js` runDuplicateCheck + confirm dialog; no copy-paste between dialogs (shared util); NO touch to `useFilters.js` display-dedup / route / station / contract / backend.
+- **Shipped:** lint clean (eslint exit 0), commit `f5ec0a6` → merged `--no-ff` → AD develop `1923124`, pushed. `migration.js` wip stashed during merge, restored after.
+- ⏳ Manual QA NOT run.
 
-**Workspace (#267):**
+**Workspace (#268):**
 - frontend: `develop` (`b3ee0fdf`) — clean
-- backend: `develop` (`d39ca6d`) — clean (search-normalize #264 committed + pushed)
-- admin-dashboard: `develop` (`36ec8ea`) — clean
+- backend: `develop` (`d39ca6d`) — clean
+- admin-dashboard: **develop `1923124`** (feature merged + pushed). Live branch left on `feat/location-duplicate-warning` (`f5ec0a6`) with `migration.js` uncommitted wip (pre-existing, unrelated).
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Manual QA Support SEP resend** at `localhost:3001/bookings` — click Resend on a paid booking, expect success snackbar + `Resend (N+1)` live (no reload) + persist on reload. Decide the `user=request.user` scope question (see flag above).
-2. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips` — 10-item checklist in `~/.claude/plans/check-vault-and-scan-kind-hickey.md` (timeless/timed dup, operator-NULL normalize, Formik key copy-A→B, copy-of-shared guardrail, override-station prefill).
-3. **Fix the station mapping DATA (prod).** Delete wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) or **44** (VIP). Delete+recreate (Our-Station disabled on edit).
-4. **Deploy develop→main** (BE + FE + AD) when ready.
-5. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
+1. **Manual QA location dup-warning** at `localhost:3001/routemanagement/locations` — create dup name (vary case/space/hyphen → proves normalize), expect warning + Save Anyway/Cancel; unique name → no warning; edit-save-no-rename → no self-flag; inline `LocationCreateDialog` (contract editor) same behavior; offline → fails open (save proceeds).
+2. **Manual QA Support SEP resend** (#267 carry) at `localhost:3001/bookings` — Resend → `(N+1)` live + persist. Decide `user=request.user` scope question.
+3. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips` — checklist in `~/.claude/plans/check-vault-and-scan-kind-hickey.md`.
+4. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP). Delete+recreate (Our-Station disabled on edit).
+5. **Deploy develop→main** (BE + FE + AD) when ready.
+6. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
 
-_(Sessions #221–#263 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#267 archived → `07-logs/session-history.md`.)_
 
 ---
 
