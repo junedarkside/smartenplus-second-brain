@@ -14,21 +14,20 @@
 - **Files:** `store/api/ordersApi.js`, `components/booking/ResendOp.js`. Committed `7aea52c` → merged `--no-ff` → AD develop (`36ec8ea`), pushed. No lint/build run this session.
 - ⏳ Manual QA NOT run — click Resend, expect (N+1) live + persist on reload.
 - **⚠️ Flagged (out of scope):** `BookingSummaryViewSet.get_queryset` filters `user=request.user` + `order__status='paid'` (`bookings/views.py:48-52`) — admin page scoped to logged-in admin's own paid bookings. If admin should see ALL users' bookings, that endpoint is wrong. User's call.
-- Backend: `products/views.py` + `stations/views.py` STILL uncommitted from #264.
+- ✅ Backend #264 search fix COMMITTED this session — `d39ca6d` → develop, pushed. All 4 repos now clean.
 
 **Workspace (#267):**
 - frontend: `develop` (`b3ee0fdf`) — clean
-- backend: `develop` (`8d03b30`) — **modified** (`products/views.py`, `stations/views.py`) — uncommitted from #264
+- backend: `develop` (`d39ca6d`) — clean (search-normalize #264 committed + pushed)
 - admin-dashboard: `develop` (`36ec8ea`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-0. **Manual QA Support SEP resend** at `localhost:3001/bookings` — click Resend on a paid booking, expect success snackbar + `Resend (N+1)` live (no reload) + persist on reload. Decide the `user=request.user` scope question (see flag above).
-1. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips` — 10-item checklist in `~/.claude/plans/check-vault-and-scan-kind-hickey.md` (timeless/timed dup, operator-NULL normalize, Formik key copy-A→B, copy-of-shared guardrail, override-station prefill).
-2. **Commit + push backend search fix** — `git -C smartenplus-backend add products/views.py stations/views.py && git commit -m "feat(search): space-insensitive normalize on 6 admin viewsets"`. ✅ Backend curl-verified: trips 19, routes 11, stations 4, locations 1, places 1, migration audit 19 — all match "hatyai"="hat yai".
-2. **Fix the station mapping DATA (prod).** Delete wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) or **44** (VIP). Delete+recreate (Our-Station disabled on edit).
-3. **Deploy develop→main** (BE + FE + AD) when ready.
-4. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
+1. **Manual QA Support SEP resend** at `localhost:3001/bookings` — click Resend on a paid booking, expect success snackbar + `Resend (N+1)` live (no reload) + persist on reload. Decide the `user=request.user` scope question (see flag above).
+2. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips` — 10-item checklist in `~/.claude/plans/check-vault-and-scan-kind-hickey.md` (timeless/timed dup, operator-NULL normalize, Formik key copy-A→B, copy-of-shared guardrail, override-station prefill).
+3. **Fix the station mapping DATA (prod).** Delete wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) or **44** (VIP). Delete+recreate (Our-Station disabled on edit).
+4. **Deploy develop→main** (BE + FE + AD) when ready.
+5. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.
 
 _(Sessions #221–#263 archived → `07-logs/session-history.md`.)_
 
