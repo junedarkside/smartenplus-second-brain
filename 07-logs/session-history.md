@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #266 (2026-07-24) — AD trips: Copy Trip + time-aware duplicate warning:**
+- **Copy Trip** — `ContentCopyOutlined` row action opens dialog in create-mode prefilled from source row. Frontend-only (no backend endpoint — trip has no deep children). "Copy Trip — {route}" title.
+- **Time-aware duplicate warning** (frontend-only, non-blocking). 3-way rule: scheduled = route+operator+dep_time+arr_time; timeless charter/transfer = route+operator+override stations. Operator NULL (shared) normalized both sides (`?? ''`). Confirm dialog names matched trip(s) + 100-row-cap disclosure. Ports the `routeEdit.js` lazy-query pattern from #265.
+- **`tripsApi.js`** — transform preserves raw override station ids + null-guard; exports `useLazyGetTripsQuery`. `contract_trip_count` in list operator column.
+- Fixed pre-existing edit-prefill bug (override stations blank on edit). Copy-of-shared blast-radius guardrail Alert.
+- UX + BD experts audited plan pre-build. Committed `78c7fa2` → merged `--no-ff` → AD develop (`0b0b301`). Lint clean, `next build` passes. Manual QA (10-item) NOT run.
+
 **Session #265 (2026-07-24) — AD route management: auto-name + duplicate detection:**
 - Auto-default route name from dep → arr station names on create; stops on manual edit (`nameEditedByUser` ref); resets on close
 - Station-pair dup check on select (lazy `useLazyGetRoutesQuery`) + route-name dup check at submit (case-insensitive), merged
