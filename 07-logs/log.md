@@ -1,3 +1,4 @@
+## [2026-07-24] session-end #266 | AD trips: Copy Trip (frontend prefill) + time-aware dup warning (3-way: scheduled=times, timeless=stations). UX+BD audit pre-build. Merged 0b0b301 → AD develop. QA pending.
 ## [2026-07-24] session-end #265 | AD route auto-name from stations + duplicate detection (station-pair + name) + confirm dialog. Committed e02fff3 → AD develop.
 ## [2026-07-24] session-end #264b | curl-verified normalized search on all 6 endpoints + FE browser test guide. No new code.
 ## [2026-07-24] session-end #264 | space-insensitive search: normalize_search + output_field=CharField() on 6 admin viewsets. BE verified, uncommitted.

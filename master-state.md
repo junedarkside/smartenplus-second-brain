@@ -4,26 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-24 (session #265)
+**Updated:** 2026-07-24 (session #266)
 
-**Achieved this session (#265) — AD route management: auto-name + duplicate detection:**
-- **Auto-default route name** from departure → arrival station names on create (`"DepName → ArrName"`). Stops auto-filling once user manually edits name (`nameEditedByUser` ref). Resets on dialog close.
-- **Station-pair duplicate check** on station select (lazy RTK query `useLazyGetRoutesQuery`). Inline MUI `Alert` warning.
-- **Route-name duplicate check** at submit time (case-insensitive). Both checks merged.
-- **Confirm dialog** required to override any duplicate (either station-pair or name match). Edit mode excludes self from match. Cancel restores Formik submitting=false.
-- `FormControl` replaced with `Field`+`TextField` for `route_name` to fix Formik onChange override bug.
-- `useLazyGetRoutesQuery` exported from `store/api/routesApi.js`.
-- **Committed `e02fff3` → AD `develop`, pushed to `origin/develop`. Clean.**
+**Achieved this session (#266) — AD trips: Copy Trip + time-aware duplicate warning:**
+- **Copy Trip** — `ContentCopyOutlined` row action opens dialog in create-mode prefilled from source row. Frontend-only (no backend endpoint — trip has no deep children). "Copy Trip — {route}" title.
+- **Time-aware duplicate warning** (frontend-only, non-blocking). 3-way rule: scheduled = route+operator+dep_time+arr_time; timeless charter/transfer = route+operator+override stations. Operator NULL (shared) normalized both sides (`?? ''`). Confirm dialog names matched trip(s) + 100-row-cap disclosure. Ports the `routeEdit.js` lazy-query pattern from #265.
+- **`tripsApi.js`** — transform now preserves raw override station ids (`departure_station_id`/`arrival_station_id`) + null-guard; exports `useLazyGetTripsQuery`. `contract_trip_count` surfaced in list operator column.
+- **Fixed pre-existing edit-prefill bug** — override stations showed blank on edit (transform clobbered ids); `handleEditOpen`/`handleCopyOpen` now map raw ids into form fields.
+- **Copy-of-shared blast-radius guardrail** Alert (copy was the only path bypassing the existing edit-only warning).
+- **Process:** plan audited by UX + BD experts before build (both APPROVE-WITH-CHANGES; all folded in). Files: `components/trips/tripEdit.js`, `pages/routemanagement/trips/index.js`, `store/api/tripsApi.js`.
+- **Committed `78c7fa2` → merged `--no-ff` → AD develop (`0b0b301`), pushed. Lint clean, `next build` passes.**
+- ⏳ Manual QA (10-item checklist) NOT yet run — needs running app + real data.
 - Backend: `products/views.py` + `stations/views.py` still uncommitted from #264.
 
-**Workspace (#265):**
+**Workspace (#266):**
 - frontend: `develop` (`b3ee0fdf`) — clean
 - backend: `develop` (`8d03b30`) — **modified** (`products/views.py`, `stations/views.py`) — uncommitted from #264
-- admin-dashboard: `develop` (`e02fff3`) — clean
+- admin-dashboard: `develop` (`0b0b301`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Commit + push backend search fix** — `git -C smartenplus-backend add products/views.py stations/views.py && git commit -m "feat(search): space-insensitive normalize on 6 admin viewsets"`. ✅ Backend curl-verified: trips 19, routes 11, stations 4, locations 1, places 1, migration audit 19 — all match "hatyai"="hat yai".
+1. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips` — 10-item checklist in `~/.claude/plans/check-vault-and-scan-kind-hickey.md` (timeless/timed dup, operator-NULL normalize, Formik key copy-A→B, copy-of-shared guardrail, override-station prefill).
+2. **Commit + push backend search fix** — `git -C smartenplus-backend add products/views.py stations/views.py && git commit -m "feat(search): space-insensitive normalize on 6 admin viewsets"`. ✅ Backend curl-verified: trips 19, routes 11, stations 4, locations 1, places 1, migration audit 19 — all match "hatyai"="hat yai".
 2. **Fix the station mapping DATA (prod).** Delete wrong mapping (Lomprayah → "Lomprayah Bangkok khao san"), recreate against `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) or **44** (VIP). Delete+recreate (Our-Station disabled on edit).
 3. **Deploy develop→main** (BE + FE + AD) when ready.
 4. **REC-ENGINE E2E + PUSH** — push BE `feat/rec-never-empty-fallback` + E2E; `migrate` operators/0064.

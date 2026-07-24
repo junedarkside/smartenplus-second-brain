@@ -4,6 +4,15 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #265 (2026-07-24) — AD route management: auto-name + duplicate detection:**
+- Auto-default route name from dep → arr station names on create; stops on manual edit (`nameEditedByUser` ref); resets on close
+- Station-pair dup check on select (lazy `useLazyGetRoutesQuery`) + route-name dup check at submit (case-insensitive), merged
+- Confirm dialog to override any dup; edit mode excludes self
+- `FormControl` → `Field`+`TextField` for route_name (Formik onChange override bug)
+- Committed `e02fff3` → AD develop, pushed
+
+---
+
 **Session #264 (2026-07-24) — space-insensitive search on 6 admin viewsets:**
 - Normalized search added to `RouteViewSet`, `TripDashBoardViewSet`, `migration_audit`, `PlaceViewset`, `DashBoardStationViewSet`, `DashBoardLocationViewSet`
 - Pattern: `normalize_search(s)` strips spaces/hyphens + lowercases → annotate FK fields with `Replace(Lower(F(...)), output_field=CharField())` → filter annotated fields
