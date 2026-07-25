@@ -4,17 +4,17 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-24 (session #269)
+**Updated:** 2026-07-25 (session #270)
 
-**Achieved this session (#269) — AD contracts: Trip/Route column + grouped trip picker:**
-- **Trip/Route column in contracts grid.** `ContractSerializer` now exposes nested `trip` (using existing `TripWithRouteSerializer`). Moved `RouteWithStationsSerializer` + `TripWithRouteSerializer` above `ContractSerializer` to fix forward-ref ordering. Extended `ContractViewSet.queryset` `select_related` to cover `trip__route__departure_station/arrival_station` (no N+1). BE `ae68e51` → develop pushed.
-- **AD `ContractsDataGrid.jsx`:** new "Trip / Route" col (`flex:1, minWidth:220`) shows `departure_station → arrival_station`; non-transport = `-`; `Tooltip` surfaces full text when clipped. Desktop only. AD `feat/trip-picker-shared-operator` → merged `--no-ff` → develop `0484eac` pushed.
-- ⏳ Manual QA NOT run.
+**Achieved this session (#270) — all 3 repos shipped to production:**
+- Fixed git checkout error (`migration.js` uncommitted WIP blocked branch switch).
+- AD `migration.js`: added `HelpIcon` tooltip to Trip Migration page. Committed `1b079b2` → main.
+- BE + FE + AD all on `main` — shipped to production.
 
-**Workspace (#269):**
-- frontend: `develop` (`b3ee0fdf`) — clean
-- backend: `develop` (`ae68e51`) — clean
-- admin-dashboard: **develop `0484eac`** — `migration.js` uncommitted wip (pre-existing, unrelated)
+**Workspace (#270):**
+- frontend: `main` (`b3ee0fdf`) — clean
+- backend: `main` (`ae68e51`) — `resources.txt` uncommitted change
+- admin-dashboard: `main` (`1b079b2`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
@@ -23,7 +23,7 @@
 3. **Manual QA Support SEP resend** (#267 carry) at `localhost:3001/bookings`.
 4. **Manual QA trips Copy + dup-warning** at `localhost:3001/routemanagement/trips`.
 5. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
-6. **Deploy develop→main** (BE + FE + AD) when ready.
+6. **Check BE `resources.txt`** uncommitted change — commit or discard.
 
 _(Sessions #221–#268 archived → `07-logs/session-history.md`.)_
 

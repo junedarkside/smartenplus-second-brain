@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #269 (2026-07-24) — AD contracts: Trip/Route column + grouped trip picker:**
+- `ContractSerializer` exposes nested `trip` via `TripWithRouteSerializer`. `select_related` extended to cover `trip__route__departure_station/arrival_station`. BE `ae68e51` → develop.
+- `ContractsDataGrid.jsx`: new "Trip / Route" col (`flex:1, minWidth:220`) — `departure_station → arrival_station`; non-transport = `-`; Tooltip clips. AD `0484eac` → develop.
+- ⚠️ Manual QA NOT run.
+
+---
+
 **Session #268 (2026-07-24) — AD locations: soft duplicate warning (FE-only):**
 - `/routemanagement/locations` create+edit warns on duplicate name (normalized). Save Anyway override. No BE change.
 - Shared utils: `locationDuplicateUtils.js` + `useLocationDuplicateCheck.js`. Pattern from route duplicate check.
