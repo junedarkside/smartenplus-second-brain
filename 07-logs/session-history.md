@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #272 (2026-07-26) — Dashboard redesign merge + profile menu link:**
+- Added Dashboard link to profile menu Account section (`components/auth/ProfileMenu.js`).
+- Merged `feat/dashboard-redesign` → develop `8401d3fd`, pushed.
+
+---
+
 **Session #271 (2026-07-26) — Account dashboard redesign + profile menu dashboard link:**
 - Audited `/account/dashboard` with 3-specialist agent team (UX/UI + React architecture + Next.js perf) + design token audit.
 - `ProfileHeader.js`: 358→90 lines — collapsed mobile/desktop JSX duplication, removed `showStats`/`stats` props, extracted `stringToColor`/`stringAvatar` to `helpers/avatarHelpers.js`, applied COLORS tokens.

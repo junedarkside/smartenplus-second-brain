@@ -1,3 +1,4 @@
+## [2026-07-26] session-end #273 | login input focus ring removed — outline-none base class on AuthInput+AuthPassword, fix/login-input-focus-ring 9b37ef92 merged → develop.
 ## [2026-07-26] session-end #272 | dashboard design update — profile menu Dashboard link added, feat/dashboard-redesign merged → develop 8401d3fd.
 ## [2026-07-26] session-end #271 | FE account dashboard redesign — 3-agent audit (UX+arch+perf+tokens), ProfileHeader 358→90 lines, StatCard neutral tile, ActivityFeed extracted, getServerSideProps redirect, 0 gradient surfaces. feat/dashboard-redesign 0b146553 clean build.
 ## [2026-07-25] session-end #270 | all 3 repos shipped to production — AD migration.js help tooltip committed 1b079b2 → main. BE+FE+AD on main.

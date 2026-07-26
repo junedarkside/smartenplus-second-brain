@@ -4,15 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-26 (session #272)
+**Updated:** 2026-07-26 (session #273)
 
-**Achieved this session (#272) — dashboard design update + profile menu link:**
-- Added Dashboard link to profile menu Account section (`components/auth/ProfileMenu.js`) — first item, `GridViewOutlinedIcon`, → `/account/dashboard`.
-- Committed `3fcb38c5` on `feat/dashboard-redesign`, pushed to remote.
-- Merged `feat/dashboard-redesign` → develop `8401d3fd`, pushed. All 10 dashboard redesign files landed.
+**Achieved this session (#273) — login page input focus ring removed:**
+- Removed focus ring flash from email + password inputs on `/account/login`.
+- `AuthInput` + `AuthPassword` in `FormControl.js`: replaced `focus:ring-2 focus:ring-blue-500 focus:border-transparent` → `outline-none focus:border-blue-500`. Base `outline-none` (not focus variant) prevents browser default outline flash before React render.
+- Committed `9b37ef92` on `fix/login-input-focus-ring`, merged → develop, pushed.
 
-**Workspace (#272):**
-- frontend: `develop` (`8401d3fd`) — clean
+**Workspace (#273):**
+- frontend: `develop` (`9b37ef92`) — clean
 - backend: `main` (`ae68e51`) — `resources.txt` uncommitted change
 - admin-dashboard: `main` (`1b079b2`) — clean
 - content: `master` (`3756e5b`) — clean
