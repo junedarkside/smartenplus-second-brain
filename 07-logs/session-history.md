@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #270 (2026-07-25) — All 3 repos shipped to production:**
+- Fixed git checkout error (`migration.js` uncommitted WIP blocked branch switch).
+- AD `migration.js`: added `HelpIcon` tooltip to Trip Migration page. Committed `1b079b2` → main.
+- BE + FE + AD all on `main` — shipped to production.
+- Workspace: frontend `main` (`b3ee0fdf`) clean; backend `main` (`ae68e51`) `resources.txt` uncommitted; admin `main` (`1b079b2`) clean; content `master` (`3756e5b`) clean.
+
+---
+
 **Session #269 (2026-07-24) — AD contracts: Trip/Route column + grouped trip picker:**
 - `ContractSerializer` exposes nested `trip` via `TripWithRouteSerializer`. `select_related` extended to cover `trip__route__departure_station/arrival_station`. BE `ae68e51` → develop.
 - `ContractsDataGrid.jsx`: new "Trip / Route" col (`flex:1, minWidth:220`) — `departure_station → arrival_station`; non-transport = `-`; Tooltip clips. AD `0484eac` → develop.
