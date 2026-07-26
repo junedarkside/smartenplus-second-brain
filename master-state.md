@@ -4,32 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-26 (session #271)
+**Updated:** 2026-07-26 (session #272)
 
-**Achieved this session (#271) — account dashboard redesign:**
-- Audited `/account/dashboard` with 3-specialist agent team (UX/UI + React architecture + Next.js perf) + design token audit.
-- `ProfileHeader.js`: 358→90 lines — collapsed mobile/desktop JSX duplication, removed `showStats`/`stats` props, extracted `stringToColor`/`stringAvatar` to `helpers/avatarHelpers.js`, applied COLORS tokens.
-- `AccountCard.js`: removed `hover:scale-105` (touch persist bug), `transition-all` → `transition-shadow`, `rounded-xl` → `rounded-container`, white-card variant added.
-- `StatCard.js` (new): uniform neutral stat tile — gray icon column + hairline divider + dark number + muted label. No per-card color variation. Replaced inline QuickStats + ProfileHeader stats grid (both removed).
-- `ActivityFeed.js` (new, `components/account/`): extracted activity list, `onNavigate` prop (no internal router side-effect).
-- `helpers/avatarHelpers.js` (new): reusable avatar utils extracted from ProfileHeader.
-- `store/api/accountApi.js`: fixed circular `providesTags` (each endpoint owns one tag only), added `keepUnusedDataFor: 60` on stats+activity.
-- `pages/account/dashboard.js`: `getServerSideProps` server-side auth redirect (no client flash), removed `isClient` guard, per-section loading, primary action strip (conditional on confirmed bookings), `max-w-container`, 0 gradient surfaces.
-- `helpers/designSystem.js` + `tailwind.config.js`: added `brand.indigo`/`brand.indigo-light` tokens (previously hardcoded `#4f46e5`).
-- All commits on `feat/dashboard-redesign` branch. Build: ✓ Compiled successfully.
+**Achieved this session (#272) — dashboard design update + profile menu link:**
+- Added Dashboard link to profile menu Account section (`components/auth/ProfileMenu.js`) — first item, `GridViewOutlinedIcon`, → `/account/dashboard`.
+- Committed `3fcb38c5` on `feat/dashboard-redesign`, pushed to remote.
+- Merged `feat/dashboard-redesign` → develop `8401d3fd`, pushed. All 10 dashboard redesign files landed.
 
-**Workspace (#271):**
-- frontend: `feat/dashboard-redesign` (`0b146553`) — clean
+**Workspace (#272):**
+- frontend: `develop` (`8401d3fd`) — clean
 - backend: `main` (`ae68e51`) — `resources.txt` uncommitted change
 - admin-dashboard: `main` (`1b079b2`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **QA `feat/dashboard-redesign` live** — `npm run dev` → `localhost:3000/account/dashboard`. Check: slim ProfileHeader, 3 StatCards, 6 white nav cards, ActivityFeed, primary action strip, incognito redirect to login.
-2. **Merge `feat/dashboard-redesign` → develop** after QA passes.
-3. **Manual QA contracts Trip/Route col** at `localhost:3001/routemanagement/contracts?page=2&pageSize=10&operators=1`.
-4. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
-5. **Check BE `resources.txt`** uncommitted change — commit or discard.
+1. **Manual QA contracts Trip/Route col** at `localhost:3001/routemanagement/contracts?page=2&pageSize=10&operators=1`.
+2. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
+3. **Check BE `resources.txt`** uncommitted change — commit or discard.
+4. **Deploy develop → main** when ready.
 
 _(Sessions #221–#270 archived → `07-logs/session-history.md`.)_
 

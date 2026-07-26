@@ -1,3 +1,4 @@
+## [2026-07-26] session-end #272 | dashboard design update — profile menu Dashboard link added, feat/dashboard-redesign merged → develop 8401d3fd.
 ## [2026-07-26] session-end #271 | FE account dashboard redesign — 3-agent audit (UX+arch+perf+tokens), ProfileHeader 358→90 lines, StatCard neutral tile, ActivityFeed extracted, getServerSideProps redirect, 0 gradient surfaces. feat/dashboard-redesign 0b146553 clean build.
 ## [2026-07-25] session-end #270 | all 3 repos shipped to production — AD migration.js help tooltip committed 1b079b2 → main. BE+FE+AD on main.
 ## [2026-07-24] session-end #269 | AD contracts: Trip/Route column in grid — nested trip in ContractSerializer (TripWithRouteSerializer reused), N+1 fixed via select_related, flex col + Tooltip in DataGrid. BE ae68e51 + AD 0484eac → develop.

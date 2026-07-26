@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #271 (2026-07-26) — Account dashboard redesign + profile menu dashboard link:**
+- Audited `/account/dashboard` with 3-specialist agent team (UX/UI + React architecture + Next.js perf) + design token audit.
+- `ProfileHeader.js`: 358→90 lines — collapsed mobile/desktop JSX duplication, removed `showStats`/`stats` props, extracted `stringToColor`/`stringAvatar` to `helpers/avatarHelpers.js`, applied COLORS tokens.
+- `AccountCard.js`: removed `hover:scale-105` (touch persist bug), `transition-all` → `transition-shadow`, `rounded-xl` → `rounded-container`, white-card variant added.
+- `StatCard.js` (new): uniform neutral stat tile — gray icon column + hairline divider + dark number + muted label. No per-card color variation.
+- `ActivityFeed.js` (new, `components/account/`): extracted activity list, `onNavigate` prop (no internal router side-effect).
+- `helpers/avatarHelpers.js` (new): reusable avatar utils extracted from ProfileHeader.
+- `store/api/accountApi.js`: fixed circular `providesTags`, added `keepUnusedDataFor: 60` on stats+activity.
+- `pages/account/dashboard.js`: `getServerSideProps` server-side auth redirect, per-section loading, primary action strip, `max-w-container`, 0 gradient surfaces.
+- `helpers/designSystem.js` + `tailwind.config.js`: added `brand.indigo`/`brand.indigo-light` tokens.
+- `components/auth/ProfileMenu.js`: added Dashboard link (first item in Account section) → `/account/dashboard`.
+- Merged `feat/dashboard-redesign` → develop `8401d3fd`. Build: ✓
+
+---
+
 **Session #270 (2026-07-25) — All 3 repos shipped to production:**
 - Fixed git checkout error (`migration.js` uncommitted WIP blocked branch switch).
 - AD `migration.js`: added `HelpIcon` tooltip to Trip Migration page. Committed `1b079b2` → main.
