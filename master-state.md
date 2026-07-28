@@ -14,13 +14,13 @@
 - Shipped `86912129` on `feat/home-personalized-band` → merged develop `a505cfcb`, pushed.
 
 **Workspace (#274):**
-- frontend: `develop` (`a505cfcb`) — clean
+- frontend: `main` (`a505cfcb`) — ✅ DEPLOYED TO PROD 2026-07-29 (homepage band + card fixes live)
 - backend: `main` (`ae68e51`) — `resources.txt` uncommitted change
 - admin-dashboard: `main` (`1b079b2`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Deploy develop → main** (FE homepage band + card fixes; must clear `smartenplus_next_cache` Docker volume or ISR persists).
+1. **Verify prod homepage** — ISR cache flushed (`smartenplus_next_cache` Docker volume) or guest homepage may serve stale HTML. Smoke: logged-in `/` shows band; guest `/` unchanged.
 2. **HOME-STATS-BUG (backend/data)** — `/users/{id}/stats` returns questionable per-user counts (425/431 for one user) + `completed` count coded `== confirmed` (`accounts/views.py:101`). Investigate seeded/contaminated data + fix count logic.
 3. **Fix station mapping DATA (prod)** — from #273: delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
 4. **Check BE `resources.txt`** uncommitted change — commit or discard.

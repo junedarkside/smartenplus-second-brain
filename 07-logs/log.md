@@ -1,3 +1,4 @@
+## [2026-07-29] deploy #274 | FE develop→main manual deploy — homepage personalized band + card token fixes LIVE in prod (`a505cfcb`). Verify ISR cache flushed.
 ## [2026-07-29] session-end #274 | homepage personalized band for logged-in users + card token fixes — new PersonalizedHomeBand (dynamic ssr:false, null for guests: greeting+upcoming trips+rebook-from-history), guest-tool hide, PopularRouteImageCard + GuideCard token fixes. feat/home-personalized-band 86912129 → develop a505cfcb. Atom: [[personalize-static-isr-homepage-client-band]]. Opened HOME-STATS-BUG.
 ## [2026-07-26] session-end #273 | login input focus ring removed — outline-none base class on AuthInput+AuthPassword, fix/login-input-focus-ring 9b37ef92 merged → develop.
 ## [2026-07-26] session-end #272 | dashboard design update — profile menu Dashboard link added, feat/dashboard-redesign merged → develop 8401d3fd.
