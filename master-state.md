@@ -4,26 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-26 (session #273)
+**Updated:** 2026-07-29 (session #274)
 
-**Achieved this session (#273) — login page input focus ring removed:**
-- Removed focus ring flash from email + password inputs on `/account/login`.
-- `AuthInput` + `AuthPassword` in `FormControl.js`: replaced `focus:ring-2 focus:ring-blue-500 focus:border-transparent` → `outline-none focus:border-blue-500`. Base `outline-none` (not focus variant) prevents browser default outline flash before React render.
-- Committed `9b37ef92` on `fix/login-input-focus-ring`, merged → develop, pushed.
+**Achieved this session (#274) — personalized homepage band for logged-in users + card token fixes (FE):**
+- New `components/FrontPage/PersonalizedHomeBand.js` — client-only `dynamic(ssr:false)` band below hero. Logged-in: "Welcome back, {name}" + upcoming confirmed trips (`BookingItemCard`, dynamic 1-col/2-col grid) + "Book again" rebook chips sourced from completed trip history (deduped by route). Guest: returns `null` → byte-identical static/ISR homepage HTML (no cross-user leak). Stats row built then removed per UX ("too much").
+- `homepagev2.js` — band insertion after `<DiscoverySection>` + `useSession` gate hiding guest booking-lookup strip + `MyBookingsSection` for logged-in users. No `getStaticProps` change.
+- Card token fixes: `PopularRouteImageCard` `rounded-lg`→`rounded-xl` + dropped inline `boxShadow:'none'` (restored `shadow-sm`); `GuideCard` (`TravelThailandBetterSection`) arbitrary shadow+no-border → standard `border-gray-200 shadow-sm hover:shadow-lg`. `ReviewCard` left `rounded-md` (token-correct text card).
+- Gotcha fixed: `/bookingsummary/` reads `tab` as numeric (`'1'`=upcoming); passing string `'upcoming'` silently returns ALL rows (past/refunded leaked). Guarded further with `getBookingStatus==='confirmed'`.
+- Shipped `86912129` on `feat/home-personalized-band` → merged develop `a505cfcb`, pushed.
 
-**Workspace (#273):**
-- frontend: `develop` (`9b37ef92`) — clean
+**Workspace (#274):**
+- frontend: `develop` (`a505cfcb`) — clean
 - backend: `main` (`ae68e51`) — `resources.txt` uncommitted change
 - admin-dashboard: `main` (`1b079b2`) — clean
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Manual QA contracts Trip/Route col** at `localhost:3001/routemanagement/contracts?page=2&pageSize=10&operators=1`.
-2. **Fix station mapping DATA (prod).** Delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
-3. **Check BE `resources.txt`** uncommitted change — commit or discard.
-4. **Deploy develop → main** when ready.
+1. **Deploy develop → main** (FE homepage band + card fixes; must clear `smartenplus_next_cache` Docker volume or ISR persists).
+2. **HOME-STATS-BUG (backend/data)** — `/users/{id}/stats` returns questionable per-user counts (425/431 for one user) + `completed` count coded `== confirmed` (`accounts/views.py:101`). Investigate seeded/contaminated data + fix count logic.
+3. **Fix station mapping DATA (prod)** — from #273: delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
+4. **Check BE `resources.txt`** uncommitted change — commit or discard.
 
-_(Sessions #221–#270 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#273 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -54,6 +56,7 @@ _(Sessions #221–#270 archived → `07-logs/session-history.md`.)_
 | **TRIPS-PAGE-REDESIGN** | **✅ DEPLOYED TO PROD 2026-07-21 #258** — QA passed, ISR cache flushed. → closed-items.md | **CLOSED** | `pages/trips/index.js`, `components/trips/RouteCard.js`, `hooks/useTrips*.js` · [[trips-page-redesign]] |
 | **LOCATIONS-PAGE-REDESIGN** | **✅ MERGED → develop `a25ff23d` (stale "uncommitted" corrected at #253 wrap-up — git log confirms merge).** Components extracted: `components/locations/{SearchBar,FilterControls,StatsDisplay,LocationCard,EmptyState}.js`. Hooks: `useLocationsFiltering` (memoised filter+sort), `useLocationsStructuredData` (returns `seo` + `ItemList` of `TouristDestination` + `BreadcrumbList` + `Organization` + `CollectionPage` w/ `lastReviewed`). Hero H1 "Where in Thailand Do You Want to Travel?", back+share overlay top-2 z-40. **Remaining:** (1) `git add -A && git commit -m "feat(locations): full visual redesign — image-forward cards + extracted hooks" && git push -u origin feat/locations-page-redesign`; (2) open `localhost:3000/locations` → verify JSON-LD `ItemList` + `CollectionPage.lastReviewed` + OG/Twitter in devtools; (3) mobile QA at 375/768/1280 (sticky filter, back+share overlay, 44px touch targets); (4) parity diff vs `feat/destinations-page-redesign` (just merged `354889f1`) — confirm same pattern. Then merge → develop. | **COMMIT + PUSH + VERIFY NEXT** | `pages/locations/index.js`, `components/locations/*`, `hooks/useLocations*.js` |
 | **LOCATIONS-FALLBACK-IMG** | Locations have no `image` field like destinations. `LocationCard` must fall back to `bgDefault` (or per-region gradient). Audit any per-card broken-image state — add `onError` swap. | OPEN — low (after redesign merge) | `components/locations/LocationCard.js` |
+| **HOME-STATS-BUG** | `GET /users/{id}/stats` (`UserStatsAPIView`) returns questionable per-user counts — one test user shows **425 Active / 431 Paid**. Query IS correctly scoped `.filter(user=user)`, so cause is seeded/contaminated dev data OR real. Same endpoint `/account/dashboard` uses. Separately, `completed` count is coded identical to `confirmed` (`accounts/views.py:101`) — no `traveling_date<today` filter → wrong "completed" number. Found while building homepage band #274. Backend/data, unfixed. | OPEN — backend/data | `accounts/views.py` `UserStatsAPIView:~91-149` (line 101 completed==confirmed) |
 
 ### Active
 

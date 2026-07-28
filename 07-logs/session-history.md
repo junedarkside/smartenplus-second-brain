@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #273 (2026-07-26) — login page input focus ring removed:**
+- Removed focus ring flash from email + password inputs on `/account/login`.
+- `AuthInput` + `AuthPassword` in `FormControl.js`: replaced `focus:ring-2 focus:ring-blue-500 focus:border-transparent` → `outline-none focus:border-blue-500`. Base `outline-none` (not focus variant) prevents browser default outline flash before React render.
+- Committed `9b37ef92` on `fix/login-input-focus-ring`, merged → develop, pushed.
+
+---
+
 **Session #272 (2026-07-26) — Dashboard redesign merge + profile menu link:**
 - Added Dashboard link to profile menu Account section (`components/auth/ProfileMenu.js`).
 - Merged `feat/dashboard-redesign` → develop `8401d3fd`, pushed.
