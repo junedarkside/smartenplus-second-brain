@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #275 — 2026-07-29 — coupon admin management shipped to PROD (BE CRUD + AD UI)
+
+- **5-agent marketing debate** (UXUI/marketing/nextjs/django/biz-dev) → verdict: ship coupon admin UI first (trapped capability — BE `Coupon` model built, zero admin UI). Report → `02-areas/marketing-tools-debate-2026.md`.
+- **BE**: `CouponAdminSerializer` (write-capable, reuses model `clean()`) + `CouponViewSet` (`IsAdminOrIsStaff`) at `/admin-dashboard-orders/admin/coupons/`. No new model/migration. Develop `13ce885`.
+- **AD**: coupon CRUD page + `CouponForm.js` (Formik+Yup) + `couponsApi.js` + `CouponRestrictionSelect.js` (operator/route M2M autocomplete). Develop `3ea1fa5`.
+- **2 shared-form bugfixes**: `CustomSelect` key-gotcha (`option.key` not `label`); `CheckBoxControl` Formik-binding (render-prop + `type="checkbox"`). Affected coupon + hero-banner + ModalPopUp.
+- Both repos DEPLOYED TO PROD 2026-07-29.
+
 **Session #274 (2026-07-29) — personalized homepage band for logged-in users + card token fixes (FE):**
 - New `components/FrontPage/PersonalizedHomeBand.js` — client-only `dynamic(ssr:false)` band below hero. Logged-in: "Welcome back, {name}" + upcoming confirmed trips (`BookingItemCard`, dynamic 1-col/2-col grid) + "Book again" rebook chips from completed history (deduped by route). Guest: `null` → byte-identical static/ISR homepage (no cross-user leak).
 - `homepagev2.js` — band after `<DiscoverySection>` + `useSession` gate hiding guest booking-lookup strip + `MyBookingsSection` for logged-in. No `getStaticProps` change.
