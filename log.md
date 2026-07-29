@@ -2,6 +2,9 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-07-29] session-end (#275) | coupon admin (BE CRUD + AD UI) shipped prod + 2 AD form-control bugfixes
+5-agent marketing debate (unanimous: ship coupon admin first — BE model built, zero UI). BE `CouponViewSet`+`CouponAdminSerializer` at `/admin-dashboard-orders/admin/coupons/` (no new model, `IsAdminOrIsStaff`), develop `13ce885`. AD coupon CRUD page/form + `couponsApi` + `CouponRestrictionSelect` (operator/route M2M, eager-loaded 8 ops/19 routes) + nav + icon, develop `3ea1fa5`. Both deployed prod. Fixed 2 shared-form bugs live: `CustomSelect` reads `option.key` not `label` (blank dropdown); `CheckBoxControl` never bound Formik `checked` (edit checkboxes cosmetic-only) → render-prop + `type="checkbox"`. Report → [[marketing-tools-debate-2026]]. Atoms → [[customselect-key-not-label-gotcha]] · [[checkboxcontrol-formik-binding-bug]]. Resume: prod smoke coupon CRUD + pop BE stash.
+
 ## [2026-07-22] session-end (#262) | prod seat-check debugging: debug block + timeout 25s + 500 fix → main
 Real Lomprayah operator live on prod. Diagnosed MAPPING_NOT_FOUND = station-record mismatch (route dep `boonsiri counter khaosan bangkok` ≠ mapping `Lomprayah Bangkok khao san`; backend matches by station FK). Added BE debug block on `check-seat-availability` + AD panel to surface resolved operator/stations/from-to/n8n URL/mappings. Timeout 15→25s (n8n `/webhook/search` 10-19s variable; browser-first "fix" = timing luck). Fixed 500: n8n `data:"no trip"` STRING → parser `.get` on a char → AttributeError; now guards `data` is list-of-dicts. 4 branches → develop → deployed main (BE `073623b`, AD `ef41c7b`). Resume: fix prod mapping data (delete+recreate dep station → id 43/44), then E2E. → [[n8n-seat-search-response-contract]] · [[station-mapping-multi-operator-design]] · [[seat-availability-reseller-operator-gap]]
 

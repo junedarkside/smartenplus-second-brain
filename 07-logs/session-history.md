@@ -4,6 +4,13 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Session #274 (2026-07-29) — personalized homepage band for logged-in users + card token fixes (FE):**
+- New `components/FrontPage/PersonalizedHomeBand.js` — client-only `dynamic(ssr:false)` band below hero. Logged-in: "Welcome back, {name}" + upcoming confirmed trips (`BookingItemCard`, dynamic 1-col/2-col grid) + "Book again" rebook chips from completed history (deduped by route). Guest: `null` → byte-identical static/ISR homepage (no cross-user leak).
+- `homepagev2.js` — band after `<DiscoverySection>` + `useSession` gate hiding guest booking-lookup strip + `MyBookingsSection` for logged-in. No `getStaticProps` change.
+- Card token fixes: `PopularRouteImageCard` `rounded-lg`→`rounded-xl` + dropped inline `boxShadow:'none'`; `GuideCard` → standard `border-gray-200 shadow-sm hover:shadow-lg`. `ReviewCard` left `rounded-md`.
+- Gotcha: `/bookingsummary/` reads `tab` numeric (`'1'`=upcoming); string `'upcoming'` silently returns ALL rows. Guarded w/ `getBookingStatus==='confirmed'`.
+- Shipped `86912129` → merged develop `a505cfcb`. Deployed prod 2026-07-29.
+
 **Session #273 (2026-07-26) — login page input focus ring removed:**
 - Removed focus ring flash from email + password inputs on `/account/login`.
 - `AuthInput` + `AuthPassword` in `FormControl.js`: replaced `focus:ring-2 focus:ring-blue-500 focus:border-transparent` → `outline-none focus:border-blue-500`. Base `outline-none` (not focus variant) prevents browser default outline flash before React render.

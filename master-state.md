@@ -4,28 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-29 (session #274)
+**Updated:** 2026-07-29 (session #275)
 
-**Achieved this session (#274) — personalized homepage band for logged-in users + card token fixes (FE):**
-- New `components/FrontPage/PersonalizedHomeBand.js` — client-only `dynamic(ssr:false)` band below hero. Logged-in: "Welcome back, {name}" + upcoming confirmed trips (`BookingItemCard`, dynamic 1-col/2-col grid) + "Book again" rebook chips sourced from completed trip history (deduped by route). Guest: returns `null` → byte-identical static/ISR homepage HTML (no cross-user leak). Stats row built then removed per UX ("too much").
-- `homepagev2.js` — band insertion after `<DiscoverySection>` + `useSession` gate hiding guest booking-lookup strip + `MyBookingsSection` for logged-in users. No `getStaticProps` change.
-- Card token fixes: `PopularRouteImageCard` `rounded-lg`→`rounded-xl` + dropped inline `boxShadow:'none'` (restored `shadow-sm`); `GuideCard` (`TravelThailandBetterSection`) arbitrary shadow+no-border → standard `border-gray-200 shadow-sm hover:shadow-lg`. `ReviewCard` left `rounded-md` (token-correct text card).
-- Gotcha fixed: `/bookingsummary/` reads `tab` as numeric (`'1'`=upcoming); passing string `'upcoming'` silently returns ALL rows (past/refunded leaked). Guarded further with `getBookingStatus==='confirmed'`.
-- Shipped `86912129` on `feat/home-personalized-band` → merged develop `a505cfcb`, pushed.
+**Achieved this session (#275) — coupon admin management shipped to PROD (BE CRUD + AD UI):**
+- **5-agent marketing debate** (UXUI/marketing/nextjs/django/biz-dev, one round + synthesis) → unanimous verdict: ship coupon admin UI first (trapped capability — BE `Coupon` model fully built, zero admin UI). Report → `02-areas/marketing-tools-debate-2026.md`.
+- **BE** (`smartenplus-backend`): `CouponAdminSerializer` (write-capable, `id`, `times_used` read-only, reuses model `clean()`) + `CouponViewSet` (`IsAdminOrIsStaff`, search `code`, ordering) at `/admin-dashboard-orders/admin/coupons/`. **No new model, no migration.** Merged develop `13ce885`.
+- **AD** (`admin-dashboard`): coupon CRUD page (`pages/routemanagement/coupons/`) + `CouponForm.js` (Formik+Yup, mirrors BE validation) + `couponsApi.js` (RTK Query) + store wiring + nav item + `LocalOfferOutlined` icon. Added `CouponRestrictionSelect.js` — isolated MUI `<Autocomplete multiple>` for operator/route M2M restrictions (8 ops + 19 routes, eager-loaded). Merged develop `3ea1fa5`.
+- **2 shared-form bugfixes** (bit us live): `CustomSelect` reads option text from `option.key` NOT `label` → blank dropdown; `CheckBoxControl` `<Field as={FormControlLabel} control={<Checkbox/>}>` never bound Formik `checked` → all checkboxes cosmetic-only on edit. Fixed with render-prop + `type="checkbox"`. Affected coupon + hero-banner + ModalPopUp.
+- Both repos **DEPLOYED TO PROD** by user 2026-07-29.
 
-**Workspace (#274):**
-- frontend: `main` (`a505cfcb`) — ✅ DEPLOYED TO PROD 2026-07-29 (homepage band + card fixes live)
-- backend: `main` (`ae68e51`) — `resources.txt` uncommitted change
-- admin-dashboard: `main` (`1b079b2`) — clean
+**Workspace (#275):**
+- frontend: `main` (`a505cfcb`) — clean (no FE change this session)
+- backend: `main` — coupon CRUD merged (`13ce885` on develop); ⚠️ `stash@{0}` resources.txt still parked
+- admin-dashboard: `main` — coupon UI merged (`3ea1fa5` on develop)
 - content: `master` (`3756e5b`) — clean
 
 **Resume point — next session:**
-1. **Verify prod homepage** — ISR cache flushed (`smartenplus_next_cache` Docker volume) or guest homepage may serve stale HTML. Smoke: logged-in `/` shows band; guest `/` unchanged.
-2. **HOME-STATS-BUG (backend/data)** — `/users/{id}/stats` returns questionable per-user counts (425/431 for one user) + `completed` count coded `== confirmed` (`accounts/views.py:101`). Investigate seeded/contaminated data + fix count logic.
-3. **Fix station mapping DATA (prod)** — from #273: delete Lomprayah → "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → operator id **43** (normal) / **44** (VIP).
-4. **Check BE `resources.txt`** uncommitted change — commit or discard.
+1. **Prod smoke coupon** — AD Coupons page loads; create/edit (checkboxes + operator/route chips persist); apply on real checkout → discount lands; restricted coupon rejected on non-matching cart (`validate_coupon`).
+2. **BE `stash@{0}`** (resources.txt) — pop or discard now that on `main`.
+3. **HOME-STATS-BUG** (carry-over #274) — `/users/{id}/stats` questionable counts + `completed`==`confirmed` (`accounts/views.py:101`).
+4. **Station mapping DATA fix (prod)** — delete "Lomprayah Bangkok khao san", recreate vs `"boonsiri counter khaosan bangkok"` → op id **43** normal / **44** VIP.
 
-_(Sessions #221–#273 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#274 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -57,6 +57,7 @@ _(Sessions #221–#273 archived → `07-logs/session-history.md`.)_
 | **LOCATIONS-PAGE-REDESIGN** | **✅ MERGED → develop `a25ff23d` (stale "uncommitted" corrected at #253 wrap-up — git log confirms merge).** Components extracted: `components/locations/{SearchBar,FilterControls,StatsDisplay,LocationCard,EmptyState}.js`. Hooks: `useLocationsFiltering` (memoised filter+sort), `useLocationsStructuredData` (returns `seo` + `ItemList` of `TouristDestination` + `BreadcrumbList` + `Organization` + `CollectionPage` w/ `lastReviewed`). Hero H1 "Where in Thailand Do You Want to Travel?", back+share overlay top-2 z-40. **Remaining:** (1) `git add -A && git commit -m "feat(locations): full visual redesign — image-forward cards + extracted hooks" && git push -u origin feat/locations-page-redesign`; (2) open `localhost:3000/locations` → verify JSON-LD `ItemList` + `CollectionPage.lastReviewed` + OG/Twitter in devtools; (3) mobile QA at 375/768/1280 (sticky filter, back+share overlay, 44px touch targets); (4) parity diff vs `feat/destinations-page-redesign` (just merged `354889f1`) — confirm same pattern. Then merge → develop. | **COMMIT + PUSH + VERIFY NEXT** | `pages/locations/index.js`, `components/locations/*`, `hooks/useLocations*.js` |
 | **LOCATIONS-FALLBACK-IMG** | Locations have no `image` field like destinations. `LocationCard` must fall back to `bgDefault` (or per-region gradient). Audit any per-card broken-image state — add `onError` swap. | OPEN — low (after redesign merge) | `components/locations/LocationCard.js` |
 | **HOME-STATS-BUG** | `GET /users/{id}/stats` (`UserStatsAPIView`) returns questionable per-user counts — one test user shows **425 Active / 431 Paid**. Query IS correctly scoped `.filter(user=user)`, so cause is seeded/contaminated dev data OR real. Same endpoint `/account/dashboard` uses. Separately, `completed` count is coded identical to `confirmed` (`accounts/views.py:101`) — no `traveling_date<today` filter → wrong "completed" number. Found while building homepage band #274. Backend/data, unfixed. | OPEN — backend/data | `accounts/views.py` `UserStatsAPIView:~91-149` (line 101 completed==confirmed) |
+| **COUPON-ADMIN** | ✅ **DEPLOYED TO PROD #275** — coupon admin management. BE `CouponViewSet`+`CouponAdminSerializer` at `/admin-dashboard-orders/admin/coupons/` (no new model, `IsAdminOrIsStaff`), develop `13ce885`. AD CRUD page + form + `CouponRestrictionSelect` (operator/route M2M), develop `3ea1fa5`. Both on main/prod. 5-agent debate report → `02-areas/marketing-tools-debate-2026.md`. Also fixed shared `CustomSelect` key-gotcha + `CheckBoxControl` Formik-binding bug (→ atoms). **Remaining:** prod smoke (create/edit/restricted-reject) + pop BE `stash@{0}`. | **PROD SMOKE PENDING** | `orders/views.py` `CouponViewSet` · `admin-dashboard/components/coupons/*` · [[marketing-tools-debate-2026]] |
 
 ### Active
 
