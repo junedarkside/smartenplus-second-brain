@@ -4,28 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-29 (session #276)
+**Updated:** 2026-07-30 (session #277)
 
-**Achieved this session (#276) — Saved favorites read-side feature shipped to PROD (BE + FE):**
-- **4-agent review** (django/nextjs/ux/design, one round + synthesis) of the fav feature → report + ADR `04-decisions/adr-saved-page-product-favorites.md` (read-side companion to `adr-activity-card-favorite-button`). Locked: unified list not tabbed; name "Saved"; trip fav target debated (Product vs Route → chose Product, but live path = Contract, see delta).
-- **BE** (`smartenplus-backend`): `BookmarkViewSet.list()` override = batched per-type hydration (**2 queries**, no GenericFK N+1, `object:null` on orphan); `product` content-type branch (mirrors contract) + `Product.slug` migration `0010` + pre_save signal; `_contract_summary` enriched (name/operator/route). Dropped `BookmarkListSerializer` (view returns plain dict, YAGNI). 8 tests pass. Merged develop `126f213`.
-- **FE** (`smartenplus-frontend`): `getUserBookmarks` query + `{Bookmark,id:'LIST'}` invalidation; `pages/account/saved.js` (SSR-gated) + `SavedItemRow` (branch contract/blog); dashboard Saved card + profile-menu Saved entry + SubMenuRow icon-align fix; heart in `TripItemLayoutV2` footer + `TripDetailHero` top bar; `blogApi.getPostsByDatabaseIds` WP-GraphQL batch hydrates blog titles; **BookmarkButton guest auto-save** (sessionStorage `pendingBookmark` → replay once on auth return, no re-click). Merged develop `b959f1ea`.
-- **KEY DELTA:** trip cards favorite the **Contract** not Product — no genuine Product card surface on FE (`productSlug` = contract slug). Product wiring kept for future.
-- **Both repos DEPLOYED TO PROD** 2026-07-29. Migration `0010` auto-applies (`docker-compose-rds.yml:13`).
+**Achieved this session (#277) — Airport-transfer improvement review + zone-pricing decision + BE Slice 1 SHIPPED (branch, not merged):**
+- **5-agent review** (UXUI/BD/MK/Next.js/Django) of airport-transfer FE+BE+AD vs Thai platforms (Welcome Pickups, Kiwitaxi, GetYourGuide, Klook, 12Go, AOT Limo) → report `02-areas/airport-transfer-competitor-review-2026.md`. Product thin (transport-only, ~6 routes) + trust-signal invisible.
+- **Zone-pricing requirement evolved** over 2 clarification rounds: pickup/dropoff = ANY Thailand address (hotel/home/Airbnb) via **Google Places** → lat/lng → resolve **ZONE** → fixed price → exact address+lat/lng on booking for driver. Unbounded input forces address provider.
+- **4-agent SHAPE debate** (Django/geo, Next.js/maps, BD/ops, UXUI): polygon vs circle vs hybrid → **VERDICT: POLYGON only** (JSONField + ray-casting, NO PostGIS). Circle = low-vertex polygon so one model subsumes both. Decisive: `@react-google-maps/api` already installed FE ships `DrawingManager` = zero new dep. ADR `04-decisions/adr-airport-transfer-zone-pricing.md` (supersedes initial tag-based).
+- **BE Slice 1 BUILT + TESTED + COMMITTED** (`smartenplus-backend` branch `feat/airport-transfer-zone-pricing` `3d10a61`, NOT merged): `TransferZone` model (airport FK + `boundary` JSONField polygon + contract FK price via existing ratecard + priority + is_active); `stations/geo.py` ray-casting `point_in_polygon`+`resolve_zone`; public `GET /api/v1/resolve-zone/` (AllowAny)→`{matched,zone,contract,price}`; admin `TransferZoneViewSet` (IsAdminUser) + Django admin; `TransferZoneSerializer`+boundary guard (≥3 [lat,lng] verts). Migration `0030_transferzone` (additive) APPLIED. **13 tests pass + live HTTP curl validated** (inside→price, outside→matched:false, bad→400). `Contract_RateCard` UNTOUCHED; zero blast radius outside `stations/*`.
 
-**Workspace (#276):**
-- frontend: `main` (`b959f1ea`) — Saved feature merged develop→main→prod
-- backend: `main` (`126f213`) — Bookmark read-side merged; ⚠️ `stash@{0}` resources.txt still parked (carry-over)
-- admin-dashboard: `main` (`3ea1fa5`) — clean (no AD change this session)
-- content: `master` (`3756e5b`) — clean
+**Workspace (#277):**
+- frontend: `main` (`b959f1ea`) — no FE change this session
+- backend: `feat/airport-transfer-zone-pricing` (`3d10a61`) — Slice 1 BE zone core, NOT merged to develop; ⚠️ `stash@{0}` resources.txt still parked
+- admin-dashboard: `main` (`3ea1fa5`) — no AD change this session
+- content: `master` — clean
 
 **Resume point — next session:**
-1. **Prod smoke Saved** — authenticated `GET /dialogue/bookmarks/` → 200 (confirms migration 0010 applied); `/account/saved` renders w/ hydrated blog titles; trip list+detail heart saves; guest→login→auto-fill; profile-menu Saved routes. **Clear `smartenplus_next_cache` ISR volume** or trip/saved pages serve stale.
-2. **Prod smoke coupon** (carry-over #275) — AD Coupons create/edit (checkbox+chip persist); apply on checkout; restricted-reject.
-3. **BE `stash@{0}`** (resources.txt) — pop or discard now that on `main`.
-4. **HOME-STATS-BUG** (carry-over #274) — `/users/{id}/stats` questionable counts + `completed`==`confirmed` (`accounts/views.py:101`).
+1. **Merge BE `feat/airport-transfer-zone-pricing` → develop** (Slice 1). Then Slice 2 = AD polygon-draw page (`DrawingManager`), Slice 3 = FE `PlacePicker` + `resolveZone` query, Slice 4 = additive lat/lng cols cart→booking, Slice 5 meet-&-greet. Sequence in ADR build section.
+2. **Seed zones** — Phuket precise polygons + benign airports few-vertex + one whole-area lowest-priority fallback per airport (gap must-have).
+3. **Google key** — add restricted `NEXT_PUBLIC_APP_GMAP_API_KEY` (referrer + Places/Maps scope + billing alert) before FE slice.
+4. **Prod smoke Saved** (carry-over #276) + **coupon** (#275) + **BE `stash@{0}`** + **HOME-STATS-BUG** (#274, `accounts/views.py:101`).
 
-_(Sessions #221–#275 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#276 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -58,6 +57,7 @@ _(Sessions #221–#275 archived → `07-logs/session-history.md`.)_
 | **LOCATIONS-FALLBACK-IMG** | Locations have no `image` field like destinations. `LocationCard` must fall back to `bgDefault` (or per-region gradient). Audit any per-card broken-image state — add `onError` swap. | OPEN — low (after redesign merge) | `components/locations/LocationCard.js` |
 | **HOME-STATS-BUG** | `GET /users/{id}/stats` (`UserStatsAPIView`) returns questionable per-user counts — one test user shows **425 Active / 431 Paid**. Query IS correctly scoped `.filter(user=user)`, so cause is seeded/contaminated dev data OR real. Same endpoint `/account/dashboard` uses. Separately, `completed` count is coded identical to `confirmed` (`accounts/views.py:101`) — no `traveling_date<today` filter → wrong "completed" number. Found while building homepage band #274. Backend/data, unfixed. | OPEN — backend/data | `accounts/views.py` `UserStatsAPIView:~91-149` (line 101 completed==confirmed) |
 | **SAVED-FAVORITES** | ✅ **DEPLOYED TO PROD #276** — Saved read-side feature. BE `BookmarkViewSet.list()` hydrated (2 queries, `object:null` orphan) + `product` CT branch + `Product.slug` migration `0010` + enriched `_contract_summary`; 8 tests pass; develop→main `126f213`. FE: `getUserBookmarks`+LIST-tag; `/account/saved` (SSR-gated) + `SavedItemRow`; dashboard card + profile-menu entry + SubMenuRow align; heart in `TripItemLayoutV2` footer + `TripDetailHero`; `blogApi.getPostsByDatabaseIds` hydrates blog titles; BookmarkButton guest auto-save (sessionStorage replay). Delta: trip fav = **Contract** not Product (no Product card surface; Product wiring kept for future). ADR → `04-decisions/adr-saved-page-product-favorites.md`. **Remaining:** prod smoke (auth GET /dialogue/bookmarks/ →200 confirms migrate; /account/saved renders; heart saves; guest→login→auto-fill) + **clear `smartenplus_next_cache` ISR volume**. Deferred: save-confirm snackbar, DS heart-color/icon drift, blog-sentinel CT debt. | **PROD SMOKE + ISR FLUSH PENDING** | `dialogue/views.py` `BookmarkViewSet` · `pages/account/saved.js` · [[adr-saved-page-product-favorites]] |
+| **AIRPORT-TRANSFER-ZONE** | 🟡 **BE Slice 1 SHIPPED (branch, NOT merged) #277.** Google-Places pickup/dropoff (any Thailand address) → lat/lng → **polygon** zone → fixed price → exact addr+coords on booking. 4-agent debate verdict: POLYGON only (JSONField + ray-casting, NO PostGIS; `@react-google-maps/api` DrawingManager already installed = zero dep). **Done:** `TransferZone` model + `stations/geo.py` resolver + public `GET /api/v1/resolve-zone/` + admin `TransferZoneViewSet` + serializer guard; migration `0030` additive+applied; 13 tests + live curl pass; `Contract_RateCard` untouched. BE branch `feat/airport-transfer-zone-pricing` `3d10a61`. **Remaining:** merge→develop; Slice 2 AD polygon-draw page; Slice 3 FE `PlacePicker`+`resolveZone`; Slice 4 additive lat/lng cols cart→booking (`InfoFields`/`CheckoutInfo`); Slice 5 meet-&-greet (`ContractAddon`); seed zones (Phuket precise + fallback per airport); restricted Google key. Gap fallback = launch blocker. | **MERGE + SLICES 2-5 NEXT** | `stations/models.py` `TransferZone` · `stations/geo.py` · [[adr-airport-transfer-zone-pricing]] · [[airport-transfer-competitor-review-2026]] |
 | **COUPON-ADMIN** | ✅ **DEPLOYED TO PROD #275** — coupon admin management. BE `CouponViewSet`+`CouponAdminSerializer` at `/admin-dashboard-orders/admin/coupons/` (no new model, `IsAdminOrIsStaff`), develop `13ce885`. AD CRUD page + form + `CouponRestrictionSelect` (operator/route M2M), develop `3ea1fa5`. Both on main/prod. 5-agent debate report → `02-areas/marketing-tools-debate-2026.md`. Also fixed shared `CustomSelect` key-gotcha + `CheckBoxControl` Formik-binding bug (→ atoms). **Remaining:** prod smoke (create/edit/restricted-reject) + pop BE `stash@{0}`. | **PROD SMOKE PENDING** | `orders/views.py` `CouponViewSet` · `admin-dashboard/components/coupons/*` · [[marketing-tools-debate-2026]] |
 
 ### Active

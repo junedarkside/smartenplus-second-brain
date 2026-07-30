@@ -1,6 +1,6 @@
 # ADR — Airport-Transfer Zone Pricing (+ Activity-Mode Surfacing)
 
-**Status:** Proposed (plan only — no code shipped). **Superseded the initial tag-based approach after 2 rounds of user clarification + a 4-agent polygon debate.**
+**Status:** Accepted — **BE Slice 1 built + tested + committed** (branch `feat/airport-transfer-zone-pricing` `3d10a61`, not merged). Slices 2-5 pending. Superseded the initial tag-based approach after 2 rounds of user clarification + a 4-agent polygon debate.
 **Date:** 2026-07-30
 **Deciders:** 5-agent review (UXUI, BD, MK, Next.js, Django) + 4-agent shape debate (Django/geo, Next.js/maps, BD/ops, UXUI) + user
 **Full context:** [[airport-transfer-competitor-review-2026]]
