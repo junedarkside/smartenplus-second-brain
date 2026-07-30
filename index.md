@@ -487,6 +487,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Areas
 
+- [[airport-transfer-competitor-review-2026]] — **NEW 2026-07-30.** 5-agent review (UXUI/BD/MK/Next.js/Django) of airport-transfer FE+BE+AD vs Thai platforms (Welcome Pickups, Kiwitaxi, GetYourGuide, Klook, 12Go, AOT Limo). Product thin (transport-only, ~6 routes) + trust-signal invisible. **Zone pricing wins** (25 SKUs vs ~500 station-pairs) and needs near-zero code (existing schema = pure data). Prioritized P0/P1/P2 + UX crits + SEO. Decision → [[adr-airport-transfer-zone-pricing]].
 - [[business-development-thesis-2026]] — **NEW 2026-06-03.** SmartEnPlus strategic thesis: Thailand Travel Commerce Platform. Four-phase growth model (revenue per traveler → retention → AI intelligence → journey commerce). Competitive position: "travel connectivity" not inventory. B2B+B2C distribution. [[business]] updated.
 - [[content-marketing-strategy]] — **NEW 2026-06-03.** Full Thailand travel content marketing playbook. Hub-and-spoke (Travel Routes primary + 4 spokes), 6-platform distribution, $54.11 CPC hat yai target, Route Demand Index as data moat. Supersedes [[content-marketing-strategy-review]] (which becomes the meta-review).
 - [[engineering]] — Software engineering practices and standards
@@ -495,6 +496,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Decisions
 
+- [[adr-airport-transfer-zone-pricing]] — **DECISION (proposed) 2026-07-30.** Zone-based airport-transfer pricing = **existing schema, pure data (zero migration)**: each zone = Route + `Contract(service_category='TRANSFER')` + normal `Contract_RateCard` (reuses `Station` types + `_TRANSPORT_CATEGORIES`). Launch HKT (5 zones) + BKK (3 zones) as data. `Station.zone` field deferred (add only on admin-grouping need). Customer copy = "Fixed price" never "zone" (MK). Meet-&-greet = 1-line `ContractAddon` choice + `Prefetch` badge. FE zone selector extends `AutoCompleteSearch`, no map, no new module. Rejected: Zone/ZoneRateCard table (forks pricing loop, breaks `min_rate` + serializers). No side effects on `/trips`,`/activities`,`Contract_RateCard` shape. Full context [[airport-transfer-competitor-review-2026]].
 - [[adr-template]] — Architecture Decision Record template
 - [[atomic-note]] — Single-concept note template for extracted atoms
 - [[adr-info-fields-casing]] — `info_fields` casing boundary: backend fully-lowercase keys, frontend camelCase, single conversion in `checkoutPersistence.js:normalizeTripData()`. Documents lowercase-t vs capital-T `arrivalFlightTime` split.
