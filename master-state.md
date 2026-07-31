@@ -21,10 +21,10 @@
 - **All 3 branches UNMERGED (user merges to develop).**
 
 **Resume point:**
-1. **⚠️ BLOCKER — Google billing account CLOSED** (`01F2CE-02A5C8-EF108C`, reopen disabled). Maps/Places dead until fixed. FIX: new billing account + link SmartEnPlus project (`smartenplus`). Free tier = 10k/API/mo ≈ ฿0 for volume. Blocks Slice 3 browser test + Slice 2 draw + Slice 4b.
-2. **After billing:** browser-test Slice 3 (`/airport-transfer/hatyai-airport` + Bangkok addr → 1200); test Slice 2 draw; then **Slice 4b** (FE Book wiring — 6 review fixes in plan: date bridge B1, full-contract fetch B2, withCartValidation M2, tabValue M3, Redux saveTripInfo stash M5, verify info_fields).
-3. **Merge 3 branches → develop** + run migrations (0030/0047/0016) + seed real zones (Phuket precise + priority-0 fallback per airport). NOTE: existing `zone1` test polygon is drawn over Bangkok but attached to Hatyai airport — delete/redraw real.
-4. **Deferred:** usage-tracking widget (self-count resolve-zone, both FE+AD) after core; Slice 5 meet-&-greet.
+1. ✅ **BILLING FIXED + S1/2/3 LIVE-VERIFIED IN BROWSER (2026-07-31):** new Google billing account linked; `/airport-transfer/hatyai-airport` → typed "Lee Gardens Plaza Hotel Hat Yai" → Places autocomplete → zone1 (redrawn over Hat Yai, 10-pt polygon) → **"Private transfer from THB 1,200.00"** ✓. Full chain Places→lat/lng→resolve-zone→contract 183→price works end-to-end. Book button correctly DISABLED (Slice 3 placeholder by design). zone1 now real Hat Yai polygon (first vertex 7.01,100.46) — Lee Gardens 7.008,100.476 genuinely inside, correct match.
+2. **Slice 4b IN PROGRESS** — wire Book button (6 fixes, refs in plan: date B1 `[slug].js:125`, full-contract `useCheckContractQuery` B2, `withCartValidation` wrap M2, BookButton convertData reuse, tabValue M3, Redux `saveTripInfo` stash M5). **CRITICAL DEP: zone contract (183) must have `info_fields` pickup_point+dropoff_point or prefill field won't render.**
+3. **Merge 3 branches → develop** + run migrations (0030/0047/0016) + seed real zones (per airport: precise + priority-0 fallback).
+4. **Deferred:** usage-tracking widget (self-count resolve-zone, both FE+AD); Slice 5 meet-&-greet; pre-existing "About All Destinations" display bug (`arrivalStation='All Destinations'`, from UX review backlog).
 5. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274).
 
 _(Sessions #221–#276 archived → `07-logs/session-history.md`.)_
