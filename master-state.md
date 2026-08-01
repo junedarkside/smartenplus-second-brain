@@ -4,29 +4,35 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-01 (session #280)
+**Updated:** 2026-08-01 (session #281)
 
-**Achieved — Airport-transfer zone: MULTI-CONTRACT-PER-ZONE + JOIN-restriction BUILT (extends Slices 1–4b; 3 branches, none merged, ALL UNCOMMITTED):**
-- **Multi contracts per zone (M:N):** replaced `TransferZone.contract` single FK with `ZoneContract` link table (zone·contract·is_active·unique) — same M2M-through idiom Contract already uses. Migration `0031` (schema) + `0032` (backfill old FK→one active link, reversible). SSOT sync helper `stations/services.py _apply_diff` (both admin sides, race-safe `get_or_create`). `resolve-zone` response `{contract_id,price}` → **`{options:[{contract_id,contract_name,price}]}`** (per-contract MIN selling_rate, skips null-price). FE `ZonePriceBox` → **tier cards** (`ZoneOptionCard` per option: own contract fetch + Immer-clone + BookButton). AD: `ZoneForm` multi-select `contract_ids`; contract-page `TransferZonesSection` (gated `service_category==='TRANSFER'`) + `GET/POST /contract-zones/`; `TestLocationPanel` options list; DataGrid contracts column. User decisions: both admin pages editable · traveler picks · auto-migrate.
-- **3-agent scrutiny (BE/FE/AD) → fix-then-ship → ALL blocker/major fixed:** `_apply_diff` single-source (was divergent) + race-safe; resolve skips null-price; FE tab-switch resets selection (stale-direction bug); FE fallback on matched+empty; dead `items.find` removed; deprecated FK dropped from `select_related`. 22 tests.
-- **JOIN-restriction (BD+UXUI debate → nextjs+django+senior review → built):** widget hardcodes ADULT=1/total=1 → PRIVATE/CHARTER (flat per-vehicle) correct, **JOIN (per-seat) silently under-books** → blocked. SSOT `assert_zone_eligible()` (DRF ValidationError→400) from serializer `validate_contract_ids` + `SetContractZonesView`; `ZoneContract.clean()` seals admin inline; **migration `0033`** deactivates legacy JOIN links (live-caught: contract 184/zone2, now inactive). AD `ZoneForm` reuses `?contract_type=PRIVATE,CHARTER` → JOIN off the picker. **28 tests pass** (+6). CHARTER kept (math=PRIVATE). JOIN block deferred not permanent (unblock when pax selector ships). ADR §6+§6b updated.
-- **Live-verified BE:** zone1 resolve → 2 priced options (demo added 184), then post-JOIN-block+0033 → 1 PRIVATE option. resolve/guard curl-checked :8000. `manage.py check` clean.
+**Achieved — Airport-transfer multi-contract-per-zone + JOIN-restriction: COMMITTED + MERGED + PUSHED to develop (all 3 repos), + AD UX fixes:**
+- **Merged + pushed all 3 develops** (the #280 feature was uncommitted; now shipped to `origin/develop`):
+  - backend `origin/develop` `8fb94ea` (multi-contract M:N + JOIN-block + migrations 0030–0033; 28 tests). `126f213..8fb94ea`.
+  - admin-dashboard `origin/develop` `c003314` (Slice 2 + both pages + this session's 3 UX fixes). `3ea1fa5..c003314`.
+  - frontend `origin/develop` `3c3e590c` (tier cards). `b959f1ea..3c3e590c`.
+- **This session's AD UX fixes** (branch `fix/transfer-zones-gate-transport-private-charter`, commit `29f0925`, merged):
+  1. **Contract-page zones gate widened** — was `service_category==='TRANSFER'` (hid real transport contracts like 183, which is TRANSPORTATION+PRIVATE). Now `isTransportationCategory(cat) && type∈{PRIVATE,CHARTER}` (reuses existing capability helper; **added missing import** — would've been ReferenceError). Data: only 1 TRANSFER contract exists (the JOIN demo), all 29 real transport = TRANSPORTATION. JOIN/non-transport → hidden.
+  2. **Transfer-zones list page** — client-side search (zone/airport) + status filter, mirroring `vehicle-types` idiom. Zero BE.
+  3. **ZoneForm contract picker** — operator + station dropdowns (derived from loaded contracts) narrow options; `selectedContracts` resolves against full list + `isOptionEqualToValue` → no MUI chip crash on filtered-out selections.
+- **JOIN-trap root-cause** (reported `POST /contract-zones/ 400`): contract 184 IS type=JOIN → guard correctly 400s; fix = the widened gate hides the section for JOIN.
+- All lint clean. BE 28 tests green on develop; `migrate --check` clean.
 
-**Workspace (#280) — ALL 3 CODE BRANCHES UNCOMMITTED + UNMERGED:**
-- backend: `feat/airport-transfer-zone-pricing` — UNCOMMITTED (M: admin/geo/models/serializers/tests/urls/views; ?? services.py + migrations 0031/0032/0033). ⚠️ `stash@{0}` parked.
-- admin-dashboard: `feat/transfer-zone-admin` (`6f36624`) — UNCOMMITTED (M: ContractFormFields/TestLocationPanel/ZoneForm/transfer-zones index/transferZonesApi; ?? TransferZonesSection.js).
-- frontend: `feat/airport-transfer-zone-picker` (`00000a80`) — UNCOMMITTED (M: ZonePriceBox.js).
-- content: `master` (`3756e5b`) — clean.
-- **User commits per branch + merges to develop.**
+**Workspace (#281) — ALL CLEAN, on develop, pushed:**
+- backend: `develop` `8fb94ea` (= origin). ⚠️ `stash@{0}` resources.txt still parked.
+- admin-dashboard: `develop` `c003314` (= origin).
+- frontend: `develop` `3c3e590c` (= origin).
+- content: `master` `3756e5b` — clean.
 
 **Resume point:**
-1. **COMMIT this session** on all 3 branches (done+tested, nothing committed): BE (multi-contract + JOIN guard + migrations 0031/0032/0033), AD (both pages + JOIN filter), FE (tier cards). Then merge → develop; run migrations 0031/0032/0033 (+ prior 0030/0047/0016) on that env.
-2. **Browser-verify** (:3000/:3001/:8000 up): AD zone picker = PRIVATE/CHARTER only + zone1 opens clean; TRANSFER-contract "zones served" section; FE `/airport-transfer/hatyai-airport` → address → tier card(s) → Book → cart + `/checkout` prefilled.
+1. **Run BE migrations on develop/staging env:** stations `0030/0031/0032/0033` + bookings `0047` + carts `0016`. (Applied locally only.)
+2. **Browser-verify** (:3000/:3001/:8000): contract 183 → "Transfer zones served" shows; zones list search/status; ZoneForm operator/station filters; FE `/airport-transfer/hatyai-airport` tier cards → Book → `/checkout` prefilled.
 3. **DATA SEED (from #279):** attach `pickup_point`+`dropoff_point` InfoField rows to zone contract(s) so editable checkout field renders (coords persist regardless).
-4. **Deferred:** pax selector (unblocks JOIN); usage-tracking widget; Slice 5 meet-&-greet; "About All Destinations" bug.
-5. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274).
+4. **develop→main deploy** (separate flow) when ready.
+5. **Deferred:** pax selector (unblocks JOIN); usage-tracking widget; Slice 5 meet-&-greet; "About All Destinations" bug.
+6. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274).
 
-_(Sessions #221–#279 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#280 archived → `07-logs/session-history.md`.)_
 
 ---
 
