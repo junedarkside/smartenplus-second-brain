@@ -4,31 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-01 (session #277-279)
+**Updated:** 2026-08-01 (session #280)
 
-**Achieved — Airport-transfer ZONE PRICING: review → decision → Slices 1, 2, 3, 4a, 4b BUILT + S1-3 LIVE-VERIFIED (3 branches, none merged):**
-- **5-agent review** + **4-agent polygon-shape debate** → report `02-areas/airport-transfer-competitor-review-2026.md` + ADR `04-decisions/adr-airport-transfer-zone-pricing.md`. Requirement: pickup/dropoff = ANY Thailand address (Google Places) → lat/lng → **polygon** zone → fixed price → coords on booking for driver. Verdict: POLYGON only (JSONField + ray-casting, NO PostGIS). Google `DrawingManager` REMOVED v3.65 → pivoted to click-to-draw (still zero new draw dep).
-- **Slice 1 (BE zone core)** `feat/airport-transfer-zone-pricing`: `TransferZone` (airport FK + boundary JSONField + contract FK price via existing ratecard + priority + is_active); `stations/geo.py` ray-casting; public `GET /api/v1/resolve-zone/`; admin `TransferZoneViewSet` + Django admin; migration `0030`. `contract`→`contract_id` rename (scrutiny F4). 13 tests + live curl.
-- **Slice 2 (AD polygon-draw page)** `feat/transfer-zone-admin`: `pages/routemanagement/transfer-zones/` DataGrid + drawer form; `transferZonesApi` (mirror stationsApi); `ZoneMap` (click-to-draw + undo/right-click-delete/finish + editable polygon); `ZoneForm` (airport/contract selects + field help); `TestLocationPanel` (Places→resolve-zone, scrutiny F3); sidebar entry + `MapOutlined` icon fix; `@react-google-maps/api`+`react-places-autocomplete` added. Lint clean. **Live map blocked on Google billing (see Section 2).**
-- **Slice 3 (FE traveler picker)** `feat/airport-transfer-zone-picker`: `ZonePriceBox` + `PlacePicker` (lifted demo, guarded); `tripsApi.resolveZone`; mounted above route cards on `[slug].js`. Show-price-only (Book=placeholder). Build ✓ compiled, lint clean, BE chain curl-verified (Bangkok pt→contract 183→1200 THB). Autocomplete blocked on billing.
-- **Slice 4a (BE booking persistence)** `feat/airport-transfer-zone-pricing` `0da5a1c`: +4 nullable coord FloatField + `resolved_contract` FK on `InfoFields`+`CartItemCheckoutInfo`; `extract_trips_info` carries coord keys (review M1); `create_info_fields` `.get()` write + server-side resolved_contract (M6); serializer+trip_info; migrations 0047/0016. **4-agent review + scrutiny SPLIT verdict.** 17 tests incl. regression. `Contract_RateCard` untouched, no payment touch.
-- **Slice 4b (FE Book wiring)** `feat/airport-transfer-zone-picker` `00000a80`: wired the Book button — `[slug].js` wrapped `withCartValidation` + passes `bookingDate`+`tabValue`; `ZonePriceBox` fetches full contract (`useCheckContractQuery`) + renders `<BookButton>` + `onSuccess`→`saveTripInfo` stash (address+coords mapped by pickup/dropoff tab); `BookButton.onSuccess` now passes created cart-item payload (additive). **2 bugs caught+fixed:** `session.id` (was `session?.user?.id`, CLAUDE.md gotcha); **RTK contract Immer-frozen → clone `{...rawContract}` before BookButton** (mutates `.ratecard` in place). Coord flow verified end-to-end: saveTripInfo→Passengers generic key-copy (`:561`)→`values.trips`→`/orders`→4a `extract_trips_info` (NO Passengers.js edit). Build ✓, lint clean.
+**Achieved — Airport-transfer zone: MULTI-CONTRACT-PER-ZONE + JOIN-restriction BUILT (extends Slices 1–4b; 3 branches, none merged, ALL UNCOMMITTED):**
+- **Multi contracts per zone (M:N):** replaced `TransferZone.contract` single FK with `ZoneContract` link table (zone·contract·is_active·unique) — same M2M-through idiom Contract already uses. Migration `0031` (schema) + `0032` (backfill old FK→one active link, reversible). SSOT sync helper `stations/services.py _apply_diff` (both admin sides, race-safe `get_or_create`). `resolve-zone` response `{contract_id,price}` → **`{options:[{contract_id,contract_name,price}]}`** (per-contract MIN selling_rate, skips null-price). FE `ZonePriceBox` → **tier cards** (`ZoneOptionCard` per option: own contract fetch + Immer-clone + BookButton). AD: `ZoneForm` multi-select `contract_ids`; contract-page `TransferZonesSection` (gated `service_category==='TRANSFER'`) + `GET/POST /contract-zones/`; `TestLocationPanel` options list; DataGrid contracts column. User decisions: both admin pages editable · traveler picks · auto-migrate.
+- **3-agent scrutiny (BE/FE/AD) → fix-then-ship → ALL blocker/major fixed:** `_apply_diff` single-source (was divergent) + race-safe; resolve skips null-price; FE tab-switch resets selection (stale-direction bug); FE fallback on matched+empty; dead `items.find` removed; deprecated FK dropped from `select_related`. 22 tests.
+- **JOIN-restriction (BD+UXUI debate → nextjs+django+senior review → built):** widget hardcodes ADULT=1/total=1 → PRIVATE/CHARTER (flat per-vehicle) correct, **JOIN (per-seat) silently under-books** → blocked. SSOT `assert_zone_eligible()` (DRF ValidationError→400) from serializer `validate_contract_ids` + `SetContractZonesView`; `ZoneContract.clean()` seals admin inline; **migration `0033`** deactivates legacy JOIN links (live-caught: contract 184/zone2, now inactive). AD `ZoneForm` reuses `?contract_type=PRIVATE,CHARTER` → JOIN off the picker. **28 tests pass** (+6). CHARTER kept (math=PRIVATE). JOIN block deferred not permanent (unblock when pax selector ships). ADR §6+§6b updated.
+- **Live-verified BE:** zone1 resolve → 2 priced options (demo added 184), then post-JOIN-block+0033 → 1 PRIVATE option. resolve/guard curl-checked :8000. `manage.py check` clean.
 
-**Workspace (#279):**
-- backend: `feat/airport-transfer-zone-pricing` (`0da5a1c`) — Slice 1+4a; ⚠️ `stash@{0}` resources.txt parked
-- admin-dashboard: `feat/transfer-zone-admin` (`6f36624`) — Slice 2
-- frontend: `feat/airport-transfer-zone-picker` (`00000a80`) — Slice 3+4b (5 commits)
-- content: `master` (`3756e5b`) — clean
-- **All 3 branches UNMERGED (user merges to develop).**
+**Workspace (#280) — ALL 3 CODE BRANCHES UNCOMMITTED + UNMERGED:**
+- backend: `feat/airport-transfer-zone-pricing` — UNCOMMITTED (M: admin/geo/models/serializers/tests/urls/views; ?? services.py + migrations 0031/0032/0033). ⚠️ `stash@{0}` parked.
+- admin-dashboard: `feat/transfer-zone-admin` (`6f36624`) — UNCOMMITTED (M: ContractFormFields/TestLocationPanel/ZoneForm/transfer-zones index/transferZonesApi; ?? TransferZonesSection.js).
+- frontend: `feat/airport-transfer-zone-picker` (`00000a80`) — UNCOMMITTED (M: ZonePriceBox.js).
+- content: `master` (`3756e5b`) — clean.
+- **User commits per branch + merges to develop.**
 
 **Resume point:**
-1. **TEST BOOK BUTTON in browser** — reload `/airport-transfer/hatyai-airport` → pick address → click Book → should add zone contract to cart → redirect `/checkout`. (Immer-frozen error fixed `00000a80`; if a NEW frozen-property error appears, clone deeper.)
-2. **DATA SEED (blocks editable field, not coords):** attach existing `pickup_point`+`dropoff_point` InfoField rows to zone contract 183 (both exist in DB, count=1 each). Without it the visible editable pickup/dropoff field won't render at checkout — but **coords still persist** to booking via saveTripInfo path. Do via shell or AD contract-edit.
-3. **Merge 3 branches → develop** + run migrations (0030/0047/0016) + seed real zones (per airport: precise + priority-0 fallback).
-4. **Deferred:** usage-tracking widget (self-count resolve-zone, both FE+AD); Slice 5 meet-&-greet; pre-existing "About All Destinations" display bug.
+1. **COMMIT this session** on all 3 branches (done+tested, nothing committed): BE (multi-contract + JOIN guard + migrations 0031/0032/0033), AD (both pages + JOIN filter), FE (tier cards). Then merge → develop; run migrations 0031/0032/0033 (+ prior 0030/0047/0016) on that env.
+2. **Browser-verify** (:3000/:3001/:8000 up): AD zone picker = PRIVATE/CHARTER only + zone1 opens clean; TRANSFER-contract "zones served" section; FE `/airport-transfer/hatyai-airport` → address → tier card(s) → Book → cart + `/checkout` prefilled.
+3. **DATA SEED (from #279):** attach `pickup_point`+`dropoff_point` InfoField rows to zone contract(s) so editable checkout field renders (coords persist regardless).
+4. **Deferred:** pax selector (unblocks JOIN); usage-tracking widget; Slice 5 meet-&-greet; "About All Destinations" bug.
 5. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274).
 
-_(Sessions #221–#276 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#279 archived → `07-logs/session-history.md`.)_
 
 ---
 

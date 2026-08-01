@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## #277-279 (2026-07-30 → -31) — Airport-transfer zone pricing: Slices 1–4b built + live-verified
+
+5-agent review + 4-agent polygon-shape debate → POLYGON only (JSONField + ray-casting, NO PostGIS); Google DrawingManager removed v3.65 → click-to-draw. **Slice 1** BE zone core (`TransferZone` + `stations/geo.py` + `resolve-zone` + admin + migration 0030, 13 tests). **Slice 2** AD polygon-draw page (`transfer-zones/` DataGrid+drawer, `ZoneMap` click-to-draw+undo/delete/finish, `ZoneForm`, `TestLocationPanel`, sidebar+icon, `@react-google-maps/api`). **Slice 3** FE traveler picker (`ZonePriceBox`+`PlacePicker`, `tripsApi.resolveZone`, mounted on `[slug].js`, show-price-only). **Slice 4a** BE booking persistence (+4 coord FloatField + `resolved_contract` FK on InfoFields+CartItemCheckoutInfo, migrations 0047/0016, 17 tests, SPLIT verdict). **Slice 4b** FE Book wiring (withCartValidation, bookingDate+tabValue, full-contract fetch, BookButton+saveTripInfo stash). 2 bugs fixed: `session.id` gotcha; RTK Immer-frozen clone. Branches: BE `feat/airport-transfer-zone-pricing` `0da5a1c`, AD `feat/transfer-zone-admin` `6f36624`, FE `feat/airport-transfer-zone-picker` `00000a80`. Google billing was the live-map blocker (later resolved). All unmerged.
+
+---
+
 ## Session #275 — 2026-07-29 — coupon admin management shipped to PROD (BE CRUD + AD UI)
 
 - **5-agent marketing debate** (UXUI/marketing/nextjs/django/biz-dev) → verdict: ship coupon admin UI first (trapped capability — BE `Coupon` model built, zero admin UI). Report → `02-areas/marketing-tools-debate-2026.md`.

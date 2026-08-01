@@ -1,7 +1,7 @@
 # ADR — Airport-Transfer Zone Pricing (+ Activity-Mode Surfacing)
 
-**Status:** Accepted — **BE Slice 1 built + tested + committed** (branch `feat/airport-transfer-zone-pricing` `3d10a61`, not merged). Slices 2-5 pending. Superseded the initial tag-based approach after 2 rounds of user clarification + a 4-agent polygon debate.
-**Date:** 2026-07-30
+**Status:** Accepted — **Slices 1–4 built + tested** (zone core, AD draw page, FE picker, coord persistence) + **Slice 6 = multi-contract-per-zone built** (see §6). Branches unmerged: BE `feat/airport-transfer-zone-pricing`, FE `feat/airport-transfer-zone-picker`, AD `feat/transfer-zone-admin`. Superseded the initial tag-based approach after 2 rounds of user clarification + a 4-agent polygon debate.
+**Date:** 2026-07-30 (§6 added 2026-08-01)
 **Deciders:** 5-agent review (UXUI, BD, MK, Next.js, Django) + 4-agent shape debate (Django/geo, Next.js/maps, BD/ops, UXUI) + user
 **Full context:** [[airport-transfer-competitor-review-2026]]
 
@@ -39,6 +39,28 @@ Add `('MEET_AND_GREET','Meet & Greet')` to `ContractAddon.ADDON_TYPE_CHOICES` (`
 
 ### 4. Admin draws polygons — AD map page (click-to-draw).
 Polygon vertices can't be hand-typed reliably → AD page with `@react-google-maps/api`. **UPDATE (build): Google REMOVED `DrawingManager` in Maps JS v3.65** (deprecated Aug 2025, removed June 2026) — the debate's "DrawingManager = zero new dep" premise is dead. Pivoted to **click-to-draw**: capture `GoogleMap onClick` → append vertex → render `<Polygon editable>` once ≥3 (vertex-drag edits still supported; only the `DrawingManager` *class* was removed, not `Polygon`/`editable`). **Still zero new drawing dep, no Terra Draw** — plain click handlers (~30 lines, `components/transfer-zones/ZoneMap.js`). Only `libraries:['places']` needed now. **Validity guards on save:** min 3 vertices, priority for overlaps. Django admin = power-user fallback. Price still edited in existing AD contract pages (zone→contract pointer).
+
+### 6. Multi contracts per zone — M:N via `ZoneContract` link table, traveler picks (2026-08-01).
+**Supersedes §1's `TransferZone.contract` single FK.** Staff need one zone priced by **many contracts/operators** (different operators, vehicle types), assignable from **both** the AD contract page and the zone page; the traveler sees **all contracts as options** and picks one.
+
+**Decision:** new `ZoneContract` link table (`stations/models.py`) — `zone` FK(CASCADE), `contract` FK(PROTECT), `is_active`, `unique(zone,contract)`. Same M2M-through idiom `Contract` already uses for ratecard/transport_composit/info_fields — **not new tech**. Old `TransferZone.contract` FK **kept but deprecated** (help_text), data-migrated into one `is_active` link per zone (migration `0032`, reversible), then **never read** by any code path (one read path, no ambiguity). No destructive drop.
+
+**Resolution now returns options[]:** `ResolveZoneView` response changed `{contract_id, price}` → `{matched, zone, options:[{contract_id, contract_name, price}]}`, one option per active linked contract, each price = that contract's MIN active `selling_rate` (existing query, per-contract). Empty active links → `matched:false`. `resolve_zone()` geometry + `Contract_RateCard` **untouched**.
+
+**One write path both sides:** `stations/services.py sync_zone_contracts(zone, contract_ids)` + mirror `sync_contract_zones(contract, zone_ids)` share one row-diff (create/deactivate, never hard-delete → keeps history, dodges PROTECT). Zone page submits `contract_ids` via `TransferZoneSerializer` (writable list, reads back `contracts[]`); contract page hits `POST /admin-dashboard-stations/contract-zones/` (+ `GET .../{id}/` prefill), both routing to the same helper — no drift.
+
+**FE `ZonePriceBox` → tier cards** over `options[]`; new `ZoneOptionCard` fetches its own full contract per Book (reuses existing Immer-clone, `stashTripInfo`, `loginUserId`, `BookButton`). `matched:false` soft-state unchanged.
+
+**Scrutiny cuts (kept minimum):** dropped a per-link `label` (duplicates contract/operator name → drift) and `is_default` (no consumer — traveler picks all). Add only if ops ask. `ZoneContract` = pure link table.
+
+**Blast radius = 1 shape change (resolve-zone response), grep-verified 3 consumers** — FE `ZonePriceBox`, AD `TestLocationPanel` (both updated to `options[]`), FE query def (passthrough). Migrated single-contract zone → one-item options = behaviorally identical to old single price (regression-tested). 19 stations tests pass. Untouched: `/trips`, `/activities`, `BookButton`, checkout, booking write path (Slice 4a).
+
+**Rejected here:** geometry+`ZonePricing` through-table returning a price *and* boundary-reuse self-FK (`boundary_source`) — solved a different problem (draw-once shape reuse), not the stated multi-contract need. M:N link is the honest model.
+
+### 6b. Zone contracts restricted to PRIVATE/CHARTER — JOIN blocked (2026-08-01).
+**Which `Contract.type` may link to a zone.** Scan found no gate: BE FK, AD zone picker, and FE all accepted any type, and the traveler widget (`ZonePriceBox`) **hardcodes ADULT=1/total=1** (no passenger selector). By type: **PRIVATE/CHARTER** → `ceil(1/seats)=1` vehicle, flat per-vehicle price = correct; **JOIN** → per-seat ratecard locked to 1 adult → a group silently under-books (family of 4 pays 1 seat). BD+UXUI debate → **allow PRIVATE+CHARTER, block JOIN.** CHARTER kept (booking math identical to PRIVATE, `VEHICLE` ratecard, safe; blocking it would be taxonomy opinion not correctness). **JOIN block is correctness + deferred, not permanent** — re-enable once the widget gains a pax selector.
+
+**Enforcement (nextjs+django+senior-reviewed, 4 corrections folded):** SSOT helper `stations/services.py assert_zone_eligible(contract_ids)` raises **DRF** ValidationError → clean 400 (not django's → would 500). Called from `TransferZoneSerializer.validate_contract_ids` (zone page) + `SetContractZonesView.post` (contract page). `ZoneContract.clean()` (django ValidationError) seals the Django-admin inline path. Rule NOT buried in `_apply_diff` (kept a pure diff util; it's side-blind to which arg is the contract). **Migration `0033`** deactivates legacy active JOIN links that migration 0032 backfilled without a type filter — else the first admin edit of such a zone 400s (live-caught: contract 184/zone 2 was JOIN, now `is_active=False`). AD `ZoneForm` reuses the existing `?contract_type=PRIVATE,CHARTER` param → JOIN never in the picker; chips resolve against the (already JOIN-free) active list, no MUI crash. 28 stations tests pass (+6). Zero side effect on resolve geometry / `Contract_RateCard` / booking.
 
 ## Alternatives rejected
 - **PostGIS / GeoDjango** — over-engineering for <20 zones/airport + low query volume; installs GIS extension + GDAL + Docker image swap. Ray-casting over ~200 vertex-iterations/booking is ample.
