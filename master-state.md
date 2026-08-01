@@ -4,27 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-07-30 (session #277-278)
+**Updated:** 2026-08-01 (session #277-279)
 
-**Achieved — Airport-transfer ZONE PRICING: review → decision → Slices 1, 2, 3, 4a BUILT (3 branches, none merged):**
+**Achieved — Airport-transfer ZONE PRICING: review → decision → Slices 1, 2, 3, 4a, 4b BUILT + S1-3 LIVE-VERIFIED (3 branches, none merged):**
 - **5-agent review** + **4-agent polygon-shape debate** → report `02-areas/airport-transfer-competitor-review-2026.md` + ADR `04-decisions/adr-airport-transfer-zone-pricing.md`. Requirement: pickup/dropoff = ANY Thailand address (Google Places) → lat/lng → **polygon** zone → fixed price → coords on booking for driver. Verdict: POLYGON only (JSONField + ray-casting, NO PostGIS). Google `DrawingManager` REMOVED v3.65 → pivoted to click-to-draw (still zero new draw dep).
 - **Slice 1 (BE zone core)** `feat/airport-transfer-zone-pricing`: `TransferZone` (airport FK + boundary JSONField + contract FK price via existing ratecard + priority + is_active); `stations/geo.py` ray-casting; public `GET /api/v1/resolve-zone/`; admin `TransferZoneViewSet` + Django admin; migration `0030`. `contract`→`contract_id` rename (scrutiny F4). 13 tests + live curl.
 - **Slice 2 (AD polygon-draw page)** `feat/transfer-zone-admin`: `pages/routemanagement/transfer-zones/` DataGrid + drawer form; `transferZonesApi` (mirror stationsApi); `ZoneMap` (click-to-draw + undo/right-click-delete/finish + editable polygon); `ZoneForm` (airport/contract selects + field help); `TestLocationPanel` (Places→resolve-zone, scrutiny F3); sidebar entry + `MapOutlined` icon fix; `@react-google-maps/api`+`react-places-autocomplete` added. Lint clean. **Live map blocked on Google billing (see Section 2).**
 - **Slice 3 (FE traveler picker)** `feat/airport-transfer-zone-picker`: `ZonePriceBox` + `PlacePicker` (lifted demo, guarded); `tripsApi.resolveZone`; mounted above route cards on `[slug].js`. Show-price-only (Book=placeholder). Build ✓ compiled, lint clean, BE chain curl-verified (Bangkok pt→contract 183→1200 THB). Autocomplete blocked on billing.
-- **Slice 4a (BE booking persistence)** `feat/airport-transfer-zone-pricing` `0da5a1c`: +4 nullable coord FloatField + `resolved_contract` FK on `InfoFields`+`CartItemCheckoutInfo`; `extract_trips_info` carries coord keys (was hard whitelist — review M1); `create_info_fields` writes via `.get()` + server-side resolved_contract (zone-only guard, M6); serializer+trip_info; migrations 0047/0016. **4-agent review + scrutiny SPLIT verdict** (4a safe now, 4b needs billing). 17 tests incl. regression (normal booking→coords null). `Contract_RateCard` untouched, no payment touch.
+- **Slice 4a (BE booking persistence)** `feat/airport-transfer-zone-pricing` `0da5a1c`: +4 nullable coord FloatField + `resolved_contract` FK on `InfoFields`+`CartItemCheckoutInfo`; `extract_trips_info` carries coord keys (review M1); `create_info_fields` `.get()` write + server-side resolved_contract (M6); serializer+trip_info; migrations 0047/0016. **4-agent review + scrutiny SPLIT verdict.** 17 tests incl. regression. `Contract_RateCard` untouched, no payment touch.
+- **Slice 4b (FE Book wiring)** `feat/airport-transfer-zone-picker` `00000a80`: wired the Book button — `[slug].js` wrapped `withCartValidation` + passes `bookingDate`+`tabValue`; `ZonePriceBox` fetches full contract (`useCheckContractQuery`) + renders `<BookButton>` + `onSuccess`→`saveTripInfo` stash (address+coords mapped by pickup/dropoff tab); `BookButton.onSuccess` now passes created cart-item payload (additive). **2 bugs caught+fixed:** `session.id` (was `session?.user?.id`, CLAUDE.md gotcha); **RTK contract Immer-frozen → clone `{...rawContract}` before BookButton** (mutates `.ratecard` in place). Coord flow verified end-to-end: saveTripInfo→Passengers generic key-copy (`:561`)→`values.trips`→`/orders`→4a `extract_trips_info` (NO Passengers.js edit). Build ✓, lint clean.
 
-**Workspace (#278):**
+**Workspace (#279):**
 - backend: `feat/airport-transfer-zone-pricing` (`0da5a1c`) — Slice 1+4a; ⚠️ `stash@{0}` resources.txt parked
 - admin-dashboard: `feat/transfer-zone-admin` (`6f36624`) — Slice 2
-- frontend: `feat/airport-transfer-zone-picker` (`b64c847b`) — Slice 3
-- content: `master` — clean
+- frontend: `feat/airport-transfer-zone-picker` (`00000a80`) — Slice 3+4b (5 commits)
+- content: `master` (`3756e5b`) — clean
 - **All 3 branches UNMERGED (user merges to develop).**
 
 **Resume point:**
-1. ✅ **BILLING FIXED + S1/2/3 LIVE-VERIFIED IN BROWSER (2026-07-31):** new Google billing account linked; `/airport-transfer/hatyai-airport` → typed "Lee Gardens Plaza Hotel Hat Yai" → Places autocomplete → zone1 (redrawn over Hat Yai, 10-pt polygon) → **"Private transfer from THB 1,200.00"** ✓. Full chain Places→lat/lng→resolve-zone→contract 183→price works end-to-end. Book button correctly DISABLED (Slice 3 placeholder by design). zone1 now real Hat Yai polygon (first vertex 7.01,100.46) — Lee Gardens 7.008,100.476 genuinely inside, correct match.
-2. **Slice 4b IN PROGRESS** — wire Book button (6 fixes, refs in plan: date B1 `[slug].js:125`, full-contract `useCheckContractQuery` B2, `withCartValidation` wrap M2, BookButton convertData reuse, tabValue M3, Redux `saveTripInfo` stash M5). **CRITICAL DEP: zone contract (183) must have `info_fields` pickup_point+dropoff_point or prefill field won't render.**
+1. **TEST BOOK BUTTON in browser** — reload `/airport-transfer/hatyai-airport` → pick address → click Book → should add zone contract to cart → redirect `/checkout`. (Immer-frozen error fixed `00000a80`; if a NEW frozen-property error appears, clone deeper.)
+2. **DATA SEED (blocks editable field, not coords):** attach existing `pickup_point`+`dropoff_point` InfoField rows to zone contract 183 (both exist in DB, count=1 each). Without it the visible editable pickup/dropoff field won't render at checkout — but **coords still persist** to booking via saveTripInfo path. Do via shell or AD contract-edit.
 3. **Merge 3 branches → develop** + run migrations (0030/0047/0016) + seed real zones (per airport: precise + priority-0 fallback).
-4. **Deferred:** usage-tracking widget (self-count resolve-zone, both FE+AD); Slice 5 meet-&-greet; pre-existing "About All Destinations" display bug (`arrivalStation='All Destinations'`, from UX review backlog).
+4. **Deferred:** usage-tracking widget (self-count resolve-zone, both FE+AD); Slice 5 meet-&-greet; pre-existing "About All Destinations" display bug.
 5. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274).
 
 _(Sessions #221–#276 archived → `07-logs/session-history.md`.)_
