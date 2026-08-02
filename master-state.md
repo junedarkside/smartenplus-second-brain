@@ -4,35 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-01 (session #281)
+**Updated:** 2026-08-02 (session #282)
 
-**Achieved — Airport-transfer multi-contract-per-zone + JOIN-restriction: COMMITTED + MERGED + PUSHED to develop (all 3 repos), + AD UX fixes:**
-- **Merged + pushed all 3 develops** (the #280 feature was uncommitted; now shipped to `origin/develop`):
-  - backend `origin/develop` `8fb94ea` (multi-contract M:N + JOIN-block + migrations 0030–0033; 28 tests). `126f213..8fb94ea`.
-  - admin-dashboard `origin/develop` `c003314` (Slice 2 + both pages + this session's 3 UX fixes). `3ea1fa5..c003314`.
-  - frontend `origin/develop` `3c3e590c` (tier cards). `b959f1ea..3c3e590c`.
-- **This session's AD UX fixes** (branch `fix/transfer-zones-gate-transport-private-charter`, commit `29f0925`, merged):
-  1. **Contract-page zones gate widened** — was `service_category==='TRANSFER'` (hid real transport contracts like 183, which is TRANSPORTATION+PRIVATE). Now `isTransportationCategory(cat) && type∈{PRIVATE,CHARTER}` (reuses existing capability helper; **added missing import** — would've been ReferenceError). Data: only 1 TRANSFER contract exists (the JOIN demo), all 29 real transport = TRANSPORTATION. JOIN/non-transport → hidden.
-  2. **Transfer-zones list page** — client-side search (zone/airport) + status filter, mirroring `vehicle-types` idiom. Zero BE.
-  3. **ZoneForm contract picker** — operator + station dropdowns (derived from loaded contracts) narrow options; `selectedContracts` resolves against full list + `isOptionEqualToValue` → no MUI chip crash on filtered-out selections.
-- **JOIN-trap root-cause** (reported `POST /contract-zones/ 400`): contract 184 IS type=JOIN → guard correctly 400s; fix = the widened gate hides the section for JOIN.
-- All lint clean. BE 28 tests green on develop; `migrate --check` clean.
+**Achieved — `/airport-transfer` index card redesign: image-led picker cards SHIPPED to develop (FE only, 0 BE):**
+- **UXUI + BD agent team** researched best platforms (Klook, GetYourGuide, Welcome Pickups, Airbnb card, Google Flights chip). Both converged on ONE change: bare text `StationCard` → **image card** using data already in payload, matching homepage `PopularRouteImageCard` quality. Deliverable = report + design spec (approved) → built.
+- **Data caveat both agents missed, I verified by curl:** payload `location_name.image` = **null for ALL 4 airports** (3 of 18 stations have any location image; 0 airports). → cards render branded `bgDefault` fallback TODAY; auto-upgrade as images upload. Correct (fallback > text-only), but spec LEADS with fallback not real photos. Subtitle fixed to real `.city`/`.province` (was area-name `location_name.location_name`).
+- **New `StationCard`** (`pages/airport-transfer/index.js` ONLY): `next/image` fill + `object-cover group-hover:scale-105` + blur placeholder + `onError→bgDefault` (idiom copied from `PopularRouteImageCard`, NOT forked). IATA chip top-right (`bg-fb-blue`), "Popular" badge on BKK/DMK/HKT top-left, bottom gradient, focus-ring (fixes prior `focus:outline-none` a11y regression), city·province subtitle. Grid `gap-3`, skeleton `height={230}` rounded-xl (kills layout shift).
+- **Width fixes** (2 rounds, user screenshots): section now reuses shared `Section` + `SectionHeader` with `py-6 px-4 xl:px-0` → edge-flush at xl, matches homepage "Explore Popular Routes" exactly. Dropped earlier white-box/asymmetric-padding.
+- **Crash fixed:** `TypeError: string.replace is not a function` — my first-branch card passed nested `location_name` **object** to `capitalizeWords`; fixed to read `.city`/`.province` type-guarded.
+- **Demand-first sort** (`sortedStations` useMemo): pin BKK/DMK/HKT/CNX/USM by IATA, degrades safely (absent airport = simply absent, no dead entry). No BE/analytics.
+- 2 branches merged → develop: `feat/airport-index-card-redesign` `0b24cc82`, `feat/airport-index-image-cards` `7d9d9dd3` (final). `main` untouched. Lint clean.
 
-**Workspace (#281) — ALL CLEAN, on develop, pushed:**
+**Workspace (#282) — ALL CLEAN, on develop, pushed:**
+- frontend: `develop` `7d9d9dd3` (= origin).
 - backend: `develop` `8fb94ea` (= origin). ⚠️ `stash@{0}` resources.txt still parked.
 - admin-dashboard: `develop` `c003314` (= origin).
-- frontend: `develop` `3c3e590c` (= origin).
 - content: `master` `3756e5b` — clean.
 
 **Resume point:**
-1. **Run BE migrations on develop/staging env:** stations `0030/0031/0032/0033` + bookings `0047` + carts `0016`. (Applied locally only.)
-2. **Browser-verify** (:3000/:3001/:8000): contract 183 → "Transfer zones served" shows; zones list search/status; ZoneForm operator/station filters; FE `/airport-transfer/hatyai-airport` tier cards → Book → `/checkout` prefilled.
-3. **DATA SEED (from #279):** attach `pickup_point`+`dropoff_point` InfoField rows to zone contract(s) so editable checkout field renders (coords persist regardless).
-4. **develop→main deploy** (separate flow) when ready.
-5. **Deferred:** pax selector (unblocks JOIN); usage-tracking widget; Slice 5 meet-&-greet; "About All Destinations" bug.
-6. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274).
+1. **Browser-verify** `/airport-transfer` cards: image (branded fallback while location images null), IATA chip, city·province subtitle, Popular badge on BKK/DMK/HKT; keyboard focus ring; width matches homepage Popular Routes; mobile 1-col no overflow.
+2. **Run BE migrations on develop/staging env:** stations `0030/0031/0032/0033` + bookings `0047` + carts `0016`. (Applied locally only.)
+3. **AIRPORT-TRANSFER-ZONE browser-verify** (:3000/:3001/:8000): contract 183 → "Transfer zones served"; zones list search/status; ZoneForm filters; FE `/airport-transfer/hatyai-airport` tier cards → Book → `/checkout` prefilled. **⚠️ blocked by Google billing account CLOSED** (Places/maps dead).
+4. **DATA SEED (#279):** attach `pickup_point`+`dropoff_point` InfoField rows to zone contract(s).
+5. **develop→main deploy** (separate flow) when ready.
+6. **Deferred (airport index, needs BE):** "From THB" price on card (highest future ROI, needs zone-price annotation); route count per airport; `getStaticProps`+ISR + intro paragraph (SEO); search/region grouping (over-engineer until catalog >12). DO-NOT-BUILD: reviews, urgency signals.
+7. **Carry-over:** Prod smoke Saved (#276) + coupon (#275) + BE `stash@{0}` + HOME-STATS-BUG (#274); pax selector (unblocks JOIN).
 
-_(Sessions #221–#280 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#281 archived → `07-logs/session-history.md`.)_
 
 ---
 
