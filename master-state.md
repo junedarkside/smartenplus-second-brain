@@ -8,17 +8,16 @@
 
 **Achieved — Airport-transfer zone: post-merge bug fixes (address-pick, airportName, transfer_airport field) + notification gaps (Telegram direction/pickup/dropoff, email timeline direction-aware). Tested on order VAR1397366 — all 3 bookings Telegram + email OK.**
 
-**Workspace (#285) — uncommitted changes on develop:**
-- frontend: `develop` tip `b9c14639` — **3 files uncommitted** (`ZoneTransferRoute.js`, `TripsConfirmation.js`, `EnhancedTripCard.js`)
-- backend: `develop` tip `f6a9146` — **4 files uncommitted** (`bookings/emails/booking_confirmation_template.html`, `bookings/tasks.py`, `carts/serializers.py`, `orders/services.py`)
+**Workspace (#285) — all clean on develop:**
+- frontend: `develop` `d827ec9a` (merged `fix/checkout-zone-address-airport-name`)
+- backend: `develop` `aa56361` (merged `fix/booking-notifications-direction`)
 - admin-dashboard: `develop` `c003314` (clean)
 - content: `master` `3756e5b` (clean)
 
 **Resume point (EXACT):**
-1. **Commit + push both repos** — FE branch `fix/checkout-zone-address-airport-name`, BE branch `fix/booking-notifications-direction` — then merge both → develop.
-2. **Deploy prep:** run all pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear.
-3. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key `CartItemCheckoutInfo` on merge); `--:--` departure_time = admin data cleanup.
-4. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
+1. **Deploy prep:** run all pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear; develop→main deploy.
+2. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key `CartItemCheckoutInfo` on merge); `--:--` departure_time = admin data cleanup.
+3. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
 
 _(Sessions #221–#284 archived → `07-logs/session-history.md`.)_
 
