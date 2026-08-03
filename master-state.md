@@ -4,33 +4,25 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-03 (session #283)
+**Updated:** 2026-08-03 (session #284)
 
-**Achieved — Airport-transfer DETAIL + CHECKOUT: research→build across 6 branches (5 FE + 1 BE), NONE merged to develop yet.**
-Long session, mostly airport-transfer detail-page conversion + the zone→checkout data honesty chain. Sequence:
-- **Detail page (`/airport-transfer/[slug]`) conversion** — UXUI+BD 2-agent research → 3-reviewer (nextjs/senior/django) impl plan → built:
-  - `fix/airport-detail-cosmetics` (pushed): R1 "from THB X" hero anchor (`getFromPrice`, >0 guard), R5 hero copy "Booking Center"→value, R6 "About All Destinations" display fix, R3 trust strip, Bug B (AirportTransferJsonLd empty-ratecards crash → ISR poison), dead `pickupMode` cut, + **PlacePicker dropdown transparency fix** (react-places-autocomplete inline-style overrides bg class → set backgroundColor via getSuggestionItemProps; z-50 was a red herring).
-  - `feat/airport-zone-card-rich` (pushed): ZoneOptionCard extracted to own file + vehicle name/seats + Instant/Free-cancel trust row + box direction chip. Data from existing `useCheckContractQuery`, 0 BE. Verified live /contract/13.
-  - `fix/airport-zone-direction-switch` (pushed): deleted clear-on-tab useEffect (rate no longer disappears), added `From ⇄ To` swap AT the box (owns tabValue), REMOVED route-list Pickup/Dropoff tabs.
-- **Checkout zone card** — 3-agent debate (UXUI+BD+senior FE): checkout item card showed generic station→station for zone bookings, not typed address+direction. `fix/checkout-zone-card` (pushed): EnhancedTripCard reads `selectTripInfo(item.id)` → ZoneTransferRoute (address+direction+vehicle), same on TripsConfirmation+CartDetailDisplay, React.memo, ZonePriceBox stash explicit `direction` field. Senior FE flagged: guest→auth cart-merge changes item.id → stash lost (logged BE follow-up).
-- **Best-practice direction + airport-framed card (cross-repo)** — user wanted airport transfers to ALWAYS read "airport↔address". Verified: direction was INFERRED everywhere (no stored field); resolve-zone direction-agnostic; station_type/iata not on trip serializer.
-  - BE `feat/checkout-direction-and-station-type` (pushed): `CartItemCheckoutInfo.direction` + **`InfoFields.direction`** (booking/ops source of truth) columns, persisted in both write paths (+ fixed views.py dropping coords), `carts TripSerializer` +4 station_type/iata fields. Migrations **carts 0017 + bookings 0048** (applied locally, `[X]`). System check clean, stations 28 tests pass.
-  - FE `feat/checkout-airport-framed-card` (pushed): `helpers/airportTransfer.js getAirportEnd()` → card renders "Hatyai Airport (HDY) → George Town" for route-list transfers. Priority: zone address > airport-framed > raw station route > name. Degrades safe if BE undeployed.
+**Achieved — Merged 6-branch airport-transfer checkout+booking stack to develop; pushed to origin. No uncommitted work.**
 
-**Workspace (#283) — 6 branches pushed, NONE merged, all clean:**
-- frontend: `feat/checkout-airport-framed-card` `cfd3ab02` (tip of 5-deep stack: cosmetics→zone-card-rich→direction-switch→checkout-zone-card→airport-framed).
-- backend: `feat/checkout-direction-and-station-type` `ea673d7` (⚠️ `stash@{0}` still parked).
+Session #283 complete: FE+BE checkout-zone-card direction-storage pipeline, booking-display direction gate (no guessing), all 6 branches MERGED to develop + pushed origin. FE `b9c14639`, BE `f6a9146`. System check + migration validation passed. Zero stashed work.
+
+**Workspace (#284) — all live on develop:**
+- frontend: `develop` `b9c14639` (fresh tip after merge, merged stack: cosmetics→zone-card-rich→direction-switch→checkout-zone-card→airport-framed).
+- backend: `develop` `f6a9146` (fresh tip after merge, merged: checkout-direction-and-station-type with carts 0017 + bookings 0048).
 - admin-dashboard: `develop` `c003314` (untouched).
 - content: `master` `3756e5b`.
 
 **Resume point (EXACT):**
-1. **VALIDATE the BE migrations + checkout feature** (user mid-validation at session end): restart BE dev server (clears stale "2 unapplied" warning — migrations ARE `[X]`); curl `/api/v1/carts/<id>` → confirm `station_type`/`iata` on trip; book route-list transfer → checkout card should read "Hatyai Airport (HDY) → …"; book zone (address box) → "Hatyai Airport → your hotel"; shell-check `CartItemCheckoutInfo.direction` populated.
-2. **MERGE the 6-branch stack to develop** (in order, --no-ff): FE cosmetics→zone-card-rich→direction-switch→checkout-zone-card→airport-framed; BE checkout-direction-and-station-type. Stack is 5-deep FE — merge carefully or squash-forward.
-3. **Deploy prep:** run migrations carts 0017 + bookings 0048 (+ earlier stations 0030-0033/bookings 0047/carts 0016) on staging.
-4. **Deferred BE (logged):** guest→auth merge address durability (backend write at add-to-cart + re-key CartItemCheckoutInfo on merge); `--:--` empty departure_time = admin data cleanup (option C).
-5. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker; Prod smoke Saved(#276)+coupon(#275); BE `stash@{0}`; HOME-STATS-BUG(#274); pax selector.
+1. **VALIDATE the checkout+booking features** (post-merge): (a) restart BE dev server (migrations carts 0017 + bookings 0048 applied, system-check clean); (b) curl `/api/v1/carts/<id>` → confirm `station_type`+`iata` on trip; (c) book route-list transfer → checkout card reads "Hatyai Airport (HDY) → …"; (d) book zone (address box) → "Hatyai Airport → your hotel"; (e) database shell-check `CartItemCheckoutInfo.direction` populated.
+2. **Deploy prep:** run migrations carts 0017 + bookings 0048 (+ earlier stations 0030-0033/bookings 0047/carts 0016) on staging; ISR cache clear if needed.
+3. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key CartItemCheckoutInfo on merge); `--:--` empty departure_time = admin data cleanup (option C).
+4. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker; Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG(#274); pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP refactor; SEO r16 P1 (CWV-7/SEO-11/SD-NEW).
 
-_(Sessions #221–#282 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#283 archived → `07-logs/session-history.md`.)_
 
 ---
 

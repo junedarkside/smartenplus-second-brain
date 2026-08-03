@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## #283 (2026-08-03) — Airport-transfer checkout + booking display: 6 branches shipped (FE 5 + BE 1), MERGED to develop + pushed
+
+**Achieved:** FE + BE checkout-zone-card direction-storage pipeline, booking-display direction gate (no guessing), merged 6-branch stack to develop and pushed to origin. System check + migration validation passed. Git: FE `b9c14639`, BE `f6a9146`.
+
+**Sequence:** (1) UXUI+BD agent research → 3-reviewer impl plan for detail-page conversion spec (8 ROI-ranked FE changes, DO-NOT-BUILD patterns). (2) FE airport-detail-cosmetics: R1 "from THB 400" hero price, R5 hero copy fix, R6 "All Destinations" label fix, R3 static trust strip, R7/R8 deferred, Bug B AirportTransferJsonLd empty-crash guard, dead `pickupMode` cut, **PlacePicker transparency fix** (inline-style override, not z-index). (3) FE airport-zone-card-rich: ZoneOptionCard extracted + vehicle/seats + Instant/Free-cancel row + direction chip. (4) FE airport-zone-direction-switch: deleted clear-on-tab useEffect, added `From ⇄ To` swap, removed route tabs. (5) 3-agent checkout-zone-card debate: direction inversion + address on card. FE fix/checkout-zone-card: EnhancedTripCard reads `selectTripInfo` → address+direction+vehicle, React.memo, ZonePriceBox stash explicit direction. Senior FE flagged guest→auth merge ID-change (deferred). (6) BE+FE cross-repo direction+framing: BE `feat/checkout-direction-and-station-type` added `CartItemCheckoutInfo.direction` + `InfoFields.direction` columns, persisted both write paths, TripSerializer +station_type/iata (migrations carts 0017 + bookings 0048, system-check clean, 28 tests pass). FE `feat/checkout-airport-framed-card`: getAirportEnd() → "Hatyai Airport (HDY)→…" for route-list, priority: zone-address > airport-framed > station-route > name, degrades safe.
+
+**Booking display:** Gate on `hasStoredDirection()` only (no guessing). Stored direction → full airport treatment (badge, route frame, label). No stored direction → plain station route (general booking). New zone-swap bookings store direction end-to-end via stash→checkout→booking.
+
+**Git state:** All 6 branches **MERGED to develop** and **PUSHED to origin**. FE `develop` tip `b9c14639`, BE `develop` tip `f6a9146`. Main untouched. No stashed work.
+
+---
+
 ## #282 (2026-08-02) — /airport-transfer INDEX card redesign: image-led picker cards SHIPPED to develop (FE only, 0 BE)
 UXUI+BD agent team → bare text StationCard → image card (`next/image` fill + object-cover group-hover:scale-105 + blur + onError→bgDefault, idiom copied from PopularRouteImageCard NOT forked). IATA chip, Popular badge (BKK/DMK/HKT), city·province subtitle, focus-ring a11y fix. Data caveat verified: `location_name.image` null for ALL 4 airports → branded fallback today. Width matched homepage "Explore Popular Routes" via shared Section+SectionHeader (py-6 px-4 xl:px-0). Fixed crash: capitalizeWords got nested location_name OBJECT. Demand-first IATA pin sort (zero-BE, degrades safe). 2 branches → develop: `0b24cc82`, `7d9d9dd3` (final). main untouched. Atoms: [[nextimage-card-fallback-idiom]], [[demand-first-iata-pin-sort]].
 
