@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## #284 (2026-08-03) — Airport-transfer checkout zone card + notification fixes: validated + shipped to develop
+
+**Achieved:** Validated merged airport-transfer stack on real BE data (user junedarkside@gmail.com, order VAR1397366, items Aug 6–8). Found + fixed 3 bugs post-merge: (1) `ZoneTransferRoute.js` — `address` var always picked `dropoffPoint` first regardless of direction (now branches on `isAirportFirst`); (2) `TripsConfirmation.js` — same address-pick bug + `airportName` resolved to route placeholder "Hatyai Any Hotel" instead of real airport (fixed: `zoneAirportFirst` computed before `zoneAddress`, `airportName` from `contract.transfer_airport.station_name`); (3) BE carts `ContractSerializer` missing `transfer_airport` field — added `get_transfer_airport()` (same ZoneContract query as products serializer). `EnhancedTripCard` updated to pass `airportStation` + `airportIata` from `transfer_airport`. `ZoneTransferRoute` now accepts `airportIata` prop + renders `Hatyai Airport (HDY)`. Notification gaps fixed: `orders/services.py` — added `direction` to `context` from `InfoFields.direction` + added `direction/pickuppoint/dropoffpoint/pickuptime/dropofftime` to `context_message` (Telegram payload) + added `booking.direction` to `customer_context` (email). `bookings/tasks.py` — zone-transfer block in Telegram message (direction label + pickup + dropoff, guarded by empty-check, zero side-effect on non-zone). Email template `booking_confirmation_template.html` — timeline FROM/TO station now branches on `booking.direction` (airport_to_address → typed address as arrival; address_to_airport → typed address as departure; blank → unchanged for route-list + activity). Tested synchronously: all 3 bookings SAW4621917/AJW0055474/PPF3522223 Telegram + email sent OK.
+
+**Git:** FE uncommitted (3 files: `ZoneTransferRoute.js`, `TripsConfirmation.js`, `EnhancedTripCard.js`). BE uncommitted (4 files: `booking_confirmation_template.html`, `bookings/tasks.py`, `carts/serializers.py`, `orders/services.py`).
+
+---
+
 ## #283 (2026-08-03) — Airport-transfer checkout + booking display: 6 branches shipped (FE 5 + BE 1), MERGED to develop + pushed
 
 **Achieved:** FE + BE checkout-zone-card direction-storage pipeline, booking-display direction gate (no guessing), merged 6-branch stack to develop and pushed to origin. System check + migration validation passed. Git: FE `b9c14639`, BE `f6a9146`.
