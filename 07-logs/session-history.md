@@ -4,6 +4,11 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## #282 (2026-08-02) — /airport-transfer INDEX card redesign: image-led picker cards SHIPPED to develop (FE only, 0 BE)
+UXUI+BD agent team → bare text StationCard → image card (`next/image` fill + object-cover group-hover:scale-105 + blur + onError→bgDefault, idiom copied from PopularRouteImageCard NOT forked). IATA chip, Popular badge (BKK/DMK/HKT), city·province subtitle, focus-ring a11y fix. Data caveat verified: `location_name.image` null for ALL 4 airports → branded fallback today. Width matched homepage "Explore Popular Routes" via shared Section+SectionHeader (py-6 px-4 xl:px-0). Fixed crash: capitalizeWords got nested location_name OBJECT. Demand-first IATA pin sort (zero-BE, degrades safe). 2 branches → develop: `0b24cc82`, `7d9d9dd3` (final). main untouched. Atoms: [[nextimage-card-fallback-idiom]], [[demand-first-iata-pin-sort]].
+
+---
+
 ## #281 (2026-08-01) — Airport-transfer multi-contract-per-zone + JOIN-restriction: committed+merged+pushed (3 repos) + AD UX fixes
 
 **Merged + pushed all 3 develops** (the #280 feature was uncommitted; now shipped to `origin/develop`): backend `8fb94ea` (multi-contract M:N + JOIN-block + migrations 0030–0033; 28 tests) `126f213..8fb94ea`; admin-dashboard `c003314` (Slice 2 + both pages + 3 UX fixes) `3ea1fa5..c003314`; frontend `3c3e590c` (tier cards) `b959f1ea..3c3e590c`. **AD UX fixes** (branch `fix/transfer-zones-gate-transport-private-charter` `29f0925`): (1) contract-page zones gate widened — was `service_category==='TRANSFER'` (hid transport contracts like 183=TRANSPORTATION+PRIVATE), now `isTransportationCategory(cat) && type∈{PRIVATE,CHARTER}` + added missing import (else ReferenceError); (2) transfer-zones list page client-side search+status filter (mirrors vehicle-types, 0 BE); (3) ZoneForm contract picker operator+station dropdowns + `isOptionEqualToValue` (no MUI chip crash). JOIN-trap root cause: contract 184=type JOIN → guard 400s correctly; fix = widened gate hides section for JOIN. All lint clean; BE 28 tests green; `migrate --check` clean.
