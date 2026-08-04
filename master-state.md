@@ -11,15 +11,14 @@
 **Workspace (#288):**
 - frontend: `develop` `8c2b5c33` (clean)
 - backend: `develop` `38c0470` (clean)
-- admin-dashboard: `develop` `f65a805` — **committed, needs push**
+- admin-dashboard: `develop` `f65a805` (pushed origin)
 - content: `master` `3756e5b` (clean)
 
 **Resume point (EXACT):**
-1. **admin-dashboard:** push `f65a805` to origin (user held back this session — confirm before pushing).
-2. **Deploy prep (carry-over from #287):** run pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear; develop→main deploy.
-3. **Smoke test airport transfer pricing (carry-over):** curl `resolve-zone?airport=&lat=&lng=&date=YYYY-MM-DD`; open `/airport-transfer/hatyai-airport` → type address → change date → verify price updates.
-4. **Deferred:** booking-type badge on bookings list grid (needs a small decision on the `service_category`/`contract.type` key-name mismatch first, see this session's finding above); guest→auth merge address durability; `--:--` departure_time admin data cleanup.
-5. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
+1. **Deploy prep (carry-over from #287):** run pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear; develop→main deploy.
+2. **Smoke test airport transfer pricing (carry-over):** curl `resolve-zone?airport=&lat=&lng=&date=YYYY-MM-DD`; open `/airport-transfer/hatyai-airport` → type address → change date → verify price updates.
+3. **Deferred:** booking-type badge on bookings list grid (needs a small decision on the `service_category`/`contract.type` key-name mismatch first, see this session's finding above); guest→auth merge address durability; `--:--` departure_time admin data cleanup.
+4. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
 
 _(Sessions #221–#287 archived → `07-logs/session-history.md`.)_
 
