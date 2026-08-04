@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #286 (2026-08-04)
+
+**Achieved:** Airport transfer `/airport-transfer/[slug]` full style+UX overhaul. Removed wrong-product elements (TripListingSection, hero search, price subtext). Fixed style tokens (5 components). Calendar date centering fixed via `showFares={false}`. Back button removed, breadcrumb promoted. Breadcrumb invisible bug fixed (double ssr:false → direct NextBreadcrumbs import). Moved breadcrumb above trust strip. Merged to develop `944b2b1f`.
+
+**Workspace:** frontend `develop` `944b2b1f` · backend `develop` `aa56361` · admin `develop` `c003314` · content `master` `3756e5b` (all clean)
+
+---
+
 ## #285 (2026-08-04) — Airport transfer detail page UX/style overhaul shipped to develop
 
 **Achieved:** Full style + UX audit of `/airport-transfer/[slug]` page. Removed wrong-product elements: `TripListingSection` (intercity trips, not zone transfers), hero search input (opened intercity trip modal), price subtext (`fromPrice` chain — backend `contracts` field = intercity trip contracts, not zone prices). Fixed style tokens across 5 components: `ZonePriceBox` (`rounded-2xl→rounded-xl`, `rounded-lg→rounded-input`, `bg-gray-50→bg-white`), `ZoneOptionCard` (`rounded-lg→rounded-container`, `bg-gray-50→bg-warm-surface`, `text-green-700→text-status-success`), `PlacePicker` (`focus:border-primary→focus:border-fb-blue` [was broken], `z-50→z-popover`, `rounded-lg→rounded-input/container`), `AirportTransferTrustStrip` (`max-w-[1200px]→max-w-container`), `StationInformation` (`color="primary"→className="text-fb-blue"`, `sm:rounded-lg→sm:rounded-container`, description typo fallback). Calendar date text centering fixed via additive `showFares={false}` prop on `SlideCalendar2` — skips invisible placeholder row that was pushing date text top-aligned. Removed back arrow button from `AirportTransferHeader` (props 8→1, `departureStation` only) — breadcrumb handles navigation. Breadcrumb invisible bug fixed: double `ssr:false` wrapping (`StandardBreadcrumb` → `NextBreadcrumbs`) caused silent render failure — import `NextBreadcrumbs` directly, one dynamic layer. Moved breadcrumb above trust strip (immediately below hero). All changes on `fix/style-consistency-airport-transfer` → merged to develop `944b2b1f`.

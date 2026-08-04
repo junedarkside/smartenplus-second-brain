@@ -2,6 +2,9 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-04] research (#287) | airport-transfer rate dynamic pricing — FE+BE cross-repo review
+Full flow mapped: resolveZone (date-agnostic) vs fare-calendar (date-filtered). Critical gap: displayed zone price ≠ cart price when date-specific ratecards exist. Note → [[airport-transfer-rate-dynamic-pricing]].
+
 ## [2026-07-29] session-end (#275) | coupon admin (BE CRUD + AD UI) shipped prod + 2 AD form-control bugfixes
 5-agent marketing debate (unanimous: ship coupon admin first — BE model built, zero UI). BE `CouponViewSet`+`CouponAdminSerializer` at `/admin-dashboard-orders/admin/coupons/` (no new model, `IsAdminOrIsStaff`), develop `13ce885`. AD coupon CRUD page/form + `couponsApi` + `CouponRestrictionSelect` (operator/route M2M, eager-loaded 8 ops/19 routes) + nav + icon, develop `3ea1fa5`. Both deployed prod. Fixed 2 shared-form bugs live: `CustomSelect` reads `option.key` not `label` (blank dropdown); `CheckBoxControl` never bound Formik `checked` (edit checkboxes cosmetic-only) → render-prop + `type="checkbox"`. Report → [[marketing-tools-debate-2026]]. Atoms → [[customselect-key-not-label-gotcha]] · [[checkboxcontrol-formik-binding-bug]]. Resume: prod smoke coupon CRUD + pop BE stash.
 

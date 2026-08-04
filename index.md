@@ -52,6 +52,10 @@ Global navigation catalog. Updated on every ingest.
 - [[adr-operator-scoped-trip-station-override]] — **DECISION (proposed) 2026-07-22.** Fixes shared-`Trip` ripple: editing a Trip time / Route station mutates the shared row → hits every sibling Contract. Operators need own time + own check-in station (Lomprayah office ≠ shared bus station), existing data untouched. 3 nullable additive FKs: `Trip.operator`, `Trip.departure_station`/`arrival_station` override (NULL=use route's), `Station.owner` (mirrors `Place.owner`). Resolution via `Trip.effective_*_station`; seat-check switches to effective station. FE's ~20 read sites unchanged (serializer resolves override into existing keys). Top gotcha: hand-rolled `TripDashBoardViewSet.update` silently drops unhandled keys. Plan-only, no code. Extends [[seat-availability-reseller-operator-gap]].
 - [[station-mapping-seat-api-visibility]] — **SHIPPED 2026-07-22 (#260).** Station Mapping page shows which operator/API a mapping serves: Seat API chip on operator pick + `Seat API` grid column (`operator_has_api` serializer field) + `?our_station=` filter to see all operators mapped to one pier. Part B (Supabase id autocomplete) deferred — `RouteID` anon-unreadable, needs BE proxy.
 
+## Knowledge — Airport Transfer
+
+- [[airport-transfer-rate-dynamic-pricing]] — **PATTERN 2026-08-04.** Full FE+BE flow for airport transfer dynamic pricing by date. Two paths: resolveZone (zone polygon → date-agnostic min price) + fare-calendar (route, 15-day, date-filtered). Critical gap: resolveZone price ≠ cart price when date-specific ratecards exist. Date filter only applied at cart-add via `filterRatecardsForCheckout()`. Key files: `Contract_RateCard` (`operators/models.py:521`), `ResolveZoneView` (`stations/views.py:638`), `filterRatecardsForCheckout` (`helpers/checkoutRatecards.js`), `ZonePriceBox.js`.
+
 ## Knowledge — UX/Design
 
 - [[slim-isr-payload-pattern]] — **PATTERN #253.** Trim nested API objects to card-shape fields inside `getStaticProps` before returning props — ~10x `__NEXT_DATA__` payload cut on index pages (147B vs 1KB+/item). Case: /trips 297→1000 routes.

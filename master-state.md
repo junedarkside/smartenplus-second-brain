@@ -4,22 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-04 (session #286)
+**Updated:** 2026-08-04 (session #287)
 
-**Achieved — Airport transfer `/airport-transfer/[slug]` full style+UX overhaul. Removed wrong-product elements (TripListingSection, hero search, price subtext). Fixed style tokens (5 components). Calendar date centering fixed via `showFares={false}`. Back button removed, breadcrumb promoted. Breadcrumb invisible bug fixed (double ssr:false → direct NextBreadcrumbs import). Moved breadcrumb above trust strip. Merged to develop `944b2b1f`.**
+**Achieved — Airport transfer date-aware dynamic pricing. Diagnosed: `resolveZone` returned date-agnostic base price → displayed price ≠ cart price when date-specific ratecards exist. Fixed: BE `ResolveZoneView` now accepts optional `?date=YYYY-MM-DD`, applies `Q(rate_date=date)|Q(rate_date__isnull=True)` (mirrors `_get_display_rate()`). FE `resolveZone` RTK query passes `date` param; `ZonePriceBox` sends `bookingDate` on address select + `useEffect` re-triggers on date change. Vault note created: `03-knowledge/airport-transfer-rate-dynamic-pricing.md`. Both branches merged → develop. BE `38c0470` · FE `8c2b5c33`.**
 
-**Workspace (#286) — all clean on develop:**
-- frontend: `develop` `944b2b1f` (merged `fix/style-consistency-airport-transfer`)
-- backend: `develop` `aa56361` (clean)
+**Workspace (#287) — all clean on develop:**
+- frontend: `develop` `8c2b5c33` (merged `feat/airport-transfer-date-aware-pricing`)
+- backend: `develop` `38c0470` (merged `feat/airport-transfer-date-aware-pricing`)
 - admin-dashboard: `develop` `c003314` (clean)
 - content: `master` `3756e5b` (clean)
 
 **Resume point (EXACT):**
 1. **Deploy prep:** run all pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear; develop→main deploy.
-2. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key `CartItemCheckoutInfo` on merge); `--:--` departure_time = admin data cleanup.
-3. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
+2. **Smoke test airport transfer pricing:** curl `resolve-zone?airport=&lat=&lng=&date=YYYY-MM-DD` → verify date-specific rate returned; open `/airport-transfer/hatyai-airport` → type address → change date → verify price updates.
+3. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key `CartItemCheckoutInfo` on merge); `--:--` departure_time = admin data cleanup.
+4. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
 
-_(Sessions #221–#285 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#286 archived → `07-logs/session-history.md`.)_
 
 ---
 
