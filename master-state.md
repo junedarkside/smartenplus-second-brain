@@ -4,13 +4,13 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-04 (session #285)
+**Updated:** 2026-08-04 (session #286)
 
-**Achieved — Airport-transfer zone: post-merge bug fixes (address-pick, airportName, transfer_airport field) + notification gaps (Telegram direction/pickup/dropoff, email timeline direction-aware). Tested on order VAR1397366 — all 3 bookings Telegram + email OK.**
+**Achieved — Airport transfer `/airport-transfer/[slug]` full style+UX overhaul. Removed wrong-product elements (TripListingSection, hero search, price subtext). Fixed style tokens (5 components). Calendar date centering fixed via `showFares={false}`. Back button removed, breadcrumb promoted. Breadcrumb invisible bug fixed (double ssr:false → direct NextBreadcrumbs import). Moved breadcrumb above trust strip. Merged to develop `944b2b1f`.**
 
-**Workspace (#285) — all clean on develop:**
-- frontend: `develop` `d827ec9a` (merged `fix/checkout-zone-address-airport-name`)
-- backend: `develop` `aa56361` (merged `fix/booking-notifications-direction`)
+**Workspace (#286) — all clean on develop:**
+- frontend: `develop` `944b2b1f` (merged `fix/style-consistency-airport-transfer`)
+- backend: `develop` `aa56361` (clean)
 - admin-dashboard: `develop` `c003314` (clean)
 - content: `master` `3756e5b` (clean)
 
@@ -19,7 +19,7 @@
 2. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key `CartItemCheckoutInfo` on merge); `--:--` departure_time = admin data cleanup.
 3. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
 
-_(Sessions #221–#284 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#285 archived → `07-logs/session-history.md`.)_
 
 ---
 

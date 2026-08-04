@@ -1,8 +1,8 @@
 ---
 name: slidecalendar2-farecalendar-prop-pattern
-description: SlideCalendar2 accepts optional fareCalendar (date-keyed rate map) + fareCalendarLoading (boolean) props. Caller MUST fetch via useGetFareCalendarQuery and pass both. Only TripSearchFilters.js wires them correctly; TripDetailSchedule.js:46 doesn't (out of scope for prior fix).
+description: SlideCalendar2 accepts optional fareCalendar (date-keyed rate map) + fareCalendarLoading (boolean) props. Caller MUST fetch via useGetFareCalendarQuery and pass both. Only TripSearchFilters.js wires them correctly. showFares=false (added 2026-08-04) skips price row entirely — use on pages that never show fares (e.g. airport-transfer/[slug]).
 type: knowledge-atom
-date: 2026-06-15
+date: 2026-08-04
 parent: trip-page-full-audit
 ---
 
@@ -90,6 +90,24 @@ return (
 | `pages/trips/detail/[...slug].js:346` | ❌ no | Passes `data` only. Calendar visible but no fare row. (Distinct from `TripDetailSchedule.js` — both render `SlideCalendar2` on detail-ish routes, neither wires fare data.) |
 
 5 callers total. **1 wired correctly. 4 missing the fare props.** None crash — fall through is graceful. The detail-page `SlideCalendar2` was *always* going to be a no-op price-wise; the prior assumption (visible fare row on detail page) was wrong.
+
+## `showFares` prop (added 2026-08-04)
+
+When a page never shows fares (e.g. `/airport-transfer/[slug]`), pass `showFares={false}` to skip the price row entirely — no invisible placeholder, no skeleton, no price. Date text vertically centers in cell.
+
+```jsx
+// pages/airport-transfer/[slug].js
+<DynamicSlideCalendar2
+  data={{ ... }}
+  showFares={false}   // ← skips price row; date text centers in cell
+/>
+```
+
+Default is `true` — all existing callers unaffected. Invisible `–` placeholder only renders when `showFares=true` (trips pages with fare data). This prevents layout shift between priced/unpriced days on the same strip.
+
+**Pattern:** additive prop with safe default — no side effect on existing callers.
+
+---
 
 ## Decision
 
