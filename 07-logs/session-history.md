@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #289 (2026-08-04)
+
+**Achieved — Admin-dashboard: booking detail table text-overflow fix.** User flagged screenshot of `/bookings/PPF3522223` — Pickup/Dropoff Point and other long values were cut off at the viewport edge instead of wrapping. Root cause: `components/booking/BookingDetails.js:29` wrapped the whole two-column layout in a div with Tailwind `whitespace-nowrap`, which cascaded (CSS `white-space` is inherited) into every `TableCell` in the desktop `BookingInfoDetails.js` table; combined with `TableContainer`'s `overflow: 'hidden'`, long text simply clipped. Only the Remark row had a local `whitespace-normal break-words` override, proving the intended pattern was never applied elsewhere. Fix: removed the stray `whitespace-nowrap` from the ancestor div, and added `sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}` to all desktop-table value cells (Operator, Contract Id, Type, Travel Mode, dates, Route, stations, flight info, Pickup/Dropoff Point/Time) for belt-and-suspenders wrapping on unbroken long strings. Mobile card layout was already unaffected (had its own `wordBreak: 'break-word'`). Committed + pushed directly to admin-dashboard `develop` (`cb9df45`) — no PR/merge needed since branch was already develop.
+
+**Workspace (#289):**
+- frontend: `develop` `8c2b5c33` (clean)
+- backend: `develop` `38c0470` (clean)
+- admin-dashboard: `develop` `cb9df45` (pushed origin)
+- content: `master` `3756e5b` (clean)
+
+---
+
 ## Session #288 (2026-08-04)
 
 **Achieved — Admin-dashboard: airport-transfer coords + booking type badge on booking detail page.** Investigated why `/bookings/PPF3522223` looked like it had no airport-transfer info — confirmed data was present (`InfoFields.direction='address_to_airport'`, `pickuplat/pickuplng`), the FE just never rendered it. Built `MapLinkIcon.js` (pickup/dropoff lat/lng → Google Maps link, inline next to existing Pickup/Dropoff rows in `BookingInfoDetails.js`). Ran a UXUI+BD agent debate on "how should staff tell Airport Transfer / Tour / Transfer apart at a glance" → consensus: explicit badge, `direction`-based, plus a 4th "Needs Review" state for ambiguous data (TRANSFER category + no direction) instead of silently guessing. Ran nextjs+django agent pair to verify the data path — found category lives at `Contract.service_category` on the detail endpoint (confirmed via `operators/models.py:330`, `bookings/serializers.py:79-113`), and that the *list-grid* endpoint exposes the same value under a differently-named key (`contract.type`, `bookings/serializers.py:265`) — scope trimmed to detail-page-only to avoid a two-shape helper (grid deferred). Built `bookingTypeUtils.js` (`getBookingType()`) + `BookingTypeBadge.js`, wired into `pages/bookings/[slug].js` header. Zero backend changes — all fields already serialized. Admin-dashboard `develop` `f65a805` (committed, not pushed).
