@@ -4,23 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-04 (session #287)
+**Updated:** 2026-08-04 (session #288)
 
-**Achieved — Airport transfer date-aware dynamic pricing. Diagnosed: `resolveZone` returned date-agnostic base price → displayed price ≠ cart price when date-specific ratecards exist. Fixed: BE `ResolveZoneView` now accepts optional `?date=YYYY-MM-DD`, applies `Q(rate_date=date)|Q(rate_date__isnull=True)` (mirrors `_get_display_rate()`). FE `resolveZone` RTK query passes `date` param; `ZonePriceBox` sends `bookingDate` on address select + `useEffect` re-triggers on date change. Vault note created: `03-knowledge/airport-transfer-rate-dynamic-pricing.md`. Both branches merged → develop. BE `38c0470` · FE `8c2b5c33`.**
+**Achieved — Admin-dashboard: airport-transfer coords + booking type badge on booking detail page.** Investigated why `/bookings/PPF3522223` looked like it had no airport-transfer info — confirmed data was present (`InfoFields.direction='address_to_airport'`, `pickuplat/pickuplng`), the FE just never rendered it. Built `MapLinkIcon.js` (pickup/dropoff lat/lng → Google Maps link, inline next to existing Pickup/Dropoff rows in `BookingInfoDetails.js`). Ran a UXUI+BD agent debate on "how should staff tell Airport Transfer / Tour / Transfer apart at a glance" → consensus: explicit badge, `direction`-based, plus a 4th "Needs Review" state for ambiguous data (TRANSFER category + no direction) instead of silently guessing. Ran nextjs+django agent pair to verify the data path — found category lives at `Contract.service_category` on the detail endpoint (confirmed via `operators/models.py:330`, `bookings/serializers.py:79-113`), and that the *list-grid* endpoint exposes the same value under a differently-named key (`contract.type`, `bookings/serializers.py:265`) — scope trimmed to detail-page-only to avoid a two-shape helper (grid deferred). Built `bookingTypeUtils.js` (`getBookingType()`) + `BookingTypeBadge.js`, wired into `pages/bookings/[slug].js` header. Zero backend changes — all fields already serialized. Admin-dashboard `develop` `f65a805` (committed, not pushed).
 
-**Workspace (#287) — all clean on develop:**
-- frontend: `develop` `8c2b5c33` (merged `feat/airport-transfer-date-aware-pricing`)
-- backend: `develop` `38c0470` (merged `feat/airport-transfer-date-aware-pricing`)
-- admin-dashboard: `develop` `c003314` (clean)
+**Workspace (#288):**
+- frontend: `develop` `8c2b5c33` (clean)
+- backend: `develop` `38c0470` (clean)
+- admin-dashboard: `develop` `f65a805` — **committed, needs push**
 - content: `master` `3756e5b` (clean)
 
 **Resume point (EXACT):**
-1. **Deploy prep:** run all pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear; develop→main deploy.
-2. **Smoke test airport transfer pricing:** curl `resolve-zone?airport=&lat=&lng=&date=YYYY-MM-DD` → verify date-specific rate returned; open `/airport-transfer/hatyai-airport` → type address → change date → verify price updates.
-3. **Deferred BE:** guest→auth merge address durability (write at add-to-cart + re-key `CartItemCheckoutInfo` on merge); `--:--` departure_time = admin data cleanup.
-4. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
+1. **admin-dashboard:** push `f65a805` to origin (user held back this session — confirm before pushing).
+2. **Deploy prep (carry-over from #287):** run pending migrations on staging (carts 0017, bookings 0048, stations 0030-0033, bookings 0047, carts 0016); ISR cache clear; develop→main deploy.
+3. **Smoke test airport transfer pricing (carry-over):** curl `resolve-zone?airport=&lat=&lng=&date=YYYY-MM-DD`; open `/airport-transfer/hatyai-airport` → type address → change date → verify price updates.
+4. **Deferred:** booking-type badge on bookings list grid (needs a small decision on the `service_category`/`contract.type` key-name mismatch first, see this session's finding above); guest→auth merge address durability; `--:--` departure_time admin data cleanup.
+5. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; pax selector; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1.
 
-_(Sessions #221–#286 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#287 archived → `07-logs/session-history.md`.)_
 
 ---
 
