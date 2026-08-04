@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #288 (2026-08-04)
+
+**Achieved — Admin-dashboard: airport-transfer coords + booking type badge on booking detail page.** Investigated why `/bookings/PPF3522223` looked like it had no airport-transfer info — confirmed data was present (`InfoFields.direction='address_to_airport'`, `pickuplat/pickuplng`), the FE just never rendered it. Built `MapLinkIcon.js` (pickup/dropoff lat/lng → Google Maps link, inline next to existing Pickup/Dropoff rows in `BookingInfoDetails.js`). Ran a UXUI+BD agent debate on "how should staff tell Airport Transfer / Tour / Transfer apart at a glance" → consensus: explicit badge, `direction`-based, plus a 4th "Needs Review" state for ambiguous data (TRANSFER category + no direction) instead of silently guessing. Ran nextjs+django agent pair to verify the data path — found category lives at `Contract.service_category` on the detail endpoint (confirmed via `operators/models.py:330`, `bookings/serializers.py:79-113`), and that the *list-grid* endpoint exposes the same value under a differently-named key (`contract.type`, `bookings/serializers.py:265`) — scope trimmed to detail-page-only to avoid a two-shape helper (grid deferred). Built `bookingTypeUtils.js` (`getBookingType()`) + `BookingTypeBadge.js`, wired into `pages/bookings/[slug].js` header. Zero backend changes — all fields already serialized. Admin-dashboard `develop` `f65a805` (committed, not pushed).
+
+**Workspace (#288):**
+- frontend: `develop` `8c2b5c33` (clean)
+- backend: `develop` `38c0470` (clean)
+- admin-dashboard: `develop` `f65a805` (pushed origin)
+- content: `master` `3756e5b` (clean)
+
+---
+
 ## Session #287 (2026-08-04)
 
 **Achieved:** Airport transfer date-aware dynamic pricing. Diagnosed: `resolveZone` returned date-agnostic base price → displayed price ≠ cart price when date-specific ratecards exist. Fixed: BE `ResolveZoneView` now accepts optional `?date=YYYY-MM-DD`, applies `Q(rate_date=date)|Q(rate_date__isnull=True)` (mirrors `_get_display_rate()`). FE `resolveZone` RTK query passes `date` param; `ZonePriceBox` sends `bookingDate` on address select + `useEffect` re-triggers on date change. Vault note created: `03-knowledge/airport-transfer-rate-dynamic-pricing.md`. Both branches merged → develop. BE `38c0470` · FE `8c2b5c33`.

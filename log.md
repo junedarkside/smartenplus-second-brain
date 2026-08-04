@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-04] session-end (#289) | admin-dashboard booking-detail table text-overflow fix — whitespace-nowrap cascade removed, pushed develop `cb9df45`
+
 ## [2026-08-04] research (#287) | airport-transfer rate dynamic pricing — FE+BE cross-repo review
 Full flow mapped: resolveZone (date-agnostic) vs fare-calendar (date-filtered). Critical gap: displayed zone price ≠ cart price when date-specific ratecards exist. Note → [[airport-transfer-rate-dynamic-pricing]].
 
