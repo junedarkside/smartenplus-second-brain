@@ -4,24 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-06 (session #301)
+**Updated:** 2026-08-06 (session #302)
 
-**Achieved (#301) — Backend: git-branch housekeeping only, no product code changed.** User pasted a list of 19 named branches + `chore/drop-contract-seat-api-url` from `smartenplus-backend` and asked to check + report purge candidates. Confirmed `master` is a dead ref (frozen since Dec 2022, 959 commits behind `develop`) — real trunk is `develop`. Ran `git branch --merged origin/develop` — all 20 branches merged. Checked each against `origin/*` for sync/divergence: 16 in sync (local==remote SHA), 4 remote-already-gone (`feat/airport-transfer-zone-pricing`, `feat/mapping-dialog-supabase`, `feat/seat-check-operator`, `fix/airport-transfer-from-price-flag`). Reported findings, user said "go." Deleted all 20 local (`git branch -d`, safe — refuses on unmerged, none hit that) + 16 remote (`git push origin --delete`). Verified final `git branch -a`: only `main`/`develop`/`master` + unrelated in-flight branches (`chore/remove-cs-debug-logs`, `feat/admin-ota-ticket-create`, various `feat/chat-*`/`feat/cs-*`/`feat/ota-*`/`fix/*` not in the purge list) remain. Repo now clean of the 20 stale branches.
+**Achieved (#302) — Admin-dashboard: git-branch housekeeping only, no product code changed. PARTIAL — remote delete blocked.** User pasted 14 named branches + `chore/drop-contract-seat-api-url` from `admin-dashboard` (repo `smartenplus-dashboard`), asked to check + purge. Confirmed trunk: `main` and `develop` sit at the same commit `9f131d6` here (unlike backend's dead `master`), so checked merge against `origin/main`. All 15 merged. Noted repo has a duplicate remote setup — `main` and `origin` git remotes both point to the same GitHub URL. Sync check vs `origin`: 11 in sync, 4 remote-already-gone (`feat/mapping-dialog-supabase`, `feat/seat-check-operator`, `feat/transfer-zone-admin`, `fix/transfer-zones-gate-transport-private-charter`). Deleted all 15 local (`git branch -d`, clean — all merged). **`git push origin --delete` for the 11 remote branches was blocked by the auto-mode permission classifier** (cwd was `admin-dashboard`, not pre-authorized like the backend repo in the prior session) — reported the blocker + exact command to the user, did not retry or attempt a workaround. User ended session before re-running or approving it. **Remote-side, all 11 branches are still live on GitHub** — only local cleanup landed.
 
-**Workspace (#301):**
-- backend: `main`/`develop` unchanged at `0996a66` (branch list pruned only — 20 stale branches → 0)
+**Workspace (#302):**
+- admin-dashboard: local branch list pruned (15 → 0), but `origin` still has the 11 that were meant to go — **not actually clean yet**. `main`/`develop` unchanged at `9f131d6`.
+- backend: unchanged, `main`/`develop` `0996a66` per #301
 - frontend: unchanged, still `develop`/`main` `bb06d910` per #300
-- admin-dashboard: unchanged, still `main` `9f131d6` per #297
 - content: unchanged, `master` `3756e5b` (clean)
 
-**Resume point (EXACT, unchanged — #301 was pure git housekeeping, no code touched):**
-1. **Manually verify the combobox dropdown-reopen fix (`bb06d910`)** — shipped without live browser confirmation (no Chrome tool access this session). Hard-refresh `/`, click Airport Transfer tab, type an airport name, confirm suggestions appear and stay reachable after any prior close/select. If still broken, the actual root cause is still unconfirmed — will need real DOM/console inspection, not further code-reading guesses.
-2. **Demo-station stop-gap filter is client-side only** (`DEMO_NAME_PATTERN` regex in `AirportTransferSearch.js`) — proper fix is backend: add `Station.is_active` following the `TransferZone.is_active`/`Contract.is_actived` precedent (`stations/models.py`, filtered in `DashBoardStationViewSet.get_queryset`), and/or add an environment guard to `seed_demo_destination.py` so it can't run against non-dev databases. Not scoped/built this session.
-3. **Rotate 4 leaked secrets** (console-side, blocking, carried from #297/#298): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET` — then paste into GitHub repo Settings → Secrets and variables → Actions.
-4. **Confirm nginx CSP fix actually reaches prod VPS** (carried from #297) — volume-mounted config, merging to develop alone doesn't update the live server.
-5. **Manual browser re-verification of #296's fixes** (backend/logic verified via curl+shell, full FE click-through still not done) — same 3 items as #298 carried forward, unchanged.
-6. **Prod smoke test #294's ratecard-priority fix.**
-7. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1; #296 backfill for pre-fix `BookingItem` station snapshots.
+**Resume point (EXACT):**
+1. **Finish admin-dashboard remote branch delete** — run from `/Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard`:
+   ```bash
+   git push origin --delete chore/drop-contract-seat-api-url feat/coupon-admin-ui feat/location-duplicate-warning feat/operator-scoped-trip feat/seat-check-debug-panel feat/station-mapping feat/station-mapping-routeid-autocomplete feat/trip-copy-duplicate-guard feat/trip-picker-shared-operator fix/routeid-confirm-prefix-match fix/support-sep-resend-counter
+   ```
+   All 11 confirmed merged into `origin/main` already — safe, just needs the permission prompt accepted (or user runs directly).
+2. **Manually verify the combobox dropdown-reopen fix (`bb06d910`)** — shipped without live browser confirmation (no Chrome tool access this session). Hard-refresh `/`, click Airport Transfer tab, type an airport name, confirm suggestions appear and stay reachable after any prior close/select. If still broken, the actual root cause is still unconfirmed — will need real DOM/console inspection, not further code-reading guesses.
+3. **Demo-station stop-gap filter is client-side only** (`DEMO_NAME_PATTERN` regex in `AirportTransferSearch.js`) — proper fix is backend: add `Station.is_active` following the `TransferZone.is_active`/`Contract.is_actived` precedent (`stations/models.py`, filtered in `DashBoardStationViewSet.get_queryset`), and/or add an environment guard to `seed_demo_destination.py` so it can't run against non-dev databases. Not scoped/built this session.
+4. **Rotate 4 leaked secrets** (console-side, blocking, carried from #297/#298): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET` — then paste into GitHub repo Settings → Secrets and variables → Actions.
+5. **Confirm nginx CSP fix actually reaches prod VPS** (carried from #297) — volume-mounted config, merging to develop alone doesn't update the live server.
+6. **Manual browser re-verification of #296's fixes** (backend/logic verified via curl+shell, full FE click-through still not done) — same 3 items as #298 carried forward, unchanged.
+7. **Prod smoke test #294's ratecard-priority fix.**
+8. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1; #296 backfill for pre-fix `BookingItem` station snapshots.
 
 _(Sessions #221–#298 archived → `07-logs/session-history.md`.)_
 

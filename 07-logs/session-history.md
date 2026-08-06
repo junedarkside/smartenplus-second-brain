@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #301 (2026-08-06)
+
+**Achieved — Backend: git-branch housekeeping only, no product code changed.** User pasted a list of 19 named branches + `chore/drop-contract-seat-api-url` from `smartenplus-backend` and asked to check + report purge candidates. Confirmed `master` is a dead ref (frozen since Dec 2022, 959 commits behind `develop`) — real trunk is `develop`. Ran `git branch --merged origin/develop` — all 20 branches merged. Checked each against `origin/*` for sync/divergence: 16 in sync (local==remote SHA), 4 remote-already-gone (`feat/airport-transfer-zone-pricing`, `feat/mapping-dialog-supabase`, `feat/seat-check-operator`, `fix/airport-transfer-from-price-flag`). Reported findings, user said "go." Deleted all 20 local (`git branch -d`, safe — refuses on unmerged, none hit that) + 16 remote (`git push origin --delete`). Verified final `git branch -a`: only `main`/`develop`/`master` + unrelated in-flight branches (`chore/remove-cs-debug-logs`, `feat/admin-ota-ticket-create`, various `feat/chat-*`/`feat/cs-*`/`feat/ota-*`/`fix/*` not in the purge list) remain. Repo now clean of the 20 stale branches.
+
+**Workspace (#301):**
+- backend: `main`/`develop` unchanged at `0996a66` (branch list pruned only — 20 stale branches → 0)
+- frontend: unchanged, still `develop`/`main` `bb06d910` per #300
+- admin-dashboard: unchanged, still `main` `9f131d6` per #297
+- content: unchanged, `master` `3756e5b` (clean)
+
+---
+
 ## Session #300 (2026-08-06)
 
 **Achieved — Frontend: git-branch housekeeping only, no product code changed.** User pasted a list of 30 stray local branches from `smartenplus-frontend` (feature/fix branches from the airport-transfer work + misc fixes) and asked to check + purge. Ran `git branch --merged develop` — 29 of 30 already merged, safe delete; kept 1 (`fix/remove-trip-listing-airport-transfer`) since it showed unmerged. Deleted the 29: local `git branch -d` for all, plus `git push origin --delete` for the 25 that had a remote (4 were local-only: `feat/airport-transfer-zone-picker`, `feat/dashboard-redesign`, `fix/booking-notifications-direction`, `fix/style-consistency-airport-transfer`). Verified `develop`/`main` untouched at `bb06d910` throughout. User then asked to double-check the held-back branch rather than assume it was junk — inspected its single commit `46a713b1` (removes `TripListingSection`/`MobileFilterDialog` from `pages/airport-transfer/[slug].js` + `AirportTransferHeader.js`, 157 lines, real diff, not empty). Found it was **not novel work**: a sibling commit `df6b6e93` (from the already-merged-and-purged `fix/style-consistency-airport-transfer`) does the identical removal plus additional token/style cleanup — confirmed `46a713b1` is NOT an ancestor of `df6b6e93` via `git merge-base --is-ancestor` (independent duplicate, not a predecessor), and confirmed current `develop` already has zero references to either removed component via grep. Force-deleted (`git branch -D`, local-only, no remote) since content was fully superseded. Also: user asked to stop a stray `npm run dev` — killed both PIDs on port 3000. All work was read-only git inspection + branch deletion; no plan-mode code edits were needed or made.
