@@ -2,6 +2,10 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-06] session-end (#299) | Airport Transfer search tab shipped end-to-end — built, reviewed, debated, revised twice, merged develop `bb06d910`. Native select → chip row → type-to-filter combobox per user pushback; demo-station client-side filter added (backend fix still open); mobile tab-overflow fixed; dropdown-reopen bug fixed (unverified live, no browser tool this session). One process slip: a fix commit landed directly on develop, caught before push, corrected onto a proper branch. → [[airport-picker-ux-pattern-and-demo-data-leak]]
+
+## [2026-08-06] debate | Airport Transfer picker UX + demo-data leak — 3-agent debate (ux-research-specialist, ui-component-engineer, design-review) unanimously verdict: replace shipped native `<select>` airport picker with a chip/card grid reusing `StationCard`/`ExperiencesSearch` chip pattern; reject `AutoCompleteSearch.js` modal reuse (wrong tool for a 4-10 item closed set). Confirmed real bug: demo/test stations (`[DEMO] Phuket Hotel Zone` etc.) leak into the live customer-facing airport list — no `is_active`/`is_demo` flag on `Station` model, `seed_demo_destination.py` has zero env guard. Recommended client-side regex filter as stop-gap + backend `is_active` flag as proper fix (follows existing `TransferZone.is_active` precedent). Recommendation only, not yet implemented. → [[airport-picker-ux-pattern-and-demo-data-leak]]
+
 ## [2026-08-04] session-end (#291) | frontend airport-transfer fare-card vehicle icon + operator name/logo shipped — merged develop `4bd5f1ef`
 
 ## [2026-08-04] session-end (#289) | admin-dashboard booking-detail table text-overflow fix — whitespace-nowrap cascade removed, pushed develop `cb9df45`
