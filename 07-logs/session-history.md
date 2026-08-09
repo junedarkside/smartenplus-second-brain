@@ -4,6 +4,18 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #302 (2026-08-06)
+
+**Achieved — Admin-dashboard: git-branch housekeeping only, no product code changed. PARTIAL — remote delete blocked.** User pasted 14 named branches + `chore/drop-contract-seat-api-url` from `admin-dashboard` (repo `smartenplus-dashboard`), asked to check + purge. Confirmed trunk: `main` and `develop` sit at the same commit `9f131d6` here (unlike backend's dead `master`), so checked merge against `origin/main`. All 15 merged. Noted repo has a duplicate remote setup — `main` and `origin` git remotes both point to the same GitHub URL. Sync check vs `origin`: 11 in sync, 4 remote-already-gone (`feat/mapping-dialog-supabase`, `feat/seat-check-operator`, `feat/transfer-zone-admin`, `fix/transfer-zones-gate-transport-private-charter`). Deleted all 15 local (`git branch -d`, clean — all merged). **`git push origin --delete` for the 11 remote branches was blocked by the auto-mode permission classifier** (cwd was `admin-dashboard`, not pre-authorized like the backend repo in the prior session) — reported the blocker + exact command to the user, did not retry or attempt a workaround. User ended session before re-running or approving it. **Remote-side, all 11 branches are still live on GitHub** — only local cleanup landed.
+
+**Workspace (#302):**
+- admin-dashboard: local branch list pruned (15 → 0), but `origin` still has the 11 that were meant to go — **not actually clean yet**. `main`/`develop` unchanged at `9f131d6`.
+- backend: unchanged, `main`/`develop` `0996a66` per #301
+- frontend: unchanged, still `develop`/`main` `bb06d910` per #300
+- content: unchanged, `master` `3756e5b` (clean)
+
+---
+
 ## Session #301 (2026-08-06)
 
 **Achieved — Backend: git-branch housekeeping only, no product code changed.** User pasted a list of 19 named branches + `chore/drop-contract-seat-api-url` from `smartenplus-backend` and asked to check + report purge candidates. Confirmed `master` is a dead ref (frozen since Dec 2022, 959 commits behind `develop`) — real trunk is `develop`. Ran `git branch --merged origin/develop` — all 20 branches merged. Checked each against `origin/*` for sync/divergence: 16 in sync (local==remote SHA), 4 remote-already-gone (`feat/airport-transfer-zone-pricing`, `feat/mapping-dialog-supabase`, `feat/seat-check-operator`, `fix/airport-transfer-from-price-flag`). Reported findings, user said "go." Deleted all 20 local (`git branch -d`, safe — refuses on unmerged, none hit that) + 16 remote (`git push origin --delete`). Verified final `git branch -a`: only `main`/`develop`/`master` + unrelated in-flight branches (`chore/remove-cs-debug-logs`, `feat/admin-ota-ticket-create`, various `feat/chat-*`/`feat/cs-*`/`feat/ota-*`/`fix/*` not in the purge list) remain. Repo now clean of the 20 stale branches.

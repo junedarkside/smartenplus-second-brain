@@ -4,31 +4,28 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-06 (session #302)
+**Updated:** 2026-08-09 (session #303)
 
-**Achieved (#302) — Admin-dashboard: git-branch housekeeping only, no product code changed. PARTIAL — remote delete blocked.** User pasted 14 named branches + `chore/drop-contract-seat-api-url` from `admin-dashboard` (repo `smartenplus-dashboard`), asked to check + purge. Confirmed trunk: `main` and `develop` sit at the same commit `9f131d6` here (unlike backend's dead `master`), so checked merge against `origin/main`. All 15 merged. Noted repo has a duplicate remote setup — `main` and `origin` git remotes both point to the same GitHub URL. Sync check vs `origin`: 11 in sync, 4 remote-already-gone (`feat/mapping-dialog-supabase`, `feat/seat-check-operator`, `feat/transfer-zone-admin`, `fix/transfer-zones-gate-transport-private-charter`). Deleted all 15 local (`git branch -d`, clean — all merged). **`git push origin --delete` for the 11 remote branches was blocked by the auto-mode permission classifier** (cwd was `admin-dashboard`, not pre-authorized like the backend repo in the prior session) — reported the blocker + exact command to the user, did not retry or attempt a workaround. User ended session before re-running or approving it. **Remote-side, all 11 branches are still live on GitHub** — only local cleanup landed.
+**Achieved (#303) — Passenger update feature: admin-dashboard + backend + smartenplus-frontend, all merged to develop.** Booking-page passenger edit/add/remove — previously only reachable by opening a support ticket first. Backend (`smartenplus-backend`): extracted passenger mutation logic into shared `apply_passenger_edits()` used by both the ticket endpoint (`TicketViewSet.partial_update`) and a new booking-scoped path (`BookingItemUpdateViewSet`), so edits don't require a ticket. Fixed a crash where an empty `datofbirth` on an existing passenger attempted to write NULL into a NOT NULL column. Added `HistoricalRecords` to `BookingPassengerDetail` (no prior audit trail on passport/DOB/name edits) + migration `0049`. Added `passenger_count_changed` flag in the response so the frontend can warn when confirmed headcount drifts from paid headcount (no auto price/refund logic — deliberately manual). 11 new tests in `tickets/test_passenger_update.py`. Admin-dashboard: wired `UpdatePassenger.js` into the booking detail page (`disableStatusGate` prop, `bookingItemId` routing to the new endpoint), added Add-passenger button, per-row Remove action with `ConfirmDialog`, DataGrid column UX fixes (hid raw `id` column, native date picker for DOB, passport placeholder), Thai-language help page (`pages/bookings/passenger-update-help.js`), and fixed the bookings-list passenger-count badge (`BookingPassengerDetail.js` — was counting unconfirmed/cancelled passengers via `.length`, now filters by `.confirm`). smartenplus-frontend (customer-facing): fixed a real rendering bug where the "Canceled" badge on a cancelled passenger row was absolutely-positioned and overlapped the DOB text; converted the row to a fixed CSS Grid template (Name/DOB/Passport/Status) so columns stay aligned across rows regardless of passenger status; replaced `border-left` status indicator with `box-shadow` (border was shifting row content); fixed React key using array index instead of real passenger id; fixed DOB fallback silently rendering a fabricated "Jan 01, 2000" for passengers with no birthdate on file. Extensive live-tested iteration across ~15 turns (screenshots caught 3 real bugs the initial fixes missed). Live-caught bug: `HistoricalRecords` migration existed but was never applied to dev DB (test suite uses disposable SQLite, masked the gap) — migrated. All 3 repos: feature branch → commit → push → `--no-ff` merge into `develop` → push. Backend tested (11 passing tests + full suite run, 3 pre-existing unrelated failures confirmed on clean stash). Frontend verified live in-browser by user across multiple rounds, not just build/lint.
 
-**Workspace (#302):**
-- admin-dashboard: local branch list pruned (15 → 0), but `origin` still has the 11 that were meant to go — **not actually clean yet**. `main`/`develop` unchanged at `9f131d6`.
-- backend: unchanged, `main`/`develop` `0996a66` per #301
-- frontend: unchanged, still `develop`/`main` `bb06d910` per #300
+**Workspace (#303):**
+- admin-dashboard: `develop` → `99c311b` (merge of `feat/booking-page-passenger-update`). `main` unchanged `9f131d6`.
+- backend: `develop` → `489c5c4` (merge of `feat/booking-page-passenger-update`). `main` unchanged `0996a66`.
+- frontend: `develop` → `10e7d72d` (merge of `fix/passenger-details-canceled-badge-layout`). `main` unchanged `bb06d910`.
 - content: unchanged, `master` `3756e5b` (clean)
 
 **Resume point (EXACT):**
-1. **Finish admin-dashboard remote branch delete** — run from `/Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard`:
-   ```bash
-   git push origin --delete chore/drop-contract-seat-api-url feat/coupon-admin-ui feat/location-duplicate-warning feat/operator-scoped-trip feat/seat-check-debug-panel feat/station-mapping feat/station-mapping-routeid-autocomplete feat/trip-copy-duplicate-guard feat/trip-picker-shared-operator fix/routeid-confirm-prefix-match fix/support-sep-resend-counter
-   ```
-   All 11 confirmed merged into `origin/main` already — safe, just needs the permission prompt accepted (or user runs directly).
-2. **Manually verify the combobox dropdown-reopen fix (`bb06d910`)** — shipped without live browser confirmation (no Chrome tool access this session). Hard-refresh `/`, click Airport Transfer tab, type an airport name, confirm suggestions appear and stay reachable after any prior close/select. If still broken, the actual root cause is still unconfirmed — will need real DOM/console inspection, not further code-reading guesses.
-3. **Demo-station stop-gap filter is client-side only** (`DEMO_NAME_PATTERN` regex in `AirportTransferSearch.js`) — proper fix is backend: add `Station.is_active` following the `TransferZone.is_active`/`Contract.is_actived` precedent (`stations/models.py`, filtered in `DashBoardStationViewSet.get_queryset`), and/or add an environment guard to `seed_demo_destination.py` so it can't run against non-dev databases. Not scoped/built this session.
-4. **Rotate 4 leaked secrets** (console-side, blocking, carried from #297/#298): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET` — then paste into GitHub repo Settings → Secrets and variables → Actions.
-5. **Confirm nginx CSP fix actually reaches prod VPS** (carried from #297) — volume-mounted config, merging to develop alone doesn't update the live server.
-6. **Manual browser re-verification of #296's fixes** (backend/logic verified via curl+shell, full FE click-through still not done) — same 3 items as #298 carried forward, unchanged.
-7. **Prod smoke test #294's ratecard-priority fix.**
-8. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker (then 4b + merge 3 branches); Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1; #296 backfill for pre-fix `BookingItem` station snapshots.
+1. **Passenger-update feature is on `develop` only — needs `develop`→`main` deploy + prod smoke** on all 3 repos before ops/customers see it live. Smoke test: booking page "Edit Passengers" (add/edit/remove, confirm dialog, warning banner on count mismatch), bookings-list passenger-count badge shows confirmed count only, customer-facing cancelled-passenger row renders with aligned columns (no DOB overlap).
+2. **Admin-dashboard remote branch delete still pending from #302** — 11 branches confirmed merged, `git push origin --delete` blocked by permission classifier, never re-run. Command is in session-history #302.
+3. **Manually verify the combobox dropdown-reopen fix (`bb06d910`)** — carried from #302, still unconfirmed live.
+4. **Demo-station stop-gap filter is client-side only** — carried from #302, not scoped/built yet.
+5. **Rotate 4 leaked secrets** (console-side, blocking, carried from #297/#298): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET`.
+6. **Confirm nginx CSP fix actually reaches prod VPS** (carried from #297).
+7. **Manual browser re-verification of #296's fixes** (carried, backend/logic verified only).
+8. **Prod smoke test #294's ratecard-priority fix.**
+9. **Carry-over:** AIRPORT-TRANSFER-ZONE Google-billing blocker; Prod smoke Saved(#276)+coupon(#275); HOME-STATS-BUG; SEAT-CHECK-RESELLER data fix; REC-ENGINE E2E + push; BE-IMAGE-DEDUP; SEO r16 P1; #296 backfill for pre-fix `BookingItem` station snapshots.
 
-_(Sessions #221–#298 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#302 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -43,6 +40,7 @@ _(Sessions #221–#298 archived → `07-logs/session-history.md`.)_
 
 | Item | What's pending | Where |
 |------|----------------|-------|
+| **PASSENGER-UPDATE-FEATURE** | ✅ **MERGED → develop all 3 repos (#303)** — booking-page passenger edit/add/remove (no ticket needed). BE `apply_passenger_edits()` shared endpoint + `HistoricalRecords` audit trail + `passenger_count_changed` warning flag, migration `0049`. AD booking-page UI + Thai help page + passenger-count badge fix. FE cancelled-passenger row layout fix (grid alignment, no more DOB overlap). BE `develop 489c5c4` · AD `develop 99c311b` · FE `develop 10e7d72d`. Backend: 11 new tests pass, full suite confirmed clean vs pre-existing failures. Frontend: live-tested in-browser by user across multiple iteration rounds. **Needs:** develop→main deploy on all 3 repos + prod smoke (Edit Passengers add/edit/remove + confirm dialog + count-mismatch warning; bookings-list count badge shows confirmed only; cancelled-passenger row renders aligned on customer site). | **DEPLOY PENDING** | `tickets/views.py` `apply_passenger_edits` · `bookings/models.py` · AD `components/tickets/UpdatePassenger.js` · FE `components/bookings/BookingDetail/PassengerDetails.js` |
 | **BOOKING-DISPATCH-N8N** | ✅ **MERGED → develop `6a9ea11` (#235)** — dead `AUTO_SMARTENPLUS_API_URL` target removed; `send_booking_data` now POSTs only to `N8N_WEBHOOK_URL`. Booking-confirm data reaches n8n again. **Needs:** develop→main deploy, OR same-day hotfix = unset `AUTO_SMARTENPLUS_API_URL` in prod `.env` + restart Celery worker. Docs cleanup shipped `a750ab5` (ENV.md + n8n banner; `docs/` permission granted). | **DEPLOY PENDING** | `bookings/tasks.py:128` · [[backend-n8n-resend-webhook]] |
 | **OTA-FLOW-BUGS** | ✅ **DEPLOYED TO PROD 2026-07-03** — 3 commits: `c96b1724` · `09e3f955` · `0657c6fb`. 2 BE bugs deferred (Bug 4 SLA fields + Bug 5 duplicate guard). 1 security deferred (`otaConsent.js:3` 8-char prefix). → closed-items.md | — |
 | **CS-CENTRALIZATION-DEPLOY** | ✅ **DEPLOYED TO PROD 2026-07-03** — BE `6cb2328` · FE `5617b137` · admin `0e5727b`. All manual tests PASS. Celery beat scheduled. → closed-items.md | — |
