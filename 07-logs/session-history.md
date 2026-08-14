@@ -4,6 +4,26 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #308 (2026-08-14)
+
+**Achieved (#308) — "Join" contract-type label renamed to "Shared Ride"/"Private Ride" across the whole customer-facing surface, plus the pre-existing missing-indicator gap on trip search cards and detail page closed. NOT YET COMMITTED (branch ready, awaiting explicit commit approval).** User reported "Join" as bad UX wording for transportation on `/trips/hatyai/koh-lipe`.
+
+**Phase 1 — 3-agent debate.** Ground-truth first: "Join" is not a booking CTA (`BookButton` always says "Book Now") — it's `CONTRACT_TYPE.JOIN`, a shared-vs-private vehicle indicator, displayed as `CONTRACT_TYPE_NAMES.JOIN = "Join Tour"`, and was **completely missing** from `TripCardV2`/detail page (pre-existing V1→V2 regression, previously flagged in [[trip-card-v2-flight-style-audit]] P1#1). Ran 3 parallel specialist agents (`ux-research-specialist`, `react-ui-engineer`, `business-analyst-expert`) debating independently. Unanimous: reappear on both search card + detail page, consolidate to one central label map. Split 3 ways on copy: UX→"Shared Ride"/"Private Ride", UI-eng→keep "Join Tour" (status quo), BD→"Shared & Save"/"Private Vehicle" (benefit-framed). Synthesized to vault → [[join-label-transport-ux-debate]].
+
+**Phase 2 — competitor research.** Live-checked Bookaway (2 routes: Bangkok-Koh Chang, Rio-Ilha Grande) — found their actual pattern badges ONLY the private option, leaves shared unmarked by omission. Didn't resolve JOIN wording directly but de-risked PRIVATE naming (all 3 agents + Bookaway converge near "Private Ride"). 12Go/Omio blocked (JS-rendered / 403), flagged as gap not finding.
+
+**Phase 3 — user decision.** User picked UX's "Shared Ride" for JOIN over the other two. Confirmed "Private Ride" (not bare "Share") for parallel construction, reasoning: bare "Share"/"Join" both fail the same object-less-verb UX problem.
+
+**Phase 4 — implementation, wider than the debate assumed.** Explore agent found the blast radius wasn't just the central `CONTRACT_TYPE_NAMES` constant — **4 separate hardcoded label sources** existed (`OperatorFilterBar.js` own `FILTER_LABELS`, `EnhancedTripCard.js`/`ServiceCategoryDetail.js` inline ternaries defaulting to raw uppercase for PRIVATE — a pre-existing display bug, fixed as a side-effect —, a second `TOUR_TYPES`/`TOUR_TYPE_LABELS` map in `dayTripConstants.js`, and `vehicleDescriptions.js` feeding `VehicleTypeTooltip` which was rendering the **raw enum value** `{vehicleType}` directly, not the mapped label — the actual worst offender, silently showing bare "JOIN" on every trip card via tooltip even before this session). Live browser sweep (Playwright, since `chromium-cli` unavailable on this machine — used repo's own `node_modules/playwright` directly) caught 6 MORE unmapped raw-`.type` render sites the static grep/Explore pass missed: `RouteSummary.js`, `RouteFAQ.js` (SEO-facing FAQ answer text + schema), `TripSummary.js` (2 sites, one feeding `ItemList` JSON-LD `Product.name`), `TripDetailHeader.js`, `TripDetailHero.js`, `TripDetailsImageAndMap.js` (page heading). Total 16 files touched. New UI: `ContractTypeBadge.js` (pre-existing, previously only used on `pages/operators/[slug].js`) wired into `TripCardV2.js` (new `contractType` prop, threaded from `TripItemLayoutV2.js`'s existing `vehicleType`) and `TripDetailsAttribute.js`.
+
+**Verification — live browser, not just lint/build.** `npm run build` compiled clean (pre-existing unrelated `/account` page error confirmed present on `develop` too, not caused by this work). Full eslint clean on all 16 files. Playwright-driven: `/trips/hatyai/koh-lipe` search cards (desktop 1440px + mobile 375px), trip detail page (`/trips/detail/GV6BatJ8ld`), operator listing (`/operators/smartenplus`) all screenshot-confirmed — "Shared Ride"/"Private Ride" render correctly everywhere, zero visible "JOIN" text-node hits (DOM tree-walker sweep, script/style tags excluded), zero console errors, operator filter tabs read "All (15) / Private Ride (4) / Shared Ride (10) / Charter (1)" with counts intact.
+
+**Ship path:** branch `feat/shared-ride-label-rename` off clean `develop` (per policy). **NOT committed yet** — user ran `/wrapup` before the commit step; FE code changes are verified-working but sitting as uncommitted working-tree diff. Dev server + scratch Playwright scripts cleaned up (ports 3000/3001 killed, scratch `.js` files removed).
+
+**Workspace (#308):**
+- frontend: branch `feat/shared-ride-label-rename` (off `develop b0809821`), 16 files modified, **uncommitted**.
+- admin-dashboard, backend, content: untouched this session. (Backend has an unrelated pre-existing untracked test file, not from this session — see Section 2 item carried from #304.)
+
 ## Session #307 (2026-08-13)
 
 **Achieved (#307) — Fav/heart button repositioned on TripItemLayoutV2 trip-result cards (tablet/desktop only), plus a follow-up spacing fix. Shipped to develop.** User asked to move the fav/save heart button from the card footer (buried next to operator info + Book Now) up to the price row, on `/trips/hatyai/koh-lipe`.
