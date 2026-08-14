@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #314 (2026-08-14)
+
+**Achieved (#314) — FE customer-facing airport-transfer PlacePicker: cross-border address search + clear-text button. Shipped, merged → develop.**
+
+User asked to check the vault + `/airport-transfer/phuket-airport` for the same neighboring-country fix just shipped in admin-dashboard's transfer-zone tester (commit `c4daaf6`, TH-only → TH+MY/LA/MM/KH). Traced the FE render path: `pages/airport-transfer/[slug].js` → `ZonePriceBox.js` → `PlacePicker.js` — found the identical hardcoded `componentRestrictions: { country: ['th'] }` blocking real cross-border pickup/dropoff search (e.g. Hatyai airport transfer into Penang, Malaysia). Widened to the same 5-country list AD used (Google Places caps at 5 country codes/request), sourced from vault note `thailand-location-coverage-framework.md` Category 9. Single caller (`ZonePriceBox.js`), no shared-API break — confirmed via grep before editing.
+
+Follow-up ask: add a clear (✕) button to the address input. Found existing project pattern first (`components/autocompletesearch/SearchInputField.js` — `HighlightOffOutlinedIcon` from `@mui/icons-material`, right-aligned, shown only when input has text, `aria-label` clear text) and reused it rather than inventing new UI. Added `onClear` prop to `PlacePicker.js` (optional, mirrors the `onSelect` shape) and wired it in `ZonePriceBox.js` to reset `selected` state — without this, clearing the text would've left a stale price/zone card on screen since `ZonePriceBox` owns that state independently of the input's own text.
+
+**Ship path.** Branch `fix/airport-transfer-cross-border-search` off `develop`, one commit `6c1f8307`, pushed, merged `--no-ff` → `develop` `fa5476eb`, pushed. Lint clean both files, verified via running dev server (page 200, HMR live).
+
+**Workspace (#314):**
+- frontend: `develop` → `fa5476eb`. Feature branch `fix/airport-transfer-cross-border-search` left on remote (merged, cleanup candidate).
+- backend, admin-dashboard, content: untouched this session.
+
+---
+
 ## Session #313 (2026-08-14)
 
 **Achieved (#313) — Airport-transfer zone↔airport reuse (Slice 7) + per-airport contract scoping fix (§9), both shipped on feature branches, PRs opened against develop (not yet merged).**
