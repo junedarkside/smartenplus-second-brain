@@ -4,6 +4,24 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #310 (2026-08-14)
+
+**Achieved (#310) — Trip card "View Detail" disclosure redesign, continuing #309's CTA column work. Two rounds, both shipped and merged → develop.**
+
+**Round 1: merge two disclosure controls into one.** Card had an icon-only chevron (opens gallery+price accordion) AND a separate "View details" text button (opens `ServiceGuidelines` drawer with transport/vehicle info) — two triggers, two surfaces. Merged into one inline accordion behind a single "View Detail" button: `TripItemAccordionContent` (`TripItem.js`) now renders gallery + price table + transport/vehicle/seat list (reusing `ServiceGuidelines`'s child components — `TransportDescription`, `TravelTimeItem`, `ConditionalIconListItem`, `MaxSeatListItem`, `TransportExtraList`) in one panel. `ServiceGuidelines.js` itself kept (4 other call sites confirmed live, incl. legacy V1 path) — only its call site inside V2's `TripItemLayoutV2.js` footer removed. Also fixed pre-existing P2 debt from #309's audit: duplicate DOM ids (`accordion-collapse*` was hardcoded, shared across every card in the list) — suffixed with `productSlug` throughout. Verified via `design-review` agent, live at 1440px/375px: exactly one button per card, `aria-expanded` toggles correctly, merged panel renders gallery+price+transport together, no console errors (one unrelated pre-existing S3 403 on vehicle images, not caused by this change).
+
+**Placement debate → technical review → visual-only fix (round 2).** User asked for a UX/Design/BD debate on where the button should sit. Debate leaned toward moving it from the CTA column into the footer (proximity-to-Book-Now / mislabeled-as-price-detail concerns). Followed with a NextJS + SWE technical review of that specific move, which surfaced real costs neither the design debate nor product-perspective could see: **(a)** the accordion (`{accordion}`) renders *between* header and footer in `TripItemLayoutV2.js` DOM — moving the trigger into the footer puts it *after* the content it controls, inverting expected screen-reader/keyboard tab order; **(b)** footer's desktop right-cluster is currently empty (both children `sm:hidden`) — not a clean append, needs a visibility-logic rework; **(c)** CTA column was purpose-built *this same session's predecessor* (#309) specifically to hold price/favorite/Book Now/View Detail together, already verified — footer move would be a same-session revert-and-redo, not a discovered oversight; **(d)** zero test coverage exists for any of this interaction, so a 3rd structural change with no automated regression net is real risk. User picked: **keep position, fix the actual complaint (visual competition with Book Now) by demoting weight instead of moving.**
+
+**Implementation.** New `components/trips/TripDetailToggleButton.js` (~20 lines) — extracts the button JSX that was duplicated between `TripCtaColumn.js` (desktop) and `TripItemLayoutV2.js` (mobile inline), both technical reviews had independently flagged this as pre-existing REUSE-FIRST debt. Style demoted from `font-semibold text-gray-700 hover:text-gray-900` to `font-medium text-gray-500 hover:text-gray-700` — reads secondary next to Book Now's filled MUI button, no fill/border added, 44px touch target preserved. Both call sites now differ only by a `className` prop (spacing). Lint clean on all 3 touched files.
+
+**Ship path.** All work stayed on `feat/trip-card-merge-view-detail` (single branch, both rounds, no separate branch per round — reasonable since round 2 directly modifies round 1's files before anything was pushed). One commit `101c5b68` (amended once to cover full scope — initial message only described round 1, amended before push since nothing was public yet), pushed, merged `--no-ff` → `develop` `53967dcd`, pushed. Clean merge, no conflicts.
+
+**Workspace (#310):**
+- frontend: `develop` → `53967dcd` (merge of `feat/trip-card-merge-view-detail`, commit `101c5b68`). Feature branch fully merged, left on remote (cleanup candidate).
+- admin-dashboard, backend, content: untouched this session.
+
+---
+
 ## Session #309 (2026-08-14)
 
 **Achieved (#309) — Trip card redesign shipped on top of #308's rename work: deduped "Shared Ride" pill, added a journey stepper, restored trust chips, and gave price/Book Now a dedicated CTA column. Committed, pushed, merged → develop.** Continuation of the same `feat/shared-ride-label-rename` branch — user reviewed #308's shipped rename and flagged the card still looked cluttered/duplicated, kicking off a design-iteration session.
