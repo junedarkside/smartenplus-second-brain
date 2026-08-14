@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #312 (2026-08-14)
+
+**Achieved (#312) — Trip search-results skeleton rebuilt to match #311's redesigned card, all breakpoints. Merged → develop.**
+
+`components/itinerary/SkeletonSection.js` still drew the old pre-#311 card anatomy (single non-responsive template, plain rounded icon boxes, price/CTA in old desktop position, no Top Pick/favorite row, no divider/CTA column) — every loading→loaded swap visibly jumped/reflowed on every viewport. Explore agent traced the live render path (`pages/trips/[...slug].js` → `TripSearchResults.js` dynamic-import fallback + `TripsPageLayout.js` `isFetching` state → `<SkeletonSection />` ×3) and confirmed a second file, `components/trips/TripResultsSkeleton.js`, was dead code (zero imports, only a stale comment reference).
+
+Rewrote `SkeletonSection.js` as one card template with explicit `sm:hidden`/`hidden sm:flex` blocks mirroring the real component tree: mobile block matches `TripMobileSummary.js` (Top Pick+favorite row, indigo-tinted journey box, `BadgeChip`-shaped pill row instead of plain icon boxes, operator row above price, merged price+CTA row with 132px book-button placeholder) and `sm:`-only block matches `TripCardV2.js`+`TripCtaColumn.js`+footer (grid `auto_1fr_auto` time/station skeleton, contract-badge placeholder, divider, CTA column stack, bottom operator footer). Deleted `TripResultsSkeleton.js`; removed its stale reference from a comment in `CheckoutStepSkeleton.js:14`. 111 lines, `eslint` clean on both touched files; user's own `next dev` was live so build was verified via lint + grep for dangling references rather than a competing `npm run build`.
+
+**Ship path.** Branch `fix/trip-card-skeleton-parity`, one commit `96ecff50`, pushed, merged `--no-ff` → `develop` `44756128`, pushed. Clean merge, no conflicts. Feature branch left on remote (cleanup candidate, same as #311's).
+
+**Workspace (#312):**
+- frontend: `develop` → `44756128` (merge of `fix/trip-card-skeleton-parity`, commit `96ecff50`).
+- admin-dashboard, backend, content: untouched this session (backend has an unrelated pre-existing untracked file, `operators/tests/test_transport_composit_pagination.py`, carried from #304, not touched).
+
+---
+
 ## Session #311 (2026-08-14)
 
 **Achieved (#311) — Mobile trip card UX audit + fixes shipped, `/trips/hatyai/koh-lipe` 375px. Merged → develop.**
