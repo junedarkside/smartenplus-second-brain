@@ -4,6 +4,28 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #313 (2026-08-14)
+
+**Achieved (#313) — Airport-transfer zone↔airport reuse (Slice 7) + per-airport contract scoping fix (§9), both shipped on feature branches, PRs opened against develop (not yet merged).**
+
+User asked to make transfer zones reusable across multiple airports (e.g. one "Chiang Mai Zone A" offered from both CNX and CEI). Built `ZoneAirport` M:N link table mirroring the existing `ZoneContract` idiom (migrations 0034/0035, `resolve_zone()` query change, AD `ZoneForm.js` single→multi airport picker). 36 stations tests passing at that point.
+
+Mid-review, user personally traced a real gap this reuse introduced: `ZoneAirport` (zone↔airport) and `ZoneContract` (zone↔contract) are independent — once a zone resolves from any linked airport, every linked contract is offered, with no way to restrict an operator to the specific airport it actually serves. Walked through a concrete numeric example (Contract-001 CNX-only, Contract-002/003 CEI-only, all sharing one zone) that made the risk undeniable. Two review rounds followed a same-day reversal (first "wait," then "build now" once the example landed): a first 4-agent pass (BD/Django/Next.js/SWE) on whether to fix, a second 3-agent pass (Django/Next.js/SWE) validating the actual design against project rules. Shipped: nullable `ZoneContract.airport` FK (migration 0036, no backfill needed), one-line filter in `ResolveZoneView`, `clean()` guard against pinning to an airport the zone isn't linked to, new `set_zone_contract_airport()` service fn, AD pin-control UI. 42/42 stations tests pass, including the exact bug repro.
+
+AD pin-control UI needed 3 iterations to land: attempt 1 (Select nested inside Autocomplete's `renderTags`) was structurally broken — MUI Autocomplete's click-away detection is DOM-ancestry-based and Select's Portal-rendered menu sits outside that subtree, so no `stopPropagation` fix was possible. Attempt 2 moved the pin control to a separate list block below the Autocomplete — fixed the real bug but user found a second issue live-testing: MUI's `Select` hides its label text on an empty (`''`) value unless `displayEmpty` is set, so "Any airport" looked blank/broken even though clicking real airports worked correctly the whole time. One-line fix (`displayEmpty` prop) closed it.
+
+A third 3-agent review (same trio) assessed the user's follow-up question — should this pivot to contract-first editing (zone creation stays simple, contracts map to zones from the Contract page instead)? All 3 converged: no, don't pivot — the backend is already direction-agnostic (`_apply_diff` is the same sync engine either way), the two UI failures were a MUI bug true on any page not evidence zone-first is wrong, and removing contract-management from the zone page would lose a real bulk-view capability. User confirmed: keep current design, defer contract-side pin support as a future non-blocking addition.
+
+**Ship path.** Both repos branched `feat/zone-airport-contract-scoping` off `main` (not `develop` — both were on `main` going in), committed, pushed. `gh` CLI unavailable — PRs not yet opened via API; GitHub provided direct compare-PR links in push output for both repos, need to be opened manually with base=`develop`.
+
+**Workspace (#313):**
+- backend: `feat/zone-airport-contract-scoping` → `bcf2326`, pushed. PR not yet opened.
+- admin-dashboard: `feat/zone-airport-contract-scoping` → `70ffa57`, pushed. PR not yet opened.
+- frontend, content: untouched this session — confirmed zero FE changes needed for this fix (server-side filtering only, `resolveZone` contract unchanged).
+- Full design history: ADR §7 (zone-airport M:N), §8 (documented-then-superseded "wait" decision), §9 (shipped fix + UI iteration + pivot-rejection) in `04-decisions/adr-airport-transfer-zone-pricing.md`.
+
+---
+
 ## Session #312 (2026-08-14)
 
 **Achieved (#312) — Trip search-results skeleton rebuilt to match #311's redesigned card, all breakpoints. Merged → develop.**
