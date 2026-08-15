@@ -4,6 +4,29 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #318 (2026-08-15)
+
+**Achieved (#318) — Available Transport filter/chip bug at `/trips/hatyai/koh-lipe`: full audit (FE+BE), 4-agent review, chip redesign, shipped → develop on both repos.**
+
+Prod report: Available Transport filter chips sometimes mixed vehicle types (speedboat+van) and sometimes looked duplicated. Deep-dived FE+BE in parallel (2 Explore agents), found the real root cause was subtler than the report implied: on clean data the two compared strings (`contract.transport_composit` vs the filter-facet's `trasportation_com`) are byte-identical — no format mismatch. The actual fragility was missing whitespace/case normalization, plus a genuine `"van undefined"` bug where `vehicle_class` being absent got string-concatenated raw. Separately found the backend's per-operator-cheapest dedup on the facet endpoint (`unique_transport_composit_list`) silently hides composit variety the results endpoint still returns — flagged as a known gap, not fixed (would need product sign-off, changes visible inventory).
+
+Spawned 4 parallel review agents (nextjs-fullstack-architect, backend-architect) against the initial fix plan — caught: BE `type_class`/`vehicle_class` fields needed adding to the serializer (additive, N+1-guarded via `prefetch_related`); FE needed to normalize composit strings before comparing, guard the undefined-concat bug, and dedupe the flattened contract list by id. A second round of 4 reviews (ux-research-specialist, senior-frontend-developer ×2, backend-architect) on the resulting chip UI **independently and unanimously rejected** the first display fix (parenthetical "(Standard)" suffix in the chip label) — chip is only 120-140px wide, the suffix doesn't fit and fails WCAG contrast at 10px gray-400.
+
+User then manually tested against seeded contracts with real 1/2/3-composit and mixed-class (`van standard` + `speedboat vip`) combos — caught 3 more real bugs through iterative screenshot review that no static review surfaced: (1) `parseOption` only read leg-0's class, so a mixed-class contract silently showed the wrong single class; (2) mixing a tagged-chip shape with a plain-label chip shape in the same row produced inconsistent heights (`min-h` vs `h`); (3) 3 tagged legs measured ~165-170px of content in a 140px chip — would have silently clipped via `overflow-hidden` rather than visibly breaking. Iterated the design in Artifact demos (not code) until the user approved: per-leg icon+class-tag columns, no shared text label, fixed `h-[72px]` everywhere, `w-[170px]` only for 3+-leg chips.
+
+**Shipped, both repos, branch `fix/available-transport-filter-mismatch` → merged `--no-ff` → `develop`:**
+- Frontend `develop` `7507e3e4`: `FilteredTripList.js` (normalize+dedupe match logic, dedupe flattened list by contract id), `TransportationOptionsFilter.js` (full chip rework — per-leg class tags, fixed height, conditional width), 3 new `helpers/` files (`normalizeTransportComposit.js`, `matchesTransportOption.js`, `transportOptionDisplay.js` — extracted to keep both touched components under the 200-line cap).
+- Backend `develop` `e5d5037`: `products/serializers.py` — additive `type_class`/`vehicle_class` fields on `ContractTranspotCompositSerializer` + `prefetch_related` guard on the FK chain (avoids N+1 on the trips-list endpoint). New dev-only management command `operators/management/commands/seed_transport_composit_variety.py` (idempotent, `--cleanup` flag) — seeds 4 test contracts with varied vehicle-type/class combos for exercising this exact bug class in local dev.
+
+**Not browser-click-tested** — Chrome tool declined again this session (asked twice, declined both times). All verification was: ESLint clean, `next build` succeeds and prerenders `/trips/hatyai/koh-lipe`, curl against live Django dev server confirms new API fields present with correct per-contract values, and iterative real screenshots from the user against seeded data (not a live click-through of filter selection). Backend regression test coverage for the new serializer fields not written (flagged by review, non-blocking).
+
+**Workspace (#318):**
+- frontend: `develop` → `7507e3e4`. Clean.
+- backend: `develop` → `e5d5037`. One pre-existing untracked file (`operators/tests/test_transport_composit_pagination.py`, from #304, correctly left alone).
+- admin-dashboard, content: untouched this session.
+
+---
+
 ## Session #317 (2026-08-15)
 
 **Achieved (#317) — Trip sort-tab audit at `/trips/hatyai/koh-lipe` (Recommended/Cheapest/Fastest/Early Departure/Top Rated). Found + fixed 2 real bugs, shipped → develop.**
