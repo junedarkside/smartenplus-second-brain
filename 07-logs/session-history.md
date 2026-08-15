@@ -4,6 +4,21 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #315 (2026-08-15)
+
+**Achieved (#315) — Admin-dashboard transfer-zone contract/operator UX fix + Thai help-page update. Both shipped, merged → develop.**
+
+Staff couldn't tell which company owned which contract when mapping zone↔airport↔contract on `/routemanagement/transfer-zones` — contract chips/rows showed contract name only, no operator. UXUI-vs-BD debate report first (operator inline text vs badge/groupBy), then implemented via nextjs-developer + backend-architect agent pair. Iterated 4x against user screenshots: v1 (em-dash suffix) truncated the wrong end (operator clipped, not contract name); v2 (composed `<Stack>` label) still clipped — root cause found by reading MUI source directly (`Chip.js` hard-codes `overflow:hidden` on the label slot regardless of content); v3 fixed via `sx` override on `.MuiChip-label`, worked for chips but pin-rows still truncated (genuine space-budget issue, 3 elements in ~520px); v4 restructured pin-rows to 2-line stacked layout — confirmed working via user screenshot. Added one BE field (`ZoneContractSerializer.operator_name`, admin-only endpoint, zero customer-frontend impact) with user approval per backend-safety rule. Shipped: AD `41be857` (FE) + backend `3e292f6` (BE serializer field), both merged `feat/zone-airport-contract-scoping` → `develop` (this also carried forward #313/#314's unmerged multi-airport zone picker + per-contract airport pin work — user explicitly confirmed shipping the whole branch, not just today's fix).
+
+Second half of session: help.js (Thai ops tutorial page, written at `a8d93bf`) was stale against 3 commits that shipped after it. Spawned nextjs-developer to diff `c4daaf6`/`70ffa57`/`41be857` against current `ZoneForm.js`+`index.js` and list every undocumented user-facing change. Added 5 new Thai sections/callouts: multi-airport zone selection, per-contract "restrict to one airport" pin feature (biggest gap — full workflow + when-to-use-it explanation), operator badge/grouping in picker, cross-border test-address search, "Test from {airport}" selector, plus a troubleshooting callout for stale pins after removing an airport from a zone. Committed directly on `develop` (docs-only, zero behavior risk) — `5bd6a36`, pushed.
+
+**Workspace (#315):**
+- admin-dashboard: `develop` → `5bd6a36`.
+- backend: `develop` → `3e292f6`. Untracked `operators/tests/test_transport_composit_pagination.py` still present (pre-existing from #304, correctly left uncommitted).
+- frontend, content: untouched this session.
+
+---
+
 ## Session #314 (2026-08-14)
 
 **Achieved (#314) — FE customer-facing airport-transfer PlacePicker: cross-border address search + clear-text button. Shipped, merged → develop.**
