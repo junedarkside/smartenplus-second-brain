@@ -4,6 +4,45 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #317 (2026-08-15)
+
+**Achieved (#317) — Trip sort-tab audit at `/trips/hatyai/koh-lipe` (Recommended/Cheapest/Fastest/Early Departure/Top Rated). Found + fixed 2 real bugs, shipped → develop.**
+
+User reported sort-tab results "don't seem correct" after testing. Investigation ran in two passes: an Explore agent traced the full pipeline (route → hooks → sort helpers → API → backend), then an Opus Plan agent did a deep business-model audit of price specifically (user asked how sort-by-price should behave given ADULT/CHILD/INFANT/VEHICLE ratecard rows and per-date overrides). Self-scrutinized the first draft against actual code before reporting — caught and retracted a wrong claim (suspected date-override leakage; backend already resolves ratecard rows to the searched date server-side, `products/serializers.py:332-369`, confirmed reached via `context={'request': request}`). Demoed both bugs to the user as a before/after Artifact with real numbers before implementing.
+
+**Bug 1 (structural):** "Our Pick for This Route" card (`components/trips/FilteredTripList.js:113-129`) extracted the highest-`computeConfidenceScore` contract out of the list **on every sort tab**, not just Recommended — so clicking Cheapest/Fastest/Early Departure/Top Rated could silently bump the wrong contract to an unlabeled card above the correctly-sorted list, hiding the actual #1 result. Fix: gated the extraction behind `sort === 'Recommended'`.
+
+**Bug 2 (business-model, price):** price used for filter/sort/display was `Math.max(...contract.ratecard.map(i => i.selling_rate))` — taking the max across ALL passenger categories (ADULT/CHILD/INFANT/VEHICLE) instead of the one category the contract actually bills (ADULT for JOIN, VEHICLE for PRIVATE/CHARTER). New knowledge atom written: [[ratecard-category-mixing-price-bug]]. Fix reused an existing correct helper (`helpers/utils.js` `findMinSellingRate`) instead of writing new code — wired into `FilteredTripList.js:97` (filter+sort) and `TripItem.js` (display, replacing `getMaxRate` + the old 5-arg `getMainPrice`). Also fixed a related ordering bug: unpriced contracts now sort last, not first (`sortContractsByRate`), and the price-range filter gained a `!= null` guard (JS coerces `null >= 0` to `true`, would've silently let unpriced contracts through).
+
+**Shipped:** branch `fix/trip-sort-price-model`, commit `52657377`, merged `--no-ff` → `develop` `9a0317d6`. Deleted `helpers/getMaxRate.js` (duplicate of the bug) and unreferenced dead hook `hooks/useFilteredAndSortedContracts.js` (same bug, zero consumers, confirmed via grep before deletion). ESLint clean on all 4 changed files. Verified page renders (curl, all 5 pills present in SSR HTML, no crash) but **client-side click-through NOT browser-verified** — no Playwright/browser-automation tool available this session; user declined to test before merge, chose to ship + verify later.
+
+**Explicitly NOT done this session (needs BD decision before building):** party-total pricing (sum adult/child/infant counts × their rates, matching what checkout actually charges via `components/search/Passenger.js:112-139`) vs. keeping a single per-unit rate — changes what "Cheapest" ordering means whenever child/adult price ratios differ across operators, and the price label needs to state which. Slider bounds (`hooks/useTripFilters.js:33-36`) still seeded from category-unaware backend `min_rate`/`max_rate` — the correct, category-aware `min_display_rate` field already exists server-side (`products/views.py:1913`) and is used elsewhere but not yet wired into this slider. Full spec → plan file `~/.claude/plans/check-vault-and-fe-hazy-hopcroft.md`.
+
+**Workspace (#317):**
+- frontend: `develop` → `9a0317d6`. Clean.
+- backend, admin-dashboard, content: untouched this session.
+
+---
+
+## Session #316 (2026-08-15)
+
+**Achieved (#316) — Overnight-arrival "+1 day" badge fix for trip search cards. Reviewed by 3-specialist agent pass, shipped, merged → develop on both repos.**
+
+Prod bug report (Thai, BD-sourced): trip search-result cards showed overnight routes like "9:30 PM - 11:30 AM" with no indicator arrival is next calendar day — foreign travelers risk double-booking accommodation. Plan-mode investigation traced root cause: `TripCardV2.js` renders bare `HH:MM` substrings with zero day-boundary logic; backend `Trip.departure_time`/`arrival_time` are date-blind `TimeField`s, no `is_overnight` signal anywhere. User asked for 3 specialist review agents (Next.js, Django backend, general SWE) before finalizing the plan — ran in parallel, synthesized findings. Key resolution: `Contract.duration` can't be trusted as the overnight signal (lives on a different model than the trip times, zero `clean()`/`save()` cross-validation in Django admin — confirmed by grep) — raw `departure_time`/`arrival_time` comparison is the reliable source. `tour_duration_days` guards multi-day tour products from a naive "+1" mislabel.
+
+Built a before/after Artifact mockup (dark/light theme, mirrors the real `TripCardV2` grid) to confirm the visual with the user before implementing — user flagged bare "+1" as unclear to first-time foreign travelers; changed to spelled-out "+1 day" (self-evident, no tooltip/hover dependency, matters since nothing hovers on mobile).
+
+**Shipped:** Backend `ContractSerializer.is_overnight` computed `SerializerMethodField` (`products/serializers.py`, zero migration, short-circuits for multi-day tours) — commit `292fe39`. Frontend: `isOvernightArrival()` fallback helper in `helpers/formatTime.js` + inline "+1 day" badge (not full `BadgeChip`, arrival column too narrow) wired through `TripCardV2.js`/`TripItemLayoutV2.js` and the legacy `TripCard.js`/`TripItemHeader.js`/`TripItem.js` path for parity — commit `87f2b1c2`. Both on branch `fix/overnight-arrival-badge`, pushed, merged `--no-ff` → `develop` on both repos (backend `99616f1`, frontend `65d25a8a`). `TripMobileSummary.js` confirmed out of scope — it doesn't render times at all today (separate pre-existing gap, noted not fixed).
+
+Verified without a browser tool (user declined Claude-in-Chrome install): backend logic confirmed via Django shell (`venv/bin/python manage.py shell`) — overnight trip → `is_overnight: True`, same-day → `False`, multi-day-tour guard → `False`; frontend fallback helper confirmed matching via Node. Then user asked to make real contract `pkXYnPg0He` (id 6, hatyai railway station → koh-lipe, single-contract trip, safe to edit) overnight for a live click-through test — set `arrival_time` 13:30→06:30 + `duration` 4:30:00→22:00:00, confirmed `is_overnight: True` live via curl, then reverted both fields back to original values once the user confirmed the badge looked right in-browser.
+
+**Workspace (#316):**
+- backend: `develop` → `99616f1`. Untracked `operators/tests/test_transport_composit_pagination.py` still present (pre-existing from #304, correctly left uncommitted — untouched this session).
+- frontend: `develop` → `65d25a8a`. Clean.
+- admin-dashboard, content: untouched this session.
+
+---
+
 ## Session #315 (2026-08-15)
 
 **Achieved (#315) — Admin-dashboard transfer-zone contract/operator UX fix + Thai help-page update. Both shipped, merged → develop.**
