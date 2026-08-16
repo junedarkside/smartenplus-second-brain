@@ -4,22 +4,14 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-16 (session #320)
+**Updated:** 2026-08-16 (session #321)
 
-**Achieved (#320) — r16 weekly SEO audit + 2 SEO quick wins shipped to develop.**
+**Achieved (#321) — Checkout "Add another trip" CTA: AddTripModal 3-tab redirect picker + Itineraries CTA button, merged → develop `14f438a9`.**
 
-Ran full r16 live-prod SEO/AEO/GEO/CWV/SD audit against https://www.smartenplus.co.th using 4-specialist methodology (curl + Googlebot UA + header inspection). Scores: SEO 8.4 / AEO 9.7 / GEO 9.4 / CWV 7.8 / SD 8.7 vs r15 baseline (8.5 / 9.7 / 9.4 / 7.8 / 8.5). Confirmed closed from prior cycles: SD-NEW-4 homepage (priceValidUntil→2027-08-15), SD-R15-3 (/trips @id). New findings: SD-NEW-4b P2 (destination pages still 2026-10-31, 76 days — needs ops/product to update contracts in DB), CWV-FP P2 (fetchpriority=high ×10/15/20 on homepage/activities/destinations — later confirmed ISR HTML chunk duplication artifacts, not a real multi-priority bug), SEO-15 P3 (/privacy+/terms in sitemap). Peer review via `seo-specialist` agent confirmed false alarms (SEO-13 title actually 52 chars, CWV-FP duplication artifacts) and found /about missing openGraph title/description. Raw 4.3MB audit file extracted via Python script (file exceeds 256KB Read limit).
+Full UX/UI/BD 3-agent audit of `/checkout` page first. Built `components/forms/checkout/AddTripModal.js` (new, ~255 lines): Transportation tab (AutoCompleteSearch + CalendarDatePickerv2 reused from homepage via nested Dialog at z-index 1400 — prevents autocomplete expanding parent modal height, redirects to `/trips/[from]/[to]?date=`), Activities tab (text search → `/activities`), Airport Transfer tab (redirect → `/airport-transfer`). Wired dashed CTA button into `Itineraries.js` after items list (`formStep === 0` only) + prominent empty-state CTA. Key decisions: SearchDialog reuse rejected (2 agents confirmed `onSearch` fires zero-arg/closes — navigation widget only); same-tab `router.push` not `window.open`; Redux location+calendar cleared on modal open; mobile tabs responsive via `isSmDown` (`iconPosition="top"`, short labels, `fontSize: 0.65rem`). 7 commits on `feat/checkout-add-trip-cta`, merged `--no-ff` → develop `14f438a9`, pushed. Vault audit doc at `01-projects/checkout-add-items-cta-audit.md` (staged, not committed yet).
 
-Shipped branch `fix/seo-r17-quick-wins` → merged → develop `38e61658`:
-- `hooks/useTripsStructuredData.js:22` — /trips meta description expanded 99→172 chars, keyword-rich with real-time/schedules/prices copy (SEO-14 P2).
-- `pages/about/index.js` — title updated to "About SmartEnPlus – Thailand Transport Booking" + openGraph title+description explicitly set (previously fell back to DefaultSeo generic title on social share) (SEO-10 P3).
-- Twitter tag fixes (SEO-3 P3) attempted on `_app.js` + `pages/activities/index.js` then reverted: next-seo v6.5.0 silently drops `twitter.title`/`twitter.description` props — only outputs `twitter:card`, `twitter:site`, `twitter:creator`. Confirmed by reading `node_modules/next-seo/lib/next-seo.modern.js`. Deferred to a separate raw `<meta>` tags PR.
-- Sitemap exclusion changes (SEO-5b, SEO-15) explicitly skipped per user decision.
-
-r16 report written to `/seo/seo-aeo-geo-prod-2026-08-16.md`, vault pointer note at `01-projects/seo-aeo-geo-live-audit-2026-06-22/r16-live-prod-2026-08-16.md`, seo README updated, master-state SEO-P1-BACKLOG row updated.
-
-**Workspace (#320):**
-- frontend: `develop` → `38e61658`. Clean.
+**Workspace (#321):**
+- frontend: `develop` → `14f438a9`. Clean.
 - backend: `develop` → `a7eb4f1`. One pre-existing untracked file (`operators/tests/test_transport_composit_pagination.py`, from #304).
 - admin-dashboard: `main` → `5bd6a36`. Clean.
 - content: `master` → `3756e5b`. Clean.
@@ -27,22 +19,23 @@ r16 report written to `/seo/seo-aeo-geo-prod-2026-08-16.md`, vault pointer note 
 **Resume point (EXACT):**
 1. **Carry from #319 — browser-verify the RouteFAQ fix**: open `/trips/hatyai/koh-lipe`, confirm FAQ section shows real price/operator names/cancellation terms (not generic filler), confirm accordion still opens/closes correctly, confirm only one FAQPage schema in page source.
 2. **Carry from #319 — decide on BE unit test for `_build_route_faq_aggregate`/`_best_cancellation_summary`**: zero-contract, single-contract, multi-operator, cheapest-contract-has-no-policy-but-another-does cases.
-3. **develop→main deploy** (RouteFAQ fix `bd651b33` + SEO quick wins `38e61658`) once browser-verified.
-4. **Twitter tags (SEO-3 P3)** — separate PR: add raw `<meta name="twitter:title">` + `<meta name="twitter:description">` to `_app.js <Head>` block (next-seo v6 can't do it).
-5. **CWV-8 P1**: /trips TouristTrip route cards are CSR-only (MUI_CARDS_IN_SSR=0) — extend `getStaticProps` to pass initial routes.
-6. **SD-NEW-4b P2**: destination pages `priceValidUntil: 2026-10-31` (76 days) — source is `contract.end_date` in DB, needs ops/product to update contracts.
-7. Carry from #318 — **browser-verify the chip fix**: open `/trips/hatyai/koh-lipe?date=2026-08-20`, confirm chips render at uniform height + per-leg class tags correct. Run `python manage.py seed_transport_composit_variety --cleanup` after.
-8. Carry from #318 — **decide fate of `unique_transport_composit_list` per-operator dedup gap** (not fixed, needs product sign-off), see `~/.claude/plans/check-vault-and-fe-greedy-hellman.md`.
-9. Carry from #317 — **browser-verify the sort-tab fix**: `/trips/hatyai/koh-lipe`, click each pill, confirm ordering + "Our Pick" gating.
-10. Carry from #317 — **BD decision**: party-total vs per-unit price display.
-11. Carry from #316 — browser-verify overnight badge on `TripCardV2`.
-12. Carry from #315 — browser-verify help.js Thai text at `/routemanagement/transfer-zones/help`.
-13. Carry from #314 — browser-verify `PlacePicker.js` cross-border search + clear-button at `/airport-transfer/phuket-airport`.
-14. **"0m" duration fallback bug** (`helpers/formatTime.js:28`), **THB decimal fix** (`helpers/formatCurrency.js`), **seat-count anomaly** — all descoped, carried.
-15. **Rotate 4 leaked secrets** (console-side, blocking): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET`.
-16. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP; AIRPORT-TRANSFER-ZONE Google-billing blocker.
+3. **develop→main deploy** (RouteFAQ fix `bd651b33` + SEO quick wins `38e61658` + Add Trip CTA `14f438a9`) once browser-verified.
+4. **Browser-verify AddTripModal**: open `/checkout`, click "Add another trip" — Transportation tab: From/To/Date fields clickable, AutoCompleteSearch opens in overlay, CalendarDatePickerv2 opens in overlay, Search button navigates same-tab to `/trips/[from]/[to]`. Activities: text search → `/activities`. Airport Transfer: button → `/airport-transfer`. Mobile (375px): 3 tabs fit, icons above short labels, no truncation.
+5. **Twitter tags (SEO-3 P3)** — separate PR: add raw `<meta name="twitter:title">` + `<meta name="twitter:description">` to `_app.js <Head>` block (next-seo v6 can't do it).
+6. **CWV-8 P1**: /trips TouristTrip route cards are CSR-only (MUI_CARDS_IN_SSR=0) — extend `getStaticProps` to pass initial routes.
+7. **SD-NEW-4b P2**: destination pages `priceValidUntil: 2026-10-31` (76 days) — source is `contract.end_date` in DB, needs ops/product to update contracts.
+8. Carry from #318 — **browser-verify the chip fix**: open `/trips/hatyai/koh-lipe?date=2026-08-20`, confirm chips render at uniform height + per-leg class tags correct. Run `python manage.py seed_transport_composit_variety --cleanup` after.
+9. Carry from #318 — **decide fate of `unique_transport_composit_list` per-operator dedup gap** (not fixed, needs product sign-off), see `~/.claude/plans/check-vault-and-fe-greedy-hellman.md`.
+10. Carry from #317 — **browser-verify the sort-tab fix**: `/trips/hatyai/koh-lipe`, click each pill, confirm ordering + "Our Pick" gating.
+11. Carry from #317 — **BD decision**: party-total vs per-unit price display.
+12. Carry from #316 — browser-verify overnight badge on `TripCardV2`.
+13. Carry from #315 — browser-verify help.js Thai text at `/routemanagement/transfer-zones/help`.
+14. Carry from #314 — browser-verify `PlacePicker.js` cross-border search + clear-button at `/airport-transfer/phuket-airport`.
+15. **"0m" duration fallback bug** (`helpers/formatTime.js:28`), **THB decimal fix** (`helpers/formatCurrency.js`), **seat-count anomaly** — all descoped, carried.
+16. **Rotate 4 leaked secrets** (console-side, blocking): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET`.
+17. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP; AIRPORT-TRANSFER-ZONE Google-billing blocker.
 
-_(Sessions #221–#319 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#320 archived → `07-logs/session-history.md`.)_
 
 ---
 

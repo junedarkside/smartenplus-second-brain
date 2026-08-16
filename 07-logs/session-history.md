@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #321 (2026-08-16)
+
+**Achieved (#321) — Checkout "Add another trip" CTA: AddTripModal (3-tab redirect picker) + Itineraries CTA button, merged → develop `14f438a9`.**
+
+Full UX/UI/BD 3-agent audit of `/checkout` page first. Then built `components/forms/checkout/AddTripModal.js` (new, ~255 lines) with 3 tabs: Transportation (AutoCompleteSearch + CalendarDatePickerv2 reused from homepage, nested Dialog z-index 1400 pattern to prevent autocomplete expanding parent modal height, redirects to `/trips/[from]/[to]`), Activities (text search → `/activities`), Airport Transfer (redirect → `/airport-transfer`). CTA dashed button wired into `Itineraries.js` after items list (`formStep === 0` only), plus empty-state prominent CTA. Key decisions: SearchDialog reuse rejected (2 independent agents confirmed `onSearch` fires zero-arg then closes — navigation only); same-tab `router.push` not `window.open`; Redux state cleared on modal open; mobile tabs responsive via `isSmDown` (`iconPosition="top"`, short labels, `fontSize: 0.65rem`). 7 commits on `feat/checkout-add-trip-cta`, merged `--no-ff` → develop, pushed. Vault audit doc at `01-projects/checkout-add-items-cta-audit.md`.
+
+---
+
+## Session #320 (2026-08-16)
+
+**Achieved (#320) — r16 weekly SEO audit run + 2 SEO quick wins shipped to develop.**
+
+(Archived from master-state.md #320 block — see log.md for full detail.)
+
+---
+
 ## Session #319 (2026-08-15)
 
 **Achieved (#319) — RouteFAQ real-data fix at `/trips/hatyai/koh-lipe`: full cross-discipline report, 3-specialist debate, shipped → develop on both repos.**
