@@ -4,6 +4,29 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #319 (2026-08-15)
+
+**Achieved (#319) — RouteFAQ real-data fix at `/trips/hatyai/koh-lipe`: full cross-discipline report, 3-specialist debate, shipped → develop on both repos.**
+
+User reported the FAQ section ("Frequently Asked Questions — Hatyai to Koh Lipe") showed generic filler instead of real data. Live-verified via curl against prod: 5/6 answers were the generic fallback branch, baked into SSR/ISR HTML. Root-caused two independent bugs: (1) `RouteFAQ.js`'s `tripsFilterSet` prop is client-only (`useGetTripFilterSetQuery`, RTK Query, date-scoped), always `undefined` at SSR time; (2) the `contracts` prop it also reads never actually carried `ratecard` data — `ExteaContractSerializer` has no such field, so the component's own price-derivation logic silently produced `null`. Cross-referenced 3 prior vault findings that predicted this exact failure mode ([[filter-trips-seo-faq-prop-dropped]], [[help-faqs-wp-graphql-broken-prod]], [[build-experience-faq-items-pure-function]]) — this is the third occurrence of the SSR-empty/client-fill bug class.
+
+Ran a full cross-discipline report (SWE/Next.js/Django/SEO/UX/BD) in plan mode before any code, then a pre-merge 3-specialist adversarial debate (Next.js, Django, SEO agents, explicitly told to find holes not confirm) against the resulting implementation plan. Debate caught a real correctness bug before ship: the draft's cancellation-summary logic picked "first contract with any structured policy," unrelated to which contract produced the displayed cheapest price — could have shown one operator's cancellation terms while the price pointed at a cheaper, different operator. Fixed to source cancellation terms from the same contract as the cheapest price first, only falling back if that one has none. Debate also caught: reuse this file's existing `cache.get`/`cache.set` idiom instead of proposing new infra, add `select_related`/`prefetch_related` to avoid a real N+1, drop a planned "how far in advance do I need to book?" question as booking-funnel content with no search intent, and make the FAQPage JSON-LD dedup between `FilterTripsSEO` and `RouteFAQ` (previously coincidental, both gated on the same `contracts.length > 0` condition) explicit via a comment. One SEO-agent claim (a `useCurrency()` loading-gate blocking SSR) was checked directly against `CurrencyContext.js` and found unfounded — corrected before it reached the plan.
+
+**Shipped, both repos, branch `fix/route-faq-real-data` → merged `--no-ff` → `develop`:**
+- Backend `develop` `a7eb4f1` (feature `a912cf3`): `products/views.py` `HomeViewSet.custom_route` — new `route_faq` aggregate (cheapest price+operator, operator roster, direct-route flag, cancellation summary from structured `cancellation_policies`, attribution-safe), cached with existing idiom (TTL matched to FE's `revalidate: 300`), `select_related`/`prefetch_related` guarded.
+- Frontend `develop` `bd651b33` (feature `e2400fe4`): `pages/trips/[...slug].js` (`route_faq` threaded through all 3 `getStaticProps` return paths), `components/trips/FilterTripsPage.js` (prop pass-through + explicit schema-dedup comment), `components/trips/RouteFAQ.js` (merged `effectiveFilterSet` fallback, new 7th "Can I cancel my booking?" question, hedged price wording for the ISR/live-results date mismatch).
+
+**Verified:** `next build` prerenders real price/operator/cancellation text into static HTML for `/trips/hatyai/koh-lipe` (real numbers: ฿990 Smart EN Plus Co., LTD, 6 operators, direct-route true, tiered cancellation 72h/48h) and `/trips/hatyai/penang` — confirmed via direct inspection of `.next/server` output (equivalent to curl/Googlebot, no JS). Zero-contract routes (`phuket/phuket`, `bangkok/bangkok`) correctly skip FAQ rendering, no crash, no "undefined". Exactly one FAQPage schema per page confirmed (dedup works). BE `products` test suite run — 1 pre-existing unrelated failure (`RecommendationTestCase.test_find_similar_contracts`), confirmed present on clean `develop` too before this session's changes.
+
+**Not browser-click-tested. No BE unit test written for the new `_build_route_faq_aggregate`/`_best_cancellation_summary` helpers** (flagged, non-blocking).
+
+**Workspace (#319):**
+- frontend: `develop` → `bd651b33`. Clean.
+- backend: `develop` → `a7eb4f1`. One pre-existing untracked file (`operators/tests/test_transport_composit_pagination.py`, from #304, correctly left alone).
+- admin-dashboard, content: untouched this session.
+
+---
+
 ## Session #318 (2026-08-15)
 
 **Achieved (#318) — Available Transport filter/chip bug at `/trips/hatyai/koh-lipe`: full audit (FE+BE), 4-agent review, chip redesign, shipped → develop on both repos.**

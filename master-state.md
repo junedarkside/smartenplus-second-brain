@@ -4,55 +4,45 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-15 (session #319)
+**Updated:** 2026-08-16 (session #320)
 
-**Achieved (#319) — RouteFAQ real-data fix at `/trips/hatyai/koh-lipe`: full cross-discipline report, 3-specialist debate, shipped → develop on both repos.**
+**Achieved (#320) — r16 weekly SEO audit + 2 SEO quick wins shipped to develop.**
 
-User reported the FAQ section ("Frequently Asked Questions — Hatyai to Koh Lipe") showed generic filler instead of real data. Live-verified via curl against prod: 5/6 answers were the generic fallback branch, baked into SSR/ISR HTML. Root-caused two independent bugs: (1) `RouteFAQ.js`'s `tripsFilterSet` prop is client-only (`useGetTripFilterSetQuery`, RTK Query, date-scoped), always `undefined` at SSR time; (2) the `contracts` prop it also reads never actually carried `ratecard` data — `ExteaContractSerializer` has no such field, so the component's own price-derivation logic silently produced `null`. Cross-referenced 3 prior vault findings that predicted this exact failure mode ([[filter-trips-seo-faq-prop-dropped]], [[help-faqs-wp-graphql-broken-prod]], [[build-experience-faq-items-pure-function]]) — this is the third occurrence of the SSR-empty/client-fill bug class.
+Ran full r16 live-prod SEO/AEO/GEO/CWV/SD audit against https://www.smartenplus.co.th using 4-specialist methodology (curl + Googlebot UA + header inspection). Scores: SEO 8.4 / AEO 9.7 / GEO 9.4 / CWV 7.8 / SD 8.7 vs r15 baseline (8.5 / 9.7 / 9.4 / 7.8 / 8.5). Confirmed closed from prior cycles: SD-NEW-4 homepage (priceValidUntil→2027-08-15), SD-R15-3 (/trips @id). New findings: SD-NEW-4b P2 (destination pages still 2026-10-31, 76 days — needs ops/product to update contracts in DB), CWV-FP P2 (fetchpriority=high ×10/15/20 on homepage/activities/destinations — later confirmed ISR HTML chunk duplication artifacts, not a real multi-priority bug), SEO-15 P3 (/privacy+/terms in sitemap). Peer review via `seo-specialist` agent confirmed false alarms (SEO-13 title actually 52 chars, CWV-FP duplication artifacts) and found /about missing openGraph title/description. Raw 4.3MB audit file extracted via Python script (file exceeds 256KB Read limit).
 
-Ran a full cross-discipline report (SWE/Next.js/Django/SEO/UX/BD) in plan mode before any code, then a pre-merge 3-specialist adversarial debate (Next.js, Django, SEO agents, explicitly told to find holes not confirm) against the resulting implementation plan. Debate caught a real correctness bug before ship: the draft's cancellation-summary logic picked "first contract with any structured policy," unrelated to which contract produced the displayed cheapest price — could have shown one operator's cancellation terms while the price pointed at a cheaper, different operator. Fixed to source cancellation terms from the same contract as the cheapest price first, only falling back if that one has none. Debate also caught: reuse this file's existing `cache.get`/`cache.set` idiom instead of proposing new infra, add `select_related`/`prefetch_related` to avoid a real N+1, drop a planned "how far in advance do I need to book?" question as booking-funnel content with no search intent, and make the FAQPage JSON-LD dedup between `FilterTripsSEO` and `RouteFAQ` (previously coincidental, both gated on the same `contracts.length > 0` condition) explicit via a comment. One SEO-agent claim (a `useCurrency()` loading-gate blocking SSR) was checked directly against `CurrencyContext.js` and found unfounded — corrected before it reached the plan.
+Shipped branch `fix/seo-r17-quick-wins` → merged → develop `38e61658`:
+- `hooks/useTripsStructuredData.js:22` — /trips meta description expanded 99→172 chars, keyword-rich with real-time/schedules/prices copy (SEO-14 P2).
+- `pages/about/index.js` — title updated to "About SmartEnPlus – Thailand Transport Booking" + openGraph title+description explicitly set (previously fell back to DefaultSeo generic title on social share) (SEO-10 P3).
+- Twitter tag fixes (SEO-3 P3) attempted on `_app.js` + `pages/activities/index.js` then reverted: next-seo v6.5.0 silently drops `twitter.title`/`twitter.description` props — only outputs `twitter:card`, `twitter:site`, `twitter:creator`. Confirmed by reading `node_modules/next-seo/lib/next-seo.modern.js`. Deferred to a separate raw `<meta>` tags PR.
+- Sitemap exclusion changes (SEO-5b, SEO-15) explicitly skipped per user decision.
 
-**Shipped, both repos, branch `fix/route-faq-real-data` → merged `--no-ff` → `develop`:**
-- Backend `develop` `a7eb4f1` (feature `a912cf3`): `products/views.py` `HomeViewSet.custom_route` — new `route_faq` aggregate (cheapest price+operator, operator roster, direct-route flag, cancellation summary from structured `cancellation_policies`, attribution-safe), cached with existing idiom (TTL matched to FE's `revalidate: 300`), `select_related`/`prefetch_related` guarded.
-- Frontend `develop` `bd651b33` (feature `e2400fe4`): `pages/trips/[...slug].js` (`route_faq` threaded through all 3 `getStaticProps` return paths), `components/trips/FilterTripsPage.js` (prop pass-through + explicit schema-dedup comment), `components/trips/RouteFAQ.js` (merged `effectiveFilterSet` fallback, new 7th "Can I cancel my booking?" question, hedged price wording for the ISR/live-results date mismatch).
+r16 report written to `/seo/seo-aeo-geo-prod-2026-08-16.md`, vault pointer note at `01-projects/seo-aeo-geo-live-audit-2026-06-22/r16-live-prod-2026-08-16.md`, seo README updated, master-state SEO-P1-BACKLOG row updated.
 
-**Verified:** `next build` prerenders real price/operator/cancellation text into static HTML for `/trips/hatyai/koh-lipe` (real numbers: ฿990 Smart EN Plus Co., LTD, 6 operators, direct-route true, tiered cancellation 72h/48h) and `/trips/hatyai/penang` — confirmed via direct inspection of `.next/server` output (equivalent to curl/Googlebot, no JS). Zero-contract routes (`phuket/phuket`, `bangkok/bangkok`) correctly skip FAQ rendering, no crash, no "undefined". Exactly one FAQPage schema per page confirmed (dedup works). BE `products` test suite run — 1 pre-existing unrelated failure (`RecommendationTestCase.test_find_similar_contracts`), confirmed present on clean `develop` too before this session's changes.
-
-**Not browser-click-tested. No BE unit test written for the new `_build_route_faq_aggregate`/`_best_cancellation_summary` helpers** (flagged, non-blocking). Demo artifact numbers shown to the user during planning (Silaphat ฿100) turned out wrong once tested against the real function (actual: ฿990, Smart EN Plus/lomprayah) — corrected and disclosed, real implementation is source of truth.
-
-**Workspace (#319):**
-- frontend: `develop` → `bd651b33`. Clean.
-- backend: `develop` → `a7eb4f1`. One pre-existing untracked file (`operators/tests/test_transport_composit_pagination.py`, from #304, correctly left alone).
-- admin-dashboard, content: untouched this session.
+**Workspace (#320):**
+- frontend: `develop` → `38e61658`. Clean.
+- backend: `develop` → `a7eb4f1`. One pre-existing untracked file (`operators/tests/test_transport_composit_pagination.py`, from #304).
+- admin-dashboard: `main` → `5bd6a36`. Clean.
+- content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. **NEW — browser-verify the #319 RouteFAQ fix**: open `/trips/hatyai/koh-lipe`, confirm FAQ section shows real price/operator names/cancellation terms (not generic filler), confirm accordion still opens/closes correctly, confirm only one FAQPage schema in page source.
-2. **NEW — decide on BE unit test for `_build_route_faq_aggregate`/`_best_cancellation_summary`** (not written #319): zero-contract, single-contract, multi-operator, cheapest-contract-has-no-policy-but-another-does cases.
-3. **NEW — develop→main deploy** once browser-verified, both repos.
-4. Carried from #318 — **browser-verify the #318 chip fix**: open `/trips/hatyai/koh-lipe?date=2026-08-20` (seeded test contracts 198-201 still live in local dev DB), confirm all Available Transport chips render at uniform height, per-leg class tags legible and correctly per-leg (not just leg-0), 3-leg chip doesn't clip. Run `python manage.py seed_transport_composit_variety --cleanup` after to remove test data once confirmed.
-5. Carried from #318 — **decide fate of `unique_transport_composit_list` per-operator dedup gap** (found #318, not fixed): facet endpoint can hide a composit combo that still exists in results if a cheaper same-operator combo wins the dedup. Needs product sign-off before touching (changes visible inventory), see plan file `~/.claude/plans/check-vault-and-fe-greedy-hellman.md` for full writeup.
-6. Carried from #317 — **browser-verify the #317 sort-tab fix**: open `/trips/hatyai/koh-lipe`, click each pill, confirm ordering matches the label and "Our Pick" card only shows on Recommended. If any PRIVATE/CHARTER contracts exist on this route, confirm price shows the VEHICLE rate, not a stale/wrong max.
-7. Carried from #317 — **BD decision needed**: party-total vs per-unit price display before building the next phase of the price fix.
-8. Carried from #316 — browser-verify overnight badge renders correctly on `TripCardV2` at both breakpoints for a real overnight product (no live overnight+active-contract route exists in dev DB — see 07-logs/session-history.md #316 for the test-tweak values if re-applying).
-9. Carried from #315 — browser-verify help.js changes render correctly (Thai text, new Callout boxes) at `/routemanagement/transfer-zones/help` — lint passed but not visually confirmed.
-10. Carried from #314 — browser-verify FE `PlacePicker.js` cross-border search + clear-button (`/airport-transfer/phuket-airport`, Malaysian address test).
-11. Carried from #314 — consider deleting merged remote branch `fix/airport-transfer-cross-border-search`.
-12. Carried from #312 — real-device/browser visual confirm still needed for #311/#312's mobile trip-card work.
-13. Carried from #312 — consider deleting merged remote branch `fix/trip-card-skeleton-parity`.
-14. **"0m" duration fallback bug found, not fixed** (`helpers/formatTime.js:28`, `customFormatDuration()`): shows literal "0m" when duration is missing/unparseable. Shared helper, 4 consumers. Needs scoping like the THB item below.
-15. **THB decimal fix descoped to its own PR**: `helpers/formatCurrency.js` `isNoFractionCurrency` excludes `'THB'`. 24+ consumers. Needs product sign-off. Same root display bug spotted again this session (`"THB  990.00"` double-space, `formatCurrency.js:17`) — not fixed, same descope reasoning applies.
-16. **Seat-count data anomaly, needs backend/ops verification**: "Van · 10 seats" next to "Speedboat · 99 seats" on the same shared-ride route. Needs a plausibility-threshold business rule from product/ops.
-17. **Carried from #310 — no automated test coverage for the View Detail/accordion interaction.** Blocked on `FE-JEST-MUI-BROKEN` (item below).
-18. **Carried from #309 — fix jest/MUI test-infra bug**: all `@mui/material` components fail to render in this project's jest setup.
-19. **TripCardV2 station-block fixes from #306 — still not real-device confirmed.**
-20. **Transport Composit fix is live on AD `main`+`develop` (`cbb6199`, #304) — still needs prod smoke.**
-21. **BE regression test uncommitted** (`smartenplus-backend/operators/tests/test_transport_composit_pagination.py`, from #304) — still present as an untracked file, correctly excluded from commits. Decide commit-on-branch or discard.
-22. **Passenger-update feature is on `develop` only — needs `develop`→`main` deploy + prod smoke** on all 3 repos (carried from #303).
-23. **Admin-dashboard remote branch delete still pending from #302.**
-24. **Rotate 4 leaked secrets** (console-side, blocking, carried from #297/#298): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET`.
-25. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP; SEO r16 P1; AIRPORT-TRANSFER-ZONE Google-billing blocker (still open, blocks browser-testing AD zone/airport work).
+1. **Carry from #319 — browser-verify the RouteFAQ fix**: open `/trips/hatyai/koh-lipe`, confirm FAQ section shows real price/operator names/cancellation terms (not generic filler), confirm accordion still opens/closes correctly, confirm only one FAQPage schema in page source.
+2. **Carry from #319 — decide on BE unit test for `_build_route_faq_aggregate`/`_best_cancellation_summary`**: zero-contract, single-contract, multi-operator, cheapest-contract-has-no-policy-but-another-does cases.
+3. **develop→main deploy** (RouteFAQ fix `bd651b33` + SEO quick wins `38e61658`) once browser-verified.
+4. **Twitter tags (SEO-3 P3)** — separate PR: add raw `<meta name="twitter:title">` + `<meta name="twitter:description">` to `_app.js <Head>` block (next-seo v6 can't do it).
+5. **CWV-8 P1**: /trips TouristTrip route cards are CSR-only (MUI_CARDS_IN_SSR=0) — extend `getStaticProps` to pass initial routes.
+6. **SD-NEW-4b P2**: destination pages `priceValidUntil: 2026-10-31` (76 days) — source is `contract.end_date` in DB, needs ops/product to update contracts.
+7. Carry from #318 — **browser-verify the chip fix**: open `/trips/hatyai/koh-lipe?date=2026-08-20`, confirm chips render at uniform height + per-leg class tags correct. Run `python manage.py seed_transport_composit_variety --cleanup` after.
+8. Carry from #318 — **decide fate of `unique_transport_composit_list` per-operator dedup gap** (not fixed, needs product sign-off), see `~/.claude/plans/check-vault-and-fe-greedy-hellman.md`.
+9. Carry from #317 — **browser-verify the sort-tab fix**: `/trips/hatyai/koh-lipe`, click each pill, confirm ordering + "Our Pick" gating.
+10. Carry from #317 — **BD decision**: party-total vs per-unit price display.
+11. Carry from #316 — browser-verify overnight badge on `TripCardV2`.
+12. Carry from #315 — browser-verify help.js Thai text at `/routemanagement/transfer-zones/help`.
+13. Carry from #314 — browser-verify `PlacePicker.js` cross-border search + clear-button at `/airport-transfer/phuket-airport`.
+14. **"0m" duration fallback bug** (`helpers/formatTime.js:28`), **THB decimal fix** (`helpers/formatCurrency.js`), **seat-count anomaly** — all descoped, carried.
+15. **Rotate 4 leaked secrets** (console-side, blocking): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET`.
+16. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP; AIRPORT-TRANSFER-ZONE Google-billing blocker.
 
-_(Sessions #221–#318 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#319 archived → `07-logs/session-history.md`.)_
 
 ---
 
@@ -122,7 +112,7 @@ _(Sessions #221–#318 archived → `07-logs/session-history.md`.)_
 | **BE-HOMEPAGE-PRICE** | ✅ **FIXED #249** — all 8 `Min(selling_rate)` finder annotations now filter `contract_ratecard__is_active=True`. BE develop `06423c5`, pushed to origin. 4-agent audit confirmed complete (other price paths already clean). **⚠️ Prod deploy MUST flush rec cache** or stale prices persist up to 24h (skip-if-fresh guard `tasks.py:66-75`): `redis-cli --scan --pattern "recommendations:*" | xargs redis-cli del`. BE docs edit skipped (docs/ permission denied) — flush step lives here. | **DEPLOY PENDING + Redis flush** | `products/services.py` · [[rec-engine-report-audit]] |
 | **REC-SLOT-WASTE** | ✅ **CLOSED #249 — DO NOTHING per 4-agent audit.** Monitor `checkout_recommendation_empty` GTM ~30 days. → closed-items.md | **CLOSED** | [[rec-engine-report-audit]] |
 | **BE-IMAGE-DEDUP** | BE image-processing duplication (moderate). WebP resize/compress ~2-3× (`operators/utils.py`, `dialogue/utils.py`, `operators/admin.py`); upload validation copy-pasted across 5 files. Consolidate → one `core/image_utils.py`: `process_image_to_webp()` + `validate_upload()`. High blast radius, dedicated refactor session. | OPEN #126 | `operators/utils.py`, `dialogue/utils.py` |
-| **SEO-P1-BACKLOG** | r14 audit DONE + r15 **DEPLOYED 2026-07-12** (`5b3669dd`). **Scores post-r14: SEO 8.7 / AEO 9.6 / GEO 9.0 / CWV 7.5 / SD 8.0.** r15 shipped: GEO-2 (OAI-SearchBot+DuckAssistant+YouBot), AEO-1 (HowTo), GEO-4 (GBP sameAs), SD-NEW-5/6, CWV-3 partial (SSR hero), GEO-5 (llms.txt). **r16 P1 remaining:** CWV-7 (INP — run PageSpeed CrUX); SEO-11 (internal link audit); SD-NEW-2/4 (operator_name + priceValidUntil). Full report: `/seo/seo-aeo-geo-prod-2026-07-11.md` | **r16 next** | [[seo-aeo-geo-live-audit-2026-06-22/r14-live-prod-2026-07-11]] |
+| **SEO-P1-BACKLOG** | **r16 DONE 2026-08-16** (no-deploy monitoring). **Scores r16: SEO 8.4 / AEO 9.7 / GEO 9.4 / CWV 7.8 / SD 8.7.** Closed: SD-NEW-4 homepage (priceValidUntil→2027-08-15), SD-R15-3 (/trips @id). New: SD-NEW-4b P2 (destination pages still 2026-10-31, 76 days), CWV-FP P2 (fetchpriority=high ×10/15/20 on homepage/activities/destinations), SEO-15 P3 (/privacy+/terms in sitemap). **r17 P1:** CWV-8 (/trips cards CSR-only), CWV-7 (INP — needs PSI field data), CWV-FP (multi-fetchpriority). **r17 P2:** SD-NEW-4b (priceValidUntil destinations), SEO-13/14 (/trips title+desc), SEO-11 (internal link audit 3rd cycle), GEO-4 (sameAs TripAdvisor), SD-NEW-2 (seller.name space). Full report: `/seo/seo-aeo-geo-prod-2026-08-16.md` | **r17 next** | [[seo-aeo-geo-live-audit-2026-06-22/r16-live-prod-2026-08-16]] |
 | **SEO-P2-FIXES** | twitter:image:alt (`_app.js` + `Seo.js`); og:locale policy unify; meta desc ≤155 chars; blog robots dup. From r6: help relative `og:image`→abs prefix (`pages/help/[...slug].js:89,109`); **lint** `structured-data-schema-patterns.md` item 7 `availableLanguage:["Thai","English"]` contradicts en-only policy → `["English"]`. `#15 og:url` CLOSED `0aa748c`. | OPEN — low | `pages/_app.js`, `components/FrontPage/Seo.js`, `utils/blog/seoHelper.js`, `03-knowledge/structured-data-schema-patterns.md` |
 | **EMAIL-RESEND-DEDUP-GUARD** | Admin "resend confirmation email" action (`bookings/admin.py` `send_booking_email_to_customer`) always hits `carts/tasks.py` `send_booking_confirmation_email`'s idempotency guard (`UserJourneyEvent` `email_booking_sent`/success lookup) and silently no-ops with "Already sent" — guard has no bypass param for legitimate admin-triggered resends. Found + manually worked around (deleted 3 stale rows) for one dev-test booking (`WET4806711`) in #295; not fixed generally. | OPEN #295 — low | `bookings/admin.py` `send_booking_email_to_customer` · `carts/tasks.py:235-246` |
 | **SEARCH-UI-POLISH** | Deferred nits from #138 (NOT regressions). SearchModeTabs ARIA (arrow-key nav, role=tabpanel); `seach-button` typo (also `TransportationSearch.js:248`); SearchDialog close icon red vs grey; comment inverts nav order; mobile tab-switch height jump. | OPEN #138 — low | `components/search/SearchModeTabs.js`, `SearchDialog.js`, `TabbedSearchPanel.js` |
