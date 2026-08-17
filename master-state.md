@@ -17,7 +17,7 @@ Deep-analysed `/airport-transfer/hatyai-airport` page + vault: `resolve-zone` re
 - content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. **Browser-verify direction filter**: open `/airport-transfer/hatyai-airport`, pick address on "Airport → Hotel" tab → Contract 11 shows. Swap tab → address clears, pick again → Contract 202 shows. Pick date 2026-08-22 on Hotel→Airport tab → price shows 4500 (override).
+1. ~~**Browser-verify direction filter**~~ ✅ **VERIFIED #322** — server restart required after merge. "Airport→Hotel" tab: Contract 11 + Demo 183 only. "Hotel→Airport" tab: Contract 202 + Demo 183 only. Filter confirmed working.
 2. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
 3. **develop→main deploy** (RouteFAQ `bd651b33` + SEO wins `38e61658` + AddTripModal `14f438a9` + direction filter `ee74c6f2`/`6c65cd7`) once verified.
 4. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
