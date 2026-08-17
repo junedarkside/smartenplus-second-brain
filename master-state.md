@@ -4,22 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-17 (session #322)
+**Updated:** 2026-08-17 (session #323)
 
-**Achieved (#322) — Airport transfer direction filter (BE+FE), Hatyai test contracts, ZoneOptionCard 120×80 vehicle thumbnail.**
+**Achieved (#323) — Fixed BE 400 on airport transfer booking: expired contract surfacing + resolve-zone date filter + BookButton error toast.**
 
-Deep-analysed `/airport-transfer/hatyai-airport` page + vault: `resolve-zone` returned ALL contracts regardless of direction tab. Built direction filter using existing `Contract.trip.effective_departure_station / effective_arrival_station` vs `airport_id` — zero new models/migrations. BE `stations/views.py`: derives `FROM_AIRPORT`/`TO_AIRPORT`/`BOTH` per link, filters by optional `direction` param. FE `ZonePriceBox.js`: passes `FROM_AIRPORT`/`TO_AIRPORT` based on `tabValue`; `toggleDirection` now calls `handleClearAddress()` first (no stale ref re-resolve on tab swap). `tripsApi.js`: `direction` param forwarded. 3-agent review (NextJS/Django/SWE) before build — caught: use `effective_*` not `trip.route.*` directly, no `tabValue` in useEffect deps (chain violation). Created Hatyai test data via Django shell: Route 31, Trip 39, Contract 202 (`hatyai any hotel to airport (Sedan)`, TRANSPORTATION, PRIVATE), RateCard 1935 (4000 default) + 1936 (4500 on 2026-08-22), ZoneContract 6 (zone1 pinned to Hatyai Airport). Verified filter: `direction=FROM_AIRPORT` → Contract 11 only; `direction=TO_AIRPORT` → Contract 202 only; no param → both. Also upgraded `ZoneOptionCard` vehicle image: `24×24` icon → `120×80px` 3:2 thumbnail (Kiwitaxi/Booking.com pattern) with "Fixed price" overlay badge (GYG pattern); icon fallback at 48px. All merged → develop: FE `ee74c6f2`, BE `6c65cd7`.
+Investigated 400 Bad Request on `POST /carts/{cartId}/cartitems/` from `/airport-transfer/hatyai-airport`. Root cause: Contract 11 (`hatyai airport to george town (Sedan)`) had `end_date=2025-12-31` (expired) but `is_actived=True` — `resolve-zone` surfaced it because it only validated ratecard existence, not contract `start_date`/`end_date` range. Booking hit `is_valid_travel_date()` → 400 `"traveling date not within valid range"`. Two fixes: (1) BE `stations/views.py` `ResolveZoneView` now filters by `contract__start_date__lte=date` / `contract__end_date__gte=date` — expired/future contracts never surface on the page. (2) FE `BookButton.js` catch block now extracts `error.data.non_field_errors[0]` / `detail` / `message` / array[0] to show the actual backend message instead of generic "Could not add item to cart". Also extended Contract 11 `end_date` to 2027-12-31 (test data fix). Both merged → develop: BE `5632db2` / FE `0d716961`.
 
-**Workspace (#322):**
-- frontend: `develop` → `ee74c6f2`. Clean.
-- backend: `develop` → `6c65cd7`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
+**Workspace (#323):**
+- frontend: `develop` → `0d716961`. Clean.
+- backend: `develop` → `5632db2`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
 - admin-dashboard: `main` → `5bd6a36`. Clean.
 - content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. ~~**Browser-verify direction filter**~~ ✅ **VERIFIED #322** — server restart required after merge. "Airport→Hotel" tab: Contract 11 + Demo 183 only. "Hotel→Airport" tab: Contract 202 + Demo 183 only. Filter confirmed working.
+1. **Browser-verify airport transfer booking** — restart Django dev server (resolve-zone date filter change), book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + redirects to checkout.
 2. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
-3. **develop→main deploy** (RouteFAQ `bd651b33` + SEO wins `38e61658` + AddTripModal `14f438a9` + direction filter `ee74c6f2`/`6c65cd7`) once verified.
+3. **develop→main deploy** (RouteFAQ `bd651b33` + SEO wins + AddTripModal `14f438a9` + direction filter `ee74c6f2` + booking fix `5632db2`/`0d716961`) once verified.
 4. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
 5. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
 6. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
@@ -32,7 +32,7 @@ Deep-analysed `/airport-transfer/hatyai-airport` page + vault: `resolve-zone` re
 13. **Rotate 4 leaked secrets** (console-side, blocking).
 14. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
 
-_(Sessions #221–#321 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#322 archived → `07-logs/session-history.md`.)_
 
 ---
 

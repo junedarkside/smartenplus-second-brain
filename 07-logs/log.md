@@ -1,3 +1,5 @@
+## [2026-08-17] session-end #323 | Fixed airport transfer booking 400 — resolve-zone now filters expired/future contracts by start/end date (BE `5632db2`); BookButton shows actual backend error message (FE `0d716961`); Contract 11 end_date extended to 2027. Both → develop.
+
 ## [2026-08-17] session-end #322 | Airport transfer direction filter (BE+FE via trip.effective_stations, 3-agent review), Hatyai test contracts (Route 31/Trip 39/Contract 202, ratecards 4000/4500 on Aug22), ZoneOptionCard 120×80 vehicle thumbnail + Fixed price badge. FE `ee74c6f2` · BE `6c65cd7` → develop.
 
 ## [2026-08-16] session-end #321 | Checkout "Add another trip" CTA — AddTripModal 3-tab redirect picker + Itineraries CTA button, 7 commits, merged → develop `14f438a9`.
