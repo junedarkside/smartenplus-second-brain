@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #321 — 2026-08-16
+
+**Achieved:** Checkout "Add another trip" CTA: AddTripModal 3-tab redirect picker + Itineraries CTA button, merged → develop `14f438a9`. Built `components/forms/checkout/AddTripModal.js` (~255 lines): Transportation tab (AutoCompleteSearch + CalendarDatePickerv2 reused from homepage via nested Dialog at z-index 1400), Activities tab, Airport Transfer tab. Wired dashed CTA button into `Itineraries.js`. Key decisions: same-tab `router.push`; Redux location+calendar cleared on modal open; mobile tabs responsive via `isSmDown`. 7 commits on `feat/checkout-add-trip-cta`, merged `--no-ff` → develop `14f438a9`, pushed.
+
+**Workspace:** frontend `develop 14f438a9` · backend `develop a7eb4f1` · admin `main 5bd6a36` · content `master 3756e5b`
+
+---
+
 ## Session #321 (2026-08-16)
 
 **Achieved (#321) — Checkout "Add another trip" CTA: AddTripModal (3-tab redirect picker) + Itineraries CTA button, merged → develop `14f438a9`.**

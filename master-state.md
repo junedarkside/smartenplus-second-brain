@@ -4,38 +4,35 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-16 (session #321)
+**Updated:** 2026-08-17 (session #322)
 
-**Achieved (#321) — Checkout "Add another trip" CTA: AddTripModal 3-tab redirect picker + Itineraries CTA button, merged → develop `14f438a9`.**
+**Achieved (#322) — Airport transfer direction filter (BE+FE), Hatyai test contracts, ZoneOptionCard 120×80 vehicle thumbnail.**
 
-Full UX/UI/BD 3-agent audit of `/checkout` page first. Built `components/forms/checkout/AddTripModal.js` (new, ~255 lines): Transportation tab (AutoCompleteSearch + CalendarDatePickerv2 reused from homepage via nested Dialog at z-index 1400 — prevents autocomplete expanding parent modal height, redirects to `/trips/[from]/[to]?date=`), Activities tab (text search → `/activities`), Airport Transfer tab (redirect → `/airport-transfer`). Wired dashed CTA button into `Itineraries.js` after items list (`formStep === 0` only) + prominent empty-state CTA. Key decisions: SearchDialog reuse rejected (2 agents confirmed `onSearch` fires zero-arg/closes — navigation widget only); same-tab `router.push` not `window.open`; Redux location+calendar cleared on modal open; mobile tabs responsive via `isSmDown` (`iconPosition="top"`, short labels, `fontSize: 0.65rem`). 7 commits on `feat/checkout-add-trip-cta`, merged `--no-ff` → develop `14f438a9`, pushed. Vault audit doc at `01-projects/checkout-add-items-cta-audit.md` (staged, not committed yet).
+Deep-analysed `/airport-transfer/hatyai-airport` page + vault: `resolve-zone` returned ALL contracts regardless of direction tab. Built direction filter using existing `Contract.trip.effective_departure_station / effective_arrival_station` vs `airport_id` — zero new models/migrations. BE `stations/views.py`: derives `FROM_AIRPORT`/`TO_AIRPORT`/`BOTH` per link, filters by optional `direction` param. FE `ZonePriceBox.js`: passes `FROM_AIRPORT`/`TO_AIRPORT` based on `tabValue`; `toggleDirection` now calls `handleClearAddress()` first (no stale ref re-resolve on tab swap). `tripsApi.js`: `direction` param forwarded. 3-agent review (NextJS/Django/SWE) before build — caught: use `effective_*` not `trip.route.*` directly, no `tabValue` in useEffect deps (chain violation). Created Hatyai test data via Django shell: Route 31, Trip 39, Contract 202 (`hatyai any hotel to airport (Sedan)`, TRANSPORTATION, PRIVATE), RateCard 1935 (4000 default) + 1936 (4500 on 2026-08-22), ZoneContract 6 (zone1 pinned to Hatyai Airport). Verified filter: `direction=FROM_AIRPORT` → Contract 11 only; `direction=TO_AIRPORT` → Contract 202 only; no param → both. Also upgraded `ZoneOptionCard` vehicle image: `24×24` icon → `120×80px` 3:2 thumbnail (Kiwitaxi/Booking.com pattern) with "Fixed price" overlay badge (GYG pattern); icon fallback at 48px. All merged → develop: FE `ee74c6f2`, BE `6c65cd7`.
 
-**Workspace (#321):**
-- frontend: `develop` → `14f438a9`. Clean.
-- backend: `develop` → `a7eb4f1`. One pre-existing untracked file (`operators/tests/test_transport_composit_pagination.py`, from #304).
+**Workspace (#322):**
+- frontend: `develop` → `ee74c6f2`. Clean.
+- backend: `develop` → `6c65cd7`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
 - admin-dashboard: `main` → `5bd6a36`. Clean.
 - content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. **Carry from #319 — browser-verify the RouteFAQ fix**: open `/trips/hatyai/koh-lipe`, confirm FAQ section shows real price/operator names/cancellation terms (not generic filler), confirm accordion still opens/closes correctly, confirm only one FAQPage schema in page source.
-2. **Carry from #319 — decide on BE unit test for `_build_route_faq_aggregate`/`_best_cancellation_summary`**: zero-contract, single-contract, multi-operator, cheapest-contract-has-no-policy-but-another-does cases.
-3. **develop→main deploy** (RouteFAQ fix `bd651b33` + SEO quick wins `38e61658` + Add Trip CTA `14f438a9`) once browser-verified.
-4. **Browser-verify AddTripModal**: open `/checkout`, click "Add another trip" — Transportation tab: From/To/Date fields clickable, AutoCompleteSearch opens in overlay, CalendarDatePickerv2 opens in overlay, Search button navigates same-tab to `/trips/[from]/[to]`. Activities: text search → `/activities`. Airport Transfer: button → `/airport-transfer`. Mobile (375px): 3 tabs fit, icons above short labels, no truncation.
-5. **Twitter tags (SEO-3 P3)** — separate PR: add raw `<meta name="twitter:title">` + `<meta name="twitter:description">` to `_app.js <Head>` block (next-seo v6 can't do it).
-6. **CWV-8 P1**: /trips TouristTrip route cards are CSR-only (MUI_CARDS_IN_SSR=0) — extend `getStaticProps` to pass initial routes.
-7. **SD-NEW-4b P2**: destination pages `priceValidUntil: 2026-10-31` (76 days) — source is `contract.end_date` in DB, needs ops/product to update contracts.
-8. Carry from #318 — **browser-verify the chip fix**: open `/trips/hatyai/koh-lipe?date=2026-08-20`, confirm chips render at uniform height + per-leg class tags correct. Run `python manage.py seed_transport_composit_variety --cleanup` after.
-9. Carry from #318 — **decide fate of `unique_transport_composit_list` per-operator dedup gap** (not fixed, needs product sign-off), see `~/.claude/plans/check-vault-and-fe-greedy-hellman.md`.
-10. Carry from #317 — **browser-verify the sort-tab fix**: `/trips/hatyai/koh-lipe`, click each pill, confirm ordering + "Our Pick" gating.
-11. Carry from #317 — **BD decision**: party-total vs per-unit price display.
-12. Carry from #316 — browser-verify overnight badge on `TripCardV2`.
-13. Carry from #315 — browser-verify help.js Thai text at `/routemanagement/transfer-zones/help`.
-14. Carry from #314 — browser-verify `PlacePicker.js` cross-border search + clear-button at `/airport-transfer/phuket-airport`.
-15. **"0m" duration fallback bug** (`helpers/formatTime.js:28`), **THB decimal fix** (`helpers/formatCurrency.js`), **seat-count anomaly** — all descoped, carried.
-16. **Rotate 4 leaked secrets** (console-side, blocking): Google Maps API key, `NEXTAUTH_SECRET`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_SECRET`, `LINE_CHANNEL_SECRET`.
-17. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP; AIRPORT-TRANSFER-ZONE Google-billing blocker.
+1. **Browser-verify direction filter**: open `/airport-transfer/hatyai-airport`, pick address on "Airport → Hotel" tab → Contract 11 shows. Swap tab → address clears, pick again → Contract 202 shows. Pick date 2026-08-22 on Hotel→Airport tab → price shows 4500 (override).
+2. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
+3. **develop→main deploy** (RouteFAQ `bd651b33` + SEO wins `38e61658` + AddTripModal `14f438a9` + direction filter `ee74c6f2`/`6c65cd7`) once verified.
+4. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
+5. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
+6. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
+7. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
+8. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
+9. Carry from #316 — browser-verify overnight badge.
+10. Carry from #315 — browser-verify help.js Thai text.
+11. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
+12. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
+13. **Rotate 4 leaked secrets** (console-side, blocking).
+14. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
 
-_(Sessions #221–#320 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#321 archived → `07-logs/session-history.md`.)_
 
 ---
 
