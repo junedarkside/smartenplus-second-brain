@@ -1,3 +1,5 @@
+## [2026-08-18] session-end #325 | ZoneOptionCard responsive layout — 3-row mobile (<640px) / single-row sm+. Fixes title truncation, badge wrap, price split, BOOK misalignment. FE `f75e6085` → develop.
+
 ## [2026-08-18] session-end #324 | Fixed mobile overflow on /airport-transfer/hatyai-airport — ZonePriceBox width matches calendar (mx-2), PlacePicker wrappers constrained (min-w-0 w-full), page container overflow-hidden, ZoneOptionCard min-w-0, vehicle image responsive. FE `ba82e757` → develop.
 
 ## [2026-08-17] session-end #323 | Fixed airport transfer booking 400 — resolve-zone now filters expired/future contracts by start/end date (BE `5632db2`); BookButton shows actual backend error message (FE `0d716961`); Contract 11 end_date extended to 2027. Both → develop.

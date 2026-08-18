@@ -4,36 +4,37 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-18 (session #324)
+**Updated:** 2026-08-18 (session #325)
 
-**Achieved (#324) — Fixed mobile overflow on `/airport-transfer/hatyai-airport` Private Transfer section.**
+**Achieved (#325) — ZoneOptionCard responsive layout fix.**
 
-Two bugs identified from screenshots + multi-agent review (nextjs-fullstack-architect + code-reviewer + SWE). Bug 1: `ZonePriceBox` card width didn't match calendar — `AirportEndPill` had no `min-w-0`, bare text node can't `truncate`, PlacePicker wrappers had no `min-w-0 w-full` on mobile. Bug 2: after entering a long Thai address, the page overflowed left — PlacePicker wrapper divs (`md:w-1/2`) had no mobile width constraint. Fixes: `AirportEndPill` gets `min-w-0 w-full` + `shrink-0` label + `flex-1 min-w-0 truncate` name span; both PlacePicker wrappers get `min-w-0 w-full md:w-1/2`; section margin corrected from `mx-4` → `mx-2` to match `SlideCalendar2`'s default `mx-2`; page wrapper div gets `w-full overflow-hidden`. Also fixed `ZoneOptionCard` outer container (`min-w-0`) and vehicle image boxes (responsive `96×68px` mobile → `120×80px` at `sm:`, updated `sizes` prop). 2 commits: `819aec2e` + `ba82e757`. Merged → develop `ba82e757`. Branch `fix/mobile-overflow-zone-pricebox` deleted after merge.
+User reported product cards unprofessional on mobile (375px): title/operator truncated, trust badges split mid-phrase, price "THB"/"3,500.00" on separate lines, BOOK button top-aligned. Root cause: single flex row with 96px image + BOOK button left content col only ~163px. Designed 3-row mobile layout in artifact demo (before/after phone frames). SWE review confirmed `formatCurrency` outputs regular space → `whitespace-nowrap` needed; 3-row safe at all sizes with responsive breakpoint. Implementation: mobile (`<sm`) = 3-row stack (info / badges / price+BOOK); sm+ = original single-row with badges+price inside content col. `BookButton`/price rendered twice, toggled `sm:hidden`/`hidden sm:block` (standard Tailwind pattern, no JS branching). Desktop whitespace regression caught from screenshot and fixed in second commit. 2 commits: `9fdf1356` + `8e8234f3`. Merged → develop `f75e6085`.
 
-**Workspace (#324):**
-- frontend: `develop` → `ba82e757`. Clean.
+**Workspace (#325):**
+- frontend: `develop` → `f75e6085`. Clean. 3 commits ahead of origin.
 - backend: `main` → `5632db2`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
 - admin-dashboard: `main` → `5bd6a36`. Clean.
 - content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. **Browser-verify airport transfer mobile fix** — open `http://localhost:3000/airport-transfer/hatyai-airport` at 375px DevTools, enter Thai address, confirm no overflow.
-2. **Browser-verify airport transfer booking** — restart Django dev server, book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + checkout redirect.
-3. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
-4. **develop→main deploy** (RouteFAQ `bd651b33` + mobile fix `ba82e757` + booking fix `5632db2`/`0d716961`) once verified.
-5. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
-6. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
-7. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
-8. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
-9. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
-10. Carry from #316 — browser-verify overnight badge.
-11. Carry from #315 — browser-verify help.js Thai text.
-12. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
-13. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
-14. **Rotate 4 leaked secrets** (console-side, blocking).
-15. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
+1. **Push frontend develop** — `git push origin develop` (3 commits unpushed).
+2. **Browser-verify ZoneOptionCard fix** — `http://localhost:3000/airport-transfer/hatyai-airport` at 375px, 768px, 1280px. Enter pickup address to load cards. Confirm 3-row mobile / single-row desktop.
+3. **Browser-verify airport transfer booking** — book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + checkout redirect.
+4. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
+5. **develop→main deploy** (RouteFAQ `bd651b33` + ZoneOptionCard fix `f75e6085` + booking fix `5632db2`/`0d716961`) once verified.
+6. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
+7. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
+8. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
+9. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
+10. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
+11. Carry from #316 — browser-verify overnight badge.
+12. Carry from #315 — browser-verify help.js Thai text.
+13. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
+14. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
+15. **Rotate 4 leaked secrets** (console-side, blocking).
+16. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
 
-_(Sessions #221–#323 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#324 archived → `07-logs/session-history.md`.)_
 
 ---
 
