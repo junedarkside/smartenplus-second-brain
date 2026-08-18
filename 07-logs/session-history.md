@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #325 — 2026-08-18
+
+**Achieved:** Fixed mobile overflow on `/airport-transfer/hatyai-airport` Private Transfer section. Two bugs: `AirportEndPill` had no `min-w-0`, PlacePicker wrappers had no `min-w-0 w-full` on mobile. Fixes applied across `AirportEndPill`, `PlacePicker`, section margin, page wrapper. Also bumped `ZoneOptionCard` thumbnail to responsive 96×68px mobile / 120×80px sm+. 2 commits: `819aec2e` + `ba82e757`.
+
+---
+
 ## Session #324 — 2026-08-18
 
 **Achieved:** Fixed mobile overflow on `/airport-transfer/hatyai-airport` Private Transfer section. Two bugs: `AirportEndPill` had no `min-w-0`, PlacePicker wrappers had no `min-w-0 w-full` on mobile. Fixes applied across `AirportEndPill`, `PlacePicker`, section margin, page wrapper. Also bumped `ZoneOptionCard` thumbnail to responsive 96×68px mobile / 120×80px sm+. 2 commits: `819aec2e` + `ba82e757`.

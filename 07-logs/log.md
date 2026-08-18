@@ -1,3 +1,5 @@
+## [2026-08-18] session-end #326 | Fixed ISR cache bug blocking /airport-transfer/chiang-rai-international-airport — catch block now discriminates 404 vs transient (60s recheck), SEO null guard + keywords fix. FE `452c1ca3` → develop + pushed.
+
 ## [2026-08-18] session-end #325 | ZoneOptionCard responsive layout — 3-row mobile (<640px) / single-row sm+. Fixes title truncation, badge wrap, price split, BOOK misalignment. FE `f75e6085` → develop.
 
 ## [2026-08-18] session-end #324 | Fixed mobile overflow on /airport-transfer/hatyai-airport — ZonePriceBox width matches calendar (mx-2), PlacePicker wrappers constrained (min-w-0 w-full), page container overflow-hidden, ZoneOptionCard min-w-0, vehicle image responsive. FE `ba82e757` → develop.

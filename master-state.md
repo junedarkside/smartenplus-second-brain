@@ -4,35 +4,38 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-18 (session #325)
+**Updated:** 2026-08-18 (session #326)
 
-**Achieved (#325) — ZoneOptionCard responsive layout fix.**
+**Achieved (#326) — Fixed production ISR cache bug blocking `/airport-transfer/chiang-rai-international-airport`.**
 
-User reported product cards unprofessional on mobile (375px): title/operator truncated, trust badges split mid-phrase, price "THB"/"3,500.00" on separate lines, BOOK button top-aligned. Root cause: single flex row with 96px image + BOOK button left content col only ~163px. Designed 3-row mobile layout in artifact demo (before/after phone frames). SWE review confirmed `formatCurrency` outputs regular space → `whitespace-nowrap` needed; 3-row safe at all sizes with responsive breakpoint. Implementation: mobile (`<sm`) = 3-row stack (info / badges / price+BOOK); sm+ = original single-row with badges+price inside content col. `BookButton`/price rendered twice, toggled `sm:hidden`/`hidden sm:block` (standard Tailwind pattern, no JS branching). Desktop whitespace regression caught from screenshot and fixed in second commit. 2 commits: `9fdf1356` + `8e8234f3`. Merged → develop `f75e6085`.
+Root cause investigation: page showed "undefined transfer" + no search form. API data was healthy (`id:41`, `station_name:"Chiang Rai International Airport"`). Real cause: `getStaticProps` catch block in `pages/airport-transfer/[slug].js` returned `{ data: null, revalidate: 3600 }` on transient API error → ISR cached the broken null-data page for 1h → `x-nextjs-cache: HIT` serving stale broken HTML even after API recovered. Secondary bug: `AirportTransferSEO.js` had no null guard → produced literal "undefined Transfer!" in page title/OG/keywords meta.
 
-**Workspace (#325):**
-- frontend: `develop` → `f75e6085`. Clean. 3 commits ahead of origin.
+First fix (bare `{ notFound: true }`) was caught by Opus-model SWE review as a regression — bare `notFound` without `revalidate` is **permanently cached by ISR**. Revised to discriminate: real 404 → `{ notFound: true, revalidate: 3600 }`; transient 5xx/network → `{ notFound: true, revalidate: 60 }` (auto-recovers in 60s). Pattern matches sibling `pages/destinations/[slug].js:534`. Also fixed 3rd unguarded spot: `keywords` array was pushing raw `departureStation` (would stringify as `"undefined"` in meta tag) — changed to `stationLabel`. 2 commits: `82da53a6` + `452c1ca3`. Pushed → `origin/develop`.
+
+**Workspace (#326):**
+- frontend: `develop` → `452c1ca3`. Clean. Pushed to origin.
 - backend: `main` → `5632db2`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
 - admin-dashboard: `main` → `5bd6a36`. Clean.
 - content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. **Push frontend develop** — `git push origin develop` (3 commits unpushed).
-2. **Browser-verify ZoneOptionCard fix** — `http://localhost:3000/airport-transfer/hatyai-airport` at 375px, 768px, 1280px. Enter pickup address to load cards. Confirm 3-row mobile / single-row desktop.
-3. **Browser-verify airport transfer booking** — book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + checkout redirect.
-4. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
-5. **develop→main deploy** (RouteFAQ `bd651b33` + ZoneOptionCard fix `f75e6085` + booking fix `5632db2`/`0d716961`) once verified.
-6. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
-7. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
-8. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
-9. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
-10. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
-11. Carry from #316 — browser-verify overnight badge.
-12. Carry from #315 — browser-verify help.js Thai text.
-13. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
-14. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
-15. **Rotate 4 leaked secrets** (console-side, blocking).
-16. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
+1. **Clear `smartenplus_next_cache` Docker volume on prod server** — `docker volume rm smartenplus_next_cache` — to evict the stale ISR-cached broken page for Chiang Rai. Deploy first, then clear.
+2. **Verify Chiang Rai fix live** — `curl -sI https://www.smartenplus.co.th/airport-transfer/chiang-rai-international-airport | grep x-nextjs-cache` → MISS then HIT with correct title.
+3. **Browser-verify ZoneOptionCard fix** — `http://localhost:3000/airport-transfer/hatyai-airport` at 375px, 768px, 1280px. Enter pickup address to load cards. Confirm 3-row mobile / single-row desktop.
+4. **Browser-verify airport transfer booking** — book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + checkout redirect.
+5. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
+6. **develop→main deploy** (RouteFAQ `bd651b33` + ZoneOptionCard fix `f75e6085` + ISR fix `452c1ca3` + booking fix `5632db2`/`0d716961`) once verified.
+7. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
+8. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
+9. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
+10. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
+11. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
+12. Carry from #316 — browser-verify overnight badge.
+13. Carry from #315 — browser-verify help.js Thai text.
+14. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
+15. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
+16. **Rotate 4 leaked secrets** (console-side, blocking).
+17. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
 
 _(Sessions #221–#324 archived → `07-logs/session-history.md`.)_
 
