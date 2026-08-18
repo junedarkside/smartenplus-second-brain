@@ -1,3 +1,5 @@
+## [2026-08-18] session-end #324 | Fixed mobile overflow on /airport-transfer/hatyai-airport — ZonePriceBox width matches calendar (mx-2), PlacePicker wrappers constrained (min-w-0 w-full), page container overflow-hidden, ZoneOptionCard min-w-0, vehicle image responsive. FE `ba82e757` → develop.
+
 ## [2026-08-17] session-end #323 | Fixed airport transfer booking 400 — resolve-zone now filters expired/future contracts by start/end date (BE `5632db2`); BookButton shows actual backend error message (FE `0d716961`); Contract 11 end_date extended to 2027. Both → develop.
 
 ## [2026-08-17] session-end #322 | Airport transfer direction filter (BE+FE via trip.effective_stations, 3-agent review), Hatyai test contracts (Route 31/Trip 39/Contract 202, ratecards 4000/4500 on Aug22), ZoneOptionCard 120×80 vehicle thumbnail + Fixed price badge. FE `ee74c6f2` · BE `6c65cd7` → develop.

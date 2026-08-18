@@ -4,35 +4,36 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-17 (session #323)
+**Updated:** 2026-08-18 (session #324)
 
-**Achieved (#323) — Fixed BE 400 on airport transfer booking: expired contract surfacing + resolve-zone date filter + BookButton error toast.**
+**Achieved (#324) — Fixed mobile overflow on `/airport-transfer/hatyai-airport` Private Transfer section.**
 
-Investigated 400 Bad Request on `POST /carts/{cartId}/cartitems/` from `/airport-transfer/hatyai-airport`. Root cause: Contract 11 (`hatyai airport to george town (Sedan)`) had `end_date=2025-12-31` (expired) but `is_actived=True` — `resolve-zone` surfaced it because it only validated ratecard existence, not contract `start_date`/`end_date` range. Booking hit `is_valid_travel_date()` → 400 `"traveling date not within valid range"`. Two fixes: (1) BE `stations/views.py` `ResolveZoneView` now filters by `contract__start_date__lte=date` / `contract__end_date__gte=date` — expired/future contracts never surface on the page. (2) FE `BookButton.js` catch block now extracts `error.data.non_field_errors[0]` / `detail` / `message` / array[0] to show the actual backend message instead of generic "Could not add item to cart". Also extended Contract 11 `end_date` to 2027-12-31 (test data fix). Both merged → develop: BE `5632db2` / FE `0d716961`.
+Two bugs identified from screenshots + multi-agent review (nextjs-fullstack-architect + code-reviewer + SWE). Bug 1: `ZonePriceBox` card width didn't match calendar — `AirportEndPill` had no `min-w-0`, bare text node can't `truncate`, PlacePicker wrappers had no `min-w-0 w-full` on mobile. Bug 2: after entering a long Thai address, the page overflowed left — PlacePicker wrapper divs (`md:w-1/2`) had no mobile width constraint. Fixes: `AirportEndPill` gets `min-w-0 w-full` + `shrink-0` label + `flex-1 min-w-0 truncate` name span; both PlacePicker wrappers get `min-w-0 w-full md:w-1/2`; section margin corrected from `mx-4` → `mx-2` to match `SlideCalendar2`'s default `mx-2`; page wrapper div gets `w-full overflow-hidden`. Also fixed `ZoneOptionCard` outer container (`min-w-0`) and vehicle image boxes (responsive `96×68px` mobile → `120×80px` at `sm:`, updated `sizes` prop). 2 commits: `819aec2e` + `ba82e757`. Merged → develop `ba82e757`. Branch `fix/mobile-overflow-zone-pricebox` deleted after merge.
 
-**Workspace (#323):**
-- frontend: `develop` → `0d716961`. Clean.
-- backend: `develop` → `5632db2`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
+**Workspace (#324):**
+- frontend: `develop` → `ba82e757`. Clean.
+- backend: `main` → `5632db2`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
 - admin-dashboard: `main` → `5bd6a36`. Clean.
 - content: `master` → `3756e5b`. Clean.
 
 **Resume point (EXACT):**
-1. **Browser-verify airport transfer booking** — restart Django dev server (resolve-zone date filter change), book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + redirects to checkout.
-2. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
-3. **develop→main deploy** (RouteFAQ `bd651b33` + SEO wins + AddTripModal `14f438a9` + direction filter `ee74c6f2` + booking fix `5632db2`/`0d716961`) once verified.
-4. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
-5. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
-6. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
-7. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
-8. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
-9. Carry from #316 — browser-verify overnight badge.
-10. Carry from #315 — browser-verify help.js Thai text.
-11. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
-12. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
-13. **Rotate 4 leaked secrets** (console-side, blocking).
-14. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
+1. **Browser-verify airport transfer mobile fix** — open `http://localhost:3000/airport-transfer/hatyai-airport` at 375px DevTools, enter Thai address, confirm no overflow.
+2. **Browser-verify airport transfer booking** — restart Django dev server, book from `/airport-transfer/hatyai-airport?date=2026-08-21&people=1&direction=forward`, confirm 201 + checkout redirect.
+3. **Carry from #319 — browser-verify RouteFAQ fix**: `/trips/hatyai/koh-lipe` — FAQ real price/operator names, accordion works, one FAQPage schema in source.
+4. **develop→main deploy** (RouteFAQ `bd651b33` + mobile fix `ba82e757` + booking fix `5632db2`/`0d716961`) once verified.
+5. **Browser-verify AddTripModal**: `/checkout` → "Add another trip" → 3 tabs work, same-tab navigation, mobile 375px.
+6. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
+7. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
+8. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
+9. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
+10. Carry from #316 — browser-verify overnight badge.
+11. Carry from #315 — browser-verify help.js Thai text.
+12. Carry from #314 — browser-verify `PlacePicker.js` cross-border + clear-button.
+13. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
+14. **Rotate 4 leaked secrets** (console-side, blocking).
+15. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
 
-_(Sessions #221–#322 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#323 archived → `07-logs/session-history.md`.)_
 
 ---
 

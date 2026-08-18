@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+**Updated:** 2026-08-17 (session #323)
+
+**Achieved (#323) — Fixed BE 400 on airport transfer booking: expired contract surfacing + resolve-zone date filter + BookButton error toast.**
+
+Investigated 400 Bad Request on `POST /carts/{cartId}/cartitems/` from `/airport-transfer/hatyai-airport`. Root cause: Contract 11 (`hatyai airport to george town (Sedan)`) had `end_date=2025-12-31` (expired) but `is_actived=True` — `resolve-zone` surfaced it because it only validated ratecard existence, not contract `start_date`/`end_date` range. Booking hit `is_valid_travel_date()` → 400 `"traveling date not within valid range"`. Two fixes: (1) BE `stations/views.py` `ResolveZoneView` now filters by `contract__start_date__lte=date` / `contract__end_date__gte=date` — expired/future contracts never surface on the page. (2) FE `BookButton.js` catch block now extracts `error.data.non_field_errors[0]` / `detail` / `message` / array[0] to show the actual backend message instead of generic "Could not add item to cart". Also extended Contract 11 `end_date` to 2027-12-31 (test data fix). Both merged → develop: BE `5632db2` / FE `0d716961`.
+
+**Workspace (#323):**
+- frontend: `develop` → `0d716961`. Clean.
+- backend: `develop` → `5632db2`. One pre-existing untracked (`operators/tests/test_transport_composit_pagination.py`, from #304).
+- admin-dashboard: `main` → `5bd6a36`. Clean.
+- content: `master` → `3756e5b`. Clean.
+
+---
+
 **Updated:** 2026-08-17 (session #322)
 
 **Achieved (#322) — Airport transfer direction filter (BE+FE), Hatyai test contracts, ZoneOptionCard 120×80 vehicle thumbnail.**
