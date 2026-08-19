@@ -1,3 +1,5 @@
+## [2026-08-19] session-end #329 | Zone-pricing general-transfer: FE checkout wired (4-agent reviewed), 3 real bugs found+fixed from live user screenshots (boolean-restore data loss, pre-existing address not displaying, wrong airport-styled card on general-transfer trips). ALL 3 REPOS MERGED → develop (BE `abd60c2`, AD `90e9129`, FE `5e21bffc`) per explicit user direction — skipped the normal browser-verify-first step. Handoff: full manual E2E test still needed next session, nothing click-through tested live post-merge.
+
 ## [2026-08-19] session-end #328 | Zone-pricing general-transfer restarted from scratch (requirement corrected), AD+BE built + reviewed across 3 agent rounds, BE test-covered 128/128, fixed a silent contract-save bug found mid-session. FE checkout deferred to next session. Uncommitted on `feat/zone-pricing-general-transfer` both repos, not yet browser-verified.
 
 ## [2026-08-18] session-end #326 | Fixed ISR cache bug blocking /airport-transfer/chiang-rai-international-airport — catch block now discriminates 404 vs transient (60s recheck), SEO null guard + keywords fix. FE `452c1ca3` → develop + pushed.
