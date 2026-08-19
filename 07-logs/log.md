@@ -1,3 +1,5 @@
+## [2026-08-19] session-end #328 | Zone-pricing general-transfer restarted from scratch (requirement corrected), AD+BE built + reviewed across 3 agent rounds, BE test-covered 128/128, fixed a silent contract-save bug found mid-session. FE checkout deferred to next session. Uncommitted on `feat/zone-pricing-general-transfer` both repos, not yet browser-verified.
+
 ## [2026-08-18] session-end #326 | Fixed ISR cache bug blocking /airport-transfer/chiang-rai-international-airport — catch block now discriminates 404 vs transient (60s recheck), SEO null guard + keywords fix. FE `452c1ca3` → develop + pushed.
 
 ## [2026-08-18] session-end #325 | ZoneOptionCard responsive layout — 3-row mobile (<640px) / single-row sm+. Fixes title truncation, badge wrap, price split, BOOK misalignment. FE `f75e6085` → develop.

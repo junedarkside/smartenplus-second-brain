@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #327 — 2026-08-19
+
+**Achieved:** Zone-pricing (general-transfer) plan paused after full revert; shipped a small staff QA tool instead. Planned+built the `zone-pricing-general-transfer-extension` feature across all 3 repos (backend model/serializer/view, frontend checkout required-fields, admin contract checkbox) — 4-agent review (UXUI/Next.js/Django/SWE) done, manual browser testing began, then hit a real UX collision: `Passengers.js` already has a DIFFERENT older pickup/dropoff mechanism (`info_fields`-driven plain textarea) that would visually collide with the new zone-resolved fields if moved to that step. User decided to pause the whole plan and **fully revert all 3 repos** rather than resolve the collision now. Reverted cleanly: all 3 feature branches deleted (`feat/zone-pricing-general-transfer` backend, `feat/zone-pricing-checkout-fields` frontend, `feat/zone-pricing-contract-checkbox` admin), backend DB migrations (`carts.0018`, `operators.0071`, `stations.0037`) unmigrated back to pre-session schema, all repos confirmed back on clean `develop`/`main`. Nothing was ever pushed to any remote during the zone-pricing work, so revert was purely local.
+
+Separately, shipped a small staff-only QA tool on `/airport-transfer/hatyai-airport`: `data-contract-id` attribute (devtools-inspectable) + Shift+D keyboard shortcut toggling a visible contract-ID badge on each `ZoneOptionCard`. Originated from "staff want to check contract/product listing correctness by ID" — 4-agent review unanimously recommended against any customer-visible ID and converged on the devtools-attribute pattern; user then asked for a faster on-screen toggle too. `ZoneOptionCard.js` badge extracted to new `DebugIdBadge.js` to stay under the 200-line component limit. 3 commits on `fix/zone-option-card-contract-id-attr`, merged → `develop`, pushed (`452c1ca3..b4b484c0`).
+
+---
+
 ## Session #326 — 2026-08-18
 
 **Achieved:** Fixed production ISR cache bug blocking `/airport-transfer/chiang-rai-international-airport` — `getStaticProps` returned bare `{notFound:true}` on transient errors, permanently ISR-cached. Discriminated real 404 (revalidate 3600) vs transient 5xx/network (revalidate 60, auto-recovers). Fixed `AirportTransferSEO.js` unguarded null → "undefined Transfer!" in meta. Also fixed `keywords` array pushing raw `departureStation` instead of `stationLabel`. 2 commits: `82da53a6` + `452c1ca3`. Pushed → develop.
