@@ -4,6 +4,12 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #326 — 2026-08-18
+
+**Achieved:** Fixed production ISR cache bug blocking `/airport-transfer/chiang-rai-international-airport` — `getStaticProps` returned bare `{notFound:true}` on transient errors, permanently ISR-cached. Discriminated real 404 (revalidate 3600) vs transient 5xx/network (revalidate 60, auto-recovers). Fixed `AirportTransferSEO.js` unguarded null → "undefined Transfer!" in meta. Also fixed `keywords` array pushing raw `departureStation` instead of `stationLabel`. 2 commits: `82da53a6` + `452c1ca3`. Pushed → develop.
+
+---
+
 ## Session #325 — 2026-08-18
 
 **Achieved:** Fixed mobile overflow on `/airport-transfer/hatyai-airport` Private Transfer section. Two bugs: `AirportEndPill` had no `min-w-0`, PlacePicker wrappers had no `min-w-0 w-full` on mobile. Fixes applied across `AirportEndPill`, `PlacePicker`, section margin, page wrapper. Also bumped `ZoneOptionCard` thumbnail to responsive 96×68px mobile / 120×80px sm+. 2 commits: `819aec2e` + `ba82e757`.
