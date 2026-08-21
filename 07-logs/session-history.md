@@ -4,6 +4,27 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #336 (2026-08-21)
+
+**Achieved (#336) — airport-transfer search-tab address autocomplete + swap, frontend-only, merged → develop.**
+
+Search section's Airport Transfer tab gained a Google Places address field alongside the existing airport picker, reusing 100% existing pieces (`PlacePicker.js`, `resolveZone` API) — no new backend work. Address+coords+direction now carry through the URL (`?addr=&lat=&lng=&atdir=`) to `/airport-transfer/[slug]`, which pre-fills `ZonePriceBox` and auto-resolves a price without the user re-typing. Multi-round design work: 4-specialist review (UX/design-system/Next.js/Django) up front, then a 2nd higher-rigor audit pass (Next.js/Django/SWE) caught 3 real seeding bugs before ship (direction-param vocabulary collision, `selectedRef` not seeded alongside `selected`, stale state on same-slug SPA re-navigation — fixed via a `key` prop forcing `ZonePriceBox` remount).
+
+Also added, per follow-up requests: a clear (×) button on the airport field (parity with the address field), and a From⇄To swap toggle reusing `ZonePriceBox`'s existing swap pattern (new files `SwapButton.js`, `AirportField.js`, `AddressField.js`, `AirportSuggestionList.js` — extracted to keep `AirportTransferSearch.js` under the 200-line component budget after the swap logic pushed it to 251).
+
+**7 live bugs found via user screenshots/testing and fixed same session**, each independently root-caused (several backed by opus-tier SWE/Next.js/Django audit passes, not guesswork): (1) address dropdown capped to its own narrow field instead of a sensible width + no text truncation; (2) `×` clear button anchored to an unstretched wrapper div, floating mid-field; (3) airport dropdown sized off the whole 3-field row instead of just its own field; (4) 4 real style diffs between the two dropdowns (width formula, position anchor, row height, missing empty-state) — unified; (5) swap wiped the typed address instead of preserving it — required reverting an earlier "clear on swap" design decision plus fixing a `Fragment`-branch reordering pattern that risked positional remount despite keys (switched to a flat keyed array, the React-correct fix); (6) mobile clear-button positions inconsistent — the two buttons used entirely different layout mechanisms (inline-flex vs absolute), unified by branching `PlacePicker`'s `bare` mode to flow inline; (7) refocusing an already-selected airport field showed false "No airports match" — filter compared the formatted display label against raw unformatted station fields, fixed by adding the formatted-label as a 3rd match check. Deferred, not fixed: cross-border/irrelevant Google Places ranking noise (needs airport lat/lng, which exists in neither backend nor frontend today — hardcode-vs-backend-field decision raised, not made).
+
+Frontend only, `develop @ 29769a2d`. Backend/admin-dashboard untouched this session.
+
+**NOT done this session:**
+- No browser click-through by Claude — no browser automation tool available; all fixes verified via lint+build only, confirmed live by the user via screenshots at each step.
+- No develop→main deploy — develop-only.
+- Ranking/location-bias fix for the address autocomplete — deferred, needs a product decision (frontend-hardcoded airport coords vs. new backend `Station.latitude/longitude` field).
+
+(#335's detail archived → below.)
+
+---
+
 ## Session #335 (2026-08-21)
 
 **Achieved (#335) — hero banner end-to-end, 3 repos, all merged → develop.**
