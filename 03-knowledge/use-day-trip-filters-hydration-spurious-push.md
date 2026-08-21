@@ -32,3 +32,4 @@ Confirmed in [[activities-day-tour-page-review]] — interacts with [[mui-autoco
 - [[nextjs-hydration-rules]]
 - [[mui-autocomplete-handle-input-change-parent-emit]]
 - CLAUDE.md: "useEffect chains forbidden"
+- [[shared-hook-instance-race-lift-state-to-parent]] — different bug, same hook: two live instances racing on URL writes, not hydration timing

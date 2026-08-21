@@ -4,6 +4,40 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #335 (2026-08-21)
+
+**Achieved (#335) — hero banner end-to-end, 3 repos, all merged → develop.**
+
+Built the first real frontend consumer of the previously-unused `HeroBanner` Django model. **BE**: `placement` field (`home`/`activities` TextChoices, `default='home'`), migration, fixed a pre-existing bug (4 serializer classes byte-for-byte duplicated in the same file — dead code, silently shadowed, landmine for future edits), `HeroBannerViewSet` gains `?placement=` filter, `FrontPageViewSet._fetch_hero_banners_data()` gains a required home-scoping fix (without it, any future `activities` row would silently leak into the homepage payload), 1 regression test. `develop @ 6945754`. **FE Activities page**: hero wired to the BE image via `getStaticProps` (LCP-safe, not client-fetched), then — on explicit user request reversing the original "no overlay text" recommendation — the H1 + subtitle + `ActivitySearch` were moved from below the hero into a centered overlay on top of it (`.hero-top-gradient` scrim + layered text-shadow + upward-biased placement, all visually mocked and signed off before building). The search-bar move required lifting `useDayTripFilters()` to the page level to avoid two competing hook instances racing on URL writes — the real architectural work of that phase. 2 live bugs found via user screenshot/testing and fixed same session: search input had no background fill (transparent MUI default, invisible on white pages, broken against a photo) and the hero fetch hit a wrong URL (`/api/v1/hero-banners/` — `pages_info.urls` is actually mounted at the site root, not under `/api/v1/`; confirmed via curl, silently swallowed by the `Promise.allSettled` fallback so it just looked like "the image won't change"). `develop @ 152b9d1b`. **AD**: `HeroBannerForm.js` gains a required Placement dropdown (starts empty on create so staff can't accidentally leave a banner defaulted to Home), list page gains a placement column + filter, plus a `resetPage()` fix applied to both the new filter and the pre-existing search box (neither called the pagination-reset helper that already existed for this). `develop @ dc94e09`. Every phase reviewed by 2-4 domain specialists (Next.js/Django/UX-UI/general-SWE) before implementation, with real findings each round (not rubber-stamps) — caught the serializer duplication bug, the home-scoping leak risk, the `useDayTripFilters` race, and 4-5 admin-dashboard should-fix items (pagination reset, responsive grid, constants shape/location, `queryParams` stale-closure risk).
+
+**Also this session, unrelated:** BE contract search (`/api/v1/contract/?search=`) now normalizes spaces/hyphens before comparing — "day trip"/"daytrip"/"day-trip" all resolve to the same contracts (reused the exact `normalize_search()`+`Replace()` pattern `RouteViewSet` already uses for `hatyai`/`Hat Yai`). First attempt (word-splitting) only solved half the reported bug; caught via user re-testing and replaced with the correct fix same session. `develop @ a6dd5bc`.
+
+**Explicitly NOT done, by decision not oversight:** homepage has zero `HeroBanner` consumer — `placement='home'` is fully wired backend-side and selectable in the admin dropdown, but picking it does nothing visible today. User confirmed this is fine to leave as-is; not scoped this session.
+
+**NOT done this session:**
+- No browser click-through beyond the 2 bugs the user caught live — no formal mobile/desktop/long-location-string pass beyond what was mocked.
+- No develop→main deploy on any of the 3 repos — all develop-only.
+- Admin-dashboard `is_staff` provisioning check (flagged by backend review as unverified, not a code gap) never done.
+- Optional backend write-path test for `HeroBannerViewSet` POST/PATCH (recommended by review, not required) not added.
+
+(#334's detail archived → below.)
+
+---
+
+## Session #334 (2026-08-20)
+
+**Achieved (#334) — loader spinner off-center bug found+fixed, merged → develop.**
+
+User reported `<Loader />` (PuffLoader spinner shown during initial fetch) not vertically centered on `/guest-order/[orderId]`. Root cause: `Loader.module.css`'s `.loader` used `height:50vh`, which centers the spinner within its own 50vh box — but that box sits inside `<main>` (`components/layout/layout.js` `PageMain`), which carries `md:pt-[96px]`/`md:pt-[48px]` top padding for the fixed header plus a footer below. `50vh` is blind to both, so the spinner's visual center sat below true viewport center. Confirmed via grep this is the sole `Loader` implementation, used identically on `pages/guest-order/[orderId].js` and `pages/orders/[orderid].js` — no other "correct" pattern existed elsewhere to copy. Fix: `.loader` switched from a flat `height:50vh` to `flex:1` (fills whatever space its flex-column parent — `#outer-container` in `layout.js`, already `flex flex-col min-h-screen justify-between` — actually gives it, between header and footer) with `min-height:50vh` kept as a floor for any non-flex parent. Single-file CSS change, `Loader.js` itself untouched. Branch `fix/loader-centering`, frontend `develop @ 96ebd191`.
+
+**NOT done this session:**
+- Not browser-click-verified — fix applied and Fast-Refresh-confirmed to compile, but the loading state is transient on localhost (fetch resolves too fast to screenshot without network throttling).
+- No develop→main deploy — develop-only.
+
+(#333's detail archived → this file, below.)
+
+---
+
 ## Session #333 — 2026-08-20
 
 **Achieved:** 2 booking-access bugs found+fixed, both merged → develop.
