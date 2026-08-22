@@ -656,6 +656,7 @@ Global navigation catalog. Updated on every ingest.
 - [[celery-task-defined-but-not-in-beat-schedule]] — task in `tasks.py` absent from `celery.py` beat_schedule silently never runs.
 - [[cache-precompute-key-must-match-reader-suffix]] — writer/reader must build identical cache keys incl. optional `:none` suffix; centralize key construction.
 - [[django-config-validate-at-call-time-not-startup]] — keep `default=''` so server boots; validate secret at call time, never on import/startup.
+- [[tailscale-funnel-local-dev-public-exposure]] — local dev bot-scan noise can mean Tailscale Funnel publicly exposed localhost, not a prod issue. Check `tailscale funnel status` first.
 
 ### React / Next.js Frontend
 - [[nextjs-double-sticky-sidebar-silent-break]] — nested StickySidebar breaks stickiness silently; one per ancestor chain.

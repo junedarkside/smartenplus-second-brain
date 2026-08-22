@@ -4,6 +4,24 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #338 (2026-08-22)
+
+**Achieved (#338) — tawk.to migration debate (vault-only report) + 2 chat-widget fixes, both merged → develop.**
+
+3-role debate (BD + Backend Django + Frontend Next.js) on replacing the customer-support chat system with tawk.to, after full vault+code audit of the existing CS platform (SLA/OTA-sync/ticket-linked chat, prod since 2026-07-03). All 3 roles converge AGAINST full replacement — no tawk.to equivalent for the business logic already built; only carve-out is an additive pre-sales widget on marketing pages, gated on BD pre-committing a pilot metric. No code changed. Report → `01-projects/tawkto-migration-debate-2026-08-22.md`, 2 artifacts published (debate memo + later a before/after visual demo for the chat-widget fixes below).
+
+Separately, user reported 3 chat-widget bugs (z-index, icon size, position) + a 4th (color mismatch). Root-caused against actual source, SWE-audited against CLAUDE.md before implementing (audit corrected 2 of 3 original fixes — see below), visually demoed before/after via published artifact, then implemented across 2 branches:
+
+1. **`fix/chat-widget-zindex-icons-positioning`** (`develop @ 5eed40ea`) — `ChatBubble.js`/`ChatPanel.js` built z-index via Tailwind template-literal (`` z-[${var}] ``), which the JIT scanner never picks up as a real class — dead z-index, fixed via inline style (matches existing `ScrollTop.js` precedent). Added app-wide `ICON` scale token (none existed before) — grepped real usage app-wide (`w-6 h-6` dominant, 33 uses) and snapped the chat launcher from an untracked 28px outlier (`w-7 h-7`, only 2 uses app-wide) to the real 24px rung, rather than just preserving the outlier as first proposed. Made `CHAT.position` responsive (viewport-relative insets, matching the #337 mobile-overflow fix pattern) instead of a fixed `w-80`. Also fixed 2 hardcoded fallback banners in `ChatWidget.js` sharing the same bug, caught during implementation.
+2. **`fix/chat-widget-brand-color-tokens`** (`develop @ c903ce3f`) — separate follow-up bug: panel header/launcher correctly used `COLORS.brand.primary` (`#3b5998`), but every other chat surface (message bubbles, send button, focus rings, guest-form links, read-receipt ticks) was hardcoded to Tailwind's default `blue-600` (`#2563EB`) — a visibly different blue. Swapped 12+ occurrences across 4 files to the already-registered `bg-brand-primary`/`text-brand-primary` Tailwind classes (no new tokens needed — they already existed in `tailwind.config.js`, just weren't used). Full-sweep grep confirmed zero `blue-N` left in `components/chat/`.
+
+**NOT done this session:**
+- No browser verification of either chat fix — no browser tool available this session (same limitation noted in prior sessions). Both fixes shipped on code-level lint/grep verification + a visual mockup artifact, not a live click-through.
+- No develop→main deploy — both chat fixes are develop-only, joining the existing deploy queue.
+- Tawk.to debate stayed vault-only — no pilot built, pending BD's metric pre-commitment.
+
+---
+
 ## Session #337 (2026-08-21)
 
 **Achieved (#337) — 2 mobile-only bugs in #336's airport-transfer search tab found+fixed, merged → develop.**

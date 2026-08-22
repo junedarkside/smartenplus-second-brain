@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-22] session-end | #339 — BE bot-scan log noise investigated, root-caused to local Tailscale Funnel exposure (not prod). No code changed. → [[tailscale-funnel-local-dev-public-exposure]]
+
 ## [2026-08-22] session-end | #338 — tawk.to migration debate (vault-only, no code) + 2 chat-widget fixes merged → develop (`5eed40ea` z-index/icon/position, `c903ce3f` brand-color tokens). Both browser-verify pending, no tool available this session. → [[tawkto-migration-debate-2026-08-22]]
 
 ## [2026-08-22] decision | tawk.to migration debate — read-only vault+code audit (CS chat = 1733L BE + 765L FE + AD staff inbox, prod since 2026-07-03, SLA/OTA-sync/ticket/emergency logic) then 3-role debate (BD/Backend Django/Frontend Next.js). All 3 converge AGAINST full replacement — no tawk.to equivalent for the business logic, swap = rebuild adapter bigger than what's there. Carve-out: tawk.to OK as additive pre-sales widget on marketing pages only (unauthenticated routes), zero backend touch, BD must pre-commit pilot metric first. No code changed. → [[tawkto-migration-debate-2026-08-22]]
