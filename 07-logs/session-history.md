@@ -4,6 +4,23 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #337 (2026-08-21)
+
+**Achieved (#337) — 2 mobile-only bugs in #336's airport-transfer search tab found+fixed, merged → develop.**
+
+Follow-up to #336, same session's feature. User screenshot showed the address dropdown clipped off the right edge on mobile — root cause: `PlacePicker.js`'s suggestion dropdown was `absolute`-positioned relative to `PlacePicker`'s own inner wrapper, which sits ~70-90px inset inside `AddressField.js`'s field (after the leading icon + role label), not at the field's true edge. Fixed by moving the positioning anchor up to `AddressField.js`'s outer `label` — `PlacePicker`'s bare-mode wrapper drops `relative`, confirmed via code check that `ZonePriceBox.js`'s non-bare pill usage (its own `relative` context) is unaffected, byte-for-byte unchanged there.
+
+That fix then exposed a **worse** regression, caught by the user immediately: the page itself gained a horizontal scrollbar on mobile (real layout overflow, not just visual clipping) — root cause traced to the dropdown's `w-[max(100%,320px)] max-w-[90vw]` width formula, which can still compute wider than the viewport under certain anchor/viewport combinations, and with no ancestor setting `overflow-x:hidden`, that excess became real scrollable page width. Fixed by replacing the width formula entirely with `left-0 right-0` (no explicit width) on both the address AND airport dropdowns — makes each dropdown's box mathematically identical to its already-safe parent field's box, structurally incapable of exceeding the page regardless of viewport quirks. Visual root-cause diagrams (box-model diagrams, before/after) built for both bugs before shipping either fix.
+
+Branch `fix/airport-transfer-mobile-dropdown-overflow`, frontend `develop @ 0a9e7bd4`. 3 files changed (`PlacePicker.js`, `AddressField.js`, `AirportSuggestionList.js`).
+
+**NOT done this session:**
+- No browser click-through by Claude — no browser automation tool available; both fixes shipped on user-provided screenshot diagnosis + lint/build verification only, confirmed live by the user.
+- No develop→main deploy — develop-only.
+- #336's still-open items (ranking/location-bias decision, full click-through pass) remain open.
+
+---
+
 ## Session #336 (2026-08-21)
 
 **Achieved (#336) — airport-transfer search-tab address autocomplete + swap, frontend-only, merged → develop.**
