@@ -4,6 +4,22 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #347 (2026-08-25)
+
+**Achieved (#347) — DestinationSearch on `/locations/[slug]`: replace hero grid-filter with destination picker, fix dead route links, remove grid section. Fixed 3 bugs in DestinationSearch (input not displaying, button layout, freeSolo interaction). Merged → develop.**
+
+BE `feat/locations-summary-destinations` (`4bae803`): added `destinations` field to `_summary_response()` — arrival-location names+counts for routes departing this location. 60/60 tests green. FE `feat/locations-destination-search` (`028cf304` + `9e2d05f5`): new `DestinationSearch.js` — origin known from slug, user picks destination, navigates to `/trips/{origin}/{dest-slug}`. Deleted 4 dead files (RouteGridSection, TransportPointFilter, useLocationRouteFiltering, GridComponent3). PopularRoutesSection + ItemList JSON-LD rebuilt on real outbound destinations. Merged to develop `0e9ec095`. Post-merge bug fixes: (1) input not showing typed text — CSS `paddingLeft:3rem` needed to push text past search icon; (2) input blank after selection — `reason!=='reset'` guard blocked MUI's label sync; (3) button floating below input — fused into single `flex-row` with inline arrow button. Removed `freeSolo` (closed set). FE develop pushed.
+
+---
+
+## Session #345 (2026-08-24)
+
+**Achieved (#345) — Committed, pushed, and merged #344's width fix (+ #343's dead-param fix) into `smartenplus-frontend` develop.**
+
+Continuation of #344 same day. 2 commits on `feat/locations-detail-transport-hub`: `f425f64e` (#343's `?from=bangkok` removal, 2 files) + `9128764b` (#344's `RouteGridSection.js` width-token fix). Pushed branch to origin, fast-forward-clean merge (`--no-ff`) into `develop` (no conflicts — develop hadn't moved), pushed. `smartenplus-frontend` `develop @ a312ea50`. `smartenplus-backend`'s copy of the same branch (`feat/locations-detail-transport-hub`, latest `31e2f43`) was NOT touched/merged this session — only frontend was asked for; BE still sits on its feature branch with 1 unrelated untracked test file, needs its own merge decision later.
+
+---
+
 ## Session #344 (2026-08-24)
 
 **Achieved (#344) — Root-caused + fixed "Find Perfect Routes" section width mismatch on `/locations/[slug]` (the #342/#343 unresolved width bug, resume point #1).**
