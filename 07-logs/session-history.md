@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #344 (2026-08-24)
+
+**Achieved (#344) — Root-caused + fixed "Find Perfect Routes" section width mismatch on `/locations/[slug]` (the #342/#343 unresolved width bug, resume point #1).**
+
+User pointed at exactly which section this time: "Find Perfect Routes in Hatyai" (`RouteGridSection.js`) vs the rest of `/locations/hatyai`. Direct source read (no screenshot/Playwright needed — diff was visible in code) found the actual bug: every other section on the page (`Where are you starting from?`, `Popular routes from X`, `About X`, FAQ — all in `pages/locations/[slug].js`) uses the shared `LAYOUT.pageContentClasses` token (`max-w-[1200px] mx-auto px-4 xl:px-0`), but `RouteGridSection.js` had its own bespoke recipe: `<section>` had `max-w-[1200px] mx-auto` with no horizontal padding, while horizontal inset instead came from an inner div's `sm:mx-3` (12px, zero on mobile) + card `p-4`. Different mechanism (padding-on-section vs margin-on-inner-div) and different breakpoints (`px-4 xl:px-0` vs `sm:mx-3`) meant the card never aligned with sibling sections at any breakpoint — worst at `xl+`, where siblings go flush to the 1200px bound but this section kept a permanent 12px inset. Same bug class as the 2 prior Popular Routes fixes (`a58570eb`, `3a3226f7`) — a section not wired to the shared token drifts. Fix: `RouteGridSection.js` now imports `LAYOUT`, outer `<section>` uses `` `${LAYOUT.pageContentClasses} w-full ...` `` matching siblings exactly, inner div's competing `sm:mx-3` removed. Went into #345 same day for commit/push/merge.
+
+---
+
 ## Session #343 (2026-08-24)
 
 **Achieved (#343) — Removed dead `?from=bangkok` query param from homepage "Thailand's Top Destinations" links.**

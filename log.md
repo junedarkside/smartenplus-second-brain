@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-24] session-end | #345 — committed+pushed+merged #344's width fix to smartenplus-frontend develop (a312ea50); BE branch merge still pending
+
 ## [2026-08-24] session-end | #344 — "Find Perfect Routes" width bug root-caused + fixed on /locations/[slug] (FE RouteGridSection.js, uncommitted, needs user re-verify)
 
 ## [2026-08-24] session-end | #343 — removed dead ?from=bangkok param from homepage destination links (FE, uncommitted)
