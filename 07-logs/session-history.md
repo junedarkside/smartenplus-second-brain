@@ -4,6 +4,50 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #341 (2026-08-22)
+
+**Achieved (#341) — "Plan Your Next Adventure" recommendation section audited (vault + live FE/BE), 2 real bugs found + fixed + merged to develop.**
+
+User asked to check the vault, then deep-audit the post-booking recommendations section ("Plan Your Next Adventure" on `/bookings/[id]` for confirmed bookings) against a live booking — price, availability, product image+logo. Vault check found no prior note on this section specifically; closest match (`03-knowledge/ratecard-category-mixing-price-bug.md`, a bug already fixed on the FE trip-sort page in #317) turned out directly relevant — same bug class, unfixed, on a different code path.
+
+Live-tested against local BE using real booking `FOM9228841`. Found: **(1) Price bug** — all 8 finder functions in `products/services.py` computed `lowest_price` via a flat `Min()` across every ratecard category (ADULT/CHILD/INFANT/VEHICLE) with no filter, so the card showed whichever category was cheapest (often INFANT) instead of the category the contract bills (JOIN→ADULT, PRIVATE/CHARTER→VEHICLE — the exact rule already correct elsewhere in the same file via `route_lowest_price_annotation()`, just never reused here). Live proof: contract 7 showed "from ฿400" (INFANT) for a ฿900 adult fare. User pushed on scope twice — confirmed live the bug also hits activity products (DAY_TOUR/ATTRACTION_TICKET, not transport-only) via a second real repro (contract 166's recommendations: contracts 136/137 showing CHILD rate instead of ADULT). **(2) Expired-contract leak** — none of the 8 finders filtered `end_date`, only `is_actived` (a separate flag that doesn't track date-range expiry) — 2 of 7 recommendations for booking `FOM9228841` were contracts already past their own `end_date`, still rendered as bookable cards.
+
+Built a visual artifact (recreated recommendation card wrong-vs-correct, real ratecard breakdown, pipeline trace to the bug) before the fix. User then asked for backend-architect + code-reviewer agent review of the plan before implementing — architect recommended a direct filtered `Min()`+two-branch `Q` over porting the more complex Subquery pattern (simpler for this queryset shape, no N+1 risk, cache key needs a version bump); SWE reviewer caught 10 concrete risks including that literal fixture tests would break (existing `Contract_RateCard` fixtures omit `ratecard=`), 3 disagreeing reference implementations for the "no billing-category row" fallback semantic (resolved: fall back to any rate, never silently hide a price), hybrid-limit starvation as an expected side effect (not a bug), a pre-existing `0.0`/`None` inconsistency sitting in the fix's blast radius, and a 9th related-but-out-of-scope bug in the serializer's fallback path. Also audited the plan itself against project CLAUDE.md rules before implementing — found and fixed one gap (git branch step wasn't explicit) and one process gap (deferred items needed a real tracked issue, not just plan-file prose).
+
+Implemented on `fix/recommendation-price-category-expiry` (off develop): 2 new shared helpers (`contract_lowest_price_annotation()`, `contract_lowest_price_fallback_annotation()`, `contract_not_expired_q()`) applied at all 8 call sites in `products/services.py`, cache key bumped to `v2`, the `0.0`/`None` inconsistency fixed in the same pass. 9 new tests added (`products/tests.py`) — direct repros of both bugs (JOIN/PRIVATE/CHARTER category picks, expiry exclusion, no-category fallback, direct-annotation construction test so a filter bug raises loud instead of the finder silently degrading to `[]`) plus an end-to-end regression test through the real `find_alternative_contracts()`. Full `products.tests` suite: 1 pre-existing unrelated failure, confirmed identical on the `develop` baseline before this session's changes (not a regression). **Live-verified against both original repro cases post-fix**: contract 7 now `฿900` (was `฿400`), contracts 26/29 (expired) no longer appear, contracts 136/137 now `฿800`/`฿400` (were `฿600`/`฿300`) — exact match to predicted values. Committed, merged → develop (`ee7f481`). Not yet pushed to remote.
+
+3 items explicitly deferred (out of scope for this fix) filed as a tracked vault open item, not left as silent prose → RECOMMENDATION-ENGINE-DEFERRED-ITEMS (Section 2). Availability filter audit (client-side `filterValidRecommendations.js`) found 1 of 4 filters is dead code (seat-availability check references a field shape that doesn't exist in the real API response) — flagged, not fixed (FE-side, separate from this BE fix). Product image/operator-logo behavior confirmed by-design, not a bug — flagged as a product-quality gap only.
+
+---
+
+## Session #340 (2026-08-22)
+
+**Achieved (#340) — CS staff chat notification gap fixed + shipped to develop; 13 stale merged branches pruned (BE repo).**
+
+User reported staff don't get notified properly when customers use the chat widget. Scanned all 3 repos (3 parallel Explore agents — FE chat widget, BE `cs` app, AD staff inbox) + vault (no prior decision doc on this). Root cause: BE `cs/signals.py` only fired staff Web Push on `Conversation` creation (message #1 of a new chat) — no signal existed for `Message` creation, so every follow-up message in an existing conversation got zero server push. Staff fell back entirely to client-side Supabase Realtime + an open AD browser tab, which silently fails when the tab/browser closes or the realtime token (14min TTL) drops. AD's notification UI itself (badges, tab title, service worker, permission prompt) was already fully correct — it just never received a push past message #1.
+
+Built a visual before/after artifact (flow diagrams: working new-conv path vs broken follow-up path vs fix) before writing code, per user request. Then Django-architect + SWE-reviewer agents audited the fix design against actual code before implementing — caught and corrected: original guard (`instance.conversation.message_set.count()==1`) had a wrong reverse-accessor name (real: `.messages`, would've crashed) and was racy/wasteful; confirmed a separate `bulk_create` sync path (`sync_chat_messages`) would've silently skipped signals if it were the real write path, but verified the actual customer-send flow uses `Message.objects.create()` so signals do fire correctly; caught that `send_push_to_subscriptions()` runs synchronous blocking `webpush()` calls and should dispatch via Celery (already established in this app) rather than inline in the signal.
+
+Implemented on `fix/staff-chat-notify-followup-messages` (off develop): `cs/signals.py` now fires on `Message` post_save (`sender=customer` only), dispatched via new `cs/tasks.py::notify_staff_new_message` Celery task; `Conversation`-creation signal no longer pushes on its own (the paired first message covers it — no double-fire guard needed since conv-create and first-message-create are separate requests). 5 new unit tests added (`cs/tests/test_staff_notify_signal.py`), all pass; full `cs` suite 179/180 (1 pre-existing unrelated failure, confirmed on clean develop baseline too). **Real E2E run** (not just mocked): local Postgres+Redis+Celery worker, fired real signals via Django shell — confirmed exactly-once task dispatch per customer message (first + follow-up), zero dispatch on staff reply. Committed, pushed, merged → develop (`2c0b2df`). No FE/AD changes needed.
+
+Separately: pruned 13 stale branches (12 requested + this session's own `fix/staff-chat-notify-followup-messages`) from `smartenplus-backend`, local + remote — all confirmed merged into develop via `git branch -r --merged`, verified none was the checked-out branch, used `git branch -d` (safe-delete, git double-checks merge status) not `-D`. Clean, `git branch -a` confirms zero trace.
+
+Visual demo artifact: https://claude.ai/code/artifact/dd43d4ba-a5f8-406f-a219-08bb20f31c14
+
+## Session #339 (2026-08-22)
+
+**Achieved (#339) — BE bot-scan log noise investigated, root-caused to local Tailscale Funnel (not prod). No code changed.**
+
+User saw BE log WARNINGs (404s for `/keyfile.json`, `/firebase-adminsdk.json`, `/wp-login.php`, `/api/v1/auto_login`) and asked for a Django security audit. Confirmed via `urls.py` all paths genuinely 404 — no route match, no exploit, no data touch. Explore-agent audit of `smartenplus-backend` settings.py found real prod gaps (missing `SECURE_*` headers, no `django.request` 404 filtering, `docker-compose-rds.yml` publishes port 8000 alongside nginx) and a Plan-agent second pass caught a correction (a `LOGGING` filter can't distinguish urlconf-miss 404s from real DRF 404s — `handler404` override is the precise fix) — full plan drafted and ship-risk-checked.
+
+Mid-approval, user revealed the log was from **local dev**, not prod. Root cause: `tailscale funnel status` confirmed Funnel active, publicly proxying `macbook-air-2.tailc1dfbd.ts.net` → local `127.0.0.1:8000` Django — turned on intentionally for payment-webhook testing (Omise/Stripe need a public callback URL), left on. Public Funnel URL gets a real TLS cert → cert-transparency-log bots scan it within hours, same as any public HTTPS endpoint. Nothing wrong with Django; noise is the accepted cost of an open Funnel tunnel.
+
+User declined the prod hardening changes this session (out of scope — trigger wasn't actually a prod issue) and is keeping Funnel on (still testing). **No code changed, no commits.**
+
+**NOT done this session:**
+- Prod hardening (`SECURE_*` headers, `handler404` 404-log fix, port-8000 compose exposure) — real gaps found, documented, but explicitly deferred. Worth revisiting on its own if prod security posture becomes the actual focus later.
+- Funnel not turned off — user still mid webhook-testing, reminder only (their own follow-up, not actioned).
+
 ## Session #338 (2026-08-22)
 
 **Achieved (#338) — tawk.to migration debate (vault-only report) + 2 chat-widget fixes, both merged → develop.**
