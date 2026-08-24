@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #349 (2026-08-25)
+
+**Achieved (#349) — Completed /locations/[slug] page: merged all pending BE+FE branches, fixed XSS in About section.**
+
+BE: merged `feat/locations-summary-destinations` → develop (`ca2a35b`) — includes both `feat/locations-detail-transport-hub` (`31e2f43`, Location.description field + summary endpoint) and `feat/locations-summary-destinations` (`4bae803`, destinations field). Both pushed to origin. FE: applied `fix/locations-overview-sanitize` directly to develop (`18ae253f`) — new `LocationOverview.js` DOMPurify-sanitizes `Location.description` before rendering (XSS fix), adds length-gated Read more toggle (>320 chars), TouristDestination JSON-LD schema block. Pushed. All location page work now on develop both repos, pending prod deploy + `python manage.py migrate stations` (migration `0038_location_description`).
+
+---
+
 ## Session #347 (2026-08-25)
 
 **Achieved (#347) — DestinationSearch on `/locations/[slug]`: replace hero grid-filter with destination picker, fix dead route links, remove grid section. Fixed 3 bugs in DestinationSearch (input not displaying, button layout, freeSolo interaction). Merged → develop.**
