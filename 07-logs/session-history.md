@@ -4,6 +4,28 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #343 (2026-08-24)
+
+**Achieved (#343) — Removed dead `?from=bangkok` query param from homepage "Thailand's Top Destinations" links.**
+
+User asked why `/locations/hatyai?from=bangkok`-style links carry a `from` param and whether it's removable. Explore-agent investigation confirmed it's dead: `pages/locations/[slug].js` `getServerSideProps` only reads `query.page`, never `query.from`; no component under `components/locations/` reads it; repo-wide `query.from` grep only hits an unrelated page (login-redirect callback on `PassengersList.js`). The value was also a hardcoded literal (`bangkok`), never derived from real user origin. Canonical/OG/breadcrumb URL generation (`domainURL` in `pages/locations/[slug].js:28-31`) already does `router.asPath.split('?')[0]`, stripping all query params before building canonical — so removal has zero SEO impact. Git blame traced it to commit `ade94ee0`, added alongside a "Search buses to {location}" CTA that's since been removed from the codebase — orphaned leftover. Removed from the 2 link-building sites: `lib/homepage/components/DestinationsEditorialGrid.js:20`, `lib/homepage/components/DestinationsCarousel.js:20`. Side benefit: link URL now matches the existing hover-prefetch URL in `lib/homepage/components/LocationsSection.js` (previously mismatched, wasting the prefetch). Uncommitted, same branch (`feat/locations-detail-transport-hub`) as #342's unresolved width bug — not pushed. (Width bug went on to be root-caused + fixed in #344 — see master-state.md Section 1.)
+
+---
+
+## Session #342 (2026-08-24)
+
+**Achieved (#342) — `/locations/[slug]` transportation-hub redesign built, reverted once, rebuilt, then 4 rounds of width-inconsistency chasing — real root cause found+fixed on round 4, but user says it's STILL not visually right. Unresolved, needs fresh eyes next session.**
+
+Multi-session arc on one branch (`feat/locations-detail-transport-hub`, both FE+BE, not pushed): user supplied an external pSEO report proposing a "location page = transportation hub" redesign for `/locations/{location}`. Checked against vault (`03-knowledge/locations-destinations-product-split.md` — `/locations` = route-list only, `/destinations` = booking/pricing, never consolidate) and found the report's price/duration destination cards would violate that split. Scoped down via user Q&A: Transportation Points = data-derived departure-station filter cards (not fake sub-pages), Popular Routes = name+count only (no price), About = new `Location.description` field (in scope, conditional render), FAQ = templated + inline guide links (reuses existing `RouteByLocationInfo.blog_slug`, no new backend). Travel Guides section explicitly rejected as a dedicated block after BD+UX agent review (sparse content, duplicates FAQ) — inline links only.
+
+3-agent review (Next.js/Django/SWE) before first implementation caught: original dual-fetch plan would've doubled a confirmed N+1 query (25 queries for 13 routes) — replaced with a new DB-aggregated `?summary=true` action on `LocationV2ViewSet` (5 queries, zero N+1, verified); `PageSeo.js` doesn't support `WebPageJsonLd` (would've shipped wrong schema); branch/vault-naming/reuse gaps. Built, verified via SSR (JSON-LD present, zero price leakage, 0/1-departure edge cases correct), shipped.
+
+**Then it started cycling.** User screenshot showed Popular Routes cards broken (reused `LocationCard`, image-forward, against `image:null` data — tiny broken photo tiles). Reverted the whole page to pre-redesign `develop` state, kept the backend endpoint. Rebuilt with a dedicated `PopularRouteCard.js` (text-only, no image ever). Then **3 more rounds of width-inconsistency chasing on the same file**, each one guessing wrong and getting corrected by the next screenshot: round 3 matched section padding to the breadcrumb's `px-2 md:px-3` (wrong — never checked what the homepage actually does); round 4 found homepage's real `Section` component pattern is `px-4 xl:px-0` uniformly and switched back (right token, but round 5 flip-flopped back to `px-2 md:px-3` again mid-edit before being called out for cycling); round 6 finally **measured real rendered box widths via Playwright** (not grep/inference) and found the actual bug — `LAYOUT.pageContentClasses` sets `max-width` but never `width:100%`, so the 4 content sections were rendering at 843px/564px/378px (shrunk to content) instead of 1200px. Added `w-full`, re-measured — every container now reports `left=120, w=1200` uniformly, confirmed via screenshot.
+
+**User says width/design is STILL not right after the `w-full` fix** (this session's very last message, before `/wrapup` was invoked) — not yet investigated further. This is a genuine unresolved bug, not just a "needs browser-verify" item — 4 rounds of fixing attempts have not satisfied the user, and the actual visual problem still open as of end of session.
+
+---
+
 ## Session #341 (2026-08-22)
 
 **Achieved (#341) — "Plan Your Next Adventure" recommendation section audited (vault + live FE/BE), 2 real bugs found + fixed + merged to develop.**

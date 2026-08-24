@@ -2,6 +2,10 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-24] session-end | #344 — "Find Perfect Routes" width bug root-caused + fixed on /locations/[slug] (FE RouteGridSection.js, uncommitted, needs user re-verify)
+
+## [2026-08-24] session-end | #343 — removed dead ?from=bangkok param from homepage destination links (FE, uncommitted)
+
 ## [2026-08-22] session-end | #339 — BE bot-scan log noise investigated, root-caused to local Tailscale Funnel exposure (not prod). No code changed. → [[tailscale-funnel-local-dev-public-exposure]]
 
 ## [2026-08-22] session-end | #338 — tawk.to migration debate (vault-only, no code) + 2 chat-widget fixes merged → develop (`5eed40ea` z-index/icon/position, `c903ce3f` brand-color tokens). Both browser-verify pending, no tool available this session. → [[tawkto-migration-debate-2026-08-22]]
