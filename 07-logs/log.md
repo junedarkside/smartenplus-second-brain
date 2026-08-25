@@ -1,3 +1,5 @@
+## [2026-08-25] session-end #354 | Hero image audit (data-gap, logged LOCATIONS-MISSING-HERO-IMAGE) + LocationFAQ real-data fix — BD-reviewed, BE transport_types aggregation + FE conditional answer, verified 7 locations (100% of old hardcoded claims were false) → BE develop 71037bd, FE develop 57e29705
+
 ## [2026-08-25] session-end #353 | /locations/hatyai UX audit + 5 fixes — section order, Read more placement, carousel tokens unified (card-carousel: 276px → 4.2/row), BlogCard responsive pattern, Guides white wrapper → develop ef99742b
 
 ## [2026-08-25] session-end #351 | Popular Routes card review (UX/design/BD/Next/Django) + responsive audit (PASS 320–1920) + mobile horizontal scroll-snap SHIPPED → develop `4c4b06c4`. Design otherwise kept: no price (vault product-split rule), no image (21/54 locations lack images), no carousel (data too small). 9/9 Playwright-verified. New open items: LOCATIONOVERVIEW-HYDRATION-WARNING, SELF-DESTINATION-CHIP. ISR flush needed on deploy.

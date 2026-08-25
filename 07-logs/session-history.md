@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #353 (2026-08-25)
+
+**Achieved (#353) — `/locations/hatyai` UX/design audit + 5 fixes shipped to develop.**
+
+Vault check (no prior notes) + browser audit of `/locations/hatyai` → found 5 issues, all fixed and pushed: section order fix (About before Guides), Read more button placement + collapse, blog card tokens + Guides white wrapper, unified carousel token across BlogCard/PopularRouteImageCard/ExperienceCard, 4.2 cards-per-row token (276px). All on `develop @ ef99742b`.
+
+---
+
 ## Session #352 (2026-08-25)
 
 **Achieved (#352) — `/locations/[slug]` hub tech-debt shipped: 5 atomic commits, 3 page bugs fixed end-to-end, 1 SSR interop bug, 1 TDZ bug.**

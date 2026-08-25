@@ -4,29 +4,30 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-25 (session #353)
+**Updated:** 2026-08-25 (session #354)
 
-**Achieved (#353) — `/locations/hatyai` UX/design audit + 5 fixes shipped to develop.**
+**Achieved (#354) — Hero image audit (data-gap, logged) + LocationFAQ real-data fix (BE+FE), verified across 7 locations.**
 
-Vault check (no prior notes) + browser audit of `/locations/hatyai` → found 5 issues, all fixed and pushed:
+1. **Hero image audit** — traced `/locations/hatyai` hero image end-to-end (BE `Location.image` field → API → FE fallback). Code correct; Hatyai/Phuket have no image uploaded (`null` in DB), fall back to generic static photo. Confirmed 21/54 locations affected (from #352). **Not a bug** — logged as content backlog item `LOCATIONS-MISSING-HERO-IMAGE` in Section 2, vault commit `2794c11`.
+2. **LocationFAQ fake-data fix** — `LocationFAQ.js` Q2 ("What types of transport can I find in {location}?") was a hardcoded string ("Trains, buses, ferries, and flights") identical across ALL 54 locations, feeding `FAQPage` JSON-LD schema. business-analyst-expert agent reviewed the fix approach (verdict: proceed, but no live per-request DB churn — reuse existing SSR boundary, add bookability ordering as a conversion angle instead of a new precompute job).
+   - **BE `71037bd`**: added `transport_types` field to `LocationRouteSummarySerializer` (`stations/serializers.py`), aggregated in `_summary_response()` (`stations/views.py`) via `Route → Trip → Contract → transport_composit → vehicle_type`, ordered by route count descending (most-bookable mode first). Same query pattern as existing `departures`/`arrivals` aggregation — no new query strategy.
+   - **FE `57e29705`**: `LocationFAQ.js` Q2 answer now conditional on real `transportTypes` prop; falls back to a generic-but-true sentence when empty.
+   - **Verified live across 7 locations** (hatyai, phuket, kohlipe, bangkok, chiangmai, penang, pakbara): **100% of the old hardcoded claims were false** — real data ranges from `[van, speedboat, Sedan, suv]` (hatyai/kohlipe/penang) down to `[van]` only (bangkok/pakbara) to **completely empty** (chiangmai — zero active transport contracts, old code would've confidently claimed all 4 fake modes). Fix generalizes automatically to all 54 locations since `LocationFAQ.js` is a single shared component.
+   - **Process note:** mid-session accidentally committed FE fix directly to `develop` (branch policy violation) — caught before push, moved commit to feature branch via cherry-pick, reset `develop` to `origin/develop`, re-merged properly. No policy violation reached remote.
+   - **Debugging note:** found 2 duplicate `manage.py runserver` processes on BE — stale one (started 12:05PM) was bound to port 8000, serving pre-fix code and causing flaky/missing `transport_types` in curl checks. User restarted; confirmed fix live after.
 
-1. **`50a2f750` — Section order fix**: About Hatyai was after Guides. Correct order: Popular Routes → About → Guides → FAQ. Swapped two `<section>` blocks in `pages/locations/[slug].js`.
-2. **`120fe81b` — Read more button placement + collapse**: Button was outside the white card (visual bug), no collapse. Moved inside card div. Toggle: "Read more →" / "Read less". `components/locations/LocationOverview.js`.
-3. **`50f445d1` — Blog card tokens + Guides white wrapper**: Added `card-blog-mobile: 300px`, `card-blog-height: 250px`, `card-carousel: 284px` to `tailwind.config.js`. BlogCard uses tokens. Guides section wrapped in white ContentCard-style container. Initial carousel token 272px (later corrected).
-4. **`adc6931d` — Unified carousel token**: `card-carousel: 284px` → used by `BlogCard`, `PopularRouteImageCard`, `ExperienceCard`. BlogCard changed from `min-w` (broken flex) to `w-` responsive pattern matching project standard (`80vw→45vw→40vw→30vw→xl`). `xl:w-[284px]` hardcoded in 2 components → `xl:w-card-carousel`.
-5. **`ef99742b` — 4.2 cards per row**: `card-carousel: 284px` → `276px`. Math: (276+12gap)×4.2 ≈ 1200px container. All carousel card types now show 4.2 cards at desktop.
+Both pushed: BE `develop @ 71037bd`, FE `develop @ 57e29705`.
 
-All on `develop @ ef99742b` (pushed).
-
-**Prior (#352, same day):** `/locations/[slug]` hub tech-debt 5 commits → session-history.md.
+**Prior (#353, same day):** `/locations/hatyai` UX audit + 5 fixes (section order, Read more, carousel tokens) → session-history.md.
 
 **Resume point (EXACT):**
-1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
-2. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`.
-3. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
-4. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
-5. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
-6. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
+1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`), plus new `transport_types` field is non-migrating (computed, no schema change). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
+2. **LOCATIONS-MISSING-HERO-IMAGE** — upload real images via Django admin `Location.image` for 21/54 locations (content/ops task, not engineering). See Section 2 Content Backlog.
+3. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`.
+4. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
+5. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
+6. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
+7. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
 7. **Browser-verify both #338 chat-widget fixes** on `develop`: at 320px/375px/768px confirm the bubble/panel neither clip nor cause page-level horizontal scroll, confirm via devtools computed style that z-index actually applies now (not just visually), confirm launcher icon renders at the new 24px size, confirm message bubbles/send button/focus rings/read-receipt ticks all render the same navy (`#3b5998`) as the header — no more two-different-blues mismatch.
 8. **BD decision on tawk.to marketing-chat pilot** — define the metric a pre-sales widget on `/trips`/`/activities` would move before greenlighting even the small additive pilot (per synthesis in the debate report).
 9. **Full click-through of #336+#337's airport-transfer search tab** on `develop`: on a real ~375px mobile viewport, type into the address field, confirm the dropdown neither clips off-screen NOR causes page-level horizontal scroll — then pick airport → type+select address → swap direction (address survives, roles flip) → clear both fields → refocus a filled airport field (no false "no match") → Search with/without address → landing page price resolves. Test at 375px/768px/1280px.
