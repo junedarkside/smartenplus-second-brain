@@ -4,38 +4,33 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-25 (session #356)
+**Updated:** 2026-08-25 (session #357)
 
-**Achieved (#356) — Full SEO/AEO/GEO audit of `/locations/[slug]` + all 12 fix items shipped across 3 batches, backend migration included.**
+**Achieved (#357) — AD location image system built out (preview, WP media reuse, compression) + 5th occurrence of a double-prefix image URL bug hunted down and fixed across 2 sessions.**
 
-Spawned `seo-specialist` agent for a deep SEO+AEO(answer-engine)+GEO(generative-engine/LLM-citability) audit of `/locations/hatyai`. Found: title/meta 100% templated (near-identical across all 54 locations), zero extractable plain-text claim anywhere on the page for an LLM to cite, FAQ answers absent from DOM until clicked (schema/DOM mismatch risk), outbound CMS citation links leaking authority to a competitor (Klook) with no `rel` enforcement, `lastReviewed` regenerating to "now" on every request, hero alt text describing the wrong image on fallback, no hreflang/geo meta despite an existing proven pattern on trip pages, duplicate `priority` hero images during transition, and more.
+1. **Tiptap editor reuse correction** — user flagged AD's Location description field was a plain textarea when contract details already has a real WYSIWYG editor. First REUSE FIRST search missed it (only grepped `FormControl.js`'s switch cases, not actual usage sites — `Tiptap` isn't `FormControl`-wrapped). Swapped in `components/editor/customr-editor.js`'s `Tiptap`, same pattern `DayTripDetails.js` already uses. **AD `e4671f4`**.
+2. **Image preview + WordPress media library** — user asked if AD can preview images and reuse the WP media library contract details has. Found `ImageSelection.js`/`WordpressImages.js` are array-based (wrong shape for `Location.image`, a single field). Built `LocationImagePicker.js` reusing the shared building blocks instead (`ImageCard`, `ImagePreviewModal`, `ImageGrid`, `ImageSearchBar`, `useGetWordpressMediaQuery`) — click-to-preview + WP picker, single-select. **BE `2d58d5a` + AD `afef6fc`**.
+   - Backend half: `Location.image` now accepts either an uploaded file OR a verbatim http(s) URL string (WP-picked) — mirrors the `ImageGallery` external-URL convention. Confirmed via live curl that a WP URL stores correctly.
+3. **Image compression** — user pointed out an existing component handles this; broadened search found `operators/utils.py`'s `process_operator_image()` (WebP normalization, dimension+quality ladder, already used 3x elsewhere). Wired into `Location.image` uploads via a custom `LocationImageField`, same 300KB/1920px budget as operator hero cover.
+4. **Bug found while wiring the string-URL case**: `location.image.url` called unconditionally at 2 read sites in `stations/views.py` — would double-prefix a WP URL through the S3 storage backend. Added `location_image_url()` helper (same guard pattern as `operators/serializers.py`'s established `ImageGallery` convention).
+5. **Image thumbnail column** — user asked why no image shown in AD's Locations list. Found real gap (`allColumns` had no image field) AND a 3rd occurrence of the same double-prefix bug (`StationsByLocationSerializer`, backs the list endpoint, no guard). New `LocationThumbnail.js` (mirrors existing `PlaceThumbnail.js` minus multi-image badge) + fixed the serializer. **BE `4fc945e` + AD `a665a95`**.
+6. **User reported `/locations/hatyai` "doesn't display"** — root-caused via live network inspection: `/locations` index page uses a 4th, separate serializer (`SummaryLocationSerializer`, reached via `apis/urls.py`'s public `/locations` route, not the admin-dashboard-stations prefix) — same bug, 4th occurrence. Found a 5th while auditing (`LocationPageSerializer`, used by `/destinations` page, confirmed live-reachable via `pages/destinations/index.js`). Both fixed. **BE `1186b2a`**. Live-verified: Hatyai card now renders on `/locations`, 403 → 200.
+7. **Checked `/locations/phuket` per user's follow-up** — page itself clean, real bug fixed and confirmed self-healing. Found 4 unrelated 403s (contract/vehicle images) in the network log at first glance; root-caused via DOM/Performance API inspection that they were stale cross-navigation artifacts in the same long-lived browser tab, not a live bug on that page — reported honestly instead of guessing a fix.
 
-**Reviewed the audit's own fix list** with 3 parallel agents (Next.js, Django, SWE/CLAUDE.md compliance) before implementing — corrected 5 of the audit's original suggested approaches:
-- FAQ fix: audit said "expand first answer" (fixes 1/3) — corrected to reuse `RouteFAQ.js`'s `<details>` pattern (all answers land in DOM, native disclosure), per REUSE FIRST.
-- Breadcrumb fix: audit said "SSR it" — corrected to a scoped `min-h` wrapper, since `StandardBreadcrumb` is a shared component with its own baked-in `ssr:false` (blast-radius risk).
-- Hero image guard: flagged risk of adding a 4th chained `useEffect` in an already-3-effect component bordering the forbidden dependency-chain pattern — fixed inline instead.
-- `lastReviewed`/geo-schema items correctly flagged backend-blocked by Django review — confirmed genuinely missing fields, not FE-implementable as originally scoped.
-- Caught the Django reviewer's own error mid-implementation: claimed `city`/`province`/`country` were available for schema enrichment — live API check showed the serializer doesn't expose them (model has the fields, serializer doesn't) — dropped that sub-item from scope rather than shipping on a wrong assumption.
+**This is now 5 occurrences of the identical double-prefix bug found and fixed across 2 sessions**, all using the same `get_image()`-style guard already established in `operators/serializers.py` for `ImageGallery`/`OperatorImageGallery`. Deliberately did NOT build a shared mixin/model property — stayed consistent with the existing per-serializer inline-guard convention; flagged that a 6th occurrence would be the signal to actually build the shared fix.
 
-**Batch 1 (9 trivial FE items, `1ffa572f`):** fact-bearing title/meta using real `total_count`/`transport_types`, SSR summary sentence under H1 (the GEO-critical fix — first extractable claim on the page), hreflang+geo meta reusing `tripDetailSEOUtils.js`'s pattern, `rel="nofollow noopener"` via DOMPurify `afterSanitizeAttributes` hook, `reviewedBy` Person→Organization, fallback-aware hero alt text, raised About clamp threshold 320→600, breadcrumb CLS wrapper.
-
-**Batch 2 (`85170fd2`):** `LocationFAQ.js` swapped to `<details>`/`<summary>` — all 3 answers now in SSR HTML (verified via curl), first expands by default. Hero image priority guard — only current (non-transitioning) image gets `priority`, fixed a real dual-LCP-candidate bug in the shared `FeaturedImageHeader.js`.
-
-**Batch 3 (BE `96c2556` + FE `d9f17c7c`):** added `Location.updated_at` (`auto_now=True`), migration `0039_location_add_updated_at`, wired into `lastReviewedTimestamp` — real content date now, not "now" on every SSR request. Migration applied+verified on local dev DB.
-
-All verified live via curl/browser: title, summary sentence, geo meta, hreflang, nofollow links, Organization schema, FAQ answers in raw HTML, real `lastReviewed` timestamp.
-
-**Prior (#355, same day):** Airport transfer link-out + header spacing token → session-history.md.
+**Prior (#356, same day):** SEO/AEO/GEO audit 12-item fix → session-history.md.
 
 **Resume point (EXACT):**
-1. **Prod deploy**: BE first — `python manage.py migrate stations` (migrations `0038_location_description` AND new `0039_location_add_updated_at`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume — critical this time, since `lastReviewed`/title/meta changes won't show until cache clears.
-2. **LOCATIONS-MISSING-HERO-IMAGE** — upload real images via Django admin `Location.image` for 21/54 locations (content/ops task, not engineering). See Section 2 Content Backlog.
-3. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`.
-4. **Follow-up SEO item found but not shipped**: `LocationOverview.js`'s `TouristDestination` schema could get `containedInPlace` (city/province/country) if `LocationRouteSummarySerializer`/`_summary_response()` is extended to expose those 3 fields (they exist on the `Location` model, just not serialized today). Small follow-up, same file already touched this session.
-5. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
-6. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
-7. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
-8. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
+1. **Prod deploy**: BE — `python manage.py migrate stations` (`0038`, `0039`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
+2. **LOCATIONS-MISSING-HERO-IMAGE** — now has a real AD path (image picker + WP media + thumbnail column all shipped this session) — no longer needs raw Django `/admin/`. Upload for remaining 20/54 locations via AD.
+3. **Content task** — ask WP editors to tag posts with location slugs so guide carousels populate.
+4. **Follow-up SEO item, not shipped**: `TouristDestination` schema `containedInPlace` (city/province/country) — needs `LocationRouteSummarySerializer` extension.
+5. **If a 6th double-prefix-bug occurrence surfaces**: build the shared fix (model property or serializer mixin) instead of a 6th inline guard — threshold already flagged.
+6. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
+7. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
+8. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
+9. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
 7. **Browser-verify both #338 chat-widget fixes** on `develop`: at 320px/375px/768px confirm the bubble/panel neither clip nor cause page-level horizontal scroll, confirm via devtools computed style that z-index actually applies now (not just visually), confirm launcher icon renders at the new 24px size, confirm message bubbles/send button/focus rings/read-receipt ticks all render the same navy (`#3b5998`) as the header — no more two-different-blues mismatch.
 8. **BD decision on tawk.to marketing-chat pilot** — define the metric a pre-sales widget on `/trips`/`/activities` would move before greenlighting even the small additive pilot (per synthesis in the debate report).
 9. **Full click-through of #336+#337's airport-transfer search tab** on `develop`: on a real ~375px mobile viewport, type into the address field, confirm the dropdown neither clips off-screen NOR causes page-level horizontal scroll — then pick airport → type+select address → swap direction (address survives, roles flip) → clear both fields → refocus a filled airport field (no false "no match") → Search with/without address → landing page price resolves. Test at 375px/768px/1280px.

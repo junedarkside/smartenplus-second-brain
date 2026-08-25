@@ -1,3 +1,5 @@
+## [2026-08-25] session-end #357 | AD location image system built (Tiptap reuse, image preview, WP media library reuse, upload compression, DataGrid thumbnail column) + hunted down 5th occurrence of double-prefix image URL bug across 4 different serializers/2 sessions, all fixed — BE develop 1186b2a, AD develop a665a95
+
 ## [2026-08-25] session-end #356 | SEO/AEO/GEO audit of /locations/[slug] + all 12 fix items shipped across 3 batches — Next.js+Django+SWE agent review corrected 5 of audit's original approaches before implementing (FAQ <details> reuse, breadcrumb blast-radius scope fix, hero image effect-chain guard) — BE develop 96c2556 (new Location.updated_at migration), FE develop d9f17c7c
 
 ## [2026-08-25] session-end #355 | Airport transfer link-out (UXUI+BD debated, shipped text link not section) + header spacing token — caught+fixed 2 real bugs (Phuket demo-airport collision, airport link hidden when no routes) → BE develop a4b782c, FE develop 6b5e7995

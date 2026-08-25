@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #356 (2026-08-25)
+
+**Achieved (#356) — Full SEO/AEO/GEO audit of `/locations/[slug]` + all 12 fix items shipped across 3 batches, backend migration included.**
+
+`seo-specialist` agent audit found title/meta templated, zero LLM-extractable claim, FAQ not in DOM, no rel=nofollow, lastReviewed always "now", broken hero alt, no hreflang. 3-agent review (Next.js/Django/SWE) corrected 5 of the audit's suggested approaches before implementing. Batch 1 (`1ffa572f`, 9 items), Batch 2 (`85170fd2`, FAQ details + hero priority), Batch 3 (BE `96c2556` + FE `d9f17c7c`, real updated_at field). All verified live.
+
+---
+
 ## Session #355 (2026-08-25)
 
 **Achieved (#355) — Airport transfer link-out (UXUI+BD debated) + header spacing token, both shipped.**
