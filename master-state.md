@@ -4,9 +4,15 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-25 (session #357)
+**Updated:** 2026-08-25 (session #358)
 
-**Achieved (#357) — AD location image system built out (preview, WP media reuse, compression) + 5th occurrence of a double-prefix image URL bug hunted down and fixed across 2 sessions.**
+**Achieved (#358) — Limit-reset continuity audit + Active Point Protocol designed, SWE-reviewed, shipped to vault.**
+
+1. **Continuity audit (live, all 5 repos)** — verified everything pushed, zero ahead/behind, only known BE untracked test file. Found 5 gaps: wrap-up timing (fires at end only), master-state bloat, untracked test file, deploy-verify backlog, unwritten mid-task findings loss.
+2. **Active Point Protocol shipped** (user-proposed, SWE-reviewed against vault + project rules) — vault `CLAUDE.md` gains: new "Active Point Protocol" section (point set at substantive-task start, updated at milestones, resumed via "continue the point"), Session Init 3-part brief now shows `Active point` first line, Session Wrap-Up gains Step 0 (clear point → fold into master-state → delete). `active-point.md` gitignored (verified live via `git check-ignore`). Vault **`8f24f1a`**, pushed.
+3. **Resume commands documented (info-only, no files)** — `claude --resume`/`--continue`/`-r`/`-c` + 3-tier return path: resume → "continue the point" → "check vault".
+
+**Prior (#357, same day):** AD location image system + 5th double-prefix fix → session-history.md.
 
 1. **Tiptap editor reuse correction** — user flagged AD's Location description field was a plain textarea when contract details already has a real WYSIWYG editor. First REUSE FIRST search missed it (only grepped `FormControl.js`'s switch cases, not actual usage sites — `Tiptap` isn't `FormControl`-wrapped). Swapped in `components/editor/customr-editor.js`'s `Tiptap`, same pattern `DayTripDetails.js` already uses. **AD `e4671f4`**.
 2. **Image preview + WordPress media library** — user asked if AD can preview images and reuse the WP media library contract details has. Found `ImageSelection.js`/`WordpressImages.js` are array-based (wrong shape for `Location.image`, a single field). Built `LocationImagePicker.js` reusing the shared building blocks instead (`ImageCard`, `ImagePreviewModal`, `ImageGrid`, `ImageSearchBar`, `useGetWordpressMediaQuery`) — click-to-preview + WP picker, single-select. **BE `2d58d5a` + AD `afef6fc`**.
@@ -22,46 +28,47 @@
 **Prior (#356, same day):** SEO/AEO/GEO audit 12-item fix → session-history.md.
 
 **Resume point (EXACT):**
-1. **Prod deploy**: BE — `python manage.py migrate stations` (`0038`, `0039`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
-2. **LOCATIONS-MISSING-HERO-IMAGE** — now has a real AD path (image picker + WP media + thumbnail column all shipped this session) — no longer needs raw Django `/admin/`. Upload for remaining 20/54 locations via AD.
-3. **Content task** — ask WP editors to tag posts with location slugs so guide carousels populate.
-4. **Follow-up SEO item, not shipped**: `TouristDestination` schema `containedInPlace` (city/province/country) — needs `LocationRouteSummarySerializer` extension.
-5. **If a 6th double-prefix-bug occurrence surfaces**: build the shared fix (model property or serializer mixin) instead of a 6th inline guard — threshold already flagged.
-6. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
-7. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
-8. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
-9. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
-7. **Browser-verify both #338 chat-widget fixes** on `develop`: at 320px/375px/768px confirm the bubble/panel neither clip nor cause page-level horizontal scroll, confirm via devtools computed style that z-index actually applies now (not just visually), confirm launcher icon renders at the new 24px size, confirm message bubbles/send button/focus rings/read-receipt ticks all render the same navy (`#3b5998`) as the header — no more two-different-blues mismatch.
-8. **BD decision on tawk.to marketing-chat pilot** — define the metric a pre-sales widget on `/trips`/`/activities` would move before greenlighting even the small additive pilot (per synthesis in the debate report).
-9. **Full click-through of #336+#337's airport-transfer search tab** on `develop`: on a real ~375px mobile viewport, type into the address field, confirm the dropdown neither clips off-screen NOR causes page-level horizontal scroll — then pick airport → type+select address → swap direction (address survives, roles flip) → clear both fields → refocus a filled airport field (no false "no match") → Search with/without address → landing page price resolves. Test at 375px/768px/1280px.
-10. **Decide the airport-transfer address-autocomplete ranking fix** (#336) — Google Places suggestions currently show cross-border/irrelevant results ahead of the correct local match for the selected airport. Choice needed: hardcode a small frontend airport-coords lookup (fast, ~15 airports, but can drift from DB-added airports) vs. add `latitude`/`longitude` to backend `Station` model + serializer (correct, needs a backend PR). Not started either way.
-11. **develop→main deploy decision for #336+#337+#338** — frontend-only work, fold into next deploy queue once click-through/browser-verify above passes.
-12. **Browser-verify the full hero-banner stack** end-to-end: admin-dashboard → set a new Activities banner image + placement → `/activities` reflects it (ISR revalidate or dev-server restart needed, not instant). Confirm the H1/subtitle/search overlay reads correctly against the actual live banner image (not just the mocked placeholder), on mobile (240px hero) and against a long location string in the URL.
-13. **Confirm `is_staff=True`** on the actual admin-dashboard account used for banner management — one-time manual Django check, flagged by review as unverified.
-14. **develop→main deploy decision for all of #335's work** (BE `6945754` + `a6dd5bc`, FE `152b9d1b`, AD `dc94e09`) once browser-verified — 3 repos, all develop-only.
-15. **Browser-verify #334's loader fix**: `http://localhost:3000/guest-order/NBX0491636?email=june_pinkfloyd%40hotmail.com`, throttle network in devtools to see the loading state, confirm spinner sits centered between header and footer (not skewed down). Repeat on `/orders/[orderid]` (shared fix) and at mobile width (header padding is `md:`-only).
-16. **Browser-verify #333's email fix**: trigger a real booking confirmation email (staging/dev SES) for a `Confirmed` booking, confirm "departing `<date>`" and "Date of Travel: `<date>`" render correctly at all 5 template spots.
-17. **Browser-verify #333's stale-session fix**: reproduce the actual reported scenario — a browser with a genuinely expired/poisoned next-auth session cookie + a booking deep-link with `?email=` — confirm it now falls through to guest access, and confirm backend logs show no more spurious 401s. Also spot-check valid login + fresh incognito guest still work.
-18. **develop→main deploy decision for #333 + #334 fixes** — all develop-only.
-19. **Browser-verify #332's transport-composit reorder end-to-end**: AD contract page → move a leg up/down → save → reload → order persists; customer-facing `/trips/detail/{slug}` shows same order; PRIVATE/CHARTER vehicle-capacity math uses the correct first leg.
-20. **Browser-verify #332's staff debug badge** on `/trips/hatyai/koh-lipe` and `/activities`.
-21. **Browser-verify #331's 2 fixes** on `/routemanagement/transfer-zones`.
-22. **Finish the zone-pricing E2E checklist from #329**, narrowed by #330's 2 fixes — six sessions running now, treat as blocking before further zone-pricing work.
-23. **Backend follow-up: derive/clear `pickup_requires_zone`/`dropoff_requires_zone` from `info_fields`** at the source (`operators/views.py` contract PATCH handler) — #330 Bug 1 root cause.
-24. **Consider unifying the 3-way duplicated `isZoneBooking`/`zoneRoute` logic** — not urgent, all 3 currently correct.
-25. **Decide `CONTRACTDETAILVIEWSET-SILENT-FIELD-DROP` structural fix** — see Section 2 Active table.
-26. **develop→main deploy decision for zone-pricing** — still develop-only across all 3 repos.
-27. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
-28. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
-29. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
-30. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
-31. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
-32. **Rotate 4 leaked secrets** (console-side, blocking).
-33. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
-34. **If revisiting prod hardening later**: `smartenplus-backend/Smartenplus/settings.py` missing `SECURE_HSTS_SECONDS`/`SECURE_SSL_REDIRECT`/`SECURE_CONTENT_TYPE_NOSNIFF`/`X_FRAME_OPTIONS` (extend existing `not DEBUG` block at ~line 609); `docker-compose-rds.yml` `web` service publishes `8000:8000` alongside nginx — undercuts the "Django is nginx-only" assumption, one-line fix (drop mapping or bind `127.0.0.1:8000:8000`); 404 log-noise fix should use a `handler404` override in `urls.py`, not a `LOGGING` filter (can't distinguish urlconf-miss from real DRF 404s).
-35. **Reminder: turn off Tailscale Funnel** (`tailscale funnel off`) once webhook testing is done — stops local Django public exposure.
+1. **Acceptance-test the Active Point Protocol** — first substantive task next session: confirm point file auto-written at start; then at any cut, "continue the point" resumes at Next step; "wrap up" folds + deletes it. If protocol text needs tuning, edit vault CLAUDE.md.
+2. **Prod deploy**: BE — `python manage.py migrate stations` (`0038`, `0039`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
+3. **LOCATIONS-MISSING-HERO-IMAGE** — real AD path shipped #357 (image picker + WP media + thumbnail column). Upload for remaining 20/54 locations via AD.
+4. **Content task** — ask WP editors to tag posts with location slugs so guide carousels populate.
+5. **Follow-up SEO item, not shipped**: `TouristDestination` schema `containedInPlace` (city/province/country) — needs `LocationRouteSummarySerializer` extension.
+6. **If a 6th double-prefix-bug occurrence surfaces**: build the shared fix (model property or serializer mixin) instead of a 6th inline guard — threshold already flagged.
+7. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
+8. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
+9. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
+10. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
+11. **Browser-verify both #338 chat-widget fixes** on `develop`: at 320px/375px/768px confirm the bubble/panel neither clip nor cause page-level horizontal scroll, confirm via devtools computed style that z-index actually applies now (not just visually), confirm launcher icon renders at the new 24px size, confirm message bubbles/send button/focus rings/read-receipt ticks all render the same navy (`#3b5998`) as the header — no more two-different-blues mismatch.
+12. **BD decision on tawk.to marketing-chat pilot** — define the metric a pre-sales widget on `/trips`/`/activities` would move before greenlighting even the small additive pilot (per synthesis in the debate report).
+13. **Full click-through of #336+#337's airport-transfer search tab** on `develop`: on a real ~375px mobile viewport, type into the address field, confirm the dropdown neither clips off-screen NOR causes page-level horizontal scroll — then pick airport → type+select address → swap direction (address survives, roles flip) → clear both fields → refocus a filled airport field (no false "no match") → Search with/without address → landing page price resolves. Test at 375px/768px/1280px.
+14. **Decide the airport-transfer address-autocomplete ranking fix** (#336) — Google Places suggestions currently show cross-border/irrelevant results ahead of the correct local match for the selected airport. Choice needed: hardcode a small frontend airport-coords lookup (fast, ~15 airports, but can drift from DB-added airports) vs. add `latitude`/`longitude` to backend `Station` model + serializer (correct, needs a backend PR). Not started either way.
+15. **develop→main deploy decision for #336+#337+#338** — frontend-only work, fold into next deploy queue once click-through/browser-verify above passes.
+16. **Browser-verify the full hero-banner stack** end-to-end: admin-dashboard → set a new Activities banner image + placement → `/activities` reflects it (ISR revalidate or dev-server restart needed, not instant). Confirm the H1/subtitle/search overlay reads correctly against the actual live banner image (not just the mocked placeholder), on mobile (240px hero) and against a long location string in the URL.
+17. **Confirm `is_staff=True`** on the actual admin-dashboard account used for banner management — one-time manual Django check, flagged by review as unverified.
+18. **develop→main deploy decision for all of #335's work** (BE `6945754` + `a6dd5bc`, FE `152b9d1b`, AD `dc94e09`) once browser-verified — 3 repos, all develop-only.
+19. **Browser-verify #334's loader fix**: `http://localhost:3000/guest-order/NBX0491636?email=june_pinkfloyd%40hotmail.com`, throttle network in devtools to see the loading state, confirm spinner sits centered between header and footer (not skewed down). Repeat on `/orders/[orderid]` (shared fix) and at mobile width (header padding is `md:`-only).
+20. **Browser-verify #333's email fix**: trigger a real booking confirmation email (staging/dev SES) for a `Confirmed` booking, confirm "departing `<date>`" and "Date of Travel: `<date>`" render correctly at all 5 template spots.
+21. **Browser-verify #333's stale-session fix**: reproduce the actual reported scenario — a browser with a genuinely expired/poisoned next-auth session cookie + a booking deep-link with `?email=` — confirm it now falls through to guest access, and confirm backend logs show no more spurious 401s. Also spot-check valid login + fresh incognito guest still work.
+22. **develop→main deploy decision for #333 + #334 fixes** — all develop-only.
+23. **Browser-verify #332's transport-composit reorder end-to-end**: AD contract page → move a leg up/down → save → reload → order persists; customer-facing `/trips/detail/{slug}` shows same order; PRIVATE/CHARTER vehicle-capacity math uses the correct first leg.
+24. **Browser-verify #332's staff debug badge** on `/trips/hatyai/koh-lipe` and `/activities`.
+25. **Browser-verify #331's 2 fixes** on `/routemanagement/transfer-zones`.
+26. **Finish the zone-pricing E2E checklist from #329**, narrowed by #330's 2 fixes — six sessions running now, treat as blocking before further zone-pricing work.
+27. **Backend follow-up: derive/clear `pickup_requires_zone`/`dropoff_requires_zone` from `info_fields`** at the source (`operators/views.py` contract PATCH handler) — #330 Bug 1 root cause.
+28. **Consider unifying the 3-way duplicated `isZoneBooking`/`zoneRoute` logic** — not urgent, all 3 currently correct.
+29. **Decide `CONTRACTDETAILVIEWSET-SILENT-FIELD-DROP` structural fix** — see Section 2 Active table.
+30. **develop→main deploy decision for zone-pricing** — still develop-only across all 3 repos.
+31. **Twitter tags (SEO-3 P3)** — `<meta name="twitter:title/description">` in `_app.js <Head>`.
+32. **CWV-8 P1**: /trips TouristTrip route cards CSR-only — extend `getStaticProps`.
+33. Carry from #318 — **browser-verify chip fix** + decide `unique_transport_composit_list` dedup gap.
+34. Carry from #317 — **browser-verify sort-tab fix** + BD decision party-total vs per-unit price.
+35. **"0m" duration fallback**, **THB decimal fix**, **seat-count anomaly** — descoped, carried.
+36. **Rotate 4 leaked secrets** (console-side, blocking).
+37. **Carry-over:** nginx CSP prod confirm; demo-station stop-gap filter; #296 backfill; SEAT-CHECK-RESELLER; REC-ENGINE E2E; BE-IMAGE-DEDUP.
+38. **If revisiting prod hardening later**: `smartenplus-backend/Smartenplus/settings.py` missing `SECURE_HSTS_SECONDS`/`SECURE_SSL_REDIRECT`/`SECURE_CONTENT_TYPE_NOSNIFF`/`X_FRAME_OPTIONS` (extend existing `not DEBUG` block at ~line 609); `docker-compose-rds.yml` `web` service publishes `8000:8000` alongside nginx — undercuts the "Django is nginx-only" assumption, one-line fix (drop mapping or bind `127.0.0.1:8000:8000`); 404 log-noise fix should use a `handler404` override in `urls.py`, not a `LOGGING` filter (can't distinguish urlconf-miss from real DRF 404s).
+39. **Reminder: turn off Tailscale Funnel** (`tailscale funnel off`) once webhook testing is done — stops local Django public exposure.
 
-_(Sessions #221–#351 archived → `07-logs/session-history.md`.)_
+_(Sessions #221–#356 archived → `07-logs/session-history.md`.)_
 
 ---
 ## Section 2 — Loose Ends (Open)

@@ -4,6 +4,20 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #357 (2026-08-25)
+
+**Achieved (#357) — AD location image system built out (preview, WP media reuse, compression) + 5th occurrence of a double-prefix image URL bug hunted down and fixed across 2 sessions.**
+
+1. Tiptap editor reused for AD Location description (was plain textarea — first REUSE FIRST search missed it, `Tiptap` isn't FormControl-wrapped). AD `e4671f4`.
+2. `LocationImagePicker.js` — image preview + WP media picker, single-select, reusing shared building blocks (`ImageCard`, `ImagePreviewModal`, `ImageGrid`, `ImageSearchBar`). BE `2d58d5a` + AD `afef6fc`. `Location.image` now accepts uploaded file OR verbatim WP URL.
+3. Image compression wired via `process_operator_image()` (WebP, 300KB/1920px budget, same as operator hero).
+4. 5th double-prefix occurrence fixed: `SummaryLocationSerializer` (`/locations` index, 4th occurrence) + `LocationPageSerializer` (`/destinations`, 5th) via `location_image_url()` guard. BE `4fc945e` + `1186b2a`. Hatyai card live-verified 403→200.
+5. AD Locations list image thumbnail column (`LocationThumbnail.js`, mirrors `PlaceThumbnail.js`). AD `a665a95`.
+
+**Threshold flagged:** a 6th double-prefix occurrence = build the shared fix (model property/mixin), not a 6th inline guard.
+
+---
+
 ## Session #356 (2026-08-25)
 
 **Achieved (#356) — Full SEO/AEO/GEO audit of `/locations/[slug]` + all 12 fix items shipped across 3 batches, backend migration included.**
