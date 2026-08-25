@@ -1,3 +1,5 @@
+## [2026-08-25] session-end #350 | Analysis-only: decided NOT to re-add "Where are you starting from?" section to /locations/[slug]. Hero DestinationSearch + /trips station detail covers intent; old chain removed-for-cause (dead station-slug links). Zero code. Revisit if station-first demand shows in analytics.
+
 ## [2026-08-25] session-end #349 | Completed /locations/[slug] page — merged all BE+FE branches to develop, XSS fix via LocationOverview (DOMPurify). Prod deploy pending + migrate stations. → LOCATIONS-DETAIL-HUB-REDESIGN
 
 ## [2026-08-25] session-end #348 | Fixed 3 bugs in DestinationSearch.js (typed text hidden behind icon, input blank after selection, button floating below input). Merged feat/locations-destination-search → develop. → master-state.md Section 2 LOCATIONS-DETAIL-HUB-REDESIGN
