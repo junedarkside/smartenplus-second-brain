@@ -1,3 +1,5 @@
+## [2026-08-25] session-end #356 | SEO/AEO/GEO audit of /locations/[slug] + all 12 fix items shipped across 3 batches — Next.js+Django+SWE agent review corrected 5 of audit's original approaches before implementing (FAQ <details> reuse, breadcrumb blast-radius scope fix, hero image effect-chain guard) — BE develop 96c2556 (new Location.updated_at migration), FE develop d9f17c7c
+
 ## [2026-08-25] session-end #355 | Airport transfer link-out (UXUI+BD debated, shipped text link not section) + header spacing token — caught+fixed 2 real bugs (Phuket demo-airport collision, airport link hidden when no routes) → BE develop a4b782c, FE develop 6b5e7995
 
 ## [2026-08-25] session-end #354 | Hero image audit (data-gap, logged LOCATIONS-MISSING-HERO-IMAGE) + LocationFAQ real-data fix — BD-reviewed, BE transport_types aggregation + FE conditional answer, verified 7 locations (100% of old hardcoded claims were false) → BE develop 71037bd, FE develop 57e29705

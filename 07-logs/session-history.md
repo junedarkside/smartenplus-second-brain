@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #355 (2026-08-25)
+
+**Achieved (#355) — Airport transfer link-out (UXUI+BD debated) + header spacing token, both shipped.**
+
+Parallel UXUI + BD review rejected a full airport-transfer section on `/locations/[slug]`; shipped a text link instead. Caught 2 real bugs during implementation: non-deterministic airport pick (Phuket has a demo + real airport station), link hidden when location has zero configured routes. Added `LAYOUT.sectionHeaderClasses` token, applied to 4 location page headers. BE `develop @ a4b782c`, FE `develop @ 6b5e7995`.
+
+---
+
 ## Session #354 (2026-08-25)
 
 **Achieved (#354) — Hero image audit (data-gap, logged) + LocationFAQ real-data fix (BE+FE), verified across 7 locations.**

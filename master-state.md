@@ -4,30 +4,38 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-25 (session #355)
+**Updated:** 2026-08-25 (session #356)
 
-**Achieved (#355) — Airport transfer link-out (UXUI+BD debated) + header spacing token, both shipped.**
+**Achieved (#356) — Full SEO/AEO/GEO audit of `/locations/[slug]` + all 12 fix items shipped across 3 batches, backend migration included.**
 
-1. **Airport transfer link-out** — spawned parallel UXUI + BD agent review on whether `/locations/[slug]` should surface airport transfer when a location has an airport station. Both rejected a full new section: UXUI's floor was a compact CTA card, BD's floor (and the shipped choice) was a single text link — thin funnel gap, cannibalizes higher-AOV intercity routes, minority coverage (~10-15% of 54 locations).
-   - **Real bug found during SWE review**: original single-`airport_slug` design was non-deterministic — **Phuket has 2 airport-slug stations** (`Demo Phuket Airport` + `Phuket Airport`). Redesigned as `airports` list, backed by direct `Station.objects.filter(station_type='airport')` query with demo-name exclusion (narrow guard, not a fix for the still-open vault-wide demo-station filter item).
-   - **Second bug found during browser verify**: airport link was nested inside `filteredDestinations.length > 0`, so Phuket (real airport, zero configured intercity routes) would never show it — exactly the case that mattered. Fixed by widening the section's render condition to OR on airports present.
-   - **BE `a4b782c`**: `airports` field on `LocationRouteSummarySerializer`, `Station.station_type='airport'` query (same authoritative field already used elsewhere in codebase) in `_summary_response()`.
-   - **FE `445691d2`**: "Airport transfer →" link per real airport, in Popular Routes header, decoupled from destinations check.
-   - Verified live: Hatyai (1 airport, has routes), Phuket (1 airport after demo exclusion, zero routes — link still shows), link navigates to real (non-demo) `/airport-transfer/phuket-airport`.
-2. **Section header spacing token** — Popular Routes/About/Guides/FAQ headers on `/locations/[slug]` had zero padding vs. homepage's `SectionHeader.js` (`pt-3 pl-2` + icon). Added `LAYOUT.sectionHeaderClasses = 'pt-3 pl-2'` to `helpers/designSystem.js` — matches homepage spacing without misusing `SectionHeader`'s forced icon/Link wrapper on non-link headers. Applied to all 4 headers. **FE `6b5e7995`**.
+Spawned `seo-specialist` agent for a deep SEO+AEO(answer-engine)+GEO(generative-engine/LLM-citability) audit of `/locations/hatyai`. Found: title/meta 100% templated (near-identical across all 54 locations), zero extractable plain-text claim anywhere on the page for an LLM to cite, FAQ answers absent from DOM until clicked (schema/DOM mismatch risk), outbound CMS citation links leaking authority to a competitor (Klook) with no `rel` enforcement, `lastReviewed` regenerating to "now" on every request, hero alt text describing the wrong image on fallback, no hreflang/geo meta despite an existing proven pattern on trip pages, duplicate `priority` hero images during transition, and more.
 
-Both pushed: BE `develop @ a4b782c`, FE `develop @ 6b5e7995`.
+**Reviewed the audit's own fix list** with 3 parallel agents (Next.js, Django, SWE/CLAUDE.md compliance) before implementing — corrected 5 of the audit's original suggested approaches:
+- FAQ fix: audit said "expand first answer" (fixes 1/3) — corrected to reuse `RouteFAQ.js`'s `<details>` pattern (all answers land in DOM, native disclosure), per REUSE FIRST.
+- Breadcrumb fix: audit said "SSR it" — corrected to a scoped `min-h` wrapper, since `StandardBreadcrumb` is a shared component with its own baked-in `ssr:false` (blast-radius risk).
+- Hero image guard: flagged risk of adding a 4th chained `useEffect` in an already-3-effect component bordering the forbidden dependency-chain pattern — fixed inline instead.
+- `lastReviewed`/geo-schema items correctly flagged backend-blocked by Django review — confirmed genuinely missing fields, not FE-implementable as originally scoped.
+- Caught the Django reviewer's own error mid-implementation: claimed `city`/`province`/`country` were available for schema enrichment — live API check showed the serializer doesn't expose them (model has the fields, serializer doesn't) — dropped that sub-item from scope rather than shipping on a wrong assumption.
 
-**Prior (#354, same day):** Hero image audit (data-gap, logged) + LocationFAQ real-data fix → session-history.md.
+**Batch 1 (9 trivial FE items, `1ffa572f`):** fact-bearing title/meta using real `total_count`/`transport_types`, SSR summary sentence under H1 (the GEO-critical fix — first extractable claim on the page), hreflang+geo meta reusing `tripDetailSEOUtils.js`'s pattern, `rel="nofollow noopener"` via DOMPurify `afterSanitizeAttributes` hook, `reviewedBy` Person→Organization, fallback-aware hero alt text, raised About clamp threshold 320→600, breadcrumb CLS wrapper.
+
+**Batch 2 (`85170fd2`):** `LocationFAQ.js` swapped to `<details>`/`<summary>` — all 3 answers now in SSR HTML (verified via curl), first expands by default. Hero image priority guard — only current (non-transitioning) image gets `priority`, fixed a real dual-LCP-candidate bug in the shared `FeaturedImageHeader.js`.
+
+**Batch 3 (BE `96c2556` + FE `d9f17c7c`):** added `Location.updated_at` (`auto_now=True`), migration `0039_location_add_updated_at`, wired into `lastReviewedTimestamp` — real content date now, not "now" on every SSR request. Migration applied+verified on local dev DB.
+
+All verified live via curl/browser: title, summary sentence, geo meta, hreflang, nofollow links, Organization schema, FAQ answers in raw HTML, real `lastReviewed` timestamp.
+
+**Prior (#355, same day):** Airport transfer link-out + header spacing token → session-history.md.
 
 **Resume point (EXACT):**
-1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`); `transport_types`/`airports` fields are non-migrating (computed, no schema change). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
+1. **Prod deploy**: BE first — `python manage.py migrate stations` (migrations `0038_location_description` AND new `0039_location_add_updated_at`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume — critical this time, since `lastReviewed`/title/meta changes won't show until cache clears.
 2. **LOCATIONS-MISSING-HERO-IMAGE** — upload real images via Django admin `Location.image` for 21/54 locations (content/ops task, not engineering). See Section 2 Content Backlog.
 3. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`.
-4. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
-5. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
-6. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
-7. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
+4. **Follow-up SEO item found but not shipped**: `LocationOverview.js`'s `TouristDestination` schema could get `containedInPlace` (city/province/country) if `LocationRouteSummarySerializer`/`_summary_response()` is extended to expose those 3 fields (they exist on the `Location` model, just not serialized today). Small follow-up, same file already touched this session.
+5. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
+6. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
+7. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
+8. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
 7. **Browser-verify both #338 chat-widget fixes** on `develop`: at 320px/375px/768px confirm the bubble/panel neither clip nor cause page-level horizontal scroll, confirm via devtools computed style that z-index actually applies now (not just visually), confirm launcher icon renders at the new 24px size, confirm message bubbles/send button/focus rings/read-receipt ticks all render the same navy (`#3b5998`) as the header — no more two-different-blues mismatch.
 8. **BD decision on tawk.to marketing-chat pilot** — define the metric a pre-sales widget on `/trips`/`/activities` would move before greenlighting even the small additive pilot (per synthesis in the debate report).
 9. **Full click-through of #336+#337's airport-transfer search tab** on `develop`: on a real ~375px mobile viewport, type into the address field, confirm the dropdown neither clips off-screen NOR causes page-level horizontal scroll — then pick airport → type+select address → swap direction (address survives, roles flip) → clear both fields → refocus a filled airport field (no false "no match") → Search with/without address → landing page price resolves. Test at 375px/768px/1280px.
