@@ -4,24 +4,24 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-25 (session #354)
+**Updated:** 2026-08-25 (session #355)
 
-**Achieved (#354) — Hero image audit (data-gap, logged) + LocationFAQ real-data fix (BE+FE), verified across 7 locations.**
+**Achieved (#355) — Airport transfer link-out (UXUI+BD debated) + header spacing token, both shipped.**
 
-1. **Hero image audit** — traced `/locations/hatyai` hero image end-to-end (BE `Location.image` field → API → FE fallback). Code correct; Hatyai/Phuket have no image uploaded (`null` in DB), fall back to generic static photo. Confirmed 21/54 locations affected (from #352). **Not a bug** — logged as content backlog item `LOCATIONS-MISSING-HERO-IMAGE` in Section 2, vault commit `2794c11`.
-2. **LocationFAQ fake-data fix** — `LocationFAQ.js` Q2 ("What types of transport can I find in {location}?") was a hardcoded string ("Trains, buses, ferries, and flights") identical across ALL 54 locations, feeding `FAQPage` JSON-LD schema. business-analyst-expert agent reviewed the fix approach (verdict: proceed, but no live per-request DB churn — reuse existing SSR boundary, add bookability ordering as a conversion angle instead of a new precompute job).
-   - **BE `71037bd`**: added `transport_types` field to `LocationRouteSummarySerializer` (`stations/serializers.py`), aggregated in `_summary_response()` (`stations/views.py`) via `Route → Trip → Contract → transport_composit → vehicle_type`, ordered by route count descending (most-bookable mode first). Same query pattern as existing `departures`/`arrivals` aggregation — no new query strategy.
-   - **FE `57e29705`**: `LocationFAQ.js` Q2 answer now conditional on real `transportTypes` prop; falls back to a generic-but-true sentence when empty.
-   - **Verified live across 7 locations** (hatyai, phuket, kohlipe, bangkok, chiangmai, penang, pakbara): **100% of the old hardcoded claims were false** — real data ranges from `[van, speedboat, Sedan, suv]` (hatyai/kohlipe/penang) down to `[van]` only (bangkok/pakbara) to **completely empty** (chiangmai — zero active transport contracts, old code would've confidently claimed all 4 fake modes). Fix generalizes automatically to all 54 locations since `LocationFAQ.js` is a single shared component.
-   - **Process note:** mid-session accidentally committed FE fix directly to `develop` (branch policy violation) — caught before push, moved commit to feature branch via cherry-pick, reset `develop` to `origin/develop`, re-merged properly. No policy violation reached remote.
-   - **Debugging note:** found 2 duplicate `manage.py runserver` processes on BE — stale one (started 12:05PM) was bound to port 8000, serving pre-fix code and causing flaky/missing `transport_types` in curl checks. User restarted; confirmed fix live after.
+1. **Airport transfer link-out** — spawned parallel UXUI + BD agent review on whether `/locations/[slug]` should surface airport transfer when a location has an airport station. Both rejected a full new section: UXUI's floor was a compact CTA card, BD's floor (and the shipped choice) was a single text link — thin funnel gap, cannibalizes higher-AOV intercity routes, minority coverage (~10-15% of 54 locations).
+   - **Real bug found during SWE review**: original single-`airport_slug` design was non-deterministic — **Phuket has 2 airport-slug stations** (`Demo Phuket Airport` + `Phuket Airport`). Redesigned as `airports` list, backed by direct `Station.objects.filter(station_type='airport')` query with demo-name exclusion (narrow guard, not a fix for the still-open vault-wide demo-station filter item).
+   - **Second bug found during browser verify**: airport link was nested inside `filteredDestinations.length > 0`, so Phuket (real airport, zero configured intercity routes) would never show it — exactly the case that mattered. Fixed by widening the section's render condition to OR on airports present.
+   - **BE `a4b782c`**: `airports` field on `LocationRouteSummarySerializer`, `Station.station_type='airport'` query (same authoritative field already used elsewhere in codebase) in `_summary_response()`.
+   - **FE `445691d2`**: "Airport transfer →" link per real airport, in Popular Routes header, decoupled from destinations check.
+   - Verified live: Hatyai (1 airport, has routes), Phuket (1 airport after demo exclusion, zero routes — link still shows), link navigates to real (non-demo) `/airport-transfer/phuket-airport`.
+2. **Section header spacing token** — Popular Routes/About/Guides/FAQ headers on `/locations/[slug]` had zero padding vs. homepage's `SectionHeader.js` (`pt-3 pl-2` + icon). Added `LAYOUT.sectionHeaderClasses = 'pt-3 pl-2'` to `helpers/designSystem.js` — matches homepage spacing without misusing `SectionHeader`'s forced icon/Link wrapper on non-link headers. Applied to all 4 headers. **FE `6b5e7995`**.
 
-Both pushed: BE `develop @ 71037bd`, FE `develop @ 57e29705`.
+Both pushed: BE `develop @ a4b782c`, FE `develop @ 6b5e7995`.
 
-**Prior (#353, same day):** `/locations/hatyai` UX audit + 5 fixes (section order, Read more, carousel tokens) → session-history.md.
+**Prior (#354, same day):** Hero image audit (data-gap, logged) + LocationFAQ real-data fix → session-history.md.
 
 **Resume point (EXACT):**
-1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`), plus new `transport_types` field is non-migrating (computed, no schema change). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
+1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`); `transport_types`/`airports` fields are non-migrating (computed, no schema change). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
 2. **LOCATIONS-MISSING-HERO-IMAGE** — upload real images via Django admin `Location.image` for 21/54 locations (content/ops task, not engineering). See Section 2 Content Backlog.
 3. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`.
 4. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.

@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #354 (2026-08-25)
+
+**Achieved (#354) — Hero image audit (data-gap, logged) + LocationFAQ real-data fix (BE+FE), verified across 7 locations.**
+
+Hero image traced end-to-end as content data-gap not a bug (logged `LOCATIONS-MISSING-HERO-IMAGE`). `LocationFAQ.js` Q2 transport-type claim was a hardcoded string, false for 100% of 7 locations tested (one had zero real data, would've claimed 4 fake modes). BE `transport_types` aggregation + FE conditional answer. Pushed BE `develop @ 71037bd`, FE `develop @ 57e29705`.
+
+---
+
 ## Session #353 (2026-08-25)
 
 **Achieved (#353) — `/locations/hatyai` UX/design audit + 5 fixes shipped to develop.**
