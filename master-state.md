@@ -67,6 +67,12 @@ _(Sessions #221–#351 archived → `07-logs/session-history.md`.)_
 > **UPDATE 2026-06-30 (#193):** CS chat UX polish shipped → develop — sender attribution (ownership-gated widget `sender:'customer'` hint, spoof→403), role labels (FE You/Support/System + admin Customer/Support/System), unread badge read-on-open + active-conv auto-read (BE `Conversation.cs_last_read_at` + migration `0008` + `POST /conversations/<pk>/mark-read/`). Flow D chat verified live (200). `NEXTAUTH_SECRET` matched admin=FE. No new Section-2 items opened; CS-CENTRALIZATION deploy queue unchanged (develop-only; manual test C/E + B-7 + 3 go-live blockers still pending).
 
 
+### Content Backlog
+
+| Item | Detail | Owner |
+|------|--------|-------|
+| **LOCATIONS-MISSING-HERO-IMAGE** | 21/54 `Location` rows have no `image` uploaded (Django admin, `stations/models.py:22`). Confirmed live: `hatyai`/`phuket` API `image` field returns `null` → FE falls back to generic static photo (`smartenplus-transportation-booking-online.webp`, longtail-boat beach shot) via `useLocationDetailStructuredData.js:23`. Mechanism verified working correctly end-to-end (`kohlipe` has a real S3 image, renders correctly) — **not a code bug**. Same fallback photo duplicates across all 21 image-less `/locations/[slug]` pages, hurting per-page uniqueness for `TouristDestination`/`WebPageJsonLd` schema, and misrepresents non-beach locations like Hatyai (inland trading hub, 13 routes). | Content/ops — upload via Django admin `Location.image` field |
+
 ### Deploy Queue — merged → develop, needs main deploy + verify
 
 | Item | What's pending | Where |
