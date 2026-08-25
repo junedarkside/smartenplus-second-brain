@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #352 (2026-08-25)
+
+**Achieved (#352) — `/locations/[slug]` hub tech-debt shipped: 5 atomic commits, 3 page bugs fixed end-to-end, 1 SSR interop bug, 1 TDZ bug.**
+
+Full audit of `/locations/hatyai` per session #351 resume point → vault + FE scan → 9-section priority ranking. Branch `fix/locations-hub-tech-debt`, 5 atomic commits merged `--no-ff` into `develop @ 28aed83e`. Hydration fix, self-dest filter, fallback image, ESM/CJS interop fix, TDZ fix. Verified live: 200, 141 KB, all 5 JSON-LD blocks, 0 hydration warnings, 0 self-chips.
+
+---
+
 ## Session #351 (2026-08-25)
 
 **Achieved (#351) — Popular Routes card: design review + responsive audit + mobile scroll-snap shipped to develop.**

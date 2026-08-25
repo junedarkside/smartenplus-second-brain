@@ -4,31 +4,29 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-08-25 (session #352)
+**Updated:** 2026-08-25 (session #353)
 
-**Achieved (#352) — `/locations/[slug]` hub tech-debt shipped: 5 atomic commits, 3 page bugs fixed end-to-end, 1 SSR interop bug, 1 TDZ bug.**
+**Achieved (#353) — `/locations/hatyai` UX/design audit + 5 fixes shipped to develop.**
 
-Full audit of `/locations/hatyai` per session #351 resume point → vault + FE scan → 9-section priority ranking (Hero+Search 4.30 > Popular Routes 3.85 > Guides 2.65 > About 2.55 > FAQs 2.40 > Back/Share 1.95 > Breadcrumb 1.65 > ErrorState 1.40). Branch `fix/locations-hub-tech-debt`, 5 atomic commits, merged `--no-ff` into `develop @ 28aed83e` (pushed `4c4b06c4..28aed83e`):
+Vault check (no prior notes) + browser audit of `/locations/hatyai` → found 5 issues, all fixed and pushed:
 
-1. **`42aeb35e` — Hydration fix (LOCATIONOVERVIEW-HYDRATION-WARNING)**: moved `DOMPurify.sanitize()` from `LocationOverview.js` (client-only via `typeof window` guard) into `getServerSideProps` boundary using `isomorphic-dompurify`. Added `sanitizedDescription` prop. Component became pure presentational (50→38 lines, no DOMPurify import). TouristDestination JSON-LD now in SSR HTML.
-2. **`d9a82b35` — Self-dest filter (SELF-DESTINATION-CHIP)**: `filteredDestinations = useMemo(destinations.filter(d => d.name.toLowerCase() !== origin.toLowerCase()))` at page boundary. Threads to LocationHero/DestinationSearch (dropdown), PopularRoutesSection (chips), useLocationDetailStructuredData (ItemList TouristTrip). Display-layer only — BE unchanged (intra-hatyai airport transfer still legit product per vault `locations-destinations-product-split`).
-3. **`46d1814d` — Fallback image (LOCATIONS-FALLBACK-IMG)**: `FeaturedImageHeader.onImageError` prop already existed (no new API). LocationHero adds `useState(imgSrc)` + handler swapping to `/smartenplus-transportation-booking-online.webp` (existing `bgDefault`).
-4. **`e7bbfabe` — 500 error fix (ESM/CJS interop)**: `isomorphic-dompurify` v3.22 transitively pulls `jsdom → html-encoding-sniffer → @exodus/bytes/encoding-lite.js` (ESM-only). Pages Router SSR runs in CJS → `require()` ERR_REQUIRE_ESM → 500. Swapped to plain `dompurify` (already installed) + manual JSDOM window via `require('jsdom')`. No new deps (jsdom already in node_modules).
-5. **`24109412` — TDZ fix (root-caused via console.log in catch block)**: same swap #4 named the local JSDOM window var `window`, but webpack hoists `const window` to module scope → put before the `typeof window !== 'undefined'` check → `ReferenceError: Cannot access 'window' before initialization` on every SSR call. Caught only on hatyai (first slug with populated description exercising new sanitize path). Renamed to `jsdomWindow`. Debug console.log removed before commit.
+1. **`50a2f750` — Section order fix**: About Hatyai was after Guides. Correct order: Popular Routes → About → Guides → FAQ. Swapped two `<section>` blocks in `pages/locations/[slug].js`.
+2. **`120fe81b` — Read more button placement + collapse**: Button was outside the white card (visual bug), no collapse. Moved inside card div. Toggle: "Read more →" / "Read less". `components/locations/LocationOverview.js`.
+3. **`50f445d1` — Blog card tokens + Guides white wrapper**: Added `card-blog-mobile: 300px`, `card-blog-height: 250px`, `card-carousel: 284px` to `tailwind.config.js`. BlogCard uses tokens. Guides section wrapped in white ContentCard-style container. Initial carousel token 272px (later corrected).
+4. **`adc6931d` — Unified carousel token**: `card-carousel: 284px` → used by `BlogCard`, `PopularRouteImageCard`, `ExperienceCard`. BlogCard changed from `min-w` (broken flex) to `w-` responsive pattern matching project standard (`80vw→45vw→40vw→30vw→xl`). `xl:w-[284px]` hardcoded in 2 components → `xl:w-card-carousel`.
+5. **`ef99742b` — 4.2 cards per row**: `card-carousel: 284px` → `276px`. Math: (276+12gap)×4.2 ≈ 1200px container. All carousel card types now show 4.2 cards at desktop.
 
-Verified live at `http://localhost:3000/locations/hatyai`: 200, 141 KB, all 5 JSON-LD blocks present (WebPage, BreadcrumbList, ItemList, TouristDestination, FAQPage), 0 hydration warnings, 0 "Hatyai to Hatyai" self-chips.
+All on `develop @ ef99742b` (pushed).
 
-**Side-findings logged (Section 2):** Other 4 DOMPurify sites with same `typeof window` SSR pattern (`ReviewList`, `ReviewListByProduct`, `ReviewDetailModal`, `BlogPostContent`) — fires post-hydration only, no SSR HTML breakage today, separate audit. axios@1.12.2 (caret-resolved from `"^1.3.1"`) is ESM-only `"type":"module"` — resolved transparently here, but flagged for separate project-wide audit. 2 vault atoms created/updated: [[webpack-hoisted-const-tdz-shadowing-globals]] (new), [[dompurify-xss-prevention-pattern]] Option B gotcha appended.
-
-**Prior (#351, same day):** Popular Routes mobile scroll-snap shipped → `4c4b06c4`. → session-history.md.
+**Prior (#352, same day):** `/locations/[slug]` hub tech-debt 5 commits → session-history.md.
 
 **Resume point (EXACT):**
-1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`). Then FE deploy this branch's 5 commits. **Then** flush `smartenplus_next_cache` ISR Docker volume or `/locations/*` serves stale.
-2. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`. Currently empty per #351 resume.
-3. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only change, `develop @ ee7f481`, not yet pushed to remote. Re-run the same live checks (curl `/api/v1/recommendations/24/` and `/166/`) against staging before main.
-4. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only change, `develop @ 2c0b2df`. Local VAPID key in `.env` was malformed/placeholder — verify real VAPID keys are valid in target env + do one real staff-browser E2E on staging before main.
-5. **Audit 4 other DOMPurify SSR sites** — `components/review/ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `components/blog/BlogPostContent.js`. All have same `typeof window` SSR pattern. None break SSR HTML today (post-hydration only), but `BlogPostContent.js` is the only one rendering arbitrary user text → XSS exposure if data shape changes. Decide: keep current client-only (lower priority, no SSR HTML), or move to boundary pattern (recommended for `BlogPostContent`).
-6. **Project-wide axios audit** — `package.json` says `"axios": "^1.3.1"`, resolved to 1.12.2 (ESM-only `"type":"module"`). Same dep-tree-stale-dev-server hazard affects every page using `fetchData.js`. Pin to 1.6.x (last CJS-compatible) OR migrate to native `fetch` (Node 18+ built-in, no dep). Separate audit PR.
+1. **Prod deploy**: BE first — `python manage.py migrate stations` (migration `0038_location_description`). Then FE deploy. **Then** flush `smartenplus_next_cache` ISR Docker volume.
+2. **Content task** — ask WP editors to tag posts with location slugs (e.g. `hatyai`) so guide carousel shows content on `/locations/hatyai`.
+3. **RECOMMENDATION-PRICE-CATEGORY-EXPIRY push + develop→main deploy** — BE-only, `develop @ ee7f481`, not yet pushed to remote.
+4. **CS-STAFF-NOTIFY-FOLLOWUP develop→main deploy** — BE-only, `develop @ 2c0b2df`. Verify real VAPID keys + staff-browser E2E on staging.
+5. **Audit 4 other DOMPurify SSR sites** — `ReviewList.js`, `ReviewListByProduct.js`, `ReviewDetailModal.js`, `BlogPostContent.js`.
+6. **Project-wide axios audit** — pin to 1.6.x or migrate to native `fetch`.
 7. **Browser-verify both #338 chat-widget fixes** on `develop`: at 320px/375px/768px confirm the bubble/panel neither clip nor cause page-level horizontal scroll, confirm via devtools computed style that z-index actually applies now (not just visually), confirm launcher icon renders at the new 24px size, confirm message bubbles/send button/focus rings/read-receipt ticks all render the same navy (`#3b5998`) as the header — no more two-different-blues mismatch.
 8. **BD decision on tawk.to marketing-chat pilot** — define the metric a pre-sales widget on `/trips`/`/activities` would move before greenlighting even the small additive pilot (per synthesis in the debate report).
 9. **Full click-through of #336+#337's airport-transfer search tab** on `develop`: on a real ~375px mobile viewport, type into the address field, confirm the dropdown neither clips off-screen NOR causes page-level horizontal scroll — then pick airport → type+select address → swap direction (address survives, roles flip) → clear both fields → refocus a filled airport field (no false "no match") → Search with/without address → landing page price resolves. Test at 375px/768px/1280px.
