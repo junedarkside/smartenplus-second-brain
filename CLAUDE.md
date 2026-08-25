@@ -125,11 +125,35 @@ At start of every session working on SmartEnPlus vault:
 3. **Update `master-state.md` Section 1** with live branch+commit data
 4. **Respond with 3-part brief** before writing code or making changes:
 
+> **Active point** — "IN-PROGRESS: <task>" (from active-point.md) or "none"
 > **Current State Summary** — last worked on + next step + live uncommitted changes
 > **Immediate Focus** — top open item from master-state.md Section 2
 > **Workspace Map** — live branch per repo + key external paths
 
 5. **Acknowledge and wait** — do not proceed until user gives instructions
+
+## Active Point Protocol
+
+**Set:** at the START of any substantive task — multi-step, multi-file, or investigation work. NOT for micro-edits (single fix, typo, small tweak). Write `active-point.md` at vault root:
+
+```markdown
+# Active Point
+**Set:** [date time]
+**Task:** one-line what+why
+**Branch:** repo + branch name
+**Files:** paths touched / planned
+**Plan:** numbered steps
+**Done so far:** milestone log (append, newest last)
+**Next step:** EXACT resume action — executable with zero prior context
+```
+
+**Update:** at meaningful milestones (root cause found, fix applied, tests pass, decision made) — append Done-so-far + rewrite Next step. Not every message.
+
+**Resume:** user says "continue the point" (or clear variant) → read `active-point.md` + `git status` on named branch → verify branch state matches file → resume at Next step. If drift, surface before proceeding.
+
+**Stale point:** starting a NEW task while a point is open → surface it, ask user: continue or close. Never silently overwrite.
+
+**One point at a time. No stack.** `active-point.md` is working state, gitignored — never committed, never linted, deleted on wrap-up (content preserved in master-state first).
 
 ## /lint-vault Command
 
@@ -158,6 +182,7 @@ At start of every session working on SmartEnPlus vault:
 - Thai: "พอแล้ว", "เลิกแล้ว", "พักก่อน", "โอเคพอ"
 
 **Steps:**
+0. **Clear active point** — read `active-point.md` (if exists): fold Task/Done-so-far/Next-step into master-state Section 1 resume point, then DELETE the file. Point must not survive wrap-up.
 1. **Run `bash vault-wrapup.sh`** — collects git state for all 4 repos. Use output for Section 1.
 2. **Edit `master-state.md` Section 1** — overwrite latest session block with achievements + exact resume point. Move previous session to `07-logs/session-history.md`.
 3. **Edit `master-state.md` Section 2** — close resolved items (move to `07-logs/closed-items.md`), add new bugs/edge cases.
