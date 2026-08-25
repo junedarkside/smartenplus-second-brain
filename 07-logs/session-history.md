@@ -4,6 +4,19 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #351 (2026-08-25)
+
+**Achieved (#351) — Popular Routes card: design review + responsive audit + mobile scroll-snap shipped to develop.**
+
+Full multi-dimension review (UX/UI, designer, BD, Next.js, Django) of "Popular routes from Hatyai" section. Decisions: NO price (vault [[locations-destinations-product-split]] — price stays on /destinations), NO image card (2 real S3 images exist for hatyai destinations, 21/54 locations lack images; would need BE summary-endpoint image join), NO carousel (data too small: hatyai 4, bangkok 1, phuket 1 dests; section is zero-typing shortcut, not browse). Responsive audit via Playwright: PASS all widths 320–1920, no overflow, 76px touch targets, contrast AA. User saw mobile stack (~700px worst case) = "sucked" → chose horizontal scroll-snap. Shipped FE `develop @ 4c4b06c4` (merge of `28db07bd` on branch `feat/locations-popular-routes-mobile-scroll`, pushed): CSS-only mobile swipe row (`overflow-x-auto sm:overflow-x-visible sm:flex-wrap no-scrollbar scroll-snap-x-mandatory`, card `w-[160px] shrink-0 sm:w-auto sm:min-w-[180px]` + `scroll-snap-align-start` + `truncate`), all utilities pre-existing in globals.css, same idiom as ReviewFirstPage. design-review agent verified 9/9 live (snap boundaries, all viewports, long-name truncate, tap nav, bangkok 1-chip). Caught pre-live: missing `shrink-0` would compress cards not scroll. Desktop unchanged. **Deploy note: clear `smartenplus_next_cache` ISR volume or /locations/* serves stale.**
+
+**Side-findings logged (Section 2):** LocationOverview hydration warning (About section, `18ae253f`), self-destination chip (hatyai→hatyai), BE uncommitted test file reminder (#304 decision).
+
+
+Archived from master-state.md. Latest session stays in master-state.md Section 1.
+
+---
+
 ## Session #350 (2026-08-25)
 
 **Achieved (#350) — DECISION: "Where are you starting from?" section NOT re-added to /locations/[slug] (analysis-only, zero code).**

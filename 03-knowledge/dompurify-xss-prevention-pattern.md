@@ -80,3 +80,29 @@ Same pattern confirmed in `RateAndReviewForm.js` (rate review submission) and an
 - [[homepage-ux-review]] — XSS issue details (ReviewFirstPage.js:185)
 - [[rate-review-uxui-audit-2026-06-06-overview]] r1-frontend — additional review-render sites
 - [[dompurify-xss-prevention-pattern]] — security patterns
+---
+
+## Update 2026-08-25 (session #352)
+
+**Option B (`isomorphic-dompurify`) does NOT work in Next.js Pages Router SSR.** Transitive deps include `jsdom → html-encoding-sniffer → @exodus/bytes/encoding-lite.js` (ESM-only). Pages Router SSR runs as CJS → `require()` of the ESM module throws `ERR_REQUIRE_ESM` → 500.
+
+**Working pattern (Pages Router SSR):** use `dompurify` + manual JSDOM window:
+```js
+import DOMPurify from 'dompurify';
+
+let serverPurify = null;
+const getPurifier = () => {
+  if (typeof window !== 'undefined') return DOMPurify;
+  if (serverPurify) return serverPurify;
+  const { JSDOM } = require('jsdom');
+  const jsdomWindow = new JSDOM('').window;          // ← do NOT name this `window`
+  serverPurify = DOMPurify(jsdomWindow);
+  return serverPurify;
+};
+```
+
+Two traps:
+1. **ESM/CJS interop** — `isomorphic-dompurify` cannot be required in Pages Router SSR context (see above).
+2. **Webpack-hoisted TDZ** — naming the local var `window` (shadowing the global) gets hoisted to module scope by webpack, putting the `const window` BEFORE the `typeof window` check and triggering `ReferenceError: Cannot access 'window' before initialization`. See [[webpack-hoisted-const-tdz-shadowing-globals]].
+
+Verified live on `/locations/hatyai` after fix: 200, 141 KB, all 5 JSON-LD blocks (WebPage, BreadcrumbList, ItemList, TouristDestination, FAQPage) present in SSR HTML. Commits `e7bbfabe` + `24109412`.

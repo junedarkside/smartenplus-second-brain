@@ -1,5 +1,26 @@
 ## [2026-08-25] session-end #351 | Popular Routes card review (UX/design/BD/Next/Django) + responsive audit (PASS 320–1920) + mobile horizontal scroll-snap SHIPPED → develop `4c4b06c4`. Design otherwise kept: no price (vault product-split rule), no image (21/54 locations lack images), no carousel (data too small). 9/9 Playwright-verified. New open items: LOCATIONOVERVIEW-HYDRATION-WARNING, SELF-DESTINATION-CHIP. ISR flush needed on deploy.
 
+## [2026-08-25] session-end #352 | /locations/[slug] hub tech-debt shipped — 5 atomic commits to develop
+
+**Achieved:** vault check + FE scan of /locations/hatyai → 9-section priority ranking (Hero+Search 4.30 > Popular Routes 3.85 > Guides 2.65 > About 2.55 > FAQs 2.40 > Back/Share 1.95 > Breadcrumb 1.65 > ErrorState 1.40). 5 atomic commits on `fix/locations-hub-tech-debt` merged --no-ff into develop (28aed83e, pushed 4c4b06c4..28aed83e):
+
+1. `42aeb35e` — hydrate fix (sanitize at SSR boundary via isomorphic-dompurify)
+2. `d9a82b35` — self-dest filter (boundary useMemo, threads to 3 consumers)
+3. `46d1814d` — hero image onError swap to bgDefault (FeaturedImageHeader.onImageError reuse)
+4. `e7bbfabe` — 500 error fix (isomorphic-dompurify ERR_REQUIRE_ESM → dompurify + jsdom)
+5. `24109412` — TDZ fix (webpack-hoisted const window before typeof check → renamed to jsdomWindow)
+
+**Verified live at localhost:3000/locations/hatyai:** 200, 141 KB, 5 JSON-LD blocks (WebPage, BreadcrumbList, ItemList, TouristDestination, FAQPage), 0 hydration warnings, 0 'Hatyai to Hatyai' self-chips.
+
+**Atoms:**
+- [[webpack-hoisted-const-tdz-shadowing-globals]] — new pattern
+- [[dompurify-xss-prevention-pattern]] — Option B gotcha appended (isomorphic-dompurify breaks Pages Router SSR)
+
+**Closed:** LOCATIONOVERVIEW-HYDRATION-WARNING, SELF-DESTINATION-CHIP, LOCATIONS-FALLBACK-IMG.
+
+**Follow-ups:** project-wide axios audit (1.12.2 ESM-only resolved transparently here, but affects all fetchData.js consumers via dep-tree-stale-dev-server hazard), audit 4 other DOMPurify SSR sites (ReviewList/ReviewListByProduct/ReviewDetailModal/BlogPostContent — same typeof window pattern, no SSR HTML breakage today).
+
+
 ## [2026-08-25] session-end #350 | Analysis-only: decided NOT to re-add "Where are you starting from?" section to /locations/[slug]. Hero DestinationSearch + /trips station detail covers intent; old chain removed-for-cause (dead station-slug links). Zero code. Revisit if station-first demand shows in analytics.
 
 ## [2026-08-25] session-end #349 | Completed /locations/[slug] page — merged all BE+FE branches to develop, XSS fix via LocationOverview (DOMPurify). Prod deploy pending + migrate stations. → LOCATIONS-DETAIL-HUB-REDESIGN
