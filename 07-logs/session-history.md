@@ -4,6 +4,14 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #350 (2026-08-25)
+
+**Achieved (#350) — DECISION: "Where are you starting from?" section NOT re-added to /locations/[slug] (analysis-only, zero code).**
+
+User asked whether requirement's post-hero "Where are you starting from?" section should return on `/locations/hatyai`. Evidence: vault #344 (section existed) + #347 (commit `028cf304` removed it same-day — old chain linked dead station-slug URLs; 4 files deleted: RouteGridSection, TransportPointFilter, useLocationRouteFiltering, GridComponent3), live-page curl (no section/h2), BE `_summary_response` (destinations field incl. intra-location airport transfers). 3-role analysis (UX/UI + designer + BD) all concluded: don't re-add — hero `DestinationSearch` asks destination (origin known from slug), station granularity deferred to `/trips/{origin}/{dest}` list showing real departure station per trip. Re-adding = double location question back-to-back, no crawlable URL target, rebuilds removed-for-cause pattern with width-bug history (#342–#344). User confirmed: keep current, zero work. Revisit trigger: analytics show station-first demand ("hat yai airport taxi" intent) → then as DestinationSearch "From station" field (needs BE station→destination matrix), not separate section.
+
+---
+
 ## Session #349 (2026-08-25)
 
 **Achieved (#349) — Completed /locations/[slug] page: merged all pending BE+FE branches, fixed XSS in About section.**

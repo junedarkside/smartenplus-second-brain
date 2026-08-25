@@ -1,3 +1,5 @@
+## [2026-08-25] session-end #351 | Popular Routes card review (UX/design/BD/Next/Django) + responsive audit (PASS 320–1920) + mobile horizontal scroll-snap SHIPPED → develop `4c4b06c4`. Design otherwise kept: no price (vault product-split rule), no image (21/54 locations lack images), no carousel (data too small). 9/9 Playwright-verified. New open items: LOCATIONOVERVIEW-HYDRATION-WARNING, SELF-DESTINATION-CHIP. ISR flush needed on deploy.
+
 ## [2026-08-25] session-end #350 | Analysis-only: decided NOT to re-add "Where are you starting from?" section to /locations/[slug]. Hero DestinationSearch + /trips station detail covers intent; old chain removed-for-cause (dead station-slug links). Zero code. Revisit if station-first demand shows in analytics.
 
 ## [2026-08-25] session-end #349 | Completed /locations/[slug] page — merged all BE+FE branches to develop, XSS fix via LocationOverview (DOMPurify). Prod deploy pending + migrate stations. → LOCATIONS-DETAIL-HUB-REDESIGN
