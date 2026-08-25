@@ -4,6 +4,34 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #360 (2026-08-25)
+
+**Achieved (#360) — Closed the Meta Pixel deploy pipeline gap: user added the 3 GitHub Secrets, audit found+fixed a downstream break, merged to develop.**
+
+1. **Audited full env-var pipeline for the 3 Meta Pixel vars** (`NEXT_PUBLIC_META_PIXEL_ID`/`NEXT_PUBLIC_FB_APP_ID`/`NEXT_PUBLIC_FB_PAGE_ID`) across vault docs, `deploy.yml`, and `docker-compose.prod.yml` — confirmed correct at GitHub Secrets, Docker build-args (`deploy.yml:135-137`), and SSH runtime export (`deploy.yml:203-205`), but found they were **never written into `.env.deploy`** by `scripts/deploy-ghcr.sh`'s heredoc (lines 252-303) — the file docker-compose loads at runtime via `env_file:`. Container would've always received empty strings for all 3, regardless of secrets being set.
+2. **User confirmed the 3 secrets were added** to GitHub Actions Secrets & Variables.
+3. **Fixed the gap** — added 3 lines to the `.env.deploy` heredoc. **FE `72bdaac1`**, merged **FE develop `7d014f3c`**.
+4. Confirmed CSP still duplicated (nginx conf + `next.config.js`, nginx wins in prod) — flagged as future drift risk only.
+
+_(Superseded next session: the 3 vars were removed entirely in #361 once GTM was confirmed as the sole Pixel delivery path.)_
+
+## Session #359 (2026-08-25)
+
+**Achieved (#359) — Meta Pixel + GDPR/PDPA consent banner shipped end-to-end (frontend), audited own work with an opus reviewer, fixed 3 bugs, merged to develop.**
+
+1. **GTM Consent Mode v2 wired** — `pages/_app.js` gains a `beforeInteractive` consent-default `<Script>` (all 4 signals `denied`, `wait_for_update: 500`) that fires before GTM's own `afterInteractive` load, plus a `routeChangeComplete` listener pushing SPA `page_view` events GTM otherwise never sees on Pages Router. **FE `b39bc140`**.
+2. **`CookieConsentBanner.js`** (new, 74 lines) — bottom banner, localStorage key `smartenplus_cookie_consent`, Accept/Decline calls `gtag('consent','update',...)`, follows `DayTripMobileBookingBar`'s exact `fixed bottom-0` pattern at `z-[80]`.
+3. **`begin_checkout` dataLayer event added** — `pages/checkout/index.js`, the one missing Meta standard event (ViewContent/AddToCart/Purchase/PageView already existed via `sendGTMEvent` calls elsewhere, untouched this session).
+4. **CSP fixes, both layers** — `next.config.js` gained a production-only CSP (dev stays unrestricted so `127.0.0.1:8000` API calls aren't blocked — first attempt broke dev, caught via user's live console dump, fixed same session). **Then found the real blocker**: `nginx/sites-available/smartenplus.conf`'s own CSP header (wins over Next.js's in prod, zero Facebook domains) would have silently killed the pixel in production even with the FE fix correct — added `connect.facebook.net`/`www.facebook.com` to nginx's `script-src`/`img-src`/`connect-src`. Confirmed no manual VPS step needed: `docker-compose.prod.yml` bind-mounts `nginx/sites-available` read-only, so the fix ships on the next normal deploy.
+5. **`deploy.yml` gap closed** — user asked "did you update deploy.yml?", answer was no; added `NEXT_PUBLIC_META_PIXEL_ID`/`NEXT_PUBLIC_FB_APP_ID`/`NEXT_PUBLIC_FB_PAGE_ID` to both the `build-args` block and the `deploy` step's shell exports (2 separate places, easy to fix one and miss the other).
+6. **Self-audit found 3 real bugs** — user asked "review what you did, audit it." Diffed all 4 commits, sent the 2 suspected bugs to an opus code-reviewer for independent verification before touching code. Opus corrected the root-cause on bug 1 and caught a 3rd bug missed in the first pass:
+   - **`begin_checkout` duplicate-fire**: not RTK-query reference instability (structuralSharing keeps `data` stable on identical refetches) — real cause was `transformResponse` rebuilding `cart_item` on any *actually-changed* refetch (passenger edit, item delete), re-firing the push with no guard. Fixed with a `cartId`-keyed `useRef` (fires once per cart).
+   - **Consent banner privacy link 404s** — linked `/privacy-policy`, real route is `/privacy`. Fixed.
+   - **Stored consent never replayed to `gtag` on repeat visits** (opus caught this) — `updateGtagConsent` only ran inside click handlers; a returning visitor with saved `granted:true` stayed stuck at the `beforeInteractive` default (`denied`) every session after the first. Fixed: mount effect now replays stored consent.
+   - Also documented (comment, not a bug fix) that `next.config.js`'s CSP is dead in prod — nginx's wins — to prevent future domain-list drift between the two files.
+   **FE `dc4ad7d6` · `f0837c53` · `f44a8ff9` · `eb62b685`.**
+7. **Merged `feat/meta-pixel-consent` → `develop`**, pushed both. Fast-forward, clean. **FE develop `eb62b685`.**
+
 ## Session #358 (2026-08-25)
 
 **Achieved (#358) — Limit-reset continuity audit + Active Point Protocol designed, SWE-reviewed, shipped to vault.**
