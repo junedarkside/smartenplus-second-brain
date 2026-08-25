@@ -4,6 +4,31 @@ Archived from master-state.md. Latest session stays in master-state.md Section 1
 
 ---
 
+## Session #358 (2026-08-25)
+
+**Achieved (#358) — Limit-reset continuity audit + Active Point Protocol designed, SWE-reviewed, shipped to vault.**
+
+1. **Continuity audit (live, all 5 repos)** — verified everything pushed, zero ahead/behind, only known BE untracked test file. Found 5 gaps: wrap-up timing (fires at end only), master-state bloat, untracked test file, deploy-verify backlog, unwritten mid-task findings loss.
+2. **Active Point Protocol shipped** (user-proposed, SWE-reviewed against vault + project rules) — vault `CLAUDE.md` gains: new "Active Point Protocol" section (point set at substantive-task start, updated at milestones, resumed via "continue the point"), Session Init 3-part brief now shows `Active point` first line, Session Wrap-Up gains Step 0 (clear point → fold into master-state → delete). `active-point.md` gitignored (verified live via `git check-ignore`). Vault **`8f24f1a`**, pushed.
+3. **Resume commands documented (info-only, no files)** — `claude --resume`/`--continue`/`-r`/`-c` + 3-tier return path: resume → "continue the point" → "check vault".
+
+**Prior (#357, same day):** AD location image system + 5th double-prefix fix — see below.
+
+1. **Tiptap editor reuse correction** — user flagged AD's Location description field was a plain textarea when contract details already has a real WYSIWYG editor. First REUSE FIRST search missed it (only grepped `FormControl.js`'s switch cases, not actual usage sites — `Tiptap` isn't `FormControl`-wrapped). Swapped in `components/editor/customr-editor.js`'s `Tiptap`, same pattern `DayTripDetails.js` already uses. **AD `e4671f4`**.
+2. **Image preview + WordPress media library** — user asked if AD can preview images and reuse the WP media library contract details has. Found `ImageSelection.js`/`WordpressImages.js` are array-based (wrong shape for `Location.image`, a single field). Built `LocationImagePicker.js` reusing the shared building blocks instead (`ImageCard`, `ImagePreviewModal`, `ImageGrid`, `ImageSearchBar`, `useGetWordpressMediaQuery`) — click-to-preview + WP picker, single-select. **BE `2d58d5a` + AD `afef6fc`**.
+   - Backend half: `Location.image` now accepts either an uploaded file OR a verbatim http(s) URL string (WP-picked) — mirrors the `ImageGallery` external-URL convention. Confirmed via live curl that a WP URL stores correctly.
+3. **Image compression** — user pointed out an existing component handles this; broadened search found `operators/utils.py`'s `process_operator_image()` (WebP normalization, dimension+quality ladder, already used 3x elsewhere). Wired into `Location.image` uploads via a custom `LocationImageField`, same 300KB/1920px budget as operator hero cover.
+4. **Bug found while wiring the string-URL case**: `location.image.url` called unconditionally at 2 read sites in `stations/views.py` — would double-prefix a WP URL through the S3 storage backend. Added `location_image_url()` helper (same guard pattern as `operators/serializers.py`'s established `ImageGallery` convention).
+5. **Image thumbnail column** — user asked why no image shown in AD's Locations list. Found real gap (`allColumns` had no image field) AND a 3rd occurrence of the same double-prefix bug (`StationsByLocationSerializer`, backs the list endpoint, no guard). New `LocationThumbnail.js` (mirrors existing `PlaceThumbnail.js` minus multi-image badge) + fixed the serializer. **BE `4fc945e` + AD `a665a95`**.
+6. **User reported `/locations/hatyai` "doesn't display"** — root-caused via live network inspection: `/locations` index page uses a 4th, separate serializer (`SummaryLocationSerializer`, reached via `apis/urls.py`'s public `/locations` route, not the admin-dashboard-stations prefix) — same bug, 4th occurrence. Found a 5th while auditing (`LocationPageSerializer`, used by `/destinations` page, confirmed live-reachable via `pages/destinations/index.js`). Both fixed. **BE `1186b2a`**. Live-verified: Hatyai card now renders on `/locations`, 403 → 200.
+7. **Checked `/locations/phuket` per user's follow-up** — page itself clean, real bug fixed and confirmed self-healing. Found 4 unrelated 403s (contract/vehicle images) in the network log at first glance; root-caused via DOM/Performance API inspection that they were stale cross-navigation artifacts in the same long-lived browser tab, not a live bug on that page — reported honestly instead of guessing a fix.
+
+**This is now 5 occurrences of the identical double-prefix bug found and fixed across 2 sessions**, all using the same `get_image()`-style guard already established in `operators/serializers.py` for `ImageGallery`/`OperatorImageGallery`. Deliberately did NOT build a shared mixin/model property — stayed consistent with the existing per-serializer inline-guard convention; flagged that a 6th occurrence would be the signal to actually build the shared fix.
+
+**Prior (#356, same day):** SEO/AEO/GEO audit 12-item fix — see session-history archive.
+
+---
+
 ## Session #357 (2026-08-25)
 
 **Achieved (#357) — AD location image system built out (preview, WP media reuse, compression) + 5th occurrence of a double-prefix image URL bug hunted down and fixed across 2 sessions.**

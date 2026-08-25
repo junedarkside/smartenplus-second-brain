@@ -1,3 +1,5 @@
+## [2026-08-25] session-end #359 | Meta Pixel + GDPR/PDPA consent banner shipped via GTM Consent Mode v2 — cookie banner, begin_checkout event, SPA pageview tracking, nginx+next.config.js CSP fixes, deploy.yml env vars; self-audited with opus reviewer, found+fixed 3 bugs (begin_checkout duplicate-fire, broken privacy link, consent not replayed on repeat visits); merged develop eb62b685. Needs GitHub Secrets + GTM dashboard config before pixel goes live.
+
 ## [2026-08-25] session-end #358 | Limit-reset continuity audit (all 5 repos verified pushed/clean) + Active Point Protocol designed, SWE-reviewed, shipped to vault CLAUDE.md (point at task start, milestone updates, "continue the point" resume, wrap-up Step 0 clear, gitignored file) — vault 8f24f1a
 
 ## [2026-08-25] session-end #357 | AD location image system built (Tiptap reuse, image preview, WP media library reuse, upload compression, DataGrid thumbnail column) + hunted down 5th occurrence of double-prefix image URL bug across 4 different serializers/2 sessions, all fixed — BE develop 1186b2a, AD develop a665a95
