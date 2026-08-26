@@ -324,6 +324,7 @@ Global navigation catalog. Updated on every ingest.
 
 - [[smartenplus-synopsis]] — Project-wide orientation: stack, repos, payment, auth, current state, open work
 - [[ai-workflows]] — LLM Wiki pattern, ingestion/query/lint operations
+- [[csp-duplicate-headers-intersection]] — **ROOT CAUSE 2026-08-26 (#362).** Two `Content-Security-Policy` headers do NOT override — browser enforces **every** header independently, effective policy = **intersection**. A stale `next.config.js` header added in `b39bc140` silently vetoed Google Ads/GA4/Cloudflare for 1 day; nginx had owned CSP alone for 8 months and been extended 6×, none inherited. **Only `curl -I` against prod reveals it** — auditing each file in isolation (as #361 did) says both are correct. Also: `remotePatterns` ≠ CSP (MUI `<Avatar>` emits plain `<img>`, no optimizer exemption); `form-action` has **no `default-src` fallback**; never assume one policy is a subset of another — diff per-directive, backfill before deleting. Fix: nginx is sole CSP source.
 - [[nextjs-patterns]] — ISR, dynamic SSR disable, RTK Query, date handling
 - [[redux-store-architecture]] — 7-version persist migration, cross-tab cart invalidation, dual reset, SSR no-op storage, deprecated cart-slice, auth whitelist, 48hr TTL
 - [[rtk-query-advanced-patterns]] — child/children normalization, fixedCacheKey dedup, intentional missing invalidatesTags, bookmark 409/404 suppression, 'null' string guard
