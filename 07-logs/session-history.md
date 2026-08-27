@@ -1,6 +1,18 @@
 # Session History
 
 
+## Session #364 (2026-08-27)
+
+**Achieved (#364) — Fixed the Apply Coupon button's mobile height in checkout, found via a design-system audit that it inherited zero vertical sizing from the shared button helper.**
+
+1. **Root cause: `getButtonClasses('primary')` never carried a height.** `helpers/designSystem.js` `BUTTON_CONFIG.primary` only defines `base`/`hover`/`disabled`/`px-6`/`rounded-md` — no `py-*`, no `min-h-*`. `components/checkout/Coupon.js`'s Apply Coupon button (line ~213) relied on the helper alone, so its height collapsed to the text line-height (~20px) while the sibling coupon input on the same row carries an explicit `py-2`. On mobile the row switches to `flex-col` (`Coupon.js:200`), so the two controls stack and the height mismatch became visible — matches the user's report.
+2. **Confirmed this is a project-wide gap, not a one-off typo.** Grepped every `getButtonClasses` caller (9 files): every other one patches the missing height ad-hoc — e.g. `SearchDialogTrigger.js:18` appends `min-h-[40px]` manually. `Coupon.js` was the one caller that didn't, which is why only this button broke visibly. Also confirmed the helper misses `TOUCH_TARGET.minHeight` (44px, WCAG 2.2 AA), a token that already exists in the same file but was never wired into `BUTTON_CONFIG`.
+3. **Fixed scoped to `Coupon.js` only** — added `flex items-center justify-center min-h-[44px]` to the button's className, same override pattern as the existing `SearchDialogTrigger.js` precedent, rounded up to the WCAG 44px token since this is a primary submit action. Did not touch shared `BUTTON_CONFIG` (would ripple to the other 8 callers — out of scope for a mobile-height bug fix, flagged as a follow-up instead).
+4. **Not click-through verified** — local checkout page stuck on its skeleton loader in the test session (no live cart/order to populate `orderId`/`email` props Coupon.js requires). The `min-h-[44px]` arbitrary-value Tailwind syntax is proven to compile (same pattern already live at `SearchDialogTrigger.js:18`), so compile risk is nil, but visual confirmation on a real cart is still owed.
+5. **Shipped:** FE `c93d0021` on branch `fix/coupon-btn-mobile-height` → merged to `develop` (`591cdf8c`), pushed. Not yet on `main`.
+
+**Prior (#363):** closed a live PDPA/GDPR gap — Meta Pixel was firing regardless of cookie consent and reporting the Decline click itself to Meta; fixed via a `consent_granted` dataLayer event + GTM trigger swap, verified across 4 consent states in prod. → session-history.md.
+
 ## Session #363 (2026-08-26)
 
 **Achieved (#363) — Measured on prod that the Meta Pixel was ignoring the cookie banner entirely: it tracked before any choice, kept tracking after Decline, and reported the Decline click itself to Meta. Root-caused, fixed, and verified closed. Also refused a wildcard CSP "fix" for the fourth time and documented why.**
