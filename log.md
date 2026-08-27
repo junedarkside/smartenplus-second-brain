@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-08-27] session-end | #367 — Advance Hours added to admin-dashboard Contracts list (column, 0h data-quality flag, server-side sort); AD `d262ab2` + backend `4b42ef4`, both merged → develop; browser-verify + main-deploy pending
+
 ## [2026-08-24] session-end | #345 — committed+pushed+merged #344's width fix to smartenplus-frontend develop (a312ea50); BE branch merge still pending
 
 ## [2026-08-24] session-end | #344 — "Find Perfect Routes" width bug root-caused + fixed on /locations/[slug] (FE RouteGridSection.js, uncommitted, needs user re-verify)
