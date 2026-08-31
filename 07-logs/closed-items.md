@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-01 (session #374, same-day follow-up)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **[#374] develop→main deploy — trip-hero-image 403 fix** | same day | User shipped `develop`→`main` to prod immediately after handoff. Confirmed: `origin/main` == `origin/develop` == `d855cd0`, zero diff. Live-verified via browser on `/trips/krabi/ao-nam-mao-pier`: real WP pier photo now renders (was fallback gradient), `_next/image` request for the WP url is now a single clean URL (`https://smartenplus-wp-s3.s3.us-west-2.amazonaws.com/wp-content/uploads/2025/08/23134535/4-2.jpg`), no more double-prefix. Fix confirmed working in production. |
+
 ## Closed — 2026-07-11 (session #236)
 
 | Item | Closed | What shipped |
