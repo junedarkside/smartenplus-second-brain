@@ -64,6 +64,14 @@ Django REST Framework API. Public, payment, cart/order, admin groups. Language v
 - `POST /admin-dashboard-orders/apply-coupon/` — apply coupon to order.
 - `POST /admin-dashboard-orders/remove-coupon/` — remove coupon from order.
 
+### Route FAQs
+- `GET /admin-dashboard-routes/home/{departure}/{arrival}/` → `HomeViewSet.custom_route` — public, no auth. Returns route + active `faqs` + `route_faq` rate/operator aggregate.
+- `POST/PUT/PATCH/DELETE /admin-dashboard-routes/route-faqs/{id}/` → `RouteFAQViewSet` — agent-only (`IsRouteFAQAgent`, single service account), throttled 100/hr, no GET.
+- `GET/POST/PUT/PATCH/DELETE /admin-dashboard-routes/route-faqs-admin/{id}/` → `RouteFAQAdminViewSet` — staff/admin CRUD, paginated, 409 optimistic-lock via `updated_at`.
+- `GET /admin-dashboard-routes/route-picker/` → `RouteByLocationInfoPickerViewSet` — staff/admin, route autocomplete for FAQ picker. Params: `?search=`.
+- `GET /admin-dashboard-routes/home/?no_pagination=true` — public, no auth. Lists all bookable `Route`s (not `RouteByLocationInfo`) — same call the sitemap generator uses. No endpoint lists all FAQ routes directly; agent accounts must discover pairs via this list then probe `home/{departure}/{arrival}/`.
+- Details, schemas, sanitization, ISR side effects, route discovery, agent auth flow: [[route-faq-api-reference]]
+
 ---
 
 ## Deprecated
