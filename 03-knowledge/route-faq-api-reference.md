@@ -88,16 +88,14 @@ Notes:
 Router basename `route-faqs` → prefix `admin-dashboard-routes/route-faqs/`
 Auth: `IsRouteFAQAgent` (only account with `is_route_faq_agent=True`)
 Throttle: `route_faq_agent` scope, **100/hour**
-Methods: `POST, PUT, PATCH, DELETE` only — **no GET/list**.
-Serializer: `RouteFAQWriteSerializer` (all actions)
+Methods: **`POST` only** — no GET/list/PUT/PATCH/DELETE (`http_method_names = ['post', 'head', 'options']`). Restricted after a 3-lens (BD/backend/security) review concluded an unreviewed automation account editing/deleting existing rows (no per-row ownership check — could touch any FAQ, not just its own) was a bigger blast radius than it adding junk rows; staff already owns full CRUD via `route-faqs-admin/`.
+Serializer: `RouteFAQWriteSerializer`
 
 | Method | Path | Body | Response |
 |---|---|---|---|
 | `POST` | `route-faqs/` | `{route, question, answer, order, is_active}` | created `RouteFAQ` (write shape) |
-| `PUT`/`PATCH` | `route-faqs/{id}/` | same, partial for PATCH | updated `RouteFAQ` |
-| `DELETE` | `route-faqs/{id}/` | — | 204 |
 
-`perform_create`/`perform_update` set `updated_by = request.user`.
+`perform_create` sets `updated_by = request.user` **and force-overrides `is_active=False`**, regardless of what the request body sends. Agent-created FAQs never go live automatically — public read (`home/<from>/<to>/`) filters `is_active=True`, so a new row is invisible on the trip page until a staff member reviews it and flips `is_active=True` via `route-faqs-admin/` (PATCH). This is the review gate: staff, not the agent, decides what publishes.
 
 **No server-side `order` auto-assignment.** `perform_create` only sets `updated_by` — `order` defaults to `0` in the model if omitted from the body, and there is no unique constraint on `(route, order)`. Caller must compute the next `order` itself (read `faqs[]` from `home/<from>/<to>/`, take `max(order) + 1`) or new FAQs will collide at `0`/whatever value was sent and sort arbitrarily among ties.
 
@@ -116,13 +114,15 @@ Read serializer: `RouteFAQAdminReadSerializer` — write serializer: `RouteFAQWr
 
 | Method | Path | Query/body | Response |
 |---|---|---|---|
-| `GET` | `route-faqs-admin/` | `?route=<id>&page=&page_size=&all=true&ordering=order` | paginated `{count, total, page_size, results: [...]}` |
+| `GET` | `route-faqs-admin/` | `?route=<id>&is_active=false&page=&page_size=&all=true&ordering=order` | paginated `{count, total, page_size, results: [...]}` |
 | `GET` | `route-faqs-admin/{id}/` | — | single `RouteFAQAdminReadSerializer` |
 | `POST` | `route-faqs-admin/` | `{route, question, answer, order, is_active}` | created |
 | `PUT`/`PATCH` | `route-faqs-admin/{id}/` | body + optional `updated_at` | updated, or `409` |
 | `DELETE` | `route-faqs-admin/{id}/` | — | 204 |
 
 **Optimistic concurrency**: if request body includes `updated_at`, view does `select_for_update()` in a transaction and compares to DB row's `updated_at`. Mismatch → custom `Conflict` exception, `status_code=409`, message: `"This FAQ was changed by someone else. Reload and try again."` Omit `updated_at` to skip the check.
+
+**`?is_active=false` filter** (`get_queryset`) — lists all pending-review rows across every route in one call, not scoped to a single `route_id`. This is the review queue: agent-created FAQs land `is_active=False` (see `RouteFAQViewSet` above), so `GET route-faqs-admin/?is_active=false` is how staff find what needs review without knowing which route it landed on. Accepts `true`/`1` (case-insensitive) for active, anything else for false.
 
 Admin read shape adds fields not public: `route, created_at, updated_at, updated_by`.
 
@@ -198,7 +198,7 @@ Triggers Next.js on-demand ISR for `/trips/{from}/{to}`. Fires on both agent and
 | Endpoint | Auth | Notes |
 |---|---|---|
 | `GET home/<departure>/<arrival>/` | none | public trip page data |
-| `route-faqs/` (POST/PUT/PATCH/DELETE) | `IsRouteFAQAgent` | single service account, 100/hr throttle |
+| `route-faqs/` (POST only) | `IsRouteFAQAgent` | single service account, 100/hr throttle, force `is_active=False` |
 | `route-faqs-admin/` (full CRUD) | `IsAdminOrIsStaff` | staff/admin dashboard, 409 optimistic-lock |
 | `route-picker/` (GET) | `IsAdminOrIsStaff` | autocomplete source |
 
