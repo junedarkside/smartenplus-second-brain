@@ -1,5 +1,20 @@
 # Session History
 
+## Session #377 (2026-09-02)
+
+**Achieved (#377) — Diagnosed + fixed a prod TypeError crash on the admin-dashboard ticket detail page, merged to `develop`.**
+
+1. **User pasted a raw prod browser error** (`TypeError: Cannot read properties of undefined (reading 'arrivalairline')`) from a minified stack trace (`[id]-*.js`, `framework-*.js`). Traced the anonymous minified chunk to `pages/tickets/[id].js` → `components/tickets/UpdateTrip.js` via grep for the literal field name `arrivalairline` across admin-dashboard (5 hits) — no browser/sourcemap tooling needed, pure static trace.
+2. **Root cause: `UpdateTrip.js:52`** — `value?.content_object.infofields[0]` — optional chain stopped at `content_object`, leaving `.infofields[0]` unguarded. Confirmed via backend read (`bookings/serializers.py:159,195,328`, `tickets/serializers.py:28`) that `infofields` is `InfoFieldsSerializer(many=True, source='infofields_set')`, a reverse FK that serializes to `[]` whenever a booking item has zero related `InfoFields` rows — making `infofields[0]` (and thus `boardingInfo`) `undefined`, which then crashes on the very next line's unguarded property reads.
+3. **Plan-mode SWE agent review before implementing** — confirmed root cause, validated the 1-line fix, additionally caught a **second live instance of the identical unguarded-index pattern** at `components/booking/BookingInfoDetails.js:57` (`data?.infofields[0]`) — flagged as a fast-follow, not bundled into this fix since it isn't confirmed to crash today (all its downstream reads are already `info?.x` guarded). Also ruled out scope creep: `IntegerField`/`toNullableNumber()` gotcha doesn't apply (all touched backend fields are `CharField`/`TimeField`), no FormData involved (plain axios.patch JSON), endpoint confirmed `/admin-dashboard-tickets/*` = admin-only per CLAUDE.md.
+4. **Shipped the fix**: `boardingInfo = value?.content_object?.infofields?.[0] ?? {}` — one line, `UpdateTrip.js:52` only. Branch `fix/update-trip-infofields-crash`, committed, pushed, merged `--no-ff` → `develop` (`e67d669`), branch deleted (local+remote) post-merge per user instruction. Backend confirmed unchanged/not needed — `[]` for zero related rows is correct existing DRF behavior.
+
+**Resume point (EXACT):**
+1. Fast-follow available, not yet scheduled: apply the same `?.` guard to `components/booking/BookingInfoDetails.js:57` (`data?.infofields[0]` → `data?.infofields?.[0]`) — same anti-pattern, lower urgency, not confirmed crashing in prod.
+2. Also noted, not fixed: `UpdateTrip.js:74` (`new Date(travelingDate)`) has a separate non-crashing failure mode (`Invalid Date` if `traveling_date` missing) — different bug class, deliberately out of scope this session.
+3. This fix is on admin-dashboard `develop`, not `main` — no main-deploy request made or performed.
+4. Carry over all pre-existing Section 2 open items below (untouched this session).
+
 ## Session #376 (2026-09-01)
 
 **Achieved (#376) — Audited + fixed two frontend layout bugs on the blog detail page (article/sidebar 0px gap, global footer spacing too tight), both merged to `develop`; regression-swept 9 page templates confirming the footer fix is clean site-wide.**
