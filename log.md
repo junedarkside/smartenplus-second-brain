@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-09-03] session-end | #381 — FAQ SEO audit only, no code shipped. Checked vault (2026-06-15 prior audit), confirmed both prior P0 fixes (FAQ-in-SSR, dupe FAQPage schema) still holding on hatyai/koh-lipe live curl. New findings: order_by('order') on HomeViewSet.custom_route still lacks id tiebreaker (separate query from #380's admin-grid fix, latent not yet triggered); admin FAQ content has scraped Maps clipboard junk (harmless, sanitized, but hygiene gap); 2/7 computed FAQ answers (duration, first-departure) render generic fallback on routes lacking that aggregate data. 3 items opened in Section 2, none actioned — findings delivered to user in chat only.
+
 ## [2026-09-03] session-end | #380 — Route FAQs grid root-caused: bot-created FAQs forced is_active=False (review gate, by design) undiscoverable w/ no status filter + unstable pagination ordering; separate empty-Q&A finding traced to migration 0040 backfill (not a bug). Fixed BE fe01aea (ordering tiebreak, route_name serializer field) + AD 3562bdb (status filter, row-count fix), merged → develop both. User shipping to prod manually.
 
 ## [2026-09-02] session-end | #379 — daytrip products leaking into /trips/<from>/<to> transportation listing, root-caused (TripSerializer never filtered service_category) + fixed both repos (BE f49dc56, FE 34fade62), 3-agent reviewed, merged → develop both; admin-dashboard check + main-deploy pending
