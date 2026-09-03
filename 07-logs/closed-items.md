@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-03 (session #382, same-day follow-up)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **[#381→#382] `ROUTE-FAQ-ORDER-TIEBREAKER-DETAIL-PATH`** | same day | Backend `HomeViewSet.custom_route`'s `Prefetch('faqs', queryset=RouteFAQ.objects.filter(is_active=True).order_by('order'), ...)` (`products/views.py:1666`) had no `id` secondary sort — separate query from the admin-grid one #380 already fixed, since this `Prefetch`'s explicit `.order_by()` overrode the model's `Meta.ordering`. Fixed: `.order_by('order', 'id')`, matching #380's exact pattern. Branch `fix/route-faq-tiebreaker-public-route`, verified `manage.py check` clean + `products`/`stations` suite 105/106 pass (identical pre-existing failure as #380's baseline, no regression). Committed `a34eeb3`, merged `--no-ff` to backend `develop` (`f7c93e8`), pushed. Combined with this session's earlier FE `.sort()` by `order` field (`fix/route-faq-be-priority-order`, FE `develop` `206ea5e8`), both the rendering-order and the underlying API-tie-instability halves of this bug are now closed. Both `RouteFAQ` ordering paths (admin-grid #380 + public trip-page #382) fixed. |
+
 ## Closed — 2026-09-01 (session #374, same-day follow-up)
 
 | Item | Closed | What shipped |

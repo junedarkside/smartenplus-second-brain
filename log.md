@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-09-03] update | #382 follow-up — backend order_by tiebreaker fixed on public trip-page FAQ path too (HomeViewSet.custom_route, products/views.py:1666, `.order_by('order','id')`), closing the last half of the ordering bug FE-mitigated earlier same session. Merged backend develop f7c93e8. Both RouteFAQ ordering paths (admin-grid #380 + public route #382) now fixed. Section 2 tiebreaker item closed → 07-logs/closed-items.md.
+
 ## [2026-09-03] session-end | #382 — Trips FAQ: BE-authored RouteFAQ now fully replaces FE-computed fallback (was always blended), sorted by order field. 3-agent review (nextjs/uxui/SWE) before implementing, all converged same fix. Shipped FE develop 206ea5e8. Live-verified on hatyai/koh-lipe: 8 FAQ items → 1 — confirms fix works AND confirms the flagged content-thinness risk (no minimum-count threshold) is real, not just theoretical. Open: threshold decision, BE order_by tiebreaker still unfixed.
 
 ## [2026-09-03] session-end | #381 — FAQ SEO audit only, no code shipped. Checked vault (2026-06-15 prior audit), confirmed both prior P0 fixes (FAQ-in-SSR, dupe FAQPage schema) still holding on hatyai/koh-lipe live curl. New findings: order_by('order') on HomeViewSet.custom_route still lacks id tiebreaker (separate query from #380's admin-grid fix, latent not yet triggered); admin FAQ content has scraped Maps clipboard junk (harmless, sanitized, but hygiene gap); 2/7 computed FAQ answers (duration, first-departure) render generic fallback on routes lacking that aggregate data. 3 items opened in Section 2, none actioned — findings delivered to user in chat only.
