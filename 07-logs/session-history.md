@@ -1,5 +1,19 @@
 # Session History
 
+## Session #381 (2026-09-03)
+
+**Achieved (#381) — FAQ SEO audit only, no code shipped. Checked vault for prior work on `/trips/<from>/<to>` FAQ section, then ran a fresh `nextjs-fullstack-architect` agent audit against live dev server (curl'd SSR HTML pre-hydration) to check for regressions on the prior 2026-06-15 fix and find new gaps.**
+
+1. **Vault check first:** found `01-projects/trip-route-page-seo-aeo-geo-audit.md` (2026-06-15) — prior audit had found FAQ missing from SSR HTML (P0) + duplicate FAQPage JSON-LD (P0), both shipped fixed at FE `45f5d7e`. Also cross-referenced #380's finding above (`is_active` review gate, `order` tiebreaker) as a related upstream data-quality risk to check for symptoms of.
+2. **Backend read (main thread, not agent):** confirmed `HomeViewSet.custom_route` (`products/views.py:1648-1711`) prefetches FAQs via `RouteFAQ.objects.filter(is_active=True).order_by('order')` — no leak of pending/inactive FAQs to the frontend. Two nuances flagged for the live-agent check: (a) staff-activate → FE-visible lag up to ~5-10min (ISR revalidate 300s + backend aggregate cache 300s stacked, no on-demand revalidate wired); (b) `.order_by('order')` still has no `id` tiebreaker on this specific read path (separate from the admin-grid query #380 already fixed) — ties on `order=0` remain DB-nondeterministic here.
+3. **Agent audit (`nextjs-fullstack-architect`, foreground) against `/trips/hatyai/koh-lipe`** (same route as the 2026-06-15 audit, for direct before/after comparison), live `next dev` + raw `curl` pre-hydration, plus a direct backend fetch of the route API (2x, 3s apart) to check ordering stability:
+   - **Regression check: both prior fixes still holding.** FAQ accordion present in SSR HTML (8 `<details>` pairs, gated on `contracts.length`); exactly 1 FAQPage JSON-LD block (`faqMainEntity` still correctly nulled when `contracts.length > 0`).
+   - **New P1:** admin FAQ answer content has scraped Google-Maps clipboard junk (`<!--TgQPHd...-->` HTML comments) in the raw DB field — currently harmless (`sanitizeHtml()` strips it before SSR/JSON-LD) but flagged as a content-hygiene gap since sanitization only strips disallowed tags, not scraped cruft that happens to be visible text.
+   - **New P1:** confirmed the `order_by('order')` no-tiebreaker gap from step 2 is real but latent — route currently has only 1 admin FAQ (`order=0`), so no live instability yet; will surface the moment a 2nd FAQ is added at the default `order=0`, at which point which FAQ opens-by-default (the featured-snippet-target slot) becomes nondeterministic per request/rebuild. One-line fix identified, not applied (audit-only): `.order_by('order', 'id')`.
+   - **New P2:** 2 of 7 computed FAQ answers (journey duration, first departure time) render generic fallback text on this route — `route_faq` backend aggregate has no duration/first-departure fields to source from, weakening AEO on exactly the fact-lookup query types answer engines want concrete data for.
+   - **Verified clean, no action:** citation-link whitespace-only diff between DOM and JSON-LD (word-for-word match after normalization); first-FAQ-open-by-default is native `<details>` semantics, not a WCAG violation.
+4. **Findings reported to user in chat only** — user confirmed chat-only delivery, no vault-note write requested for this audit (per plan-mode Q&A this session). Offered to ship the 1-line `order_by` tiebreaker fix; not yet actioned.
+
 ## Session #380 (2026-09-03)
 
 **Achieved (#380) — Root-caused why prod admin-dashboard Route FAQs grid showed only 1 of 3 newly-added Ao Nang→Koh Lanta FAQs, plus a separate "empty Question/Answer" symptom on old rows. Both traced to code/migration history (not guessed), fixed 4 real issues, shipped to `develop` on both repos.**
