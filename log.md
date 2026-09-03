@@ -2,6 +2,10 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-09-03] session-end | #380 — Route FAQs grid root-caused: bot-created FAQs forced is_active=False (review gate, by design) undiscoverable w/ no status filter + unstable pagination ordering; separate empty-Q&A finding traced to migration 0040 backfill (not a bug). Fixed BE fe01aea (ordering tiebreak, route_name serializer field) + AD 3562bdb (status filter, row-count fix), merged → develop both. User shipping to prod manually.
+
+## [2026-09-02] session-end | #379 — daytrip products leaking into /trips/<from>/<to> transportation listing, root-caused (TripSerializer never filtered service_category) + fixed both repos (BE f49dc56, FE 34fade62), 3-agent reviewed, merged → develop both; admin-dashboard check + main-deploy pending
+
 ## [2026-08-27] session-end | #367 — Advance Hours added to admin-dashboard Contracts list (column, 0h data-quality flag, server-side sort); AD `d262ab2` + backend `4b42ef4`, both merged → develop; browser-verify + main-deploy pending
 
 ## [2026-08-24] session-end | #345 — committed+pushed+merged #344's width fix to smartenplus-frontend develop (a312ea50); BE branch merge still pending
