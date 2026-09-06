@@ -1,5 +1,20 @@
 # Session History
 
+## Session #384 (2026-09-03)
+
+**Achieved (#384) — Django admin `FieldError` on Charge search (`billing_profile__email` bad lookup) root-caused, fixed, live-tested, merged to develop. Backend only.**
+
+1. **User report:** admin search on `/securelogin/cards/charge/?q=...` throws `FieldError: Unsupported lookup 'email' for ForeignKey or join on the field not permitted`, blocking every charge search by ref/order/customer. Asked for SWE-agent review against project rules before fix.
+2. **Root cause confirmed by reading code:** `ChargeAdmin.search_fields` (`cards/admin.py:98`) listed `'billing_profile__email'`. `BillingProfile` model (`billings/models.py:55`) has no `email` field — only `guest_email` (EmailField, line 58) and a `user` FK (whose email is already reached separately via `billing_profile__user__email`, line 99). Repo-wide grep confirmed exactly one bad reference, nowhere else.
+3. **Fix, one line:** `billing_profile__email` → `billing_profile__guest_email` in `cards/admin.py:98`. `manage.py check cards` clean.
+4. **Live-tested in browser** against the exact failing URL (`q=ZBJ6603468`) — 2 results returned, no `FieldError`.
+5. **Shipped:** branch `fix/charge-admin-search-billing-email`, committed (`f922f97`), pushed, `--no-ff` merged → `develop` (`9246040`), branch deleted local+remote (explicit "delete it" request).
+6. **FE coupling check before close-out:** grepped smartenplus-frontend for `billing_profile`, `guest_email`, `/cards/charge/` — zero overlap. FE's `guest_email` hits are the unrelated Review model's own field; `billing_profile_slug` in checkout is a different, correctly-named field; no FE code calls the Django admin path at all. Confirmed backend-only, no serializer/API surface touched.
+
+**Resume point (EXACT):**
+1. **Nothing open — fully closed this session.** No new Section 2 items, no deploy-queue row (admin-only fix, not a customer-facing feature needing a main-deploy decision).
+2. Carry over all pre-existing Section 2 open items below (untouched this session).
+
 ## Session #383 (2026-09-03)
 
 **Achieved (#383) — Card decline stuck at `payment_pending` forever, root-caused and fixed end-to-end across both repos; investigated + fixed the actual UI gap live in-browser after the first fix's checkout-page retry UI turned out unreachable. All 3 fixes merged → develop, both repos.**
