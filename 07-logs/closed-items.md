@@ -2,6 +2,14 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-07 (session #386)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **[#385→#386] `E2E-CTA-JUMP-VIEWPORT-FLAKE`** | #386 | Reclassified, not "fixed" as originally hypothesized — a 3-agent root-cause pass proved this was never a router race or a hydration-timing issue. `routeChangeStart`/`routeChangeComplete` both fire correctly; the destination date's data-fetch just takes longer (~10-15s) than the test's default 5s `toHaveURL` timeout under dev-server load. Fixed by extending the assertion's timeout, not by adding a pre-click wait (the originally-planned fix, confirmed by direct instrumentation to be the wrong lever). Branch `fix/cta-jump-race-test-mock` (`0e3234c1`), merged `develop` `97f643aa`. 8/8 + 10/10 verified across small-desktop and all 7 viewports respectively. |
+| **[#385→#386] `E2E-CART-MANAGEMENT-SPEC-BROKEN`** | #386 | Fully rewritten against the real checkout-embedded cart flow (confirmed: no standalone `/cart` route exists). 7 of 9 old describe blocks salvaged with real testids/fixture shapes; "Cart Responsive Design" dropped (no collapsible mobile cart UI exists to test). Branch `fix/cart-management-spec-rewrite` (`15d78f90`), merged `develop` `8ab542f2`. 12/12 passes on all 7 viewports. |
+| **[#385→#386] `E2E-CHECKOUT-FLOW-BROKEN`** | #386 (partially — see new open item `CHECKOUT-STEP1-FORMIK-VALIDATION-MYSTERY`) | Answered the open question from #385: confirmed **stale/fabricated test file, not a live regression** — same disease as cart-management.spec.ts. Fully rewritten against the real single-page stepper. Branch `fix/checkout-flow-spec-rewrite` (`5d9a2656`), merged `develop` `ec394ae5`. 13/20 pass on desktop (12/20 touch viewports, one test self-skips there via runtime `readonly` detection). 7 tests marked `test.fixme`, not closed — see new Section 2 item, carried forward to #387. |
+
 ## Closed — 2026-09-03 (session #382, same-day follow-up)
 
 | Item | Closed | What shipped |
