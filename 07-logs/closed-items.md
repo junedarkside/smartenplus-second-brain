@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-08 (session #389)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **[#386→#387→#389] `CHECKOUT-STEP1-FORMIK-VALIDATION-MYSTERY`** | #389 | Root cause was never a Formik/React/mui-tel-input bug — two test-authoring bugs in `checkout-flow.spec.ts` itself. (1) `fillContact`'s phone fixture typed `'66812345678'` as the national number, but `MuiTelInput` auto-prepends the Thai country code, producing the malformed `+6666812345678` that `libphonenumber-js` correctly rejects as invalid — so `initialPhone` legitimately resolved to `''` on every Redux round-trip; not a wipe, not a race. Fixed with the real 9-digit national number (`'812345678'` → `+66812345678`). (2) The "requires the terms checkbox" test clicked Next before Confirmation's own Formik ref (`acceptRef`) had mounted, hitting `stepValidations[2]`'s "Form not ready" guard instead of the real validation message — fixed with the same mount-wait (`#checkBox1` visible) the adjacent passing test already used. Confirmed via live instrumented capture (React-fiber walk off the `<form>` DOM node, `page.evaluate`, no product code touched) — proved both a 2-agent-reviewed `enableReinitialize`/unstable-memo-deps theory and a `mui-tel-input` internal-resync-effect theory wrong before finding the real cause. All 7 `test.fixme` tests un-skipped; 20/20 pass in `checkout-flow.spec.ts` with `--workers=1` (default-parallelism flakes confirmed to be dev-server contention, unrelated, pass standalone). Branch `debug/checkout-step1-formik-mystery` (`95910b0e`), merged `develop` `bc289a79`. Zero app code changes — fix is entirely in the test file. |
+
 ## Closed — 2026-09-07 (session #386)
 
 | Item | Closed | What shipped |
