@@ -1,5 +1,16 @@
 # Session History
 
+## Session #391 (2026-09-08)
+
+**Achieved (#391) — Payment success dialog now tells users a confirmation email is on its way, with a junk-folder hint. Shipped to frontend `develop`.**
+
+1. **Grounded the copy in real backend behavior before writing anything.** Checked `orders/utils.py::send_order_confirmation_email` and its caller `payments/services.py::_send_payment_notifications` — confirmed there's exactly one confirmation email (covers both order and booking, no separate booking email exists), fired from a `transaction.on_commit` hook wrapped in try/except (failures logged, never surfaced or retried). This ruled out any copy implying guaranteed/instant delivery — landed on "on its way," not "sent" or "check your inbox now."
+2. **Reviewed from 3 angles before drafting copy: UX/UI, Next.js/backend-reality, and business/support-cost.** UX: success moment is peak trust, keep it to one line below the existing confirmation text, not above it. Backend reality: copy must match the fire-and-forget on_commit guarantee, nothing stronger. Business: the junk-folder line is the single highest-leverage sentence — deflects the single most common "I never got my confirmation" support ticket at near-zero cost.
+3. **Built a visual mockup artifact first** (before touching code) showing all 3 real states `PaymentResultDialog.js` can render — `success`, `failed`, and the silent `null`/no-dialog case for every other order status (`pending`, `processing`, etc.) — plus a before/after comparison of the proposed success-state copy addition and the reasoning behind it. User reviewed and approved via the artifact before implementation.
+4. **Implemented exactly as mocked.** `components/order/PaymentResultDialog.js`: added `MailOutlineIcon` + a `bg-green-50` note block under the existing success message — "A confirmation email with your booking details is on its way. Don't see it in a few minutes? Check your spam or junk folder." Failed-state branch untouched. Lint clean.
+5. **Live browser verification skipped, user-approved trade-off.** The dialog only opens for a real `order.status === 'paid'` order (session-storage-gated, fires once per `current_charge_id`) — no test/story harness exists for this component. Given the copy is pixel-identical to the pre-approved mockup and lint passed, user chose to skip rigging a throwaway test route or completing a real payment just to eyeball it.
+6. **Committed, pushed, merged to frontend `develop`.** Branch `feat/payment-dialog-email-sent-note` (`15f0e3cb`), pushed to origin, fast-forward-merged into `develop`, pushed (`7c200134..15f0e3cb`). Not merged to `main` — not requested this session.
+
 ## Session #390 (2026-09-08)
 
 **Achieved (#390) — Phone placeholder fix landed + closed; large cross-repo merged-branch cleanup.**

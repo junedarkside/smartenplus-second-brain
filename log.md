@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-09-08] session-end #392 | contract info_fields prod-risk audit — 4 threads checked (#330/#329 shipped-safe, #327 cleanly reverted, #283 found ALREADY SHIPPED despite vault tracking it unmerged). 2 review agents (django-reviewer, swe-reviewer) independently confirmed #283's direction-column feature is safe, complete, no prod risk. Vault corrected: master-state.md CHECKOUT-ZONE-CARD row updated from stale "none merged" to confirmed-shipped. No code changes. Report artifact: https://claude.ai/code/artifact/a5a65061-955c-447d-8343-04dac62f3347
+
 ## [2026-09-03] update | #382 follow-up — backend order_by tiebreaker fixed on public trip-page FAQ path too (HomeViewSet.custom_route, products/views.py:1666, `.order_by('order','id')`), closing the last half of the ordering bug FE-mitigated earlier same session. Merged backend develop f7c93e8. Both RouteFAQ ordering paths (admin-grid #380 + public route #382) now fixed. Section 2 tiebreaker item closed → 07-logs/closed-items.md.
 
 ## [2026-09-03] session-end | #382 — Trips FAQ: BE-authored RouteFAQ now fully replaces FE-computed fallback (was always blended), sorted by order field. 3-agent review (nextjs/uxui/SWE) before implementing, all converged same fix. Shipped FE develop 206ea5e8. Live-verified on hatyai/koh-lipe: 8 FAQ items → 1 — confirms fix works AND confirms the flagged content-thinness risk (no minimum-count threshold) is real, not just theoretical. Open: threshold decision, BE order_by tiebreaker still unfixed.
