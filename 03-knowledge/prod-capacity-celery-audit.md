@@ -1,24 +1,28 @@
 ---
 name: prod-capacity-celery-audit
-description: Prod-capacity audit of the small EC2 box — web 2-slot + celery 1-serial both at floor; 24 celery tasks/7 apps; sync_pending_charges is the heaviest recurring blocker; beat schedule lives in prod DB (DatabaseScheduler) not code. Fix for both tiers = bigger instance, not a flag.
+description: Prod-capacity audit of the smallest-tier EC2 box (t2/t3/t4g.micro, 1 vCPU/1GB, burstable, user-confirmed 2026-09-09) — web 2-slot + celery 1-serial both at floor; 24 celery tasks/7 apps; sync_pending_charges is the heaviest recurring blocker; beat schedule lives in prod DB (DatabaseScheduler) not code. Fix for both tiers = bigger instance, not a flag.
 metadata:
   type: knowledge
   status: active
   date: 2026-06-21
+  updated: 2026-09-09
   source: source-verified (smartenplus-backend, docker-compose-rds.yml = prod)
 ---
 
 # Prod-Capacity / Celery Audit
 
-> **Source-verified 2026-06-21.** Surfaced while answering "EC2 too small → why poll?" for CS ([[cs-architecture-decision]]). Production = `docker-compose-rds.yml`.
+> **Source-verified 2026-06-21, instance tier confirmed 2026-09-09.** Surfaced while answering "EC2 too small → why poll?" for CS ([[cs-architecture-decision]]). Production = `docker-compose-rds.yml`.
 
 ## TL;DR
 
-The small prod box is **capacity-constrained on the worker tier as much as the web tier.** Both are at floor:
+Prod runs on **the smallest EC2 tier** — user-confirmed 2026-09-09: micro class (t2/t3/t4g.micro), 1 vCPU, 1GB RAM, burstable/CPU-credit model. Container `mem_limit` budget alone totals 822MB, leaving almost no headroom against the 1GB ceiling once host OS + Docker daemon overhead is counted. Exact sub-type (t2 vs t3 vs t4g) not pinned in repo/vault — confirm in AWS console if it matters (t4g is ARM/Graviton, cheaper; t2/t3 are x86).
+
+The box is **capacity-constrained on the worker tier as much as the web tier, and on the instance tier above both.** All three floors stack:
 - **Web:** 2 Gunicorn slots (`--workers 1 --threads 2`), 256MB cap.
 - **Celery:** 1 worker, `--concurrency=1` = ONE task at a time (serial queue), 150MB child-recycle.
+- **Instance:** 1 vCPU shared by every container + host OS; CPU credits (burstable) drain under sustained load and throttle to baseline (~10-20% of 1 core) — worse than a hard cap, since it degrades gradually instead of failing fast.
 
-The only lever that relieves either is a **bigger instance** — no config flag adds capacity without more RAM. If the site feels slow under load, the likely culprit is the single worker stalling behind `sync_pending_charges`, not the web tier.
+The only lever that relieves any of these is a **bigger instance** — no config flag adds capacity without more vCPU/RAM. If the site feels slow under load, the likely culprit is CPU-credit exhaustion or the single celery worker stalling behind `sync_pending_charges`, not the web tier alone.
 
 ## Topology (docker-compose-rds.yml)
 
