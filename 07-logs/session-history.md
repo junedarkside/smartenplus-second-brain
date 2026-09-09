@@ -1,5 +1,18 @@
 # Session History
 
+## Session #392 (2026-09-08)
+
+**Achieved (#392) — Read-only audit: is any prior "contract info_fields" work a DB/prod risk? Verdict: no. Found + will-fix one stale vault entry.**
+
+1. **Scoped the ask.** "Contract info fields" mapped to 4 distinct vault/git threads: #330 (pickup-field `info_fields` gating, FE), #329 (zone-gated checkout fields, all 3 repos), #327 (general-transfer zone extension), #283 (CHECKOUT-ZONE-CARD direction column). Confirmed via `git log --all` across backend+frontend plus targeted reads of vault's `contract-ambiguity-audit` round files and `adr-info-fields-casing.md`.
+2. **#330 and #329 — already shipped, no migration involved in #330, 128/128 backend tests green at #329 merge. No action needed.**
+3. **#327 — confirmed fully reverted, zero residue.** All 3 feature branches deleted, backend migrations unmigrated, nothing ever pushed. `git branch -a` clean, working tree clean.
+4. **#283 — found the vault was wrong.** `master-state.md`'s CHECKOUT-ZONE-CARD row said "6 branches pushed, none merged, remaining: VALIDATE + MERGE STACK." Git shows commit `ea673d7` (direction column + station_type/iata) merged to **both** backend `develop` and `main`, and the full frontend consumer chain confirmed on frontend `develop`. Already shipped, not pending.
+5. **Spawned 2 background review agents to independently verify #283 is actually safe, not just merged.** `django-reviewer` (backend-architect) traced migration safety and write path. `swe-reviewer` (code-reviewer) traced every frontend consumer confirming graceful fallback for pre-migration rows. Both independently concluded: **no production risk.**
+6. **Published a visual audit report artifact** summarizing all 4 threads + both agents' findings.
+7. **Corrected `master-state.md` Section 2's CHECKOUT-ZONE-CARD row** to reflect confirmed-shipped status instead of the stale "none merged" note.
+8. **No code changes this session** — pure investigation + reporting + vault correction.
+
 ## Session #391 (2026-09-08)
 
 **Achieved (#391) — Payment success dialog now tells users a confirmation email is on its way, with a junk-folder hint. Shipped to frontend `develop`.**
