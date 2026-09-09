@@ -1,5 +1,15 @@
 # Session History
 
+## Session #394 (2026-09-09)
+
+**Achieved (#394) — Closed 3 resume-point items via ground-truth verification; user claim needed correction on 2 of them.**
+
+1. User said "we did all" for `TRIP-SEARCH-QUERY-COUNT-REMAINDER`, `NEXTJS-BUILD-JSXDEV-FAILURE`, `PAYMENT-DIALOG-EMAIL-NOTE-NOT-LIVE-VERIFIED`. Checked each against git/code before accepting.
+2. **TRIP-SEARCH-QUERY-COUNT-REMAINDER**: `git log --all` across every local/remote branch found zero commits touching the 5 flagged `Contract` fields since `82c605e`. Reported this directly instead of assuming user was right. User then clarified: re-measured, decided 251 queries acceptable — no code change needed. Closed as "reviewed, accepted," not "fixed."
+3. **NEXTJS-BUILD-JSXDEV-FAILURE**: ran `rm -rf .next && npm run build` twice — confirmed genuinely clean, no jsxDEV error. This one held up. Root cause still untraceable (no relevant dependency-bump commit found).
+4. **PAYMENT-DIALOG-EMAIL-NOTE-NOT-LIVE-VERIFIED**: file unchanged since original commit, no test file exists — no git evidence of verification. User confirmed they manually browser-checked it and it works. Accepted — a look-only check legitimately leaves no git trace.
+5. Updated `master-state.md` Section 1 resume-point (removed all 3), `07-logs/closed-items.md` (full closure detail), `07-logs/log.md`. No application code touched.
+
 ## Session #392 (2026-09-08)
 
 **Achieved (#392) — Read-only audit: is any prior "contract info_fields" work a DB/prod risk? Verdict: no. Found + will-fix one stale vault entry.**

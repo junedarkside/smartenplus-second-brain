@@ -2,6 +2,14 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-09 (session #394)
+
+| Item | Closed | What shipped |
+|------|--------|-------------|
+| **[#388→#394] `TRIP-SEARCH-QUERY-COUNT-REMAINDER`** | #394 | Reviewed, not fixed — closed as "accepted" not "resolved." Ground-truth check confirmed no commit anywhere (all branches, all remotes, `git log --all`) touches `select_related`/batch-context for the 5 flagged `Contract` fields (`route`/`cancellation_policy`/`timeline`/`general_information`/`baggage_policy`, `products/serializers.py:436-442`) since the #388 fix (`82c605e`). User re-measured/reconsidered and decided 251 queries for a 3-trip/7-contract search is acceptable as-is — no further optimization scheduled. |
+| **[#389→#394] `NEXTJS-BUILD-JSXDEV-FAILURE`** | #394 | Confirmed fixed — `rm -rf .next && npm run build` run twice, both exit 0, full static generation succeeded, no `jsxDEV`/`unhandledRejection`/`TypeError` anywhere. Root cause never pinned down: no relevant `package.json`/lockfile commit found near the fix window, most likely a caret-range dependency resolution shift on a fresh `node_modules` install rather than a deliberate code change. |
+| **[#391→#394] `PAYMENT-DIALOG-EMAIL-NOTE-NOT-LIVE-VERIFIED`** | #394 | User manually browser-checked `PaymentResultDialog.js`'s success state (email-note copy + `MailOutlineIcon`/`bg-green-50` block, lines 32-38) — confirmed rendering correctly. No git trace expected/found since it was a look-only verification, not a code change; file unchanged since the original `15f0e3cb` commit. |
+
 ## Closed — 2026-09-08 (session #389)
 
 | Item | Closed | What shipped |
