@@ -56,6 +56,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Knowledge — Airport Transfer
 
+- [[contract-location-autocomplete-testing]] — **READY TO TEST 2026-09-14.** 3-specialist review (BE/FE/AD) of contract pickup/dropoff location assignment. Audit complete, test plan prepared, handbook published. Testing scheduled this morning. Key finding: Contract does NOT store lat/lng — `CartItemCheckoutInfo` does (migration 0016). No `place_id` stored anywhere. Google autocomplete uses 2-step geocoder (not Places geometry). **4 critical untested paths:** partial-update coord wipe (`carts/views.py:597-602`), direction operator-precedence edge (`carts/utils.py:381`), PlacePicker lat/lng extraction (0 tests), checkoutPersistence lat/lng round-trip (0 tests). 15 prioritized missing tests across BE/FE/AD. AD has 0% coverage for `pickup_requires_zone` toggle.
 - [[airport-transfer-rate-dynamic-pricing]] — **PATTERN 2026-08-04.** Full FE+BE flow for airport transfer dynamic pricing by date. Two paths: resolveZone (zone polygon → date-agnostic min price) + fare-calendar (route, 15-day, date-filtered). Critical gap: resolveZone price ≠ cart price when date-specific ratecards exist. Date filter only applied at cart-add via `filterRatecardsForCheckout()`. Key files: `Contract_RateCard` (`operators/models.py:521`), `ResolveZoneView` (`stations/views.py:638`), `filterRatecardsForCheckout` (`helpers/checkoutRatecards.js`), `ZonePriceBox.js`.
 
 ## Knowledge — UX/Design

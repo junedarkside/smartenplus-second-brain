@@ -4,28 +4,27 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-09 (session #400)
+**Updated:** 2026-09-14 (session #401)
 
-**Achieved (#400) — Confirmed prod EC2 concurrency ceiling + pinned instance tier in the vault audit (backend, research-only, no code changed).**
+**Achieved (#401) — Set up testing plan for Google Location Autocomplete on Contract pickup/dropoff (research + vault, no code changed).**
 
-1. **User asked**: how many concurrent users can `docker-compose-rds.yml` (prod) handle, then which EC2 instance is the bottleneck.
-2. **Re-verified against live file**: `docker-compose-rds.yml` unchanged since the 2026-06-21 audit — gunicorn `--workers 1 --threads 2` (2 concurrent request slots), celery `--concurrency=1` (1 serial task), matches existing vault note [[prod-capacity-celery-audit]] exactly. Explained the practical distinction between "2 in-flight request slots" (hard cap) vs. "concurrent users browsing" (much higher, since each user only occupies a slot for the duration of one request) — real risk is burst/overlap (checkout rush, payment webhook spike) queuing behind the 2-slot/1-task ceiling and risking the 30s gunicorn timeout.
-3. **User confirmed the EC2 instance is the smallest tier** — micro class (t2/t3/t4g.micro: 1 vCPU, 1GB RAM, burstable/CPU-credit model). Not previously pinned in repo or vault (no terraform/CDK, `.elasticbeanstalk/config.yml` doesn't carry instance type). Cross-referenced against master-state's existing `TASK-1VCPU-MONITOR` open item (Section 2) — CPU-credit-drain language there already implied a burstable T-family instance, now confirmed directly by user.
-4. **Updated vault**: `03-knowledge/prod-capacity-celery-audit.md` — added confirmed instance tier to TL;DR and frontmatter description, noted total container `mem_limit` budget (822MB) leaves almost no headroom against the 1GB ceiling, added CPU-credit throttling as a third stacked bottleneck (instance tier, on top of the existing web/celery tier findings). `index.md` entry updated to match.
-5. **Scope discipline**: no code touched (pure infra/capacity question), no `docker-compose-rds.yml` edit proposed or made — user didn't ask for a fix, just wanted the diagnosis. Exact sub-type (t2 vs t3 vs t4g) still not pinned — flagged as an open question if it matters for pricing/ARM-compat decisions later.
+1. Read vault and reviewed user spec for testing Google Location Autocomplete across FE, BE, and AD.
+2. Launched 3-specialist agent review (BE/FE/AD) — corrected architectural misunderstanding: Contract does NOT store lat/lng; `CartItemCheckoutInfo` stores customer-chosen coords (migration 0016). No `place_id` stored anywhere.
+3. Discovered `ZoneGatedField.js` wraps `PlacePicker` for ANY contract with `pickup_requires_zone=true`/`dropoff_requires_zone=true` — not airport-transfer exclusive. Created new vault note `03-knowledge/contract-location-autocomplete-testing.md` with 15 prioritized missing tests across BE/FE/AD, 2 critical bugs identified (`carts/views.py:597-602` coord-wipe, `carts/utils.py:381` operator-precedence edge).
+4. Created visual Admin Handbook (Thai) — 5-step guide for setting up Zone Verification on a Contract, published as artifact. Translated to Thai.
+5. Updated vault status to **READY TO TEST** — testing scheduled morning 2026-09-14. No code written; prep-only session.
 
 **Resume point (EXACT):**
-1. **`EC2-INSTANCE-UPSIZE` — new, not started.** Vault now confirms root cause: smallest EC2 tier (1 vCPU/1GB burstable) is the ceiling behind both the web (2-slot) and celery (1-serial) constraints — no gunicorn/celery flag can add capacity without more vCPU/RAM (`--concurrency=2` would OOM the celery container alone). Real fix is an instance resize (t3.small 2vCPU/2GB minimum, t3.medium 2vCPU/4GB more comfortable) — not scoped, not requested yet, needs a deploy-risk conversation (downtime during resize, cost delta) before acting.
-2. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs a Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`. New row, don't fold into `ACTIVITY-DETAIL-CLEANUP` (different repo, different root cause).
-3. **`ACTIVITY-DETAIL-CLEANUP` Deploy Queue row (below) still needs a `#398` addendum** — 3 frontend sessions' worth of changes to `/activities/detail/[...slug]` tree stacked on `develop`, none shipped to `main` yet. Consider a `develop→main` deploy pass covering all three before a 4th session adds more.
-4. **`#396`'s Branch 2 (fontSize sweep) still not started** — carried over untouched, see `#396`'s history entry (`07-logs/session-history.md`) for the full 12-file plan (`FONT_SIZE` token + mechanical sweep starting `PricingDisplay.js`).
-5. **`tourType`/`serviceCategory` operand-order divergence in `DayTripBookingWidget.js`** (flagged `#396`, untouched since) — still needs explicit product confirmation before touching, one site is in the booking-submission path.
-6. **`smartenplus-backend` has one untracked file** (`operators/tests/test_transport_composit_pagination.py`) sitting on `develop` — not committed, not investigated across 9 sessions now, unclear if WIP or leftover. Check before next backend session starts.
-7. **Optional, not scheduled**: `pages_info/views.py:382` prefetch tightening + admin-bookings soft-delete image bug (`bookings/serializers.py:110,225`), both flagged session #399, neither actioned.
-8. **`CHECKOUT-ZONE-CARD-MANUAL-SMOKE-TEST` (opened #392, frontend+backend) — soft, non-blocking.** #283's direction feature is code-confirmed safe by 2 independent agent reviews, but no one has done an actual manual booking test (pickup + dropoff direction) end-to-end in a browser.
-9. Carry over all pre-existing Section 2 open items below (untouched this session).
+1. **`CONTRACT-ZONE-AUTOCOMPLETE-TEST` — execute tests this morning.** Test plan in `03-knowledge/contract-location-autocomplete-testing.md`. Start with P0s: partial-update coord wipe (`carts/views.py:597-602`) + direction operator-precedence edge (`carts/utils.py:381`). After testing update vault status from READY TO TEST → TESTED with results.
+2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
+3. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`.
+4. **`ACTIVITY-DETAIL-CLEANUP` Deploy Queue** — 3 FE sessions' worth of changes stacked on `develop`, none shipped to `main`. Consider deploy pass before 4th session adds more.
+5. **`#396`'s Branch 2 (fontSize sweep) not started** — `FONT_SIZE` token + mechanical sweep, see #396 history entry.
+6. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — 9+ sessions uninvestigated. Check before next backend session.
+7. **`CHECKOUT-ZONE-CARD-MANUAL-SMOKE-TEST`** — no manual booking test (pickup + dropoff direction) done in a browser yet.
+8. Carry over all pre-existing Section 2 open items (untouched this session).
 
-**CLOSED this session (#400):** none.
+**CLOSED this session (#401):** none.
 
 ## Section 2 — Loose Ends (Open)
 

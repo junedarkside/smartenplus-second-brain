@@ -1,5 +1,15 @@
 # Session History
 
+## Session #400 (2026-09-09)
+
+**Achieved (#400) — Confirmed prod EC2 concurrency ceiling + pinned instance tier in vault audit (backend, research-only, no code changed).**
+
+1. User asked how many concurrent users `docker-compose-rds.yml` (prod) can handle, then which EC2 instance is the bottleneck.
+2. Re-verified against live file: gunicorn `--workers 1 --threads 2` (2 concurrent request slots), celery `--concurrency=1` (1 serial task), matches existing vault note [[prod-capacity-celery-audit]] exactly.
+3. User confirmed EC2 is smallest tier — micro class (t2/t3/t4g.micro: 1 vCPU, 1GB RAM, burstable/CPU-credit).
+4. Updated vault: `03-knowledge/prod-capacity-celery-audit.md` — added confirmed instance tier, total container `mem_limit` budget (822MB vs 1GB ceiling), CPU-credit throttling as third stacked bottleneck. `index.md` entry updated to match.
+5. New Section 2 item `EC2-INSTANCE-UPSIZE` opened — not started, needs deploy-risk/cost conversation before any resize.
+
 ## Session #399 (2026-09-09)
 
 **Achieved (#399) — Fixed homepage/detail-page thumbnail mismatch for activity products (Django backend fix).**
