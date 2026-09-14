@@ -4,18 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-14 (session #401)
+**Updated:** 2026-09-14 (session #402)
 
-**Achieved (#401) — Set up testing plan for Google Location Autocomplete on Contract pickup/dropoff (research + vault, no code changed).**
+**Achieved (#402) — CONTRACT-ZONE-AUTOCOMPLETE-TEST complete. 15 tests written + passing across BE/FE/AD. 1 confirmed bug found + fixed (BE-2 coord wipe).**
 
-1. Read vault and reviewed user spec for testing Google Location Autocomplete across FE, BE, and AD.
-2. Launched 3-specialist agent review (BE/FE/AD) — corrected architectural misunderstanding: Contract does NOT store lat/lng; `CartItemCheckoutInfo` stores customer-chosen coords (migration 0016). No `place_id` stored anywhere.
-3. Discovered `ZoneGatedField.js` wraps `PlacePicker` for ANY contract with `pickup_requires_zone=true`/`dropoff_requires_zone=true` — not airport-transfer exclusive. Created new vault note `03-knowledge/contract-location-autocomplete-testing.md` with 15 prioritized missing tests across BE/FE/AD, 2 critical bugs identified (`carts/views.py:597-602` coord-wipe, `carts/utils.py:381` operator-precedence edge).
-4. Created visual Admin Handbook (Thai) — 5-step guide for setting up Zone Verification on a Contract, published as artifact. Translated to Thai.
-5. Updated vault status to **READY TO TEST** — testing scheduled morning 2026-09-14. No code written; prep-only session.
+1. Read vault, confirmed no active-point.
+2. Executed all 15 planned tests. All tests on branches `test/contract-location-autocomplete` (all 3 repos).
+3. **BE-2 CONFIRMED BUG + FIXED:** `carts/views.py:597-602` — `trip.get('pickupLat')` with no fallback silently overwrote existing `pickup_lat` with None on any partial update. Fixed via sentinel pattern. BE commit `a1a8682`.
+4. **BE-5 NOT A BUG:** direction operator-precedence (`carts/utils.py:381`) — empty-string direction triggering fallback is intentional. Documented + locked in as regression guard.
+5. FE: 11 tests written (PlacePicker FE-1/2/5, ZoneGatedField FE-6/7/8, checkoutPersistence FE-3). Added MUI icon mocks to `jest.setup.js`. FE commit `1de32c23`.
+6. AD: 13 structural tests verifying `useContractFormData` mapping + `TransferZoneFieldToggles` wiring. AD commit `04d25ea`.
+7. Updated vault note `contract-location-autocomplete-testing.md` status → TESTED.
 
 **Resume point (EXACT):**
-1. **`CONTRACT-ZONE-AUTOCOMPLETE-TEST` — execute tests this morning.** Test plan in `03-knowledge/contract-location-autocomplete-testing.md`. Start with P0s: partial-update coord wipe (`carts/views.py:597-602`) + direction operator-precedence edge (`carts/utils.py:381`). After testing update vault status from READY TO TEST → TESTED with results.
+1. **`CONTRACT-ZONE-AUTOCOMPLETE-TEST` — merge branches to develop.** Branches `test/contract-location-autocomplete` on all 3 repos. BE has a real bug fix in `carts/views.py`. Merge BE + FE + AD branches → develop, then update master-state Deploy Queue.
+2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
 2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
 3. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`.
 4. **`ACTIVITY-DETAIL-CLEANUP` Deploy Queue** — 3 FE sessions' worth of changes stacked on `develop`, none shipped to `main`. Consider deploy pass before 4th session adds more.

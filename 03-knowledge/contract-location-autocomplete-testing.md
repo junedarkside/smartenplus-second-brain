@@ -1,6 +1,6 @@
 # Contract Location Autocomplete — Testing Requirements
 
-**Status: READY TO TEST — scheduled 2026-09-14 morning. Audit + test plan complete. Handbook published.**
+**Status: TESTED — 2026-09-14. All 15 tests written + passing. 1 real bug found and fixed (BE-2).**
 
 ## Summary
 What can be tested and verified for contract pickup/dropoff location assignment across FE, BE, and Admin Dashboard. Compiled from 3-specialist code review (2026-09-13), corrected 2026-09-13.
@@ -271,11 +271,11 @@ Contract location: **0% coverage**
 
 ---
 
-## Critical Risks Not Yet Tested
+## Critical Risks — Test Results (2026-09-14)
 
-1. **Partial update coord wipe** (`carts/views.py:597-602`): PATCH body missing `pickupLat` key → `trip.get('pickupLat')` returns None → existing pickup_lat silently overwritten with None. May affect any zone-transfer booking re-submitted without resending location.
+1. **Partial update coord wipe (`carts/views.py:597-602`) — CONFIRMED BUG, FIXED.** `trip.get('pickupLat')` returned None when key absent → overwrote existing `pickup_lat` with NULL. Fixed via sentinel pattern: absent keys now skip the assignment entirely. Regression guard in `carts/test_coord_save.py::SaveEndpointCoordTests::test_be2_partial_update_omitting_pickup_lat_preserves_existing`. Fix on branch `test/contract-location-autocomplete`, BE commit `a1a8682`.
 
-2. **direction operator precedence** (`carts/utils.py:381`): `if not direction or pickup_lat is None and dropoff_lat is None` — empty string direction short-circuits entire condition, triggers coord fallback even when valid coords are present.
+2. **direction operator precedence (`carts/utils.py:381`) — NOT A BUG.** `if not direction or pickup_lat is None and dropoff_lat is None` — empty-string direction correctly triggers CI fallback. This is intentional: if FE didn't send direction, fall back to what was saved at checkout. Documented and locked in via `test_be5_empty_string_direction_triggers_fallback`. No fix needed.
 
 3. **Two-step geocoder drift**: FE uses `geocodeByAddress` (Geocoding API) not Places geometry. If Google's geocoder resolves slightly differently from the Places result, stored coords may not match the selected place — no validation or fallback exists.
 
