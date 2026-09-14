@@ -4,30 +4,26 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-14 (session #402)
+**Updated:** 2026-09-14 (session #403)
 
-**Achieved (#402) — CONTRACT-ZONE-AUTOCOMPLETE-TEST complete. 15 tests written + passing across BE/FE/AD. 1 confirmed bug found + fixed (BE-2 coord wipe).**
+**Achieved (#403) — Fixed Postgres local dev connection exhaustion + AD zone-toggle UX fixes (stale caption replaced, new inconsistency Alert warnings added). All changes committed + merged to develop.**
 
-1. Read vault, confirmed no active-point.
-2. Executed all 15 planned tests. All tests on branches `test/contract-location-autocomplete` (all 3 repos).
-3. **BE-2 CONFIRMED BUG + FIXED:** `carts/views.py:597-602` — `trip.get('pickupLat')` with no fallback silently overwrote existing `pickup_lat` with None on any partial update. Fixed via sentinel pattern. BE commit `a1a8682`.
-4. **BE-5 NOT A BUG:** direction operator-precedence (`carts/utils.py:381`) — empty-string direction triggering fallback is intentional. Documented + locked in as regression guard.
-5. FE: 11 tests written (PlacePicker FE-1/2/5, ZoneGatedField FE-6/7/8, checkoutPersistence FE-3). Added MUI icon mocks to `jest.setup.js`. FE commit `1de32c23`.
-6. AD: 13 structural tests verifying `useContractFormData` mapping + `TransferZoneFieldToggles` wiring. AD commit `04d25ea`.
-7. Updated vault note `contract-location-autocomplete-testing.md` status → TESTED.
+1. **Postgres CONN_MAX_AGE fix (BE):** `CONN_MAX_AGE` was 600 in local dev `default_db_settings` — multiple gunicorn workers + celery exhausted Postgres's 100-slot limit. Set to `0` (local dev only; Docker+RDS blocks untouched). Branch `fix/postgres-conn-max-age`, merged to BE develop.
+2. **AD zone-toggle caption fix:** `TransferZoneFieldToggles.js` stale caption ("Checkout enforcement isn't live yet...") replaced with accurate live description. Branch `fix/zone-toggle-warning-and-caption`, merged to AD develop.
+3. **AD Alert warnings for broken zone state:** `ContractFormFields.js` now shows MUI `Alert severity="warning"` when `pickup_requires_zone=true` but `pickup_point` not in info_fields, and same for dropoff. Prevents silent checkout failure from stale DB state (zone=ON + InfoField deselected after the fact). Same branch.
+4. **Root cause analysis:** zone autocomplete silent failure traced — FE `ZoneGatedField` requires both `isInfoFieldEnabled(contract, 'pickup_point')` AND `contract.pickup_requires_zone`. AD already gates toggle visibility on InfoField selection, so broken state can't be created fresh from UI — but existing stale DB rows aren't caught. BE signal approach rejected (M2M not FK, no order field, wrong layer). AD warnings chosen as safest fix.
+5. **Manual smoke test attempted:** contract `o7lfBSOenh` (general transfer) confirmed zone-configured. Full checkout demo blocked by auth redirects + stale cart state in browser.
 
 **Resume point (EXACT):**
-1. **`CONTRACT-ZONE-AUTOCOMPLETE-TEST` — DONE.** All 3 branches merged + pushed to develop. BE bug fix (`carts/views.py` coord-wipe sentinel) is now on develop. Deploy queue row needed — add to Section 1 Deploy Queue below.
-2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
-2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
-3. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`.
-4. **`ACTIVITY-DETAIL-CLEANUP` Deploy Queue** — 3 FE sessions' worth of changes stacked on `develop`, none shipped to `main`. Consider deploy pass before 4th session adds more.
-5. **`#396`'s Branch 2 (fontSize sweep) not started** — `FONT_SIZE` token + mechanical sweep, see #396 history entry.
-6. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — 9+ sessions uninvestigated. Check before next backend session.
-7. **`CHECKOUT-ZONE-CARD-MANUAL-SMOKE-TEST`** — no manual booking test (pickup + dropoff direction) done in a browser yet.
-8. Carry over all pre-existing Section 2 open items (untouched this session).
+1. **`COORD-WIPE-FIX` → deploy to main** — BE `carts/views.py` sentinel fix (`f03f5cc` on develop). Top priority — silently corrupted coords on any partial checkout update. FE/AD test-only changes can bundle.
+2. **`CHECKOUT-ZONE-CARD-MANUAL-SMOKE-TEST`** — no manual booking test (pickup + dropoff direction) done in a browser yet. Use contract `o7lfBSOenh` once checkout auth is unblocked.
+3. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — real fix is instance resize, needs deploy-risk/cost conversation.
+4. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`.
+5. **`ACTIVITY-DETAIL-CLEANUP` Deploy Queue** — 3 FE sessions' worth of changes stacked on `develop`, none shipped to `main`. Consider deploy pass before 4th session adds more.
+6. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — 10+ sessions uninvestigated.
+7. Carry over all pre-existing Section 2 open items.
 
-**CLOSED this session (#401):** none.
+**CLOSED this session (#403):** none.
 
 ## Section 2 — Loose Ends (Open)
 

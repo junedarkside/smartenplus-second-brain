@@ -1,5 +1,17 @@
 # Session History
 
+## Session #402 (2026-09-14)
+
+**Achieved (#402) — CONTRACT-ZONE-AUTOCOMPLETE-TEST complete. 15 tests written + passing across BE/FE/AD. 1 confirmed bug found + fixed (BE-2 coord wipe).**
+
+1. Read vault, confirmed no active-point.
+2. Executed all 15 planned tests. All tests on branches `test/contract-location-autocomplete` (all 3 repos).
+3. **BE-2 CONFIRMED BUG + FIXED:** `carts/views.py:597-602` — `trip.get('pickupLat')` with no fallback silently overwrote existing `pickup_lat` with None on any partial update. Fixed via sentinel pattern. BE commit `a1a8682`.
+4. **BE-5 NOT A BUG:** direction operator-precedence (`carts/utils.py:381`) — empty-string direction triggering fallback is intentional. Documented + locked in as regression guard.
+5. FE: 11 tests written (PlacePicker FE-1/2/5, ZoneGatedField FE-6/7/8, checkoutPersistence FE-3). Added MUI icon mocks to `jest.setup.js`. FE commit `1de32c23`.
+6. AD: 13 structural tests verifying `useContractFormData` mapping + `TransferZoneFieldToggles` wiring. AD commit `04d25ea`.
+7. Updated vault note `contract-location-autocomplete-testing.md` status → TESTED.
+
 ## Session #400 (2026-09-09)
 
 **Achieved (#400) — Confirmed prod EC2 concurrency ceiling + pinned instance tier in vault audit (backend, research-only, no code changed).**
