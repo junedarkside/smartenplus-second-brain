@@ -4,16 +4,18 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-14 (session #407)
+**Updated:** 2026-09-14 (session #408)
 
-**Achieved (#407) — Fixed `InfoFieldsAdmin` Django admin 500 error + full search coverage for `/securelogin/bookings/infofields/`.**
+**Achieved (#408) — Shipped `UserJourneyEvent` info fields tracking for support use case. BE only.**
 
-1. **Root cause:** `search_fields` had `bookingitem__order__order_number` — field doesn't exist on `Order` model (correct: `order_id`). Django raised `FieldError` on any admin search. Fixed `bookings/admin.py`.
-2. **Full search coverage added:** `=id` (exact InfoFields PK), `bookingitem__slug`, `user__email`, `user__first_name`, `user__last_name`, `extrainfo`, `direction`. Pickup/dropoff points already present.
-3. **Human-readable direction search:** `get_search_results` override maps `"Airport to address"` / `"Address to airport"` display labels → stored values. Commit `19f8019`, merged → BE develop.
+1. Investigated `UserJourneyEvent` model + admin at `/securelogin/journeys/userjourneyevent/`. Confirmed tracks cart→payment→booking funnel but NOT info fields (flight, pickup/dropoff, zone coords) or passenger names.
+2. SWE + Django agent review: chose Option A1 — extend `order_created` metadata with `trips_payload` + `passengers` (zero new models/migrations, reuses existing `log_journey_event` util).
+3. Agent caught blocker: `trips_payload` not parsed in `OrderAndBillingProfileViewSet` — added parse from `request.data` at site 2.
+4. Shipped: `orders/views.py` (+6 lines, 2 call sites), `journeys/models.py` (+2 lines, `important_keys`). Commits `fab51cc` + `adbda59`, merged → BE develop `d453afd`.
+5. Pre-existing test failures (6) confirmed on develop baseline — zero new failures introduced.
 
 **Resume point (EXACT):**
-1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` → main** — BE develop has `474857e` + `5718155` + `189be64` + `f03f5cc` + `a58f3bb` + `19f8019`. FE develop has `f120a5f3` + `64e4247a`. None on main. Top priority.
+1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` + `JOURNEY-INFOFIELDS-METADATA` → main** — BE develop has `474857e` + `5718155` + `189be64` + `f03f5cc` + `a58f3bb` + `19f8019` + `d453afd`. FE develop has `f120a5f3` + `64e4247a`. None on main. Top priority.
 2. **Run M1–M7 manual tests** before promoting to main. M5 (booking HTTP failure visible) most important gate.
 3. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
 4. **Fix 6 — flush autosave on cleanup** (`checkoutPersistence.js:334-339`): pending debounce discarded on step-change.

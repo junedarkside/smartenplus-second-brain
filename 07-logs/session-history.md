@@ -1,5 +1,13 @@
 # Session History
 
+## Session #407 (2026-09-14)
+
+**Achieved (#407) — Fixed `InfoFieldsAdmin` Django admin 500 error + full search coverage for `/securelogin/bookings/infofields/`.**
+
+1. **Root cause:** `search_fields` had `bookingitem__order__order_number` — field doesn't exist on `Order` model (correct: `order_id`). Django raised `FieldError` on any admin search. Fixed `bookings/admin.py`.
+2. **Full search coverage added:** `=id` (exact InfoFields PK), `bookingitem__slug`, `user__email`, `user__first_name`, `user__last_name`, `extrainfo`, `direction`. Pickup/dropoff points already present.
+3. **Human-readable direction search:** `get_search_results` override maps `"Airport to address"` / `"Address to airport"` display labels → stored values. Commit `19f8019`, merged → BE develop.
+
 ## Session #406 (2026-09-14)
 
 **Achieved (#406) — Fixed grand total `total=None` bug causing `gateway-fee 400` for PRIVATE day tour checkout.**

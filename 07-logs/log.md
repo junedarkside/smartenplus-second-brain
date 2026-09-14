@@ -1,3 +1,5 @@
+## [2026-09-14] session-end #408 | Shipped UserJourneyEvent info fields tracking: trips_payload + passengers in order_created metadata. orders/views.py + journeys/models.py. Merged to BE develop d453afd.
+
 ## [2026-09-14] session-end #406 | Fixed grand total total=None bug: set_total falsy-zero (orders/models.py) + BookingRateCard recalc overwrote valid total with 0 (orders/views.py). Both fixed, merged to BE develop a58f3bb.
 
 ## [2026-09-14] session-end | fix InfoFieldsAdmin 500 (order_number→order_id) + full search coverage
