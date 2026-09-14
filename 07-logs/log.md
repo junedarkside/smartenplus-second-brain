@@ -1,3 +1,5 @@
+## [2026-09-15] session-end #409 | User Journey AD page: full feature + guest support + auth fix + AI slop cleanup. Security: /journey added to NextAuth matcher. BE c2f52f3, AD 2d56b4b, both merged to develop.
+
 ## [2026-09-14] session-end #408 | Shipped UserJourneyEvent info fields tracking: trips_payload + passengers in order_created metadata. orders/views.py + journeys/models.py. Merged to BE develop d453afd.
 
 ## [2026-09-14] session-end #406 | Fixed grand total total=None bug: set_total falsy-zero (orders/models.py) + BookingRateCard recalc overwrote valid total with 0 (orders/views.py). Both fixed, merged to BE develop a58f3bb.

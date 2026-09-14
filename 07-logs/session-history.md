@@ -1,5 +1,17 @@
 # Session History
 
+## Session #408 (2026-09-14)
+
+**Achieved (#408) — Shipped `UserJourneyEvent` info fields tracking for support use case. BE only.**
+
+1. Investigated `UserJourneyEvent` model + admin at `/securelogin/journeys/userjourneyevent/`. Confirmed tracks cart→payment→booking funnel but NOT info fields (flight, pickup/dropoff, zone coords) or passenger names.
+2. SWE + Django agent review: chose Option A1 — extend `order_created` metadata with `trips_payload` + `passengers` (zero new models/migrations, reuses existing `log_journey_event` util).
+3. Agent caught blocker: `trips_payload` not parsed in `OrderAndBillingProfileViewSet` — added parse from `request.data` at site 2.
+4. Shipped: `orders/views.py` (+6 lines, 2 call sites), `journeys/models.py` (+2 lines, `important_keys`). Commits `fab51cc` + `adbda59`, merged → BE develop `d453afd`.
+5. Pre-existing test failures (6) confirmed on develop baseline — zero new failures introduced.
+
+---
+
 ## Session #407 (2026-09-14)
 
 **Achieved (#407) — Fixed `InfoFieldsAdmin` Django admin 500 error + full search coverage for `/securelogin/bookings/infofields/`.**
