@@ -1,5 +1,27 @@
 # Session History
 
+## Session #405 (2026-09-14)
+
+**Achieved (#405) — InfoFields data-loss root-cause analysis + full fix + regression tests + interactive manual QA guide + grand total `total=None` bug fixed.**
+
+1. Root-cause analysis (Opus): 7 failure paths for "sometimes missing InfoFields".
+2. BE fix `carts/utils.py` (`474857e`): `convert_to_local_time2` rewritten with `dateutil.parser`, full `CartItemCheckoutInfo` fallback for all fields.
+3. FE fix `getBillingAndOrder.js` + `usePaymentInitialization.js` (`f120a5f3`): `getCreateBooking` throws structured error; `trips_payload` filters missing `trip.id`.
+4. 19 BE regression tests (`5718155`), 17 FE regression tests (`64e4247a`).
+5. Interactive 7-test manual QA guide published as artifact.
+6. Diagnosed `Order INB8268336 total=None` → `gateway-fee 400` root cause: `set_total` falsy-zero bug (latent since early dev) + `BookingRateCard` recalculation block (introduced `f643d485` Feb 20) overwriting valid total with 0 for PRIVATE day tours.
+7. Fixed both: `orders/models.py:314` `if amount else None` → `if amount is not None else None`; `orders/views.py` guard skip `set_total` when `booking_total=0 AND booking_item_count>0`. Merged to develop `a58f3bb`.
+
+## Session #404 (2026-09-14)
+
+**Achieved (#404) — InfoFields admin overhaul + save reliability fix. BE only. Branch `fix/infofields-admin-and-save-guard`, merged to develop `189be64`.**
+
+1. `bookings/admin.py` — full `InfoFieldsAdmin` class: 8 fieldsets, search, filter by direction, GPS coords readonly.
+2. `bookings/models.py` — `InfoFields.__str__` returns `"InfoFields #42 — order ORD-123"`.
+3. `bookings/admin.py` — `view_info_fields.short_description` changed `'Flight Details'` → `'Info Fields'`.
+4. `carts/utils.py` — `create_info_fields()` guard: skip + warn when `bookingitem is None` (was creating dangling rows).
+5. `bookings/views.py` — N+1 prefetch: added `'infofields_set'` to all 3 queryset paths in `BookingDetailsViewSet`.
+
 ## Session #402 (2026-09-14)
 
 **Achieved (#402) — CONTRACT-ZONE-AUTOCOMPLETE-TEST complete. 15 tests written + passing across BE/FE/AD. 1 confirmed bug found + fixed (BE-2 coord wipe).**
@@ -1821,3 +1843,13 @@ BE-HOMEPAGE-PRICE FIXED — all 8 `Min(selling_rate)` finder annotations in `pro
 REC ENGINE — 5 phases shipped across FE + BE, all → develop. Phase 1 (`fix/rec-quick-wins`): 2s timeout on recommendationsApi · `recommendation_modal_open` GTM · `chidren` typo fix · sessionStorage Safari guard. Phase 2 (`feat/rec-purchase-event`): purchase attribution — `markRecSourcedContract` + `fireRecommendationPurchaseEvents` in `helpers/gtmUtils.js`; wired in `RecommendationBookingModal.js` + `hooks/useOmisePayment.js`. Funnel complete: view→click→modal→add_cart→purchase. Phase 3 (`fix/rec-checkout-filter`): `filterValidRecommendations` applied at checkout rec list. Phase 4 (`chore/rec-remove-ratecard-hook`): deleted `hooks/useRecommendationRatecards.js` (−138 lines). Phase 5 (`feat/rec-never-empty-fallback`): `find_global_fallback()` in `products/services.py`; hybrid dedupe; `booked_count` default 10→0; migration `operators/0064` applied locally. 28/29 BE tests pass (1 pre-existing failure `test_find_similar_contracts`). FE develop: `9fd5b0a5` · BE develop: `f0aea8c`.
 
 ---
+
+## Session #403 (2026-09-14)
+
+**Achieved (#403) — Fixed Postgres local dev connection exhaustion + AD zone-toggle UX fixes (stale caption replaced, new inconsistency Alert warnings added). All changes committed + merged to develop.**
+
+1. **Postgres CONN_MAX_AGE fix (BE):** `CONN_MAX_AGE` was 600 in local dev `default_db_settings` — multiple gunicorn workers + celery exhausted Postgres's 100-slot limit. Set to `0` (local dev only; Docker+RDS blocks untouched). Branch `fix/postgres-conn-max-age`, merged to BE develop.
+2. **AD zone-toggle caption fix:** `TransferZoneFieldToggles.js` stale caption ("Checkout enforcement isn't live yet...") replaced with accurate live description. Branch `fix/zone-toggle-warning-and-caption`, merged to AD develop.
+3. **AD Alert warnings for broken zone state:** `ContractFormFields.js` now shows MUI `Alert severity="warning"` when `pickup_requires_zone=true` but `pickup_point` not in info_fields, and same for dropoff. Prevents silent checkout failure from stale DB state (zone=ON + InfoField deselected after the fact). Same branch.
+4. **Root cause analysis:** zone autocomplete silent failure traced — `ZoneGatedField` requires both `isInfoFieldEnabled(contract, 'pickup_point')` AND `contract.pickup_requires_zone`. AD guards toggle visibility on InfoField selection, so broken state can't be created fresh from UI — but existing stale DB rows aren't caught. BE signal approach rejected (M2M not FK, no order field, wrong layer). AD warnings chosen as safest fix.
+5. **Manual smoke test attempted:** contract `o7lfBSOenh` (general transfer) confirmed zone-configured. Full checkout demo blocked by auth redirects + stale cart state in browser.

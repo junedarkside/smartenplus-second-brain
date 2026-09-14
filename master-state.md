@@ -4,26 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-14 (session #403)
+**Updated:** 2026-09-14 (session #406)
 
-**Achieved (#403) — Fixed Postgres local dev connection exhaustion + AD zone-toggle UX fixes (stale caption replaced, new inconsistency Alert warnings added). All changes committed + merged to develop.**
+**Achieved (#406) — Fixed grand total `total=None` bug causing `gateway-fee 400` for PRIVATE day tour checkout.**
 
-1. **Postgres CONN_MAX_AGE fix (BE):** `CONN_MAX_AGE` was 600 in local dev `default_db_settings` — multiple gunicorn workers + celery exhausted Postgres's 100-slot limit. Set to `0` (local dev only; Docker+RDS blocks untouched). Branch `fix/postgres-conn-max-age`, merged to BE develop.
-2. **AD zone-toggle caption fix:** `TransferZoneFieldToggles.js` stale caption ("Checkout enforcement isn't live yet...") replaced with accurate live description. Branch `fix/zone-toggle-warning-and-caption`, merged to AD develop.
-3. **AD Alert warnings for broken zone state:** `ContractFormFields.js` now shows MUI `Alert severity="warning"` when `pickup_requires_zone=true` but `pickup_point` not in info_fields, and same for dropoff. Prevents silent checkout failure from stale DB state (zone=ON + InfoField deselected after the fact). Same branch.
-4. **Root cause analysis:** zone autocomplete silent failure traced — FE `ZoneGatedField` requires both `isInfoFieldEnabled(contract, 'pickup_point')` AND `contract.pickup_requires_zone`. AD already gates toggle visibility on InfoField selection, so broken state can't be created fresh from UI — but existing stale DB rows aren't caught. BE signal approach rejected (M2M not FK, no order field, wrong layer). AD warnings chosen as safest fix.
-5. **Manual smoke test attempted:** contract `o7lfBSOenh` (general transfer) confirmed zone-configured. Full checkout demo blocked by auth redirects + stale cart state in browser.
+1. **Root cause diagnosed:** two pre-existing bugs combined — `set_total` falsy-zero (`orders/models.py:314`: `int(0) if 0 else None` → `None`; latent since early dev) + `BookingRateCard` recalculation block (`orders/views.py:493-514`; introduced `f643d485` Feb 20) overwrote valid cart total with `booking_total=0` when `BookingRateCard` rows missing for PRIVATE day tours.
+2. **Fix — `orders/models.py:314`:** `if amount else None` → `if amount is not None else None` (both branches). Commit `1da3814`, merged to BE develop `a58f3bb`.
+3. **Fix — `orders/views.py:510`:** Guard: skip `set_total()` + log warning when `booking_total == 0 AND booking_item_count > 0`. Same commit.
+4. **Root cause of `BookingRateCard.quantity=0` still open** — `get_or_create` idempotency path in `copy_cartitem_to_bookingitem` doesn't update `defaults=` on retry; separate issue.
 
 **Resume point (EXACT):**
-1. **`COORD-WIPE-FIX` → deploy to main** — BE `carts/views.py` sentinel fix (`f03f5cc` on develop). Top priority — silently corrupted coords on any partial checkout update. FE/AD test-only changes can bundle.
-2. **`CHECKOUT-ZONE-CARD-MANUAL-SMOKE-TEST`** — no manual booking test (pickup + dropoff direction) done in a browser yet. Use contract `o7lfBSOenh` once checkout auth is unblocked.
-3. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — real fix is instance resize, needs deploy-risk/cost conversation.
-4. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`.
-5. **`ACTIVITY-DETAIL-CLEANUP` Deploy Queue** — 3 FE sessions' worth of changes stacked on `develop`, none shipped to `main`. Consider deploy pass before 4th session adds more.
-6. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — 10+ sessions uninvestigated.
-7. Carry over all pre-existing Section 2 open items.
-
-**CLOSED this session (#403):** none.
+1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` → main** — BE develop has `474857e` + `5718155` + `189be64` + `f03f5cc` + `a58f3bb`. FE develop has `f120a5f3` + `64e4247a`. None on main. Top priority.
+2. **Run M1–M7 manual tests** before promoting to main. M5 (booking HTTP failure visible) most important gate.
+3. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
+4. **Fix 6 — flush autosave on cleanup** (`checkoutPersistence.js:334-339`): pending debounce discarded on step-change.
+5. **Fix 8 — align Redux 48h / sessionStorage 30min TTLs** + warn before clearing mid-session.
+6. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — uninvestigated.
 
 ## Section 2 — Loose Ends (Open)
 

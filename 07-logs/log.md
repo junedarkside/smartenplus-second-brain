@@ -1,3 +1,9 @@
+## [2026-09-14] session-end #406 | Fixed grand total total=None bug: set_total falsy-zero (orders/models.py) + BookingRateCard recalc overwrote valid total with 0 (orders/views.py). Both fixed, merged to BE develop a58f3bb.
+
+## [2026-09-14] session-end #405 | InfoFields data-loss bug fixed: root-cause analysis (Opus), BE fix convert_to_local_time2 + CartItemCheckoutInfo full-field fallback (474857e), FE fix getCreateBooking throws + trips_payload filter (f120a5f3), 19 BE + 17 FE regression tests, interactive 7-test manual QA guide published.
+
+## [2026-09-14] session-end #404 | InfoFields admin overhaul (InfoFieldsAdmin class, fieldsets, search, read-only coords) + save guard (None bookingitem skip + warning) + N+1 prefetch fix. BE only, merged to develop 189be64.
+
 ## [2026-09-14] session-end #403 | Fixed Postgres local dev connection exhaustion (CONN_MAX_AGE=0), replaced stale zone-toggle caption in AD, added Alert warnings for broken pickup/dropoff zone state (zone=ON but InfoField deselected). All merged to develop. Zone autocomplete root-cause traced: ZoneGatedField requires both InfoField + requires_zone flags; AD already gates toggle on InfoField selection so new broken state unreachable from UI, but stale DB rows need the warning. Manual checkout demo blocked by auth/cart state.
 
 ## [2026-09-14] session-end #401 | Set up testing plan for Google Location Autocomplete on Contract pickup/dropoff — 3-specialist agent review (BE/FE/AD), corrected arch (Contract = config flags only; CartItemCheckoutInfo = coord storage), 15 missing tests identified, 2 critical bugs flagged (coord-wipe views.py:597-602, operator-precedence utils.py:381), new vault note created, Thai admin handbook published as artifact. Status: READY TO TEST, scheduled morning 2026-09-14.
