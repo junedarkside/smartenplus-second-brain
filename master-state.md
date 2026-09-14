@@ -4,17 +4,16 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-14 (session #406)
+**Updated:** 2026-09-14 (session #407)
 
-**Achieved (#406) — Fixed grand total `total=None` bug causing `gateway-fee 400` for PRIVATE day tour checkout.**
+**Achieved (#407) — Fixed `InfoFieldsAdmin` Django admin 500 error + full search coverage for `/securelogin/bookings/infofields/`.**
 
-1. **Root cause diagnosed:** two pre-existing bugs combined — `set_total` falsy-zero (`orders/models.py:314`: `int(0) if 0 else None` → `None`; latent since early dev) + `BookingRateCard` recalculation block (`orders/views.py:493-514`; introduced `f643d485` Feb 20) overwrote valid cart total with `booking_total=0` when `BookingRateCard` rows missing for PRIVATE day tours.
-2. **Fix — `orders/models.py:314`:** `if amount else None` → `if amount is not None else None` (both branches). Commit `1da3814`, merged to BE develop `a58f3bb`.
-3. **Fix — `orders/views.py:510`:** Guard: skip `set_total()` + log warning when `booking_total == 0 AND booking_item_count > 0`. Same commit.
-4. **Root cause of `BookingRateCard.quantity=0` still open** — `get_or_create` idempotency path in `copy_cartitem_to_bookingitem` doesn't update `defaults=` on retry; separate issue.
+1. **Root cause:** `search_fields` had `bookingitem__order__order_number` — field doesn't exist on `Order` model (correct: `order_id`). Django raised `FieldError` on any admin search. Fixed `bookings/admin.py`.
+2. **Full search coverage added:** `=id` (exact InfoFields PK), `bookingitem__slug`, `user__email`, `user__first_name`, `user__last_name`, `extrainfo`, `direction`. Pickup/dropoff points already present.
+3. **Human-readable direction search:** `get_search_results` override maps `"Airport to address"` / `"Address to airport"` display labels → stored values. Commit `19f8019`, merged → BE develop.
 
 **Resume point (EXACT):**
-1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` → main** — BE develop has `474857e` + `5718155` + `189be64` + `f03f5cc` + `a58f3bb`. FE develop has `f120a5f3` + `64e4247a`. None on main. Top priority.
+1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` → main** — BE develop has `474857e` + `5718155` + `189be64` + `f03f5cc` + `a58f3bb` + `19f8019`. FE develop has `f120a5f3` + `64e4247a`. None on main. Top priority.
 2. **Run M1–M7 manual tests** before promoting to main. M5 (booking HTTP failure visible) most important gate.
 3. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
 4. **Fix 6 — flush autosave on cleanup** (`checkoutPersistence.js:334-339`): pending debounce discarded on step-change.

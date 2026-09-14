@@ -1,5 +1,8 @@
 ## [2026-09-14] session-end #406 | Fixed grand total total=None bug: set_total falsy-zero (orders/models.py) + BookingRateCard recalc overwrote valid total with 0 (orders/views.py). Both fixed, merged to BE develop a58f3bb.
 
+## [2026-09-14] session-end | fix InfoFieldsAdmin 500 (order_number→order_id) + full search coverage
+
+
 ## [2026-09-14] session-end #405 | InfoFields data-loss bug fixed: root-cause analysis (Opus), BE fix convert_to_local_time2 + CartItemCheckoutInfo full-field fallback (474857e), FE fix getCreateBooking throws + trips_payload filter (f120a5f3), 19 BE + 17 FE regression tests, interactive 7-test manual QA guide published.
 
 ## [2026-09-14] session-end #404 | InfoFields admin overhaul (InfoFieldsAdmin class, fieldsets, search, read-only coords) + save guard (None bookingitem skip + warning) + N+1 prefetch fix. BE only, merged to develop 189be64.

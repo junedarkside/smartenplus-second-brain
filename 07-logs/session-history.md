@@ -1,5 +1,14 @@
 # Session History
 
+## Session #406 (2026-09-14)
+
+**Achieved (#406) — Fixed grand total `total=None` bug causing `gateway-fee 400` for PRIVATE day tour checkout.**
+
+1. **Root cause diagnosed:** two pre-existing bugs combined — `set_total` falsy-zero (`orders/models.py:314`: `int(0) if 0 else None` → `None`; latent since early dev) + `BookingRateCard` recalculation block (`orders/views.py:493-514`; introduced `f643d485` Feb 20) overwrote valid cart total with `booking_total=0` when `BookingRateCard` rows missing for PRIVATE day tours.
+2. **Fix — `orders/models.py:314`:** `if amount else None` → `if amount is not None else None` (both branches). Commit `1da3814`, merged to BE develop `a58f3bb`.
+3. **Fix — `orders/views.py:510`:** Guard: skip `set_total()` + log warning when `booking_total == 0 AND booking_item_count > 0`. Same commit.
+4. **Root cause of `BookingRateCard.quantity=0` still open** — `get_or_create` idempotency path in `copy_cartitem_to_bookingitem` doesn't update `defaults=` on retry; separate issue.
+
 ## Session #405 (2026-09-14)
 
 **Achieved (#405) — InfoFields data-loss root-cause analysis + full fix + regression tests + interactive manual QA guide + grand total `total=None` bug fixed.**
