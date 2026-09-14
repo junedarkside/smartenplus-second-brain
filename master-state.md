@@ -17,7 +17,7 @@
 7. Updated vault note `contract-location-autocomplete-testing.md` status → TESTED.
 
 **Resume point (EXACT):**
-1. **`CONTRACT-ZONE-AUTOCOMPLETE-TEST` — merge branches to develop.** Branches `test/contract-location-autocomplete` on all 3 repos. BE has a real bug fix in `carts/views.py`. Merge BE + FE + AD branches → develop, then update master-state Deploy Queue.
+1. **`CONTRACT-ZONE-AUTOCOMPLETE-TEST` — DONE.** All 3 branches merged + pushed to develop. BE bug fix (`carts/views.py` coord-wipe sentinel) is now on develop. Deploy queue row needed — add to Section 1 Deploy Queue below.
 2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
 2. **`EC2-INSTANCE-UPSIZE` — not started.** Smallest EC2 tier (1 vCPU/1GB burstable) is ceiling — no gunicorn/celery flag can add capacity without more vCPU/RAM. Real fix is instance resize — needs deploy-risk/cost conversation before acting.
 3. **`POPULAR-EXPERIENCE-THUMBNAIL-SOFT-DELETE` needs Deploy Queue row** — merged to backend `develop` (`4eaa986`) session #399, not yet on `main`.
@@ -72,6 +72,10 @@
 
 
 ### Deploy Queue — merged → develop, needs main deploy + verify (NEW #370)
+
+| Item | What's pending | Where |
+|------|----------------|-------|
+| **COORD-WIPE-FIX** | ✅ **MERGED → develop `f03f5cc`, BE only (#402).** Partial-update coord wipe bug: `carts/views.py:597-602` used `trip.get('pickupLat')` with no fallback — absent key returned `None`, silently overwriting any previously-saved `pickup_lat`/`pickup_lng`/`dropoff_lat`/`dropoff_lng`/`resolved_contract_id` on any checkout-save where FE sent an incomplete payload. Fixed via sentinel pattern: absent keys are now skipped entirely, preserving existing DB values. Regression guard in `carts/test_coord_save.py`. Tests also added FE (`__tests__/components/airport-transfer/PlacePicker.test.js`, `ZoneGatedField.test.js`, extended `checkoutPersistence.test.js`) and AD (`__tests__/contracts/contractLocationToggles.test.js`) — no prod-facing code changed in FE/AD. **Needs:** develop→main deploy (BE only for the fix; FE/AD test-only changes can bundle). | BE `carts/views.py` |
 
 | Item | What's pending | Where |
 |------|----------------|-------|
