@@ -1,5 +1,16 @@
 # Session History
 
+## Session #413 (2026-09-15)
+
+**Achieved (#413) — BE production bug fix + `products/services.py` monolith split.**
+
+1. Fixed production Django error `"Unsupported lookup 'name' for ForeignKey"` in `products/services.py:444` (`find_similar_contracts`). Root cause: `operational_day__name` → no such field; `DaysOfTheWeek` has `day` (uppercase choices). Fix: `operational_day__day` + `.upper()` on weekday string + `.distinct()` to prevent M2M duplicate rows. `logger.error` → `logger.exception` for full traceback.
+2. Fixed stale test DB (`operators_contract_info_fields` M2M join table missing) — rebuilt with `--no-keepdb`. 14 ERRORs → 0 ERRORs.
+3. Fixed pre-existing `test_find_similar_contracts` + `test_recommendations_by_type` fixture failures. Added `route_cnx_hkt` (Chiang Mai→Phuket) + dedicated similar-contract targets. Result: 58/58 PASS, 0 FAIL, 0 ERROR.
+4. Split `products/services.py` (1057 lines → 245 lines orchestrator) into 3 modules: `price_helpers.py` (126), `similarity.py` (175), `finders.py` (558). All existing callers unchanged.
+5. Merged → `smartenplus-backend` `develop` `50b5fb2`.
+
+
 ## Session #412 (2026-09-15)
 
 **Achieved (#412) — Monolith audit + 4 FE splits done.**

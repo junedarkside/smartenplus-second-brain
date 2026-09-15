@@ -4,25 +4,31 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-15 (session #413)
+**Updated:** 2026-09-15 (session #414)
 
-**Achieved (#413) — BE production bug fix + `products/services.py` monolith split.**
+**Achieved (#414) — Admin booking cancel email + booking status filter.**
 
-1. Fixed production Django error `"Unsupported lookup 'name' for ForeignKey"` in `products/services.py:444` (`find_similar_contracts`). Root cause: `operational_day__name` → no such field; `DaysOfTheWeek` has `day` (uppercase choices). Fix: `operational_day__day` + `.upper()` on weekday string + `.distinct()` to prevent M2M duplicate rows. `logger.error` → `logger.exception` for full traceback.
-2. Fixed stale test DB (`operators_contract_info_fields` M2M join table missing) — rebuilt with `--no-keepdb`. 14 ERRORs → 0 ERRORs.
-3. Fixed pre-existing `test_find_similar_contracts` + `test_recommendations_by_type` fixture failures — all 3 test contracts were on the same route, so `same_route_exclude` removed all candidates. Added `route_cnx_hkt` (Chiang Mai→Phuket) + `contract2_similar`/`contract3_similar` on that route as dedicated similar-contract targets. Original `contract2`/`contract3` untouched (needed by `test_similarity_same_route_*` which asserts score >70). Result: 58/58 PASS, 0 FAIL, 0 ERROR.
-4. Split `products/services.py` (1057 lines → 245 lines orchestrator) into 3 modules: `price_helpers.py` (126 lines, leaf), `similarity.py` (175 lines), `finders.py` (558 lines). All 7 `find_*` functions + all price helpers live in domain files. `services.py` re-exports everything so all existing `from .services import X` callers unchanged. `finders.py` 558 lines left intact (split-gate 1 fails — can't describe 7 finders in one sentence without "and").
-5. Merged all changes to `smartenplus-backend` `develop` branch. Latest: `50b5fb2 Merge refactor/products-services-split into develop`.
+1. Added staff-triggered "Send Cancel Email" button to booking detail page (`/bookings/[slug]`). Button appears only when `booking_status.startsWith('Canceled')`. One-shot disable after send.
+2. New Celery task `send_booking_cancel_email` — sends HTML cancel email via AWS SES (`bookings/tasks.py`), 3 retries, reads customer email from `booking.order.email`.
+3. New `booking_cancellation_template.html` — red status badge, booking ref / route / travel date info strip, optional cancel reason block.
+4. New `SendBookingCancelEmailView` (APIView, `IsAdminOrIsStaff`) + URL `admin-dashboard/booking-cancel-email/`. Validates booking is canceled before queuing.
+5. Added `booking_status` exact-match filter to `AdminBookingSummaryViewSet.get_queryset()` (both search + date-filter paths) — supports `?booking_status=Canceled` query param.
+6. New "Booking Status" dropdown filter on bookings list page (`/bookings`) — mirrors orders page pattern. Wired to RTK Query, URL sync (deep-link safe), Redux Persist, reset handler. `BOOKING_STATUS_OPTIONS` constants file created.
+7. Both features merged → `admin-dashboard` `develop` `458c36e` + `smartenplus-backend` `develop` `99c7e42`. `main` local-only (not pushed — user manages main merges).
 
 **Resume point (EXACT):**
-1. **Deploy to production** — user is shipping `develop → main`. BE `develop` is clean at `50b5fb2`. FE `develop` `74f3a3d6`. AD `develop` `b675934`. Run M1–M7 manual tests before promoting.
+1. **Browser smoke-test cancel email**: open `/bookings`, filter by "Canceled" status → select a booking → confirm "Send Cancel Email" button visible → click → check Celery logs + customer inbox. Celery worker must be running.
 2. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
 3. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
-4. **Run M1–M7 manual tests** + InfoFields guest→login path before main deploy. M5 (booking HTTP failure visible) most important gate.
-5. **Test journey page with real data** — search a known user/guest email, confirm timeline renders events, confirm guest flow works end-to-end.
-6. **Next monolith split** (when ready): `components/trips/FilterTrip.js` (504) ORANGE — extract filter groups. Prompt user before starting.
+4. **Run M1–M7 manual tests** + InfoFields guest→login path before main deploy.
+5. **Test journey page with real data** — search known user/guest email, confirm timeline renders, confirm guest flow end-to-end.
+6. **`bookings/views.py` is 513+ lines (RED)** — deferred: extract email views to `bookings/email_views.py` in a dedicated session (`EMAIL-VIEWS-SPLIT`).
 
 ## Section 2 — Loose Ends (Open)
+
+> **NEW 2026-09-15 (#414) — `EMAIL-VIEWS-SPLIT`, deferred, not started.**
+>
+> `bookings/views.py` is 513+ lines (RED >500) after this session's addition of `SendBookingCancelEmailView`. The email view (~25 lines) should be extracted to `bookings/email_views.py` and imported back so `views.py` drops under 500. No urgency — no new views added this session, existing callers unaffected. Extract in a dedicated session.
 
 > **NEW 2026-09-09 (#400) — `EC2-INSTANCE-UPSIZE`, open, not started, infra only.**
 >

@@ -1,3 +1,5 @@
+## [2026-09-15] session-end #414 | AD booking cancel email (staff button + Celery task + SES template + APIView) + booking_status filter on bookings list page. BE: cancel email task/view/url + booking_status query param in AdminBookingSummaryViewSet. Both → develop (AD 458c36e, BE 99c7e42).
+
 ## [2026-09-15] session-end #413 | BE prod fix: operational_day__name→__day + .upper() + .distinct() in find_similar_contracts. Fixed stale test DB (14 ERRORs→0). Fixed pre-existing fixture failures (58/58 PASS). Split products/services.py (1057→245 lines): price_helpers.py + similarity.py + finders.py. Merged to BE develop 50b5fb2.
 
 ## [2026-09-15] session-end #412 | Monolith audit + 4 FE splits: wordpress/api.js (917→5 barrel), server-sitemap (627→36 orchestrator, 9 lib files), SlideCalendar2 (622→487 ORANGE, extracted calendarUtils+useSlideCalendar), TripItem (554→258, activated orphaned stubs, extracted TripItemDetails+tripButtonProps). Vault audit doc created: 03-knowledge/monolith-audit-500line-rule.md.
