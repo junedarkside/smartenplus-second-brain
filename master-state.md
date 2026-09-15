@@ -6,7 +6,7 @@
 
 **Updated:** 2026-09-15 (session #414)
 
-**Achieved (#414) — Admin booking cancel email + booking status filter.**
+**Achieved (#414) — Admin booking cancel email + booking status filter + null-crash fix.**
 
 1. Added staff-triggered "Send Cancel Email" button to booking detail page (`/bookings/[slug]`). Button appears only when `booking_status.startsWith('Canceled')`. One-shot disable after send.
 2. New Celery task `send_booking_cancel_email` — sends HTML cancel email via AWS SES (`bookings/tasks.py`), 3 retries, reads customer email from `booking.order.email`.
@@ -14,10 +14,13 @@
 4. New `SendBookingCancelEmailView` (APIView, `IsAdminOrIsStaff`) + URL `admin-dashboard/booking-cancel-email/`. Validates booking is canceled before queuing.
 5. Added `booking_status` exact-match filter to `AdminBookingSummaryViewSet.get_queryset()` (both search + date-filter paths) — supports `?booking_status=Canceled` query param.
 6. New "Booking Status" dropdown filter on bookings list page (`/bookings`) — mirrors orders page pattern. Wired to RTK Query, URL sync (deep-link safe), Redux Persist, reset handler. `BOOKING_STATUS_OPTIONS` constants file created.
-7. Both features merged → `admin-dashboard` `develop` `458c36e` + `smartenplus-backend` `develop` `99c7e42`. `main` local-only (not pushed — user manages main merges).
+7. **Fixed `/orders/[slug]` crash** — `TypeError: Cannot read properties of null (reading 'departure_time')` in `DataGridComp.js` `renderTrips`. Root cause: non-transport bookings have `contract.trip=None` by design, but the cell renderer read `.departure_time`/`.arrival_time`/`.route.route_name` with zero optional chaining. Guarded `contract`, `trip`, and `route` independently (route treated as separately-nullable even when trip exists, matching 5 other call sites in the codebase). Same unguarded-chain bug class also fixed in `ListBookingDashBoard.js`. `'N/A'` fallback matches existing `renderOperators` convention.
+8. **BE**: `AdminBookingSummarySerializer.get_contract()` was missing `arrival_time` entirely from the `trip` dict (only `departure_time` was serialized) — added the missing key.
+9. **Process correction, logged to memory**: user's first prompt explicitly said "check vault" — skipped reading `vault-guardrails.md` before coding, which caused branching bugfix work off `main` instead of `develop` (violates vault's mandatory Git Branch Policy). Caught + corrected: rebranched onto `develop` tracking, `main` untouched. New feedback memory `feedback_read_vault_guardrails_first.md` — "check vault" is now a literal first action (read `vault-guardrails.md` + `vault-protocol.md` before any agent/edit), not ambient context.
+10. All 3 fixes merged → `admin-dashboard` `develop` `6a91303` + `smartenplus-backend` `develop` `c28e7dd`. Cancel-email features merged → `admin-dashboard` `develop` `458c36e` + `smartenplus-backend` `develop` `99c7e42` (earlier same session). `main` untouched on both repos — user manages main merges manually per [[feedback_no_main_without_permission]].
 
 **Resume point (EXACT):**
-1. **Browser smoke-test cancel email**: open `/bookings`, filter by "Canceled" status → select a booking → confirm "Send Cancel Email" button visible → click → check Celery logs + customer inbox. Celery worker must be running.
+1. **Browser smoke-test both fixes**: (a) open `/bookings`, filter by "Canceled" status → select a booking → confirm "Send Cancel Email" button → click → check Celery logs + inbox (Celery worker must be running); (b) open `/orders/INB8268336` → confirm no console error, "Trips" column shows `N/A` for non-transport booking.
 2. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
 3. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
 4. **Run M1–M7 manual tests** + InfoFields guest→login path before main deploy.
