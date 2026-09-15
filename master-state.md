@@ -4,22 +4,22 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-15 (session #412)
+**Updated:** 2026-09-15 (session #413)
 
-**Achieved (#412) — Monolith audit + 4 FE splits done.**
+**Achieved (#413) — BE production bug fix + `products/services.py` monolith split.**
 
-1. Cross-repo 500-line audit: 23 FE RED, 42 BE RED, 18 AD RED files catalogued. Vault living doc created: `03-knowledge/monolith-audit-500line-rule.md`. 4-tier execution queue: TIER 4 DO NOT SPLIT list locked (payment/checkout files).
-2. `helpers/wordpress/api.js` (917→5 lines) — barrel re-export to `helpers/wordpress/queries/{posts,categories,pages,tags,routes}.js`. 22 callers unchanged.
-3. `pages/server-sitemap.xml/index.js` (627→36 lines) — 9 domain generators extracted to `lib/sitemap/{blog,help,locations,products,routes,operators,airport-transfer,ref-articles,utils}.js`. Page = thin orchestrator.
-4. `components/search/SlideCalendar2.js` (622→487 lines ORANGE) — extracted `helpers/calendarUtils.js` (31) + `hooks/useSlideCalendar.js` (69). Component single-responsibility dense Tab JSX, passes 4-gate. 5 callers unchanged.
-5. `components/trips/TripItem.js` (554→258 lines GREEN) — activated 2 orphaned stub files + extracted `TripItemDetails.js` (85), `helpers/tripButtonProps.js` (9). All callers unchanged. `CARD_V2` flag preserved.
+1. Fixed production Django error `"Unsupported lookup 'name' for ForeignKey"` in `products/services.py:444` (`find_similar_contracts`). Root cause: `operational_day__name` → no such field; `DaysOfTheWeek` has `day` (uppercase choices). Fix: `operational_day__day` + `.upper()` on weekday string + `.distinct()` to prevent M2M duplicate rows. `logger.error` → `logger.exception` for full traceback.
+2. Fixed stale test DB (`operators_contract_info_fields` M2M join table missing) — rebuilt with `--no-keepdb`. 14 ERRORs → 0 ERRORs.
+3. Fixed pre-existing `test_find_similar_contracts` + `test_recommendations_by_type` fixture failures — all 3 test contracts were on the same route, so `same_route_exclude` removed all candidates. Added `route_cnx_hkt` (Chiang Mai→Phuket) + `contract2_similar`/`contract3_similar` on that route as dedicated similar-contract targets. Original `contract2`/`contract3` untouched (needed by `test_similarity_same_route_*` which asserts score >70). Result: 58/58 PASS, 0 FAIL, 0 ERROR.
+4. Split `products/services.py` (1057 lines → 245 lines orchestrator) into 3 modules: `price_helpers.py` (126 lines, leaf), `similarity.py` (175 lines), `finders.py` (558 lines). All 7 `find_*` functions + all price helpers live in domain files. `services.py` re-exports everything so all existing `from .services import X` callers unchanged. `finders.py` 558 lines left intact (split-gate 1 fails — can't describe 7 finders in one sentence without "and").
+5. Merged all changes to `smartenplus-backend` `develop` branch. Latest: `50b5fb2 Merge refactor/products-services-split into develop`.
 
 **Resume point (EXACT):**
-1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` + `JOURNEY-INFOFIELDS-METADATA` + `USER-JOURNEY-AD-PAGE` + `INFOFIELDS-GUEST-LOGIN-FIX`** → main — BE develop `f7b3447`, FE develop `74f3a3d6`, AD develop `b675934`. None on main. Top priority.
-2. **Run M1–M7 manual tests** + InfoFields guest→login path before promoting to main. M5 (booking HTTP failure visible) most important gate.
-3. **Test journey page with real data** — search a known user/guest email, confirm timeline renders events, confirm guest flow works end-to-end.
-4. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
-5. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
+1. **Deploy to production** — user is shipping `develop → main`. BE `develop` is clean at `50b5fb2`. FE `develop` `74f3a3d6`. AD `develop` `b675934`. Run M1–M7 manual tests before promoting.
+2. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
+3. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
+4. **Run M1–M7 manual tests** + InfoFields guest→login path before main deploy. M5 (booking HTTP failure visible) most important gate.
+5. **Test journey page with real data** — search a known user/guest email, confirm timeline renders events, confirm guest flow works end-to-end.
 6. **Next monolith split** (when ready): `components/trips/FilterTrip.js` (504) ORANGE — extract filter groups. Prompt user before starting.
 
 ## Section 2 — Loose Ends (Open)

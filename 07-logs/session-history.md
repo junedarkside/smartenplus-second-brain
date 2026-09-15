@@ -1,5 +1,15 @@
 # Session History
 
+## Session #412 (2026-09-15)
+
+**Achieved (#412) — Monolith audit + 4 FE splits done.**
+
+1. Cross-repo 500-line audit: 23 FE RED, 42 BE RED, 18 AD RED files catalogued. Vault living doc created: `03-knowledge/monolith-audit-500line-rule.md`. 4-tier execution queue: TIER 4 DO NOT SPLIT list locked (payment/checkout files).
+2. `helpers/wordpress/api.js` (917→5 lines) — barrel re-export to `helpers/wordpress/queries/{posts,categories,pages,tags,routes}.js`. 22 callers unchanged.
+3. `pages/server-sitemap.xml/index.js` (627→36 lines) — 9 domain generators extracted to `lib/sitemap/{blog,help,locations,products,routes,operators,airport-transfer,ref-articles,utils}.js`. Page = thin orchestrator.
+4. `components/search/SlideCalendar2.js` (622→487 lines ORANGE) — extracted `helpers/calendarUtils.js` (31) + `hooks/useSlideCalendar.js` (69). Component single-responsibility dense Tab JSX, passes 4-gate. 5 callers unchanged.
+5. `components/trips/TripItem.js` (554→258 lines GREEN) — activated 2 orphaned stub files + extracted `TripItemDetails.js` (85), `helpers/tripButtonProps.js` (9). All callers unchanged. `CARD_V2` flag preserved.
+
 ## Session #411 (2026-09-15)
 
 **Achieved (#411) — CLAUDE.md standards upgrade across all 3 repos. Docs only, no code changes.**
