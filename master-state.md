@@ -4,26 +4,21 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-15 (session #409)
+**Updated:** 2026-09-15 (session #410)
 
-**Achieved (#409) — User Journey AD page: full feature + guest support + auth fix + AI slop cleanup.**
+**Achieved (#410) — InfoFields guest→login data loss fix. FE only, merged to develop.**
 
-1. Built `UserJourneyEvent` AD page from scratch: RTK Query slice (`journeyApi.js`), timeline (`JourneyTimeline`/`JourneyEventCard`), user search autocomplete with guest support, sidebar menu entry.
-2. Debugged no-data issue — root cause: `@staff_member_required` (Django session auth) vs AD's JWT Bearer. Fixed: replaced with `@api_view(['GET']) + IsAdminOrIsStaff` on all JSON views.
-3. Fixed `NEXT_PUBLIC_API_URL` trailing space in AD `.env.local` silently breaking env var.
-4. Added `metadata_api_summary` BE property — strips `trips_payload`/`passengers` PII before returning via API.
-5. Extended guest support: `email_journey_api` endpoint links `Order.email → order_id → events` chain; search returns `type='user'|'guest'` unified results; AD routes guests to email API vs user API.
-6. UXUI/SWE review + fixes: killed AI slop (funnel in per-user view, raw snake_case labels, metadata dump, 7 hardcoded hex values → `journeyConstants.js`, generic Alert empty state → centered guidance block, unlabeled day toggle, 4-color StatCards).
-7. **Security fix**: `/journey` was publicly accessible without login — added to `middleware.js` NextAuth matcher.
-8. All changes merged to `develop` both repos (AD `2d56b4b`, BE `c2f52f3`).
+1. Deep-diagnosed intermittent InfoFields form data loss when guest user fills checkout then logs in. Root causes: 3 async timing races between migration effect, RTK Query refetch, and `clearGuestDataAfterMigration` wiping Redux before backend-merge could repopulate it.
+2. 3-file FE fix (no BE changes needed): `flushSave()` exposed from `useCheckoutAutoSave` (Fix 1), `refetchBackendData` exposed from `useBackendCheckoutData` (Fix 2), migration `.then()` replaced with async IIFE that sequences flush→POST→refetch→dispatch-merge→clear in correct order (Fix 3).
+3. SWE agent review enforced Rule 8 (no useEffect chains) — original plan had a second watching effect, collapsed to single IIFE per review.
+4. 20/20 tests pass, build clean. Merged FE develop `74f3a3d6`. Also resolves master-state open item Fix 6 (flush autosave).
 
 **Resume point (EXACT):**
-1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` + `JOURNEY-INFOFIELDS-METADATA` + `USER-JOURNEY-AD-PAGE` → main** — BE develop `c2f52f3`, FE develop `64e4247a`, AD develop `2d56b4b`. None on main. Top priority.
-2. **Run M1–M7 manual tests** before promoting to main. M5 (booking HTTP failure visible) most important gate.
+1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` + `JOURNEY-INFOFIELDS-METADATA` + `USER-JOURNEY-AD-PAGE` + **`INFOFIELDS-GUEST-LOGIN-FIX`** → main** — BE develop `c2f52f3`, FE develop `74f3a3d6`, AD develop `2d56b4b`. None on main. Top priority.
+2. **Run M1–M7 manual tests** + InfoFields guest→login path before promoting to main. M5 (booking HTTP failure visible) most important gate.
 3. **Test journey page with real data** — search a known user/guest email, confirm timeline renders events, confirm guest flow works end-to-end.
 4. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
-5. **Fix 6 — flush autosave on cleanup** (`checkoutPersistence.js:334-339`): pending debounce discarded on step-change.
-6. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
+5. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
 
 ## Section 2 — Loose Ends (Open)
 

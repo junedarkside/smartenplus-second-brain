@@ -26,6 +26,7 @@ Global navigation catalog. Updated on every ingest.
 - [[drf-put-bypass-vulnerability]] — **PATTERN.** DRF's `UpdateModelMixin` enables both PATCH and PUT by default. If viewset only overrides `partial_update`, PUT still works via default DRF `update()` — bypassing all guards (transition checks, `clean()`, validations). Fix: `http_method_names = ['patch', 'head', 'options']`.
 - [[manual-confirmation-audit-trail]] — **PATTERN.** When staff manually confirm external actions (OTAs, operators), record WHO + WHEN. Anti-pattern: transient flag that bypasses guard but disappears (zero audit trail). Pattern: persist `confirmed_at/by` fields + explicit UI checkbox + transient flag for guard only.
 - [[guest-chat-token-security]] — **PATTERN.** Guest support chat tokens: email → OTP → token. Vulnerability: if endpoint hands out tokens for existing conversations without OTP, anyone reads any guest's chat. Fix: return 403 `OTP_REQUIRED` when existing open/pending conv found. Authenticated path unaffected.
+- [[checkout-guest-migration-async-iife-pattern]] — **PATTERN 2026-09-15.** Guest→login checkout data migration: single async IIFE sequences flush→POST→refetch→dispatch-merge→clear. Eliminates 3 timing races that intermittently blank InfoFields. Key rule: clear Redux ONLY after dispatch merge because `enableReinitialize=true` Formik reinitializes on any Redux change. `flushSave()` exposes sync debounce flush for guest path.
 
 ## Knowledge — SEO/AEO
 

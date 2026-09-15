@@ -2,6 +2,11 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-15 (session #410)
+
+> **Fix 6 — flush autosave on cleanup — CLOSED.**
+> `checkoutPersistence.js` — pending debounce discarded on step-change. Fixed as part of InfoFields guest→login data loss fix: `flushSave()` exposed from `useCheckoutAutoSave` clears debounce timer and synchronously dispatches latest Formik values to Redux. Called before migration POST. FE develop `74f3a3d6`.
+
 ## Closed — 2026-09-09 (session #394)
 
 | Item | Closed | What shipped |

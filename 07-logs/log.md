@@ -1,3 +1,5 @@
+## [2026-09-15] session-end #410 | InfoFields guest→login data loss fix: 3-race async IIFE sequencing fix. flushSave + refetchBackendData. FE develop 74f3a3d6. Fix 6 closed.
+
 ## [2026-09-15] session-end #409 | User Journey AD page: full feature + guest support + auth fix + AI slop cleanup. Security: /journey added to NextAuth matcher. BE c2f52f3, AD 2d56b4b, both merged to develop.
 
 ## [2026-09-14] session-end #408 | Shipped UserJourneyEvent info fields tracking: trips_payload + passengers in order_created metadata. orders/views.py + journeys/models.py. Merged to BE develop d453afd.

@@ -1,5 +1,17 @@
 # Session History
 
+## Session #409 (2026-09-15)
+
+**Achieved (#409) — User Journey AD page: full feature + guest support + auth fix + AI slop cleanup.**
+
+1. Built `UserJourneyEvent` AD page from scratch: RTK Query slice (`journeyApi.js`), timeline (`JourneyTimeline`/`JourneyEventCard`), user search autocomplete with guest support, sidebar menu entry.
+2. Debugged no-data issue — root cause: `@staff_member_required` (Django session auth) vs AD's JWT Bearer. Fixed: replaced with `@api_view(['GET']) + IsAdminOrIsStaff` on all JSON views.
+3. Fixed `NEXT_PUBLIC_API_URL` trailing space in AD `.env.local` silently breaking env var.
+4. Added `metadata_api_summary` BE property — strips `trips_payload`/`passengers` PII before returning via API.
+5. Extended guest support: `email_journey_api` endpoint links `Order.email → order_id → events` chain; search returns `type='user'|'guest'` unified results; AD routes guests to email API vs user API.
+6. UXUI/SWE review + fixes: killed AI slop. Security: `/journey` added to NextAuth matcher.
+7. Merged: AD `2d56b4b`, BE `c2f52f3`.
+
 ## Session #408 (2026-09-14)
 
 **Achieved (#408) — Shipped `UserJourneyEvent` info fields tracking for support use case. BE only.**
