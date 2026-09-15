@@ -1,5 +1,17 @@
 # Session History
 
+## Session #411 (2026-09-15)
+
+**Achieved (#411) — CLAUDE.md standards upgrade across all 3 repos. Docs only, no code changes.**
+
+1. Researched professional SWE standards (React 2025, Django clean arch, cyclomatic complexity, Clean Code) to back up project rules.
+2. Revised Rule 5 NO MONOLITHIC CODE → tiered file thresholds (200 green / 200–400 yellow / 400–500 orange / >500 red) + 4-question split test + ravioli anti-pattern warning. Replaced hard 200-line ceiling with "start asking questions" trigger.
+3. Strengthened Rule 4 DON'T BREAK PRODUCTION → labeled non-negotiable, highest-priority, explicit verify mandate, "it probably works is not acceptable."
+4. Added Pre-Flight: document-current-behaviour step (props, return values, side effects, events) before touching anything.
+5. Added Post-Edit Functional Parity Verification — mandatory 6-check table: props/API unchanged, callers work, side effects preserved, edge cases, no console errors, tests pass. Rule: behaviour change = bug not refactor.
+6. Synced all 3 rules to AD + BE CLAUDE.md (Django-adapted for BE: serializer shape, `manage.py test`, signal side effects, fat-models/thin-views guidance).
+7. Committed + pushed all 3 repos to develop. FE `68a4f1ad`, AD `b675934`, BE `f7b3447`.
+
 ## Session #410 (2026-09-15)
 
 **Achieved (#410) — InfoFields guest→login data loss fix. FE only, merged to develop.**

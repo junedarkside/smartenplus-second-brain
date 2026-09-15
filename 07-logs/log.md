@@ -1,3 +1,5 @@
+## [2026-09-15] session-end #412 | Monolith audit + 4 FE splits: wordpress/api.js (917→5 barrel), server-sitemap (627→36 orchestrator, 9 lib files), SlideCalendar2 (622→487 ORANGE, extracted calendarUtils+useSlideCalendar), TripItem (554→258, activated orphaned stubs, extracted TripItemDetails+tripButtonProps). Vault audit doc created: 03-knowledge/monolith-audit-500line-rule.md.
+
 ## [2026-09-15] session-end #411 | CLAUDE.md standards upgrade: monolith thresholds (tiered 200/400/500), functional parity verification (mandatory 6-check), breakdown prevention (non-negotiable). Synced FE+AD+BE. FE 68a4f1ad, AD b675934, BE f7b3447.
 
 ## [2026-09-15] session-end #410 | InfoFields guest→login data loss fix: 3-race async IIFE sequencing fix. flushSave + refetchBackendData. FE develop 74f3a3d6. Fix 6 closed.

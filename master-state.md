@@ -4,24 +4,23 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-15 (session #411)
+**Updated:** 2026-09-15 (session #412)
 
-**Achieved (#411) — CLAUDE.md standards upgrade across all 3 repos. Docs only, no code changes.**
+**Achieved (#412) — Monolith audit + 4 FE splits done.**
 
-1. Researched professional SWE standards (React 2025, Django clean arch, cyclomatic complexity, Clean Code) to back up project rules.
-2. Revised Rule 5 NO MONOLITHIC CODE → tiered file thresholds (200 green / 200–400 yellow / 400–500 orange / >500 red) + 4-question split test + ravioli anti-pattern warning. Replaced hard 200-line ceiling with "start asking questions" trigger.
-3. Strengthened Rule 4 DON'T BREAK PRODUCTION → labeled non-negotiable, highest-priority, explicit verify mandate, "it probably works is not acceptable."
-4. Added Pre-Flight: document-current-behaviour step (props, return values, side effects, events) before touching anything.
-5. Added Post-Edit Functional Parity Verification — mandatory 6-check table: props/API unchanged, callers work, side effects preserved, edge cases, no console errors, tests pass. Rule: behaviour change = bug not refactor.
-6. Synced all 3 rules to AD + BE CLAUDE.md (Django-adapted for BE: serializer shape, `manage.py test`, signal side effects, fat-models/thin-views guidance).
-7. Committed + pushed all 3 repos to develop. FE `68a4f1ad`, AD `b675934`, BE `f7b3447`.
+1. Cross-repo 500-line audit: 23 FE RED, 42 BE RED, 18 AD RED files catalogued. Vault living doc created: `03-knowledge/monolith-audit-500line-rule.md`. 4-tier execution queue: TIER 4 DO NOT SPLIT list locked (payment/checkout files).
+2. `helpers/wordpress/api.js` (917→5 lines) — barrel re-export to `helpers/wordpress/queries/{posts,categories,pages,tags,routes}.js`. 22 callers unchanged.
+3. `pages/server-sitemap.xml/index.js` (627→36 lines) — 9 domain generators extracted to `lib/sitemap/{blog,help,locations,products,routes,operators,airport-transfer,ref-articles,utils}.js`. Page = thin orchestrator.
+4. `components/search/SlideCalendar2.js` (622→487 lines ORANGE) — extracted `helpers/calendarUtils.js` (31) + `hooks/useSlideCalendar.js` (69). Component single-responsibility dense Tab JSX, passes 4-gate. 5 callers unchanged.
+5. `components/trips/TripItem.js` (554→258 lines GREEN) — activated 2 orphaned stub files + extracted `TripItemDetails.js` (85), `helpers/tripButtonProps.js` (9). All callers unchanged. `CARD_V2` flag preserved.
 
 **Resume point (EXACT):**
-1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` + `JOURNEY-INFOFIELDS-METADATA` + `USER-JOURNEY-AD-PAGE` + `INFOFIELDS-GUEST-LOGIN-FIX`** → main — BE develop `f7b3447`, FE develop `68a4f1ad`, AD develop `b675934`. None on main. Top priority.
+1. **Deploy `INFOFIELDS-FIXES` + `COORD-WIPE-FIX` + `ORDER-TOTAL-FIX` + `INFOFIELDS-ADMIN-SEARCH-FIX` + `JOURNEY-INFOFIELDS-METADATA` + `USER-JOURNEY-AD-PAGE` + `INFOFIELDS-GUEST-LOGIN-FIX`** → main — BE develop `f7b3447`, FE develop `74f3a3d6`, AD develop `b675934`. None on main. Top priority.
 2. **Run M1–M7 manual tests** + InfoFields guest→login path before promoting to main. M5 (booking HTTP failure visible) most important gate.
 3. **Test journey page with real data** — search a known user/guest email, confirm timeline renders events, confirm guest flow works end-to-end.
 4. **Fix `BookingRateCard.quantity=0` on retry** — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
 5. **`smartenplus-backend` untracked file** (`operators/tests/test_transport_composit_pagination.py`) — commit or discard.
+6. **Next monolith split** (when ready): `components/trips/FilterTrip.js` (504) ORANGE — extract filter groups. Prompt user before starting.
 
 ## Section 2 — Loose Ends (Open)
 
