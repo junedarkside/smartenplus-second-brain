@@ -1,3 +1,5 @@
+## [2026-09-15] session-end #411 | CLAUDE.md standards upgrade: monolith thresholds (tiered 200/400/500), functional parity verification (mandatory 6-check), breakdown prevention (non-negotiable). Synced FE+AD+BE. FE 68a4f1ad, AD b675934, BE f7b3447.
+
 ## [2026-09-15] session-end #410 | InfoFields guest→login data loss fix: 3-race async IIFE sequencing fix. flushSave + refetchBackendData. FE develop 74f3a3d6. Fix 6 closed.
 
 ## [2026-09-15] session-end #409 | User Journey AD page: full feature + guest support + auth fix + AI slop cleanup. Security: /journey added to NextAuth matcher. BE c2f52f3, AD 2d56b4b, both merged to develop.

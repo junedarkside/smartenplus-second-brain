@@ -1,5 +1,14 @@
 # Session History
 
+## Session #410 (2026-09-15)
+
+**Achieved (#410) — InfoFields guest→login data loss fix. FE only, merged to develop.**
+
+1. Deep-diagnosed intermittent InfoFields form data loss when guest user fills checkout then logs in. Root causes: 3 async timing races between migration effect, RTK Query refetch, and `clearGuestDataAfterMigration` wiping Redux before backend-merge could repopulate it.
+2. 3-file FE fix (no BE changes needed): `flushSave()` exposed from `useCheckoutAutoSave` (Fix 1), `refetchBackendData` exposed from `useBackendCheckoutData` (Fix 2), migration `.then()` replaced with async IIFE that sequences flush→POST→refetch→dispatch-merge→clear in correct order (Fix 3).
+3. SWE agent review enforced Rule 8 (no useEffect chains) — original plan had a second watching effect, collapsed to single IIFE per review.
+4. 20/20 tests pass, build clean. Merged FE develop `74f3a3d6`. Also resolves master-state open item Fix 6 (flush autosave).
+
 ## Session #409 (2026-09-15)
 
 **Achieved (#409) — User Journey AD page: full feature + guest support + auth fix + AI slop cleanup.**
