@@ -2,6 +2,11 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-16 (session #415)
+
+> **`EMAIL-VIEWS-SPLIT` — CLOSED.**
+> Opened #414 when `bookings/views.py` hit 513+ lines (RED) after adding `SendBookingCancelEmailView`. This session added 2 more email views (`PreviewBookingEmailView`, `SendBookingConfirmationEmailView`) as part of the email-preview feature, growing it further to 611 before extraction. Split all 3 email-action views into new `bookings/email_views.py` (118 lines) — `views.py` ends at 500, net -20 vs the #414 baseline (520) despite 2 new views added this session. `urls.py` import updated, dead imports (`APIView`, `render_to_string`, `settings`, context-builder imports) removed from `views.py`. Verified: syntax check, `manage.py check`, live DRF-client re-test against real bookings post-split — all clean. Merged → `smartenplus-backend` `develop` `fe95ed5`.
+
 ## Closed — 2026-09-15 (session #410)
 
 > **Fix 6 — flush autosave on cleanup — CLOSED.**

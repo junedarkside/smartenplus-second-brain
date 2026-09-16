@@ -1,5 +1,22 @@
 # Session History
 
+## Session #414 (2026-09-15)
+
+**Achieved (#414) — Admin booking cancel email + booking status filter + null-crash fix.**
+
+1. Added staff-triggered "Send Cancel Email" button to booking detail page (`/bookings/[slug]`). Button appears only when `booking_status.startsWith('Canceled')`. One-shot disable after send.
+2. New Celery task `send_booking_cancel_email` — sends HTML cancel email via AWS SES (`bookings/tasks.py`), 3 retries, reads customer email from `booking.order.email`.
+3. New `booking_cancellation_template.html` — red status badge, booking ref / route / travel date info strip, optional cancel reason block.
+4. New `SendBookingCancelEmailView` (APIView, `IsAdminOrIsStaff`) + URL `admin-dashboard/booking-cancel-email/`. Validates booking is canceled before queuing.
+5. Added `booking_status` exact-match filter to `AdminBookingSummaryViewSet.get_queryset()` (both search + date-filter paths) — supports `?booking_status=Canceled` query param.
+6. New "Booking Status" dropdown filter on bookings list page (`/bookings`) — mirrors orders page pattern. Wired to RTK Query, URL sync (deep-link safe), Redux Persist, reset handler. `BOOKING_STATUS_OPTIONS` constants file created.
+7. **Fixed `/orders/[slug]` crash** — `TypeError: Cannot read properties of null (reading 'departure_time')` in `DataGridComp.js` `renderTrips`. Root cause: non-transport bookings have `contract.trip=None` by design, but the cell renderer read `.departure_time`/`.arrival_time`/`.route.route_name` with zero optional chaining. Guarded `contract`, `trip`, and `route` independently (route treated as separately-nullable even when trip exists, matching 5 other call sites in the codebase). Same unguarded-chain bug class also fixed in `ListBookingDashBoard.js`. `'N/A'` fallback matches existing `renderOperators` convention.
+8. **BE**: `AdminBookingSummarySerializer.get_contract()` was missing `arrival_time` entirely from the `trip` dict (only `departure_time` was serialized) — added the missing key.
+9. **Process correction, logged to memory**: user's first prompt explicitly said "check vault" — skipped reading `vault-guardrails.md` before coding, which caused branching bugfix work off `main` instead of `develop` (violates vault's mandatory Git Branch Policy). Caught + corrected: rebranched onto `develop` tracking, `main` untouched. New feedback memory `feedback_read_vault_guardrails_first.md` — "check vault" is now a literal first action (read `vault-guardrails.md` + `vault-protocol.md` before any agent/edit), not ambient context.
+10. All 3 fixes merged → `admin-dashboard` `develop` `6a91303` + `smartenplus-backend` `develop` `c28e7dd`. Cancel-email features merged → `admin-dashboard` `develop` `458c36e` + `smartenplus-backend` `develop` `99c7e42` (earlier same session). `main` untouched on both repos — user manages main merges manually per [[feedback_no_main_without_permission]].
+11. **Fixed cancel email template for non-transport categories** — day-tour cancellation (e.g. booking XTA1875249) rendered a confusing "Trip Details → From — / To —" block because `departure_station`/`arrival_station` are transport-only fields, always empty for day tours/spa/event tickets. Wrapped the Trip Details timeline in `{% if departure_station and arrival_station %}` — transport bookings render byte-identical, non-transport bookings skip the section (Route field in info strip already shows the tour name via existing `route_name or contract_name` fallback). Confirmed prior art exists in `booking_confirmation_template.html` (branches on `service_category` with a richer alternate block) but deliberately NOT copied verbatim — cancel task's context dict lacks `service_category`/`meeting_point_details`, and cancellation emails don't need that richness. Branched correctly from `develop` this time (`fix/cancellation-template-hide-empty-stations`) per vault-guardrails.md, merged → `smartenplus-backend` `develop` `2ad75e6`.
+
+
 ## Session #413 (2026-09-15)
 
 **Achieved (#413) — BE production bug fix + `products/services.py` monolith split.**
