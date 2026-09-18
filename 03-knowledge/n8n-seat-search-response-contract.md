@@ -1,6 +1,6 @@
 ---
 name: n8n-seat-search-response-contract
-description: n8n /webhook/search (Lomprayah seat availability) response shapes — data is a list of dicts for a real trip but a bare string "no trip" when none; parser must guard or it 500s. Latency 10-19s variable.
+description: n8n /webhook/search (Lomprayah seat availability) response shapes — data is a list of dicts for a real trip but a bare string "no trip" when none; parser must guard or it 500s. Latency 10-30s variable, timeout now 40s.
 metadata:
   type: reference
 ---
@@ -50,11 +50,18 @@ note = data_list if isinstance(data_list, str) else None
 # seat_status = item.get('seatStatus','') or (note or '')  → available:null, "no trip"
 ```
 
-## Latency — 10-19s, variable
+## Latency — 10-30s, variable, still climbing
 
-Measured warm: 9.9 / 11.4 / 15.7 / 19.1 / 12.2 s. Cold: hangs 25s+. BE timeout was 15s → caught the slow
-tail → intermittent 502. Raised to **25s** (`fix/seat-check-timeout-25s`). Real cure is n8n-side workflow
-speed (out of BE scope). A "hit it in browser first, then it works" symptom = timing luck, not a fix.
+Measured warm (2026-07-22): 9.9 / 11.4 / 15.7 / 19.1 / 12.2 s. Cold: hangs 25s+. BE timeout was 15s →
+caught the slow tail → intermittent 502. Raised to 25s (`fix/seat-check-timeout-25s`).
+
+**Re-measured 2026-09-18** (real Lomprayah URL, `from=43&to=9`): browser-direct call took **25-30s** —
+already past the 25s BE timeout, causing the same race again (`OPERATOR_API_ERROR` 502 even though n8n
+was about to return correct data). Raised again to **40s** (`operators/views.py:1137`, branch
+`fix/seat-check-n8n-timeout`). Pattern: each latency ceiling measured so far has been exceeded within
+~2 months — treat any fixed timeout here as provisional, not a permanent fix. Real cure is n8n-side
+workflow speed (out of BE scope). A "hit it in browser first, then it works" symptom = timing luck, not
+a fix — and a recurring one; expect to revisit this number again.
 
 ## Related
 

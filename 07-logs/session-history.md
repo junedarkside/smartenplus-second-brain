@@ -1,5 +1,22 @@
 # Session History
 
+## Session #418 (2026-09-18)
+
+**Achieved (#418) — installed herdr skill globally, diagnosed OTA sync "skipped" count on backend pane.**
+
+1. **herdr skill install.** `npx skills add herdrdev/herdr --skill herdr -g` failed — local node (v22.1.0) too old for the `skills` CLI's `node:zlib` `crc32` import (needs >=22.20.0). Node upgrade path (`n`, then `brew`) hit sudo-password-in-tool wall (no TTY for `sudo -S`); user ran `sudo xcodebuild -license accept` manually in a separate Terminal window to unblock `brew`, then `brew install herdr` succeeded (0.9.1) — but a pre-existing `~/.local/bin/herdr` (0.9.0) already shadowed it on PATH, so the CLI was already present regardless. Skipped the npm installer entirely: downloaded `SKILL.md` directly from `github.com/herdrdev/herdr` (`v0.9.1/skills/herdr/SKILL.md`) into `~/.claude/skills/herdr/SKILL.md` — same end state as the npx installer would have produced, no node upgrade needed. Confirmed live: `herdr status` (server running, `HERDR_ENV=1`), `herdr pane list` (5 panes across `w2`/`w3` workspaces — backend, frontend x2, admin-dashboard, plus this agent's own pane).
+2. **OTA sync "skipped" investigated, not a bug.** User saw `sync-ota-bookings done: {'fetched': 43, 'upserted': 0, 'skipped': 42, ...}` in the backend pane's live Celery log and asked why. Read `cs/tasks.py::sync_ota_bookings` (lines 72-180): `skipped` increments whenever `CsOtaBooking.objects.update_or_create()` finds an existing `(source, booking_id)` row (`created=False`) — normal steady-state behavior on a task that reruns every 5 min, not an error or data-loss signal. If any field actually changed vs the stored row, the diff is separately captured to `OtaBookingEvent` (lines 157-168) — that table is the right place to check for silent field drift, not the `skipped` counter itself.
+
+**Resume point (EXACT) — as of end of #418:**
+1. Carried from #417: **`sidemenu.js` is confirmed dead code** (zero real importers, only referenced by its own `.stories.js`) — flag for future cleanup/deletion, not deleted, no urgency.
+2. Carried from #417: **Live-verify the SideList.js scrollbar fix** — was mid-restart at #417's end; confirmed correct in code + build but not yet re-confirmed live after the real fix.
+3. Carried from #416: **Live-verify the Canceled-booking branch** on booking-detail action row (label-only change, color removed on Cancel email button) — still not done.
+4. Carried from #416: `smartenplus-backend` untracked file (`operators/tests/test_transport_composit_pagination.py`) — commit or discard. Carried across 7+ sessions now, still untouched.
+5. Carried from #416: Fix `BookingRateCard.quantity=0` on retry — `copy_cartitem_to_bookingitem` `get_or_create` with `defaults=` doesn't update existing rows. Use `update_or_create` instead.
+6. Carried from #416: Run M1–M7 manual tests + InfoFields guest→login path before main deploy.
+7. Carried from #416: Test journey page with real data — search known user/guest email, confirm timeline renders, confirm guest flow end-to-end.
+8. **New, not urgent**: if `OtaBookingEvent` diff volume ever becomes a concern, that table (not the `skipped` counter) is where to look for actual field-level drift on repeat OTA syncs.
+
 ## Session #417 (2026-09-18)
 
 **Achieved (#417) — admin-dashboard sidebar vertical scrollbar fix. First attempt hit dead code; root-caused via live DOM inspection; correct fix shipped.**
