@@ -47,11 +47,11 @@ Critical (non-test):
 - 3332 `operators/views.py` — LARGEST; split sequentially by concern last
 - 2572 `products/views.py` — extract availability service first
 - 1716 `orders/views.py` — extract service layer; keep viewset for URL routing
-- 1632 `products/serializers.py` — 101 classes; split by domain
+- 1687 `products/serializers.py` (was 1632, 2026-09-21: +55 lines, `has_live_seat_check` field) — 49 top-level classes (not 101 — corrected count); split by domain (list/detail/lookup/recommendation). **Bonus finding 2026-09-21**: two classes both named `TripSerializer` (line 268 dead/shadowed, line 668 live) — delete the dead one when this splits.
 - 1523 `operators/admin.py` — admin-only, safe to split by entity
 - 1425 `cs/views.py` — split by concern (OTP/Supabase/conversation)
 - 1364 `dialogue/views.py` — split by entity + service layer
-- 1228 `operators/models.py` — Django auto-discovery risk; verify migrations
+- 1252 `operators/models.py` (was 1228, 2026-09-21: +24 lines, `has_live_seat_check` property) — 34 top-level classes, clean natural seams (Contract+relations, Operator+mappings, day-tour scheduling, small lookups). **Risk assessed 2026-09-21, split declined**: signal-receiver silent-failure risk is the real danger here, not import errors — a `models/` package split can leave a `@receiver`-decorated function unregistered if its submodule isn't imported by `models/__init__.py`, and that fails silently (no crash, feature just stops working, e.g. slug generation or cache invalidation quietly dies). Migrations are unaffected regardless (key on app_label.ModelName not file path). User declined to risk it this session; do as its own dedicated PR with per-signal manual verification, not bundled with a feature branch.
 - 1136 `carts/serializers.py`
 - 1057 `products/services.py`
 - 969  `stations/views.py`
@@ -134,7 +134,8 @@ Celery tasks → shared utils → models → large views
 - **Claude prompts user before each split** — "Ready to split `<file>`?" User decides yes/no.
 - **Auto-update trigger** — whenever a session adds/modifies lines in any tracked file, re-scan that file and update this report.
 - **No batch** — one file per session, always user-approved.
-- Last audit: 2026-09-15
+- Last full audit: 2026-09-15
+- Last targeted update: 2026-09-21 (2 files touched by seat-check-indicator feature, line counts + risk notes refreshed, not a full re-scan)
 
 ## Related Files
 - FE CLAUDE.md — monolith thresholds + 4-gate test rules
