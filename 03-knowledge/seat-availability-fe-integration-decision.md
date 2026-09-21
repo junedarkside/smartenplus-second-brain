@@ -7,7 +7,7 @@ metadata:
 
 # Seat Availability — FE Integration Decision
 
-> **STATUS: RECOMMENDATION ONLY, 2026-09-19.** No code shipped. FE has zero references to `check_seat_availability` today — confirmed greenfield.
+> **STATUS: RECOMMENDATION ONLY, revised 2026-09-21 (see Revision below).** No code shipped. FE has zero references to `check_seat_availability` today — confirmed greenfield. **The Addendum 2 trigger point below (checkout-time, gate the Pay button) is SUPERSEDED — read the Revision section first, it changes the trigger to Passengers-step + timer-gated Payment recheck, and flags 3 ship-blockers not covered in the original debate.**
 
 ## Question
 
@@ -72,6 +72,28 @@ Given that, returning to a stale cart today re-runs the same static gates that w
 **Because the recommended design gates the check on the pay action rather than cart age or mount, this is self-healing by construction** — no separate "abandoned cart" handling is needed for seat-availability specifically. Whether the user reaches the pay button in the same session or 10 days later, the check fires fresh at that exact moment either way.
 
 **Gap surfaced but out of scope for this decision:** cart price is silently recomputed live from current `contract_ratecard.selling_rate` on every checkout mount, with no "price changed since you added this" warning. This is a real issue for the same "returns days later" scenario, but is a pricing-cache/UX concern unrelated to seat availability — flagged here for a separate follow-up, not folded into this decision.
+
+## Revision — 2026-09-21, trigger point moved to Passengers step + timer
+
+3-lens (BD/UX/SWE, opus) stress-test of the original Addendum-2 recommendation, then two rounds of user-driven revision. Session ran in `smartenplus-frontend`, code-only exploration (no code shipped) — see `~/.claude/plans/check-vault-and-fe-fluttering-frog.md` in that repo's Claude Code history for full working detail; this section is the durable summary.
+
+**Factual correction to the original debate:** "gate the Pay button, fires before any payment session starts" was wrong on one fact — arrival at the payment step already creates a backend Order+Booking (`usePaymentInitialization.js:186-214`, `getOrderAndBilling → getCreateBooking`). No money moves at that point, but a record exists. This matters because the original design's implicit safety claim (nothing has happened yet) was false at the moment it mattered most.
+
+**Trigger point moved: Passengers step (formStep 1), not Payment step.** Confirmed via code trace: the endpoint (`check_seat_availability`) is headcount-independent — query params are `from`/`to`/`date`/`time` only, no passenger count — so a Passengers-step check isn't premature on the headcount axis. And critically, item-removal is cheap and UI-available at the Passengers step (`canDeleteItem = formStep < 3`) but **locked** at the Payment step (delete button replaced by a "cart locked" icon) — so "notify + let user remove" (the actual product goal) is only buildable at Passengers step, not Payment step as originally recommended.
+
+**Final mechanism (user-confirmed, 2026-09-21):**
+1. Check fires automatically on arrival at Passengers step (not on Next-click) — Next button disabled until it resolves. Scoped only to cart items with `has_live_seat_check === true`.
+2. A per-item elapsed-time counter starts at that check. If the user reaches Payment step before the counter expires (working assumption: 10-15 min, not yet finalized), the cached result is trusted — no second network call. If expired, a silent recheck fires at Payment-step arrival, hidden behind the existing order-creation loading wait, gating only the Pay button (not Next again).
+3. Three-way result handling throughout: confirmed sold-out → block + remove-item affordance; confirmed available → proceed; anything else (timeout, 502, null, any error) → **fail open**, proceed with a soft advisory. This fail-open default is load-bearing — see blockers below.
+
+**3 ship-blockers found in a follow-up architecture-review pass, not in the original debate:**
+1. **Guest checkout breaks this silently.** `check_seat_availability` is `IsAuthenticated`-gated; guest checkout is a live path in this app. Every guest gets a 401, which — because of fail-open — is indistinguishable from "available." Feature would ship 100% dead for guests with zero signal. Must be resolved (either open the endpoint + rate-limit, or explicitly scope to logged-in users) before any frontend work starts.
+2. **A 400 error path unconditionally leaks internal infra** — the operator's live upstream API URL and full station-mapping table — into the response body. Fine when admin-only; becomes visible in every customer's Network tab once called from checkout. One-line fix (gate behind the existing `debug_on` flag, already used correctly on the other response paths) — same PR as `SEAT-CHECK-MAPPING-ORDER-BUG`.
+3. **The Payment-step "let user remove a sold-out item" design is architecturally impossible as specified** — delete UI is already replaced by a lock icon at that step in the existing codebase. Fix: don't build new UI, reuse the existing `CONTRACT_INACTIVE` pattern (advisory + redirect back to cart-review step where delete already works).
+
+Also flagged, not blockers but real: the tri-state `available` field means a soft "don't know" (`null`, arrives as HTTP 200) must never be treated as a hard "no" — a one-character bug (`!data.available` vs `data.available === false`) would wrongly block paying customers on ordinary network hiccups; zero observability currently planned (a production complaint would be undiagnosable — minimum fix is one server-side log line per check, no frontend work needed); a kill switch already exists for free (`has_live_seat_check` / `seat_availability_api_url` can be flipped per-contract/operator with zero deploy) but isn't documented as the rollback procedure anywhere.
+
+**Prerequisite backend work, independent of frontend, ship first:** `SEAT-CHECK-MAPPING-ORDER-BUG` gate-order fix + the debug-leak fix above, in the same PR. Endpoint stays admin-only until both land — zero risk in the meantime.
 
 ## Related
 
