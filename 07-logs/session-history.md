@@ -1,5 +1,14 @@
 # Session History
 
+## Session #423 (2026-09-21)
+
+**Achieved (#423) — full workflow-design pass on the checkout-time seat-check flow. Analysis + design only, no code shipped, confirmed intentional. Moved the design substantially from #421's version — trigger point changed, a timer mechanism added, and a follow-up architecture review found 3 ship-blockers not previously known.**
+
+1. 3-lens (BD/UX/SWE, opus) stress-test of the #421 recommendation — corrected the "before any payment session starts" premise (Order+Booking already exists by payment-step arrival) and flagged sold-out recovery as an instruction, not a designed flow.
+2. Trigger point moved, user-driven, 3 rounds of revision: Passengers-step → briefly single-trigger-only → reversed to dual-trigger after a 2-hour-idle scenario exposed an unbounded staleness gap → final: single check at Passengers-step arrival + per-item elapsed-time counter triggering a silent, non-blocking recheck at Payment-step arrival if expired.
+3. Follow-up architecture-review pass (opus) found 3 ship-blockers: guest-auth conflict (`IsAuthenticated` vs live guest checkout, fails open into silent 100%-dead-for-guests), a 400 error response leaking internal infra, and the "remove sold-out item at Payment step" design being architecturally impossible (delete UI replaced by lock icon at that step).
+4. Vault updated: `seat-availability-fe-integration-decision.md` — appended Revision section documenting the trigger-point change, the 3 blockers, and backend sequencing.
+
 ## Session #422 (2026-09-21)
 
 **Achieved (#422) — implemented + shipped the passive "Live Availability" seat-check indicator decided in #421 (card + detail page only, NOT the checkout auto-fire flow), plus 2 unrelated bugs found and fixed along the way. Merged to develop on both repos.**

@@ -2,6 +2,17 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-22 (session #424)
+
+> **`SEAT-CHECK-GUEST-AUTH-CONFLICT` — CLOSED.**
+> Opened #423 (endpoint `IsAuthenticated`-gated, guest checkout live, fail-open design would silently ship the whole feature dead for guests). Fixed as a 4-part bundle after a deep-dive review found opening the permission alone would reopen 2 new issues: `get_permissions()` opens `check_seat_availability` to `AllowAny` (pattern copied from `orders/views.py`'s existing guest-order-creation exemption) + in-action `is_actived`/`is_deleted` guard (staff exempted — admin diagnostic tool legitimately checks disabled contracts and has no error-UI for this case) + `debug_on` now requires `request.user.is_staff` (closes the guest-reachable reopening of `SEAT-CHECK-400-DEBUG-LEAK` below) + new `SeatCheckThrottle` (20/hour, IP-keyed — see open follow-up in master-state). Verified live via shell: anon request → 200 not 401; anon + `?debug=true` → no debug key; anon against inactive contract → 400 `CONTRACT_INACTIVE`. Merged → `smartenplus-backend` `develop` (`fc06b3e` → `f52f3fd..653a2d0`).
+
+> **`SEAT-CHECK-400-DEBUG-LEAK` — CLOSED.**
+> Opened #423. Re-verified precisely before fixing (previous pass had understated it — `debug_url` on the 502 `OPERATOR_API_ERROR` branch was also unconditional, not just `debug` on the 400 `MAPPING_NOT_FOUND` branch). Both gated behind the existing `debug_on` flag, matching the pattern already correct on the endpoint's other two response branches. Merged → `smartenplus-backend` `develop` (`78a2458`).
+
+> **`SEAT-CHECK-REMOVE-AT-PAYMENT` — CLOSED, overturned on deep-dive, not actually a blocker.**
+> Original framing (from #423's architecture review): delete UI is replaced by a lock icon at the Payment step, "architecturally impossible" to let a user remove a sold-out item there. A follow-up deep-dive found the premise wrong on 3 counts: `AMOUNT_LOCKED` only fires after Pay is pressed (not at payment-step arrival); the real cart-deletion guard (`carts/views.py` `_check_payment_pending`) already permits removal at the `'ordering'` status that exists at that point — no backend change needed at all; stale-order cleanup on removal already existed. Fix was one frontend line: `EnhancedTripCard.js`'s `canDeleteItem` extended to also allow deletion when `hasIssue` is true, reusing the existing badge/pulsing-delete UI built for `is_actived===false`. Merged → `smartenplus-frontend` `develop` (`50d84361` → `8c178a0f`).
+
 ## Closed — 2026-09-16 (session #415)
 
 > **`EMAIL-VIEWS-SPLIT` — CLOSED.**
