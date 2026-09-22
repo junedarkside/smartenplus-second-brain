@@ -1,5 +1,15 @@
 # Session History
 
+## Session #424 (2026-09-22)
+
+**Achieved (#424) — shipped the entire checkout-time seat-check flow designed in #423: all 3 ship-blockers fixed, the full feature built, live-verified in browser (with 2 real bugs found and fixed during verification), all merged to `develop` on both repos.**
+
+1. All 3 blockers from #423 fixed: debug-leak (both 400 and 502 branches gated), guest-auth (4-part bundle — `AllowAny` + `is_actived` guard with staff exemption + `debug_on` requires `is_staff` + new `SeatCheckThrottle`), remove-at-payment (overturned on deep-dive, not actually a blocker — fixed with one frontend line, zero backend change).
+2. Full frontend feature built — new hook, new TTL cache helper (10-min, matched to QR code precedent), new RTK Query endpoint, edits across FormCard/checkout-index/EnhancedTripCard/Itineraries.
+3. Live verification found 2 more real bugs static review missed: cart items went through a third serializer missing the fields the feature needed (silent no-op), and the status badges used absolute positioning with no positioned ancestor (invisible, a pre-existing bug the original badge already had).
+4. Post-fix parity review: 0 breaking changes across all 8 touched files.
+5. BD+UX follow-up confirmed the 10-min TTL recheck doesn't need a visible countdown timer.
+
 ## Session #423 (2026-09-21)
 
 **Achieved (#423) — full workflow-design pass on the checkout-time seat-check flow. Analysis + design only, no code shipped, confirmed intentional. Moved the design substantially from #421's version — trigger point changed, a timer mechanism added, and a follow-up architecture review found 3 ship-blockers not previously known.**

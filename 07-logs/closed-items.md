@@ -2,6 +2,11 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-22 (session #425)
+
+> **`DRF-THROTTLE-SCOPE-BUG` — CLOSED.**
+> Found during a pre-production-deploy security review of #424's seat-check feature: `ScopedRateThrottle` (used by the new `SeatCheckThrottle`) reads its rate-limit scope from the **view's** `throttle_scope` attribute, not the throttle class's own `scope` attribute — the class attribute is silently never read, `ContractDetailViewSet` never set `throttle_scope`, so the throttle always returned "allowed." Same broken pattern found in 4 pre-existing throttles unrelated to this session (`RouteFAQAgentThrottle`, `OtpThrottle`, `CsPollThrottle`, `CsImageThrottle`) — all wired via `throttle_classes = [...]`, which *replaces* rather than adds to the project's default throttle classes, so these views were less protected than an ordinary unthrottled endpoint. Two rounds of opus review (round 2 independently re-derived from source with executable proof, corrected round 1's overstated claim that OTP-verify was worse than the seat-check bug — OTP-verify has a separate DB-backed attempt-counter mitigation round 1 hadn't read) also surfaced 2 more bugs during the same pass: `CouponThrottle`/`PaymentThrottle` silently sharing one rate bucket (identical `scope='payment'` string, confirmed via execution), and `password_reset`'s `throttle_scope` being similarly dead (different failure mode — falls back to the global anon rate rather than fully open). Fixed all 7 in one pass: swapped `ScopedRateThrottle` → `UserRateThrottle` (the only genuinely-working pattern already used elsewhere in this codebase), preserved `CsImageThrottle`'s intentional custom guest-token cache-key override, gave `CouponThrottle` its own `coupon` scope, added explicit `throttle_classes` wiring for `password_reset`. Verified by direct execution (not just reading code): 22 requests against the fixed seat-check throttle → 20 allowed, blocked starting at request #21, matching the configured rate exactly. 130 existing tests pass across every touched app. Merged → `smartenplus-backend` `develop` (`055ff72` → `653a2d0..e9e50c6`).
+
 ## Closed — 2026-09-22 (session #424)
 
 > **`SEAT-CHECK-GUEST-AUTH-CONFLICT` — CLOSED.**

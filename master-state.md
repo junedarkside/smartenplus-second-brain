@@ -4,6 +4,38 @@
 
 ## Section 1 — Session Handoff
 
+**Updated:** 2026-09-22 (session #425)
+
+**Achieved (#425) — pre-production-deploy security review of the #424 seat-check feature across all 3 repos found a critical, previously-unknown bug: rate limiting has never actually worked anywhere in this codebase. Root-caused, independently re-verified twice (2 rounds of opus review, one with executable proof), fixed, tested, merged to `smartenplus-backend` develop.**
+
+1. **Full 3-repo pre-deploy review** (Explore agent, backend/frontend/admin-dashboard) confirmed: no migrations needed (the new field is a Python property, not a DB column), no missing env/infra config, admin-dashboard's not-yet-merged debug-param fix degrades gracefully (staff lose a diagnostic panel, no crash) rather than breaking — but flagged `SeatCheckThrottle` (this session's new rate limiter, built specifically to stop a guest-reachable 40-second blocking call from taking down the site) as a complete no-op.
+2. **Root cause, round 1**: `ScopedRateThrottle.allow_request()` reads the rate-limit scope from the **view's** `throttle_scope` attribute, not from the throttle class's own `scope` attribute — the class's `scope = 'seat_check'` is silently never read. `ContractDetailViewSet` never set `throttle_scope`, so the throttle always returned "allowed." Found the same broken pattern in 4 other places already in the codebase (`RouteFAQAgentThrottle`, `OtpThrottle`, `CsPollThrottle`, `CsImageThrottle`), unrelated to this session — including an initial claim that the unauthenticated OTP-verify endpoint was a live brute-force exposure "worse than the seat-check finding."
+3. **Round 2 (independent, executable re-verification, opus) corrected round 1 on 2 points and found 2 new bugs:**
+   - **OTP-verify severity was overstated.** Read the actual OTP code (`cs/otp.py:60-65`) — a DB-backed attempt counter already deletes the code after 5 wrong guesses, independent of the throttle. Corrected severity ranking: seat-check (High, real DoS risk) > OTP-request (Medium-High, unthrottled email-bombing/SES-cost vector) > OTP-verify (Low, already mitigated by the attempt counter).
+   - **New finding**: `CouponThrottle` and `PaymentThrottle` were silently sharing one rate-limit bucket — both used the identical scope string `'payment'`, and DRF's cache key has no class/view identity, only the scope string. Verified by executing both classes and confirming identical cache keys for the same user.
+   - **New finding**: the existing test suite's "passing" tests for these throttles never actually exercised the real blocking path — they called the cache-key helper directly and manually set attributes production never sets, giving false confidence for as long as this bug existed undetected.
+   - Confirmed via actual code execution (not just reading) that the fix (swap `ScopedRateThrottle` → `UserRateThrottle`, the only genuinely-working pattern already used elsewhere in this codebase) is correct and doesn't lose `CsImageThrottle`'s intentional custom cache-key override (guest-token-based, to avoid 429-ing co-located travelers on shared venue WiFi).
+4. **Fixed and verified**: 6 files (`operators/throttles.py`, `cs/throttles.py`, `products/views.py`, `orders/views.py`, `accounts/views.py`, `Smartenplus/settings.py`), 7 throttle classes corrected in one pass (seat-check + the 4 pre-existing broken ones + the newly-found coupon/payment collision + a `password_reset` dormant-misconfiguration also found and fixed alongside). Verified by direct execution: 22 requests against the fixed seat-check throttle → 20 allowed, blocked starting at request #21, exactly matching the configured rate. 130 existing tests pass across every touched app; one test log line shows a real `429 Too Many Requests` firing naturally during the existing suite for the first time. Merged → `smartenplus-backend` develop (`055ff72` → `653a2d0..e9e50c6`), pushed.
+5. **BD+UX follow-up** (same day, no code): confirmed the seat-check feature's 10-minute Payment-step recheck TTL does not need a visible countdown timer in the UI — no user-facing stake in watching it, unlike the QR-payment countdown precedent it borrowed the TTL value from.
+
+**Resume point (EXACT):**
+1. **`develop`→`main` deploy decision** — now the top item. All known blockers for the seat-check feature (3 from #424, plus this session's throttle fix) are resolved and merged to `develop` on `smartenplus-backend`; `smartenplus-frontend` develop already has the full feature. Only remaining pre-deploy item: `admin-dashboard`'s debug-param branch, see below.
+2. **`admin-dashboard` branch `fix/seat-check-admin-debug-param` still not merged to `main`** — carried from #424, unchanged. Low-risk, degrades gracefully if deployed out of order, but should merge before/with the backend deploy to avoid staff losing the diagnostic panel.
+3. **Throttle rates not load-tested** — all 7 fixed throttles use rates either carried over from the original (non-functional) config or newly assigned by matching an existing precedent (e.g. `coupon` set to match `payment`'s 2000/hour). None have been tuned against real traffic since they've never actually been enforced before. Worth revisiting once real usage data exists post-deploy.
+4. Carried from #424: throttle keying for `SeatCheckThrottle` is IP-based (now actually enforced, per this session's fix) — still worth revisiting to cart/session-scoped keying per the original `cs_image` precedent reasoning, now that it's a real, active limiter and not dead code.
+5. Carried from #424: stale-`useRef` edge case in `useSeatAvailabilityCheck` not hardened — low priority, dev-session-only reproduction.
+6. Carried from #419/#420: **`SEAT-CHECK-MAPPING-ORDER-BUG`** — still open, separate from anything fixed this session or last.
+7. Carried from #422: split `operators/models.py`/`products/serializers.py` into packages — still deferred.
+8. Carried from #422: extend `has_live_seat_check` testing to a real non-test contract.
+9. Carried from #421/#422: stale-cart price drift — not started.
+10. Carried from #420: `SeatCheckAdapter` interface — blocked on Silaphat API sample.
+11. Carried from #419: transportation capacity-gate product decision — see Section 2 `TRANSPORT-CONTRACT-NO-CAPACITY-GATE`.
+12. Carried from #417/#416: `sidemenu.js` dead code, SideList.js/Canceled-booking live-verifies, `test_transport_composit_pagination.py` untracked file (14+ sessions now), `BookingRateCard.quantity=0` fix, M1–M7 manual tests, journey page real-data test — all still open.
+
+---
+
+## Session #424 handoff (superseded by #425 above, kept for one cycle)
+
 **Updated:** 2026-09-22 (session #424)
 
 **Achieved (#424) — shipped the entire checkout-time seat-check flow designed in #423: all 3 ship-blockers fixed, the full feature built, live-verified in browser (with 2 real bugs found and fixed during verification), all merged to `develop` on both repos.**
@@ -74,6 +106,10 @@
 18. Carried from #419/#420: **New, deploy decision**: multiple feature branches now merged to `develop` on both repos (seat-check timeout fix, seat-availability redesign, #422's seat-check indicator) — needs a develop→main deploy decision when ready, can bundle together.
 
 ## Section 2 — Loose Ends (Open)
+
+> **NEW 2026-09-22 (#425) — `THROTTLE-RATES-NOT-TUNED`, open, not started, low priority.**
+>
+> All 7 throttle classes fixed this session (`DRF-THROTTLE-SCOPE-BUG`, closed below) were, until this session, silently unenforced — meaning none of their configured rates (`seat_check: 20/hour`, `cs_otp: 5/hour`, `cs_poll: 60/minute`, `cs_image: 30/hour`, `route_faq_agent: 100/hour`, `coupon: 2000/hour`, `password_reset: 5/hour`) have ever actually been tested against real traffic. Now that they're genuinely active, worth watching for false-positive 429s (legitimate users hitting a rate that was never load-tested) once real usage data exists post-deploy. Not urgent — no action needed unless a real complaint surfaces.
 
 > **NEW 2026-09-22 (#424) — `ADMIN-DASHBOARD-DEBUG-PARAM-MERGE`, open, not started, small/low-risk.**
 >
