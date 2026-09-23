@@ -33,6 +33,21 @@ Plan to extend the existing GA4/GTM/Meta Pixel/GSC setup for a Thai market (`loo
 1. GA4 is **not** cleanly GTM-only — a future `site`/`market`/`language` resolver must reach both the GTM dataLayer path and the direct-gtag `layout.js:252` path, or one will silently miss market dimensions. Reconciling to a single tagging path is worth doing as part of Phase 5, not just layering context on top of the ambiguity.
 2. Meta Pixel has no in-repo surface — "extend existing Meta Pixel" is not a code task here, it's a GTM-container-configuration task (external, unversioned — see Named risk below) plus wiring the same `site`/`market`/`language` dataLayer keys so GTM can segment by them.
 3. The original report never mentioned the currency hardcoding/missing-fallback bugs (fixed, see above) or the GTM dual-path issue — both found only by auditing this codebase directly, not from the report's generic best-practice assumptions.
+4. **The report's `site`/`market`/`language` 3-axis model does not match this system — corrected to 1 axis, `language`.** Found during Phase 2 design (below): for every actually-planned market, all 3 columns move in lockstep (SmartEnPlus/international/en, LookChang/Thailand/th, future-Korean-brand/Korea/ko). The Django backend's real committed data model has no `market`/`site`/`tenant` field anywhere — only `language`. Building a 3-axis resolver would invent a parallel taxonomy the backend doesn't share.
+
+## HEADLINE FINDING — the backend already has a live i18n system; "new build" was the wrong framing
+
+Found during Phase 2 design work (not this doc's original audit): `smartenplus-backend` already ships a **complete, production-live 12-language i18n system**, shipped 2026-01-25 (`docs/archive/phase-summaries/phase4-multilanguage.md`, 37/37 tests passing) —
+- `middleware/language.py` — a `LanguageMiddleware`, registered live in `MIDDLEWARE`. Resolution priority: `?lang=th` query param → `Accept-Language` header → `smartenplus_lang` cookie → `'en'` default.
+- `settings.py:307-325` — `LANGUAGE_CODE='en'`, 12 `LANGUAGES` including `th` and `ko`.
+- `operators/models.py:1154` — `ContractTranslation` model, `unique(contract, language)`, 7 translatable fields, cascade delete.
+- `products/serializers.py:810-880`, `operators/serializers.py:654` — `translated_name`/`translated_description`/etc. `SerializerMethodField`s reading `request.LANGUAGE_CODE`, falling back to the untranslated field.
+
+**The frontend is already consuming this, by accident, undocumented, in production right now**: `components/order/OrderDetail.js:196` reads `item.contract?.translated_name || item.contract?.name`. A user with a Thai-locale browser already gets Thai contract names today — non-deterministically, because the frontend never sends a language signal and the backend's `Accept-Language` fallback picks it up straight from the browser.
+
+**Corrected framing** (supersedes the earlier "Phase 2 starts from nothing" line below): *Phase 2 builds the frontend half of a language contract whose backend half already exists and is live. It is greenfield in code, constrained in design — the backend's ISO-639-1 vocabulary is the given, not something Phase 2 invents.*
+
+**Consequence for Phase 4** ("Thai Django products"): cheaper than this doc originally implied — infrastructure exists, only content population (`ContractTranslation` rows) + field consumption remain. **Real hazard**: the moment Phase 2 starts sending a language signal, the backend immediately serves any existing translated rows. If rows exist prematurely, partially-translated content could appear in production with no deploy involved. **Verify the current `ContractTranslation` row count before Phase 2 ships anything that sends `Accept-Language`.**
 
 ## Named risk: unversioned GTM container
 The marketing tag layer (Meta Pixel + any future market-segmented tags) lives entirely in a GTM container this repo cannot version, diff, or CI-check. `[[gtm-custom-html-ignores-consent-mode]]` is direct proof of the cost: a consent leak was invisible to code review, caught only by production network trace, and the documented GTM per-tag consent-settings escape hatch doesn't even render on this container (cause unknown). Any phase depending on GTM-side configuration must be verified by a **dated network-trace artifact** recorded in the vault (cold no-consent load tags / post-consent tags / consent-mode default state) — never assumed correct from a code read. Standing risk, not a one-time gate.
@@ -42,11 +57,53 @@ Only 5 phases survive audit scrutiny with real starting points in this codebase.
 
 - **Phase 0 — currency + hreflang + consent-gate + begin_checkout bug fixes.** DONE (see Fixed above — R2, R3, R1, R4, all merged to `develop`, not yet promoted to `main`).
 - **Phase 1 — Analytics audit.** DONE. This doc's findings section is the artifact.
-- **Phase 2 — Site/Language Context.** Starts from nothing (`siteContext` doesn't exist) — new build. Must declare `NEXT_PUBLIC_DOMAIN` (via `helpers/constants.js:32`) as its single domain source in writing and must not add a 5th source; full canonical-domain consolidation is a Phase 2.5 follow-on, not a precondition (the 30+ file spread makes full consolidation-first inversion of risk order). Note `next-sitemap.config.js:1` is build-time and can never read a runtime resolver — any "single source" claim must carve this out.
+- **Phase 2 — Site/Language Context.** DESIGNED, not yet implemented — full spec in `## Phase 2 design` below (3 rounds of opus review: SWE/Next.js/Architecture design, then a 4th gap-analysis pass against CLAUDE.md). `siteContext` doesn't exist in the frontend, but see the Headline Finding above — this is not greenfield design, it's building the frontend half of an already-live backend contract. Must declare `NEXT_PUBLIC_DOMAIN` (via `helpers/constants.js:32`) as its single domain source in writing and must not add a 5th source; full canonical-domain consolidation is a Phase 2.5 follow-on, not a precondition (the 30+ file spread makes full consolidation-first inversion of risk order). Note `next-sitemap.config.js:1` is build-time and can never read a runtime resolver — any "single source" claim must carve this out.
 - **Phase 3 — `/th` routing.** Builds on the inert `middleware.js` stub; must compose with, not replace, the NextAuth export. Side note for whenever reached: this phase will itself shift `page_view` volume via `routeChangeComplete` once locale-prefixed URLs exist — expected reporting noise, not a regression.
 - **Phase 4 — Thai Django products.** Cross-repo (`smartenplus-backend`), not audited this session — needs its own audit pass when reached.
 - **Phases 5-12 (report's original)** — Analytics Extension, Thai Ecommerce, LookChang Domain, GA4 Cross-Domain, GSC, Production Monitoring, `/th`→domain Migration, Final SEO Verification. Recorded as an explicitly **unvalidated block**: not assessed against this codebase, no Korean domain exists, no business commitment on timing. Re-audit each individually when actually reached. R1 (GA4 dual-path) blocks Phase 5 specifically; R4/R6 (GTM blind spot) applies as a standing check to every phase in this block that touches GTM config.
 - Production safety rules from the original report (§27) kept — they match this project's own don't-break-production doctrine.
+
+## Phase 2 design — Site/Language Context (spec, not yet implemented)
+
+Designed via 3 parallel opus reviews (SWE, Next.js, Architecture) against the live codebase, then a 4th gap-analysis pass against CLAUDE.md rules/constraints. No code written — this is the spec for when Phase 2 starts.
+
+### Axis model — 1 axis (`language`), not 3
+See Headline Finding above. `language: 'en' | 'th'`, ISO-639-1, matches the backend's already-committed vocabulary. Not a boolean (too lossy against the backend's real vocabulary), not 3 axes (`site`/`market`/`language` — invents a taxonomy the backend doesn't share). Brand identity (siteName/domain/logo) is a *derived lookup table keyed by language*, never an independent input.
+
+### Recommended shape
+No Redux (a persisted stale locale could contradict the URL — real bug, not style; `store/index.js:173`'s whitelist mechanism). No `pageProps` threading (~56 of 93 pages have neither `getServerSideProps` nor `getStaticProps` — adding either would regress ISR). No `middleware.js` matcher activation — **critical trap found independently by 2 agents**: `middleware.js` currently re-exports `next-auth/middleware`; activating any matcher for locale detection would simultaneously auth-gate every matched route. Recommendation: delete the dead middleware export, don't build on it.
+
+Pure resolver function + thin synchronous React Context, seeded from router/`pageProps`, never from `useEffect`:
+```js
+// helpers/siteContext.js — pure, no imports, no async
+export const SUPPORTED_LANGUAGES = ['en', 'th']; // 'ko' later = one array element
+export const DEFAULT_LANGUAGE = 'en';
+export function resolveLanguage({ pathname = '' } = {}) {
+  const p = (pathname || '').split('?')[0];
+  return (p === '/th' || p.startsWith('/th/')) ? 'th' : DEFAULT_LANGUAGE;
+}
+```
+Context (~20 lines, no `useState`/`useEffect`/fetch) mounted **outermost in `pages/_app.js`, above `<Provider store>`** — matches the shape of `helpers/cookieConsent.js` (this session's newest helper precedent: exported constants, guarded export, safe default, never throws), explicitly does NOT copy `CurrencyContext.js`'s async shape (that machinery exists only because currency is genuinely async — copying it here manufactures the `currency-context-infinite-fetch` bug class in a place it can't otherwise occur).
+
+### Next.js mechanics (corrects a wrong premise in the original external report)
+ISR does **not** need converting to SSR — locale-as-path-segment is exactly what `getStaticProps`/ISR already handles (`/trips/a/b` and `/th/trips/a/b` are independent cache entries). The trap is the opposite: a header-based approach would silently do nothing for the 21 ISR pages. Domain mapping (later phase) doesn't need middleware either — `next.config.js` `rewrites()` natively supports per-hostname conditions, confirmed against actual Next.js 14.2.33 source in this repo. The original report's "avoid rewrite loops" concern is a **confirmed non-risk** on this version (verified via source, explicit re-entrancy guard). **Highest-risk unknown to test before the domain-mapping phase**: does nginx forward the original `Host` header to the Next upstream? Every hostname-based rule depends on it; untested; one afternoon on staging de-risks the whole later phase.
+
+### Payment/auth boundary (no prior draft named one — added during gap analysis)
+Phase 2 touches `store/api/api-slice.js`, the base query every cart/checkout/seat-availability request flows through. Untouchable: the `publicEndpoints` allowlist and its guard comment (guest-cart AllowAny protection), the `await getSession()` call (don't reorder), `checkSeatAvailability`'s timeout config (unrelated seat-check work). `Accept-Language` must be set unconditionally, outside and before the public-endpoints check. **Language must never reach the money payload** — `hooks/useOmisePayment.js` must not appear in any Phase 2 diff.
+
+**Scope correction from gap analysis**: an earlier draft claimed this covers "every API endpoint at once" — false. The app has 7 RTK Query slices; only 3 (`apiSlice`, `bookingsApi`, `otaApi`) get `Accept-Language` in Phase 2. ~39 `axios` call sites and 4 other RTK slices stay language-unaware — logged as a follow-on, not silently implied as covered.
+
+### Branch plan — 4 branches, not one
+1. `feat/site-context-resolver` — pure helper + Context + tests only, zero call sites. Ship first.
+2. `feat/site-context-provider-mount` — `_app.js` mount + `_document.js` lang fix. Must be a verified no-op while only `en` resolves.
+3. `feat/site-context-accept-language` — the `prepareHeaders` seam. Payment/auth-adjacent (see boundary above). **Gated on confirming the `ContractTranslation` row count first** — do not cut until confirmed.
+4. `feat/site-context-brand-table` — brand lookup + SEO canonical *declaration only* (not the 29-file sweep — that's Phase 2.5).
+
+### Scope: explicitly OUT of Phase 2
+`/th` routing itself (Phase 3) · consuming `translated_*` fields (Phase 4) · domain mapping/`lookchang.com` (later, needs the nginx test first) · Korean (no domain/timeline) · UI translation-string catalog · language-switcher UI · any `market`/`site` field anywhere (a `market` field on `Contract` would create a real admin-dashboard dependency — market pickers, filters, backfill — that the translation-child-table shape avoids entirely) · GA4 dual-tagging reconciliation · `pages/checkout/index.js` (1293 lines, red band, untestable integration suite — if any branch would touch it, stop and defer to Phase 2.5).
+
+### Model floor
+`sonnet`, hard floor, no exceptions on any sub-branch — this touches auth code (`prepareHeaders`) and a new shared-helper signature, both explicitly named in CLAUDE.md's never-below-sonnet list.
 
 ## Open questions
 - Korean domain: still TBD. Nothing Korean-specific should be built until a real domain/timeline exists.
@@ -63,6 +120,9 @@ Only 5 phases survive audit scrutiny with real starting points in this codebase.
 - `begin_checkout`'s `quantity` reads `item.children`, but the backend serializer field is `child` — other call sites in the same file use `item.children || item.child || 0` defensively, this one doesn't, likely under-counting children. Found during R4's review, not fixed in that branch.
 - `__tests__/pages/checkout/index.integration.test.js` (734 lines) fails to run entirely on a broken relative-import path, unrelated to any fix this session. Needs a one-line path correction plus a check on whether its assertions still pass once loadable.
 - 3 pre-existing failures in `hooks/__tests__/useOmisePayment.test.js`, confirmed unrelated to this session's changes each time the file was touched — needs its own tracking issue.
+- **Found during Phase 2 design work** — `store/dayTripSlice.js:34` `selectedLanguage` is dead (zero production callers, only referenced in tests). Do not let Phase 2 build a second, competing language field — either remove this one or wire it to the new resolver.
+- **Found during Phase 2 design work** — `pages/_app.js:20,114`: `GlobalPaymentWarning` imported and rendered only as a comment. Dead code, own ticket.
+- **Found during Phase 2 design work, cross-repo (`smartenplus-backend`)** — need to verify the current `ContractTranslation` row count before Phase 2's `Accept-Language` branch ships (see Headline Finding above). Name an owner; log in the backend repo too per CLAUDE.md CROSS-REPO.
 
 ## Related
 [[checkout-flow]] · [[architecture]] · [[gtm-custom-html-ignores-consent-mode]] · [[currency-context-price-rendering-rule]] · [[analytics-currency-dataLayer-hardcode]] · [[seo-canonical-getsiteurl-pattern]] · [[canonicalization-audit-checklist]]
