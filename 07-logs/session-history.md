@@ -1,5 +1,19 @@
 # Session History
 
+## Session #428 (2026-09-23)
+
+**Achieved (#428) — audited an external "Multi-Market Analytics & Tracking Migration" report against the live smartenplus-frontend codebase, corrected it via multiple rounds of independent opus review, and fixed + merged 5 commits (4 distinct bugs, one refixed) to develop. Full vault documentation written and kept current throughout.**
+
+1. Audit found the report's core assumptions mostly wrong for this codebase: no i18n/locale routing, no site/market context, `middleware.js` inert stub, Meta Pixel zero in-repo code. GA4 also runs on two live tagging paths (GTM + direct-gtag `layout.js:252`), found by two independent review passes.
+2. R2 — hreflang self-reference bug, fixed, then found broken by live browser verification, then fixed correctly. First fix (`b27b20a0`) put both alternate tags in next-seo's `additionalLinkTags`, which keys by `href+rel` not `hrefLang` — both entries collided, React silently dropped one. User caught it live via view-source. Corrected fix (`61500409`) moved both to the dedicated `languageAlternates` prop, matching 3 existing precedents.
+3. R3 — GTM currency hardcode + missing fallback, fixed (`996803eb`). `purchase`/`add_to_cart`/`begin_checkout` either hardcoded THB or had no fallback, corrupting revenue currency for non-THB viewers.
+4. R1 — GA4 consent-bypass bug, found and fixed (`f750ebc6`). Direct-gtag path fired regardless of the cookie banner's Accept/Decline choice — same bug class as an already-documented Meta Pixel leak, via a second path this repo controls. Fixed via a shared `helpers/cookieConsent.js` + `CONSENT_CHANGED_EVENT` notify pattern.
+5. A post-merge review of all 4 commits (3 more opus agents) surfaced a genuine regression in R3: `begin_checkout`'s currency label was fixed but its value/price fields stayed raw THB, making the event self-contradictory and worse than before. BD review blocked promotion to main until fixed.
+6. R4 — `begin_checkout` value-conversion, fixed after a wrong fix was caught mid-review (`9055a9bd`). The first proposed fix referenced API fields that don't exist (`total_price`); would have produced NaN instead of undefined. Corrected fix uses the real fields (`grand_total`/`sub_total`), confirmed against backend serializers. Live-verified with a real booking — captured `value: 1000` matching the checkout sidebar exactly.
+7. All 5 commits lint-clean, full `next build` verified after each, zero regressions — pre-existing test failures (`useOmisePayment.test.js` 3 failures, and a newly-documented `checkout/index.integration.test.js` suite that fails to run entirely on a broken import path) confirmed unrelated via baseline comparison each time.
+8. Vault docs written and kept current: new project doc `[[multi-market-i18n-analytics-migration]]`, 2 new knowledge notes, 1 extended note, master-state + index.md — updated twice as fixes landed mid-session.
+9. The migration itself (site/language context, `/th` routing, Thai product data, LookChang domain, Korean market) was NOT started — explicit scope decision to keep this session to audit + fix + document only.
+
 ## Session #427 (2026-09-23)
 
 **Achieved (#427) — closed out the last open deploy blocker (admin-dashboard's debug-param branch), confirmed all 3 repos are deployed develop→main, and cleaned up 72 fully-merged branches (46 local + 26 remote) across all 3 repos.**
