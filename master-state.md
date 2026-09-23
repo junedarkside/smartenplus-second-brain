@@ -4,6 +4,42 @@
 
 ## Section 1 — Session Handoff
 
+**Updated:** 2026-09-23 (session #427)
+
+**Achieved (#427) — closed out the last open deploy blocker (admin-dashboard's debug-param branch), confirmed all 3 repos are deployed develop→main, and cleaned up 72 fully-merged branches (46 local + 26 remote) across all 3 repos.**
+
+1. **`admin-dashboard` `fix/seat-check-admin-debug-param` merged to develop, pushed** (`15dbd1d` → `c6eeb14`) — carried unmerged since #424, single-line fix (adds `&debug=true` to the admin diagnostic query), no conflicts.
+2. **User confirmed `develop`→`main` already merged on all 3 repos** — verified via `git fetch` + comparing `origin/main` and `origin/develop` HEAD commits on all 3: identical everywhere (`smartenplus-backend` `e9e50c6`, `smartenplus-frontend` `7728fd7a`, `admin-dashboard` `c6eeb14`). The full seat-check feature — all #423/#424 blockers, #425's throttle fix, #426's idle-gap fix, and this session's admin-dashboard fix — is now on production `main` across every repo. This closes the long-carried "develop→main deploy decision" resume-point item that had been top-of-list since #419/#420.
+3. **Branch cleanup, user-requested, confirmed safe before deleting**: listed every branch already merged into `develop` (local + remote, all 3 repos) before touching anything. Deleted 46 local branches (`git branch -d`, refuses non-fully-merged branches by design — no `-D` used) and 26 remote branches (`git push origin --delete`) that were confirmed merged. Left `origin/master` (backend's separate legacy ref, not a feature branch) and untracked scratch dirs (`.scratch/`, `.claude/commands/`) untouched — out of scope for a branch cleanup.
+4. **Housekeeping**: stopped a stray Django dev server left running on port 8000 from an earlier session (`manage.py runserver`, unrelated to this session's work).
+5. **Carried-forward note**: last session's (#426) vault commit was blocked by the Claude Code auto-mode classifier (`git commit` denied twice, even run alone, isolated from `push`) — the edits were staged but never committed. Folded into this session's wrapup rather than lost; the #426 content below is what was pending.
+
+**Achieved (#426, carried forward from previous session) — found and fixed a second Payment-step timing gap in the seat-check feature: the TTL recheck only ever fired once, on arrival, and never re-armed during idle. Fixed, merged to `smartenplus-frontend` develop.**
+
+1. **User question triggered the finding**: "what if user stays at Payment step for 1 hour?" — traced `useSeatAvailabilityCheck.js`'s effect (`[formStep, paymentStep, cartData?.cart_item?.length]`) and confirmed none of its deps change from idling alone. The Payment-step TTL comparison (stale-or-trust-cache) runs exactly once at the arrival instant, guarded by `arrivedPaymentRef` which only resets on leaving the step. A user idling past the 10-min TTL and then clicking Pay got a verdict resolved up to an hour earlier, never re-verified.
+2. **Two visual-demo artifacts built** (EN + Thai) explaining the timeline/mechanism/fix — user explicitly requested Thai version as a follow-up.
+3. **SWE/Next.js/Django expert review (Plan agent) before implementing** — confirmed exact current file/line state (had drifted slightly from the plan file written in #423-#425), and settled the fix location: `FormCard.js`'s `submitHandler` (Pay-click boundary), not `PaymentComponent.js`'s `handleClick` (confirmed to have zero seat-check awareness today — wiring it there would mean two consumers of the hook's output instead of one). Rejected a background timer/interval outright — consistent with this feature's earlier rejection of `useQRPolling`-style polling.
+4. **Fix implemented and merged**: `hooks/checkout/useSeatAvailabilityCheck.js` gains `recheckStaleOnClick()` (reuses the already-exported-but-previously-unused `isSeatCheckStale` helper + the existing `runChecks`), threaded through `pages/checkout/index.js` to `FormCard.js`. `submitHandler` calls it first at Payment step; if anything's stale, holds off submitting (existing `isSeatRecheckPending` prop already disables the button + shows "Confirming your seat..." — no new UI state needed) — second click after it resolves actually proceeds. Deliberately avoids a second `useEffect` reacting to the recheck's own result (would violate the project's no-chained-effects rule) by requiring a confirming click instead of auto-proceeding.
+5. **Verified**: 3 files changed (`FormCard.js`, `useSeatAvailabilityCheck.js`, `pages/checkout/index.js`), 28 insertions / 2 deletions — matches the minimal scope from the review. Lint clean (0 new errors/warnings — the one pre-existing warning on an unrelated line in `index.js` confirmed present on `develop` before this change too). Full `next build` succeeds, including the reseller test contract's ISR path. Single caller confirmed for both the hook and `FormCard` (`pages/checkout/index.js` only) — no other consumer to break.
+6. **Merged**: `fix/seat-check-payclick-ttl` → `smartenplus-frontend` develop (`72196a92` → `7728fd7a`), pushed. No backend changes this session — frontend-only fix.
+
+**Resume point (EXACT):**
+1. **Manual browser verification of the #426 idle-gap fix still not done** — implemented and build-verified only; the actual "idle past 10min, click Pay, see it hold-and-recheck, click again to confirm" flow hasn't been walked through live. Now the top item — everything else deploy-related is closed (see #427 above: develop→main confirmed done on all 3 repos, admin-dashboard branch merged).
+2. Carried from #425: throttle rates not load-tested against real traffic — now genuinely live in production, worth watching for false-positive 429s.
+3. Carried from #425: `SeatCheckThrottle` keying is IP-based, still worth revisiting to cart/session-scoped.
+4. Carried from #424: stale-`useRef` edge case in `useSeatAvailabilityCheck`'s Passengers-step arrival guard — separate from #426's Payment-step fix, still not hardened, still low priority.
+5. Carried from #419/#420: **`SEAT-CHECK-MAPPING-ORDER-BUG`** — still open.
+6. Carried from #422: split `operators/models.py`/`products/serializers.py` into packages — still deferred.
+7. Carried from #422: extend `has_live_seat_check` testing to a real non-test contract.
+8. Carried from #421/#422: stale-cart price drift — not started.
+9. Carried from #420: `SeatCheckAdapter` interface — blocked on Silaphat API sample.
+10. Carried from #419: transportation capacity-gate product decision — see Section 2 `TRANSPORT-CONTRACT-NO-CAPACITY-GATE`.
+11. Carried from #417/#416: `sidemenu.js` dead code, SideList.js/Canceled-booking live-verifies, `test_transport_composit_pagination.py` untracked file (15+ sessions now), `BookingRateCard.quantity=0` fix, M1–M7 manual tests, journey page real-data test — all still open.
+
+---
+
+## Session #425 handoff (superseded by #426/#427 above, kept for one cycle)
+
 **Updated:** 2026-09-22 (session #425)
 
 **Achieved (#425) — pre-production-deploy security review of the #424 seat-check feature across all 3 repos found a critical, previously-unknown bug: rate limiting has never actually worked anywhere in this codebase. Root-caused, independently re-verified twice (2 rounds of opus review, one with executable proof), fixed, tested, merged to `smartenplus-backend` develop.**
@@ -34,76 +70,6 @@
 
 ---
 
-## Session #424 handoff (superseded by #425 above, kept for one cycle)
-
-**Updated:** 2026-09-22 (session #424)
-
-**Achieved (#424) — shipped the entire checkout-time seat-check flow designed in #423: all 3 ship-blockers fixed, the full feature built, live-verified in browser (with 2 real bugs found and fixed during verification), all merged to `develop` on both repos.**
-
-1. **All 3 blockers from #423 fixed, each on its own branch, merged to `smartenplus-backend` develop:**
-   - `SEAT-CHECK-DEBUG-LEAK` — gated the `debug`/`debug_url` fields behind `debug_on` on both the `MAPPING_NOT_FOUND` (400) and `OPERATOR_API_ERROR` (502) responses (previous pass had missed that `debug_url` on the 502 branch was also unconditional, not just `debug` on 400 — corrected mid-fix).
-   - `SEAT-CHECK-GUEST-AUTH-CONFLICT` — resolved as a 4-part bundle (not just opening the permission alone, which a deep-dive review found would reopen 2 new issues): `get_permissions()` opens `check_seat_availability` to `AllowAny` (copied the exact pattern already used for guest order creation in `orders/views.py`) + an in-action `is_actived`/`is_deleted` guard (staff exempted, since the admin diagnostic tool has no error-UI for that case and legitimately checks disabled contracts) + `debug_on` now requires `request.user.is_staff` not just the query param (closes the guest-reachable reopening of the just-fixed leak) + a new `operators/throttles.py` `SeatCheckThrottle` (20/hour, IP-keyed for now — a cart/session-scoped key was considered but deferred since no frontend caller existed yet to define the real key shape).
-   - `SEAT-CHECK-REMOVE-AT-PAYMENT` — overturned on deep-dive, not actually a blocker: `AMOUNT_LOCKED` only fires after Pay is pressed, not at payment-step arrival; the real cart-deletion guard (`carts/views.py` `_check_payment_pending`) already permits removal at the `'ordering'` status that exists at that point. Fix was a single frontend line (`EnhancedTripCard.js`), not a backend change.
-2. **Full frontend feature built** (`hooks/checkout/useSeatAvailabilityCheck.js` new, `helpers/seatCheckCache.js` new, `store/api/api-slice.js` new endpoint, `FormCard.js`/`pages/checkout/index.js`/`EnhancedTripCard.js`/`Itineraries.js`/`ItinerariesStep.js` edited) — check fires on Passengers-step arrival for `has_live_seat_check` items, blocks Next while pending/on confirmed sold-out, fails open on everything else; 10-min TTL (matched to `payments/enums.py METHOD_EXPIRY`, the only other TTL precedent in the codebase) with a silent non-blocking recheck at Payment-step arrival if expired, gating Pay only.
-3. **Live browser verification found and fixed 2 more real bugs, neither caught by static review:**
-   - **Silent no-op**: `carts/serializers.py`'s `ContractSerializer` (a third, cart-item-specific serializer distinct from the same-named classes in `operators/`/`products/`) never had `slug` or `has_live_seat_check` fields — both required by the hook's qualifying-items filter. With both `undefined`, the hook correctly found zero qualifying items and did nothing, with no error anywhere. Fixed by adding both fields (read-only, additive) after confirming no other code imports that specific serializer class.
-   - **Invisible badge**: the status badges used `position:absolute` with no positioned ancestor (the card's `Paper` container was missing `relative`) — rendered off-anchor, invisible. This was a **pre-existing bug** the original "No Longer Available" badge already had, only surfaced because this was the first time anything needed the positioning to actually work. Fixed by converting to an inline pill under the trip title instead of an absolute overlay (also fixes a second issue: the original overlay position collided with the delete/lock button in the same corner). Also added a missing "Seat Confirmed" visible state — only "checking" and "sold_out" had a badge before, so a successful check looked identical to no check having run.
-4. **Post-fix regression check** (SWE parity review, all 8 touched files diffed + live browser walkthrough): 0 breaking changes. 2 non-breaking things flagged: the old inactive-contract badge changed visual location as a side effect of the positioning fix (was already broken/invisible before, so net improvement not regression); `has_live_seat_check`'s backend property does 2 DB queries per contract instance and is now computed for every cart item on every cart fetch, not just reseller items — small but real added cost on a hot path.
-5. **One dead-end during live debugging, resolved**: a "still not showing" report turned out to be a different, non-qualifying cart in the test browser tab, not a bug — confirmed via direct DB/API inspection. A second, later "still not showing" report on a genuinely qualifying item (new date, same test contract) turned out to be a stale `useRef` guard (`arrivedPassengersRef`) latched from an earlier false start, never reset without a full remount — fixed itself on hard refresh, not a code fix; flagged as a real but low-priority edge case (see Section 2, not yet hardened).
-6. **All branches merged to `develop` and pushed, both repos**: `smartenplus-backend` (`f52f3fd..653a2d0`, 2 merges: debug-leak + guest-auth, then cart-serializer fields), `smartenplus-frontend` (`7324b5f3..72196a92`, 2 merges: seat-check-remove-at-payment + alert-width-consistency, then the full feature + badge fixes). **`admin-dashboard`'s debug-param fix (`825f617`) is still only on its own branch, NOT merged to `main`** — carried to resume point.
-7. **Post-ship follow-up (same day, no code):** BD+UX review of whether the Payment-step recheck's 10-min TTL needs a visible countdown in the UI. Verdict: no — both lenses agreed the QR-payment countdown precedent exists because the user has a real deadline to act within; this recheck has no user-facing stake (nothing to hurry for, nothing changes if they wait), so a visible timer would only invite "what happens at zero?" with no good answer, and would be inconsistent UI shown only for the reseller-scoped minority of items. Confirmed as designed-correctly-as-is, not a gap.
-
-**Resume point (EXACT):**
-1. **`admin-dashboard` branch `fix/seat-check-admin-debug-param` not merged** — adds `&debug=true` to the admin seat-check query, needed to keep the staff diagnostic panel working now that the backend gates debug output behind `debug_on`. Small, low-risk, just needs a merge decision (this repo's branch policy/deploy flow wasn't otherwise touched this session).
-2. **Throttle keying is IP-based, deferred intentionally** — `SeatCheckThrottle` (`operators/throttles.py`) keys on IP for now since no frontend caller existed yet to define a better key. Now that the frontend caller exists (this session), revisit: key on cart_id or a guest-token header instead, following the `cs_image` precedent (`cs/throttles.py`) — IP-keying risks 429-ing real co-located travelers on shared ferry-terminal WiFi.
-3. **Stale-ref edge case not hardened**: `useSeatAvailabilityCheck`'s `arrivedPassengersRef` guard can latch early and never recover without a full page reload if the effect fires before qualifying data is ready. Only reproduced during dev-session live-editing (unlikely in real user flows), but a real hardening candidate — e.g. only latch once `qualifyingItems.length` is confirmed, or reset on qualifying-set change not just `formStep` transitions.
-4. **TTL threshold (10 min) not load-tested** — chosen for consistency with the QR-code precedent, not from usage data. Fine to ship, worth revisiting if checkout dwell-time data becomes available.
-5. Still open, still blocking full correctness: **`SEAT-CHECK-MAPPING-ORDER-BUG`** (carried from #419/#420) — BE admin tool `check_seat_availability` still returns misleading `MAPPING_NOT_FOUND` instead of graceful null for non-qualifying contracts. Not the same as the guest-auth fix's new in-action `is_actived` guard — this is a separate, still-open gate-ordering bug.
-6. Carried from #422: split `operators/models.py`/`products/serializers.py` into packages — still not started, still deferred given Django signal-receiver fragility.
-7. Carried from #422: extend `has_live_seat_check` testing to a real non-test contract — still only local test data.
-8. Carried from #421/#422: stale-cart price drift on return visits — not started.
-9. Carried from #420: `SeatCheckAdapter` interface for a second operator — blocked on a real Silaphat API sample.
-10. Carried from #419: customer-facing bookability has zero capacity gate for transportation contracts — product decision needed, see Section 2 `TRANSPORT-CONTRACT-NO-CAPACITY-GATE`.
-11. Carried from #417: `sidemenu.js` dead code, SideList.js scrollbar live-verify — both still open.
-12. Carried from #416: Canceled-booking live-verify, `test_transport_composit_pagination.py` untracked file (13+ sessions now), `BookingRateCard.quantity=0` fix, M1–M7 manual tests, journey page real-data test — all still open.
-13. Carried from #419/#420: develop→main deploy decision — now larger, bundles everything from #422-#424 across both repos.
-
----
-
-## Session #423 handoff (superseded by #424 above, kept for one cycle)
-
-**Updated:** 2026-09-21 (session #423)
-
-**Achieved (#423) — full workflow-design pass on the checkout-time seat-check flow (item 1 below, open since #421). Analysis + design only, no code shipped, confirmed intentional (task was explicitly "analyze, don't build"). Moved the design substantially from #421's version — trigger point changed, a timer mechanism added, and a follow-up architecture review found 3 ship-blockers not previously known.**
-
-1. **3-lens (BD/UX/SWE, opus) stress-test of the #421 recommendation** — payment-step-only trigger corrected on one fact (an Order+Booking already exists by payment-step arrival, contradicting the "before any payment session starts" premise) and one real gap (sold-out recovery was specified as an instruction, not a designed flow).
-2. **Trigger point moved, user-driven, 3 rounds of revision:** Passengers-step (not Payment-step) → briefly single-trigger-only (user simplification) → reversed back to dual-trigger after tracing a 2-hour-idle scenario exposed an unbounded staleness gap → final: single check at Passengers-step arrival + a per-item elapsed-time counter that triggers a silent, non-blocking recheck at Payment-step arrival only if expired. Scoped throughout to `has_live_seat_check === true` items only (reseller/Lomprayah subset, matching existing feature scope everywhere else).
-3. **Follow-up architecture-review pass (opus) found 3 ship-blockers not in the original #421 debate:**
-   - Endpoint is `IsAuthenticated`-gated; guest checkout is a live path — every guest would get a silent 401, indistinguishable from "available" under the fail-open design. Feature would ship 100% dead for guests, undetected.
-   - A 400 error response unconditionally leaks internal infra (operator's live upstream API URL, full station-mapping table) — fine admin-only, becomes customer-visible in the Network tab once checkout calls it.
-   - The "let user remove a sold-out item at Payment step" part of the design is architecturally impossible as specified — delete UI is already replaced by a lock icon at that step in the existing codebase.
-4. **Vault updated**: `03-knowledge/seat-availability-fe-integration-decision.md` — appended a "Revision — 2026-09-21" section (original debate kept intact, not rewritten) documenting the trigger-point change, the 3 blockers, and the prerequisite backend sequencing. Status banner at top now points revision-seekers to the new section first.
-5. **Working doc**: full session detail (agent-by-agent findings, interactive HTML demos published as artifacts) lives in `smartenplus-frontend`'s Claude Code plan file `~/.claude/plans/check-vault-and-fe-fluttering-frog.md` — durable summary is in the vault doc above; re-open the plan file only if implementation-level detail is needed beyond the vault summary.
-
-**Resume point (EXACT):**
-1. **Still not implemented**: the checkout-time flow itself — this session only designed/reviewed it further, still zero code. Before writing any frontend code: resolve the guest/`IsAuthenticated` question (blocker 1) — it determines whether the check fires at all.
-2. **Prerequisite backend PR, independent of frontend, not started**: gate-order fix (`SEAT-CHECK-MAPPING-ORDER-BUG`, item 3 below) + gate the 400 debug-leak behind the existing `debug_on` flag (new finding, blocker 2 above) — bundle in one PR, ship before frontend calls the endpoint at all.
-3. When resuming: re-read `03-knowledge/seat-availability-fe-integration-decision.md` in full (including the new Revision section) before proposing implementation — same instruction as #421/#422, now doubly true since the design changed again.
-4. Still open, still blocking full correctness: **`SEAT-CHECK-MAPPING-ORDER-BUG`** (carried from #419/#420, now also blocker 1 of the backend PR in item 2 above) — BE admin tool `check_seat_availability` still returns misleading `MAPPING_NOT_FOUND` instead of graceful null for non-qualifying contracts.
-5. Carried from #422: **split `operators/models.py` into a `models/` package and `products/serializers.py` into a `serializers/` package** — both confirmed red-zone (1252, 1687 lines), user declined to risk it in #422 given Django signal-receiver fragility. Do as its own dedicated, reviewed PR, never bundled with a feature. Also fold in deleting the dead duplicate `TripSerializer` class (`products/serializers.py:268`).
-6. Carried from #422: extend `has_live_seat_check`-style testing/verification to a **real qualifying non-test contract** — still only verified against local test data.
-7. Carried from #421/#422: stale-cart **price drift** on return visits (no "price changed" warning) — not started, not scoped.
-8. Carried from #420: **New, backend, not started**: build the `SeatCheckAdapter` interface for onboarding a second real operator (Silaphat named as the concrete case) before its response-parsing hardcoding bites. Blocked on a real Silaphat API response sample.
-9. Carried from #420: local test contract `[TEST → renamed #422] Bangkok Khaosan Pier - Koh Tao` (id=206) + its Station/Route/Trip/OperatorStationMapping rows still in local dev DB — run `seed_lomprayah_test_contract --cleanup` when no longer needed.
-10. Carried from #419: **customer-facing bookability has zero capacity gate** for transportation contracts (`products/views.py:1002-1022` returns `is_available: True` unconditionally) — product decision needed, see Section 2 `TRANSPORT-CONTRACT-NO-CAPACITY-GATE`.
-11. Carried from #417: **`sidemenu.js` is confirmed dead code** — flag for future cleanup, no urgency.
-12. Carried from #417: **Live-verify the SideList.js scrollbar fix** — still not re-confirmed live.
-13. Carried from #416: **Live-verify the Canceled-booking branch** on booking-detail action row — still not done.
-14. Carried from #416: `smartenplus-backend` untracked file `operators/tests/test_transport_composit_pagination.py` — commit or discard. Carried across 12+ sessions now, still untouched (confirmed still present this session).
-15. Carried from #416: Fix `BookingRateCard.quantity=0` on retry — use `update_or_create` not `get_or_create`.
-16. Carried from #416: Run M1–M7 manual tests + InfoFields guest→login path before main deploy.
-17. Carried from #416: Test journey page with real data end-to-end.
-18. Carried from #419/#420: **New, deploy decision**: multiple feature branches now merged to `develop` on both repos (seat-check timeout fix, seat-availability redesign, #422's seat-check indicator) — needs a develop→main deploy decision when ready, can bundle together.
 
 ## Section 2 — Loose Ends (Open)
 

@@ -1,5 +1,14 @@
 # Session History
 
+## Session #425 (2026-09-22)
+
+**Achieved (#425) — pre-production-deploy security review of #424's seat-check feature found rate limiting has never actually worked anywhere in this codebase. Root-caused, independently re-verified twice (2 rounds of opus review, one with executable proof), fixed, merged to backend develop.**
+
+1. `ScopedRateThrottle.allow_request()` reads the rate-limit scope from the view's `throttle_scope` attribute, not the throttle class's own `scope` — silently a no-op everywhere it was used. Found in 5 places total: `SeatCheckThrottle` (this session's new limiter, built to stop a 40s blocking call from taking down the site) + 4 pre-existing broken throttles (`RouteFAQAgentThrottle`, `OtpThrottle`, `CsPollThrottle`, `CsImageThrottle`).
+2. Round 2 (independent, executable re-verification) corrected round 1's overstated OTP-verify severity (already mitigated by a DB-backed attempt counter) and found 2 new bugs: `CouponThrottle`/`PaymentThrottle` silently sharing one bucket (identical scope string), and the existing tests for these throttles never exercised the real blocking path.
+3. Fixed 7 throttle classes across 6 files, verified by direct execution (22 requests → 20 allowed, blocked at #21). 130 existing tests pass. Merged → `smartenplus-backend` develop (`653a2d0` → `e9e50c6`).
+4. BD+UX follow-up: confirmed the 10-min Payment-step recheck TTL doesn't need a visible countdown timer.
+
 ## Session #424 (2026-09-22)
 
 **Achieved (#424) — shipped the entire checkout-time seat-check flow designed in #423: all 3 ship-blockers fixed, the full feature built, live-verified in browser (with 2 real bugs found and fixed during verification), all merged to `develop` on both repos.**
