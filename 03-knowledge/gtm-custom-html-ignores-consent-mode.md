@@ -110,8 +110,15 @@ The trigger gate stops it pre-consent, but AAM stays active for users who accept
 - **Every future Custom HTML tag must use the same trigger.** Building the remaining event tags on `All Pages` would reintroduce the gap.
 - A Consent Mode audit that reads only code will keep passing while the gap is live. **Measure the network.**
 
+## Addendum (2026-09-23, code-read only, not re-measured)
+
+Re-checked during the multi-market migration audit (`[[multi-market-i18n-analytics-migration]]`). The in-repo trigger-gating code is unchanged and still present as documented above: `pages/_app.js:93-104` sets Consent Mode v2 default-denied before GTM loads, `CookieConsentBanner.js:7-23` pushes `consent_granted` only on accept, nothing on decline. GA4 itself was also found to run a **second, direct-gtag path** independent of GTM (`components/layout/layout.js:252`, gated by `enableGA4`) — that path is a separate finding, not a consent-gating concern, but worth noting here since it means GA4 volume can diverge from what GTM's container reports even when the consent gate above is working correctly.
+
+**This code read does NOT confirm the GTM container itself still has the corresponding trigger fix applied** (i.e., that the Meta Pixel tag is still gated on `consent_granted` rather than having drifted back to `All Pages`). That requires the same network-trace method this note originally used — unverifiable by reading this repo. Any future phase that adds GTM-side configuration (market-segmented tags, Korean Pixel, etc.) should re-run that network trace and record a dated result, not assume this note's original fix is still live.
+
 ## Related
 
 - [[master-state]] — session #363
 - [[csp-duplicate-headers-intersection]] — the CSP work that let the Pixel run far enough to expose this
+- [[multi-market-i18n-analytics-migration]] — 2026-09-23 audit that re-checked this note's code-level claims
 - `components/UI/CookieConsentBanner.js` · `pages/_app.js:88-99` · container `GTM-PS3WS7R`

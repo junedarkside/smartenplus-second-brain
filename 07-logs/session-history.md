@@ -1,5 +1,21 @@
 # Session History
 
+## Session #427 (2026-09-23)
+
+**Achieved (#427) — closed out the last open deploy blocker (admin-dashboard's debug-param branch), confirmed all 3 repos are deployed develop→main, and cleaned up 72 fully-merged branches (46 local + 26 remote) across all 3 repos.**
+
+1. `admin-dashboard fix/seat-check-admin-debug-param` merged to develop, pushed (`15dbd1d` → `c6eeb14`) — carried unmerged since #424, single-line fix, no conflicts.
+2. User confirmed `develop`→`main` already merged on all 3 repos — verified via `git fetch` + HEAD comparison, identical everywhere. The full seat-check feature (#423-#427) is now on production `main` across every repo, closing the long-carried "develop→main deploy decision" resume-point item.
+3. Branch cleanup, user-requested, confirmed safe before deleting: deleted 46 local + 26 remote branches confirmed merged into `develop`, no `-D`/force used.
+4. Housekeeping: stopped a stray Django dev server left running on port 8000.
+5. Carried-forward note: #426's vault commit was blocked by the auto-mode classifier — folded into #427's wrapup rather than lost.
+
+**Achieved (#426, carried forward) — found and fixed a second Payment-step timing gap in the seat-check feature: the TTL recheck only ever fired once, on arrival, and never re-armed during idle.**
+
+1. User question ("what if user stays at Payment step for 1 hour?") triggered the finding — the TTL comparison ran exactly once at arrival, guarded by a ref that only reset on leaving the step.
+2. SWE/Next.js/Django expert review before implementing settled the fix location (`FormCard.js`'s `submitHandler`, not `PaymentComponent.js`'s `handleClick`) and rejected a background timer/interval.
+3. Fixed: `useSeatAvailabilityCheck.js` gains `recheckStaleOnClick()`, threaded through to `FormCard.js`. 3 files, 28 insertions / 2 deletions. Lint clean, full build succeeds. Merged `fix/seat-check-payclick-ttl` → develop (`72196a92` → `7728fd7a`).
+
 ## Session #425 (2026-09-22)
 
 **Achieved (#425) — pre-production-deploy security review of #424's seat-check feature found rate limiting has never actually worked anywhere in this codebase. Root-caused, independently re-verified twice (2 rounds of opus review, one with executable proof), fixed, merged to backend develop.**

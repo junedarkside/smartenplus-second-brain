@@ -30,6 +30,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Knowledge — SEO/AEO
 
+- [[hreflang-th-tag-self-referencing-bug]] — **BUG 2026-09-23 · FIXED.** Homepage declared `hreflang="th"` pointing at its own English-only URL, conflicting with `openGraph.locale: en_US` on the same page. Fixed to self-referencing `en`, matching the pattern already used in `tripDetailSEOUtils.js` and structured-data hooks. `components/FrontPage/Seo.js:34`, commit `b27b20a0`.
 - [[nextseo-v6-jsonld-silent-drop]] — **BUG PATTERN.** next-seo v6 `NextSeo` has no `jsonLd` prop — passing `jsonLd:[...]` is silently ignored, schemas never render. Fix: raw `<script type="application/ld+json" dangerouslySetInnerHTML>` tags (same as homepagev2.js pattern). Detection: `grep -r "jsonLd:" pages/`. Fixed in blog/index.js + blog/tags/[slug].js 2026-06-21.
 - [[seo-audit-reconciliation-2026-06-21]] — **AUDIT 2026-06-21.** External 28-finding SEO audit repro re-audited via debug-mantra (live HTTP + code-trace, FE scope). **4 of 6 Criticals PHANTOM** (apex 301 artifact + audit methodology — crawl didn't follow redirects). 10 real FE-fixable: blog JSON-LD dead code (next-seo v6 silently drops `jsonLd` key), duplicate TravelAgency entity (competing names), double brand in titles, /ref/* title dup, og:url missing on /about, og:image:type, twitter:image:alt, ContactPoint absent, 1-item homepage breadcrumb, home title 94→≤60. 5 CMS-only (author, dateModified). 2 WP. P0: fix blog schemas (#17) + TravelAgency merge (#19/#20).
 - [[seo-aeo-geo-live-audit-2026-06-22/r16-live-prod-2026-08-16]] — **AUDIT 2026-08-16 (r16, no-deploy monitoring).** SEO 8.4 / AEO 9.7 / GEO 9.4 / CWV 7.8 / SD 8.7. SD-NEW-4 closed homepage (priceValidUntil→2027-08-15). SD-R15-3 closed (/trips @id). New: SD-NEW-4b P2 (destination pages), CWV-FP P2 (multi-fetchpriority ×10/15/20), SEO-15 P3 (/privacy+/terms in sitemap). /activities SSR cards 60 (up from 28). All 14 AI crawlers confirmed.
@@ -101,6 +102,7 @@ Global navigation catalog. Updated on every ingest.
 
 ## Active Projects
 
+- [[multi-market-i18n-analytics-migration]] — **PLAN 2026-09-23 · NOT STARTED.** Thai (`lookchang.com`) + future Korean market expansion on GA4/GTM/Meta/GSC, audited against actual codebase (external report's assumptions mostly wrong — no i18n, no site context, inert middleware, no Meta Pixel in-repo) and reviewed by 3 independent opus passes. 2 live bugs found and fixed/merged during the audit: hreflang self-reference, GTM currency hardcoding. Migration itself deferred — revisit when bandwidth/timeline allows.
 - [[rec-engine-report-audit]] — **AUDIT 2026-07-15.** 4-specialist (BD/UX/BE/FE) review of session #249 rec-engine report. Fix `06423c5` CONFIRMED complete (8 sites) but **prod deploy needs one-off Redis `recommendations:*` flush** (skip-if-fresh guard = stale prices up to 24h). REC-SLOT-WASTE severity OVERTURNED → DO NOTHING (near-zero incidence, empty zone arguably correct UX, `checkout_recommendation_empty` GTM already measures it). Option A `exclude_ids` REJECTED unanimously (unbounded cache keys + RTK churn + solves only half the drain). Sub-project NO confirmed; +1 trigger added (GTM attribution data).
 
 > **Note (2026-06-19):** Items marked **CLOSED / COMPLETED / MERGED** below were archived to `08-archive/` this session. Their `[[wikilinks]]` still resolve (Obsidian finds them in the archive folder). Pending a future pass to relocate these lines into `## Archive`.
@@ -593,6 +595,7 @@ Global navigation catalog. Updated on every ingest.
 - [[sitemap-filter-by-inventory-or-recency]] — pre-flight filter: `available_routes_count>0 || updated_at>365d`
 - [[wordpress-faqpage-deprecation-note]] — `FAQPage` schema deprecated Aug 2023; use `<details>/<summary>` only
 - [[gtm-purchase-item-category-attribute]] — `tripItems[].item_category: contract.service_category` unlocks revenue-by-category GA4
+- [[analytics-currency-dataLayer-hardcode]] — **BUG 2026-09-23 · FIXED.** GTM `purchase`/`add_to_cart`/`begin_checkout` events hardcoded THB or had no currency fallback, corrupting revenue currency for non-THB viewers. Distinct surface from `[[currency-context-price-rendering-rule]]` (display + JSON-LD). Commit `996803eb`.
 - [[multi-item-cart-anchor-last-transport]] — anchor = last transport item; rec type logic tree
 - [[cross-sell-suppress-during-payment]] — DO NOT mount cross-sell during payment form interaction
 - [[react-state-no-op-guard-side-effect-prevention]] — `prev===next ? return : set` guard for object refs

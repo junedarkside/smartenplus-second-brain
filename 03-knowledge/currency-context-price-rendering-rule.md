@@ -141,3 +141,4 @@ Newly-fixed (this session):
 - [[trip-search-below-fold-redesign-2026-06-15]] — sibling work that shipped RouteFAQ/RouteSummary; both consume `useFormatPrice`
 - [[structured-data-schema-patterns]] — JSON-LD integrity rules (companion to Rule 2)
 - [[currency-context-infinite-fetch]] — historical bug in `CurrencyContext` itself (race + ref stability), separate issue
+- [[analytics-currency-dataLayer-hardcode]] — the third currency surface (GTM/GA4 ecommerce events), not covered by this note
