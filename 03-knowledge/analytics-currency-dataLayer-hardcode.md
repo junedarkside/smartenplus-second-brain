@@ -1,6 +1,6 @@
 ---
 name: analytics-currency-dataLayer-hardcode
-description: GTM/GA4 dataLayer ecommerce events (purchase, add_to_cart, begin_checkout) hardcoded THB or had no fallback, corrupting revenue currency for non-THB viewers. Fixed 2026-09-23. Distinct surface from user-facing price display and JSON-LD — see currency-context-price-rendering-rule for those.
+description: GTM/GA4 dataLayer ecommerce events (purchase, add_to_cart, begin_checkout) hardcoded THB or had no fallback, corrupting revenue currency for non-THB viewers. Fixed 2026-09-23; same-day addendum found and fixed a follow-on bug where begin_checkout's currency label was fixed but its value/price fields stayed raw THB, unconverted. Distinct surface from user-facing price display and JSON-LD — see currency-context-price-rendering-rule for those.
 type: knowledge-atom
 date: 2026-09-23
 parent: multi-market-i18n-analytics-migration
@@ -32,6 +32,25 @@ No shared helper extracted — `currentRate?.currency || 'THB'` is a 28-characte
 
 ## Verification
 GA4 DebugView: switch currency via `CurrencySelector`, confirm `add_to_cart`/`begin_checkout`/`purchase` all carry the selected code; confirm a null-context case emits `'THB'` not `undefined`. `git diff hooks/useOmisePayment.js` should show exactly one changed line — if it shows more, the payment blast-radius boundary was violated.
+
+## Addendum: fixing the currency label alone made begin_checkout worse (found + fixed 2026-09-23, same day)
+
+This fix corrected `begin_checkout`'s `currency` field but left `value`/`price` unconverted — the event's **numeric value was never in scope of this fix and stayed raw THB**. Post-fix the event said e.g. `{currency:"USD", value: 3500}` where `3500` was still baht — a self-contradicting payload, and *worse* than the pre-fix state (`{currency:"THB", value: 3500}`, wrong label but at least an internally consistent number). A BD-lens review caught this as a live-revenue-analytics risk before the branch reached `main`: inflated non-THB checkout values are exactly the shape that misdirects funnel/abandonment analysis, and GA4 history can't be corrected after the fact.
+
+**Root cause of why this fix didn't catch it**: `value`/`price` are a *fourth* money field, not currency — this note's scope was explicitly "currency field only" (see Decision above), and the value-conversion gap was a separate, pre-existing defect (`value`/`price` were already `undefined` before this fix too, since the source fields referenced — `data.total_price`/`item.total_price` — don't exist in the cart API response at all).
+
+**Fixed same day**, commit `9055a9bd`, branch `fix/analytics-begin-checkout-value-conversion`:
+```js
+const exchangeRate = (currentRate?.rate && currentRate.rate > 0) ? currentRate.rate : 1;
+// currency: currentRate?.currency || 'THB',  (unchanged, from this fix)
+value: data.grand_total / exchangeRate,        // was: data.total_price (field didn't exist)
+price: item.sub_total / exchangeRate,          // was: item.total_price (field didn't exist)
+```
+Real field names (`grand_total`, `sub_total`) confirmed against the backend `CartSerializer`/`CartItemSerializer` and a same-file precedent (`checkout/index.js:1192` already reads `data.grand_total` for the sidebar total). The rate guard matches `CartButton.js:76`'s `(rate && rate > 0)` pattern rather than a bare `|| 1`, since `rate` arrives as a stringified Decimal from DRF and a corrupt `"0.000000"` would pass a truthy check. Live-verified with a real booking: `value`/`price` both captured as `1000` (finite), matching the `THB 1,000.00` shown in the Cart Summary sidebar for that cart.
+
+**Lesson for future currency-surface fixes**: currency *label* and monetary *value* are two separate fields that must be verified together. Fixing one without checking the other can make an event actively misleading rather than merely incomplete — as happened here.
+
+**Still not fixed, found during this addendum's review, separate tickets**: `begin_checkout`'s `item_id` uses the cart-item ID instead of `contract.id` (inconsistent with `add_to_cart`/`view_cart`/`purchase`); its `quantity` reads `item.children` instead of the serializer's `item.child` field.
 
 ## Related
 - [[currency-context-price-rendering-rule]] — the two other currency surfaces (display + JSON-LD)
