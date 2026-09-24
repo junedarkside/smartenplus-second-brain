@@ -4,51 +4,59 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-09-23 (session #428)
+**Updated:** 2026-09-24 (session #429)
 
-**Achieved (#428) — audited an external "Multi-Market Analytics & Tracking Migration" report against `smartenplus-frontend`, fixed + merged 5 commits (4 distinct bugs, R2 refixed after a live-verification catch) to `develop`, each with expert review + live browser verification. Full vault documentation written and kept current throughout. Full detail archived to `[[session-history]]` (#428).**
+**Achieved (#429) — reviewed and shipped Phase 2 (Site/Language Context) branches 3+4 of the Thai i18n migration, each gated by fresh multi-agent (SWE/Next.js/Django) review before any code written. Phase 2 is now fully complete on `develop`, still fully inert for real users. Full detail archived to `[[session-history]]` (#429).**
 
-1. **R2 — hreflang self-reference, fixed twice** (`b27b20a0` broke on live verification due to a `next-seo` React-key collision → `61500409` corrected it using the right prop).
-2. **R3 — GTM currency hardcode + missing fallback, fixed** (`996803eb`).
-3. **R1 — GA4 consent-bypass bug, found and fixed** (`f750ebc6`) — direct-gtag path ignored the cookie banner entirely.
-4. **R4 — `begin_checkout` value-conversion, fixed after a wrong fix was caught mid-review** (`9055a9bd`) — a post-merge review of R3 found the currency label was fixed but the value/price fields weren't, making the event actively misleading; BD review blocked promotion to `main` until this landed.
-5. **Vault docs**: `[[multi-market-i18n-analytics-migration]]` (new), `[[analytics-currency-dataLayer-hardcode]]` + `[[hreflang-th-tag-self-referencing-bug]]` (new), `[[gtm-custom-html-ignores-consent-mode]]` (extended) — all current as of this wrapup.
-6. **Migration itself (Phase 2+) NOT started** — explicit scope decision, audit + fix + document only this session.
+1. **Branch 3 review found a BLOCKING issue**: planned `Accept-Language` header would fail CORS preflight on every authenticated/cart/checkout request — would have broken the entire cart/checkout surface. Re-scoped to `?lang=` query param instead (confirmed objectively correct on HTTP/caching/industry-precedent merits, not just a CORS workaround, via a dedicated standards review). Also found `dayTripsApi.js` already sent a language signal via a Redux field wrongly declared dead code by two prior reviews.
+2. **Branch 3 shipped** (`0526434f` → `develop` `f6f459a3`) — `withLangParam()`/`getCurrentLanguage()` in `helpers/siteContext.js`, wired into `apiSlice`/`bookingsApi`/`otaApi`/`dayTripsApi` (latter migrated off its Redux dependency). Live-verified: `?lang=en` on real cart/contract requests, 200s, zero CORS/console errors.
+3. **Branch 4 review found it wasn't greenfield** — `siteName` already exists in `constants.js` + 288 raw literal hits across 134 files. Corrected shape: new `en` brand value kept in sync with the existing export (test-enforced), lands in `siteContext.js` not `constants.js`, `localURL` excluded entirely so the Omise payment boundary is structural, not a remembered rule.
+4. **Branch 4 shipped** (`9ed34a2b` → `develop` `abb7f8d2`) — `BRANDS`/`getBrand(language)`, zero consumers, zero diff on any payment/auth file.
+5. **Phase 2 (Site/Language Context) is now fully complete** — resolver, provider mount, language query param, brand table all merged to `develop`. Verified no-op for real users until Phase 3 (`/th` routes) is designed — not started.
+6. Follow-ons logged, not fixed: service worker has 12 hardcoded brand strings and can't call `getBrand()` (Phase 3 stale-cache risk); Phase 3's eventual brand/domain consolidation is 60+ files (bigger than earlier "17" estimate); backend email templates (8 files) hardcode brand/domain, needs brand-aware rendering once Thai emails ship.
+7. **Live browser re-verification of branches 3+4 done end of session** (dev server + Claude-in-Chrome): homepage loads unchanged, `?lang=en` confirmed present on real `checkContract`/`checkCartId` requests (200s), zero console/CORS/hydration errors across homepage → trip detail → checkout, checkout page itself renders correctly with real cart data (itinerary, passenger count, totals). Phase 2 confirmed genuinely inert and non-breaking, not just build-verified.
 
 **Resume point (EXACT):**
-1. **Manual browser verification of the #426 idle-gap seat-check fix still not done** — carried forward, unrelated to this session's work, still the oldest open item.
-2. **This session's 4 analytics/SEO fixes are on `develop`, not yet promoted to `main`.** BD review explicitly recommended blocking promotion until the `begin_checkout` value bug was fixed (#428 item 6) — that's now done and merged (`9055a9bd`), so the blocker is cleared, but promotion itself hasn't happened yet. Confirm whether the GA4 dual/triple-path (GTM + direct-gtag + manual `dataLayer.push`) is intentional redundancy or accidental drift — the consent-bypass portion is now fixed, but the underlying "which path should be canonical" data-quality question is still open, blocks Phase 5 of the migration plan if/when reached.
-3. Carried from #425: throttle rates not load-tested against real traffic — still live in production, unwatched.
-4. Carried from #425: `SeatCheckThrottle` keying is IP-based, still worth revisiting to cart/session-scoped.
-5. Carried from #424: stale-`useRef` edge case in `useSeatAvailabilityCheck`'s Passengers-step arrival guard — still not hardened, still low priority.
-6. Carried from #419/#420: **`SEAT-CHECK-MAPPING-ORDER-BUG`** — still open.
-7. Carried from #422: split `operators/models.py`/`products/serializers.py` into packages — still deferred.
-8. Carried from #422: extend `has_live_seat_check` testing to a real non-test contract.
-9. Carried from #421/#422: stale-cart price drift — not started.
-10. Carried from #420: `SeatCheckAdapter` interface — blocked on Silaphat API sample.
-11. Carried from #419: transportation capacity-gate product decision — see Section 2 `TRANSPORT-CONTRACT-NO-CAPACITY-GATE`.
-12. Carried from #417/#416: `sidemenu.js` dead code, SideList.js/Canceled-booking live-verifies, `test_transport_composit_pagination.py` untracked file (16+ sessions now), `BookingRateCard.quantity=0` fix, M1–M7 manual tests, journey page real-data test — all still open.
+1. **Phase 3 (`/th` routing) — user has explicitly decided to start next session.** Needs its own design pass first, not a straight implementation start — hard constraint already on record: `/th` must be genuine path segments (physical directory or dynamic route segment), never a `next.config.js` rewrite, for any page using `getStaticProps`/ISR (a rewrite would let `_document.js`'s `ctx.asPath` see the post-rewrite path and permanently bake the wrong `lang` attribute into cached HTML). Start with a design/discovery pass (routing shape, `getStaticPaths` fan-out impact, which pages get a Thai variant first) before cutting any branch.
+2. **Manual browser verification of the #426 idle-gap seat-check fix still not done** — carried forward, unrelated, still the oldest open item.
+3. **Session #428's 4 analytics/SEO fixes are on `develop`, not yet promoted to `main`.** BD's blocker (the `begin_checkout` value bug) was cleared last session (`9055a9bd`), but promotion itself hasn't happened. GA4 dual/triple-path canonical-source question still open, blocks Phase 5 of the i18n migration if/when reached.
+4. Carried from #425: throttle rates not load-tested against real traffic — still live in production, unwatched.
+5. Carried from #425: `SeatCheckThrottle` keying is IP-based, still worth revisiting to cart/session-scoped.
+6. Carried from #424: stale-`useRef` edge case in `useSeatAvailabilityCheck`'s Passengers-step arrival guard — still not hardened, still low priority.
+7. Carried from #419/#420: **`SEAT-CHECK-MAPPING-ORDER-BUG`** — still open.
+8. Carried from #422: split `operators/models.py`/`products/serializers.py` into packages — still deferred.
+9. Carried from #422: extend `has_live_seat_check` testing to a real non-test contract.
+10. Carried from #421/#422: stale-cart price drift — not started.
+11. Carried from #420: `SeatCheckAdapter` interface — blocked on Silaphat API sample.
+12. Carried from #419: transportation capacity-gate product decision — see Section 2 `TRANSPORT-CONTRACT-NO-CAPACITY-GATE`.
+13. Carried from #417/#416: `sidemenu.js` dead code, SideList.js/Canceled-booking live-verifies, `test_transport_composit_pagination.py` untracked file (17+ sessions now), `BookingRateCard.quantity=0` fix, M1–M7 manual tests, journey page real-data test — all still open.
 
 ---
 
 
 ## Section 2 — Loose Ends (Open)
 
-> **NEW 2026-09-23 — `MULTI-MARKET-I18N-PLANNED`, open, planning-only, not started.**
+> **UPDATED 2026-09-24 (#429) — `MULTI-MARKET-I18N-PLANNED`, open, Phase 2 COMPLETE, Phase 3 not started.**
 >
-> Full plan + audit in `[[multi-market-i18n-analytics-migration]]`. External consultant report proposed a Thai (`lookchang.com`) + future Korean market expansion on GA4/GTM/Meta/GSC; audited against actual codebase (4 of the report's load-bearing assumptions were wrong — no i18n, no site context, inert middleware, no Meta Pixel in-repo) and reviewed across multiple rounds of independent opus passes (SWE, Next.js, BD/business-impact, cross-repo/Django). **Four** live bugs found have been fixed and merged to `develop`: hreflang self-reference on the homepage — first fix broke on live verification (silent React-key collision in `next-seo`'s `additionalLinkTags`), corrected in a follow-up commit (`fix/seo-hreflang-th-alternate` `b27b20a0` → `fix/seo-hreflang-languagealternates-prop` `61500409`); GTM currency hardcoding + missing fallback on 3 ecommerce events (`fix/analytics-currency-hardcode`, `996803eb`); a GA4 consent-bypass bug where the direct-gtag path fired regardless of the cookie banner's Accept/Decline choice (`fix/ga4-respect-cookie-consent`, `f750ebc6`); and a `begin_checkout` value-conversion bug found in a post-merge review of R3 itself — the currency label was fixed but the numeric value never was, making the event self-contradictory and worse than before the fix (`fix/analytics-begin-checkout-value-conversion`, `9055a9bd`). The migration itself (site/language context, `/th` routing, Thai product data, analytics extension, LookChang domain) has not started — revisit when dev bandwidth allows or a Thai/Korean launch date firms up.
+> Full plan + audit in `[[multi-market-i18n-analytics-migration]]`. External consultant report proposed a Thai (`lookchang.com`) + future Korean market expansion on GA4/GTM/Meta/GSC; audited against actual codebase and reviewed across multiple rounds of independent opus passes. **Phase 2 (Site/Language Context) is now fully shipped to `develop`, all 4 branches**: resolver + `SiteContext` (`afd784a9`), provider mount + `_document.js` lang wiring (`4f18f959`), `?lang=` query-param wiring across `apiSlice`/`bookingsApi`/`otaApi`/`dayTripsApi` (`0526434f`), brand lookup table `getBrand()` (`9ed34a2b`). Live browser re-verification done end of #429 (not just build-checked): homepage/trip-detail/checkout flow all render unchanged, `?lang=en` confirmed present on real network requests, zero console/CORS/hydration errors. **Phase 3 (`/th` routing) is the next step — user has explicitly committed to starting it next session.** Needs a design pass first (routing shape, `getStaticPaths`/ISR fan-out impact) before any branch is cut — not a straight implementation start.
+>
+> Prior session (#428) also fixed **4** live analytics/SEO bugs unrelated to the migration build-out itself, merged to `develop`, not yet promoted to `main`: hreflang self-reference (`b27b20a0` → `61500409`), GTM currency hardcode (`996803eb`), GA4 consent-bypass (`f750ebc6`), `begin_checkout` value-conversion (`9055a9bd`).
 >
 > Sub-items also tracked, not yet actioned:
+> - **NEW (#429): Phase 3 design not started** — hard constraint already documented in the plan file: `/th` routes must be genuine path segments (physical directory or dynamic route segment), never implemented via a `next.config.js` rewrite, for any page using `getStaticProps`/ISR — a rewrite would let `_document.js`'s `ctx.asPath` see the post-rewrite path and bake `lang="en"` permanently into a Thai-URL page's cached HTML.
+> - **NEW (#429): service worker (`public/service-worker.js`, 7 strings + `utils/serviceWorkerRegistration.js`, 5 strings) has 12 hardcoded "SmartEnPlus" references** and cannot call the new `getBrand()` helper (no access to page-level JS state) — stale-brand-on-cache risk once Thai routes exist and a user switches language. Flagged for Phase 3, not fixed.
+> - **NEW (#429): Phase 3's eventual brand/domain consolidation is larger than earlier estimated** — corrected count is 60+ files (14 via `helpers/constants.js` exports, ~25 files reading `process.env.NEXT_PUBLIC_DOMAIN` directly, 40+ files with a raw `"SmartEnPlus"` literal), not the "~17" figure used in earlier planning.
+> - **NEW (#429): backend email templates hardcode brand/domain** — 8 Django email templates under `bookings/emails/` + `accounts/emails/password_reset_email.html`, plus `bookings/email_context.py:177,185`. No endpoint today accepts a frontend-supplied brand string (confirmed via full backend grep, zero hits), so Phase 2 has zero backend coupling — but real Thai-branded customer emails will need this addressed, own ticket, later phase.
 > - Delete genuinely-dead `components/GoogleAnalytics/GoogleAnalytics.js`.
 > - Reconcile GA4's dual/triple page-view sources (GTM tags, direct-gtag `layout.js:252`, manual `dataLayer.push` in `_app.js:36-42`) — the consent-bypass portion is now fixed (both paths respect consent), but which path should be canonical is still an open data-quality question. Blocks Phase 5 of the migration plan if/when reached.
 > - `pages/checkout/index.js` is 1293 lines (red band, >500) — pre-existing debt, surfaced during the currency-fix review, out of scope for that fix.
 > - `checkout/index.js:523` fires `begin_checkout` via raw `window.dataLayer?.push` instead of the `isGTMEnabled()` + `sendGTMEvent` pattern used elsewhere — fires in dev too. Not fixed alongside the currency change (would shift *when* the event fires).
 > - `view_item_list` (`helpers/gtmUtils.js:36-51`) has no `currency` and no `price`/`value` field at all — different defect class, needs its own fix.
 > - `NEXT_PUBLIC_SITE_URL` single-call-site fork risk in `components/trips/TripSummary.js:90`.
-> - **NEW: `begin_checkout`'s `item_id` uses the cart-item ID instead of `contract.id`**, inconsistent with `add_to_cart`/`view_cart`/`purchase` (all use `contract.id`) — breaks item-level funnel joins in GA4. Found during R4's review, deliberately not fixed in that branch.
-> - **NEW: `begin_checkout`'s `quantity` reads `item.children`, but the backend serializer field is `child`** (not `children`) — other call sites in the same file defensively use `item.children || item.child || 0`; this one line omits the fallback, likely under-counting children in this event. Found during R4's review, deliberately not fixed in that branch.
-> - **NEW: `__tests__/pages/checkout/index.integration.test.js` (734 lines) fails to run entirely** — broken relative-import path (`Cannot find module '../../../../pages/checkout/index'`, one `../` too many). Confirmed pre-existing, unrelated to any of this session's 5 commits. Needs a one-line path fix plus a decision on whether the suite's actual assertions still pass once it can load.
-> - **NEW: 3 pre-existing failures in `hooks/__tests__/useOmisePayment.test.js`** (confirmed present before this session, re-confirmed unrelated after every fix this session touched the file) — CLAUDE.md says don't merge onto red; needs its own tracking issue independent of this migration work.
+> - `begin_checkout`'s `item_id` uses the cart-item ID instead of `contract.id`, inconsistent with `add_to_cart`/`view_cart`/`purchase` — breaks item-level funnel joins in GA4. Found during #428's R4 review, deliberately not fixed in that branch.
+> - `begin_checkout`'s `quantity` reads `item.children`, but the backend serializer field is `child` (not `children`) — other call sites in the same file defensively use `item.children || item.child || 0`; this one line omits the fallback. Found during #428's R4 review, deliberately not fixed in that branch.
+> - `__tests__/pages/checkout/index.integration.test.js` (734 lines) fails to run entirely — broken relative-import path (`Cannot find module '../../../../pages/checkout/index'`, one `../` too many). Confirmed pre-existing. Needs a one-line path fix plus a decision on whether the suite's actual assertions still pass once it can load.
+> - 3 pre-existing failures in `hooks/__tests__/useOmisePayment.test.js` (confirmed present before #428, re-confirmed unrelated after every #428/#429 fix that touched the file) — CLAUDE.md says don't merge onto red; needs its own tracking issue independent of this migration work.
 
 > **NEW 2026-09-22 (#425) — `THROTTLE-RATES-NOT-TUNED`, open, not started, low priority.**
 >

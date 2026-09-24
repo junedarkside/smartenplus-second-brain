@@ -1,5 +1,18 @@
 # Session History
 
+## Session #429 (2026-09-24)
+
+**Achieved (#429) — reviewed and shipped Phase 2 (Site/Language Context) branches 3+4 of the Thai i18n migration, both gated by fresh multi-agent (SWE/Next.js/Django) review before any code was written. Phase 2 is now fully complete on `develop`, still fully inert for real users.**
+
+1. Branch 3 (`Accept-Language`/language-signal wiring) review found a BLOCKING issue: the originally-planned header approach would fail CORS preflight on every authenticated/cart/checkout request (backend's `CORS_ALLOW_HEADERS` doesn't allowlist `accept-language`) — would have broken the entire cart/checkout surface in production. Also found `dayTripsApi.js` already silently sent a language signal via a Redux-persisted field (`dayTripSlice.selectedLanguage`) that two prior review passes had wrongly called dead code.
+2. A dedicated SWE standards review confirmed `?lang=` query param is objectively the better mechanism here (not just a CORS workaround) — RFC semantics, CDN caching, industry precedent, and debuggability all favor explicit query param over a preference-negotiation header for a URL-path-derived, non-inferred language choice.
+3. Branch 3 shipped (`0526434f` → merged `f6f459a3`): `withLangParam()`/`getCurrentLanguage()` added to `helpers/siteContext.js`, wired into `apiSlice`/`bookingsApi`/`otaApi`/`dayTripsApi` — the latter migrated off its Redux dependency onto the shared resolver. Live-verified in-browser: `?lang=en` present on real cart/contract requests, 200s, zero CORS or console errors.
+4. Branch 4 (brand-identity lookup table) review found it wasn't greenfield — `helpers/constants.js` already exports `siteName`, plus 288 raw "SmartEnPlus" literals across 134 files; corrected the plan to keep the new `en` brand value in sync with the existing export (enforced by a test) rather than forking a second source of truth. Also corrected the file location (`siteContext.js`, not `constants.js`, to avoid dragging image/base64 imports into an SSR/RTK-safe helper) and excluded `localURL` from the table entirely, making the payment boundary (Omise `redirect_uri`) structural rather than a remembered rule.
+5. Branch 4 shipped (`9ed34a2b` → merged `abb7f8d2`): `BRANDS`/`getBrand(language)` added to `siteContext.js`, zero consumers, zero diff on any payment/auth file, full build + test baseline unchanged.
+6. Backend (Django) confirmed clean for both branches: zero CORS/backend deploy needed for the final query-param approach; zero endpoint anywhere accepts a frontend-supplied brand string, so branch 4 has no cross-repo coupling today.
+7. **Phase 2 (Site/Language Context) is now fully complete** — all 4 branches (resolver, provider mount, language query param, brand table) merged to `develop`. Everything remains a verified no-op for real users until Phase 3 (`/th` routes) is designed and built — not started.
+8. Several follow-on items logged for Phase 3/backlog, not fixed now: service worker has 12 hardcoded brand strings and can't call `getBrand()` (stale-brand-on-cache risk once Thai routes exist); Phase 3's eventual brand/domain consolidation is 60+ files, larger than earlier estimated; backend email templates (8 files) hardcode brand/domain and will need brand-aware rendering once Thai customer emails actually ship.
+
 ## Session #428 (2026-09-23)
 
 **Achieved (#428) — audited an external "Multi-Market Analytics & Tracking Migration" report against the live smartenplus-frontend codebase, corrected it via multiple rounds of independent opus review, and fixed + merged 5 commits (4 distinct bugs, one refixed) to develop. Full vault documentation written and kept current throughout.**
