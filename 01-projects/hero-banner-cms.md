@@ -1,6 +1,8 @@
 # Hero Banner CMS
 
 ## Summary
+> **STALE (2026-09-30, #439):** the 2026 homepage redesign (`96bc6f94`) stopped reading `HeroBanner` — homepage hero is `lib/homepage/components/DiscoverySection.js` with a static image; hero **text** is now staff-editable per language via `SiteText` (master-state `SITE-TEXT-OVERRIDES`). `HeroBanner` still used for the activities page image (`pages/activities/index.js`). Frontend section below is historical.
+
 Backend-controlled hero banner. Staff uploads images + copy via admin dashboard. Frontend auto-rotates as slideshow.
 
 ## Context

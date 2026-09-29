@@ -8,6 +8,8 @@ parent: multi-market-i18n-analytics-migration
 
 # SiteContext Language-Branch Pattern (Zero Prop Changes)
 
+> **SUPERSEDED (2026-09-30, #439):** new UI text goes in the shared catalog `helpers/i18n/strings.js` via `hooks/useT.js` (staff-overridable) — see [[i18n-catalog-with-staff-overrides-pattern]]. Existing `COPY` objects (`ContactUs.js`, `footer.js`) stay until those files are next touched.
+
 ## Summary
 To make a shared, zero-prop component render different static text per language, consume `useSite()` directly inside the component and branch a local `COPY` lookup object by `language` — no prop threading, no caller changes, safe for components with multiple existing callers across different locale contexts.
 

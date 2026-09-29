@@ -2,6 +2,14 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-30 (session #439)
+
+> **`BE-TEST-DISCOVERY-BROKEN` — ✅ FIXED, MERGED → develop `dda70f2` (BE, pushed, #439).** `operators/` AND `orders/` (second instance found by scan) each had `tests.py` + `tests/` package; package shadowed module → discovery `ImportError`, so `manage.py test` (no label), `test operators`, `test orders` all crashed and both `tests.py` files had never run. Fix (`cea5b16`, pure `git mv`, zero code change): `operators/tests.py` → `operators/tests/test_tour_system.py`; `orders/tests.py` → `orders/tests/test_webhook_verify_and_charge_serializer.py` (Omise `verify_omise_event` + admin charge serializer tests — payment tests that had been silently not running). Result: operators 219 OK, orders 90 OK, full suite now discovers **1098 tests**. Rule going forward: never add `tests.py` to an app that has a `tests/` package.
+
+> **`BE-TEST-REDIS-SHARED` — ✅ FIXED, MERGED → develop `3585d21` (BE, pushed, #439).** Tests used the live Redis cache (DB 1). Proven both directions: (1) `pages_info` NavigationTranslation test left its `/test-destinations` fixture in dev `navigation_v1_th` after the test DB was destroyed (phantom 13th nav item); (2) `test_front_page_excludes_non_home_placement_banners` failed 0≠1 reading a `/front-page/` response cached by the dev server. Fix (`c535a0f`): `TESTING = sys.argv[1] == 'test'` → cache LOCATION uses Redis **DB 15** (`TEST_REDIS_DB`), non-test unchanged (DB 1, same `DOCKER` host switch); `Smartenplus/test_runner.py` `IsolatedCacheTestRunner` FLUSHDBs DB 15 before + after each run and raises if LOCATION isn't `/15`. **Not locmem** — 33 `cache.delete_pattern()` calls in `products/operators/bookings/dialogue` signals need django-redis. Verified: guard blocks DB 1, dev DB 1 key count + sentinel unchanged across a test run, `pages_info` 5/5 (was 4/5), `tests products bookings carts` identical to develop (3 fail + 82 errors, none new). **Caveat:** isolation is per-run, not per-test — tests that depend on empty cache still need their own `cache.clear()` in setUp (nav test already does). **Prod note:** DB 15 on the prod Redis is safe to use for tests, but still don't run the suite on prod.
+
+> **`STATIONS-MIGRATION-DRIFT` — ✅ FIXED, MERGED → develop `aa60129` (BE, pushed, #439).** `stations/0041_alter_routefaq_options` (`fb0b9b9`) — Meta `ordering = ['order', 'id']` from `8d9e8c8` never migrated. `sqlmigrate` = no-op (options only, zero schema/data effect). `makemigrations --check` now clean on develop. Joins Release B's migration set: backend deploy now runs `pages_info` 0012-0016 **+ `stations` 0041** → use plain `migrate`, not `migrate pages_info`.
+
 ## Closed — 2026-09-22 (session #425)
 
 > **`DRF-THROTTLE-SCOPE-BUG` — CLOSED.**

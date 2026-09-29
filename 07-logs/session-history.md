@@ -1,5 +1,19 @@
 # Session History
 
+## Session #439 (2026-09-29 → 2026-09-30)
+
+**Achieved (#439) — multi-site next steps; Thai redirect P0; backend test infra; homepage i18n; Phase 3b catalog; staff-editable UI text.** All merged + pushed to `develop` (FE `a02ed184`, BE `2c9ee4d`); nothing on `main`.
+
+1. Vault check for multi-site next steps: project note stale ("NOT STARTED", "/th 404s"). Built Step 1 release plan; reviewed by SWE/Next.js/Django; main thread re-verified each P0 — 2 reviewer claims rejected (`?lang` ignored — wrong, `middleware/language.py:33`; no hreflang — wrong, `languageAlternates`). Published "Thai Release Runway" (EN→TH).
+2. Real P0 reproduced locally (`curl -H 'Accept-Language: th' /` → 307 `/th`) and fixed: `localeDetection: false` (`8c194257` → develop `5eaa6642`). Verified on worktree prod build.
+3. Baselines exposed rot: FE 224/1009 failing (vault said 3); BE full suite could not start. Fixed: `stations/0041` missing migration (`fb0b9b9`); backend tests shared live Redis (polluted dev nav cache with a test fixture) → `TESTING` flag + Redis DB 15 + `IsolatedCacheTestRunner` with guard (`c535a0f`); `operators/` + `orders/` `tests.py` shadowed by `tests/` → moved (`cea5b16`), full suite now 1108 tests (6F/87E baseline, Omise webhook tests running for the first time).
+4. Homepage SWE + Architecture review: ~90 hardcoded English strings / ~25 files; `getStaticProps` ignores locale; BE `/front-page/` cache key has no language (P0 ordering: BE before FE `?lang`); canonical from `asPath`. Published "Homepage Thai Readiness" (EN/TH toggle).
+5. User proposed components-first; SWE + Architecture agreed with changes → shared catalog + `useT` (the Phase 3b mechanism). User scoped to hero + search, chose Buddhist-year display dates. PR 1 re-reviewed (SWE/Next.js/Django): caught jest `testMatch` excluding `lib/**`, dropped callerless `getBrand` seam + date helper, moved hook to `hooks/`. Shipped `19646780` → `9124d406`; EN parity diff identical. Published "PR 1 Hero and Tabs".
+6. Incident: main FE `node_modules` emptied mid-build of a worktree that symlinked it; cause unknown; `npm ci` restore (user-approved); worktrees now get their own install.
+7. User asked whether staff can edit hero/tabs or add languages from BE → no (catalog is code). User chose hero + tabs staff-editable. Plan reviewed by SWE/Next.js/Django: P0s route shadowed by `<slug>`, `if cached:` empty-dict miss, `getSession` on public endpoint; P1s no seed (drift), fetch out of `useT` (SiteProvider sits outside Redux), `currentData`, SSR seed, history. Shipped BE `250e5bf` → `2c9ee4d`, FE `02291a31` → `a02ed184`; verified live override in SSR + Chrome, delete → catalog.
+
+**Resume point:** see master-state Section 1 (#439).
+
 ## Session #438 (2026-09-29)
 
 **Achieved (#438) — footer fully translated (12 links, chrome strings, invariant legal IDs), via a 4-agent panel then a 3-agent code review that surfaced the same real disagreement twice, sharper the second time, resolved directly by the user. Caught a real routing bug before shipping. Merged to `develop`.**
