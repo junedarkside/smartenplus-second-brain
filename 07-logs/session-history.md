@@ -12,6 +12,8 @@
 6. Incident: main FE `node_modules` emptied mid-build of a worktree that symlinked it; cause unknown; `npm ci` restore (user-approved); worktrees now get their own install.
 7. User asked whether staff can edit hero/tabs or add languages from BE → no (catalog is code). User chose hero + tabs staff-editable. Plan reviewed by SWE/Next.js/Django: P0s route shadowed by `<slug>`, `if cached:` empty-dict miss, `getSession` on public endpoint; P1s no seed (drift), fetch out of `useT` (SiteProvider sits outside Redux), `currentData`, SSR seed, history. Shipped BE `250e5bf` → `2c9ee4d`, FE `02291a31` → `a02ed184`; verified live override in SSR + Chrome, delete → catalog.
 
+8. Roadmap re-reviewed (SWE/Python/Next.js/Architecture) → R1-R9; user chose release-first. R0 shipped: local checkout test passed, tags pushed, BE main fast-forward + user deploy/migrate, FE main auto-deploy; prod verified read-only.
+
 **Resume point:** see master-state Section 1 (#439).
 
 ## Session #438 (2026-09-29)

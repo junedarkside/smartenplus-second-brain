@@ -2,6 +2,12 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+## Closed — 2026-09-30 (session #439, release)
+
+> **`THAI-RELEASE-STEP1` — NEW (#439, 2026-09-29), open. Thai release Step 1 planned, local only.** 3-lens review (SWE/Next.js/Django) of the ship plan, every P0 re-verified in code. Revised plan: tag both `main` → Release A (analytics R1-R4 alone) → Release B (backend, `migrate pages_info` 0012-0016 — **5** migrations, not 4) → Release C (FE i18n + nav/footer, robots `/th` Disallow kept as index gate). Rollback = redeploy tag, **never** `migrate pages_info 0011` (seed backward deletes rows by label, incl. admin edits). Thai copy fixes → Django admin, not migration 0017. Smoke URLs are `/api/v1/pages-info/{navigation,footer}/` (`?lang` works via `middleware/language.py:33`). Two reviewer claims rejected after code check: "`?lang` ignored" and "no hreflang" (exists via `languageAlternates`). Visual plan: artifact "Thai Release Runway" (Thai). Plan file: `~/.claude/plans/check-vault-and-what-fancy-harp.md`.
+
+> **Outcome:** SHIPPED 2026-09-30 as one release (not split A/B/C — later decision to release all of develop at once after 4-lens review). Tags `pre-th-release-2026-10` (FE `7b55375c`, BE `e9e50c6`). BE `main` `2c9ee4d` + user `migrate` (pages_info 0012-0017, stations 0041); FE `main` `a02ed184` auto-deployed. Prod verified read-only (nav/footer EN+TH, site-text `{}`, no Thai redirect, `/th` Thai hero, robots blocks `/th`).
+
 ## Closed — 2026-09-30 (session #439)
 
 > **`BE-TEST-DISCOVERY-BROKEN` — ✅ FIXED, MERGED → develop `dda70f2` (BE, pushed, #439).** `operators/` AND `orders/` (second instance found by scan) each had `tests.py` + `tests/` package; package shadowed module → discovery `ImportError`, so `manage.py test` (no label), `test operators`, `test orders` all crashed and both `tests.py` files had never run. Fix (`cea5b16`, pure `git mv`, zero code change): `operators/tests.py` → `operators/tests/test_tour_system.py`; `orders/tests.py` → `orders/tests/test_webhook_verify_and_charge_serializer.py` (Omise `verify_omise_event` + admin charge serializer tests — payment tests that had been silently not running). Result: operators 219 OK, orders 90 OK, full suite now discovers **1098 tests**. Rule going forward: never add `tests.py` to an app that has a `tests/` package.
