@@ -1,3 +1,5 @@
+## [2026-10-01] session-end #441 | S0 per-language cache keys (BE c53be49), `/th` runtime kill switch via feature flag (FE 9776836d), Thai `/trips` + `/locations` (FE 342f4c44), 4-expert production runbook; all on develop, release A waiting on user go
+
 ## [2026-09-30] session-end #440 | Thai homepage i18n R1–R5 finished (FE), single language list + per-language nav/footer cache (BE `pages_info/0018`), language registry + catalog-backed nav fallback (FE); all on develop, ko next; later in #440: R8 search tail, trip results page, site chrome (FE develop `2a47c531`) — frontend Thai complete except backend data (R7)
 
 ## [2026-09-30] release #439 | Thai i18n foundation shipped to production — BE `main` 2c9ee4d (+migrate pages_info 0012-0017, stations 0041), FE `main` a02ed184 (auto-deploy). Rollback tags pre-th-release-2026-10. Prod verified: nav/footer EN+TH from seed migrations, SiteText empty, Thai browsers not redirected, /th robots-blocked. Next: R1 i18n foundation (stale-language fix for 21 API calls). → [[multi-market-i18n-analytics-migration]]

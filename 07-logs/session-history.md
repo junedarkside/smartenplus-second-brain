@@ -1,5 +1,36 @@
 # Session History
 
+## Session #440 (2026-09-30)
+
+**Updated:** 2026-09-30 (session #440)
+
+**Achieved (#440) — Thai i18n frontend finished: homepage R1–R5, search tail R8, trip results page, site chrome; i18n ownership cleaned across FE + BE; all merged to `develop` (nothing to `main`/prod after the #439 release).**
+
+1. **R1 language plumbing** — `getCurrentLanguage()` reads `Router.router?.locale` (guarded) → `<html lang>` → `en`; `SiteProvider` `useEffect` syncs `<html lang>` (the one approved effect exception). Global RTK `serializeQueryArgs` **dropped** (RTK 1.9.7 has two serializers: `useQuerySubscription` uses the default, `useQueryState` the custom one → mounted queries read an empty key).
+2. **R2 search** — `useT(key, vars)` with `{name}` interpolation; transport form, passenger modal, errors, toast Thai.
+3. **R3 dates** — `formatDisplayDate` (deterministic Thai months, year+543, display only) + `AdapterDateFnsBuddhist` for the MUI calendar; English unchanged (`02-Oct-2026`).
+4. **R4 SEO** — `/th` canonical + `og:url`, `og:locale th_TH`, hreflang en/th/x-default, Thai title/description; JSON-LD moved to `HomeStructuredData` (byte-identical).
+5. **R5 sections** (FE `b1fa16f0`) — catalog split `helpers/i18n/strings/{en,th,index}.js`; headings, destinations badges/aria, trust strip, reviews (Buddhist dates, `router.push` keeps `/th`), booking lookup form, welcome band, route + experience cards, carousel labels, operator count, star labels; Guides hidden on `/th`. EN homepage text/aria/alt identical to before.
+6. **4-expert review of i18n ownership** (SWE, Architecture, Next.js, Django) → rule: BE tables = staff content (nav/footer/products/locations); FE catalog = UI chrome; `SiteText` = override of the SAME catalog key (`nav.*` not editable); WP posts = long-form pages. FE list ⊆ BE `settings.LANGUAGES` (12).
+7. **Slice A BE** (`30209f5`) — nav/footer/`ContractTranslation` language `choices=settings.LANGUAGES` (was en/th copies); **P0 fixed:** nav/footer cache clear was hardcoded `_en/_th` → `delete_pattern('navigation_v1_*'/'footer_v1_*')` (+2 tests, proven to fail on old code); `pages_info/0018` = choices/help_text only (no DDL). Full BE suite same 6F/87E (1113 tests).
+8. **Slice B FE** (`2c67fd50`) — `config/languages.json` = one served-language list (read by `next.config.js`, `next-sitemap.config.js`, `jest.setup.js`, `siteContext`); `getOgLocale`, derived `resolveLanguage`/`BRANDS`, `LANGUAGE_OPTIONS`; `navConfig` labels → catalog `nav.*` (Thai fallback nav in SSR HTML). Jest 0 new failures (baseline 224/38; only the known flaky perf test).
+9. **Decision:** languages added one at a time **en → th → ko** (code `ko`); each ships as its own slice.
+10. **R8 search tail** (FE `ba185ae8`) — Experiences + Airport Transfer forms, suggestions, category chips (`useServiceCategoryLabel`), address picker, summary/sticky bars (Thai dates), `SearchDialog` + trigger. Homepage EN text/aria/alt/placeholder identical.
+11. **Trip results page** (FE `369f0fe9`) — `SearchCover` (trip mode derived, no effect), share menu, date strip Thai weekdays (`formatDisplayDate` `EEE d`), sort pills/dropdown, filters, trip cards/badges/tooltips/stepper, closed-departures line, overview/operator headings, breadcrumb. `getTripButtonProps(…, t)`; `getTransportDescription(…, t?)` optional `t`.
+12. **Site chrome** (FE `2a47c531`) — cookie banner, skip link, drawer aria + fallback titles (`nav.*` reused), profile menu (guest checked in Chrome), cart, scroll-top, chat, footer SSL badge. Jest 0 new failures every slice (baseline 224/38; flaky `extractUniqueValues` O(n) only).
+
+**Resume point (EXACT):**
+1. **R6/R7 BE** (next; report/plan first, user go before BE work): front-page refactor (cache key has no language) → Location/Station/product/route/FAQ/blog translations + `?lang` from FE + Thai name data entry. This is now the only big English gap on `/th` (station/vehicle/operator names, amenities, FAQ, blog).
+2. Small FE follow-ups: trip detail hero passenger text; blog `BookmarkButton` "Save"; `Standard/Luxury/Vip` filter chips + "Price Range" (BE-driven); currency names left English by design.
+3. **R9 go-live gate** (needs native Thai review + brand decision).
+4. **`ko` slice**: registry row, `strings/ko.js`, `formatDisplayDate` ko, Hangul font check, guides hidden, brand name, native review.
+5. Optional **Slice C** offline/PWA strings.
+6. **Prod deploy checklist for this batch (user go only):** BE `migrate` `pages_info/0018` (state-only); FE deploy must clear `smartenplus_next_cache` volume.
+7. **User actions:** grant staff `pages_info.add_sitetext` / `change_sitetext`; decide Thai brand spelling; who does native Thai review.
+8. Carried from #439/#438 (unchanged): `FOOTER-PUBLIC-ENDPOINT`; `ContractTranslation` cache-invalidation (in R7); `find_transport_at_location()` `.order_by()`; WP slug map file; #426 idle-gap seat-check manual verify; #425 throttle load test; #424 `useSeatAvailability`.
+
+---
+
 ## Session #439 (2026-09-29 → 2026-09-30)
 
 **Achieved (#439) — multi-site next steps; Thai redirect P0; backend test infra; homepage i18n; Phase 3b catalog; staff-editable UI text.** All merged + pushed to `develop` (FE `a02ed184`, BE `2c9ee4d`); nothing on `main`.
