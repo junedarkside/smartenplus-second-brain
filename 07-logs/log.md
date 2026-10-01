@@ -1,3 +1,5 @@
+## [2026-10-01] release #441 | Release A pushed to `main` by the user: BE c53be49 + FE 342f4c44 (git shows origin/main == develop in both repos); prod verification pending; local dev migrate 0018 applied; next session: ask ship result, then D2 Destinations
+
 ## [2026-10-01] note #441 | Release A hand-off: user will ship BE c53be49 + FE 342f4c44 to production themselves and return later; next session asks for ship result, smoke/kill-switch test, prod commits
 
 ## [2026-10-01] session-end #441 | S0 per-language cache keys (BE c53be49), `/th` runtime kill switch via feature flag (FE 9776836d), Thai `/trips` + `/locations` (FE 342f4c44), 4-expert production runbook; all on develop, release A waiting on user go
