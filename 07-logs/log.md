@@ -1,3 +1,5 @@
+## [2026-10-01] session-end #442 | Release B code on develop (not prod): Location/Station translation tables+admin+Thai editors group+API translated_*+Thai search+import/export commands (BE 33ddeb0), FE Thai names on homepage, /locations, autocomplete, trips browse, station/airport pages, search results (FE e0336e1e); BE suite same 6F/87E failing names, FE jest 225/38, next build ok; Account.has_perm now honours groups; next: Thai names sheet, route detail page, ship.
+
 ## [2026-10-01] release-verified #441 | Release A live on production (BE c53be49, FE 342f4c44): site/API 200, EN unchanged, /th Thai with th_TH og:locale, robots+sitemap still hide /th, lang_th flag enabled; correct front-page path is /front-page/; next: D2 Destinations
 
 ## [2026-10-01] release #441 | Release A pushed to `main` by the user: BE c53be49 + FE 342f4c44 (git shows origin/main == develop in both repos); prod verification pending; local dev migrate 0018 applied; next session: ask ship result, then D2 Destinations

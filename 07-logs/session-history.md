@@ -1,5 +1,27 @@
 # Session History
 
+## Session #441 (2026-10-01)
+
+**Updated:** 2026-10-01 (session #441)
+
+**Achieved (#441) — backend cache keys per language (S0), runtime kill switch for `/th` (S-K), Thai `/trips` + `/locations` browse pages, 4-expert production runbook; all on `develop`, nothing on `main`/prod.**
+
+1. **Next-steps decision** — BD + Architecture + SWE reviews → order S0 cache keys → S1 BE Location/Station names → S2 FE names → S3 sign-in pages + error codes + Yup → S4 vehicle/amenity/FAQ → S5 checkout/payment/bookings (high risk, strings only) → S6 PDF Thai font + emails → S7 account/discovery/blog/legal → go-live → Korean. Rejected: "FE names before BE tables". Visual demos in scratchpad (not in repo).
+2. **S0 (BE `c53be49`)** — language added to 4 caches that hold serialized/translated output: `frontpage_list_response`, `frontpage_stations`, `contract_list_v1`, `contract_locations_v1` (prefixes kept → existing `delete_pattern` still clears all languages). Verified the other 5 candidate keys (trips, trips_paginated, stations_list, home_viewset, recommendations) cache raw ORM/untranslated data → not needed. Correction: contract list was **not** a live bug (its serializer has no translated fields). 6 tests (fail on old code). Suite 1119 tests, 6F/87E = baseline. No migration.
+3. **S-K kill switch (FE `9776836d`)** — feature flag `lang_<code>` (existing `cs.FeatureFlag`, endpoint `/api/cs/feature-flags/<key>/`, BE 60 s cache, auto-creates enabled): `hooks/useEnabledLanguages.js` hides the language in `LanguageSelector` and redirects a visitor on a disabled language to English; fail-open. 9 tests; Chrome-verified on a prod build.
+4. **Production runbook (rev 2)** reviewed by SWE, Django, Next.js, Architecture → no P0 for the batch (BE 4 commits, FE 25 commits now), process gaps: kill switch (done), monitoring, snapshot, realistic FE rollback (`scripts/deploy-ghcr.sh` with old `GHCR_IMAGE`; `workflow_dispatch` does not redeploy old image), BE-only rollback also needs FE redeploy/volume purge, smoke-test list, redis `-n 1`, uwsgi (not gunicorn).
+5. **`/trips` + `/locations` browse pages (FE `342f4c44`)** — hero, subtitle, counts, search, sort, empty states, route/location cards, "Showing x of y", page title/description, breadcrumb top-level section names (`breadcrumb.segments.*`), header `Primary navigation` label. EN pages byte-identical to previous build (text/aria/alt/placeholder/meta). Jest 0 new failures (baseline 224/38).
+
+**Resume point (EXACT):**
+1. **Release A is live** — nothing to ship now. Branch new work off `develop` (== `main`). Next ship (Release B) = D2–D5 + names (S1/S2) when ready; same flow: BE `build --no-cache web` + `up --no-deps web -d`, then FE push `main`.
+2. **Next FE slice:** remaining discovery pages — `/destinations` (own placeholder "Search locations or stations..."), `/activities` index, `/airport-transfer`, `/operators`, `/locations/[slug]`, `/destinations/[slug]`; then trip/activity detail labels.
+3. **S1 (BE)** — Location/Station translation tables + admin inline + `translated_*` + signals (`delete_pattern('frontpage_list_response*')`, language `Prefetch`) + `import_station_names --dry-run` command; write the S1 plan first and get the user's go; needs the Thai-names source decision.
+4. **S2 (FE)** after S1: pass `lang` in `getStaticProps` (`homepagev2.js:304`, trips/locations/destinations pages), RTK `lang` arg, `revalidate.js` `/th` paths.
+5. **S3** sign-in pages + `{code, detail}` error contract + Yup by key. **S5** checkout last of funnel. **S6** PDF Thai font (`PdfView.js:10` Roboto, `helpers/pdfFontLoader.js` stub).
+6. Carried: `FOOTER-PUBLIC-ENDPOINT`, `BE-EMAILS-EN-ONLY`, `JEST-FLAKY-PERF`, WP slug map, #426/#425/#424 items (see Section 2).
+
+---
+
 ## Session #440 (2026-09-30)
 
 **Updated:** 2026-09-30 (session #440)
