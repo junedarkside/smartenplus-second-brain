@@ -1,3 +1,5 @@
+## [2026-10-01] session-end #443 | Release B finished+tested locally (not shipped): approval action/--auto-approve/cache flush (BE c990a3b), real-volume 95/210 test with English parity 17/17 APIs + 6 pages, query-count fixes (BE 07ad9dc), Thai picker modal (FE 4a463a08), picked labels + Thai place names on results page (FE b8736791); next: native review of Thai sheet, cart/checkout /th check, owner ships (flag off first).
+
 ## [2026-10-01] session-end #442 | Release B code on develop (not prod): Location/Station translation tables+admin+Thai editors group+API translated_*+Thai search+import/export commands (BE 33ddeb0), FE Thai names on homepage, /locations, autocomplete, trips browse, station/airport pages, search results (FE e0336e1e); BE suite same 6F/87E failing names, FE jest 225/38, next build ok; Account.has_perm now honours groups; next: Thai names sheet, route detail page, ship.
 
 ## [2026-10-01] release-verified #441 | Release A live on production (BE c53be49, FE 342f4c44): site/API 200, EN unchanged, /th Thai with th_TH og:locale, robots+sitemap still hide /th, lang_th flag enabled; correct front-page path is /front-page/; next: D2 Destinations

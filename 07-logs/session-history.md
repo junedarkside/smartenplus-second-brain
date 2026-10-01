@@ -1,5 +1,28 @@
 # Session History
 
+## Session #442 (2026-10-01)
+
+**Updated:** 2026-10-01 (session #442)
+
+**Achieved (#442) — Release B code on `develop` (NOT production): Thai names for Locations/Stations end to end (BE tables + admin + API + search + import, FE display on 7 surfaces).**
+
+1. **S1a (BE `0e9d5d8`)** — `LocationTranslation`/`StationTranslation` (migration `stations/0042`, create-only), admin inlines, "Thai editors" group (`ensure_thai_editors_group`, 10 perms, no delete; English fields read-only for editors), rename guard (English rename/city/province change → translations back to unreviewed). **Found:** `Account.has_perm()` returned only `is_admin` → group perms never worked; changed to `is_admin or super().has_perm(...)` (user-approved; admins unchanged).
+2. **S1b (BE `ee08bf5`, `aeff972`)** — additive `translated_*` keys only when `lang != en` (English JSON unchanged): `stations/translation_api.py` (`TranslatedFieldsMixin`, `prefetch_translations`, `attach_translations`, `prefetching_list_serializer`), applied to `/stations/`, `/stationsinfo/`, `/locations/`, front-page routes, contract locations; translations attached AFTER cache reads; translation save/delete bumps `frontpage_stations_version` + `contract_locations_v1_*`.
+3. **S1c (BE `473ea49`)** — `/stations/?search=` also matches reviewed Thai names; `import_station_names` (`--kind locations|stations --file X.csv --language th --dry-run --batch-id --rollback --overwrite-reviewed`; id + `english_name_at_export` verified; imports always UNREVIEWED; reviewed rows not overwritten; HTML descriptions sanitized with bleach) and `export_station_names`.
+4. **S2 FE (all `develop`)** — S2a `2746ec5b` homepage popular routes + `/locations` cards/search; S2b `a906640d` search autocomplete (label Thai, value English, Enter on Thai text → first English suggestion); S2c-1 `d029bed6` trips browse (`fromLabel/toLabel`, hrefs English), station/airport page H1+breadcrumb (SEO/JSON-LD/redux/trip keys English), airport list; S2c-3 `e0336e1e` search-result trip cards (`translated_*_station`).
+5. **S2c BE** — `56a4d10` dashboard station list prefetch; `33ddeb0` trip search (`/api/v1/trips/`, `/paginated-trips/`) adds `route.translated_departure_station/arrival_station` from the EFFECTIVE (override) stations, route detail `custom_route` gets request context + translated locations.
+6. **Expert reviews** (SWE/Django/Next.js/Architecture, read-only) before S1a and S2c; plan `~/.claude/plans/check-vault-and-what-fancy-harp.md` (S2c rev 1).
+7. **Verification** — BE suite 1190 tests, 6F/87E with the SAME failing test names as baseline; FE jest 225 failed/38 suites (= baseline), `next build` passes; mutation checks bite. **Not done:** Chrome/curl `/th` vs EN diff (no reviewed names exist yet, everything falls back to English).
+8. **Findings:** (a) `Account.has_perm` ignored groups (fixed). (b) `next build` lints test files under `components/` — `react/display-name` in my S2a test broke the production build of `develop` until fixed (S2c-1, `d029bed6`); **always run `next build` before merging**. (c) Backend infers language from browser `Accept-Language` when `?lang` missing → browser-side requests must always send `lang` (incl. `en`): done for autocomplete + `getTrips`; build any new client call the same way. (d) jest `testMatch` ignores `store/` → put store tests under `__tests__/store/`. (e) never run two Django test runs at once (same test DB prompts/hangs).
+
+**Resume point (EXACT):**
+1. **Draft the Thai names sheet** (95 Locations + 210 Stations; local data in the old session scratchpad `names/*.csv` — regenerate with `export_station_names` or the public API `?limit=5000`) → native reviewer → user imports on production with `--dry-run` first → staff approve in Django admin ("Thai editors"). Decision pending: ask user to say go.
+2. **Route detail page FE** (`pages/trips/[...slug].js`): BE already sends translated locations; wire display-only (`translatedName`), `lang` via `withLangParamIfNotDefault(context.locale)`.
+3. **Release B ship checklist (user ships):** BE `build --no-cache web` + `up` (migrate `stations/0042` automatic), then once `python manage.py ensure_thai_editors_group`, staff to the group (+ `is_staff`), `import_station_names --dry-run`; FE push `main`. Then Chrome/curl `/th` vs EN diff + kill switch.
+4. Remaining S2: contract/`AvialableContract` route names, filter chips (tripfilter), redux display label for the from/to boxes, `locations-and-slugs` (FE doesn't use it), station descriptions (HTML, deferred). Then D2–D5 pages (`/destinations`, `/activities`, `/operators`, `/locations/[slug]`), S3…S7 as in #441.
+
+---
+
 ## Session #441 (2026-10-01)
 
 **Updated:** 2026-10-01 (session #441)
