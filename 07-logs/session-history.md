@@ -1,5 +1,21 @@
 # Session History
 
+## Session #444 (2026-10-01)
+
+**Achieved (#444) — Release B ship plan reviewed by 4 experts + local checks done; runbook written (`06-systems/release-b-thai-names-runbook.md`); still NOT on `main`/production.**
+
+1. **Expert review** (SWE, Django, Next.js, Architecture) of the next steps → decision: **ship the CODE first, content later**; Thai-sheet review gates only **approval**, not the deploy. Rollback ladder: unapprove / flag OFF → `--rollback --batch-id` → previous FE image; never reverse migrations 0042/0043.
+2. **Correction (owner question "how can staff do it?")**: the `lang_th` flag is ALREADY ON since Release A (whole-Thai-site kill switch, needs `change_featureflag`, not given to "Thai editors"); Thai NAMES are gated by **approval (`is_reviewed`)** — staff approve via admin bulk action. There is no "flag ON at the end" step.
+3. **Local checks (no prod)**: `main..develop`: only new migrations `stations/0042`,`0043`, no FE/BE dependency/Docker/settings change; **English golden diff main vs develop on real trip data: 22/23 endpoints identical** (tripfilter differs only in list order); admin-dashboard coupling verified (sends no `lang`; station/location rename via its API un-reviews Thai text + clears approver, other-field PATCH keeps translations; all rolled back); **`/th` funnel test (Playwright, headless)**: values/URLs/cart POSTs/persisted state/sessionStorage Thai-free, checkout fully English; English pages in a Thai-language browser show zero Thai names.
+4. **Fix (FE `4fb62b9c`)**: picker never selects typed Thai as a value (Enter on Thai with no suggestion = nothing; Thai-only history rows not selectable).
+5. **Findings to act on before shipping (owner)**: `Account.has_perm` grants all perms to any active `is_superuser=True` non-admin and activates hand-assigned group perms → run the read-only prod account query (runbook); web container `mem_limit` is 256 m (import when idle, `docker cp` + `exec`); `--auto-approve` flush race (re-run `flush_translation_caches()`); SEO canonical per page type (keep `/th` blocked until all consistent).
+6. **Lessons**: Chrome extension can be offline → headless Playwright scripts (in session scratchpad, not repo) work against localhost; worktrees for any `next build`/old-code servers; scripts/CSVs/drafts stay in scratchpad.
+
+**Resume point (EXACT):**
+1. **Owner:** run the read-only production checks (runbook "Pre-ship"), snapshot RDS, decide `Account.has_perm` keep/restrict, pick the native Thai reviewer + date.
+2. **Owner ships Release B** per `06-systems/release-b-thai-names-runbook.md` (BE → FE (no Thai editors group step — owner decision #445) → golden curls → draft import → reviewed import → approve → revalidate). Claude runs nothing on production.
+3. **Claude (local, anytime):** prepare the CSV for the reviewer from a copy of real data; optional read-only diff of the 32 popular names vs real Locations; remaining small items (lowercase `koh-lipe` English display needs owner OK; `AddTripModal` placeholders; station-slug routes; recent searches); D2–D5 pages, S3…S7 as in #441 roadmap.
+
 ## Session #443 (2026-10-01)
 
 **Updated:** 2026-10-01 (session #443)

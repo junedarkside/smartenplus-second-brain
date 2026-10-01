@@ -4,8 +4,6 @@
 
 ## Section 1 — Session Handoff
 
-**Updated:** 2026-10-01 (session #444)
-
 > ### 👉 WHEN THE USER SAYS "check vault" — TELL THEM THIS FIRST (their actions, nobody else can do them)
 > 0. **Release A — ✅ SHIPPED AND VERIFIED LIVE (2026-10-01, user shipped; Claude verified read-only).** `main` == `develop` (BE `c53be49`, FE `342f4c44`). Live checks: site/API all 200; `/`,`/trips` `lang=en` English; `/th`,`/th/trips`,`/th/locations` `lang=th` Thai titles + `og:locale th_TH`; `robots.txt` still `Disallow: /th`, sitemap has 0 `/th` URLs; API `https://api.smartenplus.co.th/front-page/?lang=en|th` → 200 (real path `/front-page/`, NOT `/api/v1/front-page/` which 404s); flag `lang_th` exists, enabled; Chrome `/th/trips` Thai, console clean. User reported both FE and BE work well. NOT checked: BE container logs for `Applying pages_info.0018` (migrate runs at container start), kill-switch off/on test, checkout/cart on prod. Local dev DBs need `python manage.py migrate` once after pulling `develop` (done on the user's).
 > 0b. **Release B (Thai names) — on `develop` in both repos (BE `07ad9dc`, FE `4fb62b9c`), tested locally (real-volume, English parity, funnel); NOT shipped (#444).** Ship + rollback steps: **`06-systems/release-b-thai-names-runbook.md`**. Needs from you: prod read-only account check (`Account.has_perm` change), RDS snapshot, native reviewer. Flag `lang_th` is already ON (Release A); Thai names appear only when staff APPROVE them.
@@ -16,19 +14,19 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Achieved (#444) — Release B ship plan reviewed by 4 experts + local checks done; runbook written (`06-systems/release-b-thai-names-runbook.md`); still NOT on `main`/production.**
+**Updated:** 2026-10-01 (session #445)
 
-1. **Expert review** (SWE, Django, Next.js, Architecture) of the next steps → decision: **ship the CODE first, content later**; Thai-sheet review gates only **approval**, not the deploy. Rollback ladder: unapprove / flag OFF → `--rollback --batch-id` → previous FE image; never reverse migrations 0042/0043.
-2. **Correction (owner question "how can staff do it?")**: the `lang_th` flag is ALREADY ON since Release A (whole-Thai-site kill switch, needs `change_featureflag`, not given to "Thai editors"); Thai NAMES are gated by **approval (`is_reviewed`)** — staff approve via admin bulk action. There is no "flag ON at the end" step.
-3. **Local checks (no prod)**: `main..develop`: only new migrations `stations/0042`,`0043`, no FE/BE dependency/Docker/settings change; **English golden diff main vs develop on real trip data: 22/23 endpoints identical** (tripfilter differs only in list order); admin-dashboard coupling verified (sends no `lang`; station/location rename via its API un-reviews Thai text + clears approver, other-field PATCH keeps translations; all rolled back); **`/th` funnel test (Playwright, headless)**: values/URLs/cart POSTs/persisted state/sessionStorage Thai-free, checkout fully English; English pages in a Thai-language browser show zero Thai names.
-4. **Fix (FE `4fb62b9c`)**: picker never selects typed Thai as a value (Enter on Thai with no suggestion = nothing; Thai-only history rows not selectable).
-5. **Findings to act on before shipping (owner)**: `Account.has_perm` grants all perms to any active `is_superuser=True` non-admin and activates hand-assigned group perms → run the read-only prod account query (runbook); web container `mem_limit` is 256 m (import when idle, `docker cp` + `exec`); `--auto-approve` flush race (re-run `flush_translation_caches()`); SEO canonical per page type (keep `/th` blocked until all consistent).
-6. **Lessons**: Chrome extension can be offline → headless Playwright scripts (in session scratchpad, not repo) work against localhost; worktrees for any `next build`/old-code servers; scripts/CSVs/drafts stay in scratchpad.
+**Achieved (#445) — Thai names reviewer package fixed + staff guides + decisions; still NOT on `main`/production. No repo code changed (BE `07ad9dc`, FE `4fb62b9c` on `develop`).**
+
+1. **Reviewer package** (`/Users/charuwatnaranong/Desktop/SmartEnPlus/thai-names-reviewer-package/`, outside repos): Lomprayah = **ลมพระยา** (was wrong), Seudamgo = **เสือดำโก** (owner-confirmed), 63 station rows + 1 location hand-fixed, `needs_attention` column (91 flagged rows), brand table in glossary. Counts 95 / 152 / 43 / 15, import-compatible. Brands still UNCONFIRMED (reviewer to verify): Boonsiri, Seatran, Raja Ferry, Bundhaya, Wintour, PN Group, KST, Sea Pearl, Pralan.
+2. **Thai visual guides** (session scratchpad, not in repo): reviewer/staff/admin 3-tab guide `thai-names-staff-guide-th.html` + earlier `thai-names-reviewer-instructions-th.html`. Copy them into the package folder if the reviewer should get them.
+3. **Facts confirmed:** BE admin has NO CSV upload — CSV goes in once via `import_station_names` (docker exec, owner); staff then edit Thai names inline + bulk "Approve selected translations" in `/securelogin/`. Optional later: admin "Import CSV" page (only if imports repeat: ko / lookchang) — not built.
+4. **Owner decision:** NO "Thai editors" group step — staff use admin accounts; runbook + this file updated (code `ensure_thai_editors_group` stays dormant; cleanup optional). Admin accounts approve via `is_admin` in `Account.has_perm` (code-read, not click-tested).
 
 **Resume point (EXACT):**
-1. **Owner:** run the read-only production checks (runbook "Pre-ship"), snapshot RDS, decide `Account.has_perm` keep/restrict, pick the native Thai reviewer + date.
-2. **Owner ships Release B** per `06-systems/release-b-thai-names-runbook.md` (BE → FE (no Thai editors group step — owner decision #445) → golden curls → draft import → reviewed import → approve → revalidate). Claude runs nothing on production.
-3. **Claude (local, anytime):** prepare the CSV for the reviewer from a copy of real data; optional read-only diff of the 32 popular names vs real Locations; remaining small items (lowercase `koh-lipe` English display needs owner OK; `AddTripModal` placeholders; station-slug routes; recent searches); D2–D5 pages, S3…S7 as in #441 roadmap.
+1. **Owner:** read-only prod check (active `is_superuser` non-admin accounts), RDS snapshot, send package to native Thai reviewer (+ confirm brand spellings), then ship Release B per `06-systems/release-b-thai-names-runbook.md`: BE → FE → golden curls → (after reviewer returns CSVs and Claude checks them locally) dry-run → import drafts → staff approve → check `/th`.
+2. **Claude (local, anytime):** check returned CSVs (id/english_name byte-identical, brands consistent, <=100 chars, dry-run locally); optional popular-names diff fix (needs owner OK, changes English list); optional admin CSV import page (B) only on "go".
+3. Untracked, not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py`.
 
 ---
 
