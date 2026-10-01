@@ -27,7 +27,7 @@
 
 **Resume point (EXACT):**
 1. **Owner:** run the read-only production checks (runbook "Pre-ship"), snapshot RDS, decide `Account.has_perm` keep/restrict, pick the native Thai reviewer + date.
-2. **Owner ships Release B** per `06-systems/release-b-thai-names-runbook.md` (BE → `ensure_thai_editors_group` → FE → golden curls → draft import → reviewed import → approve → revalidate). Claude runs nothing on production.
+2. **Owner ships Release B** per `06-systems/release-b-thai-names-runbook.md` (BE → FE (no Thai editors group step — owner decision #445) → golden curls → draft import → reviewed import → approve → revalidate). Claude runs nothing on production.
 3. **Claude (local, anytime):** prepare the CSV for the reviewer from a copy of real data; optional read-only diff of the 32 popular names vs real Locations; remaining small items (lowercase `koh-lipe` English display needs owner OK; `AddTripModal` placeholders; station-slug routes; recent searches); D2–D5 pages, S3…S7 as in #441 roadmap.
 
 ---

@@ -22,7 +22,7 @@ Ship code with empty translation tables; import machine draft as **unreviewed dr
 
 ## Ship (owner, quiet window)
 1. **BE**: `docker-compose -f docker-compose-rds.yml build --no-cache web` then `up --no-deps web -d`. `migrate` runs at container start (only `stations/0042`, `0043`); expect **10–30 s of 502** (1 gunicorn worker). Leave `lang_th` as is.
-2. Once: `docker-compose -f docker-compose-rds.yml exec web python manage.py ensure_thai_editors_group`; add editors in admin (`is_staff` + group "Thai editors", **not** `is_admin`).
+2. **No "Thai editors" group step (owner decision #445):** staff reviewers use admin accounts; do NOT run `ensure_thai_editors_group`. (Group code stays dormant in BE.)
 3. **FE**: push `main` (GitHub Actions → `scripts/deploy-ghcr.sh`); confirm log line "Cleared" for volume `smartenplus_next_cache` (script warns and continues if removal fails).
 4. Verify English unchanged (golden curls).
 
