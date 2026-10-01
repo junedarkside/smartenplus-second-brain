@@ -1,3 +1,5 @@
+## [2026-10-01] release-verified #441 | Release A live on production (BE c53be49, FE 342f4c44): site/API 200, EN unchanged, /th Thai with th_TH og:locale, robots+sitemap still hide /th, lang_th flag enabled; correct front-page path is /front-page/; next: D2 Destinations
+
 ## [2026-10-01] release #441 | Release A pushed to `main` by the user: BE c53be49 + FE 342f4c44 (git shows origin/main == develop in both repos); prod verification pending; local dev migrate 0018 applied; next session: ask ship result, then D2 Destinations
 
 ## [2026-10-01] note #441 | Release A hand-off: user will ship BE c53be49 + FE 342f4c44 to production themselves and return later; next session asks for ship result, smoke/kill-switch test, prod commits

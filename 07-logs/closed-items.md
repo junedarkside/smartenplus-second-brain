@@ -2,6 +2,8 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+- **2026-10-01 (#441) RELEASE-A** — Thai batch shipped by the user (BE `c53be49`, FE `342f4c44`), verified live read-only by Claude: site/API 200, EN unchanged, `/th` Thai, robots/sitemap still hide `/th`, kill-switch flag present. Not verified: BE migrate log, kill-switch toggle, prod checkout.
+
 ## Closed — 2026-09-30 (session #439, release)
 
 > **`THAI-RELEASE-STEP1` — NEW (#439, 2026-09-29), open. Thai release Step 1 planned, local only.** 3-lens review (SWE/Next.js/Django) of the ship plan, every P0 re-verified in code. Revised plan: tag both `main` → Release A (analytics R1-R4 alone) → Release B (backend, `migrate pages_info` 0012-0016 — **5** migrations, not 4) → Release C (FE i18n + nav/footer, robots `/th` Disallow kept as index gate). Rollback = redeploy tag, **never** `migrate pages_info 0011` (seed backward deletes rows by label, incl. admin edits). Thai copy fixes → Django admin, not migration 0017. Smoke URLs are `/api/v1/pages-info/{navigation,footer}/` (`?lang` works via `middleware/language.py:33`). Two reviewer claims rejected after code check: "`?lang` ignored" and "no hreflang" (exists via `languageAlternates`). Visual plan: artifact "Thai Release Runway" (Thai). Plan file: `~/.claude/plans/check-vault-and-what-fancy-harp.md`.
