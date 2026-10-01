@@ -1,5 +1,27 @@
 # Session History
 
+## Session #443 (2026-10-01)
+
+**Updated:** 2026-10-01 (session #443)
+
+**Achieved (#443) — Release B finished and tested locally (still NOT on `main`/production): approval flow, picker modal in Thai, picked labels, Thai place names on the results page, real-volume test (95 locations / 210 stations).**
+
+1. **Approval + cache (BE `c990a3b`)** — `reviewed_by`/`reviewed_at` on translations (migration `stations/0043`, nullable); admin action **"Approve selected translations"** + "translation review" list filter (Thai editors can use it); `import_station_names --auto-approve --reviewed-by "<name>"` (opt-in, needs the name, rollback removes drafts + auto-approved rows but keeps rows a person approved); `flush_translation_caches()` now also clears `frontpage_list_response*` + `stations_list_*` (before, approvals lagged up to 15 min), once per batch. **Import is a server command run by the owner, not an admin upload.**
+2. **Local Phase 1 test** (14/20 sample rows): dry-run counts exact, drafts invisible (API JSON identical to baseline), editor approves via admin action, Chrome check of 7 surfaces + kill switch + autocomplete; `/th` shows Thai, URLs/SEO/redux English.
+3. **Phase 2 real-volume test**: real 95/210 names (public API, GET only) loaded into a throwaway DB `phase2_db` (dropped after) + 45 synthetic routes; machine-drafted Thai for all 305 names (scripts + CSVs only in the session scratchpad: `p2/loc_th.csv`, `p2/sta_th.csv`, `p2/th_draft.py` — NOT in any repo; needs native review). Production-style builds (Release A vs develop, same API): **17/17 API endpoints identical in English; 6 pages identical (text/title/meta/aria/alt); only JSON-LD build timestamp differs**; EN/TH cache order isolation stable. Found + fixed **query counts** (BE `07ad9dc`): Thai added 1 query per station on `/locations/?destinations_page=true` (+211) and ~24 on `/front-page/` → nested prefetch (reverse accessor `station_set` supported in `prefetch_translations`). `tonsai-pier` destination 500 = synthetic contracts without rate cards (also on Release A) — test-data artifact.
+4. **FE picker modal (FE `4a463a08`)** — catalog `search.picker.*` (placeholders, badges, headings, type labels, errors), popular list uses `nameTh` (value stays English), Thai/keyword search, recent-search rows select `selectedResult` not typed Thai text.
+5. **FE picked label (FE `b8736791`)** — From/To boxes show the Thai label after picking; redux keeps English value + `labels:{from,to}:{value,label,lang}`; `useLocationLabel` (label only while value+language match, normalized so `Hatyai`≈`hatyai`; plain value on first render to avoid hydration mismatch). **Results page `/th/trips/<from>/<to>`**: `getStaticProps` looks both place names up by slug (`/locations/?location=<normalized>&summary=true&lang=th`, helper `helpers/i18n/fetchLocationLabel.js`), `useSyncRouteLocations` puts them in redux, `SearchCover` hero heading + breadcrumb (`labelsBySlug`) show Thai; `<title>`/canonical/JSON-LD stay English.
+6. **Verification** — BE suite 1209 tests, 6F/87E = baseline (same names); FE jest 225F/38 suites = baseline; `next build` passes (run in a SEPARATE worktree). Mutation checks on every slice.
+7. **Mistakes/lessons** — (a) ran `next build` in the repo while `next dev` was running → clobbered `.next`, dev served 500s (user had restarted): **never build in the repo dir while dev runs; use a worktree** (`git worktree add --detach … && cp -Rc node_modules …`). (b) hydration mismatch from a persisted redux label shown in the first render. (c) shell: zsh does not word-split unquoted `$T` (use arrays). (d) never run two Django test runs at once (same test DB).
+
+**Resume point (EXACT):**
+1. **Native review of the Thai names sheet** (95 locations + 210 stations; machine draft is in the session scratchpad only — regenerate with `export_station_names` on a copy of real data + `p2/th_draft.py` ideas, or have the reviewer fill the export CSV). Then the owner imports on production: `--dry-run`, real import, approve (bulk action or `--auto-approve --reviewed-by`).
+2. **Cart/checkout under `/th`** — not checked: names/URLs/cart payload must stay English (browser run: search → cart → checkout).
+3. **Release B ship (owner)**: snapshot RDS → BE deploy (migrate `stations/0042`+`0043` automatic; `lang_th` flag stays OFF) → `ensure_thai_editors_group` once → import → FE deploy + clear `smartenplus_next_cache` → verify EN unchanged → editors approve → flag ON → verify `/th`. Rollback: flag off; `--rollback --batch-id`; previous FE image; never reverse 0042/0043.
+4. Open small items: lowercase slug `koh-lipe` in English boxes (changes English text → needs owner OK); station-slug routes + "recent searches" still English; from/to picker input seeded with English value on reopen (deliberate); `locations-and-slugs` endpoint unused by FE; popular-list names vs real Location names diff (pre-ship read-only check); API-driven popular list (BE `is_popular`) later; remaining S2 slices (contract/`AvialableContract` route names, filter chips, route detail page FE for station slugs); D2–D5 pages, S3…S7 as before.
+
+---
+
 ## Session #442 (2026-10-01)
 
 **Updated:** 2026-10-01 (session #442)

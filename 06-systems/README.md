@@ -5,6 +5,7 @@ Recurring workflows and meta-systems that govern how the vault operates.
 
 ## Contents
 - [[ingestion-workflow]] — how new content lands in the vault
+- [[release-b-thai-names-runbook]] — ship + rollback runbook for Thai names (Release B)
 - [[atomic-notes]] — when to extract atomic notes vs. leave inline
 
 ## Conventions for this folder
