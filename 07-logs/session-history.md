@@ -1,5 +1,22 @@
 # Session History
 
+## Session #448 (2026-10-02)
+
+**Updated:** 2026-10-02 (session #448)
+
+**Achieved (#448) — Thai + trips-style station page (`/destinations/[slug]`) and Thai `/destinations` index, merged and PUSHED to FE `develop` (`daab6fd0`); NOT on `main`, NOT shipped. BE untouched (no BE change needed).** Branches pushed: `feat/i18n-destinations`, `feat/destination-detail-ux-i18n`. Plan + 4-expert and 3-expert reviews were folded in (plan file `~/.claude/plans/check-vault-and-what-fancy-harp.md`).
+
+1. **Index `/destinations` (`e398252a`):** `getStaticProps` passes locale -> `lang=th`; `destinations.*` + `seo.destinations.*` keys; Thai search/sort on display name; English only changes for count 1 (singular).
+2. **Station page `/destinations/[slug]`:** width fix (3 wrappers `w-full min-w-0`; was 901px desktop / sideways scroll on mobile); route-first hero H1 in `SearchCover` via `helpers/i18n/routeAwareLabel.js` (fixes wrong "All Destinations -> ..." hero + hydration error on the trips page after visiting a station page; persisted `location` and station-page dispatch unchanged); refactor 620 -> ~410 lines (`SSRTripList`, `useDestinationSeo`, `useDestinationState`, `helpers/destinationPage`, `DestinationDialogs`; EN+TH SSR HTML byte-identical); Thai chrome (`destinations.detail.*`, sanitised Thai description, `returnRouteLabels` on `FilteredTripList`, shared `TripNotFound`/`TripErrorDisplay` via `useT`); Thai SEO (`seo.destinationDetail.*`, canonical/@id/url stay English, `/th` still noindex); `buildErrorProps` `revalidate: 60` (behaviour change, own commit); layout like trips page: hero back/share + trust line, fare calendar via `useDestinationFareCalendar` (existing `getFareCalendar`, skeleton instead of English loader), `DestinationFilterBar` (sort pills + Filters button) replaces the left sidebar, filter dialog now gets `isClient` (was blank).
+3. **Checks:** 57 new tests; jest = same 38 failing suites / 225 failing tests as baseline (1017 pass); eslint 0 new errors; Chrome th+en desktop+mobile (500px min) no console errors, calendar date -> `?date=` URL survives reload. **`next build` NOT run** (dev server shares `.next`; rule: build only in a worktree/with dev stopped).
+4. **Known gaps / notes:** `FilterTrip` labels (Mode of Transport, Departure/Arrival Stations, Operators) still English (shared component, trips page too); search dialog From/To boxes show English values; passenger pill not added to station hero; fare-calendar vs list price use different BE rules (can differ per date; trips page same); fare-calendar loop is N+1 on BE (no cache) — BE ticket; admin-inline translated descriptions are not bleach-sanitised on save (only CSV import) — BE ticket; trips page H1/SEO still English on `/th`; `/th/trips/hatyai/koh-lipe` overview text describes Khao Lak (content error).
+
+**Resume point (EXACT):**
+1. **Owner:** run a real FE build (worktree or dev stopped), then ship FE (push `main` -> Actions; clear `smartenplus_next_cache`); look at `/th/destinations`, `/th/destinations/<slug>`, `/destinations/<slug>` + trips page after.
+2. **Owner/staff:** correct the machine-drafted Thai names in `/securelogin/` (91 `needs_attention` rows + unconfirmed brands: Boonsiri, Seatran, Raja Ferry, Bundhaya, Wintour, PN Group, KST, Sea Pearl, Pralan); read-only prod check of active `is_superuser` non-admin accounts; watch Sentry/5xx.
+3. **Claude (optional):** translate `FilterTrip` labels; Thai From/To labels in the station search dialog; trips page H1/SEO Thai; BE tickets (bleach in admin `save_formset`, fare-calendar cache); popular-names diff fix; lowercase `koh-lipe`; remove dormant Thai editors group code; D3–D5 discovery pages; S3–S7 (Korean, lookchang); `/th` indexing decision (blocked by robots + sitemap).
+4. Untracked, not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py`, admin-dashboard `.scratch/`.
+
 ## Session #447 (2026-10-02)
 
 **Updated:** 2026-10-02 (session #447)

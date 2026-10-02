@@ -1,3 +1,5 @@
+## [2026-10-02] session-end #449 | Krabi page: transport chips distinguishable/no blank/no overflow (FE f9a51b63, BE c090bf9), BE speed-up trips 2443->28 / tripfilter 494->6 queries with golden snapshots from original code (BE 410b34e), station filter dialog desktop fix (FE ad5b2983); all pushed to develop, not shipped; prod found still on old FE build; next: owner deploy BE then FE + time the Krabi endpoints, EC2 upsize decision.
+
 ## [2026-10-02] session-end #448 | Thai /destinations index + station page /destinations/[slug] (Thai chrome+SEO, trips-style hero/fares/sort pills/filters, width + wrong-route hydration fixes, refactor 620->410 lines) merged+pushed FE develop daab6fd0, 57 new tests, jest baseline same 38 failing suites, build not run; next: owner build+ship FE, staff correct Thai names.
 
 ## [2026-10-01] session-end #444 | Release B ship plan reviewed by 4 experts + local checks (22/23 EN endpoints identical vs Release A, admin-dashboard coupling, /th funnel clean), Thai-Enter fix FE 4fb62b9c, runbook 06-systems/release-b-thai-names-runbook.md; flag lang_th already ON, names gated by approval; next: owner prod checks + ship, reviewer sheet.
