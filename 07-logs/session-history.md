@@ -1,5 +1,21 @@
 # Session History
 
+## Session #446 (2026-10-02)
+
+**Updated:** 2026-10-02 (session #446)
+
+**Achieved (#446) — Admin CSV import for Thai names built, reviewed, merged to BE `develop` (`0ed1c55`); owner then moved BE + FE to `main` locally (both repos' working copy is on `main` at the same commits as `develop`: BE `0ed1c55`, FE `4fb62b9c`). Claude cannot see prod — owner must confirm what is actually deployed.**
+
+1. **Admin "Import Thai names (CSV)"** (BE `stations/admin_translation_import.py`, 2 templates, 24 tests): upload -> dry-run preview -> "Import as drafts"; 1 MB / 500 rows / UTF-8 / `.csv`; never auto-approves, never overwrites approved rows; admin LogEntry + rollback command in the success message (rollback stays a command). Importer refactor: `read_rows`/`import_rows` take iterable of lines, short rows safe, cache flush after commit. Python + SWE + Django expert reviews folded in (no blockers). Full BE suite 1233 tests, 6F/87E = baseline. Not click-tested in a browser; local dry-run of the package CSVs cannot match (local DB ids differ from the export source) — real counts only on prod: 95 / 152 / 43 / 15.
+2. **Docs:** runbook updated (import via admin, command = fallback), Thai 3-tab staff guide updated (scratchpad `thai-names-staff-guide-th.html`, not in repo; copy to the reviewer package if wanted). Owner decisions: no Thai editors group (staff = admin accounts); BE answer "BE new + old FE works" explained (additive `translated_*` keys).
+3. **Reviewer package** (outside repos): Seudamgo = เสือดำโก confirmed; unconfirmed brands: Boonsiri, Seatran, Raja Ferry, Bundhaya, Wintour, PN Group, KST, Sea Pearl, Pralan.
+
+**Resume point (EXACT):**
+1. **Owner:** confirm BE + FE are live and healthy (golden curls, `/securelogin/` shows the Import button, FE cache volume cleared). Then: send reviewer package to the native Thai reviewer, get CSVs back.
+2. **Claude (local):** check returned CSVs (ids + english_name_at_export byte-identical, brands consistent, <=100 chars); then staff import in admin (Locations: file 1; Stations: files 2, 3, 4) -> approve -> check `/th`.
+3. Open owner decisions: popular-names fix (changes English list), lowercase `koh-lipe` display, `Account.has_perm` read-only prod account check, remove dormant Thai editors group code (optional), copy the Thai guide into the reviewer package.
+4. Untracked, not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py`, admin-dashboard `.scratch/`.
+
 ## Session #445 (2026-10-01)
 
 **Updated:** 2026-10-01 (session #445)
