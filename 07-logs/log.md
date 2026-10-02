@@ -1,3 +1,5 @@
+## [2026-10-02] session-end #448 | Thai /destinations index + station page /destinations/[slug] (Thai chrome+SEO, trips-style hero/fares/sort pills/filters, width + wrong-route hydration fixes, refactor 620->410 lines) merged+pushed FE develop daab6fd0, 57 new tests, jest baseline same 38 failing suites, build not run; next: owner build+ship FE, staff correct Thai names.
+
 ## [2026-10-01] session-end #444 | Release B ship plan reviewed by 4 experts + local checks (22/23 EN endpoints identical vs Release A, admin-dashboard coupling, /th funnel clean), Thai-Enter fix FE 4fb62b9c, runbook 06-systems/release-b-thai-names-runbook.md; flag lang_th already ON, names gated by approval; next: owner prod checks + ship, reviewer sheet.
 
 ## [2026-10-01] session-end #443 | Release B finished+tested locally (not shipped): approval action/--auto-approve/cache flush (BE c990a3b), real-volume 95/210 test with English parity 17/17 APIs + 6 pages, query-count fixes (BE 07ad9dc), Thai picker modal (FE 4a463a08), picked labels + Thai place names on results page (FE b8736791); next: native review of Thai sheet, cart/checkout /th check, owner ships (flag off first).

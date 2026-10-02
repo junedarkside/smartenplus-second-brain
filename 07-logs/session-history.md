@@ -1,5 +1,21 @@
 # Session History
 
+## Session #447 (2026-10-02)
+
+**Updated:** 2026-10-02 (session #447)
+
+**Achieved (#447) — RELEASE B IS LIVE ON PRODUCTION (owner shipped BE + FE; Thai names for Locations + Stations imported via the new BE admin CSV import and APPROVED by the owner).** Claude verified read-only on public endpoints: `api.smartenplus.co.th` `/locations/?summary=true&lang=th` 95/95 and `/stations/?lang=th` 210/210 rows carry `translated_*` Thai names; `lang=en` has zero `translated_*` keys on every row; `www.smartenplus.co.th` `/`, `/th`, `/trips`, `/th/trips` 200 and `/th` HTML contains Thai place names (กรุงเทพ, ภูเก็ต, หาดใหญ่). Code: BE `0ed1c55`, FE `4fb62b9c` (both == `develop` == `main`).
+
+1. **Content status:** the 305 Thai names are my machine drafts (reviewer package, `needs_attention` flags 91 rows) — NOT confirmed by a native Thai reviewer (owner: "my staff will take care of correction of locations and stations later"). Unconfirmed brand spellings: Boonsiri, Seatran, Raja Ferry, Bundhaya, Wintour, PN Group, KST, Sea Pearl, Pralan. Confirmed by owner: Lomprayah = ลมพระยา, Seudamgo = เสือดำโก.
+2. **How staff correct:** Django admin `/securelogin/` -> Locations / Stations -> open row -> edit `th` translation inline -> SAVE (approved rows stay live, edits go live at once; renaming the English name un-approves its Thai name). Untick "Is reviewed" hides a Thai name. Staff use admin accounts (no Thai editors group). Thai guide (3 tabs) = scratchpad `thai-names-staff-guide-th.html` (not in repo).
+3. **Rollback if ever needed:** unapprove names / `lang_th` flag OFF (whole Thai site) / `import_station_names --rollback --batch-id` (drafts only; approved rows are kept — so it will NOT remove these approved rows).
+
+**Resume point (EXACT):**
+1. **Owner/staff:** correct the machine-drafted names in admin (start with the 91 `needs_attention` rows and the brand names above). Optional: ask Claude to turn the 91 rows into a Thai checklist for staff.
+2. **Owner:** read-only prod check of active `is_superuser` non-admin accounts (`Account.has_perm` change) if not done; watch Sentry / 5xx for 24 h after Release B.
+3. **Claude (optional, any time):** popular-names diff fix (changes English list, needs OK); lowercase `koh-lipe` display; remaining small English-only spots (AddTripModal placeholders, station-slug routes, recent searches); remove dormant Thai editors group code (`ensure_thai_editors_group`, `ThaiEditorsMixin`); admin rollback button; discovery pages D2–D5; S3–S7 roadmap (Korean `ko`, lookchang.com); `/th` indexing decision (still blocked by robots + sitemap).
+4. Untracked, not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py`, admin-dashboard `.scratch/`.
+
 ## Session #446 (2026-10-02)
 
 **Updated:** 2026-10-02 (session #446)
