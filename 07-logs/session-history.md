@@ -1,5 +1,18 @@
 # Session History
 
+## Session #449 (2026-10-02)
+
+**Updated:** 2026-10-02 (session #449)
+
+**Achieved (#449) — Krabi results page: look-alike transport chips fixed + 27 s wait fixed in code; station-page filter dialog fixed. ALL PUSHED to `develop` (FE `ad5b2983`, BE `410b34e`); owner promoted to `main`. Earlier in the session the owner said FE (#448 station page work) was shipped, but live read-only checks showed prod still on the old build — cause not found.**
+
+**Resume point (EXACT):**
+1. **Next session starts with MULTI-LANGUAGE:** first re-read `I18N-NEXT-SLICES` (Section 2), `06-systems/release-b-thai-names-runbook.md` and this block.
+2. **Before any i18n work:** 5-minute read-only prod check after the #449 promotion.
+3. **Owner/staff:** correct machine-drafted Thai names; EC2 upsize decision.
+
+---
+
 ## Session #448 (2026-10-02)
 
 **Updated:** 2026-10-02 (session #448)

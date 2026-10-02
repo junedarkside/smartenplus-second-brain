@@ -9,6 +9,10 @@ Global navigation catalog. Updated on every ingest.
 - [[master-state|Master State]] — Live session state: branches, loose ends, API contract, architecture guardrails
 - [[multi-repo-gap-audit-methodology]] — **PATTERN.** Auditing complex features across multiple repos: fan out 3 specialized agents (Backend/Frontend/Integration) → adversarial verification → synthesized report. Single-agent review misses cross-cutting gaps. Template: CRITICAL/HIGH/MEDIUM prioritized with fix order.
 
+## Knowledge — Frontend / SSR / Next.js
+
+- [[ssr-frontpage-failure-root-causes]] — **AUDIT 2026-10-02.** Homepage SSR renders empty in prod but works in dev. 4 root causes: (1) AnonRateThrottle 500/hr blocks SSR — `throttle_classes = []` on FrontPageViewSet; (2) fetchData no timeout — add 15s; (3) ISR revalidate=3600 caches failures 1h — change to 300; (4) Redis no try/except + TTL=300 too short — guard + set 1800. All fixable without infra changes. Fix order: BE throttle → FE timeout + revalidate → BE redis+TTL.
+
 ## Knowledge — Backend / Celery
 
 - [[update-route-query-counts-audit]] — **AUDIT 2026-06-20.** Weekly Celery Beat task (`products/tasks.py:11`). **Not causing server down.** 3 real fixes: (1) add retry+logging to both tasks (no `bind=True` violates project policy); (2) add `db_index=True` on `QueryLog.query_time` (full table scan, insurance); (3) guard `bulk_create` against nullable `trip.route` → IntegrityError → 500 on search. 1 product decision needed: stale `query_count` never resets for zero-query routes (high-water-mark bug). `clear_old_query_logs` race: NOT a bug — date ranges disjoint. N+1 UPDATE loop: NOT a crash risk at current scale (~7k rows steady state).
