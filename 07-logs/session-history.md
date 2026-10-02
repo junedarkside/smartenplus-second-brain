@@ -1,5 +1,21 @@
 # Session History
 
+## Session #445 (2026-10-01)
+
+**Updated:** 2026-10-01 (session #445)
+
+**Achieved (#445) — Thai names reviewer package fixed + staff guides + decisions; still NOT on `main`/production. No repo code changed (BE `07ad9dc`, FE `4fb62b9c` on `develop`).**
+
+1. **Reviewer package** (`/Users/charuwatnaranong/Desktop/SmartEnPlus/thai-names-reviewer-package/`, outside repos): Lomprayah = **ลมพระยา** (was wrong), Seudamgo = **เสือดำโก** (owner-confirmed), 63 station rows + 1 location hand-fixed, `needs_attention` column (91 flagged rows), brand table in glossary. Counts 95 / 152 / 43 / 15, import-compatible. Brands still UNCONFIRMED (reviewer to verify): Boonsiri, Seatran, Raja Ferry, Bundhaya, Wintour, PN Group, KST, Sea Pearl, Pralan.
+2. **Thai visual guides** (session scratchpad, not in repo): reviewer/staff/admin 3-tab guide `thai-names-staff-guide-th.html` + earlier `thai-names-reviewer-instructions-th.html`. Copy them into the package folder if the reviewer should get them.
+3. **Facts confirmed:** BE admin has NO CSV upload — CSV goes in once via `import_station_names` (docker exec, owner); staff then edit Thai names inline + bulk "Approve selected translations" in `/securelogin/`. Optional later: admin "Import CSV" page (only if imports repeat: ko / lookchang) — not built.
+4. **Owner decision:** NO "Thai editors" group step — staff use admin accounts; runbook + this file updated (code `ensure_thai_editors_group` stays dormant; cleanup optional). Admin accounts approve via `is_admin` in `Account.has_perm` (code-read, not click-tested).
+
+**Resume point (EXACT):**
+1. **Owner:** read-only prod check (active `is_superuser` non-admin accounts), RDS snapshot, send package to native Thai reviewer (+ confirm brand spellings), then ship Release B per `06-systems/release-b-thai-names-runbook.md`: BE → FE → golden curls → (after reviewer returns CSVs and Claude checks them locally) dry-run → import drafts → staff approve → check `/th`.
+2. **Claude (local, anytime):** check returned CSVs (id/english_name byte-identical, brands consistent, <=100 chars, dry-run locally); optional popular-names diff fix (needs owner OK, changes English list); optional admin CSV import page (B) only on "go".
+3. Untracked, not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py`.
+
 ## Session #444 (2026-10-01)
 
 **Achieved (#444) — Release B ship plan reviewed by 4 experts + local checks done; runbook written (`06-systems/release-b-thai-names-runbook.md`); still NOT on `main`/production.**
