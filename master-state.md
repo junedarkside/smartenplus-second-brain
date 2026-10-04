@@ -28,6 +28,22 @@
 3. **Owner/staff:** correct 91 `needs_attention` Thai names + unconfirmed brands; EC2 upsize decision (`EC2-INSTANCE-UPSIZE`).
 4. **Optional tickets:** `matchesTransportOption` one-direction match; BE cache-signal gaps; `TripFilter.list` split; admin-inline description sanitising; fare-calendar N+1.
 
+**Updated:** 2026-10-04 (session #451)
+
+**Achieved (#451) — Phase 1+2+3 browse-page ISR flicker + multilingual hardening shipped across 3 repos.**
+
+1. **Phase 1 (FE `fix/browse-throw-on-api-failure` → develop):** Re-throw on API failure in `pages/destinations/index.js`, `pages/locations/index.js`, `pages/trips/index.js` (mirrors `754f5fe9` homepage throw pattern). `helpers/fetchData.js` default `timeout=0 → 15000`. `pages/trips/index.js` `page_size=1000 → 100` (BE cap). `components/destinations/LocationCard.js` `Array.isArray(stations)` guard. `_app.js` ErrorBoundary class component wrapping `<Component />`. 9 new throw-on-failure tests (`__tests__/pages/destinationsGetStaticProps.test.js`, `locationsGetStaticProps.test.js`, + throw cases in `i18nStaticPropsLang.test.js`).
+2. **Phase 1 BE (`test/be-lang-th-http-integration` → develop):** 6 HTTP integration tests for `?lang=th` on `/locations/`, `/admin-dashboard-routes/home/`, `/front-page/`. Verified BE pipeline healthy (3 batched prefetches, reviewed-only English fallback, cache keys include lang). No production code change.
+3. **Phase 2 (FE 6 branches → develop):** Locale source-of-truth unification. SSG locale coverage on 3 pages (`pages/activities/detail`, `pages/trips/detail` redirect preserves `/th/`, `pages/ref/[type].js` fallback `'blocking'`). Dead Redux locale reads replaced with `useSite()` in 6 hooks/components. Stale `localStorage.getItem('language')` reads deleted (3 sites). Manual URL construction → `withLangParam` in 2 files. `useDayTripData` locale sync from `useSite()`. Dynamic per-locale `hreflang` in 4 SEO files + new shared `helpers/localeUrl.js`. Fix #13 deferred (BE endpoints lang-agnostic — no value in adding `?lang=`).
+4. **Phase 3 hotfixes (FE 3 branches → develop):** Fix #17 — ReferenceError on `context.defaultLocale` / `context.locales` in `pages/trips/detail/[...slug].js:491-492` (Fix #14 commit) restored all product detail pages. Activities detail `fetch()` → `fetchData()` with 8s timeout parity. Removed legacy `pages/trips/[tripId].js` (route collision with `[...slug].js`).
+5. **Total:** 17 branches + 6 BE tests merged to develop. `origin/develop` FE + BE both at `61349292` and `5eadd80` respectively. 57 tests pass (51 FE + 6 BE; excluding pre-existing `mui-tel-input` ESM suite).
+6. **Documentation:** Plan file `/Users/charuwatnaranong/.claude/plans/swe-nextjs-ci-cd-agents-breezy-quasar.md` — 18 sections, 3 audit rounds (premise, locale resolution, architecture review), all findings archived.
+
+**Resume point (EXACT):**
+1. **Deploy to prod (optional, user-driven):** Clear `smartenplus_next_cache` Docker volume, then `develop → main` per project CLAUDE.md deploy flow. Browser smoke per plan section 9 (10 consecutive refreshes on `/destinations`, `/locations`, `/trips`, `/th/*` variants, `/trips/detail/<slug>`, `/th/trips/detail/<day-tour-slug>`). Kill switch `lang_th` flag was ON at end of session.
+2. **Open follow-ups (per Section 2):** `admin-dashboard` `catch → return []` audit (separate repo, pattern was bug #368); P2 deferred — Sentry, structured logs, lookchang.com domain routing (out of scope per user direction).
+3. **Vault hygiene:** Master-state now 13KB / 325 lines. Per protocol target ~60 lines. Next session: prune Section 2 (move resolved items to `07-logs/closed-items.md`, demote speculative/cosmetic items to `08-archive/` or `low-priority-backlog.md`).
+
 ---
 
 ## Section 2 — Loose Ends (Open)
