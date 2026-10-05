@@ -1,3 +1,5 @@
+## [2026-10-05] session-end #452 | activities-detail render-bug deep analysis + 4 defensive fixes shipped: FE catch-block soft-error + RTK skip + noindex + revalidate 300 (554a3fde, 8a3f6da9 → FE develop dde868e2), BE transaction.on_commit wrap for ISR revalidation + throttle_classes=[] + Redis cache guards (fadccf1, f95c657 → BE develop 1a2c44a); 88/88 tests pass; next: BE first staging deploy + celery restart, FE after 24h soak, then develop→main.
+
 ## [2026-10-03] session-end #450 | homepage SSR blank fixed (FrontPageUnavailable throw guard + 15s timeout, FE a27692f4) + next/font Google loader crash fixed (self-host Inter, FE 3ca499aa); both confirmed working in production; next: multi-language slices
 
 ## [2026-10-02] session-end #449b | wrap-up: develop promoted to main (BE 410b34e, FE ad5b2983), deploy unverified; next session = multi-language (re-read I18N-NEXT-SLICES, verify prod first)
