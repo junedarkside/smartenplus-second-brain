@@ -1,5 +1,25 @@
 # Session History
 
+## Session #452 (2026-10-05)
+
+**Updated:** 2026-10-05 (session #452)
+
+**Achieved (#452) — Activities-detail ISR/render-bug deep analysis + 4 defensive fixes merged across FE+BE.**
+
+1. **Root-cause analysis (3-expert review):** Vault search + code audit identified 7 distinct bugs across FE + BE causing `/activities/detail/[slug]` render failure. 3 expert agents (Next.js, Django, SWE safety) reviewed with project rules + vault knowledge. Plan file `/Users/charuwatnaranong/.claude/plans/check-vault-and-review-calm-planet.md` — 14 sections.
+2. **FE PR 1 — `fix/fe-isr-catch-block-noindex` (commit 554a3fde, merged FE develop `dde868e2`):** (a) V1: catch block in `getStaticProps` returns soft-error props:null with `revalidate:30` instead of `notFound:true`. (b) Activities revalidate 3600→300 parity with trips. (c) RC-1: `useGetContractBySlugQuery` now `skip:!!initialContract, refetchOnMountOrArgChange:false`. (d) `noindex,nofollow` `<Head>` meta wraps both "Tour not available" + "Trip Information Not Available" Boxes.
+3. **FE PR 4 — `fix/fe-hash-scroll` (commit 8a6f7da9, merged FE develop `dde868e2`):** V5: `router.events.on('routeChangeComplete')` replaced with `useEffect([router.asPath])` that fires only when URL has `#reviews`/`#gallery` hash.
+4. **BE PR 2 — `fix/be-signal-on-commit` (commit fadccf1, merged BE develop `1a2c44a`):** M7: `transaction.on_commit(lambda: revalidate_frontend_isr.delay(slug))` wraps Celery enqueue in `_trigger_revalidate` helper. Applies to BOTH Contract post_save AND Contract_RateCard post_save/post_delete. 6 new tests.
+5. **BE PR 3 — `fix/be-throttle-redis-guards` (commit f95c657, merged BE develop `1a2c44a`):** (a) M2/M3/M4: `throttle_classes = []` on ProductDetailViewSet, ProductSlugViewSet, FrontPageViewSet. (b) M5/M6: try/except + `logger.warning` around `cache.get`/`cache.set` on same 3 viewsets. All 82 existing tests pass zero regressions.
+6. **Total:** 4 PRs (2 FE + 2 BE) merged to develop, pushed to origin. 88 tests pass. Build clean. ISR 300 confirmed on activities detail.
+
+**Resume point (EXACT):**
+1. **Deploy order (BE first, FE after, 24h staging soak each):** Per project CLAUDE.md `develop → main` flow. (a) BE develop → staging; restart celery-worker. (b) 24h soak. (c) FE develop → staging. (d) 24h soak. (e) develop → main.
+2. **Optional staging walkthrough:** Per plan Test Execution Log G1-G6.
+3. **Follow-ups:** FE Jest test for `RC-1` skip; `Contract.delete` signal missing `_trigger_revalidate`; `notFound:true` sweep 30+ other sites; trips `getStaticProps`/page refactor; `REVALIDATION_SECRET` revisit.
+
+---
+
 ## Session #451 (2026-10-04)
 
 **Updated:** 2026-10-04 (session #451)
