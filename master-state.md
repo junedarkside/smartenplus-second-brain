@@ -14,17 +14,20 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-07 (session #467)
+**Updated:** 2026-10-07 (session #468)
 
-**Achieved (#467) — cleared all open issues on FE trips list page tracker.**
+**Achieved (#468) — full SEO/AEO/GEO audit + all P0/P1/P2 fixes shipped + TH crawlable.**
 
-1. §15 Related Guides: 1-article intentional — author links related guides within WP post content. No multi-card grid needed. Tracker ✅.
-2. §16 Last Verified: "อัปเดตเมื่อ {date}" already renders in `SearchCover.js:184–203` via `lastModified` prop (= WP `post.modified`). Tracker note "no visible UI" was stale. ✅.
-3. Tracker artifact v16 — scoreboard now **14/16 shipped**. Remaining 2 "ขาด" items tracked.
+1. 3-agent SEO/AEO/GEO audit of `/trips/hatyai/koh-lipe`. 4 specialist agents reviewed findings. Plan: `~/.claude/plans/check-vault-and-fe-elegant-pnueli.md`.
+2. TH locale unblocked: robots.txt + sitemap hreflang + `/th/trips/*` URLs. `411b76ad` FE.
+3. SEO P0+P1: hreflang, og:locale, og:site_name, twitter:site, og:type fix, WebPage schema, HowTo schema, Speakable `#route-faq`, Organization `availableLanguage` th. `37d87ce9` FE.
+4. datePublished BE+FE: `route_created_at` in `RouteByLocationInfoSerializer` (`5fd1744` BE); broken path fixed (`05d31d95` FE).
+5. SEO P2: canonical hash strip, Organization legalName/foundingDate/description, sitemap changefreq/priority. `6c8db1bf` FE.
 
 **Resume point (EXACT):**
 1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
-2. **Live verify `/th/trips/hatyai/koh-lipe`**: §14 direction labels + location names all Thai.
+2. **Live verify `/th/trips/hatyai/koh-lipe`**: §14 direction labels + location names all Thai; `og:locale=th_TH`, hreflang in source.
+3. **BE push** `smartenplus-backend develop` → `main` (includes `5fd1744` `route_created_at` serializer fix).
 
 ---
 

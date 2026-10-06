@@ -1,5 +1,21 @@
 # Session History
 
+## Session #468 (2026-10-07)
+
+**Updated:** 2026-10-07 (session #468)
+
+**Achieved (#468) — full SEO/AEO/GEO audit + all P0/P1/P2 fixes shipped + TH crawlable.**
+
+1. 3-agent SEO/AEO/GEO audit of `/trips/hatyai/koh-lipe`. 4 specialist agents reviewed findings.
+2. TH locale unblocked: robots.txt + sitemap hreflang + `/th/trips/*` URLs. `411b76ad` FE.
+3. SEO P0+P1: hreflang, og:locale, og:site_name, twitter:site, og:type fix (article vs website), WebPage schema, HowTo schema, Speakable #route-faq, Organization availableLanguage th. `37d87ce9` FE.
+4. datePublished fix (BE+FE): `route_created_at` field added to `RouteByLocationInfoSerializer` (`5fd1744` BE); broken path `data[0]?.route?.created_at` → `data[0]?.route_created_at` fixed (`05d31d95` FE).
+5. SEO P2: canonical hash strip, Organization legalName/foundingDate/description, sitemap changefreq/priority. `6c8db1bf` FE.
+
+**Resume point was:** Deploy BE+FE develop → main + clear `smartenplus_next_cache` Docker volume; live verify `/th/trips/hatyai/koh-lipe` §14 direction labels all Thai.
+
+---
+
 ## Session #467 (2026-10-07)
 
 **Updated:** 2026-10-07 (session #467)
