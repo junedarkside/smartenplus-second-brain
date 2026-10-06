@@ -1,5 +1,40 @@
 # Session History
 
+## Session #463 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #463)
+
+**Achieved (#463) — §11 RouteJourneySteps cancelled permanently.**
+
+1. Visual demo built (RouteJourneySteps 3 render modes — single, dual operator, accordion).
+2. Concluded: route page = route-level view, can't display per-operator journeys. Stepper = cosmetic, no booking decision value. §03/§09/§07/§13 already cover user needs.
+3. §11 CANCELLED permanently — no BE `journey_steps[]`, no FE component, no TouristTrip schema.
+4. Tracker artifact updated (§11 greyed, ❌ Cancelled tag). Plan file updated.
+5. No code changes — serviceType fix (`2f8b046`) was previous session.
+
+**Resume point was:** Deploy develop → main + live verify.
+
+---
+
+## Session #462 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #462)
+
+**Achieved (#462) — §11 analyzed, HOLD decision locked, serviceType array fix shipped.**
+
+1. §09/§10 (RouteDepartureInfo + RouteArrivalInfo) verified shipped (#460) — master-state updated.
+2. SEO #461 (OpeningHoursSpecification + Speakable + schema collision fixes) verified shipped — `8f837fbe`.
+3. §11 "How the Journey Works" full analysis: multi-agent (Design, UX, BD, Content, SEO, Dev) review.
+4. Decision: HOLD FE section — `contracts[].transport_composit[]` = mode strings only, no waypoints. Cosmetic without BE `journey_steps[]` field.
+5. TouristTrip schema: SKIP — `itinerary` requires `Place[]`, invalid without waypoint names, no Google rich result.
+6. `serviceType` 2-line fix: `useRouteSeo.js:139` — static `'Transportation Booking'` → deduped mode array `["Van", "Speed boat"]` from contracts. Fallback to string if no contracts. `contracts` added to dep array.
+7. Branch `feat/seo-servicetype-modes` → merged to develop (`2f8b046`), pushed.
+8. BE spec documented in plan file: `journey_steps[]` fields (order, mode, from_name, to_name, duration_min, notes).
+
+**Resume point was:** §11 FE + TouristTrip schema HOLD — pending BE `journey_steps[]`.
+
+---
+
 ## Session #458 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #458)

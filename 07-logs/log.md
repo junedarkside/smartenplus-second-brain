@@ -1,3 +1,7 @@
+## [2026-10-06] session-end #463 | §11 RouteJourneySteps cancelled permanently (cosmetic, no booking value); tracker + plan updated
+
+## [2026-10-06] session-end #462 | §11 analyzed (HOLD FE, no BE waypoints), TouristTrip schema skipped, serviceType array fix shipped → develop 2f8b046
+
 ## [2026-10-06] session-end #459 | §08 RouteNotice full build (BE-driven, human-in-loop approval, bot API, i18n fallback hardening, design token fixes); both repos develop pushed
 
 ## [2026-10-06] session-end #458 | §07 RouteSchedule built (BE + FE full i18n); operational_days added to ExteaContractSerializer; feat/route-schedule ready to merge

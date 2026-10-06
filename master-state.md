@@ -14,21 +14,18 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #459)
+**Updated:** 2026-10-06 (session #463)
 
-**Achieved (#459) — §08 RouteNotice full build + approval workflow + design token fixes.**
+**Achieved (#463) — §11 RouteJourneySteps cancelled permanently.**
 
-1. **§08 BE-driven rewrite**: `RouteNotice` model (FK→RouteByLocationInfo, icon, text_en, text_th, order, is_active), migrations `0044`+`0045`, `NoticeInline` + `RouteNoticeAdmin`, `RouteNoticeSerializer`, `get_notices` + HomeViewSet Prefetch. Removed hardcoded `is_international` workaround. Merged `feat/route-notice-be` → develop (BE + FE).
-2. **Human-in-loop approval**: `is_approved` field (default=False, migration bulk-approves existing active rows), `is_route_notice_agent` flag on Account, `IsRouteNoticeAgent` permission, `RouteNoticeViewSet` POST-only (bot API `POST /api/route-notices/`, forces `is_approved=False`), `RouteNoticeAdmin` approval queue (unapproved rows sort first, `list_editable`). Merged to develop.
-3. **i18n hardening**: `getNoticeText(item, language)` with explicit fallback (TH→`text_th||text_en`, else `text_en||text_th`). EN+TH standard documented; adding KO = 5-file checklist.
-4. **Design token fixes** (`feat/trips-card-token-fix` → develop, pushed to origin): `border-amber-200`→`border-gray-200` (RouteNotice), body `text-gray-800`→`text-gray-700` (QuickAnswer + TripOverview), `leading-6`→`leading-5` + strip `font-light`/`transition-shadow` (TripOverview wrapper). Removed ⚠️ emoji + amber bullet dot from RouteNotice.
-5. **Seed data**: 4 correct RouteNotice rows for hatyai→koh-lipe (RouteByLocationInfo id=2), `is_approved=True`, no icons.
-6. **feat/route-schedule** (§07) was already on develop from #458 — NOT yet merged this session (was already merged).
+1. Built visual demo (3 render modes: single stepper, dual operator, accordion).
+2. Decision: stepper = cosmetic, no booking value. Route page already covers user needs via §03/§09/§07/§13. Per-operator journeys can't be displayed at route level.
+3. §11 CANCELLED — no BE `journey_steps[]`, no FE component, no TouristTrip schema. Plan file updated.
+4. `serviceType` array fix (`2f8b046`, session #462) remains the only shipped value from §11 analysis.
 
 **Resume point (EXACT):**
-1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume. Both repos develop pushed to origin.
-2. **Live verify `/trips/hatyai/koh-lipe`**: RouteNotice "Before You Travel" section visible with 4 items, no icons/emoji, `border-gray-200` card border matches siblings.
-3. **Provision bot account**: set `is_route_notice_agent=True` on a service account in Django admin when AI bot is ready.
+1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
+2. **Live verify `/trips/hatyai/koh-lipe`**: all sections §03–§10 visible; JSON-LD `serviceType` = `["Van", "Speed boat"]` in DevTools (`useRouteSeo.js:139`).
 
 ---
 
