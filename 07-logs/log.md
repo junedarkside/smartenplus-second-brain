@@ -1,3 +1,5 @@
+## [2026-10-06] session-end #464 | §11 Timeline recheck — wrong FK level + too detailed; CANCELLED confirmed; move on
+
 ## [2026-10-06] session-end #463 | §11 RouteJourneySteps cancelled permanently (cosmetic, no booking value); tracker + plan updated
 
 ## [2026-10-06] session-end #462 | §11 analyzed (HOLD FE, no BE waypoints), TouristTrip schema skipped, serviceType array fix shipped → develop 2f8b046

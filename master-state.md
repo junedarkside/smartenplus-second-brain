@@ -14,14 +14,14 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #463)
+**Updated:** 2026-10-06 (session #464)
 
-**Achieved (#463) — §11 RouteJourneySteps cancelled permanently.**
+**Achieved (#464) — §11 Timeline recheck; CANCELLED confirmed permanently.**
 
-1. Built visual demo (3 render modes: single stepper, dual operator, accordion).
-2. Decision: stepper = cosmetic, no booking value. Route page already covers user needs via §03/§09/§07/§13. Per-operator journeys can't be displayed at route level.
-3. §11 CANCELLED — no BE `journey_steps[]`, no FE component, no TouristTrip schema. Plan file updated.
-4. `serviceType` array fix (`2f8b046`, session #462) remains the only shipped value from §11 analysis.
+1. Rechecked `Timeline` model (`stations/models.py:200`) as alternative data source for §11.
+2. `Timeline` FK → `Route` (contract level), not `RouteByLocationInfo` (route page). Multiple timelines per route page — same multi-operator problem. Stripped to bare titles = same cosmetic result.
+3. §11 CANCELLED confirmed. Plan file (`~/.claude/plans/check-vault-and-fe-elegant-pnueli.md`) updated with finding.
+4. Moving on.
 
 **Resume point (EXACT):**
 1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.

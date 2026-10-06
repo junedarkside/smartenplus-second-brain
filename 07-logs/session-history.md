@@ -1,5 +1,21 @@
 # Session History
 
+## Session #464 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #464)
+
+**Achieved (#464) — §11 Timeline recheck; CANCELLED confirmed.**
+
+1. Rechecked existing `Timeline` model as alternative data source for §11 stepper.
+2. Finding: `Timeline` FK → `Route` (contract level), not `RouteByLocationInfo` (route page level). Multiple contracts = multiple timelines — same multi-operator problem.
+3. Even stripped to bare titles = same cosmetic `Van → Pak Bara → Speed Boat` result.
+4. `time`/`description` fields are per-contract detail, not route-level summary.
+5. §11 CANCELLED confirmed permanently. Plan file updated with findings.
+
+**Resume point was:** Deploy develop → main.
+
+---
+
 ## Session #463 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #463)
