@@ -1,5 +1,21 @@
 # Session History
 
+## Session #466 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #466)
+
+**Achieved (#466) — §14 i18n location names fully fixed.**
+
+1. Diagnosed root cause: FE `getStaticProps` not passing `?lang` to `/front-page/` or `routeUrl` → BE returned EN data → `translated_location_name` never populated.
+2. BE bug: `HomeViewSet` cache key missing `lang` → EN cache poisoned TH requests. Fixed: added `'lang': request_language(self.request)` to `cache_key_params` → `fcd1297` (BE develop).
+3. FE fix 1: `withLangParamIfNotDefault` on `/front-page/` fetch → `cf8b557c` (FE develop).
+4. FE fix 2: `withLangParamIfNotDefault` on `routeUrl` fetch + `departureLocationLabel` from `translatedName()` in `useRouteSeo` + `locationKey` prop in `PopularRoutes` for filter vs display split → `154b7120` (FE develop).
+5. Verified locally: §14 now shows `หาดใหญ่ ถึง เกาะหลีเป๊ะ`, `จาก หาดใหญ่`, `ไปยัง หาดใหญ่` — 100% TH on TH pages.
+
+**Resume point was:** Deploy BE+FE develop → main + clear `smartenplus_next_cache` Docker volume; live verify §14 fully Thai on `/th/trips/hatyai/koh-lipe`.
+
+---
+
 ## Session #465 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #465)

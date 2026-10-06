@@ -14,18 +14,18 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #465)
+**Updated:** 2026-10-06 (session #466)
 
-**Achieved (#465) — §14 Related Routes shipped.**
+**Achieved (#466) — §14 i18n location names fully fixed.**
 
-1. Reviewed `components/trips/PopularRoutes.js` against CLAUDE.md + DESIGN_SYSTEM.md + CODING_STANDARDS.md + sibling components.
-2. Found + fixed 6 issues: dead component (0 callers), `items.filter()` crash on undefined, missing `limit`/`gridCols` to `TripRouteGridComponent`, card class mismatch, h2 class mismatch, no PropTypes.
-3. Wired data: `/front-page/?limit=50` fetch in `getStaticProps` → `relatedRoutes` prop → all 3 return paths; `DynamicPopularRoutes` render in `FilterTripsPage` guarded by `relatedRoutes.length > 0 && departureLocationName`.
-4. `feat/route-related-routes-section` → merged to develop → pushed → `c8450f67`.
+1. Root cause: FE `getStaticProps` not passing `?lang` to `/front-page/` or `routeUrl` → BE returned EN → `translated_location_name` never reached FE.
+2. BE cache bug: `HomeViewSet` cache key missing `lang` → EN cache poisoned TH requests. Fixed: `'lang': request_language(self.request)` in `cache_key_params` → `fcd1297` (BE develop).
+3. FE fix: `withLangParamIfNotDefault` on both fetches; `departureLocationLabel` via `translatedName()` in `useRouteSeo`; `locationKey` prop in `PopularRoutes` splits filter (EN) from display (TH) → `cf8b557c` + `154b7120` (FE develop).
+4. Verified locally: §14 shows `หาดใหญ่ ถึง เกาะหลีเป๊ะ`, `จาก หาดใหญ่` — 100% TH on TH pages.
 
 **Resume point (EXACT):**
 1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
-2. **Live verify `/trips/hatyai/koh-lipe`**: all sections §03–§14 visible; §14 "Related Routes" card shows routes from/to same departure location.
+2. **Live verify `/th/trips/hatyai/koh-lipe`**: §14 direction labels + card names all Thai.
 
 ---
 
