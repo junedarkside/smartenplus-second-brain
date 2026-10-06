@@ -8,6 +8,7 @@ Global navigation catalog. Updated on every ingest.
 
 - [[master-state|Master State]] — Live session state: branches, loose ends, API contract, architecture guardrails
 - [[dead-code-stub-prevention]] — Post-Edit grep check for TODO/FIXME/console.log/stubs; added to all 3 repo CLAUDE.md tables 2026-10-06
+- [[code-size-complexity-enforcement]] — ESLint + flake8 rules enforcing complexity≤10, file≤400, function≤50 lines; Pre-Flight size budget + Post-Edit size check added to all 3 CLAUDE.md; 2026-10-06
 - [[multi-repo-gap-audit-methodology]] — **PATTERN.** Auditing complex features across multiple repos: fan out 3 specialized agents (Backend/Frontend/Integration) → adversarial verification → synthesized report. Single-agent review misses cross-cutting gaps. Template: CRITICAL/HIGH/MEDIUM prioritized with fix order.
 
 ## Knowledge — Frontend / SSR / Next.js
