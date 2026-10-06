@@ -14,18 +14,14 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #456)
+**Updated:** 2026-10-06 (session #457)
 
-**Achieved (#456) — §03 Quick Answer + §04 Route Facts implemented + design token standardisation on `/trips/hatyai/koh-lipe`.**
+**Achieved (#457) — RouteIntelligenceHero investigated, built, reverted, and permanently closed. SearchCover kept as-is.**
 
-1. **New component `RouteQuickAnswer.js`** (§03): derives first sentence from `data[0].overview`, content guard (hides if sentence doesn't contain from/to location name), card style matches siblings. Branch `feat/route-facts-quick-answer` → merged to `develop`.
-2. **RouteSummary extracted** (§04): removed from TripOverview right column, now standalone section above TripOverview, guarded by `contracts.length > 0`. TripOverview → single-column editorial text only.
-3. **i18n fix**: `trip.quickAnswer` key added to `en.js` ('How to get there') + `th.js` ('วิธีเดินทาง'). `t()` second-arg bug fixed (was passing fallback string as vars object).
-4. **Design token standard established** for all 4 section cards (`card: bg-white border border-gray-200 rounded-md md:rounded-lg p-2` · `h2: text-base font-semibold text-gray-800 mb-2` · `body: text-sm`). Applied to TripOverview, RouteFAQ, RouteSummary.
-5. **RouteSummary**: `outline outline-1` → `border border-gray-200` + margin wrapper. Operator body `text-xs` → `text-sm`.
-6. **RouteFAQ**: `p-4→p-2`, `mb-3→mb-2`, added `text-base` to h2. TripOverview h2 `py-2 font-semibold` → full token class.
-7. **Heading hierarchy verified** via JS DOM scan: h1 → h2 (×5 content sections) → h3 (operators). No level skips.
-8. All changes pushed → `origin/develop` (`b5aeb825`). Content guard working after Django admin overview fix.
+1. **Built `RouteIntelligenceHero.js`** on `feat/route-intelligence-hero` (`df29f50d`) — gradient hero, deriveHeroStats from RTK trips, skeleton shimmer, leg badge, SearchDialogTrigger.
+2. **Reverted** (`f6e87695`) — design judged as AI slop vs current SearchCover (real photo, text shadow, trust signals, passenger button). SearchCover wins on authenticity.
+3. **Decision locked**: `SearchCover` stays as-is permanently. No stats row, no height change. Stats belong in trip cards below the fold.
+4. **Spec block updated** — `ROUTE-INTELLIGENCE-HERO-SPEC` closed/cancelled. Branch `feat/route-intelligence-hero` has the revert; no merge to develop needed.
 
 **Resume point (EXACT):**
 1. **Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume** (carry-forward #453). Trip "Last updated" label + Thai date still on develop only.
@@ -201,7 +197,7 @@
 > **UPDATE 2026-06-30 (#193):** CS chat UX polish shipped → develop — sender attribution (ownership-gated widget `sender:'customer'` hint, spoof→403), role labels (FE You/Support/System + admin Customer/Support/System), unread badge read-on-open + active-conv auto-read (BE `Conversation.cs_last_read_at` + migration `0008` + `POST /conversations/<pk>/mark-read/`). Flow D chat verified live (200). `NEXTAUTH_SECRET` matched admin=FE. No new Section-2 items opened; CS-CENTRALIZATION deploy queue unchanged (develop-only; manual test C/E + B-7 + 3 go-live blockers still pending).
 
 
-> **`ROUTE-INTELLIGENCE-HERO-SPEC` (#456, CLOSED — spec locked, build deferred).** `RouteIntelligenceHero.js` spec locked 2026-06-14 in `[[route-intelligence-hero-spec]]`. Gradient hero 180px desktop / 140px mobile, no photo, stats row, advance_hr-filtered min_display_rate. No build started this session — current `SearchCover` hero still in place. Closed as tracked item; build is a separate future branch whenever hero replacement is prioritised.
+> **`ROUTE-INTELLIGENCE-HERO-SPEC` (#457, CANCELLED — do not build).** Built and reverted #457. Gradient hero was judged AI slop vs current `SearchCover` (real photo background, text shadow, trust signals, passenger button). Decision locked: `SearchCover` stays permanently. Stats row rejected — stats belong in trip cards, not the hero. Branch `feat/route-intelligence-hero` contains build + revert (`df29f50d` → `f6e87695`); never merge to develop.
 
 ### Deploy Queue — merged → develop, needs main deploy + verify (NEW #370)
 
