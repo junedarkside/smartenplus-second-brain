@@ -1,3 +1,5 @@
+## [2026-10-07] session-end #467 | cleared §15 + §16 tracker gaps — §15 1-article intentional, §16 "อัปเดตเมื่อ" already in SearchCover.js:184 — tracker now 14/16
+
 ## [2026-10-06] session-end #466 | §14 i18n location names fully fixed — BE cache key + FE ?lang params + direction labels TH → develop cf8b557c + fcd1297 + 154b7120
 
 ## [2026-10-06] session-end #465 | §14 Related Routes shipped — PopularRoutes 6 issues fixed + data wired → develop c8450f67

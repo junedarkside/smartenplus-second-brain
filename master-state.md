@@ -14,18 +14,17 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #466)
+**Updated:** 2026-10-07 (session #467)
 
-**Achieved (#466) — §14 i18n location names fully fixed.**
+**Achieved (#467) — cleared all open issues on FE trips list page tracker.**
 
-1. Root cause: FE `getStaticProps` not passing `?lang` to `/front-page/` or `routeUrl` → BE returned EN → `translated_location_name` never reached FE.
-2. BE cache bug: `HomeViewSet` cache key missing `lang` → EN cache poisoned TH requests. Fixed: `'lang': request_language(self.request)` in `cache_key_params` → `fcd1297` (BE develop).
-3. FE fix: `withLangParamIfNotDefault` on both fetches; `departureLocationLabel` via `translatedName()` in `useRouteSeo`; `locationKey` prop in `PopularRoutes` splits filter (EN) from display (TH) → `cf8b557c` + `154b7120` (FE develop).
-4. Verified locally: §14 shows `หาดใหญ่ ถึง เกาะหลีเป๊ะ`, `จาก หาดใหญ่` — 100% TH on TH pages.
+1. §15 Related Guides: 1-article intentional — author links related guides within WP post content. No multi-card grid needed. Tracker ✅.
+2. §16 Last Verified: "อัปเดตเมื่อ {date}" already renders in `SearchCover.js:184–203` via `lastModified` prop (= WP `post.modified`). Tracker note "no visible UI" was stale. ✅.
+3. Tracker artifact v16 — scoreboard now **14/16 shipped**. Remaining 2 "ขาด" items tracked.
 
 **Resume point (EXACT):**
 1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
-2. **Live verify `/th/trips/hatyai/koh-lipe`**: §14 direction labels + card names all Thai.
+2. **Live verify `/th/trips/hatyai/koh-lipe`**: §14 direction labels + location names all Thai.
 
 ---
 

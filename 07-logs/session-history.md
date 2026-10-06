@@ -1,5 +1,19 @@
 # Session History
 
+## Session #467 (2026-10-07)
+
+**Updated:** 2026-10-07 (session #467)
+
+**Achieved (#467) — cleared all open issues on FE trips list page tracker.**
+
+1. §15 Related Guides: confirmed 1-article design is intentional — author links related guides within WP post content. No multi-card grid needed. Tracker updated from ⚠️ to ✅.
+2. §16 Last Verified: confirmed "อัปเดตเมื่อ {date}" already renders in `SearchCover.js:184–203` via `lastModified` prop (= WP `post.modified`). Tracker note "no visible UI" was stale. Updated to ✅.
+3. Tracker artifact updated to v16 — scoreboard now 14/16 shipped. Remaining 2 "ขาด" items tracked.
+
+**Resume point was:** Deploy BE+FE develop → main + clear `smartenplus_next_cache` Docker volume; live verify `/th/trips/hatyai/koh-lipe` §14 direction labels + location names all Thai.
+
+---
+
 ## Session #466 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #466)
