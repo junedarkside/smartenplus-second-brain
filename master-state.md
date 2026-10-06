@@ -201,6 +201,8 @@
 > **UPDATE 2026-06-30 (#193):** CS chat UX polish shipped → develop — sender attribution (ownership-gated widget `sender:'customer'` hint, spoof→403), role labels (FE You/Support/System + admin Customer/Support/System), unread badge read-on-open + active-conv auto-read (BE `Conversation.cs_last_read_at` + migration `0008` + `POST /conversations/<pk>/mark-read/`). Flow D chat verified live (200). `NEXTAUTH_SECRET` matched admin=FE. No new Section-2 items opened; CS-CENTRALIZATION deploy queue unchanged (develop-only; manual test C/E + B-7 + 3 go-live blockers still pending).
 
 
+> **`ROUTE-INTELLIGENCE-HERO-SPEC` (#456, CLOSED — spec locked, build deferred).** `RouteIntelligenceHero.js` spec locked 2026-06-14 in `[[route-intelligence-hero-spec]]`. Gradient hero 180px desktop / 140px mobile, no photo, stats row, advance_hr-filtered min_display_rate. No build started this session — current `SearchCover` hero still in place. Closed as tracked item; build is a separate future branch whenever hero replacement is prioritised.
+
 ### Deploy Queue — merged → develop, needs main deploy + verify (NEW #370)
 
 | Item | What's pending | Where |
