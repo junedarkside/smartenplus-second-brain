@@ -1,5 +1,20 @@
 # Session History
 
+## Session #465 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #465)
+
+**Achieved (#465) — §14 Related Routes shipped.**
+
+1. Reviewed `components/trips/PopularRoutes.js` against CLAUDE.md + DESIGN_SYSTEM.md + CODING_STANDARDS.md + sibling components.
+2. Found + fixed 6 issues: dead component (0 callers), `items.filter()` crash on undefined, missing `limit`/`gridCols` to `TripRouteGridComponent`, card class mismatch, h2 class mismatch, no PropTypes.
+3. Wired data: `/front-page/?limit=50` fetch in `getStaticProps` → `relatedRoutes` prop → all 3 return paths; `DynamicPopularRoutes` render in `FilterTripsPage` guarded by `relatedRoutes.length > 0 && departureLocationName`.
+4. `feat/route-related-routes-section` → merged to develop → pushed → `c8450f67`.
+
+**Resume point was:** Deploy BE+FE develop → main + clear `smartenplus_next_cache` Docker volume; live verify §14 visible on `/trips/hatyai/koh-lipe`.
+
+---
+
 ## Session #464 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #464)

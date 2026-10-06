@@ -1,3 +1,5 @@
+## [2026-10-06] session-end #465 | §14 Related Routes shipped — PopularRoutes 6 issues fixed + data wired → develop c8450f67
+
 ## [2026-10-06] session-end #464 | §11 Timeline recheck — wrong FK level + too detailed; CANCELLED confirmed; move on
 
 ## [2026-10-06] session-end #463 | §11 RouteJourneySteps cancelled permanently (cosmetic, no booking value); tracker + plan updated

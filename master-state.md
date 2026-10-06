@@ -14,18 +14,18 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #464)
+**Updated:** 2026-10-06 (session #465)
 
-**Achieved (#464) — §11 Timeline recheck; CANCELLED confirmed permanently.**
+**Achieved (#465) — §14 Related Routes shipped.**
 
-1. Rechecked `Timeline` model (`stations/models.py:200`) as alternative data source for §11.
-2. `Timeline` FK → `Route` (contract level), not `RouteByLocationInfo` (route page). Multiple timelines per route page — same multi-operator problem. Stripped to bare titles = same cosmetic result.
-3. §11 CANCELLED confirmed. Plan file (`~/.claude/plans/check-vault-and-fe-elegant-pnueli.md`) updated with finding.
-4. Moving on.
+1. Reviewed `components/trips/PopularRoutes.js` against CLAUDE.md + DESIGN_SYSTEM.md + CODING_STANDARDS.md + sibling components.
+2. Found + fixed 6 issues: dead component (0 callers), `items.filter()` crash on undefined, missing `limit`/`gridCols` to `TripRouteGridComponent`, card class mismatch, h2 class mismatch, no PropTypes.
+3. Wired data: `/front-page/?limit=50` fetch in `getStaticProps` → `relatedRoutes` prop → all 3 return paths; `DynamicPopularRoutes` render in `FilterTripsPage` guarded by `relatedRoutes.length > 0 && departureLocationName`.
+4. `feat/route-related-routes-section` → merged to develop → pushed → `c8450f67`.
 
 **Resume point (EXACT):**
 1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
-2. **Live verify `/trips/hatyai/koh-lipe`**: all sections §03–§10 visible; JSON-LD `serviceType` = `["Van", "Speed boat"]` in DevTools (`useRouteSeo.js:139`).
+2. **Live verify `/trips/hatyai/koh-lipe`**: all sections §03–§14 visible; §14 "Related Routes" card shows routes from/to same departure location.
 
 ---
 
