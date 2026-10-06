@@ -1,3 +1,5 @@
+## [2026-10-06] ingest | dead-code-stub-prevention — added No dead code/stubs row to Post-Edit table in all 3 repo CLAUDE.md files (FE JS + BE Python patterns); vault atom created
+
 ## [2026-10-06] session-end #454 | Claude agent audit + cost optimization: model pinning on 4 FE agents + herdr/wrapup skills, 3 new global agents (django-python-expert, smartenplus-swe, payment-security-specialist), BE project agent, Pages Router caveat on nextjs-fullstack-architect; FE develop b36ea69d + BE develop ade357d pushed.
 
 ## [2026-10-05] session-end #453 | "Last updated" label + JSON-LD dateModified on /trips/[from]/[to] shipped (4 FE PRs → FE develop dde868e2): feat/trips-last-updated-label (9ebb3b4c), fix/trips-last-modified-unwrap (5ef2080c, blogPost envelope bug), fix/trips-last-updated-merge-row (9f873789, merge with departure count + ·), fix/trips-thai-date-format (1cf95ac2, formatDisplayDate Buddhist-era); zero BE changes; next: deploy develop→main + clear smartenplus_next_cache Docker volume per CLAUDE.md critical gotcha.
