@@ -1,3 +1,5 @@
+## [2026-10-06] session-end #459 | §08 RouteNotice full build (BE-driven, human-in-loop approval, bot API, i18n fallback hardening, design token fixes); both repos develop pushed
+
 ## [2026-10-06] session-end #458 | §07 RouteSchedule built (BE + FE full i18n); operational_days added to ExteaContractSerializer; feat/route-schedule ready to merge
 
 ## [2026-10-06] session-end #457 | RouteIntelligenceHero built + reverted (AI slop); SearchCover kept as-is permanently; spec cancelled in vault

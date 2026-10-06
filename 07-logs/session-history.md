@@ -1,5 +1,20 @@
 # Session History
 
+## Session #458 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #458)
+
+**Achieved (#458) — §07 RouteSchedule built (BE + FE, full i18n).**
+
+1. `operational_days` SerializerMethodField added to `ExteaContractSerializer`
+2. FE `RouteSchedule.js` — groups by departure_time, day badges, Daily shortcut, full i18n
+3. i18n keys added to en.js + th.js
+4. FilterTripsPage.js dynamic import + gate
+
+**Resume point was:** merge feat/route-schedule → develop (carried forward to #459)
+
+---
+
 ## Session #457 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #457)
