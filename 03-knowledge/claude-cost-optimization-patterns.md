@@ -34,3 +34,20 @@ For multi-phase orchestrator agents (seo-homepage-auditor, trip-detail-uxui-audi
 ```
 
 This targets the 33% >150k context issue for audit sessions that accumulate WebFetch + file read output across phases.
+
+## Post-Edit Verification — Haiku for Grep Checks
+
+Grep-only Post-Edit checks (All callers, No dead code/stubs) → spawn `haiku` Explore agent. Zero judgment needed — pure text search.
+
+Test runner (`npm test` / `python manage.py test`) stays in main thread (sonnet) — test failure interpretation requires judgment.
+
+Pattern:
+```
+Agent({
+  subagent_type: "Explore",
+  model: "haiku",
+  prompt: "Run: grep -rn 'TODO|FIXME|console\\.log|stub' <changed files>. Report any hits."
+})
+```
+
+Added to Post-Edit table footer in all 3 repo CLAUDE.md files (2026-10-06).
