@@ -1,5 +1,18 @@
 # Session History
 
+## Session #453 (2026-10-05)
+
+**Updated:** 2026-10-05 (session #453)
+
+**Achieved (#453) — "Last updated" label + JSON-LD `dateModified` on `/trips/[from]/[to]` shipped across 4 PRs.**
+
+1. FE PR 1 — `feat/trips-last-updated-label` (9ebb3b4c, merged FE develop `dde868e2`): Source = WordPress `post.modified`. ~5 files, ~10 net new lines.
+2. FE PR 2 — `fix/trips-last-modified-unwrap` (5ef2080c): `blogPost.data.post.modified` fix (envelope bug).
+3. FE PR 3 — `fix/trips-last-updated-merge-row` (9f873789): merged "Last updated" + departure count with `·`.
+4. FE PR 4 — `fix/trips-thai-date-format` (1cf95ac2): Buddhist-era Thai date via `formatDisplayDate`.
+
+---
+
 ## Session #452 (2026-10-05)
 
 **Updated:** 2026-10-05 (session #452)

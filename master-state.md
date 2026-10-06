@@ -14,20 +14,20 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-05 (session #453)
+**Updated:** 2026-10-06 (session #454)
 
-**Achieved (#453) — "Last updated" label + JSON-LD `dateModified` on `/trips/[from]/[to]` shipped across 4 PRs.**
+**Achieved (#454) — Claude agent config audit + cost optimization across all 3 SmartEnPlus repos.**
 
-1. **FE PR 1 — `feat/trips-last-updated-label` (commit 9ebb3b4c, merged FE develop `dde868e2`):** Source = WordPress `post.modified` (editorial freshness, already in `getStaticProps` props). Forwarded through `FilterTripsPage.js` → `useRouteSeo` (adds `dateModified` to `serviceSchema` JSON-LD) → `<DynamicSearchCover>`. New `results.trust.lastUpdated` i18n key (en + th). ~5 files, ~10 net new lines. No BE change. Plan: `~/.claude/plans/check-vault-and-fe-typed-flute.md`.
-2. **FE PR 2 — `fix/trips-last-modified-unwrap` (commit 5ef2080c, merged FE develop `dde868e2`):** Pre-existing read-path bug found via live-test. `blogPost?.post?.modified` always `null` because `helpers/fetcher.js:33` returns raw GraphQL envelope — actual path is `blogPost.data.post.modified` (matches `pages/blog/[slug].js:52` pattern). 1-line fix at `pages/trips/[...slug].js:130`. No other fetcher consumers read `modified`, so no immediate impact; latent footgun across other consumers deferred.
-3. **FE PR 3 — `fix/trips-last-updated-merge-row` (commit 9f873789, merged FE develop `dde868e2`):** User asked "can it be the same line with 3 departures?" → merged "Last updated" + departure count into single row with `·` separator. Conditional render: each part omitted when not present. `text-white/70 text-xs sm:text-sm font-normal mt-1`.
-4. **FE PR 4 — `fix/trips-thai-date-format` (commit 1cf95ac2, merged FE develop `dde868e2`):** User asked "can we update i18n for this too" — Thai page showed English date. Reused existing `formatDisplayDate(date, language, 'dd-MMM-yyyy')` helper (Buddhist-era year +543, deterministic, no Intl) + `useSite().language` for locale. Output: `Last updated Aug 16, 2026 · 3 departures` / `อัปเดตเมื่อ 16 ส.ค. 2569 · 3 เที่ยว`.
-5. **Total:** 4 PRs (all FE) merged to develop, pushed to origin. Zero BE changes. Plan file: `~/.claude/plans/check-vault-and-fe-typed-flute.md` (4 phases).
+1. **Cost audit:** Identified 5 drivers from usage report (78% subagent-heavy, 33% >150k context, 20% cache miss, 28% Explore, 13% /wrapup). Fixed all config-addressable issues.
+2. **Model pinning (FE):** `model: sonnet` added to 4 project agents missing frontmatter (`devops-engineer`, `seo-specialist`, `seo-homepage-auditor`, `trip-detail-uxui-auditor`). Committed `chore/agent-config-cost-optimization` → FE develop `b36ea69d`, pushed.
+3. **New agents (global):** Created `django-python-expert` (Django 4.2/DRF/Celery/payment rules), `smartenplus-swe` (cross-repo generalist), `payment-security-specialist` (Omise/GatewayCharge/idempotency/15+ gotchas).
+4. **New agent (BE):** Created `smartenplus-backend/.claude/agents/django-backend.md` — project-scoped with app structure + payment rules + coding standards. Committed `chore/agent-config-django-backend` → BE develop `ade357d`, pushed.
+5. **Fixes (global):** `nextjs-fullstack-architect` Pages Router caveat (App Router was default — wrong for this project). `context-manager` tools stripped to `Read, Write` (redis/ES/vector-db unavailable). `herdr` skill pinned `model: sonnet`. `/wrapup` skill pinned `model: haiku`.
+6. **Atoms:** 3 knowledge files created: `claude-agent-model-pinning-pattern`, `claude-agent-roster-smartenplus`, `claude-cost-optimization-patterns`.
 
 **Resume point (EXACT):**
-1. **Deploy develop → main + clear `smartenplus_next_cache` Docker volume.** Per CLAUDE.md critical gotcha: deploy script must clear the Docker volume or ISR persists forever. Without this, cached trip pages show the new label/JSON-LD only on next revalidate (5 min default per page). Per project CLAUDE.md `develop → main` flow.
-2. **Live verify on `/trips/hatyai/koh-lipe`:** (a) `Last updated <date>` visible directly under route h1, above/beside "3 departures". (b) View source → `<script type="application/ld+json">` for `#service` includes `"dateModified": "..."`. (c) `/th/trips/hatyai/koh-lipe` → `อัปเดตเมื่อ <date>` with Thai Buddhist-era year. (d) Routes without WP blog post → label hidden, JSON-LD omits `dateModified` (graceful).
-3. **Follow-up (separate, NOT in scope #453):** (a) `helpers/fetcher.js:33` envelope-unwrap footgun — other consumers (none currently read `modified`, but any future caller would silently get `null` for nested fields) — small future cleanup PR. (b) `revalidate: 30` on WordPress error path in `pages/trips/[...slug].js:167` was unchanged; user didn't ask to tune.
+1. **Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume** (carry-forward from #453). Trip "Last updated" label + Thai date still on develop only.
+2. **Live verify `/trips/hatyai/koh-lipe`** after deploy: label visible, JSON-LD `dateModified`, Thai Buddhist-era year on `/th/` route.
 
 ---
 
