@@ -1,3 +1,5 @@
+## [2026-10-06] session-end #458 | §07 RouteSchedule built (BE + FE full i18n); operational_days added to ExteaContractSerializer; feat/route-schedule ready to merge
+
 ## [2026-10-06] session-end #457 | RouteIntelligenceHero built + reverted (AI slop); SearchCover kept as-is permanently; spec cancelled in vault
 
 ## [2026-10-06] session-end #456 | §03 Quick Answer + §04 Route Facts implemented; design token standard (text-base/p-2/border-gray-200) applied to all 4 section cards; i18n quickAnswer key added; heading hierarchy verified; FE develop b5aeb825 pushed

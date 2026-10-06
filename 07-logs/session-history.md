@@ -1,5 +1,18 @@
 # Session History
 
+## Session #457 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #457)
+
+**Achieved (#457) — RouteIntelligenceHero investigated, built, reverted, and permanently closed. SearchCover kept as-is.**
+
+1. Built `RouteIntelligenceHero.js` on `feat/route-intelligence-hero` (`df29f50d`) — gradient hero, deriveHeroStats, skeleton shimmer, leg badge.
+2. Reverted (`f6e87695`) — design judged AI slop vs SearchCover (real photo, trust signals). SearchCover wins on authenticity.
+3. Decision locked: SearchCover stays permanently. Spec cancelled in vault.
+4. §07 Schedule audited: BE data confirmed in `contracts` prop (`departure_time`), `operational_days` NOT in `ExteaContractSerializer` (gap found). FE status corrected from "บางส่วน" to "ยังไม่เริ่ม". `operating_season` field confirmed nonexistent.
+
+---
+
 ## Session #455 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #455)

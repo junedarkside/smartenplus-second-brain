@@ -14,18 +14,19 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #457)
+**Updated:** 2026-10-06 (session #458)
 
-**Achieved (#457) — RouteIntelligenceHero investigated, built, reverted, and permanently closed. SearchCover kept as-is.**
+**Achieved (#458) — §07 RouteSchedule built (BE + FE, full i18n).**
 
-1. **Built `RouteIntelligenceHero.js`** on `feat/route-intelligence-hero` (`df29f50d`) — gradient hero, deriveHeroStats from RTK trips, skeleton shimmer, leg badge, SearchDialogTrigger.
-2. **Reverted** (`f6e87695`) — design judged as AI slop vs current SearchCover (real photo, text shadow, trust signals, passenger button). SearchCover wins on authenticity.
-3. **Decision locked**: `SearchCover` stays as-is permanently. No stats row, no height change. Stats belong in trip cards below the fold.
-4. **Spec block updated** — `ROUTE-INTELLIGENCE-HERO-SPEC` closed/cancelled. Branch `feat/route-intelligence-hero` has the revert; no merge to develop needed.
+1. **§07 audit**: confirmed `operational_days` NOT in `ExteaContractSerializer` ISR payload (gap). `departure_time` ✅ via `contract.trip.departure_time`. `operating_season` field nonexistent — removed from spec.
+2. **BE** (`feat/route-schedule` `81987ba`): `operational_days` SerializerMethodField added to `ExteaContractSerializer` (returns day name strings MONDAY–SUNDAY). `operational_day` prefetch added to queryset.
+3. **FE** (`feat/route-schedule` `0fad9239`): new `components/trips/RouteSchedule.js` (85 lines) — derives schedule from `contracts`, groups by `departure_time`, day badges (active/inactive), "Daily"/"ทุกวัน" shortcut when all 7 days. Full i18n: 24hr format for TH, 12hr for EN, `t('trip.daily')`, `t('trip.days.*')`.
+4. **i18n**: added `trip.schedule`, `trip.departureTimes`, `trip.operatingDays`, `trip.daily`, `trip.days.*` to en.js + th.js.
+5. **FilterTripsPage.js**: dynamic import + gate `contracts.length > 0`, now 357 lines (yellow ✅).
 
 **Resume point (EXACT):**
-1. **Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume** (carry-forward #453). Trip "Last updated" label + Thai date still on develop only.
-2. **Live verify `/trips/hatyai/koh-lipe`** after deploy: §03/§04 visible, heading tokens consistent, JSON-LD `dateModified`.
+1. **Merge `feat/route-schedule` → develop** (BE + FE both branches ready). Then deploy FE + BE develop → main + clear `smartenplus_next_cache` Docker volume (#453 carry-forward).
+2. **Live verify `/trips/hatyai/koh-lipe`**: Schedule section visible, departure times correct, operating days correct, Thai locale shows 24hr + ทุกวัน/day abbreviations.
 
 ---
 
