@@ -1,3 +1,5 @@
+## [2026-10-06] session-end #455 | coding standard enforcement: ESLint complexity+size rules (FE+Admin .eslintrc.json), .flake8 max-complexity=10 (BE), Pre-Flight size budget + Post-Edit size check in all 3 CLAUDE.md; atom code-size-complexity-enforcement created
+
 ## [2026-10-06] ingest | dead-code-stub-prevention — added No dead code/stubs row to Post-Edit table in all 3 repo CLAUDE.md files (FE JS + BE Python patterns); vault atom created
 
 ## [2026-10-06] session-end #454 | Claude agent audit + cost optimization: model pinning on 4 FE agents + herdr/wrapup skills, 3 new global agents (django-python-expert, smartenplus-swe, payment-security-specialist), BE project agent, Pages Router caveat on nextjs-fullstack-architect; FE develop b36ea69d + BE develop ade357d pushed.

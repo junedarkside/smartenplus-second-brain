@@ -14,16 +14,17 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #454)
+**Updated:** 2026-10-06 (session #455)
 
-**Achieved (#454) — Claude agent config audit + cost optimization across all 3 SmartEnPlus repos.**
+**Achieved (#455) — Coding standard enforcement: ESLint/flake8 complexity + size rules across all 3 repos.**
 
-1. **Cost audit:** Identified 5 drivers from usage report (78% subagent-heavy, 33% >150k context, 20% cache miss, 28% Explore, 13% /wrapup). Fixed all config-addressable issues.
-2. **Model pinning (FE):** `model: sonnet` added to 4 project agents missing frontmatter (`devops-engineer`, `seo-specialist`, `seo-homepage-auditor`, `trip-detail-uxui-auditor`). Committed `chore/agent-config-cost-optimization` → FE develop `b36ea69d`, pushed.
-3. **New agents (global):** Created `django-python-expert` (Django 4.2/DRF/Celery/payment rules), `smartenplus-swe` (cross-repo generalist), `payment-security-specialist` (Omise/GatewayCharge/idempotency/15+ gotchas).
-4. **New agent (BE):** Created `smartenplus-backend/.claude/agents/django-backend.md` — project-scoped with app structure + payment rules + coding standards. Committed `chore/agent-config-django-backend` → BE develop `ade357d`, pushed.
-5. **Fixes (global):** `nextjs-fullstack-architect` Pages Router caveat (App Router was default — wrong for this project). `context-manager` tools stripped to `Read, Write` (redis/ES/vector-db unavailable). `herdr` skill pinned `model: sonnet`. `/wrapup` skill pinned `model: haiku`.
-6. **Atoms:** 3 knowledge files created: `claude-agent-model-pinning-pattern`, `claude-agent-roster-smartenplus`, `claude-cost-optimization-patterns`.
+1. **Research:** Confirmed existing CLAUDE.md thresholds (≤10 complexity, ≤30 lines/fn, file <500) match industry standard. Gap = no automated enforcement.
+2. **FE `.eslintrc.json`:** Added `complexity: warn/10`, `max-lines: warn/400`, `max-lines-per-function: warn/50`, `max-depth: warn/4`, `max-params: warn/4`. Committed `chore/eslint-complexity-size-rules` → FE develop `02963e38`.
+3. **BE `.flake8`:** Created new file with `max-complexity = 10`, `max-line-length = 119`, migrations exempt. Committed `chore/flake8-complexity-size-rules` → BE develop `f13f77e`.
+4. **Admin `.eslintrc.json`:** Synced to FE rules (was partial — had some rules, missing `max-depth`). Committed → Admin develop `6e8b787`.
+5. **All 3 CLAUDE.md:** Added Pre-Flight "Size budget" check (`wc -l` before adding code, extract if >300) + Post-Edit "File size in bounds" row.
+6. **Carry-forward from #454:** Post-Edit haiku cost rule committed to all 3 repos + vault (`14833a7`).
+7. **Atom:** `code-size-complexity-enforcement.md` created in vault.
 
 **Resume point (EXACT):**
 1. **Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume** (carry-forward from #453). Trip "Last updated" label + Thai date still on develop only.

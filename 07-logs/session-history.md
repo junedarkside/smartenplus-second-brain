@@ -1,5 +1,21 @@
 # Session History
 
+## Session #454 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #454)
+
+**Achieved (#454) — Claude agent config audit + cost optimization across all 3 SmartEnPlus repos.**
+
+1. Cost audit: 5 drivers from usage report fixed (model pinning, /compact hints, context-manager tools, herdr/wrapup skill models).
+2. Model pinning (FE): `model: sonnet` added to 4 project agents. Committed → FE develop `b36ea69d`.
+3. New agents (global): `django-python-expert`, `smartenplus-swe`, `payment-security-specialist`.
+4. New agent (BE): `django-backend.md` project-scoped. Committed → BE develop.
+5. Fixes (global): `nextjs-fullstack-architect` Pages Router caveat, `context-manager` tools stripped, `herdr` + `/wrapup` model pinned.
+6. Dead code / stub prevention: Post-Edit grep row + haiku cost rule added to all 3 CLAUDE.md + vault atom.
+7. Atoms: `claude-agent-model-pinning-pattern`, `claude-agent-roster-smartenplus`, `claude-cost-optimization-patterns`, `dead-code-stub-prevention`.
+
+---
+
 ## Session #453 (2026-10-05)
 
 **Updated:** 2026-10-05 (session #453)
