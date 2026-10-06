@@ -14,21 +14,22 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-06 (session #455)
+**Updated:** 2026-10-06 (session #456)
 
-**Achieved (#455) — Coding standard enforcement: ESLint/flake8 complexity + size rules across all 3 repos.**
+**Achieved (#456) — §03 Quick Answer + §04 Route Facts implemented + design token standardisation on `/trips/hatyai/koh-lipe`.**
 
-1. **Research:** Confirmed existing CLAUDE.md thresholds (≤10 complexity, ≤30 lines/fn, file <500) match industry standard. Gap = no automated enforcement.
-2. **FE `.eslintrc.json`:** Added `complexity: warn/10`, `max-lines: warn/400`, `max-lines-per-function: warn/50`, `max-depth: warn/4`, `max-params: warn/4`. Committed `chore/eslint-complexity-size-rules` → FE develop `02963e38`.
-3. **BE `.flake8`:** Created new file with `max-complexity = 10`, `max-line-length = 119`, migrations exempt. Committed `chore/flake8-complexity-size-rules` → BE develop `f13f77e`.
-4. **Admin `.eslintrc.json`:** Synced to FE rules (was partial — had some rules, missing `max-depth`). Committed → Admin develop `6e8b787`.
-5. **All 3 CLAUDE.md:** Added Pre-Flight "Size budget" check (`wc -l` before adding code, extract if >300) + Post-Edit "File size in bounds" row.
-6. **Carry-forward from #454:** Post-Edit haiku cost rule committed to all 3 repos + vault (`14833a7`).
-7. **Atom:** `code-size-complexity-enforcement.md` created in vault.
+1. **New component `RouteQuickAnswer.js`** (§03): derives first sentence from `data[0].overview`, content guard (hides if sentence doesn't contain from/to location name), card style matches siblings. Branch `feat/route-facts-quick-answer` → merged to `develop`.
+2. **RouteSummary extracted** (§04): removed from TripOverview right column, now standalone section above TripOverview, guarded by `contracts.length > 0`. TripOverview → single-column editorial text only.
+3. **i18n fix**: `trip.quickAnswer` key added to `en.js` ('How to get there') + `th.js` ('วิธีเดินทาง'). `t()` second-arg bug fixed (was passing fallback string as vars object).
+4. **Design token standard established** for all 4 section cards (`card: bg-white border border-gray-200 rounded-md md:rounded-lg p-2` · `h2: text-base font-semibold text-gray-800 mb-2` · `body: text-sm`). Applied to TripOverview, RouteFAQ, RouteSummary.
+5. **RouteSummary**: `outline outline-1` → `border border-gray-200` + margin wrapper. Operator body `text-xs` → `text-sm`.
+6. **RouteFAQ**: `p-4→p-2`, `mb-3→mb-2`, added `text-base` to h2. TripOverview h2 `py-2 font-semibold` → full token class.
+7. **Heading hierarchy verified** via JS DOM scan: h1 → h2 (×5 content sections) → h3 (operators). No level skips.
+8. All changes pushed → `origin/develop` (`b5aeb825`). Content guard working after Django admin overview fix.
 
 **Resume point (EXACT):**
-1. **Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume** (carry-forward from #453). Trip "Last updated" label + Thai date still on develop only.
-2. **Live verify `/trips/hatyai/koh-lipe`** after deploy: label visible, JSON-LD `dateModified`, Thai Buddhist-era year on `/th/` route.
+1. **Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume** (carry-forward #453). Trip "Last updated" label + Thai date still on develop only.
+2. **Live verify `/trips/hatyai/koh-lipe`** after deploy: §03/§04 visible, heading tokens consistent, JSON-LD `dateModified`.
 
 ---
 

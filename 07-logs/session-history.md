@@ -1,5 +1,21 @@
 # Session History
 
+## Session #455 (2026-10-06)
+
+**Updated:** 2026-10-06 (session #455)
+
+**Achieved (#455) — Coding standard enforcement: ESLint/flake8 complexity + size rules across all 3 repos.**
+
+1. Research: Confirmed existing CLAUDE.md thresholds (≤10 complexity, ≤30 lines/fn, file <500) match industry standard. Gap = no automated enforcement.
+2. FE `.eslintrc.json`: Added `complexity: warn/10`, `max-lines: warn/400`, `max-lines-per-function: warn/50`, `max-depth: warn/4`, `max-params: warn/4`. Committed → FE develop `02963e38`.
+3. BE `.flake8`: Created new file with `max-complexity = 10`, `max-line-length = 119`, migrations exempt. Committed → BE develop `f13f77e`.
+4. Admin `.eslintrc.json`: Synced to FE rules. Committed → Admin develop `6e8b787`.
+5. All 3 CLAUDE.md: Added Pre-Flight "Size budget" + Post-Edit "File size in bounds" row.
+6. Carry-forward from #454: Post-Edit haiku cost rule committed to all 3 repos + vault (`14833a7`).
+7. Atom: `code-size-complexity-enforcement.md` created in vault.
+
+---
+
 ## Session #454 (2026-10-06)
 
 **Updated:** 2026-10-06 (session #454)
