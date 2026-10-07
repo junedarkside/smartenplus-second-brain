@@ -1,3 +1,5 @@
+## [2026-10-07] session-end #471 | Station translation bot + AD review (approve/reject/send back/mark current) + English description edit merged to develop BE 0e85b43 / FE 234cbc73 / AD b2de308 — deploy BE→FE→AD, migrate 0049, check JWT_SIGNING_KEY
+
 ## [2026-10-07] session-end #470 | SEO panel (3 agents) + 9 bugs fixed: FAQPage JSON-LD, og:type, breadcrumb TH URLs, schema @id locale, hreflang BCP-47 → FE develop aa10eae3
 
 ## [2026-10-07] session-end #469 | Thai i18n fixes (route card ถึง→ไป, station names FE+BE, DRF context root cause) + SEO/AEO/GEO audit 10 findings → FE e9ad2e99 BE ed52d6d

@@ -1,5 +1,21 @@
 # Session History
 
+## Session #470 (2026-10-07) — full handoff block (moved from master-state)
+
+**Updated:** 2026-10-07 (session #470)
+
+**Achieved (#470) — Expert panel SEO review + 9 confirmed bugs fixed, merged to develop.**
+
+1. `/expert-panel` (3 agents: correctness · standards · SEO schema) reviewed i18n/SEO branch — 9 confirmed bugs found beyond the 4 pre-established ones.
+2. `fix/seo-panel-findings` → develop `ed68eeb2`: FAQPage JSON-LD now emits from `customFaqs` (P0); `og:type` always `'website'` + `article:modified_time` via `additionalMetaTags` (P0); breadcrumb items 3+4 locale-prefixed via `localeUrl()` (P1); `transportModes` strips internal suffixes `Van`/`Speedboat` for consumer meta description (P1); service schema TH `ถึง`→`ไป` (P1); `translated_answer` sanitized in `getStaticProps` (P1 XSS close); `og:image:alt` TH `ถึง`→`ไป` (P2); hreflang BCP-47 `en-US`/`th-TH` (P2); `capitalizeWords` dead re-export removed (P2). `customFaqs` forwarded from `FilterTripsPage` to `useRouteSeo`.
+3. `fix/schema-locale-id` → develop `aa10eae3`: `Service` + `WebPage` schema `@id`/`url` now use `localeCanonicalURL` (via `localeUrl()`) — ISR-cache-safe, always emits TH URL on TH pages regardless of `router.asPath` cache state.
+4. 93 merged local branches pruned. develop pushed to origin `aa10eae3`.
+
+**Resume point (EXACT):**
+1. **Deploy FE develop → main** + clear `smartenplus_next_cache` Docker volume.
+2. **Live verify `/th/trips/hatyai/koh-lipe`**: FAQPage JSON-LD present, `Service/@id` contains `/th/`, breadcrumb items 3+4 contain `/th/`, `og:type=website`, meta description shows `Van, Speedboat` not raw slugs.
+3. Untracked files to decide: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` — commit or delete.
+
 ## Session #470 (2026-10-07)
 
 **Achieved:** Expert panel (3 agents) SEO review of i18n/SEO branch + 9 confirmed bugs fixed. FAQPage JSON-LD, og:type, breadcrumb TH URLs, transport mode display names, ไป connectors, schema @id ISR-safe locale fix, hreflang BCP-47. 93 merged branches pruned.
