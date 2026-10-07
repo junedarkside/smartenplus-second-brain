@@ -14,20 +14,19 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-07 (session #468)
+**Updated:** 2026-10-07 (session #469)
 
-**Achieved (#468) — full SEO/AEO/GEO audit + all P0/P1/P2 fixes shipped + TH crawlable.**
+**Achieved (#469) — Thai i18n fixes + SEO/AEO/GEO route page audit.**
 
-1. 3-agent SEO/AEO/GEO audit of `/trips/hatyai/koh-lipe`. 4 specialist agents reviewed findings. Plan: `~/.claude/plans/check-vault-and-fe-elegant-pnueli.md`.
-2. TH locale unblocked: robots.txt + sitemap hreflang + `/th/trips/*` URLs. `411b76ad` FE.
-3. SEO P0+P1: hreflang, og:locale, og:site_name, twitter:site, og:type fix, WebPage schema, HowTo schema, Speakable `#route-faq`, Organization `availableLanguage` th. `37d87ce9` FE.
-4. datePublished BE+FE: `route_created_at` in `RouteByLocationInfoSerializer` (`5fd1744` BE); broken path fixed (`05d31d95` FE).
-5. SEO P2: canonical hash strip, Organization legalName/foundingDate/description, sitemap changefreq/priority. `6c8db1bf` FE.
+1. Route card Thai connector fix: `home.routeCard.to` `ถึง` → `ไป` (`th.js:500`). Merged `fix/th-route-card-connector` → develop FE `d98166fa`.
+2. Station name i18n (จุดออกเดินทาง / จุดปลายทาง): FE `RouteDepartureInfo` + `RouteArrivalInfo` use `r.translated_*_station || r.*_station` (`b9317d4d`). BE `RouteSerializer.to_representation()` injects translated fields (`15d4fec`). Root cause fix: `ExteaContractSerializer` was missing `context={'request': request}` → all nested serializers defaulted to English (`b5bb84f`). All merged to develop.
+3. SEO/AEO/GEO audit of EN+TH route pages: 10 findings (2 HIGH / 3 MEDIUM / 2 LOW / 2 content-gap / 1 verify). Audit report artifact published. Vault updated (2 new atoms, audit appended to `trip-route-page-seo-aeo-geo-audit.md`).
 
 **Resume point (EXACT):**
 1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
-2. **Live verify `/th/trips/hatyai/koh-lipe`**: §14 direction labels + location names all Thai; `og:locale=th_TH`, hreflang in source.
-3. **BE push** `smartenplus-backend develop` → `main` (includes `5fd1744` `route_created_at` serializer fix).
+2. **Live verify `/th/trips/hatyai/koh-lipe`**: station names Thai, route card connector `ไป`, og:locale=th_TH, hreflang in source.
+3. **Fix HIGH #1** — FAQPage JSON-LD never emits: remove suppression at `FilterTripsPage.js:235`, build schema from `buildRouteFAQItems()` in `useRouteSeo.js`, pass to `FilterTripsSEO` unconditionally.
+4. **Fix HIGH #2** — TH BreadcrumbList URL missing `/th/`: `useRouteSeo.js:24` prepend `/${locale}` to `cleanPath` when `locale !== 'en'`.
 
 ---
 

@@ -1,5 +1,14 @@
 # Session History
 
+## Session #469 (2026-10-07)
+
+**Achieved:** Thai i18n fixes (route card connector ถึง→ไป, station names FE+BE, missing DRF context root cause) + SEO/AEO/GEO audit 10 findings. All merged to develop.
+
+**BE develop:** `ed52d6d` (fix/route-serializer-translated-station-names merged)
+**FE develop:** `e9ad2e99` (fix/route-info-translated-station-names merged)
+
+---
+
 ## Session #468 (2026-10-07)
 
 **Updated:** 2026-10-07 (session #468)

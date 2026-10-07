@@ -1,3 +1,5 @@
+## [2026-10-07] session-end #469 | Thai i18n fixes (route card ถึง→ไป, station names FE+BE, DRF context root cause) + SEO/AEO/GEO audit 10 findings → FE e9ad2e99 BE ed52d6d
+
 ## [2026-10-07] session-end #468 | SEO/AEO/GEO full audit + all fixes shipped — TH crawlable, hreflang, og:locale, og:type fix, WebPage/HowTo schema, datePublished BE+FE, P2 fields → FE 6c8db1bf BE 5fd1744
 
 ## [2026-10-07] session-end #467 | cleared §15 + §16 tracker gaps — §15 1-article intentional, §16 "อัปเดตเมื่อ" already in SearchCover.js:184 — tracker now 14/16
