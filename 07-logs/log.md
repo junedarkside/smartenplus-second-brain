@@ -1,3 +1,5 @@
+## [2026-10-07] session-end #470 | SEO panel (3 agents) + 9 bugs fixed: FAQPage JSON-LD, og:type, breadcrumb TH URLs, schema @id locale, hreflang BCP-47 → FE develop aa10eae3
+
 ## [2026-10-07] session-end #469 | Thai i18n fixes (route card ถึง→ไป, station names FE+BE, DRF context root cause) + SEO/AEO/GEO audit 10 findings → FE e9ad2e99 BE ed52d6d
 
 ## [2026-10-07] session-end #468 | SEO/AEO/GEO full audit + all fixes shipped — TH crawlable, hreflang, og:locale, og:type fix, WebPage/HowTo schema, datePublished BE+FE, P2 fields → FE 6c8db1bf BE 5fd1744

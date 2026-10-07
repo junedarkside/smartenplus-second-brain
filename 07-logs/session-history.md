@@ -1,5 +1,13 @@
 # Session History
 
+## Session #470 (2026-10-07)
+
+**Achieved:** Expert panel (3 agents) SEO review of i18n/SEO branch + 9 confirmed bugs fixed. FAQPage JSON-LD, og:type, breadcrumb TH URLs, transport mode display names, ไป connectors, schema @id ISR-safe locale fix, hreflang BCP-47. 93 merged branches pruned.
+
+**FE develop:** `aa10eae3` (fix/schema-locale-id merged)
+
+---
+
 ## Session #469 (2026-10-07)
 
 **Achieved:** Thai i18n fixes (route card connector ถึง→ไป, station names FE+BE, missing DRF context root cause) + SEO/AEO/GEO audit 10 findings. All merged to develop.

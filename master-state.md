@@ -14,19 +14,19 @@
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 
-**Updated:** 2026-10-07 (session #469)
+**Updated:** 2026-10-07 (session #470)
 
-**Achieved (#469) — Thai i18n fixes + SEO/AEO/GEO route page audit.**
+**Achieved (#470) — Expert panel SEO review + 9 confirmed bugs fixed, merged to develop.**
 
-1. Route card Thai connector fix: `home.routeCard.to` `ถึง` → `ไป` (`th.js:500`). Merged `fix/th-route-card-connector` → develop FE `d98166fa`.
-2. Station name i18n (จุดออกเดินทาง / จุดปลายทาง): FE `RouteDepartureInfo` + `RouteArrivalInfo` use `r.translated_*_station || r.*_station` (`b9317d4d`). BE `RouteSerializer.to_representation()` injects translated fields (`15d4fec`). Root cause fix: `ExteaContractSerializer` was missing `context={'request': request}` → all nested serializers defaulted to English (`b5bb84f`). All merged to develop.
-3. SEO/AEO/GEO audit of EN+TH route pages: 10 findings (2 HIGH / 3 MEDIUM / 2 LOW / 2 content-gap / 1 verify). Audit report artifact published. Vault updated (2 new atoms, audit appended to `trip-route-page-seo-aeo-geo-audit.md`).
+1. `/expert-panel` (3 agents: correctness · standards · SEO schema) reviewed i18n/SEO branch — 9 confirmed bugs found beyond the 4 pre-established ones.
+2. `fix/seo-panel-findings` → develop `ed68eeb2`: FAQPage JSON-LD now emits from `customFaqs` (P0); `og:type` always `'website'` + `article:modified_time` via `additionalMetaTags` (P0); breadcrumb items 3+4 locale-prefixed via `localeUrl()` (P1); `transportModes` strips internal suffixes `Van`/`Speedboat` for consumer meta description (P1); service schema TH `ถึง`→`ไป` (P1); `translated_answer` sanitized in `getStaticProps` (P1 XSS close); `og:image:alt` TH `ถึง`→`ไป` (P2); hreflang BCP-47 `en-US`/`th-TH` (P2); `capitalizeWords` dead re-export removed (P2). `customFaqs` forwarded from `FilterTripsPage` to `useRouteSeo`.
+3. `fix/schema-locale-id` → develop `aa10eae3`: `Service` + `WebPage` schema `@id`/`url` now use `localeCanonicalURL` (via `localeUrl()`) — ISR-cache-safe, always emits TH URL on TH pages regardless of `router.asPath` cache state.
+4. 93 merged local branches pruned. develop pushed to origin `aa10eae3`.
 
 **Resume point (EXACT):**
-1. **Deploy BE+FE develop → main** + clear `smartenplus_next_cache` Docker volume.
-2. **Live verify `/th/trips/hatyai/koh-lipe`**: station names Thai, route card connector `ไป`, og:locale=th_TH, hreflang in source.
-3. **Fix HIGH #1** — FAQPage JSON-LD never emits: remove suppression at `FilterTripsPage.js:235`, build schema from `buildRouteFAQItems()` in `useRouteSeo.js`, pass to `FilterTripsSEO` unconditionally.
-4. **Fix HIGH #2** — TH BreadcrumbList URL missing `/th/`: `useRouteSeo.js:24` prepend `/${locale}` to `cleanPath` when `locale !== 'en'`.
+1. **Deploy FE develop → main** + clear `smartenplus_next_cache` Docker volume.
+2. **Live verify `/th/trips/hatyai/koh-lipe`**: FAQPage JSON-LD present, `Service/@id` contains `/th/`, breadcrumb items 3+4 contain `/th/`, `og:type=website`, meta description shows `Van, Speedboat` not raw slugs.
+3. Untracked files to decide: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` — commit or delete.
 
 ---
 
