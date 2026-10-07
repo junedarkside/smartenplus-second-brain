@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-07] audit | SEO/AEO/GEO route page audit — 10 findings, i18n station fix, vault updated
+
 ## [2026-09-30] release #439 | Thai i18n foundation shipped to production — BE `main` 2c9ee4d (+migrate pages_info 0012-0017, stations 0041), FE `main` a02ed184 (auto-deploy). Rollback tags pre-th-release-2026-10. Prod verified: nav/footer EN+TH from seed migrations, SiteText empty, Thai browsers not redirected, /th robots-blocked. Next: R1 i18n foundation (stale-language fix for 21 API calls). → [[multi-market-i18n-analytics-migration]]
 
 ## [2026-09-30] session-end #439 | Multi-site review → Thai auto-redirect P0 fixed; BE test infra repaired (Redis DB 15 isolation, full suite runs 1108, stations 0041); homepage i18n reviewed; Phase 3b decided (catalog + useT) with hero/search tabs Thai; staff-editable UI text per language via Django admin (SiteText). All on develop (FE a02ed184, BE 2c9ee4d), nothing in prod. Next: search PR 2. → [[multi-market-i18n-analytics-migration]]

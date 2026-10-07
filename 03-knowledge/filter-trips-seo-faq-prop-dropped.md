@@ -3,25 +3,24 @@
 ## Summary
 `FilterTripsSEO.js` accepts `faqMainEntity` prop in JSDoc and destructuring but the JSX render block never emits a FAQPage schema. Route listing pages have zero structured data in production HTML despite the infrastructure appearing to be wired.
 
-## Problem
-`components/trips/search/FilterTripsSEO.js` lines 41–55:
-- JSDoc at line 14 documents `faqMainEntity` prop
-- Prop is destructured at line 25
-- JSX render block (lines 41–55) has no `<FAQPageJsonLd>` or `<JsonLd schema={...}>` output
-- The `faqMainEntity` prop is silently discarded
+## Problem (updated 2026-10-07)
 
-Additionally, even if the render block is fixed, the data source is `useRouteSeo` — a client-side hook. For FAQPage to appear in SSR HTML (required for rich results and AI engine extraction), the FAQ data must be moved from the hook into `getStaticProps` on the trips page.
+Re-audit found the root cause evolved. The prop-not-rendered symptom was fixed at some point, but the schema still does not emit. Current root cause is **contradictory suppression logic**:
 
-## Fix
+- `FilterTripsPage.js:235` — `faqMainEntity={contracts?.length > 0 ? null : faqMainEntity}` — **suppresses** the prop when trips exist, with a comment claiming RouteFAQ will emit it instead.
+- `RouteFAQ.js:8` — comment explicitly says: "FAQPage schema is emitted by FilterTripsSEO (ISR SSR path) — not duplicated here." — so **RouteFAQ does not emit it**.
 
-**Step 1** — Add render in `FilterTripsSEO.js`:
-```jsx
-import { FAQPageJsonLd } from 'next-seo'
-// in JSX:
-{faqMainEntity?.length > 0 && <FAQPageJsonLd mainEntity={faqMainEntity} />}
-```
+Result: every page with real trips passes `null` to FilterTripsSEO, and RouteFAQ opts out by design. Zero FAQPage JSON-LD on any live route page.
 
-**Step 2** — Move FAQ data generation from `useRouteSeo` hook into `getStaticProps` in the trips page so schema appears in SSR HTML.
+## Fix (2026-10-07)
+
+1. Remove the `contracts?.length > 0 ? null :` suppression at `FilterTripsPage.js:235` — pass `faqMainEntity` unconditionally.
+2. Ensure `faqMainEntity` is built from `buildRouteFAQItems()` output in `useRouteSeo.js` and returned as a separate value — the current `faqMainEntity` built from `faqPosts` (WordPress) is empty for routes with no WP posts. A complete fix computes a schema FAQ array from `buildRouteFAQItems` and passes it to `FilterTripsSEO` unconditionally.
+3. Update the stale comment in `RouteFAQ.js:8`.
+
+## History (original finding — 2026-06-22)
+
+`components/trips/search/FilterTripsSEO.js` destructured `faqMainEntity` prop but JSX render block had no `<FAQPageJsonLd>` output — prop silently discarded. Additionally data source was `useRouteSeo` (client-side hook), not ISR. Both issues identified 2026-06-22.
 
 ## Detection
 ```bash

@@ -187,3 +187,40 @@ Prior vault: [[trip-search-below-fold-redesign-2026-06-15]], [[structured-data-s
 - [[isr-client-rtk-stats-seo-pattern]]
 - [[seo-homepage-specialist-team]]
 - [[gsc-crawled-not-indexed-investigation-2026-06-05]]
+
+---
+
+## Audit — 2026-10-07
+
+Fresh audit of EN `/trips/hatyai/koh-lipe` + TH `/th/trips/hatyai/koh-lipe`. 10 issues, 12 passing. This session also shipped i18n station name fixes for จุดออกเดินทาง / จุดปลายทาง (FE + BE both merged to develop).
+
+### Findings
+
+| # | Severity | Finding | File(s) | Status |
+|---|---|---|---|---|
+| 1 | HIGH | FAQPage JSON-LD never emitted when contracts exist — FilterTripsPage:235 suppresses; RouteFAQ:8 says it doesn't emit; neither emits | `FilterTripsPage.js:235`, `RouteFAQ.js:8`, `useRouteSeo.js` | Open |
+| 2 | HIGH | TH BreadcrumbList position 4 `item` URL missing `/th/` prefix — `router.asPath` never includes locale | `useRouteSeo.js:24` | Open |
+| 3 | MEDIUM | `[TEST]` operator names in Product offers + ItemList on both pages | Backend: deactivate test trips | Open |
+| 4 | MEDIUM | Meta descriptions >160 chars + internal type names (EN: 186, TH: ~185) | `seoConfig.js`, `th.js` | Open |
+| 5 | MEDIUM | `og:type: article` wrong for trip results page — should be `website` | `seoConfig.js` | Open |
+| 6 | LOW | `twitter:title` + `twitter:description` absent from both pages | `seoConfig.js` | Open |
+| 7 | LOW | og:image:alt on TH uses `ถึง` connector — inconsistent with `ไป` standard | `seoConfig.js` (createSeo image alt) | Open |
+| 8 | CONTENT-GAP | TH page may serve English overview if `translated_overview` null | Backend admin: add Thai overview for hatyai→koh-lipe | Open |
+| 9 | CONTENT-GAP | Only 1 placeholder custom FAQ (test data) — no real Thai Q&A | Admin: `/securelogin/stations/routebylocationinfo/` | Open |
+| 10 | VERIFY | DynamicRouteFAQ may have `ssr: false` — FAQ text absent from initial HTML | `FilterTripsPage.js:62` | Open |
+| — | FIXED | Station names i18n (จุดออกเดินทาง / จุดปลายทาง) English fallback only | FE `b9317d4d`, BE `b5bb84f` + `15d4fec` | ✅ Merged |
+
+### Passing
+- Title EN (70 chars) + TH (`ไป` connector correct)
+- Canonical URL (both locales correct)
+- hreflang — en, th, x-default cross-referencing
+- og:title, og:image (1200×630), og:locale
+- Organization schema (legalName, foundingDate, availableLanguage: ["en","th"])
+- WebPage schema (datePublished, dateModified, author, publisher)
+- HowTo schema (4 steps, EN + TH)
+- Speakable (#route-quick-answer, #route-schedule, #route-faq all confirmed in DOM)
+- robots.txt — AI bots explicitly allowed (GPTBot, ClaudeBot, Google-Extended, PerplexityBot + 7 more)
+
+### New knowledge atoms extracted
+- [[th-breadcrumb-locale-prefix-bug]] — `router.asPath` drops locale prefix in Next.js i18n
+- [[route-info-station-i18n-missing-context]] — DRF nested serializer silent EN fallback when outermost serializer lacks `context={'request': request}`
