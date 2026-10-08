@@ -2,6 +2,8 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+- **2026-10-08 (#472) STATION-BOT-NOTE** — Bot contract written: BE `stations/STATION_TRANSLATION_BOT.md` (`17a5fb1`) + artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc (v2), incl. how to find what needs translating via `?include=translations`.
+
 - **2026-10-01 (#441) RELEASE-A** — Thai batch shipped by the user (BE `c53be49`, FE `342f4c44`), verified live read-only by Claude: site/API 200, EN unchanged, `/th` Thai, robots/sitemap still hide `/th`, kill-switch flag present. Not verified: BE migrate log, kill-switch toggle, prod checkout.
 
 ## Closed — 2026-09-30 (session #439, release)

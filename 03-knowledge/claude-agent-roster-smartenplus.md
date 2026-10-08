@@ -16,7 +16,7 @@ All `model: sonnet`. Apply to all 3 repos.
 | `react-ui-engineer` | React components |
 | `senior-frontend-developer` | React/Vue/Angular |
 | `ui-component-engineer` | React UI |
-| `api-architect` / `api-designer` / `api-documenter` | REST/GraphQL |
+| `api-architect` / `api-designer` / `api-documenter` (disabled 2026-10-07, in `~/.claude/agents-disabled/`) | REST/GraphQL |
 | `code-reviewer` | Code quality |
 | `code-refactoring-specialist` | Refactoring |
 | `debug-specialist` | Debugging |
@@ -24,9 +24,9 @@ All `model: sonnet`. Apply to all 3 repos.
 | `design-review` | Visual/a11y (uses Playwright MCP) |
 | `postgres-pro` / `postgresql-expert` | PostgreSQL |
 | `websocket-architect` | WS/Django Channels |
-| `multi-agent-orchestrator` | Team coordination |
+| `multi-agent-orchestrator` (disabled 2026-10-07, in `~/.claude/agents-disabled/`) | Team coordination |
 | `business-analyst-expert` | BA/requirements |
-| `context-manager` | State/memory (tools: Read, Write only — redis/ES not available) |
+| `context-manager` (disabled 2026-10-07, in `~/.claude/agents-disabled/`) | State/memory (tools: Read, Write only — redis/ES not available) |
 
 ## FE Project Agents (`smartenplus-frontend/.claude/agents/`)
 

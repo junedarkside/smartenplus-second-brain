@@ -1,5 +1,23 @@
 # Session History
 
+## Session #471 (2026-10-07) — full handoff block (moved from master-state)
+
+**Updated:** 2026-10-07 (session #471)
+
+**Achieved (#471) — Station translation bot + AD human review + English description edit: built, tested, merged to develop in BE/FE/AD (pushed, NOT on main).**
+
+1. **BE `develop 0e85b43`** (231 stations tests): bot endpoint `POST /admin-dashboard-stations/station-translations/` is now an upsert on (station, language) (201/200), PATCH, 409 on an approved row, `en` rejected, bleach-cleaned HTML, `batch_id`. Review API `…/station-translation-review/`: list pending bot drafts, `approve` (version-checked `{items:[{id,updated_at}]}`), `reject` (deletes drafts; rows locked in a transaction, one cache flush, audit log), `{id}/revert` (approved→draft), `{id}/mark-current`, `summary` (badge). Needs-update tracking: `StationTranslation.source_hash` (migration **0049**, stamps existing rows). Staff can edit English `desciption` via the dashboard write serializer. `?include=translations` adds per-language text/status/`needs_update` to the station list (opt-in, no change for public readers).
+2. **FE `develop 234cbc73`**: English station description is now cleaned like the translated one (`StationInformation.js`; it was rendered raw).
+3. **AD `develop b2de308`**: Translation Review page + sidebar badge (approve/reject, confirms, language chip, length cue), Languages column + Translations dialog (send back to draft with confirm, mark as up to date, "Needs update"), Description field in the station dialog (tiptap + new Link extension `@tiptap/extension-link@2.3.2`, change detection against the editor-normalized original), rename warning.
+4. Agents reviewed every plan and the built code against project rules (BE code-reviewer, AD react-specialist, 2 UX reviewers); their fixes are in. Live-tested over HTTP on dev data; test bot account + test rows deleted; merged local branches deleted.
+
+**Resume point (EXACT):**
+1. **Deploy station bot work in order BE → FE → AD.** BE needs `python manage.py migrate stations` (0049) — without it the station list endpoint errors. Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin), give the bot builder the requirements (see Section 2 `STATION-BOT-NOTE`).
+2. **Check prod env has `JWT_SIGNING_KEY`** (settings.py:447 falls back to the public default `'SMARTENPLUS'`; forged tokens would bypass the approval step). Fix branch `fix/jwt-signing-key-required` if missing.
+3. (From #470, still open) Deploy FE develop → main + clear `smartenplus_next_cache` Docker volume; live verify `/th/trips/hatyai/koh-lipe` (FAQPage JSON-LD, `/th/` in `Service/@id` + breadcrumbs, `og:type=website`, meta description `Van, Speedboat`).
+4. Untracked files to decide: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py`.
+
+
 ## Session #470 (2026-10-07) — full handoff block (moved from master-state)
 
 **Updated:** 2026-10-07 (session #470)
