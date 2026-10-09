@@ -1,5 +1,22 @@
 # Session History
 
+## Session #472 (2026-10-08) — full handoff block (moved from master-state)
+
+**Updated:** 2026-10-08 (session #472)
+
+**Achieved this session (#472):**
+- AD: language chip opens that language in the translations dialog (accordion, sticky English block, "Edit English" button); chip label is the code only. Merged to AD `develop 5f58c72`, pushed.
+- BE: `stations/STATION_TRANSLATION_BOT.md` now explains how the bot finds what needs translating (`?include=translations` + skip/translate table + caveats). BE `develop 17a5fb1`, pushed. Same section added to the bot artifact (claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc, v2). `STATION-BOT-NOTE` closed.
+- Pruned merged local branches: AD 4, BE 37. Remote branches left (FE ~57, BE ~20, AD 2 merged, waiting for the user's go).
+- Claude Code usage setup: status line shows context + cost, `settings-claude.json` permissions match `settings.json`, 3 unused agents moved to `agents-disabled/`.
+- Found that Haiku 5.5 (`claude-haiku-5-5`) exists per the docs; agents left as they are.
+
+**Resume point (EXACT):**
+1. **Check prod env has `JWT_SIGNING_KEY`** (fix branch `fix/jwt-signing-key-required` if missing).
+2. **Deploy station bot work BE → FE → AD** (BE `migrate stations` → 0049). Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin); give the bot builder the artifact link above.
+3. Decide: gate `?include=translations` behind auth (`STATION-BOT-DRAFTS-PUBLIC`).
+4. Optional: delete merged remote branches; `npm run build` in AD with the dev server stopped; uncommitted `.claude/*` changes in BE/FE/AD.
+
 ## Session #471 (2026-10-07) — full handoff block (moved from master-state)
 
 **Updated:** 2026-10-07 (session #471)

@@ -2,6 +2,8 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+- **2026-10-09 (#473) GSC-AGGREGATERATING** — GSC warning "Missing field aggregateRating" (649 items, non-critical) closed as accepted, no code change. No real approved reviews behind trip detail / airport-transfer / route-list Product JSON-LD; trip detail emits rating automatically once reviews exist. Route-page fix would need BE batched rating (N+1, `products/serializers.py` 1830 lines) + cross-operator aggregation, and Google reads rating on Product not Offers. Reopen only if route-page rich results become a goal.
+
 - **2026-10-08 (#472) STATION-BOT-NOTE** — Bot contract written: BE `stations/STATION_TRANSLATION_BOT.md` (`17a5fb1`) + artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc (v2), incl. how to find what needs translating via `?include=translations`.
 
 - **2026-10-01 (#441) RELEASE-A** — Thai batch shipped by the user (BE `c53be49`, FE `342f4c44`), verified live read-only by Claude: site/API 200, EN unchanged, `/th` Thai, robots/sitemap still hide `/th`, kill-switch flag present. Not verified: BE migrate log, kill-switch toggle, prod checkout.

@@ -1,3 +1,5 @@
+## [2026-10-09] session-end #473 | GSC "Missing aggregateRating" (649 items) investigated FE+BE vs project rules — closed as accepted, no code change (no real reviews; route-page fix needs BE batching + red-zone file)
+
 ## [2026-10-08] session-end #472 | AD language-chip dialog UX merged (5f58c72); bot doc gained 'what needs translating' (BE 17a5fb1, artifact v2); pruned 41 local branches; STATION-BOT-NOTE closed, STATION-BOT-DRAFTS-PUBLIC opened
 
 ## [2026-10-07] session-end #471 | Station translation bot + AD review (approve/reject/send back/mark current) + English description edit merged to develop BE 0e85b43 / FE 234cbc73 / AD b2de308 — deploy BE→FE→AD, migrate 0049, check JWT_SIGNING_KEY
