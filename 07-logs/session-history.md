@@ -1,5 +1,20 @@
 # Session History
 
+## Session #473 (2026-10-09) — full handoff block (moved from master-state)
+
+**Updated:** 2026-10-09 (session #473)
+
+**Achieved this session (#473):**
+- GSC "Missing field aggregateRating" (649 items, non-critical, first seen 2026-06-02) investigated across FE + BE against project rules. **Closed as accepted, no code change.** Cause: Product JSON-LD on `/trips/detail/*`, `/airport-transfer/*`, `/trips/{from}/{to}` has no real approved reviews to mark up (trip detail `helpers/seo/tripDetailSEOUtils.js:73` already emits it when `reviews.length > 0`). Route page lists one Offer per operator, so GSC counts each as an item (inflates to 649).
+- Why not fixed: BE `AvialableContractSerializer` (`products/serializers.py:1207`) has no rating fields and `get_avaliable_routes` (`:1376`) has no batching (N+1 per route page); file is 1830 lines (red); Google reads aggregateRating on Product not nested Offers; faking/defaulting rating = spam policy.
+- No commits, no deploys this session.
+
+**Resume point (EXACT):**
+1. **Check prod env has `JWT_SIGNING_KEY`** (fix branch `fix/jwt-signing-key-required` if missing).
+2. **Deploy station bot work BE → FE → AD** (BE `migrate stations` → 0049). Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin); give the bot builder the artifact link above.
+3. Decide: gate `?include=translations` behind auth (`STATION-BOT-DRAFTS-PUBLIC`).
+4. Optional: delete merged remote branches; `npm run build` in AD with the dev server stopped; uncommitted `.claude/*` changes in BE/FE/AD.
+
 ## Session #472 (2026-10-08) — full handoff block (moved from master-state)
 
 **Updated:** 2026-10-08 (session #472)

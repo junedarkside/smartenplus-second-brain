@@ -1,3 +1,5 @@
+## [2026-10-09] session-end #474 | GSC not-indexed triage: live `/server-sitemap.xml` 500 (undeclared var in routes sitemap, ~24 days) + `/locations/<bad-slug>` placeholder pages fixed, FE develop e403db17 pushed, NOT deployed; FAQ duplicate cause pending GSC URL Inspection
+
 ## [2026-10-09] session-end #473 | GSC "Missing aggregateRating" (649 items) investigated FE+BE vs project rules — closed as accepted, no code change (no real reviews; route-page fix needs BE batching + red-zone file)
 
 ## [2026-10-08] session-end #472 | AD language-chip dialog UX merged (5f58c72); bot doc gained 'what needs translating' (BE 17a5fb1, artifact v2); pruned 41 local branches; STATION-BOT-NOTE closed, STATION-BOT-DRAFTS-PUBLIC opened

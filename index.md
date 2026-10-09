@@ -616,6 +616,7 @@ Global navigation catalog. Updated on every ingest.
 - [[tiered-empty-page-noindex-strategy]] — 3-tier: notFound:300 / noindex:3600 / fully indexed
 - [[never-notfound-in-catch-block]] — ISR catch must never return `{notFound: true}`; serves stale props
 - [[sitemap-filter-by-inventory-or-recency]] — pre-flight filter: `available_routes_count>0 || updated_at>365d`
+- [[sitemap-all-or-nothing-promise-all]] — one throwing generator in `Promise.all` 500s whole `/server-sitemap.xml` for weeks; API had no `updated_at`; test with real payload; curl status after every sitemap change
 - [[wordpress-faqpage-deprecation-note]] — `FAQPage` schema deprecated Aug 2023; use `<details>/<summary>` only
 - [[gtm-purchase-item-category-attribute]] — `tripItems[].item_category: contract.service_category` unlocks revenue-by-category GA4
 - [[analytics-currency-dataLayer-hardcode]] — **BUG 2026-09-23 · FIXED (2 rounds).** GTM `purchase`/`add_to_cart`/`begin_checkout` events hardcoded THB or had no currency fallback, corrupting revenue currency for non-THB viewers. Fixed `996803eb`. Same-day addendum: fixing `begin_checkout`'s currency label alone left its `value`/`price` unconverted, making the event self-contradictory and worse than before — fixed `9055a9bd` after catching the first proposed fix referenced nonexistent API fields. Distinct surface from `[[currency-context-price-rendering-rule]]` (display + JSON-LD).

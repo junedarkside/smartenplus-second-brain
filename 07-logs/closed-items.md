@@ -2,6 +2,8 @@
 
 Archived from master-state.md Section 2. Audit trail only.
 
+- **2026-10-09 (#474) SITEMAP-500 + LOCATION-PLACEHOLDER** — FE `develop e403db17` (not yet on `main`): `/server-sitemap.xml` 500 fixed (`59e2bc27`, undeclared `currentDateForNewRoutes`, API has no `updated_at`) and unknown `/locations/<slug>` now 404 (`c3757502`). Closes when deployed and sitemap verified 200 (Resume point 1).
+
 - **2026-10-09 (#473) GSC-AGGREGATERATING** — GSC warning "Missing field aggregateRating" (649 items, non-critical) closed as accepted, no code change. No real approved reviews behind trip detail / airport-transfer / route-list Product JSON-LD; trip detail emits rating automatically once reviews exist. Route-page fix would need BE batched rating (N+1, `products/serializers.py` 1830 lines) + cross-operator aggregation, and Google reads rating on Product not Offers. Reopen only if route-page rich results become a goal.
 
 - **2026-10-08 (#472) STATION-BOT-NOTE** — Bot contract written: BE `stations/STATION_TRANSLATION_BOT.md` (`17a5fb1`) + artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc (v2), incl. how to find what needs translating via `?include=translations`.

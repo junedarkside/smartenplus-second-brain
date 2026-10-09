@@ -15,23 +15,29 @@
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-09 (session #473)
+**Updated:** 2026-10-09 (session #474)
 
-**Achieved this session (#473):**
-- GSC "Missing field aggregateRating" (649 items, non-critical, first seen 2026-06-02) investigated across FE + BE against project rules. **Closed as accepted, no code change.** Cause: Product JSON-LD on `/trips/detail/*`, `/airport-transfer/*`, `/trips/{from}/{to}` has no real approved reviews to mark up (trip detail `helpers/seo/tripDetailSEOUtils.js:73` already emits it when `reviews.length > 0`). Route page lists one Offer per operator, so GSC counts each as an item (inflates to 649).
-- Why not fixed: BE `AvialableContractSerializer` (`products/serializers.py:1207`) has no rating fields and `get_avaliable_routes` (`:1376`) has no batching (N+1 per route page); file is 1830 lines (red); Google reads aggregateRating on Product not nested Offers; faking/defaulting rating = spam policy.
-- No commits, no deploys this session.
+**Achieved this session (#474):**
+- GSC "Why pages aren't indexed" triaged (~15.5k URLs). Found + fixed 2 real causes, both FE, merged to FE `develop e403db17` and pushed (**NOT on `main`, not deployed**):
+  - **`/server-sitemap.xml` was HTTP 500 on prod** (verified live, also as Googlebot). `lib/sitemap/routes.js:49` used undeclared `currentDateForNewRoutes`; routes API sends no `updated_at` → ReferenceError → whole sitemap 500. Broken since my refactor `a918f290` (2026-09-15) ≈ 24 days. Fix `59e2bc27`: omit `<lastmod>` when missing. Real prod payload (352 routes) → 705 URLs. Test `__tests__/lib/sitemap/routes.test.js`.
+  - **`/locations/<unknown-slug>` served indexable "Selected Location" placeholder** (API returns 200 + `location_name: null`; page only handled `undefined`) → duplicate-canonical cluster. Fix `c3757502`: `notFound` when name null AND no results. 0 of 60 real sitemap locations affected. Test `__tests__/pages/locationSlugGetServerSideProps.test.js`.
+- Buckets judged OK/by design: noindex 4,066 (empty routes + private pages; don't Validate), redirects 533, crawled-not-indexed 52,400 → 2,125.
+- Not verified: `npx next build` (dev server running, its `.next` has missing `@mui` chunk); local `/server-sitemap.xml` e2e.
 
 **Resume point (EXACT):**
-1. **Check prod env has `JWT_SIGNING_KEY`** (fix branch `fix/jwt-signing-key-required` if missing).
-2. **Deploy station bot work BE → FE → AD** (BE `migrate stations` → 0049). Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin); give the bot builder the artifact link above.
-3. Decide: gate `?include=translations` behind auth (`STATION-BOT-DRAFTS-PUBLIC`).
-4. Optional: delete merged remote branches; `npm run build` in AD with the dev server stopped; uncommitted `.claude/*` changes in BE/FE/AD.
+1. **Deploy FE `develop` → `main`** (clear `smartenplus_next_cache` volume), then `curl https://www.smartenplus.co.th/server-sitemap.xml` = 200 with >1000 `<url>`; resubmit sitemap in GSC; bad location slug → 404. Then Validate 404/duplicate buckets after ~1 week.
+2. **Check prod env has `JWT_SIGNING_KEY`** (fix branch `fix/jwt-signing-key-required` if missing).
+3. **Deploy station bot work BE → FE → AD** (BE `migrate stations` → 0049). Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin).
+4. User: GSC URL Inspection on 2 `/help/faqs/*` URLs → send "Google-selected canonical" (`GSC-FAQ-DUPLICATE`).
 
 ---
 
 ## Section 2 — Loose Ends (Open)
 
+> **`GSC-FAQ-DUPLICATE` (#474) — OPEN, needs the user.** GSC "Duplicate, Google chose different canonical" 4,679 (first seen 2023-10-21). Samples `/help/faqs/*` live: 200, self-canonical, `index,follow`; WP origin `blog.smartenplus.co.th/<slug>` is `noindex,nofollow`; `/help/<slug>` + `/blog/<slug>` 404; trailing slash 308. Title double-brand ("… - SmartEnPlus | SmartEnPlus"). Cause unknown from outside — need GSC URL Inspection "Google-selected canonical" on 2–3 URLs before any change. `/locations/*` part of the cluster fixed in #474. Expect alternate/duplicate counts to rise as `/th` (indexable since `411b76ad`, 2026-10-07) gets crawled.
+>
+> **`SITEMAP-FAILSOFT` (#474, low) — open, deferred.** `pages/server-sitemap.xml/index.js` uses `Promise.all` over 9 generators: one throwing generator 500s the whole sitemap (that is how #474 F1 hid for 24 days). Consider `Promise.allSettled` + per-section counts/alert (also vault P1-8) and a monitor on `/server-sitemap.xml` status. Also: `tripsIndexLastmod` in `lib/sitemap/routes.js` reads `updated_at` the API never sends (falls back to "now").
+>
 > **`STATION-BOT-DEPLOY` (#471) — OPEN, needs the user.** BE `develop 17a5fb1` (migration `stations/0049_station_translation_source_hash` adds `source_hash` + stamps existing translations), FE `develop 234cbc73`, AD `develop 5f58c72` (new dep `@tiptap/extension-link@2.3.2` → `npm ci`/install on deploy). Order BE → FE (English sanitize live before staff can publish HTML) → AD. Bot account: `is_station_info_agent=True`, never `is_staff`/`is_admin` (else it could approve its own drafts). Endpoints: login `POST /api/token/`; write `POST/PATCH /admin-dashboard-stations/station-translations/` (200/hour, scope `station_info_agent`); review API `/admin-dashboard-stations/station-translation-review/` (staff only). Local dev DB already migrated.
 >
 > **`JWT-SIGNING-KEY-DEFAULT` (#471, security) — OPEN, needs the user to check prod.** `Smartenplus/settings.py:447` `config('JWT_SIGNING_KEY', default='SMARTENPLUS')`; the key is in no `.env`/compose file locally. If prod lacks it, anyone can forge JWTs (admin, bot). Fix: set a long random value in prod (logs everyone out once) and remove the default so startup fails (like `SECRET_KEY`); branch `fix/jwt-signing-key-required`. Also noted, lower: `/api/token/` has only the global anon throttle (500/h/IP), refresh tokens not blacklisted after rotation (`BLACKLIST_AFTER_ROTATION False`).
