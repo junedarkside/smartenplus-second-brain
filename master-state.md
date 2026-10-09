@@ -15,25 +15,38 @@
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-09 (session #474)
+**Updated:** 2026-10-09 (session #476)
 
-**Achieved this session (#474):**
-- GSC "Why pages aren't indexed" triaged (~15.5k URLs). Found + fixed 2 real causes, both FE, merged to FE `develop e403db17` and pushed (**NOT on `main`, not deployed**):
-  - **`/server-sitemap.xml` was HTTP 500 on prod** (verified live, also as Googlebot). `lib/sitemap/routes.js:49` used undeclared `currentDateForNewRoutes`; routes API sends no `updated_at` → ReferenceError → whole sitemap 500. Broken since my refactor `a918f290` (2026-09-15) ≈ 24 days. Fix `59e2bc27`: omit `<lastmod>` when missing. Real prod payload (352 routes) → 705 URLs. Test `__tests__/lib/sitemap/routes.test.js`.
-  - **`/locations/<unknown-slug>` served indexable "Selected Location" placeholder** (API returns 200 + `location_name: null`; page only handled `undefined`) → duplicate-canonical cluster. Fix `c3757502`: `notFound` when name null AND no results. 0 of 60 real sitemap locations affected. Test `__tests__/pages/locationSlugGetServerSideProps.test.js`.
-- Buckets judged OK/by design: noindex 4,066 (empty routes + private pages; don't Validate), redirects 533, crawled-not-indexed 52,400 → 2,125.
-- Not verified: `npx next build` (dev server running, its `.next` has missing `@mui` chunk); local `/server-sitemap.xml` e2e.
+**Achieved this session (#476):**
+- AD first page timeout (prod, after the 10-07/08 release): code-side fixes merged to `develop`, all pushed. BE `5227bd8` `perf/booking-summary-queries` (AD first-page `booking-summary` 1186 -> 6 queries local, JSON byte-identical on 6 URL variants, new `bookings/test_admin_booking_summary_queries.py` flat at 1/5/20 rows; full suite failures = clean-develop baseline 6F + 87E). FE `8b02a812` + AD `db2e849` `perf/api-trailing-slash` (about a dozen BE calls (FE + AD) had no trailing slash -> APPEND_SLASH 301 -> 2 requests each; ISR product-detail / routes-home / stationsinfo were hot; FE jest failures = develop baseline, AD `next build` ok). Also merged earlier: AD `eb520bf`, BE `c3ea619`, BE `f2fa237`.
+- User deployed BE (`f2fa237`, `c3ea619`, `5227bd8`). AD `eb520bf`/`db2e849` and FE `8b02a812` NOT deployed yet.
+- **New evidence (user's CloudWatch screenshot): EC2 CPU credit balance 144 -> 0 since ~10-07 night, CPU ~5% -> ~12% after the release.** Fits the drain math (usage ~9.6 credits/h vs earn ~6/h -> ~40 h). Likely the real cause of "slow": micro box throttled to baseline. Exact type (t2/t3/t4g) + credit mode (Standard/Unlimited) + which box NOT confirmed. Station bot is NOT running (user), ruled out as a cause.
+- Thai explainer Artifact (private): https://claude.ai/artifact/Xa9NjXkoiCsL8KSDQJ9yFS
 
 **Resume point (EXACT):**
-1. **Deploy FE `develop` → `main`** (clear `smartenplus_next_cache` volume), then `curl https://www.smartenplus.co.th/server-sitemap.xml` = 200 with >1000 `<url>`; resubmit sitemap in GSC; bad location slug → 404. Then Validate 404/duplicate buckets after ~1 week.
-2. **Check prod env has `JWT_SIGNING_KEY`** (fix branch `fix/jwt-signing-key-required` if missing).
-3. **Deploy station bot work BE → FE → AD** (BE `migrate stations` → 0049). Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin).
-4. User: GSC URL Inspection on 2 `/help/faqs/*` URLs → send "Google-selected canonical" (`GSC-FAQ-DUPLICATE`).
+1. User: deploy AD `db2e849`, then FE `8b02a812`.
+2. User: send `docker ps` + `docker stats --no-stream` from the BE box (is `celery-beat` restarting? which container eats CPU), EC2 instance type + credit mode; decide Unlimited credits / upsize (Claude never touches prod).
+3. Re-measure ~1 h after deploy: CloudWatch CPU utilization (target ~5%) + credit balance slope; AD first page; gunicorn `WORKER TIMEOUT` count.
+4. On user go: `perf/ad-trips-queries` (~320 queries at page size 50), then `feat/booking-dashboard-summary` (+AD PR; stops loading all 679 bookings).
 
 ---
 
 ## Section 2 — Loose Ends (Open)
 
+> **`AD-FIRST-PAGE-TIMEOUT` (2026-10-09) - OPEN, needs the user + prod access. UPDATE #476: likeliest cause now = EC2 CPU credits exhausted (CloudWatch: balance 144 -> 0, CPU ~5% -> ~12% since the release); station bot is NOT running. Merged to develop: AD `eb520bf`, `db2e849`; BE `c3ea619`, `f2fa237`, `5227bd8`; FE `8b02a812`. Deployed by user: BE only. Remaining N+1: trips (~320 queries, `perf/ad-trips-queries`), dashboard bookings (`feat/booking-dashboard-summary`), orders/tickets/contracts/locations/routes.** AD first page times out; no prod timings yet (nginx has no `$request_time`). Step 1 = deploy AD + FE, send `docker ps`/`docker stats`, instance type + credit mode; relief options (user only): Unlimited credits, upsize, pause load. Details: `03-knowledge/ad-first-page-timeout-investigation.md`.
+>
+> **`CPU-CREDIT-EXHAUSTED` (#476) - OPEN, needs the user.** CPUCreditBalance hit 0 (graph ends 2026-10-09 17:25). At 0 a standard burstable CPU is throttled to ~10%/vCPU; earn ~6/h, so recovery needs load < baseline (~5% -> ~7 h to 20 credits, ~2 days to full). Add CloudWatch alarm CPUCreditBalance < 30. See `prod-capacity-celery-audit`.
+>
+> **`NGINX-NO-REQUEST-TIME` (#476, low)** - `nginx.conf` has no `log_format` with `$request_time`/`$upstream_response_time`, so prod logs cannot show slow requests. Also verify `celery-beat` is not in a restart loop (log showed "System check / Waiting for database").
+>
+> **`TEST-TELEGRAM-TOKEN-LEAK` (#476, security)** - BE tests call the real Telegram API and the logs print the bot token: rotate the token, stub the sender in tests. Also `tests/error_handling/test_tc022_webhook_idempotency.py:447` IndentationError; `AdminBookingSummaryViewSet` is unauthenticated (left untouched on purpose).
+>
+> **`TRIPS-ROUTE-DESC-DEPLOY` (#475) - OPEN, needs the user.** BE `develop f2fa237` removes the station-description N+1 in `RouteSerializer` (142 -> 29 queries in tests). Not deployed; real prod gain unmeasured. After deploy: one timed curl of Koh Lipe `/trips` + `took Ns` log line. Rule learned: a red `test_trips_perf` on `develop` is a signal - new serializer fields must update goldens + `BOUNDS` in the same commit.
+>
+> **`TRIPS-PERF-FOLLOWUPS` (#475, conditional)** - only if prod is still slow after the fix: A cache serialized `/trips` (short TTL; price staleness decision), B slim list serializer opt-in (~75% of 672 KB is detail data; audit TripDetail3/TripDetailContent/ExtraItems/BookingDetail first), C FE `initialData` from ISR props in `useTripData`, D `/stationsinfo/{slug}/` trailing slash, E uWSGI worker count. Details in `03-knowledge/destination-trips-slow-root-cause.md`.
+>
+> **`BE-TEST-SUITE-STALE` (#475, tech debt)** - `python manage.py test` has ~93 failures on clean `develop` (carts.test_checkout_persistence 37, tests.webhooks.test_tc042 11, carts.test_infofields_data_loss 7, ... ): `create_user()` now needs first_name/last_name/email, `orders_order` check `order_contact_info_required_after_cutoff`, `create_contract(advance_hour)` removed, 3 files with IndentationError (`unittest.loader`). `--parallel` breaks payment concurrency tests (run serially, ~15 min). `flake8` not installed in the BE venv. Nobody notices regressions while the suite is red.
+>
 > **`GSC-FAQ-DUPLICATE` (#474) — OPEN, needs the user.** GSC "Duplicate, Google chose different canonical" 4,679 (first seen 2023-10-21). Samples `/help/faqs/*` live: 200, self-canonical, `index,follow`; WP origin `blog.smartenplus.co.th/<slug>` is `noindex,nofollow`; `/help/<slug>` + `/blog/<slug>` 404; trailing slash 308. Title double-brand ("… - SmartEnPlus | SmartEnPlus"). Cause unknown from outside — need GSC URL Inspection "Google-selected canonical" on 2–3 URLs before any change. `/locations/*` part of the cluster fixed in #474. Expect alternate/duplicate counts to rise as `/th` (indexable since `411b76ad`, 2026-10-07) gets crawled.
 >
 > **`SITEMAP-FAILSOFT` (#474, low) — open, deferred.** `pages/server-sitemap.xml/index.js` uses `Promise.all` over 9 generators: one throwing generator 500s the whole sitemap (that is how #474 F1 hid for 24 days). Consider `Promise.allSettled` + per-section counts/alert (also vault P1-8) and a monitor on `/server-sitemap.xml` status. Also: `tripsIndexLastmod` in `lib/sitemap/routes.js` reads `updated_at` the API never sends (falls back to "now").

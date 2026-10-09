@@ -1,3 +1,7 @@
+## [2026-10-09] session-end #476 | AD first-page timeout: BE booking-summary N+1 fixed (5227bd8, 1186 -> 6 queries) + FE/AD trailing-slash fix (8b02a812 / db2e849) merged to develop; user deployed BE; CloudWatch shows CPU credits 144 -> 0 since release = likeliest cause (micro box throttled); station bot not running; nothing measured on prod yet
+
+## [2026-10-09] session-end #475 | Destination trips slow: real cause = RouteSerializer station-description N+1 (142 queries, from f0d3a04), fixed + merged to BE develop f2fa237 (142 -> 29 queries), NOT deployed/measured; search rewrite dropped (search ~36 ms); BE suite has ~93 pre-existing failures; vault note rewritten
+
 ## [2026-10-09] session-end #474 | GSC not-indexed triage: live `/server-sitemap.xml` 500 (undeclared var in routes sitemap, ~24 days) + `/locations/<bad-slug>` placeholder pages fixed, FE develop e403db17 pushed, NOT deployed; FAQ duplicate cause pending GSC URL Inspection
 
 ## [2026-10-09] session-end #473 | GSC "Missing aggregateRating" (649 items) investigated FE+BE vs project rules — closed as accepted, no code change (no real reviews; route-page fix needs BE batching + red-zone file)

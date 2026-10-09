@@ -1,5 +1,42 @@
 # Session History
 
+## Session #475 (2026-10-09) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-09 (session #475)
+
+**Achieved this session (#475):**
+- Investigated slow `/destinations/koh-lipe-pattaya-beach` contract list (prod `/trips` 19-33 s, 672 KB). Step-0 baseline on clean BE `develop` showed `products.test_trips_perf` already red: `/trips` = **142 queries (bound 30)**, 114 of them one `stations_stationtranslation` lookup. Root cause = `RouteSerializer._get_station_desc` querying per description field per route (commits `f0d3a04`/`d54a5c9`, 2026-10-07). The trip search was only 2 queries/~36 ms, so the planned `fetch_trips` two-step rewrite was **dropped**.
+- Fix merged to **BE `develop` `f2fa237`** (commit `6d2a7d9`, pushed, **NOT deployed, prod effect NOT measured**): `load_station_descriptions` (1 query) + `RouteDescriptionPrefetchListSerializer`; `/trips` 142 -> 29 queries; goldens refreshed (+4 keys only); new `products/test_station_description.py` (equivalence vs original logic). All `products` tests green.
+- Full BE suite run serially: 1330 tests, 93 failures/errors, none in products/stations; sampled modules fail identically on clean `develop` (stale fixtures). Parallel mode breaks payment concurrency tests.
+- Vault: `03-knowledge/destination-trips-slow-root-cause.md` rewritten (root cause, fix, lessons), `index.md` + `log.md` updated.
+
+**Resume point (EXACT):**
+1. **Deploy BE `develop` (`f2fa237`)**, then ONE timed `curl "https://api.smartenplus.co.th/api/v1/trips/All Destinations/Koh Lipe Pattaya Beach/"` (no loops - workers saturated earlier) + read the `trips ... took Ns` log line; record the real number in `destination-trips-slow-root-cause`. If still slow -> `TRIPS-PERF-FOLLOWUPS`.
+2. **Deploy FE `develop` -> `main`** (clear `smartenplus_next_cache` volume), verify `/server-sitemap.xml` 200 with >1000 `<url>`; resubmit sitemap in GSC (from #474).
+3. **Check prod env has `JWT_SIGNING_KEY`**; deploy station bot work BE -> FE -> AD (BE `migrate stations` -> 0049).
+4. User: GSC URL Inspection on 2 `/help/faqs/*` URLs (`GSC-FAQ-DUPLICATE`).
+
+---
+
+## Session #474 (2026-10-09) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-09 (session #474)
+
+**Achieved this session (#474):**
+- GSC "Why pages aren't indexed" triaged (~15.5k URLs). Found + fixed 2 real causes, both FE, merged to FE `develop e403db17` and pushed (**NOT on `main`, not deployed**):
+  - **`/server-sitemap.xml` was HTTP 500 on prod** (verified live, also as Googlebot). `lib/sitemap/routes.js:49` used undeclared `currentDateForNewRoutes`; routes API sends no `updated_at` → ReferenceError → whole sitemap 500. Broken since my refactor `a918f290` (2026-09-15) ≈ 24 days. Fix `59e2bc27`: omit `<lastmod>` when missing. Real prod payload (352 routes) → 705 URLs. Test `__tests__/lib/sitemap/routes.test.js`.
+  - **`/locations/<unknown-slug>` served indexable "Selected Location" placeholder** (API returns 200 + `location_name: null`; page only handled `undefined`) → duplicate-canonical cluster. Fix `c3757502`: `notFound` when name null AND no results. 0 of 60 real sitemap locations affected. Test `__tests__/pages/locationSlugGetServerSideProps.test.js`.
+- Buckets judged OK/by design: noindex 4,066 (empty routes + private pages; don't Validate), redirects 533, crawled-not-indexed 52,400 → 2,125.
+- Not verified: `npx next build` (dev server running, its `.next` has missing `@mui` chunk); local `/server-sitemap.xml` e2e.
+
+**Resume point (EXACT):**
+1. **Deploy FE `develop` → `main`** (clear `smartenplus_next_cache` volume), then `curl https://www.smartenplus.co.th/server-sitemap.xml` = 200 with >1000 `<url>`; resubmit sitemap in GSC; bad location slug → 404. Then Validate 404/duplicate buckets after ~1 week.
+2. **Check prod env has `JWT_SIGNING_KEY`** (fix branch `fix/jwt-signing-key-required` if missing).
+3. **Deploy station bot work BE → FE → AD** (BE `migrate stations` → 0049). Create the bot account by hand (`is_station_info_agent=True`, NOT staff/admin).
+4. User: GSC URL Inspection on 2 `/help/faqs/*` URLs → send "Google-selected canonical" (`GSC-FAQ-DUPLICATE`).
+
+---
+
 ## Session #473 (2026-10-09) — full handoff block (moved from master-state)
 
 **Updated:** 2026-10-09 (session #473)
