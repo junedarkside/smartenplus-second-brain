@@ -1,3 +1,5 @@
+## [2026-10-10] session-end #479 | Destination-page BE perf merged to BE develop 8752c1b: fare-calendar 2774 -> 3 queries, 5-min Redis response cache for trips/tripfilter/fare-calendar with version-token invalidation, QueryLog via Celery; FE ISR seeding dropped (1h-stale availability, tiny gain); NOT deployed, prod unmeasured
+
 ## [2026-10-10] session-end #478 | FE trailing-slash change (develop 8b02a812) verified safe to ship: BE resolver + local UI flow (login, cart create/update/delete, checkout passengers family-and-friends) + prod stationsinfo slash 200; Jest failures identical on main/develop; user merges develop->main + deploys manually (clear smartenplus_next_cache); payment not tested
 
 ## [2026-10-09] session-end #477 | Celery Beat OOM (BE prod report) reviewed vs code + project rules; beat mem_limit 96m -> 160m merged to BE develop 8dca6ba (docker-compose-rds.yml:97), NOT deployed, 160m unmeasured; wait_for_db no-op not the cause, not fixed yet

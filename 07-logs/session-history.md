@@ -1,5 +1,22 @@
 # Session History
 
+## Session #478 (2026-10-10) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-10 (session #478)
+
+**Achieved this session (#478):**
+- Pre-merge verification of FE trailing-slash change (`develop` 2 commits ahead of `main`: `6c3366c0` + merge `8b02a812`; 9 files, 6 BE endpoints, URL strings only). Result: **safe to ship**. Proof: BE URL resolver (all 6 resolve only WITH slash); local FE+BE UI run (login, cart create 201, cart update, checkout passengers `family-and-friends/` 200, `cart-checkout-info/save/` 200, cart DELETE via logout `ProfileButton.js:84` -> cart 404 after), zero 301s, zero console errors; prod parity: `stationsinfo/hat-yai-airport/` and `koh-lipe-pattaya-beach/` 200, no-slash form 301 to slashed. Jest: 39 suites / 226 tests fail identically on `main` and `develop` (pre-existing). NOT tested: payment submit, `BlogTimelineDisplay`.
+- Not caused by the change: `recommendations/184` 503 locally, S3 vehicle images 403 locally, `sw.js` 404. Prod bare list routes `/stationsinfo/` and `/product-detail/` gave 502/timeout (nginx) during checks; slug routes fine.
+- User merges `develop` -> `main` and deploys FE manually (nothing pushed by Claude). Deploy MUST clear `smartenplus_next_cache`. Rollback: `git revert -m 1 <merge-sha>`, redeploy, clear same volume.
+- Carry from #477 (BE `8dca6ba` beat `mem_limit` 160m merged to develop, NOT deployed) is unchanged.
+
+**Resume point (EXACT):**
+1. User: after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls.
+2. User: record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `develop 8dca6ba` (`docker compose -f docker-compose-rds.yml up -d celery-beat`; rollback = revert line + same command). Add swap or bigger instance (limits total 926 of 949 MiB, no swap).
+3. 24 h watch: `docker inspect -f '{{.RestartCount}} {{.State.OOMKilled}}' <beat>`, `docker stats` (beat flat, <75% of 160m). If it dies again, measure baseline: `docker run --memory=320m ... celery -A Smartenplus beat`.
+4. (carry from #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode; re-measure CPU/credit slope ~1 h after.
+4. Optional, on go: BE `fix/wait-for-db` (`ensure_connection()`, bounded retries, `logger`, fix typo, `products/test_wait_for_db.py`) - NOT started; then `perf/ad-trips-queries`, `feat/booking-dashboard-summary`.
+
 ## Session #477 (2026-10-09) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-09 (session #477)

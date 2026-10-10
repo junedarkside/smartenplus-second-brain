@@ -15,20 +15,20 @@
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-10 (session #478)
+**Updated:** 2026-10-10 (session #479)
 
-**Achieved this session (#478):**
-- Pre-merge verification of FE trailing-slash change (`develop` 2 commits ahead of `main`: `6c3366c0` + merge `8b02a812`; 9 files, 6 BE endpoints, URL strings only). Result: **safe to ship**. Proof: BE URL resolver (all 6 resolve only WITH slash); local FE+BE UI run (login, cart create 201, cart update, checkout passengers `family-and-friends/` 200, `cart-checkout-info/save/` 200, cart DELETE via logout `ProfileButton.js:84` -> cart 404 after), zero 301s, zero console errors; prod parity: `stationsinfo/hat-yai-airport/` and `koh-lipe-pattaya-beach/` 200, no-slash form 301 to slashed. Jest: 39 suites / 226 tests fail identically on `main` and `develop` (pre-existing). NOT tested: payment submit, `BlogTimelineDisplay`.
-- Not caused by the change: `recommendations/184` 503 locally, S3 vehicle images 403 locally, `sw.js` 404. Prod bare list routes `/stationsinfo/` and `/product-detail/` gave 502/timeout (nginx) during checks; slug routes fine.
-- User merges `develop` -> `main` and deploys FE manually (nothing pushed by Claude). Deploy MUST clear `smartenplus_next_cache`. Rollback: `git revert -m 1 <merge-sha>`, redeploy, clear same volume.
-- Carry from #477 (BE `8dca6ba` beat `mem_limit` 160m merged to develop, NOT deployed) is unchanged.
+**Achieved this session (#479):**
+- BE perf for destination page `/destinations/hatyai-airport` (`trips`, `tripfilter`, `fare-calendar`), merged to BE `develop` (merge `8752c1b`, pushed). New `products/trip_cache.py` (one trip lookup, version-token invalidation, 5-min response cache keyed by params + lang + host), new `products/fare_calendar.py` (contracts loaded once, 15 days in memory), QueryLog rows written by Celery task `log_route_queries` (keeps `Route.query_count`), duplicate `validate_input` removed from `TripFilter.list`. `products/views.py` 2673 -> 2504 lines. Tests: 466 OK on branch, 113 `products` OK on `develop`.
+- Fixture numbers (20 trips/route, local): fare-calendar 2774 queries / 2.42s -> 3 / 0.056s cold, 0 / 0.002s repeat; trips 29 -> 26 cold, 0 repeat; tripfilter 5 cold, 0 repeat. Real pair Hatyai -> Koh Lipe (after-only, local): trips 0.57s -> 0.06s, tripfilter 0.13s -> 0.10s, fare-calendar 0.14s -> 0.06s. Local data smaller than prod; no before run for the real pair.
+- FE ISR-seeding step (`useTripData` + `initialTrips`) DROPPED after reading code: ISR data up to 1h old would show trips past the advance-hours cutoff (client refetch keeps it within 5 min), a `fetchedAt` guard would rarely fire, and client calls are now cheap cache hits. No FE change; empty branch deleted.
+- Not touched: `FindTripViewSet.list` discards `validate_input` return (`people=abc` returns 200, pre-existing).
 
 **Resume point (EXACT):**
-1. User: after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls.
-2. User: record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `develop 8dca6ba` (`docker compose -f docker-compose-rds.yml up -d celery-beat`; rollback = revert line + same command). Add swap or bigger instance (limits total 926 of 949 MiB, no swap).
-3. 24 h watch: `docker inspect -f '{{.RestartCount}} {{.State.OOMKilled}}' <beat>`, `docker stats` (beat flat, <75% of 160m). If it dies again, measure baseline: `docker run --memory=320m ... celery -A Smartenplus beat`.
-4. (carry from #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode; re-measure CPU/credit slope ~1 h after.
-4. Optional, on go: BE `fix/wait-for-db` (`ensure_connection()`, bounded retries, `logger`, fix typo, `products/test_wait_for_db.py`) - NOT started; then `perf/ad-trips-queries`, `feat/booking-dashboard-summary`.
+1. User: deploy BE `develop 8752c1b` (no migration; needs Redis + Celery worker for `log_route_queries`). Then curl `https://api.smartenplus.co.th/api/v1/fare-calendar/All%20Destinations/Hatyai%20Airport/?date=<today>` twice (2nd must be fast) and check the `took Ns` log line for `trips`.
+2. User: after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls (carry #478).
+3. User: record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `8dca6ba` (celery-beat `mem_limit` 160m) (carry #478/#477).
+4. (carry #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode.
+5. Optional, on go: BE `fix/wait-for-db`; `perf/ad-trips-queries`; `feat/booking-dashboard-summary`.
 
 ---
 
@@ -44,9 +44,11 @@
 >
 > **`TEST-TELEGRAM-TOKEN-LEAK` (#476, security)** - BE tests call the real Telegram API and the logs print the bot token: rotate the token, stub the sender in tests. Also `tests/error_handling/test_tc022_webhook_idempotency.py:447` IndentationError; `AdminBookingSummaryViewSet` is unauthenticated (left untouched on purpose).
 >
+> **`TRIPS-RESPONSE-CACHE-DEPLOY` (#479) - OPEN, needs the user.** BE `develop 8752c1b`: Redis response cache (5 min) for `/trips`, `/tripfilter`, `/fare-calendar` + version-token invalidation (Trip / transport Contract / Contract_RateCard save-delete) + Celery `log_route_queries`. Not deployed, prod gain unmeasured. `queryset.update` / `bulk_create` skip signals -> stale up to TTL (trip list 15 min, response 5 min). Needs Celery worker running or `Route.query_count` stops growing. Rollback = revert merge `8752c1b`.
+>
 > **`TRIPS-ROUTE-DESC-DEPLOY` (#475) - OPEN, needs the user.** BE `develop f2fa237` removes the station-description N+1 in `RouteSerializer` (142 -> 29 queries in tests). Not deployed; real prod gain unmeasured. After deploy: one timed curl of Koh Lipe `/trips` + `took Ns` log line. Rule learned: a red `test_trips_perf` on `develop` is a signal - new serializer fields must update goldens + `BOUNDS` in the same commit.
 >
-> **`TRIPS-PERF-FOLLOWUPS` (#475, conditional)** - only if prod is still slow after the fix: A cache serialized `/trips` (short TTL; price staleness decision), B slim list serializer opt-in (~75% of 672 KB is detail data; audit TripDetail3/TripDetailContent/ExtraItems/BookingDetail first), C FE `initialData` from ISR props in `useTripData`, D `/stationsinfo/{slug}/` trailing slash, E uWSGI worker count. Details in `03-knowledge/destination-trips-slow-root-cause.md`.
+> **`TRIPS-PERF-FOLLOWUPS` (#475, conditional)** - only if prod is still slow after the fix: A cache serialized `/trips` (DONE #479, 5-min TTL), B slim list serializer opt-in (~75% of 672 KB is detail data; audit TripDetail3/TripDetailContent/ExtraItems/BookingDetail first), C FE `initialData` from ISR props in `useTripData` (DROPPED #479: 1h-stale availability, tiny gain), D `/stationsinfo/{slug}/` trailing slash, E uWSGI worker count. Details in `03-knowledge/destination-trips-slow-root-cause.md`.
 >
 > **`BE-TEST-SUITE-STALE` (#475, tech debt)** - `python manage.py test` has ~93 failures on clean `develop` (carts.test_checkout_persistence 37, tests.webhooks.test_tc042 11, carts.test_infofields_data_loss 7, ... ): `create_user()` now needs first_name/last_name/email, `orders_order` check `order_contact_info_required_after_cutoff`, `create_contract(advance_hour)` removed, 3 files with IndentationError (`unittest.loader`). `--parallel` breaks payment concurrency tests (run serially, ~15 min). `flake8` not installed in the BE venv. Nobody notices regressions while the suite is red.
 >
