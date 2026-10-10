@@ -1,3 +1,7 @@
+## [2026-10-10] session-end #481 | Prod trips 429 ("Too many requests") traced to global anon throttle 500/h/IP on trip search + SSR views; BE fix on develop 482e71e (trip_search 3000/h, public_read 10000/h, 6 tests), not deployed; 3-agent review corrected SSR claim, raised XFF spoofing + nginx limit_req follow-ups
+
+## [2026-10-10] session-end #480 | FE search->trips redirect slow: prod cold route MISS 1.2-4.4 s vs HIT 0.3-0.8 s (blocking fallback + serial fetches + WP fetcher 30 s x3); FE develop 9b56315f parallel fetches, WP 8 s no-retry, FAQ-fail revalidate 30 s, spinner until router.push settles; local Chrome OK; NOT deployed, prod gain unmeasured; popular routes still MISS on prod unexplained
+
 ## [2026-10-10] session-end #479 | Destination-page BE perf merged to BE develop 8752c1b: fare-calendar 2774 -> 3 queries, 5-min Redis response cache for trips/tripfilter/fare-calendar with version-token invalidation, QueryLog via Celery; FE ISR seeding dropped (1h-stale availability, tiny gain); NOT deployed, prod unmeasured
 
 ## [2026-10-10] session-end #478 | FE trailing-slash change (develop 8b02a812) verified safe to ship: BE resolver + local UI flow (login, cart create/update/delete, checkout passengers family-and-friends) + prod stationsinfo slash 200; Jest failures identical on main/develop; user merges develop->main + deploys manually (clear smartenplus_next_cache); payment not tested

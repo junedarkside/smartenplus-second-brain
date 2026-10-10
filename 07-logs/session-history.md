@@ -1,5 +1,42 @@
 # Session History
 
+## Session #480 (2026-10-10) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-10 (session #480)
+
+**Achieved this session (#480):**
+- FE homepage SEARCH -> `/trips/[from]/[to]` sometimes stays on the homepage 1-4 s (also on prod). Cause measured on prod (read-only GETs of `/_next/data/<buildId>/en/trips/<from>/<to>.json`): cold route `x-nextjs-cache: MISS` 1.2-4.4 s vs `HIT` 0.26-0.8 s. `getStaticPaths` prebuilds ~50 routes, `fallback: 'blocking'` renders the rest while the user waits; `getStaticProps` fetched front-page, labels, route API, WP blog, WP FAQs one after another; `helpers/fetcher.js` default = 30 s x 3 attempts + 2 s/4 s delays (up to ~96 s per WP call). Local `next dev` showed no gain (local upstreams 0.1-0.7 s), so the gain is expected on prod only (unmeasured).
+- Merged to FE `develop` `9b56315f` (pushed): `pages/trips/[...slug].js` starts front-page + label + route fetches together, blog + FAQ posts fetched concurrently via `fetchWpPost` (8 s, no retry); any failed blog OR FAQ post sets `hasWordPressFailures` (revalidate 30 s, not 300 s). Search handlers (`homepagev2.js`, `SearchCover.js`, `StickySearchBar.js`) now `return router.push(path)` (dropped `router.prefetch` + 100 ms `setTimeout`); `TransportationSearch.js` keeps the SEARCHING spinner until that promise settles (was a fixed 3 s reset). Tests: 74 OK in search + pages suites; `__tests__/pages/checkout/index.integration.test.js` fails on baseline too (missing `pages/checkout/index`, unrelated).
+- Local Chrome check on `develop` (hatyai -> koh-lipe): spinner stayed ~2.5 s, then redirect at ~2.8 s. NOT tested: missing-field toast, return trip, sticky search bar.
+- FE `.claude/commands/team.md` committed + merged by the user (`8390a94c`; Claude was blocked by the auto-mode classifier). Review by an SWE subagent drove the FAQ-failure fix and the promise-based spinner design.
+- Prod still on the old FE build (build ID `nkObd0W86DpGVPQ3SUzGg` unchanged when checked).
+
+**Resume point (EXACT):**
+1. User: deploy FE `develop 8390a94c` (merge `develop` -> `main`, clear `smartenplus_next_cache`). Re-run the cold/warm loop (2 GETs per route on `/_next/data/<buildId>/en/trips/<from>/<to>.json`, compare MISS vs HIT; do NOT loop-curl prod) and click SEARCH on prod: spinner until redirect, missing-field toast, return trip.
+2. If popular routes (e.g. `bangkok/phuket`, expected prebuilt) still show MISS right after deploy: investigate prebuild (volume clear vs locale prefix vs not in top 50) BEFORE writing a post-deploy warm-up script (~10 lines in the deploy script).
+3. (carry #479) deploy BE `develop 8752c1b` (no migration; needs Redis + Celery worker for `log_route_queries`), then curl `https://api.smartenplus.co.th/api/v1/fare-calendar/All%20Destinations/Hatyai%20Airport/?date=<today>` twice (2nd fast) and check the `took Ns` log line for `trips`.
+4. (carry #478) after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls.
+5. (carry #478/#477) record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `8dca6ba` (celery-beat `mem_limit` 160m).
+6. (carry #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode.
+7. Optional, on go: BE `fix/wait-for-db`; `perf/ad-trips-queries`; `feat/booking-dashboard-summary`.
+
+## Session #479 (2026-10-10) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-10 (session #479)
+
+**Achieved this session (#479):**
+- BE perf for destination page `/destinations/hatyai-airport` (`trips`, `tripfilter`, `fare-calendar`), merged to BE `develop` (merge `8752c1b`, pushed). New `products/trip_cache.py` (one trip lookup, version-token invalidation, 5-min response cache keyed by params + lang + host), new `products/fare_calendar.py` (contracts loaded once, 15 days in memory), QueryLog rows written by Celery task `log_route_queries` (keeps `Route.query_count`), duplicate `validate_input` removed from `TripFilter.list`. `products/views.py` 2673 -> 2504 lines. Tests: 466 OK on branch, 113 `products` OK on `develop`.
+- Fixture numbers (20 trips/route, local): fare-calendar 2774 queries / 2.42s -> 3 / 0.056s cold, 0 / 0.002s repeat; trips 29 -> 26 cold, 0 repeat; tripfilter 5 cold, 0 repeat. Real pair Hatyai -> Koh Lipe (after-only, local): trips 0.57s -> 0.06s, tripfilter 0.13s -> 0.10s, fare-calendar 0.14s -> 0.06s. Local data smaller than prod; no before run for the real pair.
+- FE ISR-seeding step (`useTripData` + `initialTrips`) DROPPED after reading code: ISR data up to 1h old would show trips past the advance-hours cutoff (client refetch keeps it within 5 min), a `fetchedAt` guard would rarely fire, and client calls are now cheap cache hits. No FE change; empty branch deleted.
+- Not touched: `FindTripViewSet.list` discards `validate_input` return (`people=abc` returns 200, pre-existing).
+
+**Resume point (EXACT):**
+1. User: deploy BE `develop 8752c1b` (no migration; needs Redis + Celery worker for `log_route_queries`). Then curl `https://api.smartenplus.co.th/api/v1/fare-calendar/All%20Destinations/Hatyai%20Airport/?date=<today>` twice (2nd must be fast) and check the `took Ns` log line for `trips`.
+2. User: after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls (carry #478).
+3. User: record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `8dca6ba` (celery-beat `mem_limit` 160m) (carry #478/#477).
+4. (carry #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode.
+5. Optional, on go: BE `fix/wait-for-db`; `perf/ad-trips-queries`; `feat/booking-dashboard-summary`.
+
 ## Session #478 (2026-10-10) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-10 (session #478)

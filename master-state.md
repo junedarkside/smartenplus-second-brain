@@ -12,27 +12,29 @@
 > 3. **After release:** test the kill switch once — Django admin → CS → Feature flags → `lang_th` → untick Enabled → wait ≤60 s → `/th` redirects to English and menu shows English only → tick again.
 > 4. **Thai names for places/stations (S1):** who supplies them? Recommended: Claude drafts a sheet → native Thai reviewer corrects → import command once → staff fix in Django admin. Need: rough count of Locations/Stations on prod, reviewer name + date.
 > 5. **Still open owner decisions:** Thai brand spelling (SmartEnPlus / สมาร์ทเอ็นพลัส / LookChang), Thai legal text (terms/privacy/refund), go-live owner + date, `lookchang.com` timing, grant staff `pages_info.add_sitetext` / `change_sitetext`.
-> 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
+> 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-10 (session #479)
+**Updated:** 2026-10-10 (session #481)
 
-**Achieved this session (#479):**
-- BE perf for destination page `/destinations/hatyai-airport` (`trips`, `tripfilter`, `fare-calendar`), merged to BE `develop` (merge `8752c1b`, pushed). New `products/trip_cache.py` (one trip lookup, version-token invalidation, 5-min response cache keyed by params + lang + host), new `products/fare_calendar.py` (contracts loaded once, 15 days in memory), QueryLog rows written by Celery task `log_route_queries` (keeps `Route.query_count`), duplicate `validate_input` removed from `TripFilter.list`. `products/views.py` 2673 -> 2504 lines. Tests: 466 OK on branch, 113 `products` OK on `develop`.
-- Fixture numbers (20 trips/route, local): fare-calendar 2774 queries / 2.42s -> 3 / 0.056s cold, 0 / 0.002s repeat; trips 29 -> 26 cold, 0 repeat; tripfilter 5 cold, 0 repeat. Real pair Hatyai -> Koh Lipe (after-only, local): trips 0.57s -> 0.06s, tripfilter 0.13s -> 0.10s, fare-calendar 0.14s -> 0.06s. Local data smaller than prod; no before run for the real pair.
-- FE ISR-seeding step (`useTripData` + `initialTrips`) DROPPED after reading code: ISR data up to 1h old would show trips past the advance-hours cutoff (client refetch keeps it within 5 min), a `fetchedAt` guard would rarely fire, and client calls are now cheap cache hits. No FE change; empty branch deleted.
-- Not touched: `FindTripViewSet.list` discards `validate_input` return (`people=abc` returns 200, pre-existing).
+**Achieved this session (#481):**
+- Prod trips page (`/trips/phuket/koh-phi-phi`) showed "Too many requests. Please wait and try again." = browser RTK Query got HTTP 429 (`TripSearchResults.js:72`). Cause (code-proven, prod logs NOT seen): global DRF anon throttle 500/h per IP (`settings.py:411-416`) applies to the 4 trip search views (`FindTripViewSet`, `PaginatedFindTripViewSet`, `TripFilter`, `FareCalendarViewSet`) and to `HomeViewSet` + `LocationViewSet` (called by FE `getStaticProps` from one server IP). Throttle runs before the Redis trip cache, so cache hits still count.
+- BE fix merged to `develop` `482e71e` (branch commit `5119f17`, pushed): new `products/throttles.py` (`TripSearchThrottle` scope `trip_search` 3000/h on the 4 search views; `PublicReadThrottle` scope `public_read` 10000/h on `HomeViewSet` + `LocationViewSet`), rates in `settings.py` (x10 when DEBUG), `products/test_throttles.py` 6 tests OK. `products stations cs apis` = 541 tests, 1 fail `cs...test_awaiting_ota_update_to_resolved` (fails on clean develop too). NOT deployed.
+- 3-agent review (SWE, Django, standards) corrected the first diagnosis: a 429 on SSR gets `revalidate: 60` (not 3600; 3600 is the OK-but-empty branch); SSR exhaustion would show "Failed to fetch static data", not this message. New risks: XFF spoofing (no `NUM_PROXIES`, key = full XFF string), FE nginx `limit_req` returns 503 unless `limit_req_status 429`, `fetchRelatedRoutes`/`fetchLocationLabel` swallow 429 and cache an empty page (300 s).
+- Visual demo artifact (private): claude.ai/artifact/Vc2ArNPkAc5YAAuJG8pE3Y. FE untouched.
 
 **Resume point (EXACT):**
-1. User: deploy BE `develop 8752c1b` (no migration; needs Redis + Celery worker for `log_route_queries`). Then curl `https://api.smartenplus.co.th/api/v1/fare-calendar/All%20Destinations/Hatyai%20Airport/?date=<today>` twice (2nd must be fast) and check the `took Ns` log line for `trips`.
-2. User: after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls (carry #478).
-3. User: record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `8dca6ba` (celery-beat `mem_limit` 160m) (carry #478/#477).
-4. (carry #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode.
-5. Optional, on go: BE `fix/wait-for-db`; `perf/ad-trips-queries`; `feat/booking-dashboard-summary`.
+1. User: deploy BE `develop 482e71e` (no migration), then search `/trips/phuket/koh-phi-phi` several times on prod. If 429 persists: pull 429 logs grouped by `X-Forwarded-For` + path, check FE nginx `limit_req_status` and any CDN in front (see `TRIPS-429-THROTTLE-FOLLOWUP`).
+2. (carry #480) deploy FE `develop 8390a94c` (merge `develop` -> `main`, clear `smartenplus_next_cache`), re-run cold/warm route loop.
+3. (carry #479) deploy BE `8752c1b` path is included in the same `develop` deploy; curl fare-calendar twice (2nd fast).
+4. (carry #478) after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200.
+5. (carry #478/#477) CloudWatch baseline, then BE `8dca6ba` (celery-beat `mem_limit` 160m). (carry #476) deploy AD `db2e849`; send `docker ps` + `docker stats`.
 
 ---
 
 ## Section 2 — Loose Ends (Open)
+
+> **`TRIPS-429-THROTTLE-FOLLOWUP` (#481) - OPEN, needs the user + prod logs.** BE throttle fix on `develop` `482e71e`, not deployed, 429 source not confirmed in prod. Open: (a) XFF spoofing / set `NUM_PROXIES` only after confirming nothing but nginx sits in front; (b) FE nginx `limit_req_status` (503 vs 429); (c) FE `[...slug].js`: make `fetchRelatedRoutes`/`fetchLocationLabel` signal failure so a 429 page gets a short revalidate (extract a helper, `getStaticProps` already ~106 lines; leave the 3600 branch); (d) pre-existing failing test `cs...test_awaiting_ota_update_to_resolved`; (e) PR waiver: `products/views.py` 2504 and `stations/views.py` 1114 lines are over budget, one line added per class.
 
 > **`AD-FIRST-PAGE-TIMEOUT` (2026-10-09) - OPEN, needs the user + prod access. UPDATE #476: likeliest cause now = EC2 CPU credits exhausted (CloudWatch: balance 144 -> 0, CPU ~5% -> ~12% since the release); station bot is NOT running. Merged to develop: AD `eb520bf`, `db2e849`; BE `c3ea619`, `f2fa237`, `5227bd8`; FE `8b02a812`. Deployed by user: BE only. Remaining N+1: trips (~320 queries, `perf/ad-trips-queries`), dashboard bookings (`feat/booking-dashboard-summary`), orders/tickets/contracts/locations/routes.** AD first page times out; no prod timings yet (nginx has no `$request_time`). Step 1 = deploy AD + FE, send `docker ps`/`docker stats`, instance type + credit mode; relief options (user only): Unlimited credits, upsize, pause load. Details: `03-knowledge/ad-first-page-timeout-investigation.md`.
 >
@@ -43,6 +45,8 @@
 > **`NGINX-NO-REQUEST-TIME` (#476, low)** - `nginx.conf` has no `log_format` with `$request_time`/`$upstream_response_time`, so prod logs cannot show slow requests. celery-beat restart loop is CONFIRMED by the BE report (see `CELERY-BEAT-OOM`).
 >
 > **`TEST-TELEGRAM-TOKEN-LEAK` (#476, security)** - BE tests call the real Telegram API and the logs print the bot token: rotate the token, stub the sender in tests. Also `tests/error_handling/test_tc022_webhook_idempotency.py:447` IndentationError; `AdminBookingSummaryViewSet` is unauthenticated (left untouched on purpose).
+>
+> **`TRIPS-SEARCH-LATENCY-DEPLOY` (#480) - OPEN, needs the user.** FE `develop 9b56315f` (parallel `getStaticProps` fetches, WP 8 s/no retry, FAQ-failure revalidate 30 s, spinner until navigation settles). Not deployed; prod gain unmeasured (prod cold MISS 1.2-4.4 s before). Deploy MUST clear `smartenplus_next_cache`, so every route is cold again after each deploy. Open question: popular routes (`bangkok/phuket`) showed MISS on prod although `getStaticPaths` prebuilds ~50 - cause unknown (volume clear / locale prefix / not in top 50); check before building a post-deploy warm-up script. Not done: prefetch once from+to are chosen, global route-change progress bar. Atom: [[isr-cold-route-latency-and-wp-fetcher-retry]].
 >
 > **`TRIPS-RESPONSE-CACHE-DEPLOY` (#479) - OPEN, needs the user.** BE `develop 8752c1b`: Redis response cache (5 min) for `/trips`, `/tripfilter`, `/fare-calendar` + version-token invalidation (Trip / transport Contract / Contract_RateCard save-delete) + Celery `log_route_queries`. Not deployed, prod gain unmeasured. `queryset.update` / `bulk_create` skip signals -> stale up to TTL (trip list 15 min, response 5 min). Needs Celery worker running or `Route.query_count` stops growing. Rollback = revert merge `8752c1b`.
 >
