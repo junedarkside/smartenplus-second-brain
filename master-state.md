@@ -15,19 +15,20 @@
 > 6. Untracked files not mine: FE `.claude/commands/`, BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete).
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-09 (session #476)
+**Updated:** 2026-10-10 (session #478)
 
-**Achieved this session (#476):**
-- AD first page timeout (prod, after the 10-07/08 release): code-side fixes merged to `develop`, all pushed. BE `5227bd8` `perf/booking-summary-queries` (AD first-page `booking-summary` 1186 -> 6 queries local, JSON byte-identical on 6 URL variants, new `bookings/test_admin_booking_summary_queries.py` flat at 1/5/20 rows; full suite failures = clean-develop baseline 6F + 87E). FE `8b02a812` + AD `db2e849` `perf/api-trailing-slash` (about a dozen BE calls (FE + AD) had no trailing slash -> APPEND_SLASH 301 -> 2 requests each; ISR product-detail / routes-home / stationsinfo were hot; FE jest failures = develop baseline, AD `next build` ok). Also merged earlier: AD `eb520bf`, BE `c3ea619`, BE `f2fa237`.
-- User deployed BE (`f2fa237`, `c3ea619`, `5227bd8`). AD `eb520bf`/`db2e849` and FE `8b02a812` NOT deployed yet.
-- **New evidence (user's CloudWatch screenshot): EC2 CPU credit balance 144 -> 0 since ~10-07 night, CPU ~5% -> ~12% after the release.** Fits the drain math (usage ~9.6 credits/h vs earn ~6/h -> ~40 h). Likely the real cause of "slow": micro box throttled to baseline. Exact type (t2/t3/t4g) + credit mode (Standard/Unlimited) + which box NOT confirmed. Station bot is NOT running (user), ruled out as a cause.
-- Thai explainer Artifact (private): https://claude.ai/artifact/Xa9NjXkoiCsL8KSDQJ9yFS
+**Achieved this session (#478):**
+- Pre-merge verification of FE trailing-slash change (`develop` 2 commits ahead of `main`: `6c3366c0` + merge `8b02a812`; 9 files, 6 BE endpoints, URL strings only). Result: **safe to ship**. Proof: BE URL resolver (all 6 resolve only WITH slash); local FE+BE UI run (login, cart create 201, cart update, checkout passengers `family-and-friends/` 200, `cart-checkout-info/save/` 200, cart DELETE via logout `ProfileButton.js:84` -> cart 404 after), zero 301s, zero console errors; prod parity: `stationsinfo/hat-yai-airport/` and `koh-lipe-pattaya-beach/` 200, no-slash form 301 to slashed. Jest: 39 suites / 226 tests fail identically on `main` and `develop` (pre-existing). NOT tested: payment submit, `BlogTimelineDisplay`.
+- Not caused by the change: `recommendations/184` 503 locally, S3 vehicle images 403 locally, `sw.js` 404. Prod bare list routes `/stationsinfo/` and `/product-detail/` gave 502/timeout (nginx) during checks; slug routes fine.
+- User merges `develop` -> `main` and deploys FE manually (nothing pushed by Claude). Deploy MUST clear `smartenplus_next_cache`. Rollback: `git revert -m 1 <merge-sha>`, redeploy, clear same volume.
+- Carry from #477 (BE `8dca6ba` beat `mem_limit` 160m merged to develop, NOT deployed) is unchanged.
 
 **Resume point (EXACT):**
-1. User: deploy AD `db2e849`, then FE `8b02a812`.
-2. User: send `docker ps` + `docker stats --no-stream` from the BE box (is `celery-beat` restarting? which container eats CPU), EC2 instance type + credit mode; decide Unlimited credits / upsize (Claude never touches prod).
-3. Re-measure ~1 h after deploy: CloudWatch CPU utilization (target ~5%) + credit balance slope; AD first page; gunicorn `WORKER TIMEOUT` count.
-4. On user go: `perf/ad-trips-queries` (~320 queries at page size 50), then `feat/booking-dashboard-summary` (+AD PR; stops loading all 679 bookings).
+1. User: after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200; open a trip detail + destinations page on prod, no console errors, no 301 on the 9 changed calls.
+2. User: record CloudWatch `CPUUtilization` + `CPUCreditBalance` baseline, then deploy BE `develop 8dca6ba` (`docker compose -f docker-compose-rds.yml up -d celery-beat`; rollback = revert line + same command). Add swap or bigger instance (limits total 926 of 949 MiB, no swap).
+3. 24 h watch: `docker inspect -f '{{.RestartCount}} {{.State.OOMKilled}}' <beat>`, `docker stats` (beat flat, <75% of 160m). If it dies again, measure baseline: `docker run --memory=320m ... celery -A Smartenplus beat`.
+4. (carry from #476) deploy AD `db2e849`; send `docker ps` + `docker stats --no-stream`, EC2 type + credit mode; re-measure CPU/credit slope ~1 h after.
+4. Optional, on go: BE `fix/wait-for-db` (`ensure_connection()`, bounded retries, `logger`, fix typo, `products/test_wait_for_db.py`) - NOT started; then `perf/ad-trips-queries`, `feat/booking-dashboard-summary`.
 
 ---
 
@@ -37,7 +38,9 @@
 >
 > **`CPU-CREDIT-EXHAUSTED` (#476) - OPEN, needs the user.** CPUCreditBalance hit 0 (graph ends 2026-10-09 17:25). At 0 a standard burstable CPU is throttled to ~10%/vCPU; earn ~6/h, so recovery needs load < baseline (~5% -> ~7 h to 20 credits, ~2 days to full). Add CloudWatch alarm CPUCreditBalance < 30. See `prod-capacity-celery-audit`.
 >
-> **`NGINX-NO-REQUEST-TIME` (#476, low)** - `nginx.conf` has no `log_format` with `$request_time`/`$upstream_response_time`, so prod logs cannot show slow requests. Also verify `celery-beat` is not in a restart loop (log showed "System check / Waiting for database").
+> **`CELERY-BEAT-OOM` (#477) - OPEN, needs the user.** Fix merged to BE `develop 8dca6ba` (`docker-compose-rds.yml:97` 96m -> 160m), NOT deployed; 160m unmeasured. Deploy + 24 h watch (RestartCount, OOMKilled, `docker stats`). Host: limits total 926/949 MiB, no swap. Follow-ups (not started): `fix/wait-for-db` (no-op `connections['default']`, unbounded loop), `docker-compose.yml` / `-deploy.yml` have no beat limit, scheduler timezone unverified, worker healthcheck (`celery inspect ping` boots Django per check, 10 s timeout), alerts. BE docs/ not read by the reviewer.
+>
+> **`NGINX-NO-REQUEST-TIME` (#476, low)** - `nginx.conf` has no `log_format` with `$request_time`/`$upstream_response_time`, so prod logs cannot show slow requests. celery-beat restart loop is CONFIRMED by the BE report (see `CELERY-BEAT-OOM`).
 >
 > **`TEST-TELEGRAM-TOKEN-LEAK` (#476, security)** - BE tests call the real Telegram API and the logs print the bot token: rotate the token, stub the sender in tests. Also `tests/error_handling/test_tc022_webhook_idempotency.py:447` IndentationError; `AdminBookingSummaryViewSet` is unauthenticated (left untouched on purpose).
 >

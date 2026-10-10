@@ -1,5 +1,32 @@
 # Session History
 
+## Session #477 (2026-10-09) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-09 (session #477)
+
+**Achieved this session (#477):**
+- BE production report "Celery Beat OOM" (prod `celery-beat` killed in a loop at its 96 MiB limit) reviewed against BE code and project rules. `celery -A Smartenplus beat` runs `django.setup()` for the whole app, so footprint likely above 96 MiB (PREDICTION, not measured); `wait_for_db` (`products/management/commands/wait_for_db.py:14`) is a no-op but NOT the OOM cause.
+- Fix: BE `fix/beat-mem-limit` `1731d54`, merged to BE `develop` `8dca6ba`, pushed: `docker-compose-rds.yml:97` `mem_limit: 96m` -> `160m` (160m is a guess). NOT deployed.
+- Private artifacts: EN https://claude.ai/artifact/UdW2zh53raPXkkETHmpa3D, TH https://claude.ai/artifact/GnGWCS9yEkn2ta1tfovsDu.
+
+**Resume point (EXACT, as left):** deploy BE `8dca6ba` + 24 h beat watch; carry #476 deploys (AD `db2e849`, FE `8b02a812`); optional BE `fix/wait-for-db`.
+
+## Session #476 (2026-10-09) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-09 (session #476)
+
+**Achieved this session (#476):**
+- AD first page timeout (prod, after the 10-07/08 release): code-side fixes merged to `develop`, all pushed. BE `5227bd8` `perf/booking-summary-queries` (AD first-page `booking-summary` 1186 -> 6 queries local, JSON byte-identical on 6 URL variants, new `bookings/test_admin_booking_summary_queries.py` flat at 1/5/20 rows; full suite failures = clean-develop baseline 6F + 87E). FE `8b02a812` + AD `db2e849` `perf/api-trailing-slash` (about a dozen BE calls (FE + AD) had no trailing slash -> APPEND_SLASH 301 -> 2 requests each; ISR product-detail / routes-home / stationsinfo were hot; FE jest failures = develop baseline, AD `next build` ok). Also merged earlier: AD `eb520bf`, BE `c3ea619`, BE `f2fa237`.
+- User deployed BE (`f2fa237`, `c3ea619`, `5227bd8`). AD `eb520bf`/`db2e849` and FE `8b02a812` NOT deployed yet.
+- **New evidence (user's CloudWatch screenshot): EC2 CPU credit balance 144 -> 0 since ~10-07 night, CPU ~5% -> ~12% after the release.** Fits the drain math (usage ~9.6 credits/h vs earn ~6/h -> ~40 h). Likely the real cause of "slow": micro box throttled to baseline. Exact type (t2/t3/t4g) + credit mode (Standard/Unlimited) + which box NOT confirmed. Station bot is NOT running (user), ruled out as a cause.
+- Thai explainer Artifact (private): https://claude.ai/artifact/Xa9NjXkoiCsL8KSDQJ9yFS
+
+**Resume point (EXACT):**
+1. User: deploy AD `db2e849`, then FE `8b02a812`.
+2. User: send `docker ps` + `docker stats --no-stream` from the BE box (is `celery-beat` restarting? which container eats CPU), EC2 instance type + credit mode; decide Unlimited credits / upsize (Claude never touches prod).
+3. Re-measure ~1 h after deploy: CloudWatch CPU utilization (target ~5%) + credit balance slope; AD first page; gunicorn `WORKER TIMEOUT` count.
+4. On user go: `perf/ad-trips-queries` (~320 queries at page size 50), then `feat/booking-dashboard-summary` (+AD PR; stops loading all 679 bookings).
+
 ## Session #475 (2026-10-09) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-09 (session #475)

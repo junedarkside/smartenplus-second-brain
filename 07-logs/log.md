@@ -1,3 +1,7 @@
+## [2026-10-10] session-end #478 | FE trailing-slash change (develop 8b02a812) verified safe to ship: BE resolver + local UI flow (login, cart create/update/delete, checkout passengers family-and-friends) + prod stationsinfo slash 200; Jest failures identical on main/develop; user merges develop->main + deploys manually (clear smartenplus_next_cache); payment not tested
+
+## [2026-10-09] session-end #477 | Celery Beat OOM (BE prod report) reviewed vs code + project rules; beat mem_limit 96m -> 160m merged to BE develop 8dca6ba (docker-compose-rds.yml:97), NOT deployed, 160m unmeasured; wait_for_db no-op not the cause, not fixed yet
+
 ## [2026-10-09] session-end #476 | AD first-page timeout: BE booking-summary N+1 fixed (5227bd8, 1186 -> 6 queries) + FE/AD trailing-slash fix (8b02a812 / db2e849) merged to develop; user deployed BE; CloudWatch shows CPU credits 144 -> 0 since release = likeliest cause (micro box throttled); station bot not running; nothing measured on prod yet
 
 ## [2026-10-09] session-end #475 | Destination trips slow: real cause = RouteSerializer station-description N+1 (142 queries, from f0d3a04), fixed + merged to BE develop f2fa237 (142 -> 29 queries), NOT deployed/measured; search rewrite dropped (search ~36 ms); BE suite has ~93 pre-existing failures; vault note rewritten
