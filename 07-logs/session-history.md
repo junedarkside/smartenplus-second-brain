@@ -1,5 +1,25 @@
 # Session History
 
+## Session #481 (2026-10-10) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-10 (session #481)
+
+**Achieved this session (#481):**
+- Prod trips page (`/trips/phuket/koh-phi-phi`) showed "Too many requests. Please wait and try again." = browser RTK Query got HTTP 429 (`TripSearchResults.js:72`). Cause (code-proven, prod logs NOT seen): global DRF anon throttle 500/h per IP (`settings.py:411-416`) applies to the 4 trip search views (`FindTripViewSet`, `PaginatedFindTripViewSet`, `TripFilter`, `FareCalendarViewSet`) and to `HomeViewSet` + `LocationViewSet` (called by FE `getStaticProps` from one server IP). Throttle runs before the Redis trip cache, so cache hits still count.
+- BE fix merged to `develop` `482e71e` (branch commit `5119f17`, pushed): new `products/throttles.py` (`TripSearchThrottle` scope `trip_search` 3000/h on the 4 search views; `PublicReadThrottle` scope `public_read` 10000/h on `HomeViewSet` + `LocationViewSet`), rates in `settings.py` (x10 when DEBUG), `products/test_throttles.py` 6 tests OK. `products stations cs apis` = 541 tests, 1 fail `cs...test_awaiting_ota_update_to_resolved` (fails on clean develop too). NOT deployed.
+- 3-agent review (SWE, Django, standards) corrected the first diagnosis: a 429 on SSR gets `revalidate: 60` (not 3600; 3600 is the OK-but-empty branch); SSR exhaustion would show "Failed to fetch static data", not this message. New risks: XFF spoofing (no `NUM_PROXIES`, key = full XFF string), FE nginx `limit_req` returns 503 unless `limit_req_status 429`, `fetchRelatedRoutes`/`fetchLocationLabel` swallow 429 and cache an empty page (300 s).
+- Visual demo artifact (private): claude.ai/artifact/Vc2ArNPkAc5YAAuJG8pE3Y. FE untouched.
+
+**Resume point (EXACT):**
+1. User: deploy BE `develop 482e71e` (no migration), then search `/trips/phuket/koh-phi-phi` several times on prod. If 429 persists: pull 429 logs grouped by `X-Forwarded-For` + path, check FE nginx `limit_req_status` and any CDN in front (see `TRIPS-429-THROTTLE-FOLLOWUP`).
+2. (carry #480) deploy FE `develop 8390a94c` (merge `develop` -> `main`, clear `smartenplus_next_cache`), re-run cold/warm route loop.
+3. (carry #479) deploy BE `8752c1b` path is included in the same `develop` deploy; curl fare-calendar twice (2nd fast).
+4. (carry #478) after FE deploy, curl `https://api.smartenplus.co.th/stationsinfo/hat-yai-airport/` -> 200.
+5. (carry #478/#477) CloudWatch baseline, then BE `8dca6ba` (celery-beat `mem_limit` 160m). (carry #476) deploy AD `db2e849`; send `docker ps` + `docker stats`.
+
+
+---
+
 ## Session #480 (2026-10-10) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-10 (session #480)

@@ -1,3 +1,5 @@
+## [2026-10-11] session-end #482 | GSC /server-sitemap.xml "Couldn't fetch" = undeclared var + Promise.all 500 (fixed in prod 59e2bc27); sitemap fail-soft + /trips dedupe on FE develop a1ad0836; single-segment /trips/<place> -> 307 /locations or 404, FE develop b75a7350. Open: deploy, GSC resubmit, filter ~450 noindex routes (BE has_route_info), CF cache rule, monitor.
+
 ## [2026-10-10] session-end #481 | Prod trips 429 ("Too many requests") traced to global anon throttle 500/h/IP on trip search + SSR views; BE fix on develop 482e71e (trip_search 3000/h, public_read 10000/h, 6 tests), not deployed; 3-agent review corrected SSR claim, raised XFF spoofing + nginx limit_req follow-ups
 
 ## [2026-10-10] session-end #480 | FE search->trips redirect slow: prod cold route MISS 1.2-4.4 s vs HIT 0.3-0.8 s (blocking fallback + serial fetches + WP fetcher 30 s x3); FE develop 9b56315f parallel fetches, WP 8 s no-retry, FAQ-fail revalidate 30 s, spinner until router.push settles; local Chrome OK; NOT deployed, prod gain unmeasured; popular routes still MISS on prod unexplained
