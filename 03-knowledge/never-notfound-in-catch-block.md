@@ -62,3 +62,4 @@ One-line rule: no `notFound: true` in catch blocks. Lint rule or code-review che
 - [[isr-csr-overlay-stale-fields]] — the umbrella pattern for serving stale data cleanly.
 - [[tiered-empty-page-noindex-strategy]] — defines the only valid `notFound: true` site.
 - [[getstaticprops-fetch-timeout-isr-blocking]] — pairs with this rule to make catch blocks fire fast.
+- [[soft-404-api-returns-200-empty-payload]] — the one status-gated exception: confirmed `error.response?.status === 404` may return `notFound` from the catch (2026-10-13, trips detail).
