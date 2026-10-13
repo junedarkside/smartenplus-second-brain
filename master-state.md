@@ -15,20 +15,18 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-13 (session #484)
+**Updated:** 2026-10-13 (session #485)
 
-**Achieved this session (#484):**
-- SEO report: live `/trips/koh-phi-phi/ao-nang` was `noindex,follow`. Verified true; NOT a forgotten flag. `noindex: !dataValid` (`useRouteSeo.js`, commit `effdc49d`) fired whenever API `routes[]` (= `RouteByLocationInfo` editorial row) was empty. Sweep of 354 sitemap pairs: **227 have routes=0 but active contracts** -> all noindex while listed in the sitemap. User decided: pages without an overview row are OK to index.
-- Fix FE `develop` (branch `fix/seo-trips-contracts-only-index` `5034f919`, merge `a581d92c`): `noindex: !(data?.length || contracts?.length)`, `dataValid` NOT widened (it drives the "from THB ${minRate}" title; contracts-only pages have `minRate: null`). Pages with routes=0 AND contracts=0 still `notFound` (`[...slug].js:158`). Tests `hooks/__tests__/useRouteSeo.test.js`. Live-API test (local dev vs `api.smartenplus.co.th`, read-only): 11 pages all `index,follow`, no "THB null", en + `/th/`; fake route 404.
-- Second fix `fix/seo-th-title-brand-dup` `7433a1d2`, merge `8ab9c79d`: Thai no-price title in `seoConfig.js:13` ended `| SmartEnPlus` and `_app.js:91` `titleTemplate` appends it again -> removed suffix; Thai test added.
-- `develop` pushed (`90865583..8ab9c79d`). NOT on `main`: user ships to production manually.
-- Pre-existing, left alone: `FilterTripsPage.test.js` fails `react.withEmotionCache is not a function` on clean develop.
+**Achieved this session (#485):**
+- REQ-012 FAQPage schema: live route pages emitted 0 FAQPage (FilterTripsPage suppressed `faqMainEntity` when contracts existed assuming RouteFAQ emitted it; RouteFAQ did not). Fix: `RouteFAQ.js` renders `FAQPageJsonLd` from the same `buildRouteFAQItems` list it displays; one `showRouteFaq` flag in `FilterTripsPage.js` gates suppression + render. FE `develop` `ca3a649e`, deployed, **verified live** (`/trips/phuket/koh-phi-phi` + `/th` = exactly 1 FAQPage, matches visible FAQ). Reviewed by code-reviewer agent (gate coupling, empty-list guard, th test applied). **Accepted gap:** contracts-only routes (~227, e.g. koh-phi-phi/ao-nang) show no FAQ + no schema (RouteFAQ lives inside `data.length > 0`); `useRouteSeo.js:98-113` `faqMainEntity` has no `th` translation. -> [[filter-trips-seo-faq-prop-dropped]]
+- REQ-009 CI sitemap check BUILT: `scripts/sitemap-check.js` (samples 25 URLs per first path segment of `server-sitemap.xml` + `sitemap-0.xml`; fails non-200/redirect, placeholder/null title, noindex), `.github/workflows/sitemap-check.yml` (after deploy, daily 03:00 UTC, manual; separate from `deploy.yml`), `__tests__/sitemapCheck.test.js` (6 pass). FE `develop` `87b6ce28`, **NOT on `main`**. Prod run: 241 URLs OK. -> [[sitemap-health-check-ci]]
+- REQ-008 recorded as dropped (INVALID: no server pagination). REQ-009 CI part now built. Sitemap counts: server 4,494 + sitemap-0 80, 60 overlap (~4,510 unique); GSC "1,865" for server-sitemap is a stale Oct 11 read. User resubmitted sitemaps in GSC.
+- Pre-existing, left alone: `FilterTripsPage.test.js` `react.withEmotionCache is not a function`.
 
 **Resume point (EXACT):**
-0. (#484) DONE: FE `8ab9c79d` deployed and verified live (see loose ends). Left for user: GSC re-inspect + resubmit sitemap. (old text:) Wait <= 1 h (contracts-only ISR 3600 s), then Claude: curl `/trips/koh-phi-phi/ao-nang` + `/th/...` -> `index,follow`, Thai title has one `| SmartEnPlus`; re-run the 354-pair sweep (`routes=0 & contracts>0` all `index,follow`, no "null"). User: GSC re-inspect koh-phi-phi/ao-nang + bangkok/pattaya. See `SEO-NOINDEX-CONTRACTS-ONLY`.
-1. (#483) Same deploy also carries `SEO-REQ-VALIDATION` fixes; Claude runs that prod sweep after "deployed".
-2. User: GSC resubmit `server-sitemap.xml` (see `SITEMAP-FOLLOWUP`; item D is now mostly obsolete, see below).
-3. (carry #481) deploy BE `develop 482e71e`; (carry #480-#476) FE develop, BE celery-beat 160m, AD `db2e849`; CloudWatch baseline.
+0. User: deploy FE `develop` -> `main` (carries REQ-009 workflow); then Claude/user check Actions "Sitemap Check" first run is green (YAML only validated by reading, never run in Actions).
+1. Open SEO REQs: 006/013 need BE `updated_at`; 010 business call; 011 re-measure; REQ-012 gap (move FAQ out of `data` block + `th` `faqMainEntity`, one branch).
+2. (carry #481) deploy BE `develop 482e71e`; (carry #480-#476) BE celery-beat 160m, AD `db2e849`; CloudWatch baseline.
 
 ---
 

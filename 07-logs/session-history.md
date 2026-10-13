@@ -1,5 +1,22 @@
 # Session History
 
+## Session #484 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #484)
+
+**Achieved this session (#484):**
+- SEO report: live `/trips/koh-phi-phi/ao-nang` was `noindex,follow`. Verified true; NOT a forgotten flag. `noindex: !dataValid` (`useRouteSeo.js`, commit `effdc49d`) fired whenever API `routes[]` (= `RouteByLocationInfo` editorial row) was empty. Sweep of 354 sitemap pairs: **227 have routes=0 but active contracts** -> all noindex while listed in the sitemap. User decided: pages without an overview row are OK to index.
+- Fix FE `develop` (branch `fix/seo-trips-contracts-only-index` `5034f919`, merge `a581d92c`): `noindex: !(data?.length || contracts?.length)`, `dataValid` NOT widened (it drives the "from THB ${minRate}" title; contracts-only pages have `minRate: null`). Pages with routes=0 AND contracts=0 still `notFound` (`[...slug].js:158`). Tests `hooks/__tests__/useRouteSeo.test.js`. Live-API test (local dev vs `api.smartenplus.co.th`, read-only): 11 pages all `index,follow`, no "THB null", en + `/th/`; fake route 404.
+- Second fix `fix/seo-th-title-brand-dup` `7433a1d2`, merge `8ab9c79d`: Thai no-price title in `seoConfig.js:13` ended `| SmartEnPlus` and `_app.js:91` `titleTemplate` appends it again -> removed suffix; Thai test added.
+- `develop` pushed (`90865583..8ab9c79d`). NOT on `main`: user ships to production manually.
+- Pre-existing, left alone: `FilterTripsPage.test.js` fails `react.withEmotionCache is not a function` on clean develop.
+
+**Resume point (EXACT):**
+0. (#484) DONE: FE `8ab9c79d` deployed and verified live (see loose ends). Left for user: GSC re-inspect + resubmit sitemap. (old text:) Wait <= 1 h (contracts-only ISR 3600 s), then Claude: curl `/trips/koh-phi-phi/ao-nang` + `/th/...` -> `index,follow`, Thai title has one `| SmartEnPlus`; re-run the 354-pair sweep (`routes=0 & contracts>0` all `index,follow`, no "null"). User: GSC re-inspect koh-phi-phi/ao-nang + bangkok/pattaya. See `SEO-NOINDEX-CONTRACTS-ONLY`.
+1. (#483) Same deploy also carries `SEO-REQ-VALIDATION` fixes; Claude runs that prod sweep after "deployed".
+2. User: GSC resubmit `server-sitemap.xml` (see `SITEMAP-FOLLOWUP`; item D is now mostly obsolete, see below).
+3. (carry #481) deploy BE `develop 482e71e`; (carry #480-#476) FE develop, BE celery-beat 160m, AD `db2e849`; CloudWatch baseline.
+
 ## Session #483 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #483)

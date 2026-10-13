@@ -1,3 +1,5 @@
+## [2026-10-13] session-end #485 | REQ-012 FAQPage JSON-LD fixed + verified live (FE develop ca3a649e; contracts-only gap accepted); REQ-009 sitemap CI check built (develop 87b6ce28, not on main, first Actions run pending); REQ-008 dropped. -> [[filter-trips-seo-faq-prop-dropped]], [[sitemap-health-check-ci]]
+
 ## [2026-10-13] REQ-012 | FAQPage JSON-LD fixed on route pages with overview+contracts (RouteFAQ emits schema, one showRouteFaq gate), FE develop ca3a649e, verified live (1 FAQPage, matches visible). Gap accepted: contracts-only routes (~227) have no FAQ/schema (RouteFAQ inside data.length>0). -> [[filter-trips-seo-faq-prop-dropped]]
 
 ## [2026-10-13] session-end #484 | Live /trips/koh-phi-phi/ao-nang noindex = `noindex: !dataValid` fired on empty RouteByLocationInfo; 227/354 sitemap pairs affected. FE develop fix (contracts-only now index,follow, title flag untouched) a581d92c + Thai title double-brand fix 8ab9c79d; live-API tested; pushed develop, user ships prod. -> [[noindex-flag-decoupled-from-title-flag]]
