@@ -1,3 +1,5 @@
+## [2026-10-13] REQ-012 | FAQPage JSON-LD fixed on route pages with overview+contracts (RouteFAQ emits schema, one showRouteFaq gate), FE develop ca3a649e, verified live (1 FAQPage, matches visible). Gap accepted: contracts-only routes (~227) have no FAQ/schema (RouteFAQ inside data.length>0). -> [[filter-trips-seo-faq-prop-dropped]]
+
 ## [2026-10-13] session-end #484 | Live /trips/koh-phi-phi/ao-nang noindex = `noindex: !dataValid` fired on empty RouteByLocationInfo; 227/354 sitemap pairs affected. FE develop fix (contracts-only now index,follow, title flag untouched) a581d92c + Thai title double-brand fix 8ab9c79d; live-API tested; pushed develop, user ships prod. -> [[noindex-flag-decoupled-from-title-flag]]
 
 ## [2026-10-11] session-end #482 | GSC /server-sitemap.xml "Couldn't fetch" = undeclared var + Promise.all 500 (fixed in prod 59e2bc27); sitemap fail-soft + /trips dedupe on FE develop a1ad0836; single-segment /trips/<place> -> 307 /locations or 404, FE develop b75a7350. Open: deploy, GSC resubmit, filter ~450 noindex routes (BE has_route_info), CF cache rule, monitor.

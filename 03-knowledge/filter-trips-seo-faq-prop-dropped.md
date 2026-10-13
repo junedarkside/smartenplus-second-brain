@@ -18,6 +18,12 @@ Result: every page with real trips passes `null` to FilterTripsSEO, and RouteFAQ
 2. Ensure `faqMainEntity` is built from `buildRouteFAQItems()` output in `useRouteSeo.js` and returned as a separate value — the current `faqMainEntity` built from `faqPosts` (WordPress) is empty for routes with no WP posts. A complete fix computes a schema FAQ array from `buildRouteFAQItems` and passes it to `FilterTripsSEO` unconditionally.
 3. Update the stale comment in `RouteFAQ.js:8`.
 
+## Resolution (2026-10-13, FE develop `ca3a649e`, verified live)
+
+`RouteFAQ.js` now renders `<FAQPageJsonLd>` from the same `buildRouteFAQItems` list it displays (schema == visible text). `FilterTripsPage.js` uses one `showRouteFaq = contracts?.length > 0` flag for both the suppression and the render, so exactly one FAQPage is emitted. Live check: `curl ... | grep -c FAQPage` = 1 on `/trips/phuket/koh-phi-phi` and `/th/...`.
+
+**Remaining gap:** RouteFAQ sits inside the `data.length > 0` block, so contracts-only routes (data=0, e.g. koh-phi-phi/ao-nang) render no FAQ and emit no schema (~227 routes). Also `useRouteSeo.js` `faqMainEntity` (WP/custom fallback, no `th` translation) is now only reachable on no-contract routes. Fix = move FAQ out of the `data` block + tighten the gate. Lesson: gate the schema on the exact condition that renders the visible content, in one shared variable.
+
 ## History (original finding — 2026-06-22)
 
 `components/trips/search/FilterTripsSEO.js` destructured `faqMainEntity` prop but JSX render block had no `<FAQPageJsonLd>` output — prop silently discarded. Additionally data source was `useRouteSeo` (client-side hook), not ISR. Both issues identified 2026-06-22.
