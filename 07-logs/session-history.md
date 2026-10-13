@@ -1,5 +1,22 @@
 # Session History
 
+## Session #483 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #483)
+
+**Achieved this session (#482):**
+- GSC "Couldn't fetch" on `/server-sitemap.xml` (last read Sep 29): root cause = undeclared `currentDateForNewRoutes` in `lib/sitemap/routes.js` (refactor `a918f290`, 2026-09-15) + `Promise.all` all-or-nothing -> HTTP 500 for ~24 days. Prod fix `59e2bc27` already in `main`; live sitemap healthy 2026-10-11 (200, valid XML, 4,472 URLs). GSC row is stale until resubmitted. `sitemap-0.xml` (static next-sitemap, 80 URLs) was fine, needs nothing.
+- Sitemap hardening merged to FE `develop` `a1ad0836`: `Promise.allSettled` fail-soft sections (`pages/server-sitemap.xml/index.js`), `/trips` duplicate removed from `routes.js`; 9 tests.
+- Single-segment `/trips/<place>` (e.g. `/trips/kohlipe`) showed "Search Error: Missing route parameters" (soft-404, 200 + noindex) and a dev hydration error. Fixed on FE `develop` `b75a7350` (branch commit `1dc23ae9`): `helpers/i18n/resolveNonRouteSlug.js` + `locationExists.js`; 1 segment -> 307 to `/locations/<slug>` (locale kept) if place exists else 404 (60 s cache on API error); 3+ segments -> 404; 10 tests, build OK. User verified locally: `/trips/kohlipe` redirects, no hydration error, `/trips/koh-lipe/hat-yai` 200. Hydration theory (persisted return-trip swap) REFUTED by the user's localStorage (`currentStep: input`, `isReturnTrip: false`) -> Fix B dropped.
+- Not deployed: FE `develop` -> `main`. 5 FE suites fail on clean baseline too (`dayTripsApi`, `daytrips.integration`, `FilterTripsPage`, `TripSearchFilters`, `TripSearchResults`).
+
+**Resume point (EXACT):**
+0. (#483) User: deploy FE `develop 90865583` (includes #482 `b75a7350`; clear `smartenplus_next_cache`), tell Claude "deployed" → Claude runs the prod sweep in `SEO-REQ-VALIDATION`. 6 SEO fixes merged this session (ref routing, trips 404, case 308, help canonical, hreflang, trip-detail 404); full FE suite has 39 failing suites on clean `develop` (pre-existing, unowned).
+1. User: deploy FE `develop b75a7350` (merge `develop` -> `main`, clear `smartenplus_next_cache`). Then `curl -s https://www.smartenplus.co.th/server-sitemap.xml | xmllint --noout -`, `<loc>` count 4,471, `/trips` once; `curl -sI /trips/kohlipe` -> 307.
+2. User: GSC -> Indexing -> Sitemaps -> add `server-sitemap.xml` -> Submit; wait 1-3 days. Then see `SITEMAP-FOLLOWUP`.
+3. (carry #481) deploy BE `develop 482e71e`, test `/trips/phuket/koh-phi-phi` on prod; see `TRIPS-429-THROTTLE-FOLLOWUP`.
+4. (carry #480-#476) deploy FE `develop` (clear next cache), BE celery-beat 160m, AD `db2e849`; CloudWatch baseline.
+
 ## Session #481 (2026-10-10) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-10 (session #481)

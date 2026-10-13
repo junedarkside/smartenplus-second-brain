@@ -1,3 +1,5 @@
+## [2026-10-13] session-end #484 | Live /trips/koh-phi-phi/ao-nang noindex = `noindex: !dataValid` fired on empty RouteByLocationInfo; 227/354 sitemap pairs affected. FE develop fix (contracts-only now index,follow, title flag untouched) a581d92c + Thai title double-brand fix 8ab9c79d; live-API tested; pushed develop, user ships prod. -> [[noindex-flag-decoupled-from-title-flag]]
+
 ## [2026-10-11] session-end #482 | GSC /server-sitemap.xml "Couldn't fetch" = undeclared var + Promise.all 500 (fixed in prod 59e2bc27); sitemap fail-soft + /trips dedupe on FE develop a1ad0836; single-segment /trips/<place> -> 307 /locations or 404, FE develop b75a7350. Open: deploy, GSC resubmit, filter ~450 noindex routes (BE has_route_info), CF cache rule, monitor.
 
 ## [2026-10-10] session-end #481 | Prod trips 429 ("Too many requests") traced to global anon throttle 500/h/IP on trip search + SSR views; BE fix on develop 482e71e (trip_search 3000/h, public_read 10000/h, 6 tests), not deployed; 3-agent review corrected SSR claim, raised XFF spoofing + nginx limit_req follow-ups
