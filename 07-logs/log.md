@@ -1,3 +1,11 @@
+## [2026-10-13] session-end #490 | Passenger step: member without DOB counted as empty slot (counter 0/4, 2nd pick overwrote slot 1); `isSlotOccupied` fix verified in browser, FE develop 234714e0 pushed, not on main; Phase 2/3 open. -> master-state
+
+## [2026-10-13] session-end #489 | Sitemap Check first run red (7 airport-transfer 404) = cold-cache blip after deploy; CI script now re-checks failures once (FE develop 2e955464, not on main); page 404-catch left as is. -> [[sitemap-health-check-ci]]
+
+## [2026-10-13] session-end #488 | Picker is search-count only (never writes cart), `touched` flag fixes set-1-refresh-5, checkout card resync; live test: new trip did not change existing items; FE develop 62b35992 pushed, not deployed. -> [[guest-login-cart-hardening]]
+
+## [2026-10-13] session-end #486 | REQ-012 contracts-only gap: code fix rejected for content route (admin adds RouteByLocationInfo rows); ranked list of 227 missing routes in vault + artifact; abandoned FE branch discarded, FE clean on develop 87b6ce28. -> [[filter-trips-seo-faq-prop-dropped]]
+
 ## [2026-10-13] session-end #485 | REQ-012 FAQPage JSON-LD fixed + verified live (FE develop ca3a649e; contracts-only gap accepted); REQ-009 sitemap CI check built (develop 87b6ce28, not on main, first Actions run pending); REQ-008 dropped. -> [[filter-trips-seo-faq-prop-dropped]], [[sitemap-health-check-ci]]
 
 ## [2026-10-13] REQ-012 | FAQPage JSON-LD fixed on route pages with overview+contracts (RouteFAQ emits schema, one showRouteFaq gate), FE develop ca3a649e, verified live (1 FAQPage, matches visible). Gap accepted: contracts-only routes (~227) have no FAQ/schema (RouteFAQ inside data.length>0). -> [[filter-trips-seo-faq-prop-dropped]]

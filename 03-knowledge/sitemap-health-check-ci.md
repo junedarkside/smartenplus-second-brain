@@ -17,5 +17,11 @@ Only URLs that return 200 and are indexable belong in the sitemap. 404/410/3xx a
 - Sitemap sizes (2026-10-13): server 4,494 + sitemap-0 80, 60 overlap. GSC "Discovered pages" lags (showed 1,865 from an Oct 11 read).
 - Workflow YAML was never run in Actions at merge time; check the first run after develop -> main.
 
+## First run failed: cold-cache blip (2026-10-13, #489)
+- 7 `/airport-transfer/<slug>` 404 right after deploy; all 200 minutes later. Not data: sitemap (`lib/sitemap/airport-transfer.js`) and page (`[slug].js`) both read the `Station` table.
+- Cause (likely, unproven): deploy clears the ISR cache, `paths: []` + `fallback:'blocking'` (kept so build stays fast, pre-render was 8 min), check fires 241 cold renders, `/stationsinfo/` (heavy `get_contracts`) times out, `[slug].js:185-192` returns `notFound` for ANY error, cached 60 s.
+- Fix: `recheckFailures` re-checks failures once after `RETRY_DELAY_MS` (default 60000, env override). Page untouched: re-throw = uncached 500 on never-generated paths; soft error props = indexable empty 200.
+- If it still flakes: prewarm step after deploy, or drop the `workflow_run` trigger and keep the daily cron.
+
 ## Related
 [[soft-404-api-returns-200-empty-payload]] · [[noindex-flag-decoupled-from-title-flag]] · [[seo-dev-requirements-validation-2026-10-11/overview]]

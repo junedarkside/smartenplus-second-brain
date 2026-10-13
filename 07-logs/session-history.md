@@ -1,5 +1,74 @@
 # Session History
 
+## Session #489 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #489)
+
+**Achieved this session (#489):** first Sitemap Check run failed (7 `/airport-transfer/<slug>` 404); diagnosed as a cold-cache blip, fixed in the CI script. FE `develop` `2e955464` (pushed, NOT on `main`). Note [[sitemap-health-check-ci]].
+- Failing URLs: u-tapao, trang, surat-thani, sukhothai, trat, penang-international, phitsanulok. All 200 minutes later (`x-nextjs-cache` MISS/STALE) -> transient, not missing data or duplicate slug (sitemap + page read the same `Station` table).
+- Likely cause (NOT proven, no deploy-time logs): deploy clears `smartenplus_next_cache` -> Sitemap Check starts right after -> 241 cold renders, `/stationsinfo/` (heavy `get_contracts`) times out -> `pages/airport-transfer/[slug].js:185-192` maps ANY error to `notFound` (real 404, cached 60 s).
+- Fix `a05f3f19`: `scripts/sitemap-check.js` re-checks failed URLs once after `RETRY_DELAY_MS` (default 60 s); `recheckFailures` + 2 tests (8/8 pass); live run OK. Merged `develop` `2e955464`, pushed. Takes effect in CI only after `develop` -> `main`.
+- SWE review rejected the "re-throw in catch" idea (never-generated path + `fallback:'blocking'` = uncached 500 per request, does not fix the 7). Destinations-style soft error props = 200 empty indexable page, so not applied. Page behaviour untouched.
+- Why `paths: []`: pre-rendering at build took 8 min (user), so pages are ISR-on-demand and cold after every deploy. Decision: keep the check (non-blocking, separate workflow, caught a real cold-page 404).
+
+**Resume point (EXACT):**
+0. User: deploy order FE (clear `smartenplus_next_cache`) -> BE with `CART_EMAIL_READ_ENFORCE` off (migration `carts.0018`) -> watch logs -> flag on. Never `main` without the user. After the next FE deploy confirm Sitemap Check is green (retry active only once `main` has `a05f3f19`).
+1. If it still flakes: prove the cause on the VPS (`docker logs <frontend> | grep "Critical error fetching station data"`), then pick: post-deploy prewarm step, drop the `workflow_run` trigger (keep daily cron), or make `/stationsinfo/` cheaper/cached.
+2. (carry #488) live checks not run: "Use new" + "Keep saved" at checkout, Test B (conflict modal after Google login), Test C (empty guest cart), Facebook/LINE login. Ask user: delete test cart item 4325? hide passenger dialog on `/checkout`? read `?people=` into Redux?
+3. (carry #488) follow-ups not started: "update this trip's cart item" action; BE test "POST 2nd item leaves 1st unchanged"; FE `BookButton` test "Book = 1 POST, 0 PATCH"; `.env-sample` + `docs/api/PUBLIC_ENDPOINTS.md` for the flag.
+4. (carry #487) read Handoff of [[shared-transfer-seat-cap-fix]]; (carry #486) deploy FE `develop`->`main`, admin adds `RouteByLocationInfo` rows for 227 routes; (carry #481-#476) BE `develop 482e71e`, celery-beat 160m, AD `db2e849`.
+
+## Session #488 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #488)
+
+**Achieved this session (#488):** guest login/logout x cart hardening follow-up, FE `develop` `62b35992` (pushed, NOT deployed). Note [[guest-login-cart-hardening]].
+- Picker no longer writes the cart (`c9b2d8d5`): search count only; counts per item edited at checkout. Old `81aabbf0` all-items PATCH is superseded.
+- Checkout card resyncs to server counts after "Use new" (`useServerSyncedPassengers`, `cd3a7380`, 7 tests).
+- Bug "set adult 1, refresh -> back to 5": `seedPassenger` treated 1/0/0 as untouched. Fixed with persisted `touched` flag (`91c2327e`, 5 tests); verified live. Not a render loop (4 clicks = 4 URL replaces).
+- Live test: new trip with a different count (3/1/1) did NOT change existing items. Test item 4325 (Koh Lipe -> Hatyai, Oct 19) still in the user's cart.
+- Merged picker `8cfbd3b8` then resync `62b35992` into `develop`; 3 relevant suites pass (21 tests). Mistake: stray `git stash pop` applied an old stash, reverted, tree clean, ~29 old stashes untouched.
+
+**Resume point (EXACT):**
+0. User: deploy order FE (clear `smartenplus_next_cache`) -> BE with `CART_EMAIL_READ_ENFORCE` off (migration `carts.0018`) -> watch logs -> flag on. Never `main` without the user.
+1. Live checks still not run: "Use new" + "Keep saved" at checkout, Test B (conflict modal after Google login, logged-out guest cart), Test C (empty guest cart), Facebook/LINE real login.
+2. Ask user: delete test cart item 4325? hide the passenger dialog on `/checkout` (`pages/checkout/index.js:1228`, now changes only the search count)? read `?people=` into Redux on shared links?
+3. Follow-ups (not started): "update this trip's cart item" action beside the duplicate-add toast; BE test "POST 2nd item leaves 1st unchanged"; FE `BookButton` test "Book = 1 POST, 0 PATCH"; `.env-sample` + `docs/api/PUBLIC_ENDPOINTS.md` for the flag.
+4. (carry #487) read Handoff of [[shared-transfer-seat-cap-fix]]; (carry #486) deploy FE `develop`->`main`, Sitemap Check green, admin adds `RouteByLocationInfo` rows for 227 routes; (carry #481-#476) BE `develop 482e71e`, celery-beat 160m, AD `db2e849`.
+
+## Session #486/#487 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #486)
+
+**Achieved this session (#486):**
+- REQ-012 contracts-only gap: root cause confirmed (`RouteFAQ` inside `data.length > 0`; on `data=[]` pages `departureLocation*` come from `data[0]`, so a hoisted FAQ rendered "from  to ?" with empty names). Code fix needs label fallbacks (`fromLabel || routeParams.fromSearch`) + layout change. **User chose the content route instead:** admin adds a `RouteByLocationInfo` row (overview + FAQs) per direction; FE then renders FAQ + 1 FAQPage on its own via ISR (~5 min to 1 h). No FE change shipped.
+- Ranked list of the 227 routes missing a row (contracts desc: koh-tao/bangkok 12, koh-phangan/chumphon-city 11, koh-kradan/phuket 10, koh-phangan/bangkok 10, koh-tao/koh-samui 10 ...; 127 of 354 already have rows): vault `01-projects/seo-dev-requirements-validation-2026-10-11/routeinfo-missing-pages.md` + private artifact claude.ai/artifact/T23xfFcGfmHeY3TQc8PEzg (search, min-contracts filter, per-route done checkbox in localStorage). Re-run scan if many rows get added.
+- Abandoned FE edit discarded: branch `fix/seo-faq-contracts-only` deleted, FE back on clean `develop` `87b6ce28` (`FilterTripsPage.js` 396 lines).
+
+**Resume point (EXACT):**
+0. User: deploy FE `develop` -> `main` (carries REQ-009 workflow + REQ-012); clear `smartenplus_next_cache`; then check Actions "Sitemap Check" first run is green (YAML only validated by reading, never run in Actions).
+1. User: add `RouteByLocationInfo` rows in Django admin for the 227 routes, highest contracts first (list in artifact / vault file). Optional check: does saving an overview hit `/api/revalidate` in BE? (decides 5 min vs 1 h refresh).
+2. Open SEO REQs: 006/013 need BE `updated_at` (next code task); 010 business call; 011 re-measure after deploy; follow-up `useRouteSeo.js:98-113` `faqMainEntity` no `th` translation.
+3. (carry #481) deploy BE `develop 482e71e`; (carry #480-#476) BE celery-beat 160m, AD `db2e849`; CloudWatch baseline.
+
+**Session #487 (shared transfer seat cap) — shipped to FE `develop` `20be3c87`, not deployed:** JOIN uncapped, PRIVATE/CHARTER capped; browser-verified; local DB legs 1/87 restored to 10. Note [[shared-transfer-seat-cap-fix]].
+**Resume point #487 (EXACT):** new session, read the Handoff section of [[shared-transfer-seat-cap-fix]], then plan PRIVATE/CHARTER quantity by vehicle (`ceil(total/minSeat)`, e.g. max 2 + 4 pax = 2 vehicles). Branch `feat/private-vehicle-quantity` from `develop`. Ask first: multi-leg contracts (taxi 2 + boat 75) and price per vehicle.
+
+## Session #485 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #485)
+
+**Achieved this session (#485):**
+- REQ-012 FAQPage schema: live route pages emitted 0 FAQPage (FilterTripsPage suppressed `faqMainEntity` when contracts existed assuming RouteFAQ emitted it; RouteFAQ did not). Fix: `RouteFAQ.js` renders `FAQPageJsonLd` from the same `buildRouteFAQItems` list it displays; one `showRouteFaq` flag in `FilterTripsPage.js` gates suppression + render. FE `develop` `ca3a649e`, deployed, **verified live** (`/trips/phuket/koh-phi-phi` + `/th` = exactly 1 FAQPage, matches visible FAQ). Reviewed by code-reviewer agent (gate coupling, empty-list guard, th test applied). **Accepted gap:** contracts-only routes (~227, e.g. koh-phi-phi/ao-nang) show no FAQ + no schema (RouteFAQ lives inside `data.length > 0`); `useRouteSeo.js:98-113` `faqMainEntity` has no `th` translation. -> [[filter-trips-seo-faq-prop-dropped]]
+- REQ-009 CI sitemap check BUILT: `scripts/sitemap-check.js` (samples 25 URLs per first path segment of `server-sitemap.xml` + `sitemap-0.xml`; fails non-200/redirect, placeholder/null title, noindex), `.github/workflows/sitemap-check.yml` (after deploy, daily 03:00 UTC, manual; separate from `deploy.yml`), `__tests__/sitemapCheck.test.js` (6 pass). FE `develop` `87b6ce28`, **NOT on `main`**. Prod run: 241 URLs OK. -> [[sitemap-health-check-ci]]
+- REQ-008 recorded as dropped (INVALID: no server pagination). REQ-009 CI part now built. Sitemap counts: server 4,494 + sitemap-0 80, 60 overlap (~4,510 unique); GSC "1,865" for server-sitemap is a stale Oct 11 read. User resubmitted sitemaps in GSC.
+- Pre-existing, left alone: `FilterTripsPage.test.js` `react.withEmotionCache is not a function`.
+
+**Resume point (EXACT):**
+0. User: deploy FE `develop` -> `main` (carries REQ-009 workflow); then Claude/user check Actions "Sitemap Check" first run is green (YAML only validated by reading, never run in Actions).
+1. Open SEO REQs: 006/013 need BE `updated_at`; 010 business call; 011 re-measure; REQ-012 gap (move FAQ out of `data` block + `th` `faqMainEntity`, one branch).
+2. (carry #481) deploy BE `develop 482e71e`; (carry #480-#476) BE celery-beat 160m, AD `db2e849`; CloudWatch baseline.
+
 ## Session #484 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #484)
