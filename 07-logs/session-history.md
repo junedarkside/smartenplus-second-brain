@@ -1,5 +1,25 @@
 # Session History
 
+## Session #492 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #492)
+
+**Achieved this session (#492):** guest cart item no longer silently lost after email login when a stuck payment blocks the merge; cancel button on the order page; all on `develop` in both repos (pushed, NOT on `main`, NOT deployed). BE `develop` `bcdd82d`, FE `develop` `a4c0256b`.
+- Root cause: `PUT /logincart/<cartId>/` answers 409 `payment_pending` while any active `payment_pending` order exists. Order #1442 was an orphan: charge already `expired` locally, order never reset (sweepers write the two in separate transactions, `expire_stale_payments` is not in celery beat). Google login skipped it because the merge path differs.
+- BE: `carts/orphan_payment_heal.py` heals orphans before the guard (asks Omise, fail-closed, 6 s budget, lock order GatewayCharge then Order, charge stays PAID on amount mismatch); hardening + docs (`docs/technical/PAYMENT_SYSTEM.md` heal section); one `logincart_blocked_payment_pending cart_id= user_id=` warning log per 409 (`carts/views.py`, commit `04eefc9`). 19 tests in `carts/test_orphan_payment_heal.py`; 533 tests in carts+payments+orders, same 44 pre-existing errors.
+- FE: login toast says why the trip was not added, waits 10 minutes, links to "View my orders" (`helpers/cartMergeNotice.js`); NEW `components/order/PendingPaymentCancel.js` (48 lines) on `/orders/[orderid]`: banner "If you already paid, do not cancel. Wait for the confirmation." + cancel dialog, reuses `useCancelPayment` and `CancelPaymentDialog`, refetches by the existing poll. Commit `e3981a0f`, merge `a4c0256b`. 4 new jest tests, 21 related pass, ESLint 0 errors.
+- Browser-verified on dev (fake PENDING mobile-banking charge on #1442): banner, dialog, cancel toast, order -> `ordering` with `locked_amount` None, then Book Now on a trip -> "Item added successfully!", badge 2 -> 3. Test data restored (#1442 `payment_failed`, fake charge and test cart item 4349 deleted).
+- NOT done: `payment-security-specialist` review of the cancel button (user said merge without it), `npm run build` (would clobber the running dev `.next`), full FE jest suite. The add-trip click while the order was still pending was not re-run in the browser (blocked state comes from code + earlier 409).
+- Limit: cancel unblocks cart edits and checkout. It does NOT move the guest trip into the cart (merge only runs at login), so the guest trip must be re-added or the user logs in again.
+
+**Resume point (EXACT):**
+0. User: deploy order FE (`a4c0256b`, clear `smartenplus_next_cache`) -> BE (`bcdd82d`) with `CART_EMAIL_READ_ENFORCE` off (migration `carts.0018`) -> watch logs -> flag on (the #491 order; #492 changes work in either order). Never `main` without the user. Before the FE deploy run `npm run build`. After BE deploy, grep prod logs for `logincart_blocked_payment_pending` to get the real rate of blocked logins; read-only prod count of orphan `payment_pending` orders (charge expired/failed) is still unknown.
+1. Decide B (auto-retry the merge after cancel: keep guest cartId in localStorage, retry in `components/layout/layout.js`) and D (BE sweepers: order-first sweeper + `expire_stale_payments` in celery beat, card/3DS pending sweeper, negative cache on `/logincart` during an Omise outage, close the unlock race in `ExpirePendingChargeView`) only if step 0's numbers justify them. D touches payment code: own branch, payment-security-specialist review.
+2. Optional now: run the `payment-security-specialist` review on `PendingPaymentCancel.js` + the expire flow (sonnet or higher).
+3. Google login test of the same guest-cart flow needs the user's own Google account.
+4. Carry from #491: member-DOB edit with a member that has no DOB, `npm run build`, `CHECKOUT.md` vs RTK swap; Passenger Phase 2/C; `checkoutMigration.test.js` failure on clean `develop`.
+5. Carry (#491 and older): items 1-7 of the #491 resume point (deploy order FE -> BE `CART_EMAIL_READ_ENFORCE` off, sitemap flake, #488 live checks, #487, #486, #481-#476) are unchanged and still open.
+
 ## Session #491 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #491)

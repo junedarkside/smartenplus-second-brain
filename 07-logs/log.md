@@ -1,3 +1,5 @@
+## [2026-10-13] session-end #493 | /trips/<from>/<to> 404s only for unknown places; real empty routes render 200 + noindex empty state naming the route (EmptyState extended, en/th copy); FE develop ec126229 pushed, not on main/deployed; browser look + EmptyState jest test not done. -> master-state
+
 ## [2026-10-13] session-end #492 | Guest cart lost after email login traced to orphan payment_pending order (409 on /logincart); BE heal + 409 log (develop bcdd82d) and FE order-page cancel button + login toast (develop a4c0256b) merged, browser-verified cancel then add-trip; not on main, review gate + build not run. -> master-state
 
 ## [2026-10-13] session-end #491 | Checkout Trip Participants: pencil edits a saved member's birth date (DOB-only), members via RTK query, Add Member returns to checkout; FE develop 55e29c22 pushed, not on main; DOB-less edit + build not verified. -> master-state
