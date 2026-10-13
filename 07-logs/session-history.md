@@ -1,5 +1,27 @@
 # Session History
 
+## Session #491 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #491)
+
+**Achieved this session (#491):** members in Trip Participants can now have their birth date edited at checkout; merged to FE `develop` `55e29c22` (pushed, NOT on `main`, NOT deployed). Branch `feat/checkout-edit-member` pushed.
+- Question: "is it possible to edit each member?" Yes. BE `FamilyAndFriendViewSet` is a full ModelViewSet (PUT ok); `/account/passenger` already had edit/delete. Checkout list was read-only.
+- Reviews: BD (GO, DOB only is the real blocker; name/ID carry PII + manifest risk), UX (in-page modal beats link-out; no write-back from card), tech (RTK swap + slot sync), SWE vs repo rules (full-field plan over-engineered, dropped; the "watcher race" it flagged does NOT exist: `passengerMatchesMember` compares ids only when `sourceMemberId` is set, `Passengers.js:139-141`).
+- Shipped, 3 commits: `124cc0ea` Add Member -> `/account/passenger?callback=/checkout` (callback already supported); `3155d582` saved members via `useGetFamilyAndFriendsQuery` + `helpers/buildMemberList.js` (removed raw-fetch effect); `8f81fb8b` pencil -> `EditMemberButton.js` (DOB-only modal, PUT) + `helpers/syncSlotsForMember.js` (copies new details into ticked slots). Main contact row has no pencil. `Passengers.js` 1143 -> 1127 lines.
+- Verified: 9 new unit tests pass; ESLint 0 errors on new files; browser: pencil only on saved members, modal prefilled, Save closes, stays ticked `1/4` `Completed`, console clean (save wrote the unchanged DOB, no data changed).
+- NOT verified: edit of a member with NO DOB (none on the dev account), `npm run build`, `docs/operations/CHECKOUT.md` rules vs RTK swap (directory blocked by permissions). Pre-existing failing tests: `Passengers.integration.test.js` (FormikValuesSync.js:13), `PassengerAssignment.integration.test.js` (store/location-slice); `checkoutMigration.test.js` "should log successful migration" fails, NOT checked on clean `develop`.
+- Scope decision: DOB-only for now (user: "ok for now"). Name/ID/passport edits stay at `/account/passenger`.
+
+**Resume point (EXACT):**
+0. User: deploy order FE (clear `smartenplus_next_cache`) -> BE with `CART_EMAIL_READ_ENFORCE` off (migration `carts.0018`) -> watch logs -> flag on. Never `main` without the user. After next FE deploy confirm Sitemap Check green (retry only once `main` has `a05f3f19`), passenger slot fix `e718f2a4` and member DOB edit `8f81fb8b` work on prod.
+1. Test member-DOB edit end to end on a member with no DOB (blank one on dev, or add a member without DOB), then `npm run build`; read `docs/operations/CHECKOUT.md` (guest/logout/sessionStorage vs RTK swap).
+2. Passenger Phase 2 (optional, own branch, needs user OK, design-system only): hint `text-xs text-gray-500` "Birth date needed" on member row w/o DOB, `<span onClick>` Add Member -> `<button type="button">`, `aria-live` on counter, drop hard-coded `aria-invalid:false`, focus DOB field after tick.
+3. Passenger Phase C (only if owner wants): edit name/ID in the checkout modal; extract shared form from `PassengersList.js` (738 lines, no tests: add parity test first). Owner decisions: DOB mandatory for infants/children? consent for editing third-party PII? main-contact DOB write-back? Pre-existing bug: restore-from-Redux (`Passengers.js` ~496-510) can null `sourceMemberId` for a member w/o DOB.
+4. Check `checkoutMigration.test.js` failure on clean `develop` (mine or pre-existing).
+5. (carry #489) if Sitemap Check still flakes: prove cause on VPS (`docker logs <frontend> | grep "Critical error fetching station data"`), then prewarm step / drop `workflow_run` trigger / cache `/stationsinfo/`.
+6. (carry #488) live checks not run: "Use new" + "Keep saved" at checkout, Test B (conflict modal after Google login), Test C (empty guest cart), Facebook/LINE login. Ask user: delete test cart item 4325? hide passenger dialog on `/checkout`? read `?people=` into Redux?
+7. (carry #487) read Handoff of [[shared-transfer-seat-cap-fix]]; (carry #486) deploy FE `develop`->`main`, admin adds `RouteByLocationInfo` rows for 227 routes; (carry #481-#476) BE `develop 482e71e`, celery-beat 160m, AD `db2e849`.
+
 ## Session #490 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #490)

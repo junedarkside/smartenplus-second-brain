@@ -1,3 +1,5 @@
+## [2026-10-13] session-end #492 | Guest cart lost after email login traced to orphan payment_pending order (409 on /logincart); BE heal + 409 log (develop bcdd82d) and FE order-page cancel button + login toast (develop a4c0256b) merged, browser-verified cancel then add-trip; not on main, review gate + build not run. -> master-state
+
 ## [2026-10-13] session-end #491 | Checkout Trip Participants: pencil edits a saved member's birth date (DOB-only), members via RTK query, Add Member returns to checkout; FE develop 55e29c22 pushed, not on main; DOB-less edit + build not verified. -> master-state
 
 ## [2026-10-13] session-end #490 | Passenger step: member without DOB counted as empty slot (counter 0/4, 2nd pick overwrote slot 1); `isSlotOccupied` fix verified in browser, FE develop 234714e0 pushed, not on main; Phase 2/3 open. -> master-state
