@@ -1,5 +1,24 @@
 # Session History
 
+## Session #490 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #490)
+
+**Achieved this session (#490):** passenger-step member checkbox bug fixed, merged to FE `develop` `234714e0` (pushed, NOT on `main`, NOT deployed).
+- Symptom: `/checkout` Passengers, Trip Participants: tick member A, counter stays `0/4`, tick member B, A unticks and B overwrites Passenger 1.
+- Root cause: main contact comes from session with `datofbirth: null`; `isPassengerFilled` needs firstname + lastname + birthDate, so a member without DOB counted as an EMPTY slot (counter + `findIndex` empty slot in `Passengers.js`). Next pick reused slot 0 and overwrote `sourceMemberId`.
+- Fix `e718f2a4` (3 lines): `isSlotOccupied = p => !!p?.sourceMemberId || isPassengerFilled(p)` used for `filledPassengersCount` and the empty-slot search. Validation + `Incomplete` chip still use `isPassengerFilled` (Next stays blocked until DOB). Merge `234714e0`.
+- Browser-verified: both ticked `2/4`, untick clears only its slot, console clean. ESLint 0 errors. NOT run: build, new unit test (`Passengers.integration.test.js` cannot load: `FormikValuesSync.js:13` transform error; `PassengerAssignment.integration.test.js` missing `store/location-slice`, both pre-existing), Next-blocked click-through.
+- 4 review agents (code, BD, UX, UI) ran on the report; Phase 2 rewritten to design-system tokens only after user rejected invented design.
+
+**Resume point (EXACT):**
+0. User: deploy order FE (clear `smartenplus_next_cache`) -> BE with `CART_EMAIL_READ_ENFORCE` off (migration `carts.0018`) -> watch logs -> flag on. Never `main` without the user. After next FE deploy confirm Sitemap Check green (retry only once `main` has `a05f3f19`) and passenger fix `e718f2a4` works on prod.
+1. Passenger Phase 2 (optional, own branch, needs user OK, design-system only): hint `text-xs text-gray-500` "Birth date needed" on member row w/o DOB, `<span onClick>` Add Member -> `<button type="button">`, `aria-live` on counter, drop hard-coded `aria-invalid:false` (`Passengers.js:927`), focus DOB field after tick. Plan `~/.claude/plans/check-fe-on-current-eventual-nautilus.md`.
+2. Passenger Phase 3 (needs owner decision): DOB mandatory on profile/member? inline DOB saved back to profile (consent for third-party members)? Pre-existing bug: restore-from-Redux (`Passengers.js` ~496-510) can null `sourceMemberId` for a member w/o DOB. Open: change `Incomplete` chip colour? Metric: count profiles with null DOB.
+3. (carry #489) if Sitemap Check still flakes: prove cause on VPS (`docker logs <frontend> | grep "Critical error fetching station data"`), then prewarm step / drop `workflow_run` trigger / cache `/stationsinfo/`.
+4. (carry #488) live checks not run: "Use new" + "Keep saved" at checkout, Test B (conflict modal after Google login), Test C (empty guest cart), Facebook/LINE login. Ask user: delete test cart item 4325? hide passenger dialog on `/checkout`? read `?people=` into Redux? Follow-ups not started: "update this trip's cart item" action; BE test "POST 2nd item leaves 1st unchanged"; FE `BookButton` test "Book = 1 POST, 0 PATCH"; `.env-sample` + `docs/api/PUBLIC_ENDPOINTS.md` for the flag.
+5. (carry #487) read Handoff of [[shared-transfer-seat-cap-fix]]; (carry #486) deploy FE `develop`->`main`, admin adds `RouteByLocationInfo` rows for 227 routes; (carry #481-#476) BE `develop 482e71e`, celery-beat 160m, AD `db2e849`.
+
 ## Session #489 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #489)

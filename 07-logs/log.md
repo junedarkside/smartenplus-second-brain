@@ -1,3 +1,5 @@
+## [2026-10-13] session-end #491 | Checkout Trip Participants: pencil edits a saved member's birth date (DOB-only), members via RTK query, Add Member returns to checkout; FE develop 55e29c22 pushed, not on main; DOB-less edit + build not verified. -> master-state
+
 ## [2026-10-13] session-end #490 | Passenger step: member without DOB counted as empty slot (counter 0/4, 2nd pick overwrote slot 1); `isSlotOccupied` fix verified in browser, FE develop 234714e0 pushed, not on main; Phase 2/3 open. -> master-state
 
 ## [2026-10-13] session-end #489 | Sitemap Check first run red (7 airport-transfer 404) = cold-cache blip after deploy; CI script now re-checks failures once (FE develop 2e955464, not on main); page 404-catch left as is. -> [[sitemap-health-check-ci]]
