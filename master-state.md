@@ -15,20 +15,19 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-14 (session #494)
+**Updated:** 2026-10-14 (session #495)
 
-**Achieved this session (#494):** post-deploy verify of the shipped FE+BE on `https://www.smartenplus.co.th` (user said both are live; `.com` does not resolve, prod is `.co.th`). Read-only, no charge, nothing saved. Claude in Chrome, user logged in by hand.
-- PASS: `/` 200 (`smartenplus.co.th` 301 -> `www`), no console errors; `/trips/phuket/koh-phi-phi` + `/trips/krabi/ao-nang` 200; `/trips/ao-nang/koh-kood` 200 with EmptyState "No trips from Ao Nang to Koh Kood right now" + Change date + Browse destinations (#493 live); `/trips/phuket/zzz-bogus-place` and `/trips/zzz-bogus-place/phuket` 404.
-- PASS (logged in): `/orders` lists 45 orders; checkout Itinerary + Passengers steps load with the cart; Trip Participants shows saved members with edit pencils + "+ Add Member"; DOB edit dialog opens prefilled (closed, not saved); `cart-checkout-info` calls 200; no console errors seen. One Google Analytics POST 503 (third party, not ours).
-- NOT tested: order-page cancel (`PendingPaymentCancel`) because the account has 0 ORDERING orders; login cart-merge notice (needs a live pending payment); DOB save and Add Member round trip; any payment path. NOT checked (needs server access): `smartenplus_next_cache` clear, `CART_EMAIL_READ_ENFORCE` on prod BE, BE logs / 5xx, Celery.
-- Flag: checkout shows "Guest checkout active. Your data is saved locally for 48 hours" while logged in; not known if expected. Opening checkout fired an app autosave (`cart-checkout-info/save/` 200). Browser console/network tools only record after first call, so load-time errors on some pages may be missed.
+**Achieved this session (#495):** FE housekeeping, no deploy. All on FE `develop` `f4bb8160`, pushed. Live branches at wrap-up: FE `main`, BE `main`, AD `main`, content `master` (FE was left on `develop`; something switched it after; not touched).
+- Language selector: globe icon (MUI `LanguageOutlined`), localized `aria-label` (new `chrome.language` key in `en.js` + `th.js`), `lang` on each menu item. FE `12030536`, merged `4b6477a7`. Browser-checked header + 400px drawer. Currency chip left text-only on purpose (option A; option C = one merged language+currency control if the header gets crowded). 36 failing FE tests across 8 suites are pre-existing on `develop` (same on a stash check).
+- Merged `chore/claude-agents-skills-update` into `develop` (`f4bb8160`): skills renamed `skill.md` -> `SKILL.md`, 9 agents keep pinned models, `CLAUDE.md` +2 rules (Pages Router `server-*` ignore, no `@/` alias). Dry-run merge first: 0 conflicts. The 3316 deleted skill-doc lines were NOT read line by line.
+- Branch prune: 39 local merged + 85 remote merged + origin `fix/cs-chat-history-sync` (already on develop in another form) + local-only `feat/route-intelligence-hero` (add + own revert = empty) and `feat/route-schedule` (newer `RouteSchedule.js` already on develop). FE now has only `develop` + `main`, local and origin. Removed stale `wt-r1` worktree. Recover a deleted branch from reflog: `df29f50d` / `f6e87695` (hero), `0fad9239` (schedule).
+- NOT done: `develop` is ahead of `main` and not shipped; `npm run build` not run for the globe change (dev server + jest only).
 
 **Resume point (EXACT):**
 0. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
 1. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
 2. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
 3. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
-
 ---
 
 ## Section 2 — Loose Ends (Open)

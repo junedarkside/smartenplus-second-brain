@@ -1,5 +1,21 @@
 # Session History
 
+## Session #494 (2026-10-14) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-14 (session #494)
+
+**Achieved this session (#494):** post-deploy verify of the shipped FE+BE on `https://www.smartenplus.co.th` (user said both are live; `.com` does not resolve, prod is `.co.th`). Read-only, no charge, nothing saved. Claude in Chrome, user logged in by hand.
+- PASS: `/` 200 (`smartenplus.co.th` 301 -> `www`), no console errors; `/trips/phuket/koh-phi-phi` + `/trips/krabi/ao-nang` 200; `/trips/ao-nang/koh-kood` 200 with EmptyState "No trips from Ao Nang to Koh Kood right now" + Change date + Browse destinations (#493 live); `/trips/phuket/zzz-bogus-place` and `/trips/zzz-bogus-place/phuket` 404.
+- PASS (logged in): `/orders` lists 45 orders; checkout Itinerary + Passengers steps load with the cart; Trip Participants shows saved members with edit pencils + "+ Add Member"; DOB edit dialog opens prefilled (closed, not saved); `cart-checkout-info` calls 200; no console errors seen. One Google Analytics POST 503 (third party, not ours).
+- NOT tested: order-page cancel (`PendingPaymentCancel`) because the account has 0 ORDERING orders; login cart-merge notice (needs a live pending payment); DOB save and Add Member round trip; any payment path. NOT checked (needs server access): `smartenplus_next_cache` clear, `CART_EMAIL_READ_ENFORCE` on prod BE, BE logs / 5xx, Celery.
+- Flag: checkout shows "Guest checkout active. Your data is saved locally for 48 hours" while logged in; not known if expected. Opening checkout fired an app autosave (`cart-checkout-info/save/` 200). Browser console/network tools only record after first call, so load-time errors on some pages may be missed.
+
+**Resume point (EXACT):**
+0. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+1. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+2. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+3. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+
 ## Session #493 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #493)

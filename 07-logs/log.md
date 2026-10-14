@@ -1,3 +1,5 @@
+## [2026-10-14] session-end #495 | FE housekeeping: language selector globe icon + aria-label + lang tags (FE develop 4b6477a7), merged chore/claude-agents-skills-update (f4bb8160, SKILL.md rename), pruned all merged and superseded branches (FE now develop+main only); not deployed
+
 ## [2026-10-14] session-end #494 | Post-deploy verify of shipped FE+BE on smartenplus.co.th (read-only): home, real + empty-route + bogus-place trips, orders list and checkout Passengers step pass; cancel-pending-payment and login-merge notice untested (no pending order); ISR volume, CART_EMAIL_READ_ENFORCE, BE logs unchecked; "Guest checkout" banner while logged in flagged. -> master-state
 
 ## [2026-10-13] session-end #493 | /trips/<from>/<to> 404s only for unknown places; real empty routes render 200 + noindex empty state naming the route (EmptyState extended, en/th copy); FE develop ec126229 pushed, not on main/deployed; browser look + EmptyState jest test not done. -> master-state
