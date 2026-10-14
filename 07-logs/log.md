@@ -1,3 +1,5 @@
+## [2026-10-14] session-end #494 | Post-deploy verify of shipped FE+BE on smartenplus.co.th (read-only): home, real + empty-route + bogus-place trips, orders list and checkout Passengers step pass; cancel-pending-payment and login-merge notice untested (no pending order); ISR volume, CART_EMAIL_READ_ENFORCE, BE logs unchecked; "Guest checkout" banner while logged in flagged. -> master-state
+
 ## [2026-10-13] session-end #493 | /trips/<from>/<to> 404s only for unknown places; real empty routes render 200 + noindex empty state naming the route (EmptyState extended, en/th copy); FE develop ec126229 pushed, not on main/deployed; browser look + EmptyState jest test not done. -> master-state
 
 ## [2026-10-13] session-end #492 | Guest cart lost after email login traced to orphan payment_pending order (409 on /logincart); BE heal + 409 log (develop bcdd82d) and FE order-page cancel button + login toast (develop a4c0256b) merged, browser-verified cancel then add-trip; not on main, review gate + build not run. -> master-state

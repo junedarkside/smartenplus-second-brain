@@ -1,5 +1,21 @@
 # Session History
 
+## Session #493 (2026-10-13) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-13 (session #493)
+
+**Achieved this session (#493):** `/trips/<from>/<to>` no longer 404s for real places with nothing on sale; both PRs merged to FE `develop` `ec126229` and pushed (NOT on `main`, NOT deployed). Regression came from commit `36f307a5` (route-API 404 or empty 200 -> `notFound`).
+- PR 1 `fix/trips-empty-route-not-404` (`69ae6ec5`): new `helpers/i18n/resolveEmptyRoute.js` + shared `emptyRouteProps()`. Empty/404 route payload -> `locationExists` both slugs: any false -> 404 (revalidate 300); any null (places API down) -> 200 empty page, revalidate 60 (never cache a 404 on an API error); both true -> 200 + noindex (`useRouteSeo.js:80`), revalidate 300. Populated routes make 0 extra `/locations/` calls. `[...slug].js` getStaticProps 94 -> 78 lines, complexity 25 -> 23. Gate 0: the route API returns 200 + empty for unknown pairs (`zzzz/yyyy`), so the places check is the only way to tell them apart.
+- PR 2 `feat/trips-empty-state-ux` (`043f90cd`): `EmptyState` optional props (secondary CTA, `headingLevel`, `role`, link CTA as `Button component={Link}`, icon `aria-hidden`, wrapping); `TripErrorComponent` default branch -> EmptyState "No trips from {from} to {to} right now" + Change date (scrolls to top) + Browse destinations + related routes (`PopularRoutes`), via one `emptyContext` prop from `FilterTripsPage` (397 lines) through `TripSearchResults`; removed "similar routes below" + `BlockAlert`/`TripNotFound`/`FilteredTripList` fallback (no caller passed `extraTrips`); `trip.empty.*` en+th.
+- Verified: `npm run build` ok; `next start` smoke: `/trips/zzzz/yyyy` 404, `/trips/bangkok/chiang-mai` 200 + `noindex,follow`; 7 new route tests + 3 new TripErrorComponent tests pass; 5 failing `TripSearchResults/Filters/FilterTripsPage` tests and `checkoutMigration` also fail on clean `develop`.
+- NOT done: browser look at the empty state (320px, Thai); `EmptyState` jest test (suite cannot load here, `react.withEmotionCache is not a function`, same as other MUI suites on `develop`); "Change date" does not focus the date field; linked issue for JSON-LD tweaks + 404 page rework not filed. Station-slug route pairs: `/locations/` returns 0 rows for station slugs, but the route API returns an empty payload for them anyway so no live page depends on it.
+
+**Resume point (EXACT):**
+0. User: deploy order FE (`ec126229`, clear `smartenplus_next_cache`) -> BE (`bcdd82d`) with `CART_EMAIL_READ_ENFORCE` off (migration `carts.0018`) -> watch logs -> flag on. Never `main` without the user. Run `npm run build` first (done on the #493 branch, not re-run on merged `develop`). After FE deploy: `/trips/zzzz/yyyy` 404, a real pair with no contracts 200 + noindex, EN and `/th`, 320px.
+1. Look at the empty state in a browser (EN, TH, 320px) and decide whether "Change date" should focus the date field (needs an id on the search bar).
+2. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+3. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+
 ## Session #492 (2026-10-13) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-13 (session #492)
