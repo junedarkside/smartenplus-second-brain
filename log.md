@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-15] feat #499 | i18n L1 registry-driven shipped to develop — FE `698c63b8` (pushed, not on main). Hardcoded `th` removed from `formatDisplayDate`, `AdapterDateFnsBuddhist`, `CalendarDatePickerv2`, `RouteSchedule` via registry `calendar`/`dateLocale`/`timeFormat`; new `calendarYear.js` + `dateNames.js`. 2 sonnet reviewers found ~25 more `th` sites → split A (L1) / B content fields (D1-D3) / C Thai copy; `searchHistory.js` + `seoConfig.js` deferred. jest 0 new failures, build ok, Chrome `/th` parity. Next = L2.
+
 ## [2026-10-15] feat #498 | i18n L0 registry v2 shipped to develop — FE `386993c0` → merge `13548eec` (pushed, not on main). `config/languages.json` + `dateLocale/calendar/timeFormat`, `getLanguage()` in `helpers/siteContext.js`, `getOgLocale` wraps it. Rules review trimmed scope (no consumer = no field: `dir`/`wpSlugSuffix`/`enabled` deferred). Verified jest/lint/Chrome parity. Found: sitemap/robots registry test + 3 Omise tests already red on develop; 4 missed hardcoded-th spots added to L1. Next L1. -> [[i18n-rollout-plan]]
 
 ## [2026-10-13] session-end #491 | Checkout Trip Participants: pencil edits a saved member's birth date (DOB-only), members via RTK query, Add Member returns to checkout; FE develop 55e29c22 pushed, not on main; DOB-less edit + build not verified. -> master-state

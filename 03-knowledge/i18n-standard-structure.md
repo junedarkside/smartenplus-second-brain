@@ -54,6 +54,15 @@ External AI bot = just another producer of drafts via the existing bot accounts:
 FE: `components/SEO/seoConfig.js:10,24,53-55,88`; `pages/about/index.js:41,197`; `components/calendar/CalendarDatePickerv2.js:39,113`; `components/trips/RouteSchedule.js:28`; `components/trips/FilterTripsPage.js:331,355`; `public/robots.txt` + `next-sitemap.config.js` hand-listed.
 BE: `products/serializers.py:26,172,178`; `stations/admin_translation_import.py:28`.
 
+### L1 scope decision (2026-10-15)
+The list above under-counts (~25 more sites). Classify every `th` site before touching it:
+- **A — behaviour keyed on registry data** (calendar year offset, date locale, time format, adapter choice): replace with `getLanguage(code)` fields. Done in L1.
+- **B — content-field names** (`text_th`, `translated_*`, `*_description_th`, `nameTh`): API shape, needs BE alignment → content-field milestone D1-D3. Includes `RouteNotice`, `FilterTripsPage`, `routeFAQBuilder`, `buildStations`, `destinations`, `useRouteSeo`.
+- **C — hardcoded Thai copy** (`useRouteSeo` "ไป", offline hooks/components): string-catalog milestones; log as issue, not "fixed".
+- **Hreflang/canonical/og pair logic** (`seoConfig.js`): P2/W1.
+- **`searchHistory.js:132`**: shows a Thai month to English users today; changing it is a behaviour change, needs explicit OK.
+Rule: registry gets a field only when a consumer needs it. Date names stay fixed tables (`helpers/i18n/dateNames.js`), never Intl (SSR/hydration determinism). Guard: `helpers/__tests__/noHardcodedTh.test.js`.
+
 ## Consequences
 - New page = recipe + catalog namespace; no design debate.
 - Deviations must be written HERE, not in a PR description.
