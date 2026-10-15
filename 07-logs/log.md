@@ -1,3 +1,5 @@
+## [2026-10-15] session-end #502 | i18n P3 ✅ (staff perm grant by user in prod Django admin; ContractTranslation counts not tracked in vault), FE i18n audit vs CLAUDE.md 0 blockers, P2 push state corrected; no code changed; next = W0 ('i18n next milestone')
+
 ## [2026-10-15] session-end #501 | i18n P2 buildLocaleSeo: pure helper (canonical, hreflang by indexable, og:locale, noindex), wired Seo.js + /about + useDestinationSeo; FE develop e955aabc pushed; plan reviewed by sonnet agent vs project rules; vault stale lines fixed (L2 merged, ContractTranslation exists, source_hash -> D1); Chrome dev check ok; next P3
 
 ## [2026-10-15] session-end #497 | i18n rollout planning: 3-agent review, Thai-first n-language plan (30 milestones), WP `-th` slug decision, vault notes + dashboard; no code changed

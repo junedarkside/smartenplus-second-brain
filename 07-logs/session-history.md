@@ -1,5 +1,21 @@
 # Session History
 
+## Session #501 (2026-10-15) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-15 (session #501)
+
+**Achieved this session (#501):** i18n **P2 ✅** — pure `buildLocaleSeo` helper (canonical, hreflang by `indexable`, og:locale, noindex); wired `Seo.js`, `/about`, `useDestinationSeo`. FE `1c1dc21b` → develop `e955aabc` (pushed to origin/develop, not on main). jest 224 fail (baseline 225), build ok, Chrome dev check ok. Canonical on `/th/destinations/<slug>` now `/th/...` (was English). See plan tracker.
+
+**Resume point (EXACT):**
+1. i18n: **P2 ✅** (develop `e955aabc`, pushed, not on main). **P3 ✅** (staff perm grant done by user in prod Django admin; ContractTranslation counts NOT tracked in vault — read live in admin at D3 start). Next = **W0** (data/content, vault-only); one milestone per session, branch off `develop`. FE audit vs CLAUDE.md 2026-10-15: 0 blockers (see plan tracker). Open: prod `curl` baseline of `robots.txt` + `server-sitemap.xml` before/after deploy (L2); P1 deploy = FE first then BE, clear `smartenplus_next_cache` volume; `ContractTranslation` DOES exist (BE `operators/models.py:1155`) — plan corrected; read `docs/operations/SEO.md` (was unreadable to agent) before next SEO work. Jest baseline develop: 225 failing, all pre-existing.
+2. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+3. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
+4. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+5. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+6. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+7. `develop` is ahead of `main` (station list, globe selector, #487/#492 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
+
 ## Session #500 (2026-10-15) - full handoff block (moved from master-state)
 
 **Achieved this session (#500):** i18n **W1 ✅** — `wpSlugFor` + registry `wpSlugSuffix`; `/about` WP slug from registry. FE `be75ff7c` → develop `e13971e4` (merged locally, NOT pushed, not on main). jest 225 fail = baseline, build ok; user checked `/about` + `/th/about` in browser. Out of scope: about `ogLocale`/COPY (debt), `/privacy` `/terms` (W2).
