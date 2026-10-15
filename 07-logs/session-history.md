@@ -1,5 +1,21 @@
 # Session History
 
+## Session #505 (2026-10-15) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-15 (session #505)
+
+**Achieved this session (#505):** i18n **W2 review + follow-up, W0 ✅**. 2 sonnet agents (code-reviewer + seo-specialist) reviewed W2 `d8491ff7` vs CLAUDE.md + CODING_STANDARDS: 0 blockers. Follow-up `fix/i18n-w2-terms-seo` (`f03c6a11`): `/terms` gets full OG block (title, description, url, type, siteName) + Thai `ogTitle`, FeaturedImage alt fixed (was "Privacy Policy"), tests assert hreflang hrefs, `og:url`, unknown-locale fallback. Merged FE `develop` `427aafc3`, **pushed**, not deployed, not on `main`. False alarm: terms title suffix is fine (`_app.js:92` `titleTemplate`). Jest on the 2 related suites 22/22 pass; full suite and `npm run build` not re-run. **W0** vault-only: live WP GraphQL scan -> `01-projects/i18n-wp-inventory.md`: 3 Thai pages done (`about-th`, `privacy-th`, `terms-th`), homepage `smartenplus` has no Thai twin (W4), **0 `-th` tags and 0 Thai posts of 1629**, 1468 tags, help/FAQ = ~77 posts under `helps` child categories (W5). Vault `8d554fc` pushed. Unresolved review notes (optional): `getLocalizedPage` lets fetch errors propagate (rule says null+warn; callers catch), hreflang codes bare `en`/`th` vs `SEO.md` unread (permission), test `describe` 61 lines (pre-existing ESLint warning).
+
+**Resume point (EXACT):**
+1. **START: say `i18n next milestone`** -> W3 (guide posts by tag, Thai tag `<slug>-th`, fallback English). **First ask the user (3 decisions in `i18n-wp-inventory` "Decisions needed"): ship W3 now (English shown until Thai posts exist) or wait for the first Thai batch?** If ship: branch `feat/i18n-w3-guide-posts-th` from `develop`. Pages: `pages/destinations/[slug].js:345-349` (413 lines, **extract before adding**), `pages/locations/[slug].js`, `pages/airport-transfer/[slug].js`. Query `GET_ALL_POSTS_BY_TAG` (`helpers/wordpress/queries/posts.js:119`); reuse `wpSlugFor` (`helpers/wordpress/langQuery.js`); pass `locale` to `buildLocaleSeo` (`useDestinationSeo` already takes it). Done-check: `/th/destinations/<slug>` Thai guides, `th_TH`, hreflang, canonical; missing Thai tag -> English guides. Content team needs the W0 checklist (tag `<station-slug>-th`).
+2. Deploy of `develop` (user): FE first then BE, clear `smartenplus_next_cache`; then `curl -s https://www.smartenplus.co.th/th/privacy | grep -iE 'robots|canonical|hreflang'` (stale noindex risk up to 1 h). Open W2: user reviews Claude-drafted Thai SEO title/description in `COPY.th` (`pages/privacy`, `pages/terms`); Chrome visual check `/th/privacy` `/th/terms`. Open L2: prod `curl` baseline of `robots.txt` + `server-sitemap.xml`. Jest baseline develop ~224 failing, all pre-existing.
+3. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+4. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
+5. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+6. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+7. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+8. `develop` is ahead of `main` (station list, globe selector, #487/#492, i18n L0-W2 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
 ## Session #504 (2026-10-15) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-15 (session #504)

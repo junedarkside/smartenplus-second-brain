@@ -1,3 +1,5 @@
+## [2026-10-15] session-end #506 | i18n W3 ✅ code (getLocalizedPostsByTag, 3 pages wired, FE 0ea1e288 -> develop db091cba pushed, not deployed); Thai path unverified until Thai tags exist; next W4 or M1
+
 ## [2026-10-15] session-end #505 | i18n W2 review (2 agents, 0 blockers) + follow-up FE f03c6a11 -> develop 427aafc3 pushed (terms OG tags, alt, tests); W0 ✅ WP inventory (0 -th tags, 0 Thai posts) -> i18n-wp-inventory; vault 8d554fc; next W3 (ask ship-now vs wait first)
 
 ## [2026-10-15] session-end #504 | i18n W2 ✅ Thai /privacy + /terms (FE e8fb8ab1 on develop, pushed, not deployed); getLocalizedPage fallback live-verified; EN HTML diff clean (terms og-tag leak fixed); W0 plan error found (help/FAQ = categories); AEO/GEO extras deferred to W5; artifact updated
