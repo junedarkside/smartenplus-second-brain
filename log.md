@@ -672,3 +672,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-10-15] audit | i18n L0–P2 + W1 FE code vs CLAUDE.md rules — 0 blockers, 5 notes (`destinations/[slug].js` 412 lines, unused `hasLocaleContent`, Seo.js hreflang scope change, about re-render, pre-existing `operators.js` console.log). P2 confirmed pushed (origin/develop `e955aabc`); tracker "NOT pushed" was stale, fixed. → [[i18n-rollout-plan]]
 
 ## [2026-10-15] plan | i18n P3 prep — ContractTranslation count method = Django admin (list total + language filter), AD has no Contract UI; staff `add/change_sitetext` grant pending user (done by user in Django admin). **Decision:** ContractTranslation counts NOT recorded in vault — user + staff track them; read live in admin at D3 start. No prod step, no code changed. → [[i18n-rollout-plan]]
+
+## [2026-10-15] done | i18n P3 ✅ — user granted staff `add/change/view_sitetext` in prod Django admin (user-reported, not verified by Claude). No count recorded by design. Next = W0. → [[i18n-rollout-plan]]
