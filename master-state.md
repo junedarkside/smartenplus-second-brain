@@ -15,22 +15,23 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-15 (session #497)
+**Updated:** 2026-10-15 (session #498)
 
-**Achieved this session (#497):** planning/vault only — NO code changed, no commits in FE/BE/AD. Live branches at wrap-up: FE `main`, BE `main`, AD `main`, content `master`; all trees clean (AD only untracked `.scratch/`).
-- Scanned vault + FE `pages/` for undone i18n. 3 sonnet reviewers (FE rules / BE+AD / architecture) checked the plan against project rules and real code. Findings: BE translation base, AD review grid and bot accounts already exist; `pages/api/revalidate.js:26` skips `/th/*` (hard dep); go-live gate must be per-section content readiness; 7 hardcoded `th` spots block language #3; only `/about` is WP-locale-aware (Thai body = WP `about-th`).
-- Decisions (user): WP Thai = `-th` slug suffix, no plugin; AI translation bot is EXTERNAL (we ship handbook, drafts only); AD staff approve; Thai first, one milestone per session, language #2 via runbook later.
-- Vault: new `i18n-rollout-plan` (30 milestones + tracker + start-each-session steps), `i18n-standard-structure`, `i18n-rollout-plan-review`, `i18n-rollout-dashboard.html`; updated `index.md`, `log.md`, `I18N-DISCOVERY-PAGES` + new `I18N-ROLLOUT-NEXT` in Section 2.
-- Mishap: wrote to plan file via Bash while plan mode was on (allowed file only; no other writes).
+**Achieved this session (#498):** i18n **P1 ✅** — `/api/revalidate` purges locale-prefixed ISR paths. FE `536067aa` → develop `85191e05`, BE `3a3e62c` → develop `f3e55c1`, both pushed, NOT on main/deployed. Live branches at wrap-up: FE `develop`, BE `develop`, AD `main` (untracked `.scratch/`), content `master`; all clean.
+- FE: pure `helpers/i18n/revalidatePaths.js` (`localePrefix` + `SUPPORTED_LANGUAGES`, invalid → null+warn); handler takes optional `locales[]`; omitted = default + ALL supported languages (additive; only deviation from strict parity). 16 new tests; jest 225 fail vs baseline 226, 0 new; build ok.
+- BE: `operators/tasks.py` + `products/tasks.py` optional trailing `locales=None` (omitted from payload when None), exponential backoff, HTTP 400 not retried. 14 BE tests pass.
+- Pre-merge review by 2 sonnet agents (FE rules, BE) corrected the plan: no approve→ISR path exists (`approve_drafts` uses `.update()`, no signals) → hook moved to D1/D2; `ContractTranslation` model does not exist in BE → D3 wording to fix.
+- Vault: tracker row, `master-state`, `log` updated. Not verified: live `curl`/`x-nextjs-cache` HIT/MISS, Chrome.
 
 **Resume point (EXACT):**
-1. i18n: **L0 ✅ + L1 ✅ + L2 ✅ done** (FE develop `a0f4c483`, pushed, not on main/deployed). L2: registry `indexable` flag → `lib/sitemap/languagePolicy.js` feeds `next-sitemap.config.js` + `lib/sitemap/routes.js`; `/th` confirmed indexable since `411b76ad`, stale test rewritten; `public/robots.txt` untracked (postbuild regenerates). Build diff develop vs L2: robots + `sitemap.xml` + `sitemap-0.xml` identical (ignoring lastmod). **Open before/after deploy:** `curl` prod `robots.txt` + `server-sitemap.xml` baseline now, diff after deploy (`server-sitemap.xml` is runtime, not covered by build diff). Next = **P1** (`revalidate.js:26`), then W1; one milestone per session, branch off `develop`. One milestone per session. Then P1 (`revalidate.js:26`), W1. L1 left class B/C + `searchHistory.js` + `seoConfig.js` deferred — see tracker in `[[i18n-rollout-plan]]`. Jest baseline on develop: 226 failing (all pre-existing).
+1. i18n: **P1 ✅** (see above). Next = **W1** (`helpers/wordpress/langQuery.js` `wpSlugFor`, migrate `/about` for parity), then P2, P3, W0; one milestone per session, branch off `develop`. Open: prod `curl` baseline of `robots.txt` + `server-sitemap.xml` before/after deploy (L2); P1 deploy = FE first then BE, clear `smartenplus_next_cache` volume; fix stale `ContractTranslation` wording in the plan (D3). Jest baseline develop: 225 failing, all pre-existing.
 2. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
 3. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
 4. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
 5. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
 6. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
 7. `develop` is ahead of `main` (station list, globe selector, #487/#492 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
 ---
 
 ## Section 2 — Loose Ends (Open)

@@ -658,3 +658,9 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-10-15] session-end #497 | i18n rollout planning session; vault notes added; no code changed
 
 ## [2026-10-15] feat | i18n L2 — sitemap + robots follow registry `indexable` flag, merged FE `develop` `a0f4c483` (pushed, not deployed) — `config/languages.json` `indexable`, pure `lib/sitemap/languagePolicy.js`, `next-sitemap.config.js` (exclude + disallow on every robots group), `lib/sitemap/routes.js` (url + hreflang per indexable language, hardcoded th pair removed), stale `/th` test rewritten, fake `xx` tests, `public/robots.txt` untracked. `/th` is indexed since `411b76ad`; plan line claiming robots-blocked was wrong, fixed. 2 agent reviews (rules + standards) found it. Build diff develop vs L2: robots/sitemap identical. Open: prod `server-sitemap.xml` + `robots.txt` before/after deploy diff. → [[i18n-rollout-plan]]
+
+## [2026-10-15] feat | i18n P1 — `/api/revalidate` accepts `locales[]` (omitted = all supported languages); BE tasks send optional `locales`, backoff, no retry on 400. FE `536067aa` + BE `3a3e62c` on branch `feat/i18n-p1-revalidate-locales` (not merged/pushed). Approve→ISR hook still missing → D1/D2. Next = W1.
+
+## [2026-10-15] merge | i18n P1 merged → develop and pushed: FE `85191e05`, BE `f3e55c1`. Not on main/deployed; deploy FE first then BE, clear ISR volume.
+
+## [2026-10-15] session-end | i18n P1 done (revalidate locales, FE 85191e05 + BE f3e55c1 on develop, pushed, not deployed); next W1
