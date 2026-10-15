@@ -1,5 +1,9 @@
 # Session History
 
+## Session #500 (2026-10-15) - full handoff block (moved from master-state)
+
+**Achieved this session (#500):** i18n **W1 ✅** — `wpSlugFor` + registry `wpSlugSuffix`; `/about` WP slug from registry. FE `be75ff7c` → develop `e13971e4` (merged locally, NOT pushed, not on main). jest 225 fail = baseline, build ok; user checked `/about` + `/th/about` in browser. Out of scope: about `ogLocale`/COPY (debt), `/privacy` `/terms` (W2).
+
 ## Session #498 (2026-10-15) - full handoff block (moved from master-state)
 
 **Achieved this session (#498):** i18n **P1 ✅** — `/api/revalidate` purges locale-prefixed ISR paths. FE `536067aa` → develop `85191e05`, BE `3a3e62c` → develop `f3e55c1`, both pushed, NOT on main/deployed. Live branches at wrap-up: FE `develop`, BE `develop`, AD `main` (untracked `.scratch/`), content `master`; all clean.

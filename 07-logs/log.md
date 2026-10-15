@@ -1,3 +1,5 @@
+## [2026-10-15] session-end #501 | i18n P2 buildLocaleSeo: pure helper (canonical, hreflang by indexable, og:locale, noindex), wired Seo.js + /about + useDestinationSeo; FE develop e955aabc pushed; plan reviewed by sonnet agent vs project rules; vault stale lines fixed (L2 merged, ContractTranslation exists, source_hash -> D1); Chrome dev check ok; next P3
+
 ## [2026-10-15] session-end #497 | i18n rollout planning: 3-agent review, Thai-first n-language plan (30 milestones), WP `-th` slug decision, vault notes + dashboard; no code changed
 
 ## [2026-10-14] session-end #496 | Departure/Arrival Points rebuilt as StationList: renders sanitized rich-text HTML + legacy plain text, <details> collapse, token-aligned, 17 tests, build ok, desktop/mobile/TH checked vs prod API; FE develop bf8566bb pushed, not deployed; HTML path not seen live, BKK essay is backend content. -> master-state
