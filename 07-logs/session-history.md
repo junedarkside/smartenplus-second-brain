@@ -1,5 +1,13 @@
 # Session History
 
+## Session #498 (2026-10-15) - full handoff block (moved from master-state)
+
+**Achieved this session (#498):** i18n **P1 ✅** — `/api/revalidate` purges locale-prefixed ISR paths. FE `536067aa` → develop `85191e05`, BE `3a3e62c` → develop `f3e55c1`, both pushed, NOT on main/deployed. Live branches at wrap-up: FE `develop`, BE `develop`, AD `main` (untracked `.scratch/`), content `master`; all clean.
+- FE: pure `helpers/i18n/revalidatePaths.js` (`localePrefix` + `SUPPORTED_LANGUAGES`, invalid → null+warn); handler takes optional `locales[]`; omitted = default + ALL supported languages (additive; only deviation from strict parity). 16 new tests; jest 225 fail vs baseline 226, 0 new; build ok.
+- BE: `operators/tasks.py` + `products/tasks.py` optional trailing `locales=None` (omitted from payload when None), exponential backoff, HTTP 400 not retried. 14 BE tests pass.
+- Pre-merge review by 2 sonnet agents (FE rules, BE) corrected the plan: no approve→ISR path exists (`approve_drafts` uses `.update()`, no signals) → hook moved to D1/D2; `ContractTranslation` model does not exist in BE → D3 wording to fix.
+- Vault: tracker row, `master-state`, `log` updated. Live-verified after wrapup (curl, per-locale purge via file mtime, Chrome `/` `/th` `/th/trips/detail`, BE tasks → local FE); not covered: Django admin edit → signal → Celery → FE.
+
 ## Session #497 (2026-10-15) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-15 (session #497)

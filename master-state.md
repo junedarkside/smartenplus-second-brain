@@ -19,12 +19,6 @@
 
 **Achieved this session (#500):** i18n **W1 ✅** — `wpSlugFor` + registry `wpSlugSuffix`; `/about` WP slug from registry. FE `be75ff7c` → develop `e13971e4` (merged locally, NOT pushed, not on main). jest 225 fail = baseline, build ok; user checked `/about` + `/th/about` in browser. Out of scope: about `ogLocale`/COPY (debt), `/privacy` `/terms` (W2).
 
-**Earlier (#498):** i18n **P1 ✅** — `/api/revalidate` purges locale-prefixed ISR paths. FE `536067aa` → develop `85191e05`, BE `3a3e62c` → develop `f3e55c1`, both pushed, NOT on main/deployed. Live branches at wrap-up: FE `develop`, BE `develop`, AD `main` (untracked `.scratch/`), content `master`; all clean.
-- FE: pure `helpers/i18n/revalidatePaths.js` (`localePrefix` + `SUPPORTED_LANGUAGES`, invalid → null+warn); handler takes optional `locales[]`; omitted = default + ALL supported languages (additive; only deviation from strict parity). 16 new tests; jest 225 fail vs baseline 226, 0 new; build ok.
-- BE: `operators/tasks.py` + `products/tasks.py` optional trailing `locales=None` (omitted from payload when None), exponential backoff, HTTP 400 not retried. 14 BE tests pass.
-- Pre-merge review by 2 sonnet agents (FE rules, BE) corrected the plan: no approve→ISR path exists (`approve_drafts` uses `.update()`, no signals) → hook moved to D1/D2; `ContractTranslation` model does not exist in BE → D3 wording to fix.
-- Vault: tracker row, `master-state`, `log` updated. Live-verified after wrapup (curl, per-locale purge via file mtime, Chrome `/` `/th` `/th/trips/detail`, BE tasks → local FE); not covered: Django admin edit → signal → Celery → FE.
-
 **Resume point (EXACT):**
 1. i18n: **W1 ✅** (develop `e13971e4`, push pending). Next = **P2**, then P3, W0; one milestone per session, branch off `develop`. Open: prod `curl` baseline of `robots.txt` + `server-sitemap.xml` before/after deploy (L2); P1 deploy = FE first then BE, clear `smartenplus_next_cache` volume; fix stale `ContractTranslation` wording in the plan (D3). Jest baseline develop: 225 failing, all pre-existing.
 2. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
