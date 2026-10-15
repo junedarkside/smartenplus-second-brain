@@ -1,5 +1,20 @@
 # Session History
 
+## Session #504 (2026-10-15) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-15 (session #504)
+
+**Achieved this session (#504):** i18n **W2 ✅** Thai `/privacy` + `/terms`. Content team published WP `privacy-th` + `terms-th` (checked read-only: slug, top-level, sections match EN; EN privacy contact emails now match TH, owner confirmed `info.smartenplus@gmail.com` correct). FE feature `d8491ff7` merged -> `develop` `e8fb8ab1`, **pushed**, not deployed, not on `main`. New `helpers/wordpress/getLocalizedPage.js` (Thai slug, missing -> English page + `hasLocaleContent:false` -> noindex); `pages/privacy`, `pages/terms`: Thai/English `COPY`, `buildLocaleSeo`, `revalidate` 3600 / 60 on fetch failure (decided: WP down at build -> noindex placeholder, not build fail), empty-nodes guard; terms `Head` -> `NextSeo`. Tests 20 new; full jest 224 fail = baseline, 0 new; build ok; eslint clean. Agent review vs CLAUDE.md + CODING_STANDARDS (2 blockers fixed in code). EN HTML diff vs develop (2 builds): body identical; terms stops leaking HOMEPAGE og tags (old bug). Fallback live-verified (real helper vs live WP). W0 review found plan error: help/FAQ are WP posts+categories (`helps`, `FAQs`), not `help-th` pages. AEO/GEO extras (WebPage JSON-LD, /privacy og:image, last-updated, FAQPage) deferred to W5. Artifact `claude.ai/artifact/Cai87oVBKrRyLawmDodnTj` updated (9/30).
+
+**Resume point (EXACT):**
+1. **START: say `i18n next milestone`** -> W0 remainder (vault-only): WP inventory of tags (`<tag>-th` per station slug, W3) + help/FAQ category approach (W5) + content-team checklist -> `01-projects/i18n-wp-inventory.md`; then W3. Open W2: user reviews Claude-drafted Thai SEO title/description in `COPY.th` (`pages/privacy`, `pages/terms`); Chrome console/visual check of `/th/privacy` `/th/terms` `/privacy` `/terms`; deploy FE first then BE, clear `smartenplus_next_cache`. Open L2: prod `curl` baseline of `robots.txt` + `server-sitemap.xml`. Jest baseline develop: ~224 failing, all pre-existing.
+2. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+3. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
+4. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+5. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+6. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+7. `develop` is ahead of `main` (station list, globe selector, #487/#492 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
 ## Session #503 (2026-10-15) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-15 (session #503)
