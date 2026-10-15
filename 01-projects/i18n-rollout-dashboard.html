@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartEnPlus i18n Plan</title>
+<style>
+:root{--bg:#f7f8fa;--card:#fff;--ink:#1c2430;--mut:#667085;--line:#e4e7ec;--done:#12805c;--part:#b7791f;--todo:#c0392b;--acc:#2563eb}
+@media (prefers-color-scheme:dark){:root{--bg:#10141a;--card:#181e27;--ink:#e8ecf2;--mut:#98a2b3;--line:#2a3340;--done:#3ccf91;--part:#f0b44c;--todo:#ff7a6b;--acc:#6ea0ff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif;padding:24px 16px}
+main{max-width:1100px;margin:auto}h1{margin:0 0 4px;font-size:26px}h2{margin:32px 0 12px;font-size:18px}
+.sub{color:var(--mut);margin-bottom:20px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat b{font-size:28px;display:block}.stat span{color:var(--mut);font-size:13px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;display:flex;margin:14px 0}
+.bar i{display:block;height:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.pg{background:var(--card);border:1px solid var(--line);border-left:4px solid;border-radius:8px;padding:8px 10px;font-size:13px}
+.pg small{display:block;color:var(--mut)}
+.done{border-left-color:var(--done)}.part{border-left-color:var(--part)}.todo{border-left-color:var(--todo)}
+.legend span{margin-right:14px;font-size:13px}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.node{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px}
+.node.ok{border-color:var(--done)}.node.new{border-color:var(--acc)}.arr{color:var(--mut)}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--bg);color:var(--mut);font-weight:600}
+td:first-child{font-weight:700;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;border:1px solid var(--line);color:var(--mut)}
+.tag.p{color:var(--acc);border-color:var(--acc)}.tag.r{color:var(--todo);border-color:var(--todo)}
+label{cursor:pointer}input[type=checkbox]{margin-right:6px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{margin:0 0 8px;font-size:14px}.card ul{margin:0;padding-left:18px;color:var(--mut)}.card li{margin:3px 0}
+.prog{font-size:13px;color:var(--mut)}
+@media(max-width:640px){td:first-child{white-space:normal}th:nth-child(3),td:nth-child(3){display:none}}
+</style></head><body><main>
+<h1>i18n rollout · Thai first, n languages</h1>
+<div class="sub">SmartEnPlus · scan 2026-10-15 · vault updated: i18n-rollout-plan · i18n-standard-structure · i18n-rollout-plan-review · <code>/th</code> still robots-blocked</div>
+
+<div class="stats">
+<div class="stat"><b style="color:var(--done)">8</b><span>pages done (incl. /about)</span></div>
+<div class="stat"><b style="color:var(--part)">9</b><span>WP-fed, not Thai-aware</span></div>
+<div class="stat"><b style="color:var(--todo)">~40</b><span>pages not done</span></div>
+<div class="stat"><b>30</b><span>milestones</span></div>
+<div class="stat"><b id="pct">0%</b><span>checked below</span></div>
+</div>
+<div class="bar"><i style="width:15%;background:var(--done)"></i><i style="width:3%;background:var(--part)"></i><i style="width:82%;background:var(--todo)"></i></div>
+<div class="legend"><span><i style="background:var(--done)"></i>done</span><span><i style="background:var(--part)"></i>partial</span><span><i style="background:var(--todo)"></i>not done</span></div>
+
+<h2>Page status</h2>
+<div class="grid">
+<div class="pg done">/ homepage<small>homepagev2 · useT</small></div>
+<div class="pg done">/trips<small>index · useT</small></div>
+<div class="pg done">/locations<small>index · useT</small></div>
+<div class="pg done">/destinations<small>index + [slug] · vault stale</small></div>
+<div class="pg done">nav · footer · drawer · chat<small>site chrome</small></div>
+<div class="pg done">/about<small>Thai body from WP about-th · COPY table = debt (L1/W1)</small></div>
+<div class="pg todo">/activities (+detail)<small>M1 · lang param wired</small></div>
+<div class="pg todo">/airport-transfer (+slug)<small>M2 · lang param wired</small></div>
+<div class="pg todo">/operators (+slug)<small>M3 · 419 lines</small></div>
+<div class="pg todo">/locations/[slug]<small>M4</small></div>
+<div class="pg todo">/trips/[...slug] + detail<small>M4</small></div>
+<div class="pg todo">/account/* · /profile<small>M5 · profile 463 lines</small></div>
+<div class="pg todo">/bookings · /orders · /guest-order · /my-trip<small>M5</small></div>
+<div class="pg part">/privacy · /terms<small>WP GET_SINGLE_PAGE · English only · W2</small></div><div class="pg todo">/404 · /forum · /rate-review<small>M6</small></div>
+<div class="pg part">/help · /blog<small>WP posts · English only · W5</small></div>
+<div class="pg todo">/checkout (+Payment, TotalCart)<small>R1 split → M7 · 1295 / 867 lines</small></div>
+<div class="pg todo">offline strings<small>M8</small></div>
+<div class="pg todo">BE emails<small>M8 · EN only</small></div>
+</div>
+
+<h2>DB content flow (human in the loop)</h2>
+<div class="flow">
+<div class="node new">External AI bot<br><small>handbook only, D4</small></div><span class="arr">→ POST draft →</span>
+<div class="node ok">BE translation table<br><small>is_reviewed=false · source=bot</small></div><span class="arr">→</span>
+<div class="node ok">AD review grid<br><small>staff CRUD + approve</small></div><span class="arr">→ approve →</span>
+<div class="node ok">flush_translation_caches</div><span class="arr">→</span>
+<div class="node new">revalidate /th/*<br><small>P1 — missing today</small></div><span class="arr">→</span>
+<div class="node ok">FE /th shows Thai<br><small>unapproved = English</small></div>
+</div>
+<p class="prog">Green = exists in code (verified). Blue = new work. Bot: 409 on approved row, cannot approve.</p>
+
+<h2>WordPress content (which pages fetch WP)</h2>
+<table><thead><tr><th>Page</th><th>WP query</th><th>Thai-aware?</th><th>Milestone</th></tr></thead><tbody>
+<tr><td>/about</td><td>GET_SINGLE_PAGE</td><td style="color:var(--done)">yes · slug about-th</td><td>W1 refactor</td></tr>
+<tr><td>/privacy · /terms</td><td>GET_SINGLE_PAGE</td><td style="color:var(--todo)">no</td><td>W2 (privacy-th, terms-th)</td></tr>
+<tr><td>homepage</td><td>GET_HOMEPAGE_WORDPRESS_DATA</td><td style="color:var(--todo)">no</td><td>W4</td></tr>
+<tr><td>/destinations/[slug] · /locations/[slug] · /airport-transfer/[slug]</td><td>GET_ALL_POSTS_BY_TAG</td><td style="color:var(--todo)">no</td><td>W3 (tag &lt;tag&gt;-th, EN fallback)</td></tr>
+<tr><td>/trips/[...slug]</td><td>POST_BY_SLUG</td><td style="color:var(--todo)">no</td><td>W4</td></tr>
+<tr><td>/help · /help/faqs</td><td>POSTS_*_CATEGORY, POST_BY_SLUG</td><td style="color:var(--todo)">no</td><td>W5</td></tr>
+<tr><td>/blog (+categories/tags/search)</td><td>ALL_POST, POST_BY_SLUG…</td><td style="color:var(--todo)">no · og:locale hardcoded en_US</td><td>W5 (Thai blog or EN-only)</td></tr>
+</tbody></table>
+<p class="prog">Decision: WP = separate pages/posts with <code>-th</code> slug, no plugin. One helper <code>wpSlugFor(slug, lang)</code>. Missing Thai → English fallback + noindex.</p>
+<h2>Multi-language readiness (Thai first, n languages later)</h2>
+<div class="cols">
+<div class="card"><h3>Hardcoded <code>th</code> to remove (L1)</h3><ul>
+<li>SEO/seoConfig.js — en↔th pair only</li><li>about/index.js — ogLocale, wpSlug</li><li>CalendarDatePickerv2 — Buddhist calendar</li><li>RouteSchedule — time format</li><li>FilterTripsPage — translated_overview</li><li>BE products/serializers — DESCRIPTION_LANGS</li><li>robots.txt + sitemap hand-edited</li></ul></div>
+<div class="card"><h3>Already language-agnostic</h3><ul>
+<li>languages.json → next.config locales</li><li>BE settings.LANGUAGES → model choices</li><li>middleware/language.py</li><li>import/export --language param</li><li>translation_api.py</li></ul></div>
+<div class="card"><h3>Rules</h3><ul>
+<li>Never <code>=== 'th'</code>: registry lookup</li><li>hreflang N-way + x-default</li><li>Per-language flag + SEO readiness</li><li>Registry gets dateLocale, calendar, timeFormat, wpSlug, dir</li></ul></div>
+<div class="card"><h3>Order</h3><ul>
+<li>L0 registry v2 → L1 de-hardcode → L2 robots/sitemap from registry</li><li>L3 fake <code>xx</code> locale dry run</li><li>L4 add-a-language runbook</li><li>L5 language #2 only after Thai go-live</li></ul></div>
+</div>
+<h2>Milestones — tick when browser + vault checks pass</h2>
+<table id="ms"><thead><tr><th>#</th><th>Milestone</th><th>Browser check</th><th>Vault update</th></tr></thead><tbody></tbody></table>
+
+<h2>Every milestone</h2>
+<div class="cols">
+<div class="card"><h3>Before code</h3><ul><li>Branch from <code>develop</code>, never main</li><li>Document props/callers/side effects</li><li><code>wc -l</code>, extract if &gt;300</li></ul></div>
+<div class="card"><h3>Browser</h3><ul><li><code>/th/page</code> Thai, lang=th, og:locale th_TH</li><li>view-source hreflang + canonical</li><li>console clean, API carries <code>lang</code></li><li>EN page identical, missing → English</li></ul></div>
+<div class="card"><h3>Vault</h3><ul><li>master-state entry + commit hash</li><li>log.md line</li><li>tick I18N-DISCOVERY-PAGES</li></ul></div>
+<div class="card"><h3>Review risks</h3><ul><li>Gate = per-section content readiness</li><li>revalidate.js:26 skips /th</li><li>Payment: never branch on translated text</li><li>Cut: generic API, MCP, new base class</li></ul></div>
+</div>
+
+<script>
+const M=[
+["L0","Registry v2 (dateLocale, calendar, timeFormat, wpSlugSuffix, dir, enabled)","unit tests, th unchanged","standard-structure"],
+["L1","Remove hardcoded th (7 spots) + /about COPY → catalog","/th identical, hreflang","master-state"],
+["L2","robots + sitemap from registry, per-language ready","robots output, fake xx","decision log"],
+["P0","Vault sync (done in vault 2026-10-15)","vault diff","i18n-rollout-plan"],
+["P1","revalidate.js → /th/* + BE sends locale","approve in AD → /th updates, ISR hit/miss","master-state, log"],
+["P2","Shared SEO hook + robots/sitemap owner","view-source 3 pages","standard-structure"],
+["P3","Staff perms, ContractTranslation row count, source_hash Location/Route","counts recorded","master-state"],
+["W0","WP inventory: existing -th pages, content checklist","list in vault","i18n-rollout-plan"],
+["W1","wpSlugFor helper, migrate /about","/th/about identical","standard-structure"],
+["W2","/privacy, /terms Thai (content team)","/th/privacy, missing → EN + noindex","master-state"],
+["W3","Guide posts by tag (destinations/locations/airport-transfer)","/th/destinations/&lt;slug&gt; Thai or EN fallback","master-state"],
+["W4","Homepage WP data + trips POST_BY_SLUG","/th, /th/trips/&lt;route&gt;","master-state"],
+["W5","/help + FAQs, /blog decision","/th/help","decision log"],
+["M1","/activities + detail","/th/activities","I18N-DISCOVERY-PAGES"],
+["M2","/airport-transfer + slug","/th/airport-transfer/&lt;slug&gt;","I18N-DISCOVERY-PAGES"],
+["M3","/operators + slug (extract first)","/th/operators/&lt;slug&gt;","I18N-DISCOVERY-PAGES"],
+["M4","locations/[slug], trips/[...slug], trips/detail","/th/trips/&lt;slug&gt; + hreflang","I18N-DISCOVERY-PAGES"],
+["D1","Station/Location approve→flush→/th loop","AD approve → /th/locations","release-b runbook"],
+["D2","Route overview/FAQ wired FE + AD","/th route text","master-state"],
+["D3","Contract/Operator text (after row count)","/th/trips/&lt;slug&gt; after approve","master-state"],
+["S1","Per-section SEO unblock by content readiness","robots, sitemap, GSC","decision log"],
+["M5","Account/bookings/orders/my-trip","login flow under /th","master-state"],
+["M6","404, forum, rate-review, ref","each /th","master-state"],
+["R1","Split checkout + PaymentComponent (parity)","guest + auth flow unchanged","master-state"],
+["M7","Checkout strings (payment checklist)","full payment flow /th","master-state"],
+["M8","Offline strings + BE emails","DevTools offline, sample email","master-state"],
+["L3","Fake xx locale dry run","/xx/trips builds, import --language xx","findings list"],
+["L4","Add-a-language runbook","follow runbook only on xx","06-systems runbook"],
+["D4","AI handbook (after go-live, external bot)","5 external drafts → AD queue, not live","06-systems handbook"],
+["L5","Language #2 (needs domain/timeline)","per runbook","runbook"]
+];
+const tb=document.querySelector('#ms tbody');let saved={};try{saved=JSON.parse(localStorage.getItem('i18n-ms')||'{}')}catch(e){}
+M.forEach(([id,t,b,v])=>{const tr=document.createElement('tr');
+tr.innerHTML=`<td><label><input type=checkbox data-id="${id}" ${saved[id]?'checked':''}>${id}</label></td><td>${t}</td><td>${b}</td><td>${v}</td>`;tb.appendChild(tr)});
+function upd(){const c=[...document.querySelectorAll('input[type=checkbox]')];const n=c.filter(x=>x.checked).length;
+document.getElementById('pct').textContent=Math.round(n/c.length*100)+'%';
+const s={};c.forEach(x=>s[x.dataset.id]=x.checked);try{localStorage.setItem('i18n-ms',JSON.stringify(s))}catch(e){}}
+document.addEventListener('change',upd);upd();
+</script></main></body></html>

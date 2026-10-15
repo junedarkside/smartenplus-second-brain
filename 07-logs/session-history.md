@@ -1,5 +1,40 @@
 # Session History
 
+## Session #496 (2026-10-14) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-14 (session #496)
+
+**Achieved this session (#496):** FE `develop` `bf8566bb` (feature `c4f6e694`), pushed, NOT deployed. Live branches at wrap-up: FE `main`, BE `main`, AD `main`, content `master`. Working tree clean; dev servers 3000/3002 killed.
+- Departure/Arrival Points on `/trips/<from>/<to>` (seen on bangkok/koh-kood) were a wall of text. Cause: backend plain text with `\n`/`\t` in a `<span>` plus a 3.4k-char BKK essay. Rebuilt as `StationList` (names, IATA badge, map link, `<details>` collapse for descriptions > 140 chars, token-aligned Tailwind). New pure helper `helpers/stations/buildStations.js`; `RouteDepartureInfo`/`RouteArrivalInfo` are now 15-line wrappers (`contracts` prop unchanged, only caller `FilterTripsPage.js:347,350`).
+- Station descriptions come from a rich-text editor: renders HTML (sanitized by `helpers/sanitizeHtml.js` allowlist, forced `target=_blank rel=noopener`, only http/https/mailto links) AND legacy plain text. Sanitize happens inside `buildStations` (server-safe, no DOMPurify, no hydration mismatch). `.station-desc` CSS in `globals.css` (NOT `.contract-content`: blue-400 link fails AA). i18n `trip.stations.*` in en + th.
+- Checked: 17 new jest tests pass, ESLint, `npm run build`, desktop + 390px mobile + Thai on dev server against PROD API (read-only GET; local BE has no route data). Two agent plan reviews (v3 plan). Pre-existing: `FilterTripsPage.test.js` fails with `withEmotionCache` on clean `develop` too.
+- NOT verified: HTML path never seen live (prod data has no tags yet). Expanded-details mobile screenshot not retaken.
+- Mishaps: `pkill -f "next dev"` killed the user's own :3000 server (restarted, user told); two dev servers in one dir corrupted shared `.next`.
+
+**Resume point (EXACT):**
+0. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+1. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
+2. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+3. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+4. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+5. `develop` is ahead of `main` (station list, globe selector, #487/#492 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
+## Session #495 (2026-10-14) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-14 (session #495)
+
+**Achieved this session (#495):** FE housekeeping, no deploy. All on FE `develop` `f4bb8160`, pushed. Live branches at wrap-up: FE `main`, BE `main`, AD `main`, content `master` (FE was left on `develop`; something switched it after; not touched).
+- Language selector: globe icon (MUI `LanguageOutlined`), localized `aria-label` (new `chrome.language` key in `en.js` + `th.js`), `lang` on each menu item. FE `12030536`, merged `4b6477a7`. Browser-checked header + 400px drawer. Currency chip left text-only on purpose (option A; option C = one merged language+currency control if the header gets crowded). 36 failing FE tests across 8 suites are pre-existing on `develop` (same on a stash check).
+- Merged `chore/claude-agents-skills-update` into `develop` (`f4bb8160`): skills renamed `skill.md` -> `SKILL.md`, 9 agents keep pinned models, `CLAUDE.md` +2 rules (Pages Router `server-*` ignore, no `@/` alias). Dry-run merge first: 0 conflicts. The 3316 deleted skill-doc lines were NOT read line by line.
+- Branch prune: 39 local merged + 85 remote merged + origin `fix/cs-chat-history-sync` (already on develop in another form) + local-only `feat/route-intelligence-hero` (add + own revert = empty) and `feat/route-schedule` (newer `RouteSchedule.js` already on develop). FE now has only `develop` + `main`, local and origin. Removed stale `wt-r1` worktree. Recover a deleted branch from reflog: `df29f50d` / `f6e87695` (hero), `0fad9239` (schedule).
+- NOT done: `develop` is ahead of `main` and not shipped; `npm run build` not run for the globe change (dev server + jest only).
+
+**Resume point (EXACT):**
+0. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+1. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+2. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+3. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+
 ## Session #494 (2026-10-14) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-14 (session #494)

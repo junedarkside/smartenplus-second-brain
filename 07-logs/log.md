@@ -1,3 +1,7 @@
+## [2026-10-15] session-end #497 | i18n rollout planning: 3-agent review, Thai-first n-language plan (30 milestones), WP `-th` slug decision, vault notes + dashboard; no code changed
+
+## [2026-10-14] session-end #496 | Departure/Arrival Points rebuilt as StationList: renders sanitized rich-text HTML + legacy plain text, <details> collapse, token-aligned, 17 tests, build ok, desktop/mobile/TH checked vs prod API; FE develop bf8566bb pushed, not deployed; HTML path not seen live, BKK essay is backend content. -> master-state
+
 ## [2026-10-14] session-end #495 | FE housekeeping: language selector globe icon + aria-label + lang tags (FE develop 4b6477a7), merged chore/claude-agents-skills-update (f4bb8160, SKILL.md rename), pruned all merged and superseded branches (FE now develop+main only); not deployed
 
 ## [2026-10-14] session-end #494 | Post-deploy verify of shipped FE+BE on smartenplus.co.th (read-only): home, real + empty-route + bogus-place trips, orders list and checkout Passengers step pass; cancel-pending-payment and login-merge notice untested (no pending order); ISR volume, CART_EMAIL_READ_ENFORCE, BE logs unchecked; "Guest checkout" banner while logged in flagged. -> master-state
