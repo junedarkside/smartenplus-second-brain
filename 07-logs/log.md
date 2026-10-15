@@ -1,3 +1,5 @@
+## [2026-10-15] session-end #504 | i18n W2 ✅ Thai /privacy + /terms (FE e8fb8ab1 on develop, pushed, not deployed); getLocalizedPage fallback live-verified; EN HTML diff clean (terms og-tag leak fixed); W0 plan error found (help/FAQ = categories); AEO/GEO extras deferred to W5; artifact updated
+
 ## [2026-10-15] session-end #503 | i18n review fixes A-D merged to FE develop 2b42e664 (Seo.js non-default canonical, about noindex, revalidate auth hardening, searchHistory locale dates, removed dead useDayTripSEO); not deployed
 
 ## [2026-10-15] session-end #502 | i18n P3 ✅ (staff perm grant by user in prod Django admin; ContractTranslation counts not tracked in vault), FE i18n audit vs CLAUDE.md 0 blockers, P2 push state corrected; no code changed; next = W0 ('i18n next milestone')

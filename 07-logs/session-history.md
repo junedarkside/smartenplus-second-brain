@@ -1,5 +1,22 @@
 # Session History
 
+## Session #503 (2026-10-15) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-15 (session #503)
+
+**Achieved this session (#503):** i18n review fixes A-D merged to FE `develop` and pushed (`2b42e664`), none deployed, nothing on `main`. **A** `fix/i18n-seo-canonical` (`565b1594`): `Seo.js` takes canonical/og:url/og:locale from `buildLocaleSeo` on non-default locale when caller passes no alternates (homepagev2 passes its own, unaffected); `/about` loading + not-found states noindex, Thai page with empty WP content = noindex + English canonical, hardcoded `AVAILABLE_LANGUAGES` replaced by `SUPPORTED_LANGUAGES`. **B** `fix/revalidate-auth` (`b640c0d5`): `/api/revalidate` returns 500 when `REVALIDATION_SECRET` unset (old code accepted tokenless requests then, `undefined !== undefined`), 400 on slug/from/to outside `[A-Za-z0-9_-]`. **C** `fix/search-history-locale` (`e2ee8bea`): `formatSearchTime(ts, locale='th')` uses `formatDisplayDate(..., 'd MMM')`, caller passes `router.locale`, English users no longer see Thai months. **D** `chore/remove-dead-daytrip-hook` (`3a11686a`): deleted unused `hooks/useDayTripSEO.js` (live code = `helpers/seo/dayTripSEOUtils.js`). New tests: `Seo.test.js`, `aboutSeo.test.js`, revalidate cases, `searchHistory.test.js`. Jest no new failures (full run 224 vs baseline 225; `autocompletesearch` 152 failing before and after). `npm run build` passed on D only. Thai demo artifact (session-local, private): claude.ai/artifact/BciDbU7bKABKmmXFGcM5qk.
+
+**Resume point (EXACT):**
+1. **START: say `i18n next milestone`** -> W0 (WP inventory of existing `-th` pages + content-team authoring checklist, vault-only; one milestone per session). Review fixes A-D done (see Achieved). Open: prod `curl` baseline of `robots.txt` + `server-sitemap.xml` before/after deploy (L2); P1 deploy = FE first then BE, clear `smartenplus_next_cache` volume; read `docs/operations/SEO.md` before next SEO work. Jest baseline develop: ~224 failing, all pre-existing.
+2. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+3. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
+4. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+5. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+6. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+7. `develop` is ahead of `main` (station list, globe selector, #487/#492 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
+---
+
 ## Session #502 (2026-10-15) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-15 (session #502)

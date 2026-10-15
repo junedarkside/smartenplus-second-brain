@@ -674,3 +674,9 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-10-15] plan | i18n P3 prep — ContractTranslation count method = Django admin (list total + language filter), AD has no Contract UI; staff `add/change_sitetext` grant pending user (done by user in Django admin). **Decision:** ContractTranslation counts NOT recorded in vault — user + staff track them; read live in admin at D3 start. No prod step, no code changed. → [[i18n-rollout-plan]]
 
 ## [2026-10-15] done | i18n P3 ✅ — user granted staff `add/change/view_sitetext` in prod Django admin (user-reported, not verified by Claude). No count recorded by design. Next = W0. → [[i18n-rollout-plan]]
+
+## [2026-10-15] done | i18n W2 ✅ — Thai `/privacy` + `/terms` from WP `privacy-th`/`terms-th`. FE feature `d8491ff7` merged → develop `e8fb8ab1` (local, not pushed/deployed). Fallback to English + noindex when `-th` missing; WP-down build → noindex placeholder. EN HTML diff vs develop: body identical, terms no longer leaks homepage og tags. Open: Thai SEO strings review (Claude draft), Chrome check, deploy + clear ISR volume, EN privacy gmail fix (user). Note: W0 row wrongly assumed `help-th` page — help/FAQ are WP posts+categories (W5). → [[i18n-rollout-plan]]
+
+## [2026-10-15] verify | i18n W2 fallback live-verified — real `getLocalizedPage` vs live WP: `smartenplus` th → English node, `hasLocaleContent:false`; `privacy` th → Thai, true. AEO/GEO extras (WebPage JSON-LD, /privacy og:image, last-updated, FAQPage) deferred to W5, not in W2 scope. → [[i18n-rollout-plan]]
+
+## [2026-10-15] done | i18n W0 ✅ — WP inventory (vault-only). 3 Thai pages (about/privacy/terms) done; 0 `-th` tags, 0 Thai posts of 1629; help/FAQ ~77 posts, 0 Thai. W3 FE can ship but shows English until content team tags Thai posts `<slug>-th`. Also W2 follow-up merged: FE `427aafc3` pushed. Next = W3 (needs user decision: ship now vs wait). → [[i18n-wp-inventory]] · [[i18n-rollout-plan]]
