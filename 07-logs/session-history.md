@@ -1,5 +1,20 @@
 # Session History
 
+## Session #502 (2026-10-15) - full handoff block (moved from master-state)
+
+**Updated:** 2026-10-15 (session #502)
+
+**Achieved this session (#502):** i18n **P3 ✅** (vault-only) — user granted staff `pages_info.add/change/view_sitetext` in prod Django admin via a Group (user-reported, not verified by Claude). Decision: `ContractTranslation` counts are NOT recorded in vault; user + staff read them live in Django admin (Operators → Contract translations, language filter) at D3 start; AD has no Contract UI. Read-only audit of i18n L0–P2 + W1 FE code vs CLAUDE.md: 0 blockers, 5 notes (`pages/destinations/[slug].js` 412 lines, unused `hasLocaleContent`, `Seo.js` hreflang scope, about re-render, pre-existing `operators.js` console.log). P2 confirmed pushed (stale 'NOT pushed' tracker text fixed). Vault commits `9678ed5` + `0dc1b28` pushed (by user; agent `git push` is classifier-blocked). No code changed in any repo. Thai explainer artifacts (session-local): claude.ai/artifact/H9LdPLdqLvboNEPB88yGxM, claude.ai/artifact/MzUvprpdVRR3oy98GDujJa.
+
+**Resume point (EXACT):**
+1. **START: say `i18n next milestone`** → W0 (WP inventory of existing `-th` pages + content-team authoring checklist, vault-only; one milestone per session). i18n: **P2 ✅** (develop `e955aabc`, pushed, not on main). **P3 ✅** (staff perm grant done by user in prod Django admin; ContractTranslation counts NOT tracked in vault — read live in admin at D3 start). Next = **W0** (data/content, vault-only); one milestone per session, branch off `develop`. FE audit vs CLAUDE.md 2026-10-15: 0 blockers (see plan tracker). Open: prod `curl` baseline of `robots.txt` + `server-sitemap.xml` before/after deploy (L2); P1 deploy = FE first then BE, clear `smartenplus_next_cache` volume; `ContractTranslation` DOES exist (BE `operators/models.py:1155`) — plan corrected; read `docs/operations/SEO.md` (was unreadable to agent) before next SEO work. Jest baseline develop: 225 failing, all pre-existing.
+2. User: confirm the "Guest checkout active" banner on checkout is expected for a logged-in user. If a pending QR payment is available (staging or a low-value prod order the user approves), test cancel + login-merge notice (steps 3-4 of the verify). Check `CART_EMAIL_READ_ENFORCE`, ISR volume clear and BE logs on the server.
+3. Station content (backend/admin, owner = user): trim BKK airport essay to short meeting instructions; fix lowercase titles/typos ("boonsiri counter khaosan road", "Starbuck"); sentence-long hotel-zone title; some stations have no Thai text (fall back to English); confirm the rich-text field saves AND the API returns HTML (not escaped). Then look at one real HTML station on a dev server.
+4. Look at the empty state in a browser at 320px and in TH, and decide whether "Change date" should focus the date field (needs an id on the search bar).
+5. File the linked issue: JSON-LD tweaks + 404 page rework for the tiered-empty-page rule.
+6. Items 1-5 of the #492 resume point (auto-retry merge B, sweepers D, payment-security review of `PendingPaymentCancel.js`, Google login test, #491 carry) are unchanged and still open.
+7. `develop` is ahead of `main` (station list, globe selector, #487/#492 etc.), not shipped. Deploy = user, FE after BE, clear `smartenplus_next_cache`.
+
 ## Session #501 (2026-10-15) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-15 (session #501)
