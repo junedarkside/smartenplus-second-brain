@@ -21,7 +21,7 @@
 - FE: pure `helpers/i18n/revalidatePaths.js` (`localePrefix` + `SUPPORTED_LANGUAGES`, invalid → null+warn); handler takes optional `locales[]`; omitted = default + ALL supported languages (additive; only deviation from strict parity). 16 new tests; jest 225 fail vs baseline 226, 0 new; build ok.
 - BE: `operators/tasks.py` + `products/tasks.py` optional trailing `locales=None` (omitted from payload when None), exponential backoff, HTTP 400 not retried. 14 BE tests pass.
 - Pre-merge review by 2 sonnet agents (FE rules, BE) corrected the plan: no approve→ISR path exists (`approve_drafts` uses `.update()`, no signals) → hook moved to D1/D2; `ContractTranslation` model does not exist in BE → D3 wording to fix.
-- Vault: tracker row, `master-state`, `log` updated. Not verified: live `curl`/`x-nextjs-cache` HIT/MISS, Chrome.
+- Vault: tracker row, `master-state`, `log` updated. Live-verified after wrapup (curl, per-locale purge via file mtime, Chrome `/` `/th` `/th/trips/detail`, BE tasks → local FE); not covered: Django admin edit → signal → Celery → FE.
 
 **Resume point (EXACT):**
 1. i18n: **P1 ✅** (see above). Next = **W1** (`helpers/wordpress/langQuery.js` `wpSlugFor`, migrate `/about` for parity), then P2, P3, W0; one milestone per session, branch off `develop`. Open: prod `curl` baseline of `robots.txt` + `server-sitemap.xml` before/after deploy (L2); P1 deploy = FE first then BE, clear `smartenplus_next_cache` volume; fix stale `ContractTranslation` wording in the plan (D3). Jest baseline develop: 225 failing, all pre-existing.

@@ -664,3 +664,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-10-15] merge | i18n P1 merged → develop and pushed: FE `85191e05`, BE `f3e55c1`. Not on main/deployed; deploy FE first then BE, clear ISR volume.
 
 ## [2026-10-15] session-end | i18n P1 done (revalidate locales, FE 85191e05 + BE f3e55c1 on develop, pushed, not deployed); next W1
+
+## [2026-10-15] verify | i18n P1 live-verified on local prod build: curl matrix, per-locale purge (file mtime), Chrome 0 console errors, BE tasks → FE 200. Gap: admin edit → signal → Celery path not run.
