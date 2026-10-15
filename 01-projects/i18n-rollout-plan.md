@@ -79,7 +79,10 @@ Feature flag `lang_th` (exists) = kill switch; un-approve in AD reverts to Engli
 ## Progress tracker (update ONE row per session when a milestone passes its done-checklist)
 | Milestone | Status | Commit / note |
 |---|---|---|
-| (none started — all ⬜ as of 2026-10-15; P0 vault sync ✅ done in vault) | | |
+| P0 vault sync | ✅ | 2026-10-15 |
+| **L0 registry v2** | ✅ 2026-10-15 | FE `386993c0` → develop `13548eec` (pushed, not on main). Shipped `dateLocale`, `calendar`, `timeFormat` + `getLanguage(code)` (`getOgLocale` wraps it; `getBrand`/`BRANDS`/`LANGUAGE_OPTIONS` untouched). **Deviation from row:** `dir` → L2, `wpSlugSuffix` → W1, `enabled` → deferred until precedence vs runtime `lang_<code>` flag (`hooks/useEnabledLanguages.js:12`) is decided (rule: no field without a consumer). No BE mirror code (check manually: FE codes ⊂ BE `settings.LANGUAGES`). Verified: jest 43 pass / 1 fail (pre-existing, below), eslint clean, Chrome `/` `/th` `/th/about` og:locale + lang + Buddhist year unchanged, TH→EN switch OK. Reviewed by sonnet (no issues). |
+| **Pre-existing red on develop (not L0):** | ⚠️ | `languageRegistry.test.js` "excludes every non-default locale from sitemap and robots" — `next-sitemap.config.js` `exclude` has no `/th`, `/th/*` (th now indexable? test stale, or config regressed — decide in L2/P2). 3 `useOmisePayment` tests also fail on develop. |
+| **Add to L1 scope** | ⬜ | 4 missed hardcoded-th spots: `helpers/i18n/formatDisplayDate.js:7-9,31`, `components/trips/RouteNotice.js:6`, `components/autocompletesearch/utils/searchHistory.js:132`, `components/calendar/AdapterDateFnsBuddhist.js:5` (duplicate 543 offset). |
 
 ## How to start each new session (one milestone per session)
 1. Say: "i18n next milestone" → read this note + [[i18n-standard-structure]] + `master-state.md` `I18N-DISCOVERY-PAGES`.

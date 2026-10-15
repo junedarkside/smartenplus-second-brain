@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-15] feat #498 | i18n L0 registry v2 shipped to develop — FE `386993c0` → merge `13548eec` (pushed, not on main). `config/languages.json` + `dateLocale/calendar/timeFormat`, `getLanguage()` in `helpers/siteContext.js`, `getOgLocale` wraps it. Rules review trimmed scope (no consumer = no field: `dir`/`wpSlugSuffix`/`enabled` deferred). Verified jest/lint/Chrome parity. Found: sitemap/robots registry test + 3 Omise tests already red on develop; 4 missed hardcoded-th spots added to L1. Next L1. -> [[i18n-rollout-plan]]
+
 ## [2026-10-13] session-end #491 | Checkout Trip Participants: pencil edits a saved member's birth date (DOB-only), members via RTK query, Add Member returns to checkout; FE develop 55e29c22 pushed, not on main; DOB-less edit + build not verified. -> master-state
 
 ## [2026-10-13] session-end #490 | Passenger step: member without DOB counted as empty slot (counter 0/4, 2nd pick overwrote slot 1); `isSlotOccupied` fix verified in browser, FE develop 234714e0 pushed, not on main; Phase 2/3 open. -> master-state
