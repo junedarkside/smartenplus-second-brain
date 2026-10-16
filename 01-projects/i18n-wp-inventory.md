@@ -39,10 +39,11 @@ Pairing rule: Thai page slug = base slug + `-th`, top-level (registry `wpSlugSuf
 ## Content-team authoring checklist
 1. **Start small for W3:** pick the top destinations by traffic (e.g. Krabi, Phuket, Chiang Mai, Koh Lipe, Ao Nang, Bangkok). Per destination, author 3-5 Thai guide posts.
 2. **Tag each Thai post** with `<station-slug>-th` (exactly the English tag slug + `-th`). One typo = invisible post.
-3. Thai posts keep English category slugs (`destination-guides`, etc.) so category UI stays consistent.
+3. Thai posts keep English category slugs (`destination-guides`, etc.) so category UI stays consistent. **Open risk (2026-10-16):** homepage `recentPosts` and blog listings are not language-filtered, so Thai posts in English categories may show on English pages. Pilot 1-2 posts first, dev verifies, then bulk.
 4. **Help/FAQ (W5):** translate by category. Decide first if Thai posts reuse the English categories or get their own (open, goes with W5 decision).
 5. Do not edit `privacy-th`, `terms-th`, `about-th` slugs. FE depends on them.
-6. Homepage twin `smartenplus-th` only when W4 starts.
+6. Homepage: W4 homepage is parked (2026-10-16). It reads posts + categories (`news`, `activities`, `helps`), not the `smartenplus` page, so `smartenplus-th` is not needed for it. Wait for the Thai category decision.
+7. Staff instructions in Thai (artifact): https://claude.ai/artifact/KEykHwDSwKAm87v1xSC4ve. Covers destination guide tags (`<slug>-th`) and route trip posts (`<blog_slug>-th`, `<faq_slug>-th`).
 
 ## Decisions needed (user)
 - Ship W3 before any Thai tag exists (FE ready, English shown) or wait for first Thai batch?
