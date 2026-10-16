@@ -1,3 +1,7 @@
+## [2026-10-17] session-end #513 | i18n M4c-prep + M4c ✅ trips/detail (FE develop `4c5b943b`, 5 ahead of origin, not pushed/deployed); null `currentRate` crash fixed (BestRateTable + 4 display components, CurrencyProvider untouched); Thai seats/View details/stops/durations; payment review clean; `useOmisePayment.js:294` THB fallback logged as open decision; strings not browser-verified; tracker artifact updated
+
+## [2026-10-16] session-end #512 | i18n M4a ✅ `/locations/[slug]` + M4b ✅ trips list SEO/UI (catalog `routes.*`, `buildLocaleSeo`, untranslated `/th` = noindex + EN canonical); FE develop `87ef4604` pushed, not deployed; build exit 0, EN snapshots identical; sitemap noindex mismatch + no browser check logged; tracker artifact updated; next M4c-prep (split trips/detail) then M4c
+
 ## [2026-10-16] session-end #511 | i18n M3 ✅ Thai operators: M3a index (`93d21ae0`) + M3b detail (`66b9c074`+`9a8d681d`); FE develop `c43714be` pushed, not deployed; page split 418→176 lines, EN HTML parity, Chrome TH verified; tracker artifact v10 (15/30); title double-brand logged as site-wide ticket; next M4
 
 ## [2026-10-16] session-end #510 | i18n M2 ✅ `/airport-transfer` + slug (M2a index, M2b slug SEO + sitemap hreflang, M2c booking widgets); FE develop `d78aca9e` pushed, not deployed; M2b agent review fix (English parity) in `accb4d20`; Chrome EN unchanged / TH Thai verified; calendar adapterLocale already in shared picker; tracker artifact v8; next M3 /operators

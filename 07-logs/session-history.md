@@ -4,6 +4,18 @@
 
 # Session History
 
+## Session #512 (2026-10-16) - summary block (moved from master-state)
+
+**Updated:** 2026-10-16 (session #512)
+
+**Achieved this session (#512):** i18n **M4a + M4b ✅** (code), both merged to FE develop and **pushed** (`87ef4604`), NOT deployed, not on `main`. **M4a** `/locations/[slug]` (`b8fe03ea` → `93597c5f`): `locations.{en,th}.js`, getServerSideProps passes `locale` → `?lang=th`, `buildLocaleSeo`. **M4b** trips list `/trips/<from>/<to>` (3 commits → `87ef4604`): (1) test-first parity snapshots `0a7df303` (EN + Thai-translated + 17 return keys); (2) `ef6a0c2e` SEO via catalog: `routes.{en,th}.js`, `catalogText()`, `helpers/seo/{routeMeta,routeLocaleFields,routeSchemas}.js`, `createSeo` takes an options object, `useRouteSeo` 259 → 219 lines, `buildLocaleSeo` for canonical/hreflang/og:locale; (3) `51ac2398` UI strings: `TripProgressIndicator`, `TripSearchResults` errors, `FilterTripsPage` aria-label. **SEO decision (seo-specialist agent):** `hasLocaleContent = locale==='en' || Boolean(fromLabel && toLabel)`; untranslated `/th/trips/..` = English text + English canonical + noindex + no hreflang + og:locale th_TH. English output byte-identical (snapshots). Verified: `npm run build` exit 0; new tests pass; `TripSearchResults.test.js` 5 fails identical on original code. Not done: curl/Chrome check of `/th/trips/<from>/<to>`.
+
+## Session #511 (2026-10-16) - summary block (moved from master-state)
+
+**Updated:** 2026-10-16 (session #511)
+
+**Achieved this session (#511):** i18n **M3 ✅** (code) - `/operators` index (M3a) + `/operators/[slug]` (M3b); M3b merged to FE develop `c43714be`, pushed, not deployed. Details in `[[i18n-rollout-plan]]` M3a/M3b rows. Open: badge labels English on `/th`, Thai copy draft, title double-brand (site-wide ticket).
+
 ## Session #509 (2026-10-16) - summary block (moved from master-state)
 
 **Updated:** 2026-10-16 (session #509)
