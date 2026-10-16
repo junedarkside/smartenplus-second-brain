@@ -1,3 +1,5 @@
+## [2026-10-16] session-end #510 | i18n M2 ✅ `/airport-transfer` + slug (M2a index, M2b slug SEO + sitemap hreflang, M2c booking widgets); FE develop `d78aca9e` pushed, not deployed; M2b agent review fix (English parity) in `accb4d20`; Chrome EN unchanged / TH Thai verified; calendar adapterLocale already in shared picker; tracker artifact v8; next M3 /operators
+
 ## [2026-10-16] session-end #509 | i18n M1d ✅ booking widget Thai (FE `2eabdaa1` → develop `f5d656e8`) + date-picker partial-date crash fixed (`adfe5a5d` → develop `75053266`, 4 new tests); both pushed, not deployed; Chrome EN/TH/mobile modal verified; 21 merged local FE branches deleted; tracker artifact v7; next M2 /airport-transfer. → [[i18n-rollout-plan]]
 
 ## [2026-10-16] session-end #507 | i18n review follow-ups ✅ (3 majors fixed, FE develop 2b652b62) + W4 trips ✅ code (getLocalizedPost, FE develop c5904529), both pushed, not deployed; W4 homepage ⏸ parked (Thai content later); Thai WP staff guide artifact published; vault pushed; next M1 /activities.

@@ -1,5 +1,20 @@
 # Session History
 
+## Session #509 (2026-10-16) - summary block (moved from master-state)
+
+**Updated:** 2026-10-16 (session #509)
+
+**Achieved this session (#509):** i18n **M1d ✅** (code) - day-trip booking widget Thai. Prep refactor `70bff117` + `b6009851` (split `DayTripBookingWidget` into `helpers/dayTripBooking.js`, `useDayTripAddToCart`, `DayTripParticipantSelector`, `DayTripDatePicker`), then i18n `2eabdaa1` (`booking.{widget,date,participants,availability,capacity,button,toast}` in `activityDetail.{en,th}.js`; helpers take trailing `t = tEn` so cart/checkout stay English; backend error text passed through inside `จองไม่สำเร็จ: {error}`; backend matchers stay English). Merged → FE develop `f5d656e8`. Plus **date-picker crash fix** (`adfe5a5d` → develop `75053266`): partial typed date made MUI emit an Invalid Date, parent stored it, sync effect `toISOString()` threw `RangeError: Invalid time value`; now only `null`/valid Dates reach the parent; 4 new tests in `components/activities/detail/__tests__/DayTripDatePicker.test.js` (fail without fix). Both **pushed**, not deployed, not on `main`. Verified: unit tests (`dayTripBookingI18n.test.js`), `npm run build`, lint clean on changed files, Chrome local backend EN + TH desktop + 420px mobile booking modal (i18n context works through the MUI portal, no raw keys, no `[i18n] missing`), partial date typing no console error. Jest failing set = same 38 suites with and without my changes (baseline red, cause not investigated). **Not browser-verified:** unavailable-date alerts, at-capacity warning; Thai `alreadyInCart` toast (local backend returns 400 not 409 for a duplicate cart item; unit tests cover it). Cleanup: deleted 21 merged local FE branches (only `develop` + `main` left; origin copies not checked, origin untouched). Tracker artifact https://claude.ai/artifact/Cai87oVBKrRyLawmDodnTj updated (v7). Leftover: one local test cart item (Oct 22, 1 adult) in the dev DB.
+
+**Resume point (EXACT):**
+1. **START: say `i18n next milestone` -> M2** `/airport-transfer` + slug (no content dependency). Branch off `develop` (`git checkout develop && git pull`), follow the M1 pattern (`useT`, keys in a new `helpers/i18n/strings/*.{en,th}.js`, `tEn` for non-hook helpers, plan-then-audit vs CLAUDE.md first). **W4 homepage WP data is PARKED** (user: Thai content later).
+1a. Small M1 leftovers (open): `PricingDisplay` "From" label and calendar month names stay English on `/th` (no `adapterLocale` on `LocalizationProvider`); `DayTripDetailHeader.js` + `DayTripHero` dead code (no importers); MUI Autocomplete aria-labels and 'Per Person' badge English on /th; `constants/dayTripConstants.js` + `AGE_RANGE_LABELS` still English (used by `RecommendationBookingModal`); `DayTripCard` duration missing `t`; FAQ JSON-LD vs visible FAQ mismatch and no `/th` activities in sitemap (see [[i18n-m1-activities-review-vs-rules]]).
+2. User (content): give staff the Thai guide (artifact https://claude.ai/artifact/KEykHwDSwKAm87v1xSC4ve, private, share it). Pilot 1-2 posts first (`<station-slug>-th`, `<blog_slug>-th` / `<faq_slug>-th`); check Thai posts do NOT leak onto English homepage/blog listings. Then live Thai check of `/th/destinations/<slug>` + `/th/trips/<from>/<to>`.
+3. Deploy of `develop` (user): FE first then BE, clear `smartenplus_next_cache`; then `curl -s https://www.smartenplus.co.th/th/privacy | grep -iE 'robots|canonical|hreflang'` (stale noindex risk up to 1 h). M1 + M1d + date-picker fix + W3 + W4 trips ride the same deploy; FE develop = `75053266`. Open W2: user reviews Claude-drafted Thai SEO copy (`COPY.th` in `pages/privacy`, `pages/terms`); L2: prod `curl` baseline of `robots.txt` + `server-sitemap.xml`. Jest baseline develop: 38 suites red, not investigated.
+4. Items 3-8 of the #507 resume point are unchanged and still open (checkout banner check, station content cleanup, empty-state 320px/TH look, linked issue for JSON-LD/404, #492 items 1-5, `develop` ahead of `main`) - see `07-logs/session-history.md` #507 block.
+
+---
+
 ## Session #508 (2026-10-16) - summary block (moved from master-state)
 
 **Updated:** 2026-10-16 (session #508)
