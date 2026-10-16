@@ -1,3 +1,5 @@
+## [2026-10-16] session-end #507 | i18n review follow-ups ✅ (3 majors fixed, FE develop 2b652b62) + W4 trips ✅ code (getLocalizedPost, FE develop c5904529), both pushed, not deployed; W4 homepage ⏸ parked (Thai content later); Thai WP staff guide artifact published; vault pushed; next M1 /activities.
+
 ## [2026-10-15] session-end #506 | i18n W3 ✅ code (getLocalizedPostsByTag, 3 pages wired, FE 0ea1e288 -> develop db091cba pushed, not deployed); Thai path unverified until Thai tags exist; next W4 or M1
 
 ## [2026-10-15] session-end #505 | i18n W2 review (2 agents, 0 blockers) + follow-up FE f03c6a11 -> develop 427aafc3 pushed (terms OG tags, alt, tests); W0 ✅ WP inventory (0 -th tags, 0 Thai posts) -> i18n-wp-inventory; vault 8d554fc; next W3 (ask ship-now vs wait first)

@@ -1,5 +1,9 @@
 # Session History
 
+## Session #506 (2026-10-15) - summary block (moved from master-state)
+
+**Achieved (#506):** i18n **W3 ✅ (code)** guide posts by tag. User decided to ship W3 before Thai content exists (Thai content = user task, later). Plan reviewed by 1 sonnet agent (approve with changes, applied: no page split, locations cache keyed by locale, helper unit tests). New `helpers/wordpress/getLocalizedPostsByTag(tag, locale, options)`: non-default locale tries `wpSlugFor` tag (`krabi-th`), empty/error -> warn + base tag, base-tag errors propagate. Wired `destinations/[slug]` `airport-transfer/[slug]` `locations/[slug]` (files all got shorter). FE feature `0ea1e288` -> develop `db091cba`, **pushed**, not deployed, not on `main`. Verified: 6 new tests + `noHardcodedTh` guard pass, full jest failing set identical to develop (0 new; raw count 225 vs 224 baseline = same names), build ok, eslint 0 errors. **Not done:** Chrome English parity check, BE station slug vs WP tag match, live Thai check (needs content), `CODING_STANDARDS.md`/`CODE_PATTERNS.md` unreadable to agent. Cost: 1 extra WP fetch per `/th` render while Thai tag empty. Observed: `git stash -u` + pop during baseline compare partly failed once (tracked files restored via `git checkout stash@{0} -- <files>`; no loss).
+
 ## Session #505 (2026-10-15) - full handoff block (moved from master-state)
 
 **Updated:** 2026-10-15 (session #505)
