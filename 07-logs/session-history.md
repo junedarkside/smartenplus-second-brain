@@ -1,5 +1,20 @@
 # Session History
 
+## Session #508 (2026-10-16) - summary block (moved from master-state)
+
+**Updated:** 2026-10-16 (session #508)
+
+**Achieved this session (#508):** i18n **M1 ✅** (code) - `/activities` index (PR-a) + detail SEO/chrome (PR-b) + detail components (**PR-c**, FE `45133286` → develop `d99d89fe`, **pushed**, not deployed, not on `main`). PR-c: photo grid, mobile booking bar (+ date via `formatDisplayDate`), `PremiumBookingPanel`, trust badges, `formatContractDuration`, visible FAQ via `useT`; helpers take optional `t`, default `helpers/i18n/translateEn.js` (`tEn`) so SEO JSON-LD / `DayTripCard` stay English. `NextBreadcrumbs` now uses `next/link` (keeps `/th` on crumbs, ~40 pages, EN unchanged). FAQ JSON-LD + SEO description English by decision (JSON-LD is built in `dayTripSEOUtils`, not the FAQ builder). Verified: `npm run build` ok, new test + `i18nStrings` + NextBreadcrumbs pass, jest failing set = same 7 suites as clean develop, ESLint warning counts unchanged on 7 touched files, Chrome desktop `/th/activities/detail/...-125` (Thai strings, crumbs `/th`, console clean). **Not verified:** 390px mobile (window would not resize), Thai date with a picked date. Tracker artifact https://claude.ai/artifact/Cai87oVBKrRyLawmDodnTj updated (v6).
+
+**Resume point (EXACT):**
+1. **START: say `i18n next milestone` -> M1d** `DayTripBookingWidget.js` (no `useT` yet): "Select Date" l.383, "Travel Date" l.388, "From"/"Total Price" l.466, more below. Branch `feat/i18n-m1d-booking-widget` off `develop`; follow PR-c pattern (`useT`, keys in `helpers/i18n/strings/activityDetail.{en,th}.js`, `tEn` for non-hook helpers, `formatDisplayDate` for dates). Alt: M2 `/airport-transfer`. **W4 homepage WP data is PARKED** (user: Thai content later).
+1a. Small leftovers: `DayTripDetailHeader.js` + `DayTripHero` dead code (no importers); MUI Autocomplete aria-labels and 'Per Person' badge English on /th; mobile (390px) visual check of the booking bar.
+2. User (content): give staff the Thai guide (artifact https://claude.ai/artifact/KEykHwDSwKAm87v1xSC4ve, private, share it). Pilot 1-2 posts first (`<station-slug>-th`, `<blog_slug>-th` / `<faq_slug>-th`); check Thai posts do NOT leak onto English homepage/blog listings. Then live Thai check of `/th/destinations/<slug>` + `/th/trips/<from>/<to>`.
+3. Deploy of `develop` (user): FE first then BE, clear `smartenplus_next_cache`; then `curl -s https://www.smartenplus.co.th/th/privacy | grep -iE 'robots|canonical|hreflang'` (stale noindex risk up to 1 h). M1 + W3 + W4 trips ride the same deploy. Open W2: user reviews Claude-drafted Thai SEO copy (`COPY.th` in `pages/privacy`, `pages/terms`); L2: prod `curl` baseline of `robots.txt` + `server-sitemap.xml`. Jest baseline develop: pre-existing failures, not investigated.
+4. Items 3-8 of the #507 resume point are unchanged and still open (checkout banner check, station content cleanup, empty-state 320px/TH look, linked issue for JSON-LD/404, #492 items 1-5, `develop` ahead of `main`) - see `07-logs/session-history.md` #507 block.
+
+---
+
 ## Session #507 (2026-10-16) - summary block (moved from master-state)
 
 **Updated:** 2026-10-16 (session #507)
