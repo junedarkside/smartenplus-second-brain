@@ -2,6 +2,18 @@
 
 # Session History
 
+## Session #514 (2026-10-17) - summary block (moved from master-state)
+
+**Updated:** 2026-10-17 (session #514)
+
+**Achieved this session (#514):** `/trips/<from>/<to>` fixes + search recents, all merged to FE `develop` and **pushed** (`ac0f2415`), **NOT deployed, not on `main`** (`main` = `bf8566bb`; `develop` is **96 commits ahead, 0 behind**). 5 trips issues on 4 branches: stale breadcrumb on search (remount), raw slugs in search fields (labels), duplicate `/stations/` calls (dead fetch removed), fuzzy slugs `/trips/h/k` now noindex via `routeSlugIsExact` (contracts-only pages stay indexable by decision), `/th/trips/hatyai/lipe` English fallback = intended, no code change. **Recent search fix** (`fix/recent-search-save-and-show`, `7083f3a4` -> merge `ac0f2415`): dropdown recents (localStorage `smartenplus_search_history`) now save the PICKED place (not the typed fragment), dedupe by place, split by From/To, and show even when the field is prefilled. 11 new tests (`searchHistory`, `AutoCompleteSearch.label`, new `SearchInput.recents`); they fail on old code. Picking a recent still drops the Thai label (field falls back to the English name; value is right) - left as is. **Pre-ship gate run on `develop` `74542650`** (before the recents merge): build exit 0; jest = same 38 red suites / 224 red tests as baseline, no new failures (per-suite compare, weaker than per-test: baseline file covered only 26 suites); payment diff reviewed by `payment-security-specialist` = 3 files SAFE (note: day-trip page has no `withCartValidation`); Chrome smoke 6/6 (recents fix 7/7) on a dev server, not `next start` standalone. The recents merge has its own checks (41 tests, build exit 0, Chrome 7/7) but was NOT in the gate. Not rebuilt after merge.
+
+**Resume point (EXACT):**
+1. **SHIP DECISION (user, nobody else):** deploy `develop` `ac0f2415` -> `main`? It ships **96 commits / ~222 files**, not only the trips fixes (M1..M4c i18n, #487 quantity, #492 login-cart, #471 bot, etc. - see Section 2 deploy items). Claude does **no push to `main`, deploy, or cache clear without an explicit "go"**. If go: (a) optional re-run `npm run build` + the 41 related tests on `ac0f2415` (gate ran on `74542650`); (b) BE first if BE items ride along (`STATION-BOT-DEPLOY`: `migrate stations` -> 0049; `TRIPS-RESPONSE-CACHE-DEPLOY`; `CELERY-BEAT-OOM`), then FE; (c) **clear `smartenplus_next_cache`** in the deploy; (d) after deploy: `/trips/hatyai/koh-lipe` EN + `/th`, `/trips/h/k` has `noindex`, From/To picker recents, `server-sitemap.xml` `/th/airport-transfer*` only for translated stations, GSC resubmit.
+2. Decide `USEOMISE-THB-FALLBACK` (payment path, Section 2) before or with the deploy.
+3. Deferred by user (not started): fix the 38 red legacy suites (`sanitizeInput` wrong path, `SearchInput.test` theme mock, `FilterTripsPage.test.js` emotion/MUI load error - its branch 1+2 tests never ran, only Chrome verified them; 6 helper files counted as suites); 2 GitHub issues (fuzzy slug + matching contract gap; BE `slug` field on Location); dead homepage chips cleanup (`RecentSearch.js`, Redux `recentLocations`, `{from,to}` vs `{fromLocation,toLocation}` payload mismatch).
+4. i18n next: M5 (account/bookings/orders) or R1 (checkout split, 1295 lines) before M7. **W4 homepage WP data stays PARKED.** Items 2-4 of the #513/#507 resume points (Thai staff guide, `browser-verify 802da3e1/2a8187cb`) are unchanged - see `07-logs/session-history.md` #513 block.
+
 ## Session #513 (2026-10-17) - summary block (moved from master-state)
 
 **Updated:** 2026-10-17 (session #513)
