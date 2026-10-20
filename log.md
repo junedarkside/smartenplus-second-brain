@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-20] feat #517 | i18n M6a2 `/rate-review` Thai chrome merged → develop `9ae13951` (FE `bf552af5`..`49c77edf`; local, not pushed, not on main). Intentional SEO fix: 3 pages noindex,nofollow in SSR HTML (index.js noindex was not reaching SSR before), sitemap exclude, titles no double brand. `[reviewSlug]` + `RateAndReviewForm` split first; hook returns catalog keys. Removed dead `ReviewList.js`. jest failing set = baseline 38, build ok, curl + Chrome (error state) verified; real-slug pages unverified. Agents (SEO, sizing, standards) reviewed plan; sizing agent wrongly called ReviewList shared (grep: 0 importers). Next M6b forum. -> [[i18n-rollout-plan]]
+
 ## [2026-10-19] feat #516 | i18n M6a1 `/404` + `/ref` Thai chrome merged → develop `e18fd378` (FE `e98dc156`; local, not pushed, not on main). `/th/ref*` noindex + EN canonical (CPT content English; M6c later), SEO URLs via `getSiteUrl()`, `ref/[type]` gSP throws on missing data. 47 i18n tests pass, build ok, jest failing set = baseline, Chrome + curl verified. Found: next-sitemap exclude misses locale-prefixed paths. Next M6a2. -> [[i18n-rollout-plan]]
 
 ## [2026-10-15] feat #500 | i18n W1 wpSlugFor merged → develop `e13971e4` (FE `be75ff7c`; not pushed, not on main). Registry `wpSlugSuffix` + `helpers/wordpress/langQuery.js`; `/about` WP slug parity (`about` / `about-th`). jest 225 fail = baseline, build ok. Out of scope: about COPY/ogLocale debt, privacy/terms (W2). Next = P2. -> [[i18n-rollout-plan]]
