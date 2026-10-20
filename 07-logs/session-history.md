@@ -2,6 +2,12 @@
 
 # Session History
 
+## Session #518 (2026-10-20) - summary block (moved from master-state)
+
+**Updated:** 2026-10-20 (session #518)
+
+**Achieved this session (#518):** i18n **M6b `/forum` ✅** (code, chrome-only Thai). Parity split first (`016c968e`: `index.js` 363→212, `createtopic.js` 321→172), then SEO (`1f24db98`: `buildForumSeo`, `createtopic` now noindex,nofollow in every locale, `/th/forum*` noindex + EN canonical, no hreflang), then i18n (`7429b3a4`: `forum.{en,th}.js`, `forumErrorMessage`, `timeAgoLocalized`, 14 components on `useT`). Branch `feat/i18n-m6b-forum` pushed to origin; merged `--no-ff` into **local** FE `develop` = `13ee1c3a`. `develop` is **12 commits ahead of `origin/develop` (`e4d3cb43`)**: 8 from M6a1/M6a2 + 4 from M6b. **Not pushed, not deployed.** Gate: build ok, jest failing set 38 = baseline, eslint 0 errors, curl SSR + Chrome `/th/forum` clean. Not verified: logged-in create/edit/report flows, mobile 390px, category/pagination clicks. Vault: tracker row, `I18N-M6B-FOLLOWUPS` (#518), logs. Artifact "i18n Milestones" refreshed.
+
 ## Session #517 (2026-10-20) - summary block (moved from master-state)
 
 **Updated:** 2026-10-20 (session #517)
