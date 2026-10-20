@@ -2,6 +2,12 @@
 
 # Session History
 
+## Session #519 (2026-10-20) - summary block (moved from master-state)
+
+**Achieved earlier (#519):** i18n **M5a login/register/forgetPassword ✅** (code, Thai chrome). Dead `authHandlers` exports removed (audited), `auth.{en,th}` catalog, `buildAuthSchemas(t)`, locale-aware `callbackUrl`, shared `AuthHead` (Thai pages noindex; SSR now carries page head, English title changes). Plus SEO fix `870188fb`: `/th/{orders,checkout,account,profile,bookings,guest-order,dev}` now in robots `*` group + sitemap exclude for every indexable language (prefix `/account` never covered `/th/account`; several Thai account pages had no noindex). FE `develop` = `cc24c7f3`, **pushed to origin** (M5a branch + fix branch pushed too). Not on `main`, not deployed. Gate: jest failing set 38 = baseline, eslint 0 errors, build ok, curl + Chrome Thai pages clean. Not verified: real login, callbackUrl through next-auth, mobile 390px. Stale stash dropped. Vault: tracker row, `I18N-M5A-FOLLOWUPS`, log.
+
+---
+
 ## Session #518 (2026-10-20) - summary block (moved from master-state)
 
 **Updated:** 2026-10-20 (session #518)
