@@ -343,6 +343,7 @@ Global navigation catalog. Updated on every ingest.
 - [[celery-unregistered-task-stale-worker]] — **NEW 2026-06-18.** `Received unregistered task` / `KeyError <task>` = worker started before task existed; restart worker (web reload ≠ worker reload). Messages discarded, not retried. Local bare process = manual restart (high risk); prod container = `up -d --build` auto-recreates (safe). This incident: #129 `revalidate_frontend_isr`; benign in dev (stale worker + empty `REVALIDATION_SECRET` + frontend down).
 - [[isr-csr-overlay-stale-fields]] — CSR covers ratecard/dates; stale: name/description/images/JSON-LD/meta
 - [[persistgate-ssr-suppresses-head-component]] — PersistGate null SSR blocks DefaultSeo/Head; hoisting fix
+- [[nextseo-after-early-return-misses-ssr]] — NextSeo placed after loading/error early returns leaves noindex out of SSR HTML; render it in every branch
 - [[webpack-image-src-og-absolute-url-rule]] — webpack .src relative → absolute for OG images
 - [[stale-session-guest-booking-access]] — **NEW 2026-08-20.** next-auth refresh failure must NULL the token, not just flag `session.error` — every consumer checks token presence not the error flag, so a stale session keeps sending a dead Bearer header, which DRF's global `JWTAuthentication` rejects before any view's `AllowAny`/guest-fallback logic runs. Incident #333: booking-email deep-link "Access denied" for guests in a normal browser (worked in incognito = no stale cookie). Rejected proactive `signOut()` — would bounce guests off their own emailed link.
 

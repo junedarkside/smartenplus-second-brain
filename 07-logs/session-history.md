@@ -2,6 +2,19 @@
 
 # Session History
 
+## Session #515 (2026-10-17) - summary block (moved from master-state)
+
+**Updated:** 2026-10-17 (session #515)
+
+**Achieved this session (#515):** Sitemap Check #9 failure traced and both root causes fixed; all merged to `develop` and **pushed, NOT deployed, not on `main`**. (1) **False failure = checker bug:** `scripts/sitemap-check.js` fetched the literal `&amp;` from sitemap `<loc>` (never decoded XML entities) -> 500 on `/activities/detail/chiang-rai-airport-&amp;-...-1120`; real page was 200. Fix: single-pass `decodeXml` in `parseLocs`, 2 new tests (FE `d938f478` -> merge `f1b189a7`). (2) **Real bug, FE:** `pages/activities/detail/[...slug].js` re-threw every error so any backend 404 (unknown slug) became a Next 500; now returns `{ notFound: true, revalidate: 300 }` on 404 only, 5xx/timeouts still re-throw (regression from `554a3fde`). 5 new tests in `__tests__/pages/activitiesDetailGetStaticProps.test.js` (FE `975d9621` -> merge `e4d3cb43`). (3) **Real bug, BE:** `Contract` create/update stored client slugs raw (`operators/views.py`), only the auto path slugified, so 1120 kept `&`. New `clean_client_slug` in `operators/utils.py`: slugify on create, on update ONLY when the slug changed (legacy slugs not rewritten by other edits), empty result or collision -> 400 `{"error": ...}` (admin dashboard alert reads `data.error`), `check-slug` also returns the slugified `slug`. 11 new tests, 5 fail on old code (BE `0a8f9ae` -> merge `9df1f39`). **Prod:** user fixed activity 1120's slug by hand; Claude verified read-only: sitemap lists the clean slug, new URL 200, old `&` URL still 200 (cached ISR page, 5 min). **Gate:** FE jest 5/5 + trips getStaticProps 14/14, `npm run build` ok, eslint 0 errors (1 old max-lines warning); BE `operators` 244/244 ok. BE full suite = 6 failures + 87 errors (webhooks, tickets, bookings, cs), IDENTICAL on base code with my change stashed -> pre-existing. Not run: BE `flake8` (not installed in venv).
+
+**Resume point (EXACT):**
+1. **SHIP DECISION (user, nobody else):** deploy `develop` -> `main`. FE `develop` = `e4d3cb43` (96+ commits ahead of `main`, see #514 list), BE `develop` = `9df1f39`. Claude does **no push to `main`, deploy, or cache clear without an explicit "go"**. If go: BE first if BE items ride along (`STATION-BOT-DEPLOY`, `TRIPS-RESPONSE-CACHE-DEPLOY`, `CELERY-BEAT-OOM`, now also the slug fix), then FE; **clear `smartenplus_next_cache`**; after deploy: curl literal `&amp;` activity URL -> expect 404 (was 500), `&` URL / clean 1120 URL -> 200; re-run the **Sitemap Check** GitHub workflow -> expect green (it runs on prod and needs the new script on the default branch).
+2. Decide `SITEMAP-CHECK-FOLLOWUP-515` (Section 2): 44 `/operators/*` 404s in a local full check; 301 for old 1120 URL; scan prod for other dirty slugs.
+3. Decide `USEOMISE-THB-FALLBACK` (payment path, Section 2) before or with the deploy.
+4. Deferred by user (unchanged from #514): fix the 38 red legacy FE suites; 2 GitHub issues (fuzzy slug + contract gap; BE `slug` on Location); dead homepage chips cleanup. i18n next: M6a2 (rate-review), M6b (forum), then M5a-c or R1 before M7. M6a1 done (#516). **W4 homepage WP data stays PARKED.**
+
+
 ## Session #514 (2026-10-17) - summary block (moved from master-state)
 
 **Updated:** 2026-10-17 (session #514)
