@@ -2,6 +2,18 @@
 
 # Session History
 
+## Session #517 (2026-10-20) - summary block (moved from master-state)
+
+**Updated:** 2026-10-20 (session #517)
+
+**Achieved this session (#516 + #517):** i18n **M6a1 + M6a2 ✅** (code), both merged to FE `develop` and **local only** (`develop` = `9ae13951`, 8 commits ahead of `origin/develop` `e4d3cb43`; no push, no deploy). **M6a1** `/404` + `/ref*` Thai chrome (develop `e18fd378`, verified jest/lint/Chrome/curl first). **M6a2** `/rate-review` (develop `9ae13951`): `[reviewSlug]` 430→173 and `RateAndReviewForm` 369→106 split first (parity commits), then `rateReview.{en,th}` catalog + `useT` on 3 pages and child components, hook returns catalog keys, dates language-aware, titles lose the doubled brand. **Intentional SEO fix:** all 3 rate-review pages `noindex,nofollow` in the SSR HTML (`index.js` noindex never reached SSR before: `NextSeo` was missing in its loading/gate branches, so `/rate-review` served `index,follow`); `/rate-review/*` excluded from sitemap; 7 SEO tests. Removed dead `ReviewList.js` (0 importers; a sizing agent wrongly called it shared). Gate: build ok, jest failing set 38 = baseline, eslint 0 errors, curl SSR + Chrome `/th/rate-review/x` (Thai error state, console clean). **Not verified:** real review slug / submit-token pages (client-rendered, needs live data). Vault: tracker rows, `I18N-M6A1-FOLLOWUPS` (#516), `I18N-M6A2-FOLLOWUPS` (#517), logs. Artifact "i18n Milestones" refreshed.
+
+**Resume point (EXACT):**
+1. **SHIP DECISION (user, nobody else):** FE `origin/main` = `origin/develop` = `e4d3cb43` (pushed, user says NOT deployed). Local FE `develop` `9ae13951` is 8 commits ahead (M6a1 + M6a2). Claude does **no push to `main`, deploy, or cache clear without an explicit "go"**; deploy also needs `smartenplus_next_cache` cleared. Before shipping M6a2: check Search Console for `/rate-review/` impressions; after: curl SSR robots meta on `/rate-review`, `/th/rate-review/x`, `/rate-review/submit-review/x`. Older ship items (`STATION-BOT-DEPLOY`, `TRIPS-RESPONSE-CACHE-DEPLOY`, `CELERY-BEAT-OOM`, slug fix, sitemap re-run) unchanged, see session history #515.
+2. i18n: **M6b forum ✅ code** on FE branch `feat/i18n-m6b-forum` (3 commits, not merged to develop, local only). User decides merge to develop. Next: M5a-c or R1 before M7. M6c Thai `/ref` content waits for a Thai `referenceArticle` in WP.
+3. Decide `SITEMAP-CHECK-FOLLOWUP-515` and `USEOMISE-THB-FALLBACK` (Section 2) before or with the deploy; open follow-ups `I18N-M6A1-FOLLOWUPS` / `I18N-M6A2-FOLLOWUPS` (native Thai review, sitemap locale-exclusion gap, real-slug Chrome check).
+4. Deferred by user (unchanged): fix the 38 red legacy FE suites; 2 GitHub issues (fuzzy slug + contract gap; BE `slug` on Location); dead homepage chips cleanup. **W4 homepage WP data stays PARKED.**
+
 ## Session #515 (2026-10-17) - summary block (moved from master-state)
 
 **Updated:** 2026-10-17 (session #515)

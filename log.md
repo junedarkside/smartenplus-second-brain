@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-20] session-end | #518: i18n M6b /forum Thai chrome merged to FE develop `13ee1c3a` (local, 12 ahead of origin; branch pushed). createtopic noindex, /th/forum* noindex + EN canonical. Next: ship decision, then M5a-c or R1. -> [[i18n-rollout-plan]]
+
 ## [2026-10-20] session-end | #517: i18n M6a1 + M6a2 merged to FE develop `9ae13951` (local, 8 ahead of origin), rate-review noindex SSR fix, artifact refreshed. Next M6b forum. -> [[i18n-rollout-plan]]
 
 ## [2026-10-20] feat #517 | i18n M6a2 `/rate-review` Thai chrome merged → develop `9ae13951` (FE `bf552af5`..`49c77edf`; local, not pushed, not on main). Intentional SEO fix: 3 pages noindex,nofollow in SSR HTML (index.js noindex was not reaching SSR before), sitemap exclude, titles no double brand. `[reviewSlug]` + `RateAndReviewForm` split first; hook returns catalog keys. Removed dead `ReviewList.js`. jest failing set = baseline 38, build ok, curl + Chrome (error state) verified; real-slug pages unverified. Agents (SEO, sizing, standards) reviewed plan; sizing agent wrongly called ReviewList shared (grep: 0 importers). Next M6b forum. -> [[i18n-rollout-plan]]
@@ -704,3 +706,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-10-16] done | i18n M3a ✅ code - `/operators` index Thai. FE `93d21ae0` → develop `f2646f6a`, local only, not pushed/deployed. `/th` noindex + English canonical (operator text English until D3); `getStaticProps` re-throws on API failure (behaviour change). Agent audit of plan caught: detail page is `getServerSideProps` not static; SEO for detail must be a pure helper, not a hook. EN HTML identical to `d78aca9e`; Chrome `/th/operators` OK. Next: M3b.
 
 ## [2026-10-16] done | i18n M3b ✅ code - `/operators/[slug]` Thai. FE `66b9c074` (extract) + `9a8d681d` → develop `c43714be`, pushed, not deployed. `/th` noindex + English canonical; `?lang` on both fetches; pure SEO helper takes `locale`; error prop is now a code. Agent audit caught: gSSP needs its own split, error text hardcoded server-side, en parity of og:locale. EN HTML identical; Chrome `/th` OK. M3 done. Next: M4. → [[i18n-rollout-plan]]
+
+## [2026-10-20] done | i18n M6b ✅ code - `/forum` Thai chrome. FE branch `feat/i18n-m6b-forum` (`016c968e` split, `1f24db98` SEO, `7429b3a4` i18n), merged to local develop `13ee1c3a` (not pushed). User chose chrome-only Thai: post text never translated, `/th/forum*` noindex + English canonical, createtopic now noindex,nofollow. Agent audit (1 sonnet) caught: hand-built canonical on all 3 pages, shared `timeAgo` (don't edit in place), missing MUI pagination/plural strings, sitemap premise. jest failing set = 38 baseline, build ok, curl + Chrome `/th/forum` OK. Next: M5a-c or R1. → [[i18n-rollout-plan]]
