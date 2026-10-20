@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-20] session-end | #522: i18n M5c-2 slices 0+a (`/bookings` list split 724→187 + Thai chrome) merged → local FE develop `2a4e158f`, not pushed (4 ahead). JSON dump removed from error panel; jest failing set = 38 baseline; Chrome `/th/bookings` OK. Next: slice b1 (detail head + errors).
+
 ## [2026-10-20] session-end | #521: i18n M5c-1 orders Thai + locale-keeping login redirects merged → FE develop `2c88ad10`, pushed (not on main/deployed). `returnUrl`→`callbackUrl` behaviour change. Next: ship decision, M5c-2 bookings or R1. -> [[i18n-rollout-plan]]
 
 ## [2026-10-20] session-end | #520: i18n M5b account pages merged → FE develop `467f00cf`, pushed. Checklist now requires the failing jest set be identical to the 38 baseline suites after each milestone. Next: ship decision, M5c or R1. -> [[i18n-rollout-plan]]
