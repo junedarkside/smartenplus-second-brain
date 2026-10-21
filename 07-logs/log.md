@@ -1,3 +1,5 @@
+## [2026-10-21] session-end #530 | i18n R2-4..R2-7 done (whole checkout split); FE develop `f71c5f63` pushed, not main/deployed. R2-7 page 1095->~175 lines, 63 tests, gates + both reviews clean. Tickets: CHECKOUT-QR-LEAVE-STALE-DEPS, I18N-R2-LOOSE-ENDS. Resume: R2-8 i18n.
+
 ## [2026-10-21] session-end #529 | i18n R2-1 harness (partial) done; FE develop `ae9e5190` pushed, not main/deployed. Full jest diff vs base: no regressions (38->37 failed suites). New ticket JEST-SETUP-MUI-MOCKS. Resume: R2-2 InlinePassengerSelector stale closure.
 
 ## [2026-10-21] session-end #526 | i18n R1 partial: checkout S1 step validators + S7 getOrderUrl extracted, FE develop `fefe475e` pushed (not main/deployed). Test net for /checkout is broken (page test + provider paths); riskier slices skipped. Resume: R1 S6/S11/S2 or M7.
