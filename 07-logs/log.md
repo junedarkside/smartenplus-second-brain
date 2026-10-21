@@ -1,3 +1,5 @@
+## [2026-10-21] session-end #525 (BE addendum) | BE develop pushed `637773a`: BookingPDFViewSet deleted + BookingDetailsViewSet read-only (guest PATCH/DELETE closed). Deploy FE first (prod main still has download.js). FE develop `066088c1`, resume R1 or M7.
+
 ## [2026-10-21] fix | BE `BookingDetailsViewSet` now ReadOnly (BE develop `637773a`, NOT pushed/deployed): guest slug+email could PATCH/DELETE. Test fails without fix; BE suite 1466, failing set = baseline. No FE dependency.
 
 ## [2026-10-21] fix | BE `BookingPDFViewSet` removed (BE develop `8f02428`, NOT pushed/deployed): guest could PATCH/DELETE any booking by slug. FE prod `main` still has `download.js` -> deploy FE first. New ticket `be-bookingdetails-write-methods-ticket` (same hole, slug+email). 1464 BE tests, failing set = baseline.
