@@ -27,7 +27,7 @@
 
 **Resume point (EXACT):**
 1. **SHIP DECISION (user, nobody else):** FE `develop` (`467f00cf`, includes M5a/M5b/M6a1/M6a2/M6b/SEO fix) is **already pushed**; remaining = `main` + deploy. Claude does **no push of `main`, deploy, or cache clear without an explicit "go"**; deploy also needs `smartenplus_next_cache` cleared. Before shipping: Search Console check for `/rate-review/` and `/forum/createtopic` impressions (both turned noindex); after: curl SSR robots meta on `/rate-review`, `/th/rate-review/x`, `/forum/createtopic`, `/th/forum`. Older ship items (`STATION-BOT-DEPLOY`, `TRIPS-RESPONSE-CACHE-DEPLOY`, `CELERY-BEAT-OOM`, slug fix, sitemap re-run) unchanged, see session history #515.
-2. i18n next (M5c-2 slices 0+a on local develop `2a4e158f`, unpushed): **M5c-2 slice b1** (bookings detail head + errors), then b2, c (pdf/download) then M5c-3 my-trip, or **R1** (split checkout 1295 lines) before M7. M6c Thai `/ref` content waits for a Thai `referenceArticle` in WP.
+2. i18n next (M5c-2 ALL slices done; slice c pdf on local develop `ac71e8be`, unpushed; b2b-2 pushed `d0d07b54`): **M5c-3 `/my-trip`** (TicketStatusBanner, InfoUpdateNotice), or **R1** (split checkout 1295 lines) before M7. M6c Thai `/ref` content waits for a Thai `referenceArticle` in WP.
 3. Decide `SITEMAP-CHECK-FOLLOWUP-515` and `USEOMISE-THB-FALLBACK` (Section 2) before or with the deploy; open follow-ups `I18N-M5B-FOLLOWUPS` / `I18N-M5A-FOLLOWUPS` / `I18N-M6A1-` / `M6A2-` / `M6B-FOLLOWUPS` (native Thai review, sitemap locale-exclusion gap, real-slug Chrome checks).
 4. Deferred by user (unchanged): fix the 38 red legacy FE suites; 2 GitHub issues (fuzzy slug + contract gap; BE `slug` on Location); dead homepage chips cleanup. **W4 homepage WP data stays PARKED.**
 ---
