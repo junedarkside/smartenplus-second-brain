@@ -1,3 +1,5 @@
+## [2026-10-21] session-end #526 | i18n R1 partial: checkout S1 step validators + S7 getOrderUrl extracted, FE develop `fefe475e` pushed (not main/deployed). Test net for /checkout is broken (page test + provider paths); riskier slices skipped. Resume: R1 S6/S11/S2 or M7.
+
 ## [2026-10-21] chore | Branch cleanup: deleted all merged local branches (FE 38, BE 28) and merged remote branches (FE 9, BE 41). Left: BE local `feat/route-schedule`, BE local+remote `test/be-lang-th-http-integration` (unmerged, unchecked). BE `origin/HEAD` -> `master` (odd, not investigated).
 
 ## [2026-10-21] session-end #525 (BE addendum) | BE develop pushed `637773a`: BookingPDFViewSet deleted + BookingDetailsViewSet read-only (guest PATCH/DELETE closed). Deploy FE first (prod main still has download.js). FE develop `066088c1`, resume R1 or M7.
