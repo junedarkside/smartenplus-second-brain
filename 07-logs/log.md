@@ -1,3 +1,5 @@
+## [2026-10-21] session-end #523 | account head bug (hoisted AuthHead lost title+noindex after _app re-render) fixed `18aabc98`, merged FE develop `c51ea40b` (unpushed); M5+M6 signed-in Chrome pass OK, gaps listed
+
 ## [2026-10-17] session-end #515 | Sitemap Check #9 root-caused: checker bug (XML `&amp;` not decoded, FE `f1b189a7`) + 2 real bugs fixed: activities `getStaticProps` 404->500 (FE `e4d3cb43`) and Contract client slugs stored raw (BE `9df1f39`, guarded slugify, 400 on collision); user fixed 1120 on prod, verified; all on develop, NOT deployed; BE full-suite failures identical on base; 44 `/operators/*` 404 in local full check uninvestigated
 
 ## [2026-10-17] session-end #514 | FE `/trips/<from>/<to>` 5 fixes (breadcrumb remount, labels in search fields, dead `/stations/` fetch, noindex fuzzy slugs) + recent-search fix (save picked place, dedupe by place, From/To split, show when prefilled); all merged to FE develop `ac0f2415`, pushed, NOT deployed (develop 96 ahead of main `bf8566bb`); pre-ship gate on `74542650` passed (build 0, same 38 red suites, payment diff SAFE, Chrome 6/6); deploy needs explicit user go + clear `smartenplus_next_cache`

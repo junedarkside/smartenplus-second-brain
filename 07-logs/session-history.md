@@ -6,6 +6,10 @@
 
 # Session History
 
+## Session #521 (2026-10-20) - summary block (moved from master-state)
+
+**Achieved earlier (#521):** i18n **M5c-1 orders ✅** (code, Thai chrome for `/orders`, `/orders/[orderid]`, `/guest-order/[orderId]` + locale-keeping login redirects) on FE `feat/i18n-m5c1-orders` (6 commits `6a812cab`..`4d76675a`), **merged → develop `2c88ad10`, pushed to origin**. Behaviour change: `ProtectedComponent`/checkout now send `callbackUrl` (was unread `returnUrl`), so login returns to the origin page. Payment code untouched. jest failing set = same 38 suites as clean develop, build ok. Not verified: signed-in Thai UI, payment flows, mobile. See tracker row + `I18N-M5C-FOLLOWUPS`.
+
 ## Session #519 (2026-10-20) - summary block (moved from master-state)
 
 **Achieved earlier (#519):** i18n **M5a login/register/forgetPassword ✅** (code, Thai chrome). Dead `authHandlers` exports removed (audited), `auth.{en,th}` catalog, `buildAuthSchemas(t)`, locale-aware `callbackUrl`, shared `AuthHead` (Thai pages noindex; SSR now carries page head, English title changes). Plus SEO fix `870188fb`: `/th/{orders,checkout,account,profile,bookings,guest-order,dev}` now in robots `*` group + sitemap exclude for every indexable language (prefix `/account` never covered `/th/account`; several Thai account pages had no noindex). FE `develop` = `cc24c7f3`, **pushed to origin** (M5a branch + fix branch pushed too). Not on `main`, not deployed. Gate: jest failing set 38 = baseline, eslint 0 errors, build ok, curl + Chrome Thai pages clean. Not verified: real login, callbackUrl through next-auth, mobile 390px. Stale stash dropped. Vault: tracker row, `I18N-M5A-FOLLOWUPS`, log.

@@ -2,6 +2,12 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-21] i18n | M5c-2 slice b2a done
+FE `1c325c0e` → develop `6ffa725c` (local, 2 ahead of origin). Detail header, status badge, date, request-change dialog Thai; `formatBookingDate` helper. b2 split into b2a/b2b-1/b2b-2. Next: b2b-1.
+
+## [2026-10-21] i18n | M5c-2 slice b1 done
+FE `3ed5e996` → develop `7a06c6c6` (pushed 2026-10-21). `/bookings/[bookingId]` Thai head + error states, hooks extracted. Next: b2 detail components, c pdf.
+
 ## [2026-10-20] session-end | #522: i18n M5c-2 slices 0+a (`/bookings` list split 724→187 + Thai chrome) merged → local FE develop `2a4e158f`, not pushed (4 ahead). JSON dump removed from error panel; jest failing set = 38 baseline; Chrome `/th/bookings` OK. Next: slice b1 (detail head + errors).
 
 ## [2026-10-20] session-end | #521: i18n M5c-1 orders Thai + locale-keeping login redirects merged → FE develop `2c88ad10`, pushed (not on main/deployed). `returnUrl`→`callbackUrl` behaviour change. Next: ship decision, M5c-2 bookings or R1. -> [[i18n-rollout-plan]]
