@@ -1,3 +1,5 @@
+## [2026-10-21] session-end #529 | i18n R2-1 harness (partial) done; FE develop `ae9e5190` pushed, not main/deployed. Full jest diff vs base: no regressions (38->37 failed suites). New ticket JEST-SETUP-MUI-MOCKS. Resume: R2-2 InlinePassengerSelector stale closure.
+
 ## [2026-10-21] session-end #526 | i18n R1 partial: checkout S1 step validators + S7 getOrderUrl extracted, FE develop `fefe475e` pushed (not main/deployed). Test net for /checkout is broken (page test + provider paths); riskier slices skipped. Resume: R1 S6/S11/S2 or M7.
 
 ## [2026-10-21] session-end #528 | i18n M7c+M7d+M7e done (validators, payment leaves, QR panel, inline passengers, cancel dialog); FE develop `0a477827` pushed, not main/deployed. Both payment reviews SAFE TO MERGE. Resume: R2 split of 5 red files, Chrome check, native Thai review.
