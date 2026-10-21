@@ -9,6 +9,18 @@
 
 # Session History
 
+## Session #526 (2026-10-21) - summary block (moved from master-state)
+
+**Updated:** 2026-10-21 (session #526)
+
+**Achieved this session (#526):** i18n **R1 partial** (checkout split, FE). Reviewed next milestone with 2 agents (Explore + rules review, verdict approve-with-changes); plan `~/.claude/plans/agents-review-i18n-next-scalable-storm.md`. User rule: must not break current functions -> **pure slices only**. Shipped: **S1** `helpers/checkout/stepValidations.js` (`buildStepValidations(ctx)`, `index.js` 1294->1097, 17 tests, `e7e89c5f`) and **S7** `helpers/checkout/orderUrl.js` `getOrderUrl` (5 identical redirect ternaries in `PaymentComponent.js`, 4 tests, `a4ad456a`). Merged -> FE develop `fefe475e`, **pushed to origin**, not on main/deployed. Verified: build ok, eslint 0 errors, jest failing set = baseline (checkout page test + `useOmisePayment` 3 tests already red), Chrome dev (signed-in, local BE, demo day tour in cart): step 0 pass, step 1 msg "Please complete all passenger details", step 2 msg "Please accept terms and conditions", Payment step renders, console clean. **Not verified:** `getOrderUrl` call sites (only run after paid/409 already-paid), mixed-passenger assignment step, seat-check messages, guest flow. Caught own bug: failed `sed` import of `getOrderUrl` (no test renders PaymentComponent; eslint no-undef caught it). **Found:** `__tests__/pages/checkout/index.integration.test.js` cannot load (wrong relative paths) and `__tests__/utils/test-utils-provider.js` has wrong `../../../store` paths + fake store -> NO automated net for `/checkout`; `docs/operations/{REFACTORING_WORKFLOW,CHECKOUT}.md` + `docs/development/CODING_STANDARDS.md` unreadable to Claude (permission), followed CLAUDE.md only. Local dev cart still holds the demo tour (28 Oct).
+
+**Resume point (EXACT):**
+1. **R1 remaining (optional, user decides):** S6 `GuestAuthChoiceModal`, S11 `TripAssignmentsSummary`, S2 `usePassengerDerivations` only if each passes the split test (block >60 / >30 lines). Skipped as risky without a test net: S3, S4, S5, S8, S9, S10 (nav lock, cancelState.success, QR guards, pending-charge actions). Before them: fix the test harness (paths + real store) or accept Chrome-only gate. Trap: `scrollToCheckoutTop` const index.js ~809 used ~675 (TDZ if reordered).
+2. **Or M7** (Thai checkout strings, in place): ~30 EN strings `index.js` (now mostly in `stepValidations.js`, messages hardcoded English -> pass `t` in), ~40 `PaymentComponent`, ~9 toasts `useOmisePayment`, ~8 `TotalCartSummary`. Payment checklist in `i18n-rollout-plan.md`; model floor sonnet; language never in money payload.
+3. **SHIP DECISION (user, nobody else):** FE `develop` (`fefe475e`) pushed; remaining = `main` + deploy (clear `smartenplus_next_cache`). BE `develop` `637773a` (BookingPDFViewSet deleted, BookingDetailsViewSet read-only) pushed, not on main: deploy FE first (prod main still has `download.js`). Claude does no main push/deploy without an explicit "go".
+4. Decide `SITEMAP-CHECK-FOLLOWUP-515`, `USEOMISE-THB-FALLBACK`; open follow-ups `I18N-M5A/M5B/M5C2/M6A1/M6A2/M6B-FOLLOWUPS` (native Thai review, real-slug Chrome checks). Deferred (unchanged): 38 red legacy FE suites, 2 GitHub issues, dead homepage chips, **W4 homepage PARKED**.
+
 ## Session #525 (2026-10-21) - summary block (moved from master-state)
 
 **Updated:** 2026-10-21 (session #525)
