@@ -40,4 +40,4 @@ Do NOT deploy BE until: (a) FE `develop`→`main` deployed with `smartenplus_nex
 `CLAUDE.md.original.md:312`, `docs/operations/BOOKINGS_REFACTOR_PLAN.md:34,460-472,663`, `BOOKINGS_REFACTOR_TEST_PLAN.md:38,114,308`.
 
 ## Follow-up
-Same hole on `BookingDetailsViewSet` -> [[be-bookingdetails-write-methods-ticket]].
+Same hole on `BookingDetailsViewSet` -> [[be-bookingdetails-write-methods-ticket]] (also FIXED, BE develop `637773a`).
