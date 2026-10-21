@@ -2,6 +2,9 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-21] i18n | M5c-2 slice b2b-1 done
+FE `61b66949` → develop `121d8dff` + connection-key fix (local, not pushed; b2a pushed `6ffa725c`). Passenger, Information, TripRoute, category badge Thai. Next: b2b-2.
+
 ## [2026-10-21] i18n | M5c-2 slice b2a done
 FE `1c325c0e` → develop `6ffa725c` (local, 2 ahead of origin). Detail header, status badge, date, request-change dialog Thai; `formatBookingDate` helper. b2 split into b2a/b2b-1/b2b-2. Next: b2b-1.
 
