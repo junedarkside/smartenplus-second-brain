@@ -2,6 +2,9 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-21] i18n | M5c-2 slice b2b-2 done (b2 complete)
+FE merged to local develop (2 ahead; b2b-1 pushed `ffe58dd5`). ServiceDetail, tabs, baggage, cancellation policy Thai; `BaggageContent` extracted. Next: slice c (pdf).
+
 ## [2026-10-21] i18n | M5c-2 slice b2b-1 done
 FE `61b66949` → develop `121d8dff` + connection-key fix (local, not pushed; b2a pushed `6ffa725c`). Passenger, Information, TripRoute, category badge Thai. Next: b2b-2.
 
