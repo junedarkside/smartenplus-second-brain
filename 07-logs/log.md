@@ -1,3 +1,5 @@
+## [2026-10-21] fix | BE `BookingPDFViewSet` removed (BE develop `8f02428`, NOT pushed/deployed): guest could PATCH/DELETE any booking by slug. FE prod `main` still has `download.js` -> deploy FE first. New ticket `be-bookingdetails-write-methods-ticket` (same hole, slug+email). 1464 BE tests, failing set = baseline.
+
 ## [2026-10-21] session-end #523 | account head bug (hoisted AuthHead lost title+noindex after _app re-render) fixed `18aabc98`, merged FE develop `c51ea40b` (unpushed); M5+M6 signed-in Chrome pass OK, gaps listed
 
 ## [2026-10-17] session-end #515 | Sitemap Check #9 root-caused: checker bug (XML `&amp;` not decoded, FE `f1b189a7`) + 2 real bugs fixed: activities `getStaticProps` 404->500 (FE `e4d3cb43`) and Contract client slugs stored raw (BE `9df1f39`, guarded slugify, 400 on collision); user fixed 1120 on prod, verified; all on develop, NOT deployed; BE full-suite failures identical on base; 44 `/operators/*` 404 in local full check uninvestigated
