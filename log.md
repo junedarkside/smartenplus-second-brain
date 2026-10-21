@@ -2,6 +2,8 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-10-21] session-end | #525: i18n M5c-2 slice c (pdf ticket) + M5c-3 (/my-trip) done, M5c complete. Thai brand = SmartEnPlus (was LookChang). FE develop pushed `066088c1`, not on main, not deployed. BE BookingPDFViewSet AllowAny ticketed. Next: R1 or M7.
+
 ## [2026-10-21] i18n | M5c-2 slice b2b-2 done (b2 complete)
 FE merged to local develop (2 ahead; b2b-1 pushed `ffe58dd5`). ServiceDetail, tabs, baggage, cancellation policy Thai; `BaggageContent` extracted. Next: slice c (pdf).
 
