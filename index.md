@@ -718,3 +718,4 @@ Global navigation catalog. Updated on every ingest.
 - [[soft-404-api-returns-200-empty-payload]] — unknown ids return 200 + empty collections: `notFound` on empty payload or confirmed 404 only, never 5xx; probe the real API first.
 - [[logincart-orphan-payment-pending-block]] — **NEW 2026-10-13 (#492).** Orphan `payment_pending` order makes `PUT /logincart` 409 so the guest trip is lost; heal-before-guard decision table (fail closed), cancel button on `/orders`, 409 log, test trap (use mobile banking, not PromptPay).
 - [[i18n-rollout-dashboard.html]] — visual board for [[i18n-rollout-plan]] (open in browser)
+- [[redux-persist-checkout-no-owner]] — **NEW 2026-10-22 (#532).** Persisted guest checkout blob has no owner; only normal logout clears it, so shared-browser PII can prefill for the next user. BE is user-scoped (no leak). Fix planned, not built.
