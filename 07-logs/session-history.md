@@ -1,5 +1,20 @@
 
 
+**Session #536 (moved from master-state):** **Achieved this session (#536):** lock-with-no-charge gap closed on the backend, plus order-endpoint lockdown. All merged to `develop` and **pushed**; **nothing deployed, nothing on main.** BE `develop` `b11b01f`, FE `develop` `704d80fb`.
+- FE `fix/locked-notice-without-charge`: the locked notice no longer vanishes when the 409 names no charge, and clears once the backend releases the lock.
+- BE `/order-billing/` IDOR closed (any logged-in user could GET/PATCH/DELETE any order); sibling order viewsets locked to the methods they need, with ownership checks.
+- BE lock-with-no-charge, 4 parts: lock write bumps `Order.updated`; `release_chargeless_locks` sweep (in `stuck_sweep.py`, called from `sync_pending_charges`) frees a charge-less lock after 10 min; new `Order.charge_attempted_at` marker (set just before the Omise call by a conditional UPDATE) so the sweep never releases once Omise may have been called (alert-only instead); revert after an Omise error is now a conditional UPDATE, only when this call took the lock and still owns the marker.
+- Migration `orders/0044` adds the marker and backfills it on existing charge-less locks (they alert, not release). Bad card/bank/Alipay input now fails before the lock.
+- Two `payment-security-specialist` reviews each found real issues (double charge on a captured card, same-amount retry race, backfill, input-before-lock, concurrent revert race); all fixed with failing tests first and mutation checks. Regression equals baseline (1 failure, 50 errors, pre-existing).
+
+**Resume point (EXACT):**
+1. **Deploy decision (user only), order BE, FE, clear `smartenplus_next_cache`.** BE `b11b01f` and FE `704d80fb` pushed, `main` untouched. BE has migration `orders/0044` (BE first) and the new beat sweeps: restart the celery worker + beat after the BE deploy. `SEP_NOTIFY_bot` / `SEP_GROUP_ID` already exist on prod (same vars `bookings/tasks.py` uses); new alerts go to the existing ops group.
+2. **Not yet browser-run:** locked-notice recipe (`lock-amount` with page open, Generate QR) and QR-paid via Omise test mark-as-paid (endpoint unverified).
+3. **Staging test matrix from #534** still stands (nobody has run a real Omise charge on develop).
+4. **Rotate the DB password** committed in a comment at BE `Smartenplus/settings.py:232`, then remove the comment.
+5. New open items below (`LOCK-NO-CHARGE-STRANDED`, `ORDER-ENDPOINT-HOLES`, `OMISE-CHARGE-METADATA`, FE locked-notice follow-ups); older #534 items still open: `USEOMISE-THB-FALLBACK` (decision), M8 offline strings + BE emails, `feat/i18n-r2-8-followups-1/-2`, `chore/remove-dead-checkout-code`.
+
+
 **Session #535 (moved from master-state):** **Achieved this session (#535):** payment/checkout leftovers closed on the backend and one frontend fix, all merged to `develop` and **pushed**; **nothing deployed, nothing on main.** BE `develop` `e8f633e`: `fix/e2e-fixture-guards` (fixture CLI refuses unless DEBUG + local DB + `skey_test_` + `E2E_FIXTURES=1`, QA-email-only order commands), `fix/pp-expire-asks-omise` (PromptPay beat loop asks Omise before expiring; blind expire only after TTL+1h; conditional write cannot overwrite PAID), `feat/sweep-paid-stuck` (`payments/stuck_sweep.py`: beat finalizes orders whose LATEST charge is PAID with amount == `locked_amount`; mismatch / older-PAID-not-latest / still-stuck are Telegram alert-only, 24h dedupe, never raises). FE `develop` `31257df5`: `fix/stale-pending-notice-after-cancel` (`usePendingCharge` clears on latest charge `expired`/`failed`; root cause = refetched order still returns the cancelled charge, the 409-seeded `pendingCharge.exists` survived and the pending notice hid the method selector). Tests: BE `payments orders` 446 OK, 12 sweep mutations all caught; FE new `usePendingCharge.test.js` (mutation checked). payment-security-specialist: SAFE on all. Browser (local, Omise test): fixture guard, real QR + countdown restore, no literal `{name}`, QR to card switch, declined card `4111111111140011` -> `payment_failed` + modal, cancel-pending now restores the selector.
 
 **Resume point (EXACT):**

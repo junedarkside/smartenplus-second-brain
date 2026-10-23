@@ -15,17 +15,16 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-22 (session #536)
+**Updated:** 2026-10-23 (session #537)
 
-**Achieved this session (#536):** lock-with-no-charge gap closed on the backend, plus order-endpoint lockdown. All merged to `develop` and **pushed**; **nothing deployed, nothing on main.** BE `develop` `b11b01f`, FE `develop` `704d80fb`.
-- FE `fix/locked-notice-without-charge`: the locked notice no longer vanishes when the 409 names no charge, and clears once the backend releases the lock.
-- BE `/order-billing/` IDOR closed (any logged-in user could GET/PATCH/DELETE any order); sibling order viewsets locked to the methods they need, with ownership checks.
-- BE lock-with-no-charge, 4 parts: lock write bumps `Order.updated`; `release_chargeless_locks` sweep (in `stuck_sweep.py`, called from `sync_pending_charges`) frees a charge-less lock after 10 min; new `Order.charge_attempted_at` marker (set just before the Omise call by a conditional UPDATE) so the sweep never releases once Omise may have been called (alert-only instead); revert after an Omise error is now a conditional UPDATE, only when this call took the lock and still owns the marker.
-- Migration `orders/0044` adds the marker and backfills it on existing charge-less locks (they alert, not release). Bad card/bank/Alipay input now fails before the lock.
-- Two `payment-security-specialist` reviews each found real issues (double charge on a captured card, same-amount retry race, backfill, input-before-lock, concurrent revert race); all fixed with failing tests first and mutation checks. Regression equals baseline (1 failure, 50 errors, pre-existing).
+**Achieved this session (#537):** `/th/activities` first-paint flash (73 results, then 34) fixed on the frontend. Merged to FE `develop` `088ebc11`; **not pushed, not deployed, nothing on main.**
+- Root cause: `pages/activities/index.js` `getStaticProps` fetched the first page without the experience `service_category` filter (count 73, included non-experience contracts); the client RTK query uses `EXPERIENCE_CATEGORIES` (count 34), so the client swapped the list and count after load. SSR query now uses the same categories (backend returns identical 12 ids and count 34 for SSR and client URLs, en and th).
+- SSR count (`initialCount`) and pagination render on first paint; skeleton only while URL filters are pending (blank count line, no "no results" flash). Review (feature-dev:code-reviewer vs CLAUDE.md + coding standards) caught a permanent-skeleton bug on `?utm_source=x` / `?page=1`; fixed with `hasActiveFilters(filtersFromQuery(router.query))`. `getStaticProps` now throws on HTTP errors so ISR keeps the last good build.
+- Derivation moved to `deriveBrowseState` (component complexity warning 29 → 12). Added `__tests__/pages/activitiesIndexGetStaticProps.test.js` and `hooks/__tests__/useDayTripFilters.test.js` (35/35 activity tests pass, eslint 0 errors). Chrome-verified `/th/activities`, `?utm_source=x&page=1`, `?location=phuket&category=DAY_TOUR`.
+- Known, left: raw SSR HTML of a filtered URL shows the unfiltered count for an instant before the skeleton (server cannot see the query string). Broken-image cards seen in activities screenshots were not investigated.
 
 **Resume point (EXACT):**
-1. **Deploy decision (user only), order BE, FE, clear `smartenplus_next_cache`.** BE `b11b01f` and FE `704d80fb` pushed, `main` untouched. BE has migration `orders/0044` (BE first) and the new beat sweeps: restart the celery worker + beat after the BE deploy. `SEP_NOTIFY_bot` / `SEP_GROUP_ID` already exist on prod (same vars `bookings/tasks.py` uses); new alerts go to the existing ops group.
+1. **Push FE `develop` (`088ebc11`, local only), then the deploy decision (user only), order BE, FE, clear `smartenplus_next_cache`.** BE `b11b01f` pushed, `main` untouched. BE has migration `orders/0044` (BE first) and the new beat sweeps: restart the celery worker + beat after the BE deploy.
 2. **Not yet browser-run:** locked-notice recipe (`lock-amount` with page open, Generate QR) and QR-paid via Omise test mark-as-paid (endpoint unverified).
 3. **Staging test matrix from #534** still stands (nobody has run a real Omise charge on develop).
 4. **Rotate the DB password** committed in a comment at BE `Smartenplus/settings.py:232`, then remove the comment.
