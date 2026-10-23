@@ -83,3 +83,4 @@ Resets on every component mount, not only on cartId change. Ensures fresh backen
 - [[checkout-formdata-time-fields]] — time field casing boundary in persistence
 - [[rtk-query-advanced-patterns]] — saveCheckoutInfo missing invalidatesTags
 - [[nextauth-session-shape]] — session?.user?.email for logged-in users
+- [[checkout-guest-clear-my-data]] — guest data holders and what "Clear My Data" must wipe
