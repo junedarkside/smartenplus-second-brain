@@ -17,14 +17,14 @@
 
 **Updated:** 2026-10-23 (session #537)
 
-**Achieved this session (#537):** `/th/activities` first-paint flash (73 results, then 34) fixed on the frontend. Merged to FE `develop` `088ebc11`; **not pushed, not deployed, nothing on main.**
+**Achieved this session (#537):** `/th/activities` first-paint flash (73 results, then 34) fixed on the frontend. Merged to FE `develop` `088ebc11` and **pushed**; **not deployed, nothing on main.**
 - Root cause: `pages/activities/index.js` `getStaticProps` fetched the first page without the experience `service_category` filter (count 73, included non-experience contracts); the client RTK query uses `EXPERIENCE_CATEGORIES` (count 34), so the client swapped the list and count after load. SSR query now uses the same categories (backend returns identical 12 ids and count 34 for SSR and client URLs, en and th).
 - SSR count (`initialCount`) and pagination render on first paint; skeleton only while URL filters are pending (blank count line, no "no results" flash). Review (feature-dev:code-reviewer vs CLAUDE.md + coding standards) caught a permanent-skeleton bug on `?utm_source=x` / `?page=1`; fixed with `hasActiveFilters(filtersFromQuery(router.query))`. `getStaticProps` now throws on HTTP errors so ISR keeps the last good build.
 - Derivation moved to `deriveBrowseState` (component complexity warning 29 → 12). Added `__tests__/pages/activitiesIndexGetStaticProps.test.js` and `hooks/__tests__/useDayTripFilters.test.js` (35/35 activity tests pass, eslint 0 errors). Chrome-verified `/th/activities`, `?utm_source=x&page=1`, `?location=phuket&category=DAY_TOUR`.
 - Known, left: raw SSR HTML of a filtered URL shows the unfiltered count for an instant before the skeleton (server cannot see the query string). Broken-image cards seen in activities screenshots were not investigated.
 
 **Resume point (EXACT):**
-1. **Push FE `develop` (`088ebc11`, local only), then the deploy decision (user only), order BE, FE, clear `smartenplus_next_cache`.** BE `b11b01f` pushed, `main` untouched. BE has migration `orders/0044` (BE first) and the new beat sweeps: restart the celery worker + beat after the BE deploy.
+1. **Deploy decision (user only), order BE, FE, clear `smartenplus_next_cache`.** BE `b11b01f` and FE `088ebc11` pushed, `main` untouched. BE has migration `orders/0044` (BE first) and the new beat sweeps: restart the celery worker + beat after the BE deploy.
 2. **Not yet browser-run:** locked-notice recipe (`lock-amount` with page open, Generate QR) and QR-paid via Omise test mark-as-paid (endpoint unverified).
 3. **Staging test matrix from #534** still stands (nobody has run a real Omise charge on develop).
 4. **Rotate the DB password** committed in a comment at BE `Smartenplus/settings.py:232`, then remove the comment.
