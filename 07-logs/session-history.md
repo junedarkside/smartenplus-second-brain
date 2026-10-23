@@ -1,3 +1,20 @@
+**Session #539 (moved from master-state):** **Achieved this session (#539):** stuck-lock alert for order GOL8409503 explained and the orphan-charge tooling shipped to BE `develop` `4cecbb8` (**pushed; not deployed, nothing on main**).
+- A: payments admin search/filters + Order "Payment Lock" fieldset (`26dcc67`). A2: read-only `GatewayChargeInline` on the Order admin page (`41c351b`). Merged `438caca`.
+- D: read-only orphan finder (`payments/orphan_charges.py`): management command `find_orphan_charges`, hourly Celery task with Telegram alert (24h dedupe per charge), and Django admin page with built-in help for locked orders (`is_admin` only). Commit `cac2f5c`, merged `4cecbb8`. 26 tests green; payments+orders 527 OK.
+- C: vault runbook `06-systems/stuck-payment-lock-runbook.md`, now lists the new tools.
+- Decided: NOT doing E (order_id metadata on the Omise charge), W, B for now. Admin can check but cannot release; a dev releases or links.
+- Full BE suite has 93 pre-existing failures (6 fail, 87 error), identical on clean `develop`. Not mine.
+- Seen, not fixed: payments tests hit the real Telegram API (429) and logs print a URL with the bot token. A credential was pasted in chat this session; user should change it if reused.
+
+**Resume point (EXACT):**
+0. **Admin release button built (not pushed):** BE `feat/admin-release-stuck-lock` (`b7e8fa8`, `1c7f1d4`), off `develop` `4cecbb8`. Next: browser-run locally, push, merge to develop, deploy with `4cecbb8`. Then GOL8409503 (created 2026-06-04, 800 THB): user checks Omise Live around the order `Updated` time, admin releases via the button.
+1. **Deploy decision (user only), order BE, FE, clear `smartenplus_next_cache`.** BE `4cecbb8` (includes `b11b01f` + orphan finder) and FE `aab555a7` pushed, `main` untouched. BE has migration `orders/0044` (BE first) and the new beat sweeps: restart the celery worker + beat after the BE deploy.
+2. **GOL8409503 (prod):** user checks Omise Dashboard (Live > Charges, same amount near lock time). successful = dev links charge, do NOT release; failed/expired/none = dev releases. After BE deploy: restart celery worker + beat, click the admin orphan page once, confirm amounts are baht, expect a first Telegram burst of old charges. Run `payment-security-specialist` review of D before deploy (not done).
+3. **Not yet browser-run:** locked-notice recipe (`lock-amount` with page open, Generate QR) and QR-paid via Omise test mark-as-paid (endpoint unverified).
+4. **Staging test matrix from #534** still stands (nobody has run a real Omise charge on develop).
+5. **Rotate the DB password** committed in a comment at BE `Smartenplus/settings.py:232`, then remove the comment.
+6. New open items below (`LOCK-NO-CHARGE-STRANDED`, `ORDER-ENDPOINT-HOLES`, `OMISE-CHARGE-METADATA`, FE locked-notice follow-ups); older #534 items still open: `USEOMISE-THB-FALLBACK` (decision), M8 offline strings + BE emails, `feat/i18n-r2-8-followups-1/-2`, `chore/remove-dead-checkout-code`.
+
 **Session #538 (moved from master-state):** **Achieved this session (#538):** guest checkout "Clear My Data" fixed. FE `fix/guest-clear-data` `6e63398f` merged to `develop` `aab555a7` and **pushed**; **not deployed, nothing on main.** Vault note pushed (`745dd3e`).
 - Root cause: the handler only reset the Redux checkout slice. `formData` state + `sessionStorage['checkout_formData']` re-filled the form (autosave wrote it back, refresh restored it), and `isGuestMode=false` on step 1+ made `ProtectedComponent` redirect the guest to login. Alert text was hardcoded English.
 - Fix: new `clearFormData` in `useCheckoutFormData` (state + storage), passed through `useCheckoutData`; `handleClearGuestData` also resets `completedSteps` to `[0]` and `formStep` to 0; alert via `checkout.guestBanner.cleared` (en + th). Plan reviewed by code-reviewer + react-specialist before coding (they caught `[0]` vs `[]` and the login redirect).

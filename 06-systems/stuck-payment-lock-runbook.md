@@ -28,7 +28,7 @@ Migration `orders/0044_order_charge_attempted_at` (2026-10-22) back-filled `char
 | failed / expired | Safe to release |
 | no match in window | Safe to release (widen window to ±1h first) |
 
-6. Release (dev only, never ops by hand-editing blindly): `status='ordering'`, `locked_amount=None`, `charge_attempted_at=None`, guarded by `status='payment_pending'`, `payment_finalized_at IS NULL`, no linked GatewayCharge. Mirrors `_revert_own_lock` (`services.py:504-521`).
+6. Release. **Preferred (BE branch `feat/admin-release-stuck-lock`, once deployed): `is_admin` opens the order in `/securelogin/`, clicks "Release stuck payment lock", re-does the Omise Live check from the page checklist, ticks the box, confirms.** Refused when: gateway charge linked, live idempotency key, lock younger than 15 min, or values changed since the page opened. Writes Order History + Telegram. Fallback (dev shell, never ops by hand-editing blindly): `status='ordering'`, `locked_amount=None`, `charge_attempted_at=None`, guarded by `status='payment_pending'`, `payment_finalized_at IS NULL`, no linked GatewayCharge. Mirrors `_revert_own_lock` (`services.py:504-521`).
 7. Verify: order back to `ordering`; no new alert after the 1h cooldown (`RETRY_COOLDOWN_SECONDS`).
 
 ## Tradeoffs
@@ -43,4 +43,4 @@ Wrong release with a live successful charge = customer pays twice on retry. Wron
 - Dev fallback: `manage.py find_orphan_charges --hours 24 [--alert]`. All read-only; nothing links or releases.
 - The existing sweep alert "locked with no linked charge" repeats at most once per 24h per order.
 
-Follow-ups (not built): `order_ref` metadata on `Charge.create` (E, user declined for now), webhook unknown-charge alert (W), guarded "Release stuck lock" admin action (B, last, needs payment-security review).
+Admin release button (B) built 2026-10-23 on branch `feat/admin-release-stuck-lock` (BE `b7e8fa8`, `1c7f1d4`), payment-security reviewed, not deployed. Residual risk: if Omise made a charge but our DB never saved it, only the human Omise Live check catches it. Follow-ups (not built): `order_ref` metadata on `Charge.create` (E, declined for now), webhook unknown-charge alert (W), automatic Omise date-range check inside the release page.
