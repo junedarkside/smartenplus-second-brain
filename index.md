@@ -583,6 +583,7 @@ Global navigation catalog. Updated on every ingest.
 
 - [[ingestion-workflow]] — How to ingest sources into the vault
 - [[atomic-notes]] — Rules for extracting single-concept notes; used by wrap-up atomize step + /lint-vault
+- [[stuck-payment-lock-runbook]] — Non-dev ops runbook for "order locked, no linked charge" alert: check Omise by time+amount, release/hold table, admin gotchas
 
 ## Templates
 
