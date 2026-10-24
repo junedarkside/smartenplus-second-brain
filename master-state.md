@@ -25,7 +25,7 @@
 
 **Resume point (EXACT):**
 0. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (includes `31addc1` admin release, `4cecbb8`, guard fixes; migration `orders/0044`, restart celery worker + beat). FE `develop` `cabec43c`.
-1. **GOL8409503 (prod):** user checks Omise Live; no charge, an `is_admin` clicks "Release stuck payment lock"; successful charge, dev links it, do NOT release.
+1. **GOL8409503 (prod): CLOSED by the user (2026-10-24).** No charge exists, so the user deletes the order themselves. Nothing for Claude to do (no prod access).
 2. Not browser-run: E3 (15s `PendingChargeNotice` poll with a live charge), E4 (guest). Unit tests cover both.
 3. Rotate the DB password in the comment at BE `Smartenplus/settings.py:232`.
 4. Older open items unchanged (see Section 2).
