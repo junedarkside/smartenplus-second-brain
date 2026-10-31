@@ -1,3 +1,18 @@
+**Session #543 (moved from master-state):** **Achieved this session (#543):** planning only for moving `smartenplus-backend` from AWS EC2 to the Coolify VPS. **No repo changed, no commits in BE/FE/AD.**
+- 4 read-only agent reviews (deploy readiness vs Coolify recipe B, AWS coupling in code, DB move, payment/Celery cutover risk) + an adversarial plan review. Coolify base vault `ops/migration-playbook.md` + `coolify/recipes.md` used as reference.
+- Revised plan: new separate RDS in Frankfurt (not ShopMung's), cross-region read replica from the current RDS then promote; S3 + SES unchanged; ElastiCache dropped (CHANNEL_LAYERS host is dead config, `settings.py:202-208`); old nginx forwards to the VPS after promote, so only the write freeze + promote (about 8-15 min, rehearse to measure) is downtime. Cert pre-issued via ACME pass-through. Keep the same API hostname (Omise webhook is domain-bound).
+- Plan page (EN + TH): https://claude.ai/artifact/WqmUcJLThCf4oKkjHPXwbB
+- Verified from outside: VPS is Hostinger Duesseldorf; ports 22/80/443 open, 5432/6379/8000 closed; ShopMung shares the VPS and the AWS account; SES is ap-southeast-1.
+- Blocked: the Mac's AWS key (IAM `smartenplus`) cannot read EC2/RDS; SSH to the VPS with `id_coolify_vps` as root was refused. RDS region (Oregon is only inferred from the `usw2` ElastiCache host), version, size, encryption and VPS RAM/disk are still unknown.
+
+**Resume point (EXACT):**
+0. **Deploy FE `develop` `1b5c35e9` to `main` (user only), clear `smartenplus_next_cache`.** Blog is at risk on prod. Ship first, ahead of the older BE/FE deploy below.
+1. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (migration `orders/0044`, restart celery worker + beat). FE `develop` now includes `cabec43c` + `1b5c35e9`.
+2. **EC2-TO-COOLIFY-BE:** user supplies current RDS region/version/size/encryption/backup retention and the right SSH user+key for the VPS and the EC2 (or pastes `free -m; df -h /; docker ps --format '{{.Names}}'` from the VPS). Then Claude finishes the read-only scan and updates the plan.
+3. Start Phase 1 once the facts are in: BE branch `fix/coolify-compose` off `develop` (Coolify compose, env-driven Redis/Channels, `.dockerignore`, remove DB password block, ckeditor static path, `FRONTEND_URL`).
+4. Check WP admin (comments / WPGraphQL drift, `WP-SCHEMA-DRIFT`). Rotate the DB password in the comment at BE `Smartenplus/settings.py:232` (also in `docs/operations/DEPLOY_RUNBOOK.md:45`).
+5. Older open items unchanged (see Section 2).
+
 **Session #542 (moved from master-state):** **Achieved this session (#542):** every `/blog/[slug]` 404 on local fixed. WP GraphQL dropped `Post.commentCount`, so `POST_BY_SLUG` errored, `post` came back null and `getStaticProps` returned `notFound`. **Pushed; NOT on main, prod not fixed yet.**
 - FE `ecd9c6d7` removes `commentCount` from `POST_BY_SLUG`, `RECENT_POST`, `POPULAR_POSTS` (`helpers/wordpress/queries/posts.js`). Merged to `develop` `1b5c35e9`, pushed. `PostItem`/`formatViewCount` already fall back to views.
 - Verified: every query in `posts.js` passes against WP, blog+wordpress jest pass, blog URLs return 200 locally. Prod not checked (Claude has no prod access); ISR serves cached pages until they revalidate (300s), new posts 404 straight away.

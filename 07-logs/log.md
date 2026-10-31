@@ -1,3 +1,4 @@
+## [2026-10-31] session-end #544 | EC2-to-Coolify BE move facts gathered with owner: RDS Oregon PG 14.22 t3.micro encrypted, backups OFF, DB public (fw fix deferred by owner), only EC2 connects, fresh snapshot done; VPS KVM 4 16 GB with ShopMung stack; visual roadmap EN/TH published. No repo changes. Next: start phase 1 + quiet hour for backups.
 ## [2026-10-31] session-end #543 | Planning only (no repo changes): BE EC2 to Coolify move reviewed by 4 agents + adversarial review; plan = new Frankfurt RDS replica then promote, old nginx forwards to VPS, S3/SES kept; EN/TH plan page published; RDS region + VPS access still unverified
 ## [2026-10-30] session-end #542 | Blog 404 fixed: WP GraphQL dropped `Post.commentCount`, `POST_BY_SLUG` errored so every `/blog/[slug]` returned notFound. FE `ecd9c6d7` merged develop `1b5c35e9`, pushed, NOT on main (prod still at risk). Open: deploy to main, WP-SCHEMA-DRIFT.
 

@@ -15,20 +15,19 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-31 (session #543)
+**Updated:** 2026-10-31 (session #544)
 
-**Achieved this session (#543):** planning only for moving `smartenplus-backend` from AWS EC2 to the Coolify VPS. **No repo changed, no commits in BE/FE/AD.**
-- 4 read-only agent reviews (deploy readiness vs Coolify recipe B, AWS coupling in code, DB move, payment/Celery cutover risk) + an adversarial plan review. Coolify base vault `ops/migration-playbook.md` + `coolify/recipes.md` used as reference.
-- Revised plan: new separate RDS in Frankfurt (not ShopMung's), cross-region read replica from the current RDS then promote; S3 + SES unchanged; ElastiCache dropped (CHANNEL_LAYERS host is dead config, `settings.py:202-208`); old nginx forwards to the VPS after promote, so only the write freeze + promote (about 8-15 min, rehearse to measure) is downtime. Cert pre-issued via ACME pass-through. Keep the same API hostname (Omise webhook is domain-bound).
-- Plan page (EN + TH): https://claude.ai/artifact/WqmUcJLThCf4oKkjHPXwbB
-- Verified from outside: VPS is Hostinger Duesseldorf; ports 22/80/443 open, 5432/6379/8000 closed; ShopMung shares the VPS and the AWS account; SES is ap-southeast-1.
-- Blocked: the Mac's AWS key (IAM `smartenplus`) cannot read EC2/RDS; SSH to the VPS with `id_coolify_vps` as root was refused. RDS region (Oregon is only inferred from the `usw2` ElastiCache host), version, size, encryption and VPS RAM/disk are still unknown.
+**Achieved this session (#544):** BE move to Coolify, fact gathering done with the owner (CloudShell + console). **No repo changed.**
+- RDS confirmed: `database-1`, Oregon (us-west-2d), PostgreSQL 14.22, db.t3.micro, 20 GiB, single-AZ, encrypted (default key). Automated backups OFF (retention 0), DB publicly reachable on 5432 (SG `launch-wizard-1` shared with EC2, all TCP open). Only the old EC2 (t2.micro) connects, no outside clients. Fresh manual snapshot `manual-2026-10-31` Available. Owner DEFERRED the firewall fix (move ends it).
+- VPS: Hostinger KVM 4 (4 vCPU, 16 GB, 200 GB), 8% CPU, 17% RAM. 14 containers: ShopMung API group (web/beat/worker/redis), WordPress+MariaDB, 2 apps, Coolify. SmartEnPlus not deployed yet. Owner says server hardening done during the ShopMung move, skip it.
+- Visual roadmap (EN/TH, 7 phases, cutover slider): https://claude.ai/artifact/G86j5FKMmgbvSKHwY83Jhg. Older plan page: claude.ai/artifact/WqmUcJLThCf4oKkjHPXwbB.
+- Both vaults updated and pushed (SmartEnPlus `a98f10e`, Coolify base `6d35281`). Coolify base has `projects/smartenplus.md`.
 
 **Resume point (EXACT):**
 0. **Deploy FE `develop` `1b5c35e9` to `main` (user only), clear `smartenplus_next_cache`.** Blog is at risk on prod. Ship first, ahead of the older BE/FE deploy below.
-1. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (migration `orders/0044`, restart celery worker + beat). FE `develop` now includes `cabec43c` + `1b5c35e9`.
-2. **EC2-TO-COOLIFY-BE:** user supplies current RDS region/version/size/encryption/backup retention and the right SSH user+key for the VPS and the EC2 (or pastes `free -m; df -h /; docker ps --format '{{.Names}}'` from the VPS). Then Claude finishes the read-only scan and updates the plan.
-3. Start Phase 1 once the facts are in: BE branch `fix/coolify-compose` off `develop` (Coolify compose, env-driven Redis/Channels, `.dockerignore`, remove DB password block, ckeditor static path, `FRONTEND_URL`).
+1. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (migration `orders/0044`, restart celery worker + beat). FE `develop` includes `cabec43c` + `1b5c35e9`.
+2. **EC2-TO-COOLIFY-BE, owner says "start phase 1" and gives the quiet hour:** Phase 1 = BE branch `fix/coolify-compose` off `develop` (Coolify compose, env-driven Redis/Channels, migrate out of start command, `.dockerignore`, remove DB password block, ckeditor static path, `FRONTEND_URL`, TZ). Then Phase 2 (owner, quiet hour): turn on 7-day backups on `database-1` (reboot few min), create Frankfurt read replica (own KMS key).
+3. Owner confirms in Coolify that the web/beat/worker/redis group on the VPS is ShopMung. Read the old EC2 nginx file (read-only) before rehearsal. Still unknown: DNS host for the API, Omise webhook retry window, S3 region, ElastiCache idle.
 4. Check WP admin (comments / WPGraphQL drift, `WP-SCHEMA-DRIFT`). Rotate the DB password in the comment at BE `Smartenplus/settings.py:232` (also in `docs/operations/DEPLOY_RUNBOOK.md:45`).
 5. Older open items unchanged (see Section 2).
 
