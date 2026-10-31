@@ -15,24 +15,31 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-10-24 (session #541)
+**Updated:** 2026-10-31 (session #543)
 
-**Achieved this session (#541):** review fixes for the user-wide payment guard finished and merged to `develop` in both repos. **Pushed; NOT deployed, nothing on main.**
-- BE `71535eb` + `8dc4502`: #1 empty-match leak, #6 guard no longer masks already-paid, #5 non-Omise error reverts own lock, #2 in-flight charge guard (second tab/method gets 409 `payment_pending`), standards items.
-- FE `9d439224`: #3 QR path stops quietly on `otherOrderLocked`/`orderStale` (no "Failed to generate QR code"); #4 own-order chargeless 409 unlocks once the refetched order shows no lock; `hooks/useVisiblePoll.js` extracted from `PendingChargeNotice`; CLAUDE.md 409 line. FE `cabec43c`: "Payment in Progress" alert now says to contact support after a few minutes (EN+TH).
-- Verified: BE sim S1-S5 pass; FE new tests fail-then-pass; failing FE suites (37) identical to develop. Browser (local, Omise test): QR cross-order 409 toast + Pay button back + no Omise call; `order_stale` toast same; chargeless lock unlocks on "Try again".
-- Decided: no 15s poll for the billing-409 chargeless lock (server load, rare, sweeper `release_chargeless_locks` clears ~10 min, admin release `31addc1` as before); user contacts support.
+**Achieved this session (#543):** planning only for moving `smartenplus-backend` from AWS EC2 to the Coolify VPS. **No repo changed, no commits in BE/FE/AD.**
+- 4 read-only agent reviews (deploy readiness vs Coolify recipe B, AWS coupling in code, DB move, payment/Celery cutover risk) + an adversarial plan review. Coolify base vault `ops/migration-playbook.md` + `coolify/recipes.md` used as reference.
+- Revised plan: new separate RDS in Frankfurt (not ShopMung's), cross-region read replica from the current RDS then promote; S3 + SES unchanged; ElastiCache dropped (CHANNEL_LAYERS host is dead config, `settings.py:202-208`); old nginx forwards to the VPS after promote, so only the write freeze + promote (about 8-15 min, rehearse to measure) is downtime. Cert pre-issued via ACME pass-through. Keep the same API hostname (Omise webhook is domain-bound).
+- Plan page (EN + TH): https://claude.ai/artifact/WqmUcJLThCf4oKkjHPXwbB
+- Verified from outside: VPS is Hostinger Duesseldorf; ports 22/80/443 open, 5432/6379/8000 closed; ShopMung shares the VPS and the AWS account; SES is ap-southeast-1.
+- Blocked: the Mac's AWS key (IAM `smartenplus`) cannot read EC2/RDS; SSH to the VPS with `id_coolify_vps` as root was refused. RDS region (Oregon is only inferred from the `usw2` ElastiCache host), version, size, encryption and VPS RAM/disk are still unknown.
 
 **Resume point (EXACT):**
-0. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (includes `31addc1` admin release, `4cecbb8`, guard fixes; migration `orders/0044`, restart celery worker + beat). FE `develop` `cabec43c`.
-1. **GOL8409503 (prod): CLOSED by the user (2026-10-24).** No charge exists, so the user deletes the order themselves. Nothing for Claude to do (no prod access).
-2. Not browser-run: E3 (15s `PendingChargeNotice` poll with a live charge), E4 (guest). Unit tests cover both.
-3. Rotate the DB password in the comment at BE `Smartenplus/settings.py:232`.
-4. Older open items unchanged (see Section 2).
+0. **Deploy FE `develop` `1b5c35e9` to `main` (user only), clear `smartenplus_next_cache`.** Blog is at risk on prod. Ship first, ahead of the older BE/FE deploy below.
+1. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (migration `orders/0044`, restart celery worker + beat). FE `develop` now includes `cabec43c` + `1b5c35e9`.
+2. **EC2-TO-COOLIFY-BE:** user supplies current RDS region/version/size/encryption/backup retention and the right SSH user+key for the VPS and the EC2 (or pastes `free -m; df -h /; docker ps --format '{{.Names}}'` from the VPS). Then Claude finishes the read-only scan and updates the plan.
+3. Start Phase 1 once the facts are in: BE branch `fix/coolify-compose` off `develop` (Coolify compose, env-driven Redis/Channels, `.dockerignore`, remove DB password block, ckeditor static path, `FRONTEND_URL`).
+4. Check WP admin (comments / WPGraphQL drift, `WP-SCHEMA-DRIFT`). Rotate the DB password in the comment at BE `Smartenplus/settings.py:232` (also in `docs/operations/DEPLOY_RUNBOOK.md:45`).
+5. Older open items unchanged (see Section 2).
+
 ---
 
 ## Section 2 — Loose Ends (Open)
 
+> **`EC2-TO-COOLIFY-BE` (#543) - OPEN, high.** Move BE from AWS EC2/EB to the Coolify VPS (Hostinger Duesseldorf, shared with ShopMung). Plan page: claude.ai/artifact/WqmUcJLThCf4oKkjHPXwbB. Blockers before staging: Coolify compose (gunicorn, worker, ONE beat, 2 Redis), `.env` not in git (list all config names), no `migrate` in start command, Redis cache vs broker split, DB password in a comment (`settings.py:215-234`). Open facts: RDS region/version/encryption, VPS RAM/disk, Omise webhook retry window, S3 bucket region, DNS host for api. Port 22 on the shared VPS is open to the internet: confirm password login is off. Coolify base vault has no `projects/smartenplus.md` pointer yet (needs owner OK, other vault).
+>
+> **`WP-SCHEMA-DRIFT` (#542) - OPEN, low.** WP GraphQL schema changed with no warning (`Post.commentCount` gone), all blog posts 404'd because FE treats a GraphQL error as "post not found". (1) Find out why WP dropped it (comments disabled? plugin update?) and whether more fields can go. (2) `getStaticProps` in `pages/blog/[slug].js` returns `notFound` on a GraphQL error; consider error props + short `revalidate` like the WP-down branch so a schema error does not cache a 404. (3) No test validates FE queries against the live WP schema.
+>
 > **`GUARD-REVIEW-RESIDUALS` (#541) - OPEN, accepted, low.** (1) Late Omise success on a `payment_failed` sibling. (2) Stale check ignores quantity edits. (3) Gap between lock and `_mark_charge_attempt`. (4) Same-key retry during the first in-flight call also gets the 409; in-flight 409 shows the cross-order toast wording. (5) Pay button returns after up to 10s (FormCard `isSubmitting` timer). (6) Billing-409 chargeless lock unlocks only on "Try again"/reload (no poll, by choice). (7) `cartGone` toast, `useQRPolling` reuse of `fetchOrderStatus`, 409 branches into `mapChargeConflict` (B, C) skipped. (8) Pre-existing: 44 `carts` BE test errors, 37 FE failing suites, `Read(./docs/**)` deny rule to restore, Next dev hydration warning in `MainHeaderComponent`.
 >
 > **`I18N-R2-8-FOLLOWUPS` - OPEN, low, English text left on `/th/checkout` found in the R2-8 Chrome check (not R2-8 scope).** `components/cart/CartDetailDisplay.js` (386 lines; 'N passengers', 'Adult', 'per person', 'Trip Total'; shared with the cart dialog) and `pages/checkout/TotalCartSummary.js` (290 lines, 209-249: 'Subtotal', 'Processing Fee', 'Grand Total', 'N travelers'; corrected 2026-10-22), `components/forms/form-components/DatePicker.js` ('Age on travel date' + `MM/DD/YYYY` comes from the MUI locale, not this file), `components/checkout/payment/TripAssignmentsSummary.js:21`, `CheckoutStepSkeleton` + aria labels, English date format on step 2 / confirmation, MUI time picker locale, `CONTRACT_TYPE_NAMES` in `TripCardDetails`, `ContactDetails` EN typo 'to you email' (in `strings/checkoutPassengers.en.js:85`, asserted by `PassengersFormParts.test.js:69`, fix both), `pages/checkout/index.js:72` 'Your data has been cleared.', dead `FlightInfoForm.js`, dead 'Google Pay/Apple Pay Ready' arm in `FormCard`. Details: log.md R2-8 Chrome check entry.

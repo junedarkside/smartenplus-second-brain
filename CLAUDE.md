@@ -15,6 +15,9 @@ LLM Wiki — persistent, compounding knowledge artifact. LLM writes+maintains. H
 5. **Anti-Duplication** — search before creating. If existing page covers 80%: extend, don't fork
 6. **Anti-Overengineering** — 3 similar lines > premature helper. No config options "just in case"
 
+## Hosting
+Hosting runs on Coolify. For deploys, DNS, certificates, cutovers or incidents read the Coolify base vault first: `/Users/charuwatnaranong/Desktop/Projects/Coolify` (`index.md`). The base wins on generic Coolify behaviour; this vault wins on this project's own state and history.
+
 ## Folder Structure
 
 | Folder | Purpose | Permanence |

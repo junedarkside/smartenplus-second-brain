@@ -1,3 +1,27 @@
+**Session #542 (moved from master-state):** **Achieved this session (#542):** every `/blog/[slug]` 404 on local fixed. WP GraphQL dropped `Post.commentCount`, so `POST_BY_SLUG` errored, `post` came back null and `getStaticProps` returned `notFound`. **Pushed; NOT on main, prod not fixed yet.**
+- FE `ecd9c6d7` removes `commentCount` from `POST_BY_SLUG`, `RECENT_POST`, `POPULAR_POSTS` (`helpers/wordpress/queries/posts.js`). Merged to `develop` `1b5c35e9`, pushed. `PostItem`/`formatViewCount` already fall back to views.
+- Verified: every query in `posts.js` passes against WP, blog+wordpress jest pass, blog URLs return 200 locally. Prod not checked (Claude has no prod access); ISR serves cached pages until they revalidate (300s), new posts 404 straight away.
+
+**Resume point (EXACT):**
+0. **Deploy FE `develop` `1b5c35e9` to `main` (user only), clear `smartenplus_next_cache`.** Blog is at risk on prod. Ship first, ahead of the older BE/FE deploy below.
+1. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (migration `orders/0044`, restart celery worker + beat). FE `develop` now includes `cabec43c` + `1b5c35e9`.
+2. Check WP admin: who turned comments off / changed WPGraphQL, and diff other FE queries for drift (see `WP-SCHEMA-DRIFT`).
+3. Rotate the DB password in the comment at BE `Smartenplus/settings.py:232`.
+4. Older open items unchanged (see Section 2).
+
+**Session #541 (moved from master-state):** **Achieved this session (#541):** review fixes for the user-wide payment guard finished and merged to `develop` in both repos. **Pushed; NOT deployed, nothing on main.**
+- BE `71535eb` + `8dc4502`: #1 empty-match leak, #6 guard no longer masks already-paid, #5 non-Omise error reverts own lock, #2 in-flight charge guard (second tab/method gets 409 `payment_pending`), standards items.
+- FE `9d439224`: #3 QR path stops quietly on `otherOrderLocked`/`orderStale` (no "Failed to generate QR code"); #4 own-order chargeless 409 unlocks once the refetched order shows no lock; `hooks/useVisiblePoll.js` extracted from `PendingChargeNotice`; CLAUDE.md 409 line. FE `cabec43c`: "Payment in Progress" alert now says to contact support after a few minutes (EN+TH).
+- Verified: BE sim S1-S5 pass; FE new tests fail-then-pass; failing FE suites (37) identical to develop. Browser (local, Omise test): QR cross-order 409 toast + Pay button back + no Omise call; `order_stale` toast same; chargeless lock unlocks on "Try again".
+- Decided: no 15s poll for the billing-409 chargeless lock (server load, rare, sweeper `release_chargeless_locks` clears ~10 min, admin release `31addc1` as before); user contacts support.
+
+**Resume point (EXACT):**
+0. **Deploy decision (user only): BE first, then FE, clear `smartenplus_next_cache`.** BE `develop` `8dc4502` (includes `31addc1` admin release, `4cecbb8`, guard fixes; migration `orders/0044`, restart celery worker + beat). FE `develop` `cabec43c`.
+1. **GOL8409503 (prod): CLOSED by the user (2026-10-24).** No charge exists, so the user deletes the order themselves. Nothing for Claude to do (no prod access).
+2. Not browser-run: E3 (15s `PendingChargeNotice` poll with a live charge), E4 (guest). Unit tests cover both.
+3. Rotate the DB password in the comment at BE `Smartenplus/settings.py:232`.
+4. Older open items unchanged (see Section 2).
+
 **Session #540 (moved from master-state):** **Achieved this session (#540):** admin "Release stuck payment lock" (item B) built, reviewed, browser-tested, merged to BE `develop` `31addc1` and **pushed; not deployed, nothing on main.**
 - `payments/lock_release.py` (`release_stuck_lock`, `audit_release`), route `payments/gatewaycharge/release-lock/<id>/`, confirm template, Order admin button. `is_admin` only; manual "I checked Omise Live" checkbox; DB guards (linked charge, unlinked key, finalized, 15 min age floor, pinned amount + attempt time vs stale page). Audit: LogEntry on Order + warning log + Telegram `alert_ops`.
 - Two reviews (payment safety + coding standards) before build; payment-security review after found 4 input-handling defects (500 on bad id/timestamp, locale amount, any HTTP method), fixed in `1c7f1d4`. payments+orders 553 tests OK.
