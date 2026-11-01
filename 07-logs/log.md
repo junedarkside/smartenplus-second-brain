@@ -1,3 +1,4 @@
+## [2026-11-01] done | Phase 3 step 9 data part: sequences match on Oregon copy and Frankfurt (171, total 2310209). migrate --plan moves into step 10. Next: Coolify app on api-stage.
 ## [2026-11-01] incident | EC2 web container OOM-killed 14:46 Thailand after a read-only docker exec showmigrations check (EC2 has 949 MB RAM, no swap). Auto-restarted, site OK, no stuck payments (owner checked). Rule: no Python or image pulls on the old EC2. Recorded in the Coolify vault.
 ## [2026-11-01] done | Phase 3 steps 4-8: EC2 is plain Docker, 0044 already live (no deploy). Temp RDS smartenplus-rehearsal-tmp (Oregon, small, VPS-only SG). Prod DB name mydatabase, 396 MB. Dump 5m13s, restore into Frankfurt 1m12s, counts match (775 orders, 176 tables, 810574 rows). Replica fallback not needed. Next: step 9 migrate --plan.
 
