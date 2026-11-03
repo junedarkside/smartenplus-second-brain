@@ -9,10 +9,17 @@ Phase 1 done, Phase 2 Lomprayah read-only done (2026-11-03). GitHub `junedarksid
 - **Live test passed** (real Lomprayah, 2 calls, no 429): 39 stations; Bangkok to Koh Tao and Chumphon to Koh Nangyuan returned departures with seats; cache repeat call 0.017 s.
 - **Per-customer IDs (ADR 0003, 2026-11-03):** each customer (ApiClient) owns its IDs; mappings, the API (caller sees only its own `central_id`) and the staff mapping page `/admin/stations/<provider>/<client_id>/` are scoped to it. Picker list comes from `ApiClient.stations_url` (https, public IPs only; SmartEnPlus: its public `/api/v1/stations/`). CSV import for customers without an endpoint = slice 2, not built.
 - **Local dev:** `make run` (migrate + server on :8001), `make dev-key` (writes `DEV_API_KEY` to git-ignored `.env`), `make lomprayah-on|off`, dev console at `http://localhost:8001/dev/` (SmartEnPlus BE on :8000) (DEBUG only, prefilled key, auto-loads stations). No superuser needed except for Django Admin.
-- **Not verified:** Redis never run, Docker image not built, Lomprayah has not confirmed `availableAllotment` meaning or allowed automated access, real rate limit unknown (20/min and 60/min are guesses).
+- **Not verified:** nothing run on Coolify yet (Docker image and compose stack were tested locally 2026-11-03), Lomprayah has not confirmed `availableAllotment` meaning or allowed automated access, real rate limit unknown (20/min and 60/min are guesses).
 - **Next:** JSON 404 handler for unknown URLs, sort departures by time, draft Lomprayah partner-API request, SPC (blocked on docs and credentials).
 
 **Lomprayah (2026-11-03):** only 3 unofficial website endpoints known (source-station, destination-station, quota). Reverse-documented in repo `docs/providers/lomprayah-api-reference.md` (tags observed/inferred/unknown). Owner: **Lomprayah provides seat availability only** — booking UNSUPPORTED, so no booking machinery for Lomprayah; Phase 4 booking = SPC only. `availableAllotment` >0 AVAILABLE, 0 UNAVAILABLE; 429/timeout/missing items = UNKNOWN. Rate limit hit (429 after ~20 calls at 0.4s). Timetable sample matched API times; overnight timetable uses arrival date, API `travelDate` = departure date. Open: permission for automated access, official partner API.
+
+## Deploy to Coolify (prepared 2026-11-03, not deployed)
+- Target: `https://nexo.smartenplus.co.th` on the shared Coolify VPS. Compose app (`web` + `redis`) from repo `docker-compose.coolify.yml`, branch `develop`; Postgres 16 as a separate Coolify **Database resource** with daily backups to its own private R2 bucket `nexo-db-backups`. One `web` replica only (migrate runs on start).
+- Repo work done and merged to `develop` (`b1f570c`, 165 tests): whitenoise static files, prod hardening (HTTPS redirect with health path exempt, HSTS by env var, `check --deploy` in `make check`), mapping admin locked so edits cannot bypass the audit trail, `docs/deploy-coolify.md` (step by step, checks, restore drill).
+- DNS checked: zone on Cloudflare; owner added A `nexo` (DNS only) to the shared VPS; resolves. CAA already allows Let's Encrypt (the dashboard hides Cloudflare's own CAA records; see Coolify base `ops/dns-cloudflare.md`).
+- Owner steps left (one at a time with Claude): confirm VPS IP in Coolify, R2 bucket + token, Storages S3 store, Postgres Database resource + backup, compose app + variables, domain `:8000`, deploy, `create_api_key`, enable Lomprayah capabilities, restore drill.
+- Pointer for hosting facts: Coolify base `projects/nexo.md`.
 
 ## Why it exists
 SmartEnPlus should not learn each provider's API format, auth, availability or booking payload. Provider logic isolated in one modular monolith so adding an operator = new module, not new infra.

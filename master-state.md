@@ -35,7 +35,7 @@
 
 ## Section 2 — Loose Ends (Open)
 
-> **`NEXO-NEXT` (#548) - OPEN, low.** Nexo (`Desktop/SmartEnPlus/Nexo`, GitHub `junedarkside/nexo`, `develop` working branch, `main` owner-only): merge CLAUDE.md branch; prod check of the ApiClient name and Station list URL before deploy; second customer + CSV import (slice 2); JSON 404 handler for unknown URLs; sort departures by time; draft Lomprayah partner-API request; SPC blocked on docs and credentials. Detail: `01-projects/nexo-integration-platform.md`.
+> **`NEXO-NEXT` (#548) - OPEN, low.** Nexo deploy prepared 2026-11-03: `develop` `b1f570c`, host `nexo.smartenplus.co.th`, DNS record added, owner doing Coolify steps one by one (`docs/deploy-coolify.md` in repo). Nexo (`Desktop/SmartEnPlus/Nexo`, GitHub `junedarkside/nexo`, `develop` working branch, `main` owner-only): merge CLAUDE.md branch; prod check of the ApiClient name and Station list URL before deploy; second customer + CSV import (slice 2); JSON 404 handler for unknown URLs; sort departures by time; draft Lomprayah partner-API request; SPC blocked on docs and credentials. Detail: `01-projects/nexo-integration-platform.md`.
 >
 > **`BLOG-SEARCH-GRAPHQL-404` (#544) - FIXED on FE develop `23f1323b`, NOT pushed, NOT deployed.** Blog search + `/blog` and category load-more dead since i18n enable (2026-09-25): `/graphql` rewrite had `locale:false`, prod POST 404. `internalfetcher` now uses `/api/graphql`; dead rewrite removed. **Needs:** push develop, develop→main deploy, clear `smartenplus_next_cache`, then prod check (`/blog` suggestions, `/blog/search/phuket`, `/th/...`). 37 jest suites fail identically on develop (pre-existing, not triaged). Lesson in [[nextjs-rewrites-beforefiles-shadowed-by-dynamic-page]].
 >
