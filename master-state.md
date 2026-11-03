@@ -25,7 +25,7 @@
 - Details: Coolify vault `projects/cutover-night.md` (Result). Vault pushes: Coolify `82ca81b`, SmartEnPlus `34108af`.
 
 **Resume point (EXACT):**
-0. **Deploy FE `develop` `1b5c35e9` to `main` (user only), clear `smartenplus_next_cache`.** Blog is at risk on prod.
+0. **Deploy FE `develop` `1b5c35e9` to `main` (user only), clear `smartenplus_next_cache`.** Not urgent: owner checked 2026-11-03, live blog post loads (200, ISR cache HIT); the `commentCount` fix `ecd9c6d7` ships with the next FE deploy.
 1. **EC2-TO-COOLIFY-BE quiet week (to about 2026-11-10):** watch orders, payments, Telegram; fix forward only. Then Phase 6 cleanup, one delete at a time with owner yes: rotate shared AWS key + LINE token in git history; Elastic IP, EBS, ElastiCache, `launch-wizard-1` last (SmartEnPlus only, IAM shared with ShopMung); Cloudflare `api-stage`, Supabase rehearsal project, unused `smartenplus-ses` user, old EC2 deploy key; Frankfurt downsize decision; remove CORS/CSRF localhost/stage entries; merge develop to main + Coolify to main; `database-1` final snapshot kept 30+ days.
 2. Small owed items: restore local funnel Omise TEST webhook (`https://macbook-air-2.tailc1dfbd.ts.net/admin-dashboard-orders/payments/webhook/`); delete dead rehearsal key entry in Passwords app; real booking email via SES check, HTTPS login cookie, `docker stats --no-stream`; WP admin schema drift check; FE 429 render bug; speed up `stations/`; look at paid orders 849 and 843 (no notification, 2026-11-01); old certbot cert expiry; chat cursor `cs:sync_chat:cursor`; Docker Cleanup time; S7 08:00 review-email task; "update roadmap" only if owner asks.
 3. Older open items unchanged (see Section 2).
