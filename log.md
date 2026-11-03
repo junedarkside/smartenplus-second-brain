@@ -2,6 +2,7 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-11-03] update | Nexo: pushed to GitHub junedarkside/nexo (private); develop merged 734dab2; main is owner-only (Claude never touches it). Local dev setup (make run/dev-key/lomprayah-on|off, DEV_API_KEY in .env, /dev/ console auto-load). 77 tests. Project page Status rewritten.
 ## [2026-10-21] session-end | #525: i18n M5c-2 slice c (pdf ticket) + M5c-3 (/my-trip) done, M5c complete. Thai brand = SmartEnPlus (was LookChang). FE develop pushed `066088c1`, not on main, not deployed. BE BookingPDFViewSet AllowAny ticketed. Next: R1 or M7.
 
 ## [2026-10-21] i18n | M5c-2 slice b2b-2 done (b2 complete)
