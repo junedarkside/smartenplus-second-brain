@@ -27,6 +27,8 @@ Active.
 
 API changes → update frontend AND admin-dashboard.
 
+Separate service: [[nexo-integration-platform]] (Nexo) — provider integration layer (Lomprayah, SPC). SmartEnPlus owns Central IDs; Nexo only references them.
+
 ## Key Facts
 - Cart item keys: `item.id` (stable_id removed 2026-02-13)
 - Checkout sorting: chronological by `traveling_date` (earliest first) on ALL steps
