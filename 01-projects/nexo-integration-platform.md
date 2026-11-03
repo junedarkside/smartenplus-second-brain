@@ -1,7 +1,7 @@
 # Nexo — SmartEnPlus Integration Platform
 
 ## Summary
-Standalone Django backend that integrates external transport operators (Lomprayah, SPC Thailand) with SmartEnPlus via one normalized API. Repo: `/Users/charuwatnaranong/Desktop/SmartEnPlus/Nexo`.
+Standalone Django backend that integrates external transport operators (Lomprayah, SPC Thailand) with SmartEnPlus via one normalized API. Repo: `/Users/charuwatnaranong/Desktop/SmartEnPlus/Nexo`, GitHub `junedarkside/nexo` (private, branches `main` + `develop`).
 
 ## Status
 Phase 1 foundation built 2026-11-03 (git `main`, 7 commits, 18 tests + ruff green, not pushed, no remote). Django 5.2 + DRF; `apps/{core,providers,mappings}`; `integrations/base` (adapter + registry by dotted path); `/api/v1/health/`; capability + mapping + append-only audit models; Docker files (compose only config-validated, image not built). No provider module yet; Phase 2 needs provider docs/credentials.
