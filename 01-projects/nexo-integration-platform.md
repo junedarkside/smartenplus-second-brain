@@ -1,10 +1,12 @@
 # Nexo — SmartEnPlus Integration Platform
 
 ## Summary
-Standalone Django backend that integrates external transport operators (Lomprayah, SPC Thailand) with SmartEnPlus via one normalized API. Repo: `/Users/charuwatnaranong/Desktop/SmartEnPlus/Nexo` (no git yet).
+Standalone Django backend that integrates external transport operators (Lomprayah, SPC Thailand) with SmartEnPlus via one normalized API. Repo: `/Users/charuwatnaranong/Desktop/SmartEnPlus/Nexo`.
 
 ## Status
-Initialized 2026-11-03. Docs only (`CLAUDE.md`, `README.md`, `docs/`). No Django project, no code. Phase 1 not started.
+Phase 1 foundation built 2026-11-03 (git `main`, 7 commits, 18 tests + ruff green, not pushed, no remote). Django 5.2 + DRF; `apps/{core,providers,mappings}`; `integrations/base` (adapter + registry by dotted path); `/api/v1/health/`; capability + mapping + append-only audit models; Docker files (compose only config-validated, image not built). No provider module yet; Phase 2 needs provider docs/credentials.
+
+**Lomprayah (2026-11-03):** only 3 unofficial website endpoints known (source-station, destination-station, quota). Reverse-documented in repo `docs/providers/lomprayah-api-reference.md` (tags observed/inferred/unknown). Owner: **Lomprayah provides seat availability only** — booking UNSUPPORTED, so no booking machinery for Lomprayah; Phase 4 booking = SPC only. `availableAllotment` >0 AVAILABLE, 0 UNAVAILABLE; 429/timeout/missing items = UNKNOWN. Rate limit hit (429 after ~20 calls at 0.4s). Timetable sample matched API times; overnight timetable uses arrival date, API `travelDate` = departure date. Open: permission for automated access, official partner API.
 
 ## Why it exists
 SmartEnPlus should not learn each provider's API format, auth, availability or booking payload. Provider logic isolated in one modular monolith so adding an operator = new module, not new infra.
@@ -27,7 +29,7 @@ Python/Django, DRF, PostgreSQL, Redis, Celery (only when justified), HTTPX, Dock
 4. Booking (SPC end to end, idempotency, reconciliation)
 
 ## Open
-Nothing about provider endpoints is verified. Missing: provider docs/credentials, how SmartEnPlus supplies Central IDs, SmartEnPlus-to-platform auth, repo/package name, Coolify target. Tracked in repo `docs/open-questions.md`.
+Nothing about provider endpoints is verified. Missing: SPC docs/credentials, how SmartEnPlus supplies Central IDs, SmartEnPlus-to-platform auth, Coolify target. Tracked in repo `docs/open-questions.md`.
 
 ## Related
 - Repo ADR 0001: Central ID ownership + modular monolith (`docs/decisions/0001-...`)
