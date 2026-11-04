@@ -1,3 +1,10 @@
+**Session #548 (moved from master-state):** **Achieved this session (#548, Nexo):** **Nexo `develop` `0f4eac5`, 162 tests, `main` untouched (`dea1f21`).**
+- Central ID picker with autocomplete fed by the customer's station list (name/city/type/ID filter, bare ID kept in the field); simpler review panel (no typed-confirm, one "same place" tick) that closes itself after approve/reject/retire.
+- Dev ports swapped: Nexo `make run` on :8001, SmartEnPlus BE on :8000.
+- **Per-customer station IDs (ADR 0003):** Mapping belongs to an ApiClient (unique client+provider+entity+id), API returns only the caller's own `central_id`, `ApiClient.stations_url` replaces `SMARTENPLUS_API_URL` (https only, public IPs after DNS, no redirects, 5 MB and 10 s caps; `http://localhost` only with DEBUG), staff page `/admin/stations/<provider>/<client_id>/` names the customer. Three reversible migrations; old mappings go to the SmartEnPlus customer. Agent-reviewed plan twice (Django, rules, UX) and one code review; findings fixed.
+- `CLAUDE.md` rule 2.1 reworded (each customer owns its IDs) merged into `develop` (`288ad1b`, branch deleted). All merged branches deleted.
+- `docs/integration-guide.md` merged (`0f4eac5`): how a customer BE (FE -> BE -> Nexo -> Lomprayah) turns Central IDs into Lomprayah IDs and reads seat availability; not tried against the SmartEnPlus BE code yet.
+
 **Session #546 (moved from master-state):** **Achieved this session (#546):** **BE `develop` `7cf3f21` REDEPLOYED on Coolify, verified.** Owner clicked Redeploy 13:10 Thailand.
 - Gap about 11 s (old containers removed 06:10:35 UTC, web Healthy 06:10:46). Compose HTTP healthcheck works (Waiting then Healthy; probe `/health-check/` 200 every 30 s). Coolify header still says "Running (no healthcheck)": its own UI setting, ignore. One beat. `migrate --check` exit 0 (startup log lines scrolled out of the 100-line runtime tail).
 - `api/v1/stations/` ttfb 2.1s to 0.8s (total about 1.8s, payload download). Earlier in #546: `stations/` N+1 fix and web HTTP healthcheck (agent-reviewed) merged to `develop` and pushed; FE `1b5c35e9` already on `origin/main` since 30 Oct.
