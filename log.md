@@ -786,3 +786,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-04] done | Nexo deployed to Coolify and verified live: nexo.smartenplus.co.th, Postgres Database resource with R2 backup (restore drill passed on a local postgres:16), HSTS stage 1 (3600), Lomprayah stations enabled and fetched live. Three deploy lessons recorded in Coolify base gotchas section C. Next steps in master-state resume point 0.
 
 ## [2026-11-04] done | Nexo: station mapping page linked from Admin > Mappings (`develop` cc9f959). BD + UX agent reviews run; owner finalized the 6-item risk list, filed in the project page. Next: Lomprayah partner-API/permission request, set stations_url in prod and map 39 stations, small UX branch. See [[nexo-integration-platform]].
+
+## [2026-11-04] done | Nexo: mapping page UX merged to `develop` d435775 (row anchor, station search, status filter links, not-in-list box opens on picker failure), checked in local Chrome. Lomprayah partner-API/permission request drafted (EN+TH, unsent). Owner set prod Station list URL. Next: owner sends request, redeploys Coolify, maps 39 stations. See [[nexo-integration-platform]].

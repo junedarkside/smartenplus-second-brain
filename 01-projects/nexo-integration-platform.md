@@ -30,7 +30,8 @@ Phase 1 done, Phase 2 Lomprayah read-only done (2026-11-03). GitHub `junedarksid
 5. **Ops gaps.** No uptime monitor, HSTS at 1 h, auto deploy off.
 6. **One-person mapping.** Proposer can also approve (warning only). A wrong mapping sends customers to the wrong place.
 
-**Mapping page (2026-11-04):** menu link added (Admin > Mappings > "Map <provider> stations", `develop` `cc9f959`, needs Coolify redeploy). No station mapped yet in prod. UX review ideas, not built: row anchor after save, search box, clickable status counts, next-pending review jump, open "not in list" box when picker fails, CSV export, same-name flag in picker. Validation idea: 2-3 staff map 10 stations, measure wrong-ID rate.
+**Mapping page (2026-11-04):** on `develop` `d435775` (169 tests), needs Coolify redeploy. Built: menu link (Admin > Mappings > "Map <provider> stations"), row anchor after save, "Find station" search box, clickable status counts (`?status=`), "ID not in list?" box open when the customer list fails to load. Checked in local Chrome (search, status filter, menu button). Owner set the SmartEnPlus Station list URL in prod. No station mapped yet in prod. UX ideas not built: next-pending review jump, CSV export, same-name flag in picker. Validation idea: 2-3 staff map 10 stations, measure wrong-ID rate.
+**Lomprayah partner request:** draft (EN + TH, unsent) in repo `docs/providers/lomprayah-partner-request.md`. Owner to fill contact fields and send. Asks for written permission, partner API + sandbox, rate limit, `availableAllotment` meaning, timezone/currency, change contact, data sharing across customers. The 20/min cap quoted is our own guess.
 
 ## Why it exists
 SmartEnPlus should not learn each provider's API format, auth, availability or booking payload. Provider logic isolated in one modular monolith so adding an operator = new module, not new infra.
