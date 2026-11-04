@@ -782,3 +782,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-03] done | Nexo deploy prep for Coolify: whitenoise + prod hardening + mapping admin audit lock + compose (web+redis) with Postgres as a Coolify Database resource backed up to its own R2 bucket; `develop` `b1f570c`, 165 tests. Host `nexo.smartenplus.co.th`; DNS A record added (DNS only), CAA already allows Let's Encrypt. Not deployed; owner doing Coolify steps. Coolify base updated (`projects/nexo.md`, `ops/dns-cloudflare.md` CAA/NS rules). See [[nexo-integration-platform]].
 
 ## [2026-11-03] pause | Nexo deploy: step 1 DNS done; resume at 'confirm VPS IP in Coolify > Servers', then step 2 R2 bucket. See master-state resume point 0.
+
+## [2026-11-04] done | Nexo deployed to Coolify and verified live: nexo.smartenplus.co.th, Postgres Database resource with R2 backup (restore drill passed on a local postgres:16), HSTS stage 1 (3600), Lomprayah stations enabled and fetched live. Three deploy lessons recorded in Coolify base gotchas section C. Next steps in master-state resume point 0.
