@@ -36,6 +36,7 @@ Phase 1 done, Phase 2 Lomprayah read-only done (2026-11-03). GitHub `junedarksid
 ## Contract report for sign-off (built 2026-11-04, not deployed)
 - Page `/admin/stations/<slug>/<client_id>/report/` (link on the mapping page): customer contracts, each station, mapped Lomprayah station, flags, digest, Print / Save as PDF. Checks stations only, not route, timetable or fare.
 - Data: BE feed `GET /internal/nexo/operators/<id>/contracts/` (Bearer `NEXO_FEED_TOKEN`; empty = off). Nexo: `ApiClient.contracts_url`, env `CONTRACT_FEED_TOKENS` (JSON by customer name, never in the DB). Limit: one feed URL per customer.
+- Prod facts (2026-11-04): Lomprayah operator id in SmartEnPlus = 29; feed URL `https://api.smartenplus.co.th/internal/nexo/operators/29/contracts/`; ApiClient name is lowercase `smartenplus` and the `CONTRACT_FEED_TOKENS` JSON key must match it exactly. 39 mappings already exist; Central IDs 141, 88, 83 each map to several Lomprayah stations (report flags them).
 - Go-live steps and error meanings: master-state resume item 00. Repo doc: `docs/mapping-admin.md`.
 
 ## Why it exists
