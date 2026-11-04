@@ -22,6 +22,16 @@ Phase 1 done, Phase 2 Lomprayah read-only done (2026-11-03). GitHub `junedarksid
 - Lessons that cost time (all in repo history and Coolify base): `${VAR:?}` in the compose file fails Coolify's build step (now `${VAR:-}`); a Coolify variable with the same name as the compose key is locked as "Derived in Compose" (now `PUBLIC_HOSTNAME`); a mistyped variable name (`SECURE_HSTS`) silently does nothing, so check with `printenv` in the container.
 - Open: HSTS to 31536000 after about a week, uptime monitor, real ApiClient name and Station list URL in prod Django Admin, repo `docs/deploy-coolify.md` still describes older UI names.
 
+## Risks (owner-finalized 2026-11-04, from BD + UX agent review)
+1. **Unofficial endpoints.** Only 3 website endpoints, no permission for automated access. Can be blocked or changed anytime. 429 seen after about 20 calls.
+2. **Guessed numbers.** Cache 45 s, client throttle 60/min, provider cap 20/min. No single-flight, so many users on one route can exhaust the cap and return UNKNOWN.
+3. **SPC blocked.** Only booking provider. No docs, credentials or sandbox, so no start date for the revenue phase.
+4. **Seat meaning unconfirmed.** `availableAllotment` unverified. A seat count that is not real stock hurts trust.
+5. **Ops gaps.** No uptime monitor, HSTS at 1 h, auto deploy off.
+6. **One-person mapping.** Proposer can also approve (warning only). A wrong mapping sends customers to the wrong place.
+
+**Mapping page (2026-11-04):** menu link added (Admin > Mappings > "Map <provider> stations", `develop` `cc9f959`, needs Coolify redeploy). No station mapped yet in prod. UX review ideas, not built: row anchor after save, search box, clickable status counts, next-pending review jump, open "not in list" box when picker fails, CSV export, same-name flag in picker. Validation idea: 2-3 staff map 10 stations, measure wrong-ID rate.
+
 ## Why it exists
 SmartEnPlus should not learn each provider's API format, auth, availability or booking payload. Provider logic isolated in one modular monolith so adding an operator = new module, not new infra.
 

@@ -784,3 +784,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-03] pause | Nexo deploy: step 1 DNS done; resume at 'confirm VPS IP in Coolify > Servers', then step 2 R2 bucket. See master-state resume point 0.
 
 ## [2026-11-04] done | Nexo deployed to Coolify and verified live: nexo.smartenplus.co.th, Postgres Database resource with R2 backup (restore drill passed on a local postgres:16), HSTS stage 1 (3600), Lomprayah stations enabled and fetched live. Three deploy lessons recorded in Coolify base gotchas section C. Next steps in master-state resume point 0.
+
+## [2026-11-04] done | Nexo: station mapping page linked from Admin > Mappings (`develop` cc9f959). BD + UX agent reviews run; owner finalized the 6-item risk list, filed in the project page. Next: Lomprayah partner-API/permission request, set stations_url in prod and map 39 stations, small UX branch. See [[nexo-integration-platform]].
