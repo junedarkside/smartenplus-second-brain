@@ -1,3 +1,4 @@
+## [2026-11-05] done | Frankfurt Elastic IPs checked: they are the public addresses of the live RDS DBs (SmartEnPlus + ShopMung), keep, nothing released.
 ## [2026-11-05] done | Leftover Amplify WAF web ACL deleted (nothing attached, about $8/mo). API 200.
 ## [2026-11-05] done | Phase 6 old AWS teardown: Oregon database-1, old EC2 (snapshot kept), ALB api-smartenplus + its 4 Elastic IPs deleted, live.dump deleted, API 200 after each step. SES key left alone (joins key rotation). WAF, target group, snapshots still open. Detail in master-state 2d.
 ## [2026-11-05] update | #550 Nexo seat check per contract merged to `develop` c697369 (205 tests, not deployed, feature off until the Lomprayah availability capability is enabled). 3 agent reviews, Chrome click-through on a local stub. Gap: contract departure time not in the BE feed. RDS snapshot retention advice recorded in master-state (nothing deleted).
