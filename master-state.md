@@ -15,29 +15,25 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-11-05 (session #551)
+**Updated:** 2026-11-05 (session #552, payment incident)
 
-**Also this session (payment incident, 2026-11-05):** CSL4045824 (card PAID at Omise, DB `payment_pending`). BE `develop` `6a3e5b8` + AD `develop` `a3d6f31`, pushed, NOT deployed (owner merges to `main`): card poll with 1h cooldown, double-fee fix, `GET /payments/admin/issues/`, Payment Issues page. Pre-deploy pending-card list = 0. Detail: [[stuck-card-payment-csl4045824]].
-
-**Achieved this session (#551, Nexo):** **Nexo `develop` `09fced8` (259 tests), `main` untouched (`dea1f21`). Pushed, NOT redeployed (Change mapping needs a `nexo-api` Redeploy).**
-- Owner asked for station mapping on the contract page (SmartEnPlus checks Lomprayah allotment per contract). Page renamed "Contract report" to "Contracts" (`/contracts/`, old `/report/` 302).
-- **Map station** (unmapped/rejected/retired stations) proposes PENDING; **Change mapping** (one live mapping) proposes the new provider station and retires/rejects the old in one transaction, reason required. Approval stays on the mapping page.
-- Opus rules agent + Sonnet UX agent reviewed the plan before building; race guard (`mapping_id` + row lock), HTTP before the transaction, client/provider scoping all adopted. Chrome-checked on a throwaway DB.
-- Live check by owner showed a gap: the picker lists only unmapped provider stations, so searching "koh samui" finds nothing and does not say why. Fix proposed (show mapped stations greyed out with "already mapped to ..."), not built yet.
-- Vault: Nexo project page + log updated (`38a9160`).
+**Achieved this session (#552):** Stuck card order CSL4045824 (PAID at Omise, DB `payment_pending` for 3 days). Fixed in code and merged by the owner to `main` in BE (`6a54916`, includes `6a3e5b8`) and AD (`a3d6f31`), pushed. **Deploy NOT verified by Claude.**
+- BE: card poll in `sync_pending_charges` (30 min to 7 days, latest charge, order `payment_pending`, unfinalized) + 1h per-charge cooldown; Payment amount double-fee fix; failed attempts notify as `failed`; staff-only `GET /payments/admin/issues/` (5 checks, read-only, security review clean).
+- AD: Payment Issues page + sidebar entry; Reconcile button only for `paid_not_finalized` and `card_pending_stale`.
+- Customer FE: unchanged.
+- Pre-deploy check run by owner in the app container: pending-card list = 0 (no surprise emails).
+- Webhook root cause NOT confirmed. Omise URL in use (`/admin-dashboard-orders/payments/webhook/`) is a valid alias of the same view, so the URL is probably fine; `OMISE_SEC_KEY` / `ALLOWED_HOSTS` after the Coolify move are the next suspects.
+- Vault: [[stuck-card-payment-csl4045824]], coverage matrix status, index, log.
 
 **Resume point (EXACT):**
-1. **Redeploy `nexo-api`** (auto deploy off) to ship Change mapping; then fix the 54 flagged contracts with the new buttons, reload, repeat until sign-off ready, then Print / Save as PDF.
-2. Owner decision on the picker fix: show mapped Lomprayah stations greyed out with their SmartEnPlus station (say "go"); many-to-one mapping stays unbuilt.
-3. Rotate the feed token (quiet hour). Seat check: enable the `availability` capability only after Lomprayah allows automated access.
-4. Previous resume list (#550: RDS snapshots after 2026-11-10, Nexo hardening, partner request) is in `07-logs/session-history.md` and still applies.
-
+0. **Payment incident:** (a) confirm BE + AD deploys finished and Celery beat + worker restarted (look for `sync_pending_charges` in beat logs within 10 min); (b) open admin-dashboard > Payment Issues and read the five counts; (c) Omise (Live mode) > Settings > Webhooks delivery log for `chrg_69jkpjnfll8h751prwg`, and compare `OMISE_SEC_KEY` with the live secret key; (d) CSL4045824 is hand-set `paid` and not finalized: check booking, email, `payment_finalized_at`. Optional: build a backend "finalize manually-paid order" action.
+1. **Nexo (carry-over, #551):** redeploy `nexo-api` (auto deploy off) to ship Change mapping; fix the 54 flagged contracts, reload until sign-off ready, Print / Save as PDF. Picker fix (show mapped stations greyed out) waits for "go". Rotate the feed token (quiet hour); seat check only after Lomprayah allows automated access. Older list (#550) in `07-logs/session-history.md` still applies.
 
 ---
 
 ## Section 2 — Loose Ends (Open)
 
-> **`STUCK-CARD-CSL4045824` (2026-11-05) - OPEN, high.** Deploy BE then AD (`develop` to `main`, restart Celery beat+worker). Confirm webhook root cause: Omise Live delivery log for `chrg_69jkpjnfll8h751prwg`, `OMISE_SEC_KEY` vs live key, `ALLOWED_HOSTS`. CSL4045824 is hand-set `paid` (not finalized: check booking, email, `payment_finalized_at`). After deploy read the Payment Issues page. Detail: [[stuck-card-payment-csl4045824]].
+> **`STUCK-CARD-CSL4045824` (2026-11-05) - OPEN, high.** BE + AD merged to `main` by owner; verify deploy and Celery beat+worker restart. Confirm webhook root cause: Omise Live delivery log for `chrg_69jkpjnfll8h751prwg`, `OMISE_SEC_KEY` vs live key, `ALLOWED_HOSTS`. CSL4045824 is hand-set `paid` (not finalized: check booking, email, `payment_finalized_at`). After deploy read the Payment Issues page. Detail: [[stuck-card-payment-csl4045824]].
 >
 > **`NEXO-CHANGE-FOLLOWUPS` (#551) - OPEN, low.** (1) Check the Change/Map dialog in Safari (the old `hidden` option filter is gone, options are rebuilt), on mobile width and in print. (2) Same-person propose and approve is warn-only; owner never decided whether to require a different approver. (3) Picker hides mapped provider stations (see resume item 2).
 >

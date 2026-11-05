@@ -1,3 +1,16 @@
+**Session #551 (moved from master-state):** **Nexo `develop` `09fced8` (259 tests), `main` untouched (`dea1f21`). Pushed, NOT redeployed (Change mapping needs a `nexo-api` Redeploy).**
+- Owner asked for station mapping on the contract page (SmartEnPlus checks Lomprayah allotment per contract). Page renamed "Contract report" to "Contracts" (`/contracts/`, old `/report/` 302).
+- **Map station** (unmapped/rejected/retired stations) proposes PENDING; **Change mapping** (one live mapping) proposes the new provider station and retires/rejects the old in one transaction, reason required. Approval stays on the mapping page.
+- Opus rules agent + Sonnet UX agent reviewed the plan before building; race guard (`mapping_id` + row lock), HTTP before the transaction, client/provider scoping all adopted. Chrome-checked on a throwaway DB.
+- Live check by owner showed a gap: the picker lists only unmapped provider stations, so searching "koh samui" finds nothing and does not say why. Fix proposed (show mapped stations greyed out with "already mapped to ..."), not built yet.
+- Vault: Nexo project page + log updated (`38a9160`).
+
+**Resume point (EXACT):**
+1. **Redeploy `nexo-api`** (auto deploy off) to ship Change mapping; then fix the 54 flagged contracts with the new buttons, reload, repeat until sign-off ready, then Print / Save as PDF.
+2. Owner decision on the picker fix: show mapped Lomprayah stations greyed out with their SmartEnPlus station (say "go"); many-to-one mapping stays unbuilt.
+3. Rotate the feed token (quiet hour). Seat check: enable the `availability` capability only after Lomprayah allows automated access.
+4. Previous resume list (#550: RDS snapshots after 2026-11-10, Nexo hardening, partner request) is in `07-logs/session-history.md` and still applies.
+
 **Session #550 (moved from master-state):** **Achieved this session (#550, Nexo + BE):** **Contract report for sign-off is LIVE and working on prod. Nexo `develop` `c697369` (205 tests), BE `develop` `4ff31c5` (also in BE `main` `1621e81`), Nexo `main` untouched.**
 - Built last night, deployed this morning by the owner: BE (token-guarded read-only feed `/internal/nexo/operators/29/contracts/`) and `nexo-api` (report page, `contracts_url`, migration 0003). Agent review of BE: safe, one 500 bug (non-ASCII Authorization header) fixed with a test. Full BE suite 6 failures + 87 errors, same list on clean `develop` (pre-existing).
 - Go-live gotcha: `CONTRACT_FEED_TOKENS` key must equal the ApiClient name exactly, lowercase `smartenplus` (first saved as `SmartEnPlus`, gave "no read token set"; fixed in Coolify, redeployed).

@@ -5,7 +5,7 @@ M12 coverage gap map. Card 3DS charges are excluded from all self-heal sweeps. M
 
 
 ## Status update 2026-11-05
-Gap closed in code by [[stuck-card-payment-csl4045824]]: `sync_pending_charges` now polls card charges (30 min to 7 days, latest charge, order `payment_pending`, unfinalized, 1h per-charge cooldown). Backend `develop` only, not deployed. Option chosen was the unified sweep, not a separate task. Card row in the matrix below is the pre-fix state.
+Gap closed in code by [[stuck-card-payment-csl4045824]]: `sync_pending_charges` now polls card charges (30 min to 7 days, latest charge, order `payment_pending`, unfinalized, 1h per-charge cooldown). Backend merged to `main` (`6a54916`), deploy not verified. Option chosen was the unified sweep, not a separate task. Card row in the matrix below is the pre-fix state.
 
 ## Context
 Three self-heal paths exist in the payment system:

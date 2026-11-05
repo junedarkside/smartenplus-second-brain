@@ -15,7 +15,7 @@ Order CSL4045824 (2000 THB + 81.28 card fee = 2081.28) was PAID at Omise on 2 No
 3. Possible crash inside `finalize_payment`, or the return-page reconcile failing.
 To confirm: Omise Settings > Webhooks delivery log for `chrg_69jkpjnfll8h751prwg` (Live mode), `payments_webhookevent` row, `OMISE_SEC_KEY` vs live key.
 
-## Fixes (all on `develop`, pushed, NOT deployed)
+## Fixes (merged to `main` by owner in BE `6a54916` and AD `a3d6f31`; deploy not verified)
 Backend:
 - `a06672c` Payment amount no longer double-counts the card fee (`amount_thb` already includes it; use `set_amount`). Failed attempts notify as `failed`, not `declined`. Old rows keep the wrong amount (display-only, no backfill).
 - `80e2d68` `sync_pending_charges` polls card charges pending 30 min to 7 days, only if latest charge, order `payment_pending`, `payment_finalized_at` null.
@@ -28,7 +28,7 @@ Customer frontend: unchanged (planned PR C dropped; backend poll covers it).
 Pending-card list that the poll would pick up = 0 (run via `manage.py shell` in the app container). No surprise confirmation emails expected.
 
 ## Open
-- Deploy BE then AD (owner merges `develop` to `main`). Make sure Celery beat + worker restart.
+- Verify BE + AD deploys finished and Celery beat + worker restarted.
 - Confirm webhook root cause via Omise delivery log; check `OMISE_SEC_KEY`.
 - CSL4045824 still hand-set to paid: finalize properly or leave. A backend "finalize manually-paid order" action is not built.
 - Order History in admin: who set PAID (not checked).
