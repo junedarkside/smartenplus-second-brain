@@ -1,3 +1,4 @@
+## [2026-11-05] done | All 6 SmartEnPlus Oregon RDS snapshots deleted (Frankfurt copies `database-1-final-2026-11-05-fra` and `post-cutover-2026-11-03` kept). 3 ShopMung database-2 snapshots untouched (pre-cutover-final is ShopMung's).
 ## [2026-11-05] done | admin-dashboard is local-only (nothing to check). Backend main already contains develop and live commit 8f27fcf (verified). Coolify deploy branch setting still unchecked.
 ## [2026-11-05] done | Route 53 zone checked: dormant (Cloudflare is real DNS). Beanstalk and ELB auto-smart already gone; Oregon EC2 dashboard all 0 except 1 kept snapshot. Nothing deleted.
 ## [2026-11-05] done | Frankfurt Elastic IPs checked: they are the public addresses of the live RDS DBs (SmartEnPlus + ShopMung), keep, nothing released.
