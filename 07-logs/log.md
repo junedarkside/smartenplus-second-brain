@@ -1,3 +1,4 @@
+## [2026-11-05] done | Route 53 hosted zone smartenplus.co.th deleted (12 records first: 3 SES DKIM CNAMEs, 5 cert-validation CNAMEs, api/app/auto/blog A; then the zone). Owner yes, dialogs checked. api, blog, www 200 after; Cloudflare NS unchanged. Hosted zones now 0.
 ## [2026-11-05] done | Oregon EC2 root snapshot `smartenplus-ec2-root-final` deleted (owner yes, dialog checked, Oregon snapshots now 0). Old EC2 disk unrecoverable. Oregon now has only the orphan target group (free).
 ## [2026-11-05] done | Coolify backend app `smartenplus-api` deploy branch switched develop to main (saved, no redeploy yet, live container unchanged on 8f27fcf). Next Redeploy ships main; plan: with the 11-08 key rotation.
 ## [2026-11-05] done | All 6 SmartEnPlus Oregon RDS snapshots deleted (Frankfurt copies `database-1-final-2026-11-05-fra` and `post-cutover-2026-11-03` kept). 3 ShopMung database-2 snapshots untouched (pre-cutover-final is ShopMung's).
