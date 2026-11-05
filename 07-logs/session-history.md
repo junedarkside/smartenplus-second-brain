@@ -1,3 +1,11 @@
+**Session #549 (moved from master-state):** **Achieved this session (#549, Nexo + BE):** **Nexo `develop` `d5a444a` (185 tests), BE `develop` `4ff31c5`, `main` untouched in both. NOT deployed.**
+- **Contract report for station sign-off (late #549):** Nexo page `/admin/stations/<slug>/<client_id>/report/` lists a customer's contracts with each station, the Lomprayah station Nexo maps it to, flags, digest, print to PDF. Data comes from a new token-guarded read-only BE feed `GET /internal/nexo/operators/<id>/contracts/` (`operators/nexo_feed.py`, env `NEXO_FEED_TOKEN`, empty = always 403, no migration). Nexo side: `ApiClient.contracts_url` (migration 0003), env `CONTRACT_FEED_TOKENS` JSON keyed by customer name, `read_json` reuses the station-list safety limits. Agent review of BE: safe, one bug (non-ASCII Authorization header gave 500) fixed with a test. Full BE suite: 6 failures + 87 errors, identical list on clean `develop` (pre-existing, 10 new feed tests pass). Known limit: one feed URL per customer = one operator. Not checked: Nexo `central_id` equals BE `Station.pk`; page not viewed in a browser.
+- Station mapping page: menu link (Admin > Mappings > "Map <provider> stations"), row anchor after save, "Find station" search, clickable status counts (`?status=`), "ID not in list?" box opens when the customer list fails, `th scope`. Checked in local Chrome. Needs Coolify redeploy to be live.
+- BD + UX agent reviews run; owner finalized a 6-item risk list (unofficial endpoints, guessed limits, SPC blocked, seat meaning, ops gaps, one-person mapping). Filed in the Nexo project page.
+- Lomprayah partner-API / permission request drafted EN + TH, unsent: repo `docs/providers/lomprayah-partner-request.md`.
+- Owner set the SmartEnPlus Station list URL in prod admin.
+- Vault: Nexo project page + log updated (`c022485`).
+
 **Session #548 (moved from master-state):** **Achieved this session (#548, Nexo):** **Nexo `develop` `0f4eac5`, 162 tests, `main` untouched (`dea1f21`).**
 - Central ID picker with autocomplete fed by the customer's station list (name/city/type/ID filter, bare ID kept in the field); simpler review panel (no typed-confirm, one "same place" tick) that closes itself after approve/reject/retire.
 - Dev ports swapped: Nexo `make run` on :8001, SmartEnPlus BE on :8000.
