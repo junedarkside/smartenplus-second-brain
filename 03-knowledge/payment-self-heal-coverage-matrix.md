@@ -3,6 +3,10 @@
 ## Summary
 M12 coverage gap map. Card 3DS charges are excluded from all self-heal sweeps. Missed `charge.complete` webhook for a 3DS card = stuck pending forever. New payment methods silently inherit the card 3DS exclusion. The matrix is the source of truth for what heals what.
 
+
+## Status update 2026-11-05
+Gap closed in code by [[stuck-card-payment-csl4045824]]: `sync_pending_charges` now polls card charges (30 min to 7 days, latest charge, order `payment_pending`, unfinalized, 1h per-charge cooldown). Backend `develop` only, not deployed. Option chosen was the unified sweep, not a separate task. Card row in the matrix below is the pre-fix state.
+
 ## Context
 Three self-heal paths exist in the payment system:
 

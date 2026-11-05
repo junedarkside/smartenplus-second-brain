@@ -17,6 +17,8 @@
 
 **Updated:** 2026-11-05 (session #551)
 
+**Also this session (payment incident, 2026-11-05):** CSL4045824 (card PAID at Omise, DB `payment_pending`). BE `develop` `6a3e5b8` + AD `develop` `a3d6f31`, pushed, NOT deployed (owner merges to `main`): card poll with 1h cooldown, double-fee fix, `GET /payments/admin/issues/`, Payment Issues page. Pre-deploy pending-card list = 0. Detail: [[stuck-card-payment-csl4045824]].
+
 **Achieved this session (#551, Nexo):** **Nexo `develop` `09fced8` (259 tests), `main` untouched (`dea1f21`). Pushed, NOT redeployed (Change mapping needs a `nexo-api` Redeploy).**
 - Owner asked for station mapping on the contract page (SmartEnPlus checks Lomprayah allotment per contract). Page renamed "Contract report" to "Contracts" (`/contracts/`, old `/report/` 302).
 - **Map station** (unmapped/rejected/retired stations) proposes PENDING; **Change mapping** (one live mapping) proposes the new provider station and retires/rejects the old in one transaction, reason required. Approval stays on the mapping page.
@@ -35,6 +37,8 @@
 
 ## Section 2 — Loose Ends (Open)
 
+> **`STUCK-CARD-CSL4045824` (2026-11-05) - OPEN, high.** Deploy BE then AD (`develop` to `main`, restart Celery beat+worker). Confirm webhook root cause: Omise Live delivery log for `chrg_69jkpjnfll8h751prwg`, `OMISE_SEC_KEY` vs live key, `ALLOWED_HOSTS`. CSL4045824 is hand-set `paid` (not finalized: check booking, email, `payment_finalized_at`). After deploy read the Payment Issues page. Detail: [[stuck-card-payment-csl4045824]].
+>
 > **`NEXO-CHANGE-FOLLOWUPS` (#551) - OPEN, low.** (1) Check the Change/Map dialog in Safari (the old `hidden` option filter is gone, options are rebuilt), on mobile width and in print. (2) Same-person propose and approve is warn-only; owner never decided whether to require a different approver. (3) Picker hides mapped provider stations (see resume item 2).
 >
 > **`NEXO-NEXT` (#548) - OPEN, low.** Nexo is LIVE since 2026-11-04 (`nexo.smartenplus.co.th`, compose app + Postgres Database resource, R2 backup verified, restore drill passed, HSTS 3600). Remaining: first scheduled backup check 2026-11-05, HSTS to 31536000 in about a week, uptime monitor, prod ApiClient name and Station list URL, wire the SmartEnPlus BE client, update repo deploy doc, then slice 2 (second customer + CSV import), JSON 404 handler, sort departures, Lomprayah partner-API request; SPC blocked on docs and credentials. Detail: `01-projects/nexo-integration-platform.md`.
