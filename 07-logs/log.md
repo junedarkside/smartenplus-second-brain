@@ -1,3 +1,4 @@
+## [2026-11-05] done | Route 53 zone checked: dormant (Cloudflare is real DNS). Beanstalk and ELB auto-smart already gone; Oregon EC2 dashboard all 0 except 1 kept snapshot. Nothing deleted.
 ## [2026-11-05] done | Frankfurt Elastic IPs checked: they are the public addresses of the live RDS DBs (SmartEnPlus + ShopMung), keep, nothing released.
 ## [2026-11-05] done | Leftover Amplify WAF web ACL deleted (nothing attached, about $8/mo). API 200.
 ## [2026-11-05] done | Phase 6 old AWS teardown: Oregon database-1, old EC2 (snapshot kept), ALB api-smartenplus + its 4 Elastic IPs deleted, live.dump deleted, API 200 after each step. SES key left alone (joins key rotation). WAF, target group, snapshots still open. Detail in master-state 2d.
