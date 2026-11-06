@@ -14,7 +14,7 @@ Next.js 14 (Pages Router) · React 18.2 · MUI 5.14 · RTK Query 1.9 · redux-pe
 |------|------|------|
 | `smartenplus-backend` | `~/Desktop/SmartEnPlus/smartenplus-backend` | Django REST API |
 | `smartenplus-frontend` | `~/Desktop/SmartEnPlus/smartenplus-frontend` | Customer app |
-| `admin-dashboard` | `~/Desktop/AdminDashBoard/admin-dashboard` | This repo — admin interface |
+| `admin-dashboard` | `~/Desktop/SmartEnPlus/admin-dashboard` | This repo — admin interface |
 
 ## Structure
 

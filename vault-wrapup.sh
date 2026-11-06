@@ -6,7 +6,7 @@
 REPOS=(
   "smartenplus-backend:/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-backend"
   "smartenplus-frontend:/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-frontend"
-  "admin-dashboard:/Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard"
+  "admin-dashboard:/Users/charuwatnaranong/Desktop/SmartEnPlus/admin-dashboard"
   "smartenplus-content:/Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content"
 )
 

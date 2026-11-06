@@ -120,8 +120,8 @@ At start of every session working on SmartEnPlus vault:
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-backend status --short`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-frontend branch --show-current`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-frontend log --oneline -3`
-   - `git -C /Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard branch --show-current`
-   - `git -C /Users/charuwatnaranong/Desktop/AdminDashBoard/admin-dashboard log --oneline -3`
+   - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/admin-dashboard branch --show-current`
+   - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/admin-dashboard log --oneline -3`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content branch --show-current`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content log --oneline -3`
    - `git -C /Users/charuwatnaranong/Desktop/SmartEnPlus/smartenplus-content status --short`
