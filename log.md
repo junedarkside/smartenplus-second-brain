@@ -2,6 +2,7 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-11-05] session-end | #554: webhook false-alarm fix (BE develop 30f90a4), CSL4045824 repaired by owner shell, admin-created orders + payment link reviewed (3 agents) and split into 7 steps, step 1 = underpay check. Note [[admin-created-orders-payment-link]].
 ## [2026-11-03] fix | Blog search broken: `/graphql` rewrite (`locale:false`) 404'd under i18n; `internalfetcher` → `/api/graphql`. FE develop `23f1323b` (local, not pushed/deployed). Updated [[nextjs-rewrites-beforefiles-shadowed-by-dynamic-page]].
 ## [2026-11-03] update | Nexo: pushed to GitHub junedarkside/nexo (private); develop merged 734dab2; main is owner-only (Claude never touches it). Local dev setup (make run/dev-key/lomprayah-on|off, DEV_API_KEY in .env, /dev/ console auto-load). 77 tests. Project page Status rewritten.
 ## [2026-10-21] session-end | #525: i18n M5c-2 slice c (pdf ticket) + M5c-3 (/my-trip) done, M5c complete. Thai brand = SmartEnPlus (was LookChang). FE develop pushed `066088c1`, not on main, not deployed. BE BookingPDFViewSet AllowAny ticketed. Next: R1 or M7.
