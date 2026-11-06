@@ -1,3 +1,16 @@
+**Session #556 (moved from master-state)**, 2026-11-06 (session #556, refund webhook merged, pay-link step 4 built, full suite pending)
+
+**Achieved this session (#556):**
+- **Refund-webhook gap CLOSED on BE `develop` `7998b7b` (merged earlier, not deployed):** PR5 cards refund idempotent, PR2a webhook dispatch refactor, PR2b `refund.create` handler (`payments/refund_sync.py`, refund-before-complete guard folded in).
+- **Admin orders step 3 merged** (admin create-order API). **Step 4 (pay-link token, backend only) built on BE branch `feat/order-pay-link`** (`52e9cc2` feat, `d1c1f7b` fix; NOT merged, NOT pushed to develop): `OrderPayLink` model + migration `0046`, `orders/pay_link_service.py`, admin `POST/DELETE /admin-dashboard-orders/admin/orders/<id>/pay-link/`, public `POST /payments/pay-link/resolve/`. Only sha256 hash stored, 7-day TTL, one active link per order, identical empty 404 for every failure, no-store + no-referrer, throttles. Plan reviewed by 2 sonnet agents, diff by payment-security-specialist; all blockers fixed (lone-surrogate token 500 fixed). 28 pay-link tests pass, `orders payments` 738 OK before the fix commit.
+- **Full suite on the final commit was STILL RUNNING when the session ended** (log in scratchpad `full-suite-step4.log`, background shell may be gone). Result unknown.
+
+**Resume point (EXACT):**
+0. **Step 4 merge:** in BE repo on `feat/order-pay-link`, run `source venv/bin/activate && python manage.py test --noinput` ALONE (about 10 min, background to a log). If the ONLY failure is known `carts.test_checkout_persistence...test_partial_data_update`, `git checkout develop && git merge --no-ff feat/order-pay-link`, push, report counts. Any other failure: do not merge.
+1. **Then ask the owner:** step 5 (customer `/pay/[token]` page) go, or PR4 (alert-only handlers for `dispute.*`, `charge.reverse`). Step 5 hand-off notes are in Section 2 `ADMIN-ORDERS-PAYMENT-LINK`.
+2. Nexo carry-overs from #555 (below, unchanged): Samui 49 -> 11 steps, hold-code decision, per-contract plan A go.
+
+
 **Session #555 (moved from master-state), 2026-11-06 (session #555, Nexo customer-stations page + Choose on it, per-contract plan, Samui 49 finding)
 
 **Achieved this session (#555):**
