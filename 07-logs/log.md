@@ -1,3 +1,6 @@
+## [2026-11-07] session-end | #558: pay-link items 1 (expiry asks Omise) and 2 (Sentry token scrub) on BE develop `26e13e4`; nginx pay-token log fix merged to FE develop `3f094b06` (tested in docker, NOT deployed); owner VPS test at step 2 of 5; item 3 `/pay/[token]` page not started. Nothing on `main`.
+## [2026-11-07] session-end | Admin THB guard `fix/charge-thb-only` merged to BE develop `266c7e1` (suite 1863, only known failure); not deployed. Next: step 5 `/pay/[token]` page after explanation to owner.
+
 ## [2026-11-06] session-end | Server-side charge currency merged to BE develop (`3181e8f`, THB-rate fix `91f0e21`); frontend PR4 merged to FE develop `fbbc5602`; full BE suite 1858, only known failure; nothing deployed. Owner checks before deploy: Omise multi-currency + minimums, `fetch_forex_rates` schedule and ForexData age.
 
 ## [2026-11-06] session-end | Forex endpoint made read-only (BE develop `ea97c54`, was open to anonymous writes); step 4 pay-link merged `bf79cd0`; server-side charge currency built on `feat/server-side-currency` (pushed, not merged, 23 tests, Sonnet-reviewed, FE PR4 not started); multi-currency checkout found never to have worked
