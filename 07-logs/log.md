@@ -1,3 +1,4 @@
+## [2026-11-08] session-end | #559: BE develop shipped to prod (main `0ce1317`, Coolify manual deploy, rollback `27cccf9`); forex task now every 6 h; PaymentMethod rows checked; real THB card order QYS3603289 paid then refunded (fee, email, Telegram, paid and refund webhooks OK); FE NOT deployed (prod = new BE + old FE); fee floor-only and client `vat` findings, fixes E1-E3 not started; next: forex check, then FE nginx test on VPS.
 ## [2026-11-07] session-end | #558: pay-link items 1 (expiry asks Omise) and 2 (Sentry token scrub) on BE develop `26e13e4`; nginx pay-token log fix merged to FE develop `3f094b06` (tested in docker, NOT deployed); owner VPS test at step 2 of 5; item 3 `/pay/[token]` page not started. Nothing on `main`.
 ## [2026-11-07] session-end | Admin THB guard `fix/charge-thb-only` merged to BE develop `266c7e1` (suite 1863, only known failure); not deployed. Next: step 5 `/pay/[token]` page after explanation to owner.
 
