@@ -791,3 +791,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-04] done | Nexo: mapping page UX merged to `develop` d435775 (row anchor, station search, status filter links, not-in-list box opens on picker failure), checked in local Chrome. Lomprayah partner-API/permission request drafted (EN+TH, unsent). Owner set prod Station list URL. Next: owner sends request, redeploys Coolify, maps 39 stations. See [[nexo-integration-platform]].
 
 ## [2026-11-05] fix | Stuck card payment CSL4045824: card poll + cooldown, double-fee fix, issues API + Payment Issues page on `develop` (BE `6a3e5b8`, AD `a3d6f31`), not deployed. Webhook root cause unconfirmed. See [[stuck-card-payment-csl4045824]].
+
+## [2026-11-08] ingest | `admin-dashboard` repo moved to `~/Desktop/SmartEnPlus/admin-dashboard`; stale paths fixed in vault, `~/.claude` hooks/agents, 3 repos (chore branches merged to develop); audit in `07-logs/admin-dashboard-move-audit-2026-11-06.md`. Added [[agent-sharing-requirements]] for the agent-sharing audit.

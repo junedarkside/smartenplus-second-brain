@@ -1,5 +1,3 @@
-No filepath provided — compressing inline text directly.
-
 # Admin Dashboard
 
 Admin dashboard for SmartEnPlus — Thailand transport booking platform. Frontend admin interface for bookings, orders, routes, operators, vehicles, contracts.
