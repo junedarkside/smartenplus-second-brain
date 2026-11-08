@@ -13,7 +13,7 @@ The same policy was copied by hand into 3 `CLAUDE.md` files and drifted (only th
 
 ## Enforcement
 - `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash, 3 code repos only). Checks every `&&`/`;`/`|` segment. Blocks: `commit` on `main`/`develop`; `merge`/`push` on `main`; any push targeting `main` (incl. `HEAD:refs/heads/main`, bare push whose upstream is `main`); `rebase/reset/cherry-pick/revert/am/pull` on `main`; destructive `branch/tag/update-ref` on `main`; `--force`; `--no-verify`. Allowed (owner decision 2026-11-08): merge and push `develop`. Vault and other repos are exempt. Rewritten 2026-11-09 (old copy `branch-guard.sh.bak-2026-11-09`).
-- `~/.claude/hooks/agent-model-guard.sh` (PreToolUse on Agent) blocks unpinned/implicit-model spawns in the 3 code repos. Backup of settings: `~/.claude/settings*.json.bak-2026-11-09`.
+- `~/.claude/hooks/agent-model-guard.sh` (PreToolUse on Agent, 3 code repos only): blocks `Explore`/`Plan`/`general-purpose` spawns without an explicit `model`. Custom agents rely on their frontmatter pin; forks and untyped spawns inherit the parent. Simplified 2026-11-09 (old copy `agent-model-guard.sh.bak-2026-11-09`; it also blocked forks and unpinned custom agents). Settings backups: `~/.claude/settings*.json.bak-2026-11-09`.
 - `~/.claude/settings.json` `permissions.deny` blocks reading `.env*` secret files, `secrets/`, `*.key`, `*.pem` and `curl`.
 - Not covered: your own terminal, CI, GitHub branch rules, `bash -c`/scripts, `gh pr merge`, sessions started outside a repo folder. See [[master-state]] for the open item.
 
