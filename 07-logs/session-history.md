@@ -1,3 +1,18 @@
+**Session #562 (moved from master-state)**, 2026-11-08
+
+**Updated:** 2026-11-08 (session #562, agent governance: settings + hook + shared policy for the 3 code repos; branches uncommitted)
+
+**Achieved this session (#562):**
+- **Audit (read-only, 3 reviewer agents: security, governance, fact-check):** rules were prose-only, FE-only for branch policy + model rules, no hooks/CI gate/deny rules. Full report: `~/.claude/plans/review-vault-and-scan-silly-duckling.md`.
+- **Enforcement added (user level, not in git):** `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash) blocks git commit/merge/push on `main`/`develop`, pushes targeting them, `--force`, `--no-verify` in the 3 code repos; vault and other repos exempt. Registered in `~/.claude/settings.json` AND `settings-{claude,glm,minimax}.json` (claude-switch overwrites settings.json). `permissions.deny`: `.env*` reads, `secrets/`, `*.key`, `*.pem`, `curl`. Backups `*.bak-2026-11-08`. Verified: 13 script cases, real headless commit on `develop` in a throwaway clone blocked (0 commits).
+- **Shared policy:** canonical [[agent-governance]] (`06-systems/`); verbatim block between `AGENT-GOVERNANCE` markers in each repo `CLAUDE.md`; `scripts/check-agent-governance.sh` = OK x3. External `@` imports do NOT load (tested), so copies + drift check. `SYNC.md` x3 point to vault. Repo `.claude/settings.json` x3 share `additionalDirectories`; BE `settings.local.json` untracked + ignored, loose `curl/python3/grep` allows removed. `smartenplus-leader`, `lookup-scout`, `opus-reviewer` copied to `~/.claude/agents/` (originals stay in FE).
+- **Branches:** `chore/agent-governance-sync` in FE, BE, AD, off `develop`, UNCOMMITTED (BE also has staged `git rm --cached` of `.claude/settings.local.json`).
+
+**Resume point (EXACT):**
+A. **Review + commit the 3 `chore/agent-governance-sync` branches** (owner decides; Claude cannot merge to `develop`, branch-guard blocks it, owner merges in own terminal). Check `git -C <repo> diff` first.
+B. **Open governance gaps, owner has not said go:** GitHub rulesets on `main`/`develop` + restore FE CI test gate (`deploy.yml:11-44`), BE/AD have no CI; git pre-push hook for the human terminal; SessionStart hook not widened (would hit Nexo/seo folders); BE root `settings-claude.json` still tracked (unreferenced).
+C. **Security findings from audit, UNVERIFIED by Claude, need owner decision:** no DRF `DEFAULT_PERMISSION_CLASSES` (`settings.py:404-406`), `AdminBookingSummaryViewSet` open (`bookings/views.py:116-119`), JWT default key (`settings.py:448`, see `JWT-SIGNING-KEY-DEFAULT`), `BLACKLIST_AFTER_ROTATION=False`, AD `middleware.js` allowlist matcher.
+
 **Session #561 (moved from master-state)**, 2026-11-08
 
 **Updated:** 2026-11-08 (session #561, repo hygiene: admin-dashboard shipped to production, remote branches cleaned; FE money tests from #560 still open)
