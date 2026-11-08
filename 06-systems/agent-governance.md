@@ -12,7 +12,7 @@ The same policy was copied by hand into 3 `CLAUDE.md` files and drifted (only th
 3. Run `bash scripts/check-agent-governance.sh` from the vault root. Empty diff = in sync.
 
 ## Enforcement
-- Claude: `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash, registered in `~/.claude/settings.json`) blocks `git commit` on `main`/`develop`, `git merge/push` on `main`, pushes targeting `main`, `--force`, `--no-verify` in the 3 code repos. Since 2026-11-08 Claude is allowed to `git merge` into and `git push` `develop` (owner decision). The vault and other repos are exempt. Backup of the settings before the change: `~/.claude/settings.json.bak-2026-11-08`.
+- Claude: `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash, registered in `~/.claude/settings.json`) blocks `git commit` on `main`/`develop`, `git merge/push` on `main`, pushes targeting `main`, `--force`, `--no-verify` in the 3 code repos. `main` is untouchable for Claude: also blocks `reset/rebase/cherry-pick/revert/am/pull` on `main`, and `branch/update-ref/tag` aimed at it. Since 2026-11-08 Claude is allowed to `git merge` into and `git push` `develop` (owner decision). The vault and other repos are exempt. Backup of the settings before the change: `~/.claude/settings.json.bak-2026-11-08`.
 - `~/.claude/settings.json` `permissions.deny` blocks reading `.env*` secret files, `secrets/`, `*.key`, `*.pem` and `curl`.
 - Not covered: your own terminal, CI, GitHub branch rules. See [[master-state]] for the open item.
 
