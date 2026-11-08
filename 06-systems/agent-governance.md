@@ -12,7 +12,7 @@ The same policy was copied by hand into 3 `CLAUDE.md` files and drifted (only th
 3. Run `bash scripts/check-agent-governance.sh` from the vault root. Empty diff = in sync.
 
 ## Enforcement
-- Claude: `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash, registered in `~/.claude/settings.json`) blocks `git commit/merge/push` on `main`/`develop`, pushes targeting them, `--force`, `--no-verify` in the 3 code repos. The vault and other repos are exempt. Backup of the settings before the change: `~/.claude/settings.json.bak-2026-11-08`.
+- Claude: `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash, registered in `~/.claude/settings.json`) blocks `git commit` on `main`/`develop`, `git merge/push` on `main`, pushes targeting `main`, `--force`, `--no-verify` in the 3 code repos. Since 2026-11-08 Claude is allowed to `git merge` into and `git push` `develop` (owner decision). The vault and other repos are exempt. Backup of the settings before the change: `~/.claude/settings.json.bak-2026-11-08`.
 - `~/.claude/settings.json` `permissions.deny` blocks reading `.env*` secret files, `secrets/`, `*.key`, `*.pem` and `curl`.
 - Not covered: your own terminal, CI, GitHub branch rules. See [[master-state]] for the open item.
 
@@ -20,14 +20,14 @@ The same policy was copied by hand into 3 `CLAUDE.md` files and drifted (only th
 
 <!-- AGENT-GOVERNANCE:BEGIN -->
 ### Git Branch Policy — MANDATORY
-**NEVER commit code changes directly to `main` or `develop`.** Always:
+**NEVER commit code changes directly to `main` or `develop`.** Claude may merge feature branches into `develop` and push `develop`; never `main`. Always:
 1. `git checkout develop && git pull`
 2. `git checkout -b <type>/<short-desc>` (types: `fix/`, `feat/`, `refactor/`, `chore/`)
 3. Make changes + commit on the feature branch
-4. Merge to `develop` only (never directly to `main`) — the owner does the merge
+4. Merge to `develop` only (never directly to `main`) — Claude may do this merge and push `develop` (owner policy 2026-11-08); `--force` and `--no-verify` stay blocked
 5. `main` = production-only; only merged via develop→main deploy flow
 
-Violation = lost history, broken prod, no rollback point. Enforced for Claude by `~/.claude/hooks/branch-guard.sh` (blocks commit/merge/push on `main`/`develop`, `--force`, `--no-verify`). If it blocks you, switch to a feature branch — do not work around it.
+Violation = lost history, broken prod, no rollback point. Enforced for Claude by `~/.claude/hooks/branch-guard.sh` (blocks commit on `main`/`develop`, merge/push on `main`, `--force`, `--no-verify`). If it blocks you, switch to a feature branch — do not work around it.
 
 ### Subagent Routing — Skip the Agent Tool When…
 
