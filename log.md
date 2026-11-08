@@ -793,3 +793,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-05] fix | Stuck card payment CSL4045824: card poll + cooldown, double-fee fix, issues API + Payment Issues page on `develop` (BE `6a3e5b8`, AD `a3d6f31`), not deployed. Webhook root cause unconfirmed. See [[stuck-card-payment-csl4045824]].
 
 ## [2026-11-08] ingest | `admin-dashboard` repo moved to `~/Desktop/SmartEnPlus/admin-dashboard`; stale paths fixed in vault, `~/.claude` hooks/agents, 3 repos (chore branches merged to develop); audit in `07-logs/admin-dashboard-move-audit-2026-11-06.md`. Added [[agent-sharing-requirements]] for the agent-sharing audit.
+
+## [2026-11-08] ingest | agent governance: canonical policy note `06-systems/agent-governance.md`, `~/.claude` branch-guard hook + .env/curl deny rules (settings + claude-switch files), shared block in 3 repo CLAUDE.md on branch `chore/agent-governance-sync` (uncommitted), 3 cross-repo agents copied to `~/.claude/agents`
