@@ -13,6 +13,7 @@ The same policy was copied by hand into 3 `CLAUDE.md` files and drifted (only th
 
 ## Enforcement
 - Claude: `~/.claude/hooks/branch-guard.sh` (PreToolUse on Bash, registered in `~/.claude/settings.json`) blocks `git commit` on `main`/`develop`, `git merge/push` on `main`, pushes targeting `main`, `--force`, `--no-verify` in the 3 code repos. `main` is untouchable for Claude: also blocks `reset/rebase/cherry-pick/revert/am/pull` on `main`, and `branch/update-ref/tag` aimed at it. Since 2026-11-08 Claude is allowed to `git merge` into and `git push` `develop` (owner decision). The vault and other repos are exempt. Backup of the settings before the change: `~/.claude/settings.json.bak-2026-11-08`.
+- `~/.claude/hooks/agent-model-guard.sh` (PreToolUse on Agent) blocks unpinned/implicit-model spawns in the 3 code repos. Backup of settings: `~/.claude/settings*.json.bak-2026-11-09`.
 - `~/.claude/settings.json` `permissions.deny` blocks reading `.env*` secret files, `secrets/`, `*.key`, `*.pem` and `curl`.
 - Not covered: your own terminal, CI, GitHub branch rules. See [[master-state]] for the open item.
 
@@ -53,6 +54,8 @@ Match model to task risk, not flat downgrade. Wrong output costs more (rework, p
   - `sonnet` (default) — implementation, review, design, refactors, anything judgment-bearing. Floor for code that ships.
   - `opus` — only user-requested, hard architectural tradeoffs, or payment/security-critical design review. Never a standing agent default.
   - Never route payment, auth, or shared-helper-signature work below `sonnet` regardless of how "simple" the task looks — "simple" payment changes broke prod before.
+- **Standard roster in every repo** (repo-local `.claude/agents/`, pinned): `lookup-scout` (haiku, read-only facts), `check-runner` (haiku, runs lint/build/test and reports first errors; BE: gates only, `manage.py test` stays in main thread), `opus-reviewer` (opus, read-only, payment/auth/shared-API only). Implementers and reviewers are `sonnet`. Route mechanical work to the haiku agents first.
+- **Enforced for Claude:** `~/.claude/hooks/agent-model-guard.sh` (PreToolUse on Agent) blocks a spawn in the 3 repos when a built-in type (Explore/Plan/general-purpose) has no explicit `model`, or a custom agent has no `model:` pin.
 - **One Explore call, not several.** Under-covered first pass → broaden its query. Don't stack a second Explore agent "just in case" (~739k tok/call).
 - **No duplicate work across main thread + subagent.** Work delegated to Agent → don't re-run same Grep/Read in main thread "to confirm." Trust the report; re-open only the specific file still in question.
 - **Background vs foreground agents.** Default background. Foreground/sync only when result blocks the very next step — sync spawns idle the caller and invite premature re-polling.
