@@ -797,3 +797,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-08] ingest | agent governance: canonical policy note `06-systems/agent-governance.md`, `~/.claude` branch-guard hook + .env/curl deny rules (settings + claude-switch files), shared block in 3 repo CLAUDE.md on branch `chore/agent-governance-sync` (uncommitted), 3 cross-repo agents copied to `~/.claude/agents`
 
 ## [2026-11-09] ingest | `how-agents-work` one-page note; branch-guard compound-command fix, policy block slimmed to ~20 lines, agent-model-guard simplified
+
+## [2026-11-10] ingest | Nexo SPC read-only adapter built on `feature/spc-read-only` (uncommitted); vault page SPC status updated

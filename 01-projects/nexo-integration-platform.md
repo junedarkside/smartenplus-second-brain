@@ -10,7 +10,7 @@ Phase 1 done, Phase 2 Lomprayah read-only done (2026-11-03). GitHub `junedarksid
 - **Per-customer IDs (ADR 0003, 2026-11-03):** each customer (ApiClient) owns its IDs; mappings, the API (caller sees only its own `central_id`) and the staff mapping page `/admin/stations/<provider>/<client_id>/` are scoped to it. Picker list comes from `ApiClient.stations_url` (https, public IPs only; SmartEnPlus: its public `/api/v1/stations/`). CSV import for customers without an endpoint = slice 2, not built.
 - **Local dev:** `make run` (migrate + server on :8001), `make dev-key` (writes `DEV_API_KEY` to git-ignored `.env`), `make lomprayah-on|off`, dev console at `http://localhost:8001/dev/` (SmartEnPlus BE on :8000) (DEBUG only, prefilled key, auto-loads stations). No superuser needed except for Django Admin.
 - **Not verified:** Lomprayah has not confirmed `availableAllotment` meaning or allowed automated access, real rate limit unknown (20/min and 60/min are guesses).
-- **Next:** JSON 404 handler for unknown URLs, sort departures by time, draft Lomprayah partner-API request, SPC (blocked on docs and credentials).
+- **Next:** JSON 404 handler for unknown URLs, sort departures by time, draft Lomprayah partner-API request, SPC read-only adapter (built 2026-11-10 on branch `feature/spc-read-only`, untested live; waiting on IP whitelist).
 
 **Lomprayah (2026-11-03):** only 3 unofficial website endpoints known (source-station, destination-station, quota). Reverse-documented in repo `docs/providers/lomprayah-api-reference.md` (tags observed/inferred/unknown). Owner: **Lomprayah provides seat availability only** — booking UNSUPPORTED, so no booking machinery for Lomprayah; Phase 4 booking = SPC only. `availableAllotment` >0 AVAILABLE, 0 UNAVAILABLE; 429/timeout/missing items = UNKNOWN. Rate limit hit (429 after ~20 calls at 0.4s). Timetable sample matched API times; overnight timetable uses arrival date, API `travelDate` = departure date. Open: permission for automated access, official partner API.
 
@@ -25,7 +25,7 @@ Phase 1 done, Phase 2 Lomprayah read-only done (2026-11-03). GitHub `junedarksid
 ## Risks (owner-finalized 2026-11-04, from BD + UX agent review)
 1. **Unofficial endpoints.** Only 3 website endpoints, no permission for automated access. Can be blocked or changed anytime. 429 seen after about 20 calls.
 2. **Guessed numbers.** Cache 45 s, client throttle 60/min, provider cap 20/min. No single-flight, so many users on one route can exhaust the cap and return UNKNOWN.
-3. **SPC blocked.** Only booking provider. No docs, credentials or sandbox, so no start date for the revenue phase.
+3. **SPC unblocked on paper (2026-11-10).** Docs, Postman and staging credentials exist (kept outside the repo). Read-only adapter built, not yet called live: needs IP whitelist confirmation. No seat-availability field documented, so SPC availability is UNKNOWN until SPC answers. Booking not started; needs owner decisions on route mapping and price-mismatch policy. See repo `docs/providers/spc-api-reference.md`.
 4. **Seat meaning unconfirmed.** `availableAllotment` unverified. A seat count that is not real stock hurts trust.
 5. **Ops gaps.** No uptime monitor, HSTS at 1 h, auto deploy off.
 6. **One-person mapping.** Proposer can also approve (warning only). A wrong mapping sends customers to the wrong place.
