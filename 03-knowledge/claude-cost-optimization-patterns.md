@@ -81,4 +81,4 @@ Model pinning (above) was already done and was NOT the problem: all project agen
 - Moved unused user agents to `~/.claude/agents-disabled/`: `api-documenter`, `multi-agent-orchestrator`, `context-manager` (no recorded use; descriptions loaded into every turn). Kept `ux-research-specialist` (used June/Aug debates, listed in `smartenplus-leader`), `websocket-architect` (listed in `smartenplus-leader`), `business-analyst-expert`. Rollback = move the files back.
 
 ## Related
-[[claude-agent-roster-smartenplus]]
+[[claude-agent-roster-smartenplus]], [[opencode-delegation-workflow]], [[evaluating-cheap-models-as-coding-workers]]
