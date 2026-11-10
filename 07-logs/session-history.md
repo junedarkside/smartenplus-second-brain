@@ -1,3 +1,21 @@
+**Session #566 (moved from master-state)**, 2026-11-10
+
+**Updated:** 2026-11-10 (session #566, FE: pay-link order page aligned with booking page, merged and pushed to `develop`)
+
+**Achieved this session (#566):**
+- **Pay-link order details page (`/guest-order/<id>?pay_token=`) now uses the booking page format and design system.** FE `develop` `cd134d5c`, pushed to origin (also pushed 2 earlier unpushed commits). `main` untouched, not deployed.
+- **Status card:** dot, readable method, full date, translated chip, Print button on both pages (`helpers/orderChargeDisplay.js`); thank-you wording; no-token fallback line; Thai unpaid/failed wording; print keeps the status row and hides site header, footer and chat bubble (`styles/print.css`, affects every printing page).
+- **Spacing standard:** every order-details section card now starts 17px from the card edge (card `p-4` only; no `px-*` on titles/bodies; Customer card lost `md:p-6`). Tokens `CARD_CONFIG.sectionTitle|sectionTitleDivided|sectionBody` in `helpers/designSystem.js`; rule added to `docs/design/DESIGN_SYSTEM.md`. Owner visually checked both pages: OK.
+- **Review:** design-review + ux-research agents run, fixes applied. Jest `components/order` 70 pass; eslint clean; `next build` passed on the booking branch before the last token commit (not re-run after).
+- **Branch cleanup:** 2 feature branches + 6 leftover merged branches deleted (3 on origin). FE repo now has only `develop` and `main`.
+
+**Resume point (EXACT):**
+1. **Owner deploys:** BE (the pay-link/order-detail endpoint `link_order_detail` is on BE `develop` `40638f2`) then FE `main`. After BE deploy: restart Celery workers, then admin resend on SSX5442553 and check email + Telegram show 208.13.
+2. **Not browser-checked:** print preview, mobile width, Thai, pending/failed/cancelled states on the real page (jest covers them).
+3. **Awaiting owner decision, not started:** refund/cancelled next-step copy (needs refund timeframe); auto-poll while pending; `role="status"` live region; replace hardcoded hex in `OrderPaymentStatusCard.js` `ChargeRow`; booking back-button `aria-label`; duplicate `mx-auto mx-2`; pay-link header back chevron.
+4. Known gap: logged-in non-staff user opening `/orders/[orderid]` for a link order still gets `[]`; `OrderInfoSerializer` over-exposure for booking orders; no extra rate limit on `pay_token`.
+5. Then older items: Nexo SPC (#565 block, now in session-history), admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
+
 **Session #565 (moved from master-state)**, 2026-11-10
 
 **Updated:** 2026-11-10 (session #565, Nexo: SPC read-only adapter built and merged to `develop`)

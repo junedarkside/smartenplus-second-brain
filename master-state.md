@@ -15,21 +15,24 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-11-10 (session #566, FE: pay-link order page aligned with booking page, merged and pushed to `develop`)
+**Updated:** 2026-11-10 (session #567, BE + FE + AD: pay-link emails, status panel, charge net/fee; all merged and pushed to `develop`)
 
-**Achieved this session (#566):**
-- **Pay-link order details page (`/guest-order/<id>?pay_token=`) now uses the booking page format and design system.** FE `develop` `cd134d5c`, pushed to origin (also pushed 2 earlier unpushed commits). `main` untouched, not deployed.
-- **Status card:** dot, readable method, full date, translated chip, Print button on both pages (`helpers/orderChargeDisplay.js`); thank-you wording; no-token fallback line; Thai unpaid/failed wording; print keeps the status row and hides site header, footer and chat bubble (`styles/print.css`, affects every printing page).
-- **Spacing standard:** every order-details section card now starts 17px from the card edge (card `p-4` only; no `px-*` on titles/bodies; Customer card lost `md:p-6`). Tokens `CARD_CONFIG.sectionTitle|sectionTitleDivided|sectionBody` in `helpers/designSystem.js`; rule added to `docs/design/DESIGN_SYSTEM.md`. Owner visually checked both pages: OK.
-- **Review:** design-review + ux-research agents run, fixes applied. Jest `components/order` 70 pass; eslint clean; `next build` passed on the booking branch before the last token commit (not re-run after).
-- **Branch cleanup:** 2 feature branches + 6 leftover merged branches deleted (3 on origin). FE repo now has only `develop` and `main`.
+**Achieved this session (#567):**
+- **Pay-link confirmation email fixed.** Wrong "Order Confirmed" email for ZCU2062515 was stale Celery workers (old code). Link-order emails now show items, qty x unit price, Subtotal, "Payment received" subject and a "VIEW MY ORDER" button. Booking emails unchanged (owner chose: link orders only).
+- **Signed receipt link, no email in URL:** `orders/receipt_token.py` (TimestampSigner, salt `order-receipt-v1`, keyed by `SECRET_KEY`, 365 days, no new env var). `GET /orders/<id>/orderdetails/?receipt=`. Guest lookup throttled (`guest_order` 60/min).
+- **Security fix:** guest `?email=` lookup could read account-owned orders. Now `user__isnull=True` only; failed-lookup log no longer holds the email.
+- **FE privacy:** `/guest-order` keeps the email and receipt token out of GTM, `page_view` and referrers (`Referrer-Policy: no-referrer`, `no-store`); two FE bugs fixed.
+- **Pay-link status panel (dashboard) + staff GET status endpoint + 409 stale-link guard** merged.
+- **Charge net, fee, fee VAT:** nothing ever saved them from Omise, so the admin charge table showed 0.00 for every new-flow payment. Webhook and reconcile now store them; new column `GatewayCharge.fee_vat` (migration `payments/0005`); `backfill_gateway_charge_amounts` command (dry run unless `--apply`, `--pause` 1.5 s default, Omise rate-limits at 0.5 s). Local DB backfilled, ZCU2062515 shows net 100.00, fee 1.68, VAT 0.12.
+- **Pushed `develop`:** BE `2c99eda`, FE `1d2d2ec4`, AD `9cefdeb`. `main` untouched, nothing deployed. BE tests: payments + orders 1004 OK. Merged feature branches deleted (BE 14, FE 1, AD 4 local; 3 `chore/*` remote in BE and AD).
 
 **Resume point (EXACT):**
-1. **Owner deploys:** BE (the pay-link/order-detail endpoint `link_order_detail` is on BE `develop` `40638f2`) then FE `main`. After BE deploy: restart Celery workers, then admin resend on SSX5442553 and check email + Telegram show 208.13.
-2. **Not browser-checked:** print preview, mobile width, Thai, pending/failed/cancelled states on the real page (jest covers them).
-3. **Awaiting owner decision, not started:** refund/cancelled next-step copy (needs refund timeframe); auto-poll while pending; `role="status"` live region; replace hardcoded hex in `OrderPaymentStatusCard.js` `ChargeRow`; booking back-button `aria-label`; duplicate `mx-auto mx-2`; pay-link header back chevron.
-4. Known gap: logged-in non-staff user opening `/orders/[orderid]` for a link order still gets `[]`; `OrderInfoSerializer` over-exposure for booking orders; no extra rate limit on `pay_token`.
-5. Then older items: Nexo SPC (#565 block, now in session-history), admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
+1. **Owner deploys:** BE, then FE, then AD. BE: run `migrate` (`payments/0005`), restart Celery workers, then `backfill_gateway_charge_amounts` dry run, then `--apply` (batches with `--limit`). Check prod `FRONTEND_URL` and `NUM_PROXIES`. `ORDER_RECEIPT_SIGNING_KEY` is NOT needed.
+2. **After deploy, owner checks:** resend the SSX5442553 email (shows 208.13), click "VIEW MY ORDER" on a link-order email, dashboard charge table shows net/fee/VAT.
+3. **Not browser-checked:** the receipt link in a real browser, the `/guest-order` header rule (FE dev server needs a restart), dashboard panel after merge (no post-merge tests there).
+4. **Known gaps, deferred on purpose:** booking-order guest response still exposes passport and DOB by email lookup; paid-stuck sweep and orphan-heal paths do not store charge amounts (backfill covers them); `reconcile_gateway_charge` "5 s throttle" never limits Omise calls; `random` order IDs; emails not lowercased at checkout; legacy webhook email path in `orders/views.py` (~L1090-1195) has no link handling; non-THB link orders get the old email; BE docs entry for the new pay-link GET endpoint not written.
+5. **Housekeeping:** duplicate `celery beat` processes on the dev Mac; remote BE `master` branch unexplained; untracked `.scratch/` in admin-dashboard; stale plan `/Users/charuwatnaranong/.claude/plans/i-got-issue-with-concurrent-sunrise.md` (stuck card CSL4045824) not started.
+6. Then older items from #566: refund/cancelled copy decision, Nexo SPC, admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
 
 ---
 
