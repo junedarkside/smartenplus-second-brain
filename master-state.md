@@ -15,24 +15,30 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-11-10 (session #567, BE + FE + AD: pay-link emails, status panel, charge net/fee; all merged and pushed to `develop`)
+**Updated:** 2026-11-11 (session #568, all repos: OpenCode delegation set up and piloted; FE/BE/AD `develop` only, nothing deployed)
 
-**Achieved this session (#567):**
-- **Pay-link confirmation email fixed.** Wrong "Order Confirmed" email for ZCU2062515 was stale Celery workers (old code). Link-order emails now show items, qty x unit price, Subtotal, "Payment received" subject and a "VIEW MY ORDER" button. Booking emails unchanged (owner chose: link orders only).
-- **Signed receipt link, no email in URL:** `orders/receipt_token.py` (TimestampSigner, salt `order-receipt-v1`, keyed by `SECRET_KEY`, 365 days, no new env var). `GET /orders/<id>/orderdetails/?receipt=`. Guest lookup throttled (`guest_order` 60/min).
-- **Security fix:** guest `?email=` lookup could read account-owned orders. Now `user__isnull=True` only; failed-lookup log no longer holds the email.
-- **FE privacy:** `/guest-order` keeps the email and receipt token out of GTM, `page_view` and referrers (`Referrer-Policy: no-referrer`, `no-store`); two FE bugs fixed.
-- **Pay-link status panel (dashboard) + staff GET status endpoint + 409 stale-link guard** merged.
-- **Charge net, fee, fee VAT:** nothing ever saved them from Omise, so the admin charge table showed 0.00 for every new-flow payment. Webhook and reconcile now store them; new column `GatewayCharge.fee_vat` (migration `payments/0005`); `backfill_gateway_charge_amounts` command (dry run unless `--apply`, `--pause` 1.5 s default, Omise rate-limits at 0.5 s). Local DB backfilled, ZCU2062515 shows net 100.00, fee 1.68, VAT 0.12.
-- **Pushed `develop`:** BE `2c99eda`, FE `1d2d2ec4`, AD `9cefdeb`. `main` untouched, nothing deployed. BE tests: payments + orders 1004 OK. Merged feature branches deleted (BE 14, FE 1, AD 4 local; 3 `chore/*` remote in BE and AD).
+**Achieved this session (#568):**
+- **Vault + Nexo OpenCode report reviewed** (`opencode-delegation-workflow`, `evaluating-cheap-models-as-coding-workers`, Nexo CLAUDE.md §19). Gaps found: eval was Python only; FE/BE/AD never scanned.
+- **Whole-project scan (static):** FE 1255 js (9 files >500 lines), AD 421 (17 >500, only 5 test files, NO `test` script, no jest), BE 296 py (33 >500). Safe FE test candidates: `routeFAQBuilder`, `tocUtils`, `routeUtils`, `tripSorting`, `bookingContext`. (Earlier "FE candidates" in chat were AD files from an overwritten temp file; corrected.)
+- **Baselines (develop):** FE jest 37 of 331 suites fail (263 tests). BE serial 2107 tests, 5 failures + 1 error (5 `bookings`, 1 `carts`; ~9 min; `--parallel` broken: clone DB missing). BE lint: `venv/bin/ruff` 0.15.17 gives 1302 existing hits, so run it on changed files only.
+- **`~/.claude/scripts/opencode-delegate.sh`** (user-level, shared): refuses main/develop and dirty tree, worker runs in a `git archive` copy without `.env`, edit allowed on ONE file, bash/webfetch denied, timeout, scope check, copy back unstaged, runs verify cmd. Mechanical PASS only; orchestrator still reads diff + mutation check.
+- **Pilot (FE):** `helpers/__tests__/slugify.test.js`, 13 tests, gpt-6-luna, reviewed by hand, 5 of 5 real mutations killed. Merged to FE `develop` (`aeab8110`).
+- **"Delegation to OpenCode" section added to FE/AD/BE CLAUDE.md** (lanes, never-list, models, baselines). FE `45b8fbf1`, AD `666d453`, BE `2676462`, all pushed to `develop`. `main` untouched.
+- **Admin jest attempt reverted:** `npm install` ERESOLVE (`@types/react` peer); `--legacy-peer-deps` rewrote ~22k lines of `package-lock.json` and AD Dockerfile runs plain `npm install`. Nothing committed.
+- **Cost talk:** cost = context size x requests; caveman saves only a few percent of output; herdr installed (`HERDR_ENV=1`) but NOT used in the pilot (headless `opencode run`).
 
 **Resume point (EXACT):**
-1. **Owner deploys:** BE, then FE, then AD. BE: run `migrate` (`payments/0005`), restart Celery workers, then `backfill_gateway_charge_amounts` dry run, then `--apply` (batches with `--limit`). Check prod `FRONTEND_URL` and `NUM_PROXIES`. `ORDER_RECEIPT_SIGNING_KEY` is NOT needed.
-2. **After deploy, owner checks:** resend the SSX5442553 email (shows 208.13), click "VIEW MY ORDER" on a link-order email, dashboard charge table shows net/fee/VAT.
-3. **Not browser-checked:** the receipt link in a real browser, the `/guest-order` header rule (FE dev server needs a restart), dashboard panel after merge (no post-merge tests there).
-4. **Known gaps, deferred on purpose:** booking-order guest response still exposes passport and DOB by email lookup; paid-stuck sweep and orphan-heal paths do not store charge amounts (backfill covers them); `reconcile_gateway_charge` "5 s throttle" never limits Omise calls; `random` order IDs; emails not lowercased at checkout; legacy webhook email path in `orders/views.py` (~L1090-1195) has no link handling; non-THB link orders get the old email; BE docs entry for the new pay-link GET endpoint not written.
-5. **Housekeeping:** duplicate `celery beat` processes on the dev Mac; remote BE `master` branch unexplained; untracked `.scratch/` in admin-dashboard; stale plan `/Users/charuwatnaranong/.claude/plans/i-got-issue-with-concurrent-sunrise.md` (stuck card CSL4045824) not started.
-6. Then older items from #566: refund/cancelled copy decision, Nexo SPC, admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
+1. **Owner decision, Admin jest:** A) hand-pin versions + test the Docker build in a throwaway copy (recommended), B) skip Admin delegation, C) accept the big lockfile change.
+2. **Measure cost:** run a 3-file FE batch (`routeUtils`, `tripSorting`, `tocUtils`) through the script, read worker cost in the OpenCode console, compare with Sonnet review tokens, then go/stop. Not measured yet, saving is unproven.
+3. **Optional:** herdr pane mode for the script (watch workers, parallel batch); audit unused agents/skills/MCP to shrink always-loaded context (list only, owner decides).
+4. Update vault `opencode-delegation-workflow.md` with the FE pilot, baselines and script path.
+5. Carried over from #567 (still open):
+   - **Owner deploys:** BE, then FE, then AD. BE: run `migrate` (`payments/0005`), restart Celery workers, then `backfill_gateway_charge_amounts` dry run, then `--apply` (batches with `--limit`). Check prod `FRONTEND_URL` and `NUM_PROXIES`. `ORDER_RECEIPT_SIGNING_KEY` is NOT needed.
+   - **After deploy, owner checks:** resend the SSX5442553 email (shows 208.13), click "VIEW MY ORDER" on a link-order email, dashboard charge table shows net/fee/VAT.
+   - **Not browser-checked:** the receipt link in a real browser, the `/guest-order` header rule (FE dev server needs a restart), dashboard panel after merge (no post-merge tests there).
+   - **Known gaps, deferred on purpose:** booking-order guest response still exposes passport and DOB by email lookup; paid-stuck sweep and orphan-heal paths do not store charge amounts (backfill covers them); `reconcile_gateway_charge` "5 s throttle" never limits Omise calls; `random` order IDs; emails not lowercased at checkout; legacy webhook email path in `orders/views.py` (~L1090-1195) has no link handling; non-THB link orders get the old email; BE docs entry for the new pay-link GET endpoint not written.
+   - **Housekeeping:** duplicate `celery beat` processes on the dev Mac; remote BE `master` branch unexplained; untracked `.scratch/` in admin-dashboard; stale plan `/Users/charuwatnaranong/.claude/plans/i-got-issue-with-concurrent-sunrise.md` (stuck card CSL4045824) not started.
+   - Then older items from #566: refund/cancelled copy decision, Nexo SPC, admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
 
 ---
 

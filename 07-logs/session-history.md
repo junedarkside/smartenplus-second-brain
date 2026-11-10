@@ -1,3 +1,27 @@
+**Session #567 (moved from master-state)**, 2026-11-10
+
+**Updated:** 2026-11-10 (session #567, BE + FE + AD: pay-link emails, status panel, charge net/fee; all merged and pushed to `develop`)
+
+**Achieved this session (#567):**
+- **Pay-link confirmation email fixed.** Wrong "Order Confirmed" email for ZCU2062515 was stale Celery workers (old code). Link-order emails now show items, qty x unit price, Subtotal, "Payment received" subject and a "VIEW MY ORDER" button. Booking emails unchanged (owner chose: link orders only).
+- **Signed receipt link, no email in URL:** `orders/receipt_token.py` (TimestampSigner, salt `order-receipt-v1`, keyed by `SECRET_KEY`, 365 days, no new env var). `GET /orders/<id>/orderdetails/?receipt=`. Guest lookup throttled (`guest_order` 60/min).
+- **Security fix:** guest `?email=` lookup could read account-owned orders. Now `user__isnull=True` only; failed-lookup log no longer holds the email.
+- **FE privacy:** `/guest-order` keeps the email and receipt token out of GTM, `page_view` and referrers (`Referrer-Policy: no-referrer`, `no-store`); two FE bugs fixed.
+- **Pay-link status panel (dashboard) + staff GET status endpoint + 409 stale-link guard** merged.
+- **Charge net, fee, fee VAT:** nothing ever saved them from Omise, so the admin charge table showed 0.00 for every new-flow payment. Webhook and reconcile now store them; new column `GatewayCharge.fee_vat` (migration `payments/0005`); `backfill_gateway_charge_amounts` command (dry run unless `--apply`, `--pause` 1.5 s default, Omise rate-limits at 0.5 s). Local DB backfilled, ZCU2062515 shows net 100.00, fee 1.68, VAT 0.12.
+- **Pushed `develop`:** BE `2c99eda`, FE `1d2d2ec4`, AD `9cefdeb`. `main` untouched, nothing deployed. BE tests: payments + orders 1004 OK. Merged feature branches deleted (BE 14, FE 1, AD 4 local; 3 `chore/*` remote in BE and AD).
+
+**Resume point (EXACT):**
+1. **Owner deploys:** BE, then FE, then AD. BE: run `migrate` (`payments/0005`), restart Celery workers, then `backfill_gateway_charge_amounts` dry run, then `--apply` (batches with `--limit`). Check prod `FRONTEND_URL` and `NUM_PROXIES`. `ORDER_RECEIPT_SIGNING_KEY` is NOT needed.
+2. **After deploy, owner checks:** resend the SSX5442553 email (shows 208.13), click "VIEW MY ORDER" on a link-order email, dashboard charge table shows net/fee/VAT.
+3. **Not browser-checked:** the receipt link in a real browser, the `/guest-order` header rule (FE dev server needs a restart), dashboard panel after merge (no post-merge tests there).
+4. **Known gaps, deferred on purpose:** booking-order guest response still exposes passport and DOB by email lookup; paid-stuck sweep and orphan-heal paths do not store charge amounts (backfill covers them); `reconcile_gateway_charge` "5 s throttle" never limits Omise calls; `random` order IDs; emails not lowercased at checkout; legacy webhook email path in `orders/views.py` (~L1090-1195) has no link handling; non-THB link orders get the old email; BE docs entry for the new pay-link GET endpoint not written.
+5. **Housekeeping:** duplicate `celery beat` processes on the dev Mac; remote BE `master` branch unexplained; untracked `.scratch/` in admin-dashboard; stale plan `/Users/charuwatnaranong/.claude/plans/i-got-issue-with-concurrent-sunrise.md` (stuck card CSL4045824) not started.
+6. Then older items from #566: refund/cancelled copy decision, Nexo SPC, admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
+
+
+---
+
 **Session #566 (moved from master-state)**, 2026-11-10
 
 **Updated:** 2026-11-10 (session #566, FE: pay-link order page aligned with booking page, merged and pushed to `develop`)

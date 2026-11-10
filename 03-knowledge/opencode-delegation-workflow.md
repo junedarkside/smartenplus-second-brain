@@ -18,5 +18,13 @@ Delegate narrow, reversible tasks. Never trust the worker's report: the orchestr
 - Billing is per token. Read cost in the OpenCode console; `opencode stats` reports 0. A 5-request test-writing run cost about $0.0033.
 - Data egress: the files an agent reads go to the model provider. Use only models whose retention policy the owner accepted.
 
+## SmartEnPlus rollout (2026-11-11, #568)
+- Script: `~/.claude/scripts/opencode-delegate.sh <repo> <target-file> <prompt-file> [model] [verify-cmd]` (user-level, all repos). Headless `opencode run`, no herdr pane; refuses main/develop and a dirty tree; scope check fails on any extra changed file.
+- Pilot FE: `helpers/__tests__/slugify.test.js`, gpt-6-luna, 13 tests, 5/5 real mutations killed. Worker cost NOT measured yet (read the OpenCode console).
+- Baselines on develop: FE 37/331 suites fail (263 tests); BE serial 2107 tests, 5 failures + 1 error, ~9 min, `--parallel` broken; BE lint = `venv/bin/ruff` on changed files only (1302 existing hits).
+- Admin has no jest; adding it via `npm install` hits ERESOLVE and `--legacy-peer-deps` rewrites ~22k lock lines (Dockerfile runs plain `npm install`). Open owner decision.
+- Rules live in each repo's CLAUDE.md section "Delegation to OpenCode".
+- Break-even: tiny tasks lose money; batch 3+ files per session.
+
 ## Related
 [[claude-cost-optimization-patterns]], [[evaluating-cheap-models-as-coding-workers]]
