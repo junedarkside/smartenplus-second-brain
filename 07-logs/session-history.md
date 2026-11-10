@@ -1,3 +1,15 @@
+**Session #563 (moved from master-state)**, 2026-11-09
+
+**Updated:** 2026-11-09 (session #563, agent governance finished: merged, hardened, slimmed; model cost roster added)
+
+**Achieved this session (#563):**
+- **Governance branches merged:** #562 `chore/agent-governance-sync` merged to `develop` and pushed in FE, BE, AD. Owner policy change: Claude MAY `git merge` into and `git push` `develop`; Claude may NEVER touch `main` (also blocks reset/rebase/cherry-pick/revert/am/pull on `main`, destructive branch/tag/update-ref on it).
+- **`~/.claude/hooks/branch-guard.sh` rewritten** after a 3-agent-style review found bugs: checks every `&&`/`;`/`|` segment (was first verb only), catches `HEAD:refs/heads/main` and bare push with upstream `main`, no false block on `branch --list main`/`tag v1 main`/`--no-verify` inside a commit message. 24 test cases pass. Backup `branch-guard.sh.bak-2026-11-09`.
+- **Model cost optimization:** every repo now has `lookup-scout` + `check-runner` (haiku) and `opus-reviewer` (opus); BE also `django-reviewer` (sonnet); all agents pin a model. `~/.claude/hooks/agent-model-guard.sh` (PreToolUse on Agent, registered in settings + 3 claude-switch files, backups `*.bak-2026-11-09`) blocks `Explore`/`Plan`/`general-purpose` spawns without explicit `model`; simplified after review (no fork/custom-agent checks). Merged to `develop` in all 3 repos.
+- **Policy slimmed:** canonical block in [[agent-governance]] cut from ~58 to ~20 lines (branch policy + model cost only), re-synced to 3 repos, drift check OK x3. New plain note [[how-agents-work]] (3 ideas, 2 habits, not-covered list).
+- **Research:** official Claude Code docs on multi-agent (subagents, agent teams ~7x tokens, worktrees, headless, hooks). Findings: hooks fire inside subagents, nesting up to 3 layers by default, `additionalDirectories` does not load `CLAUDE.md`. Herdr is only a pane-status hook + opt-in skill, not used by the Agent tool (unguarded path).
+- `develop` heads: BE `2c00ee2`, FE `1e171fed`, AD `fea7ea2`. All pushed. AD has untracked `.scratch/` (not mine).
+
 **Session #562 (moved from master-state)**, 2026-11-08
 
 **Updated:** 2026-11-08 (session #562, agent governance: settings + hook + shared policy for the 3 code repos; branches uncommitted)
