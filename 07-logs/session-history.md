@@ -1,3 +1,18 @@
+**Session #565 (moved from master-state)**, 2026-11-10
+
+**Updated:** 2026-11-10 (session #565, Nexo: SPC read-only adapter built and merged to `develop`)
+
+**Achieved this session (#565):**
+- **SPC investigation + plan:** read SPC Postman/test-scenario docs (credentials doc untouched; a staging key was printed once in command output, owner told to rotate if shared). One Sonnet governance review (GO WITH CHANGES). Private plan artifact: claude.ai/artifact/NsPCnjvpJKdi3M99DdCNh8. Key finding: **SPC docs list no seat/inventory field**, so SPC availability = `UNKNOWN` until SPC answers.
+- **Phases 0+1 built, Nexo `develop` `62bfa45` (386 tests, `make check` green, main untouched):** `integrations/spc` (token-cached client, GET-only retry on E0004, parsing, adapter), additive `Route` + `list_locations`/`list_routes` on base adapter, `GET /providers/{slug}/locations|routes/`, seed migration `0003_seed_spc` (8 capabilities UNVERIFIED+disabled, safe reverse), `docs/providers/spc-api-reference.md`, `docs/open-questions.md` + `docs/api.md` updated. Tests/parsing written by Sonnet directly (no OpenCode: setup cost > benefit for ~100 lines).
+- Vault Nexo page: SPC "blocked" corrected.
+
+**Resume point (EXACT):**
+N. **Nexo SPC, owner actions/decisions:** (a) confirm SPC IP whitelist (Coolify egress + dev IP) then say "go" for first live staging read (locations/routes), flip capabilities with evidence; (b) route-mapping model B or C + is SmartEnPlus contract the booked unit; (c) price-mismatch policy (recommend block `PRICE_MISMATCH`); (d) email SPC: seat check, `is_open`/`is_booking`/`schedule`, `adult_price` meaning, rate limit, `number` uniqueness, E1007/E1102; (e) approve CLAUDE.md edits: §19 "secrets in reference docs" + §18 status "SPC not started" is stale; (f) rotate staging key if it was shared. Not done: Sonnet review of token manager + seed migration; branch `feature/spc-read-only` not deleted.
+Then (older #564 items stay): privacy table check for OpenCode models; hooks live test; governance gaps (branch protection, CI).
+
+---
+
 **Session #564 (moved from master-state)**, 2026-11-10
 
 **Updated:** 2026-11-10 (session #564, Nexo: OpenCode delegation eval, §19 rules, `/` redirect, first delegated task; all merged to Nexo `develop`)

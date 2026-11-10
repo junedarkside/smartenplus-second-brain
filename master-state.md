@@ -15,16 +15,21 @@
 > 6. Untracked files not mine: BE `operators/tests/test_transport_composit_pagination.py` (owner? commit separately or delete); AD `.scratch/`. (FE `.claude/commands/` committed in #480.)
 > 7. **Station translation bot (#471) is on `develop` (BE `17a5fb1`, FE `234cbc73`, AD `5f58c72`), not shipped.** Your steps: deploy BE (run `migrate stations` → 0049), then FE, then AD; create the bot account by hand (agent flag, not staff); hand the bot builder the contract (`stations/STATION_TRANSLATION_BOT.md`, BE `17a5fb1`; artifact claude.ai/artifact/1XB1sepwKH97Zh3P1stZRc); confirm `JWT_SIGNING_KEY` is set in prod. Nobody else can do these.
 
-**Updated:** 2026-11-10 (session #565, Nexo: SPC read-only adapter built and merged to `develop`)
+**Updated:** 2026-11-10 (session #566, FE: pay-link order page aligned with booking page, merged and pushed to `develop`)
 
-**Achieved this session (#565):**
-- **SPC investigation + plan:** read SPC Postman/test-scenario docs (credentials doc untouched; a staging key was printed once in command output, owner told to rotate if shared). One Sonnet governance review (GO WITH CHANGES). Private plan artifact: claude.ai/artifact/NsPCnjvpJKdi3M99DdCNh8. Key finding: **SPC docs list no seat/inventory field**, so SPC availability = `UNKNOWN` until SPC answers.
-- **Phases 0+1 built, Nexo `develop` `62bfa45` (386 tests, `make check` green, main untouched):** `integrations/spc` (token-cached client, GET-only retry on E0004, parsing, adapter), additive `Route` + `list_locations`/`list_routes` on base adapter, `GET /providers/{slug}/locations|routes/`, seed migration `0003_seed_spc` (8 capabilities UNVERIFIED+disabled, safe reverse), `docs/providers/spc-api-reference.md`, `docs/open-questions.md` + `docs/api.md` updated. Tests/parsing written by Sonnet directly (no OpenCode: setup cost > benefit for ~100 lines).
-- Vault Nexo page: SPC "blocked" corrected.
+**Achieved this session (#566):**
+- **Pay-link order details page (`/guest-order/<id>?pay_token=`) now uses the booking page format and design system.** FE `develop` `cd134d5c`, pushed to origin (also pushed 2 earlier unpushed commits). `main` untouched, not deployed.
+- **Status card:** dot, readable method, full date, translated chip, Print button on both pages (`helpers/orderChargeDisplay.js`); thank-you wording; no-token fallback line; Thai unpaid/failed wording; print keeps the status row and hides site header, footer and chat bubble (`styles/print.css`, affects every printing page).
+- **Spacing standard:** every order-details section card now starts 17px from the card edge (card `p-4` only; no `px-*` on titles/bodies; Customer card lost `md:p-6`). Tokens `CARD_CONFIG.sectionTitle|sectionTitleDivided|sectionBody` in `helpers/designSystem.js`; rule added to `docs/design/DESIGN_SYSTEM.md`. Owner visually checked both pages: OK.
+- **Review:** design-review + ux-research agents run, fixes applied. Jest `components/order` 70 pass; eslint clean; `next build` passed on the booking branch before the last token commit (not re-run after).
+- **Branch cleanup:** 2 feature branches + 6 leftover merged branches deleted (3 on origin). FE repo now has only `develop` and `main`.
 
 **Resume point (EXACT):**
-N. **Nexo SPC, owner actions/decisions:** (a) confirm SPC IP whitelist (Coolify egress + dev IP) then say "go" for first live staging read (locations/routes), flip capabilities with evidence; (b) route-mapping model B or C + is SmartEnPlus contract the booked unit; (c) price-mismatch policy (recommend block `PRICE_MISMATCH`); (d) email SPC: seat check, `is_open`/`is_booking`/`schedule`, `adult_price` meaning, rate limit, `number` uniqueness, E1007/E1102; (e) approve CLAUDE.md edits: §19 "secrets in reference docs" + §18 status "SPC not started" is stale; (f) rotate staging key if it was shared. Not done: Sonnet review of token manager + seed migration; branch `feature/spc-read-only` not deleted.
-Then (older #564 items stay): privacy table check for OpenCode models; hooks live test; governance gaps (branch protection, CI).
+1. **Owner deploys:** BE (the pay-link/order-detail endpoint `link_order_detail` is on BE `develop` `40638f2`) then FE `main`. After BE deploy: restart Celery workers, then admin resend on SSX5442553 and check email + Telegram show 208.13.
+2. **Not browser-checked:** print preview, mobile width, Thai, pending/failed/cancelled states on the real page (jest covers them).
+3. **Awaiting owner decision, not started:** refund/cancelled next-step copy (needs refund timeframe); auto-poll while pending; `role="status"` live region; replace hardcoded hex in `OrderPaymentStatusCard.js` `ChargeRow`; booking back-button `aria-label`; duplicate `mx-auto mx-2`; pay-link header back chevron.
+4. Known gap: logged-in non-staff user opening `/orders/[orderid]` for a link order still gets `[]`; `OrderInfoSerializer` over-exposure for booking orders; no extra rate limit on `pay_token`.
+5. Then older items: Nexo SPC (#565 block, now in session-history), admin-dashboard Phase 2, deploy-safety PR (FE), fee fixes E1-E3 (BE).
 
 ---
 
