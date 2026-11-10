@@ -14,7 +14,7 @@ Score by deterministic checks on a synthetic repo, not by the model's own report
 ## Result (2026-11-10)
 - Pass all: `gpt-6-luna` (under $0.01), `claude-haiku-5-5` ($0.07, fastest), `qwen3.8-flash` ($0.02, slow).
 - Failed the trap (created files or a shadow package): kimi-k2.7-code, glm-5.3, minimax-m3, deepseek-v4-pro. `beam-free` ignored scope.
-- Basic tasks did not separate Claude Haiku/Sonnet/Opus/Fable; all passed. Do not pay for a bigger model on junior tasks.
+- Basic tasks did not separate Claude Haiku/Sonnet/Opus (5/5 each). Fable testing was stopped by the owner (2 tasks recorded, both passed); Opus and Sonnet are enough. Do not pay for a bigger model on junior tasks.
 - Pick the cheapest model that passes with no scope violation; re-run the eval when a model or price changes.
 
 ## Related
