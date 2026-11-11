@@ -1,3 +1,27 @@
+**Session #569 (moved from master-state)**, 2026-11-11
+
+**Updated:** 2026-11-11 (session #569, vault audit + pay-link pre-deploy security review; NO code changed, nothing deployed)
+
+**Achieved this session (#569):**
+- **Vault audit.** Section 2 `EC2-TO-COOLIFY-BE` was stale (closed in log 2026-11-03/05) and the pay-link entry said step 5 "nothing written" while FE `/pay/[token]`, AD panel + create order and BE resolve/reconcile/paid receipt are merged on `develop`. Both fixed in this wrap-up. Other Section 2 "not deployed" items (#471, #475-#481, #453, #476/477) NOT yet reconciled against `main`: BE `main` `0ce1317` shipped 2026-11-08, so some are probably live. Do this with `git branch --contains <sha>` per item, then prune Section 2.
+- **Undeployed list** (git, 2026-11-11): BE 37 commits (pay-link resolve/reconcile, paid receipt, staff status API, Django admin panel + create order, signed receipt email link, guest-lookup leak fix, gateway charge net/fee/VAT + backfill), FE 33 (`/pay/[token]` page, link-order details page, privacy fix), AD 12 (link panel, create link order), plus governance/cost docs in all three.
+- **Admin jest decision:** B (skip), revisit after the FE 3-file cost measurement. A needs hand-pinned versions plus a Docker build test; C rewrites ~22k lockfile lines.
+- **Pay-link security review** (`opus-reviewer` on BE, then `payment-security-specialist` sonnet to refute): amount, guest email, ownership, 256-bit hashed token, email-lookup leak all PASS. Findings in the project note. Must fix: F1 coupon bypass on admin orders; in-flight charge vs revoke/cancel/replace (`finalize_payment` forces `paid` from any state). Should fix: F2 checkout `get_or_create` takes over a user-owned admin order (pre-existing on `main`). Owner checks: `NUM_PROXIES`, unrestricted prod coupons.
+- **Second-pass review done** (`opus-reviewer`, FE `/pay/[token]`, AD panel, deploy order): FE/AD token hygiene clean. New gates: B1 migration `orders/0045` NOT NULL `source` breaks order creation while old and new containers overlap (verify `showmigrations orders` on prod + Coolify recreate behaviour); B2 no links may be issued until new FE + nginx redaction are live (Django admin panel ships with BE). Also M1 raw token stored in DB via Omise `return_uri`, M2 card-decline cap now hits normal guest checkout, M3 `?pay_token=` in logs. Reviewer 2 downgraded F2, revoke-vs-charge and `NUM_PROXIES` to Low; reviewer 1 had cancel-then-paid Medium: owner decides. Detail in the project note.
+
+**Resume point (EXACT):**
+1. **Check B1 and B2 first (owner, read-only):** `python manage.py showmigrations orders` on prod (is 0045 applied?), Coolify recreate behaviour for the BE stack (old container kept serving or stopped?), FE nginx config deploy path (by hand?). Decide: ship a safe default for `Order.source` or accept a short planned downtime; rule that no pay links are issued until FE + nginx are live.
+2. **Fix branches, BE, off `develop`, test red then green, then `payment-security-specialist` review, merge to `develop` (never `main`):**
+   - a) `fix/admin-order-coupon-guard`: refuse coupons on cart-less/admin orders (`orders/views.py:1277-1303` `ApplyCouponView`, `orders/utils.py:~675-704` `validate_coupon`). Add the missing test.
+   - b) `fix/admin-order-inflight-charge`: `finalize_payment` (`payments/services.py:~417`) must not force `paid` from `canceled`; revoke/cancel/replace of a link with a pending charge expires that charge (or blocks until it expires). Recommend: block cancel/replace while `payment_pending` and expire on revoke. Owner confirms behaviour first.
+   - c) `fix/checkout-skip-admin-orders`: add a `source` filter to `OrderViewSet.create` `get_or_create` (`orders/views.py:139-157`), also fixes the `MultipleObjectsReturned` 500. Pre-existing on `main`, can ship separately.
+3. **Owner prep** (item 3 of the check-vault block), then **deploy BE > FE > AD:** BE `migrate` (`payments/0005`), restart Celery, `backfill_gateway_charge_amounts` dry run then `--apply` with `--limit` (watch the "have no net" count: rows Omise returns without `net` can stall it), then FE, then AD. Rollback: BE `0ce1317`, FE `06d0ef1f`, AD `10b83c1`.
+4. **After deploy, owner checks:** resend SSX5442553 email (shows 208.13), "VIEW MY ORDER" on a link-order email, dashboard charge table net/fee/VAT, one small real pay-link order end to end, revoke and cancel behave as decided in 2b.
+5. **Then (order):** stuck card CSL4045824 root cause (Omise delivery log `chrg_69jkpjnfll8h751prwg`), secrets rotation from the Phase 6 log (AWS key, LINE token, DB password in git history, TEST Telegram token leak), 11-08 Cost Explorer check (WAF ~$45/mo, orphan target group, Cloudflare `api-stage`), port 22 password login off, refund webhook real-payload review, fee/VAT E1-E3 (BE, normal checkout only), delegation cost measurement + update `opencode-delegation-workflow.md`, Section 2 reconcile (item above).
+6. Housekeeping carried over: duplicate `celery beat` on the dev Mac, remote BE `master` branch, stale plan `~/.claude/plans/i-got-issue-with-concurrent-sunrise.md`, #567 known gaps (guest order exposes passport/DOB by email lookup, paid-stuck sweep paths do not store charge amounts, legacy webhook email path `orders/views.py` ~L1090-1195).
+
+---
+
 **Session #568 (moved from master-state)**, 2026-11-11
 
 **Updated:** 2026-11-11 (session #568, all repos: OpenCode delegation set up and piloted; FE/BE/AD `develop` only, nothing deployed)
