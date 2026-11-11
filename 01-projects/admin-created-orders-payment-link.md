@@ -168,3 +168,13 @@ Read-only, no tests run. FE and AD token hygiene is good (checked clean: GTM/con
 **Severity disagreement (owner decides):** reviewer 2 downgrades F2 (`get_or_create` reuse), revoke-vs-in-flight and `NUM_PROXIES` to Low for the pay-link feature (AD form creates guest orders only; amount is server-computed at charge time; card cap is per order in DB; Traefik default does not trust client X-Forwarded-For, verify `forwardedHeaders`) and keeps F1 coupon at Medium (lost revenue, the pay page shows no discount line so lines no longer add to total). Reviewer 1 rated cancel-then-paid Medium. Cheap middle path: make `finalize_payment` refuse `canceled`, add the runbook line "revoke does not cancel a started charge".
 
 **Deploy order:** new FE/AD on old BE degrades gracefully; old FE on new BE is API-compatible except B2; BE>FE>AD fine if FE nginx config ships with or before FE. `payments/0005` nullable AddField (safe online); `orders/0046` new table (safe); backfill safe on live DB (dry run default, 200 per run, 1.5 s pause, `update_fields` only, re-runnable), run inside the prod container for live Omise keys. Not checked: old Celery worker running new-signature tasks until the new web passes health check (`docker-compose.coolify.yml:44-46`).
+
+## intended_user (#571, 2026-11-11)
+
+Staff can pick a registered user for a pay-link order. BE `develop` `f2c5ca8` (migration `orders/0047_order_intended_user`), FE `acc255b2`, AD `e25a370`. Not deployed.
+
+- **Design:** order stays `user=NULL` until paid so the pay link works; `Order.intended_user` (FK, SET_NULL) records the pick. After payment `attach_intended_user` runs one conditional UPDATE `user_id=F('intended_user_id')` (paid, finalized, `source='admin'`, `user` NULL, picked user active). Never matches by email (account emails are unverified).
+- **Hook + safety net:** attach runs last in `_send_payment_notifications` inside try/except. Celery beat `orders-attach-missed-admin-orders` every 10 min calls `attach_missed_orders()` (paid, notified, still unattached). After deploy confirm it in Django admin Periodic Tasks; add by hand if absent.
+- **Picker:** `GET /admin-dashboard-orders/admin/users/?q=` (min 3 chars, max 10 results, throttle 60/min, active customers only, `CUSTOMER_ONLY` excludes staff/admin/superadmin). Create check uses the same filter; the older `user_id` path is unchanged.
+- **Receipts:** `order_for_receipt_token` also opens a `source='admin'` order whose `user_id == intended_user_id`, so the emailed link keeps working after attach.
+- **Risks left:** account squatting via an unverified email (idea: show account creation date in the picker); FE pay-link success page must never fall back to `?email=` after attach (unchecked).
