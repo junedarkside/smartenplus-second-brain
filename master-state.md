@@ -13,21 +13,19 @@
 > 6. **Untracked, not mine:** BE `operators/tests/test_transport_composit_pagination.py` (commit or delete), AD `.scratch/`.
 > 7. **Closed, do not re-raise:** Release A and B (shipped), EC2 to Coolify move (cutover 2026-11-03, Phase 6 teardown 2026-11-05), SSR/Inter fix (#449/#450). Old check-vault block archived in `07-logs/closed-items.md`.
 
-**Updated:** 2026-11-12 (session #573, Nexo: model roster + SPC merges; no SmartEnPlus code changed)
+**Updated:** 2026-11-12 (session #574, Nexo: SPC merged + Coolify env set; SPC auth still blocked on SPC)
 
-**Achieved this session (#573):**
-- Nexo `develop` = `4daa2eb`: merged `fix/spc-doc-corrections` (`ab3641b`) and `docs/model-roster` (`08cd18d`), pushed. Lint + 23 tests pass; full ~387-test suite NOT run (Docker/Postgres down).
-- Nexo `CLAUDE.md` §19 model roster: Sonnet = orchestrator, Opus = read-only advisor (hard-to-reverse work, complicated tasks, complex debug), Haiku = lookups, Fable = owner permission only; OpenCode: `gpt-6-luna` default, `deepseek-v4.1-flash` spare (Lane A), `deepseek-v4-pro` skip, `qwen3.8-flash` non-urgent.
-- Eval harness saved in vault `06-systems/opencode-eval-harness/`. Trap rerun 3x per model with edits unrestricted: 12/12 pass. First sandboxed pass was not a scope test (not comparable to 2026-11-10).
-- Stale memory fixed (Fable id `claude-fable-5-2`, `beam-free` lookups only).
-- Nexo open items saved in `01-projects/nexo-integration-platform.md` ("Open items 2026-11-12"); Section 2 row `NEXO-SEAT-AVAIL (#573)`.
-- Earlier pushes: vault `f95f876`, `4c6eb18`.
+**Achieved this session (#574):**
+- Nexo `fix/spc-availability-and-language` (`2aa8676`, `f5216e0`) pushed, merged no-ff into `develop` as `ac57f31`, `develop` pushed. `main` untouched. Pre-merge `make check POSTGRES_PORT=5434`: 414 passed.
+- Coolify Nexo env set by owner: `SPC_BASE_URL`, `SPC_API_KEY` (runtime, build time off, locked), `SPC_ACCEPT_LANGUAGE=en`; `LOMPRAYAH_BASE_URL` and `LOMPRAYAH_TIMEOUT_SECONDS` optional (code defaults identical). Owner deployed `develop`.
+- Test connection (SPC) on server: `HTTP 400 [E0003]`, same as the Mac. Not a client defect; key or SPC-side binding. Owner asks SPC tomorrow. Lomprayah and SPC capabilities still UNVERIFIED and disabled.
 
 **Resume point (EXACT, Nexo):**
-1. Re-run the live Lomprayah availability check (public endpoints, no credentials).
-2. Owner enables `stations` and `availability` in Django Admin.
-3. Draft SPC email, seat question first (owner sends).
-4. Owner decision: does a closed date in `schedule.routes_closing` mean `UNAVAILABLE`?
+1. Owner asks SPC: key active on staging, IP binding (`187.126.13.233`), `E0003` vs `E0007` for unlisted IP, token cancel behaviour, `accessExpireTTL` unit, seat endpoint.
+2. When SPC answers: one Test connection on Coolify. Do not spam (no call cap yet).
+3. Before enabling SPC catalog capabilities: build negative cache / call cap for failed SPC auth.
+4. Re-run the live Lomprayah availability check (public endpoints, no credentials).
+5. Owner decision: does a closed date in `schedule.routes_closing` mean `UNAVAILABLE`?
 
 **SmartEnPlus resume point:** moved to `07-logs/session-history.md` (session #572). Section 2 still holds the open SmartEnPlus items.
 
@@ -47,7 +45,7 @@
 >
 > **`NEXO-NEXT` (#548) - OPEN, low.** Nexo is LIVE since 2026-11-04 (`nexo.smartenplus.co.th`, compose app + Postgres Database resource, R2 backup verified, restore drill passed, HSTS 3600). Remaining: first scheduled backup check 2026-11-05, HSTS to 31536000 in about a week, uptime monitor, prod ApiClient name and Station list URL, wire the SmartEnPlus BE client, update repo deploy doc, then slice 2 (second customer + CSV import), JSON 404 handler, sort departures, Lomprayah partner-API request; SPC blocked on docs and credentials. Detail: `01-projects/nexo-integration-platform.md`. #564: OpenCode delegation rules (CLAUDE.md §19) and `/` redirect are on Nexo `develop` `987bcda`; open items in master-state resume point N.
 
-> **`NEXO-SEAT-AVAIL` (#573) - OPEN, medium (owner priority).** SPC read-only + model roster merged to Nexo `develop` (`4daa2eb`). Next: live Lomprayah availability check, owner enables capabilities, SPC email (seat question first), SPC has no seat field. Full list of owner decisions, cost/model setup and housekeeping in `01-projects/nexo-integration-platform.md` ("Open items 2026-11-12").
+> **`NEXO-SEAT-AVAIL` (#573, #574) - OPEN, medium (owner priority).** SPC read-only + model roster on Nexo `develop` (`4daa2eb`); SPC availability UNSUPPORTED + Accept-Language merged (`ac57f31`, deployed). SPC auth on Coolify returns `E0003` (#574): owner asks SPC. Next: live Lomprayah availability check, owner enables capabilities, SPC email (seat question first), SPC has no seat field. Full list of owner decisions, cost/model setup and housekeeping in `01-projects/nexo-integration-platform.md` ("Open items 2026-11-12").
 >
 > **`ADMIN-DASHBOARD-MOVE` (2026-11-08) - OPEN, low.** `admin-dashboard` now lives at `~/Desktop/SmartEnPlus/admin-dashboard` (git intact, extra remote `main` removed, only `origin`). Paths fixed in vault, `~/.claude` hooks/agents (backups `.bak-before-admin-move-2026-11-06`), memory dir renamed, and the 3 repos (chore branches merged to develop). Audit: `07-logs/admin-dashboard-move-audit-2026-11-06.md`. Open: (1) `~/.claude.json` still has a project key for the old path (Claude may re-ask trust; edit only with all sessions closed); (2) 2 docs still use the old path (plus delete empty `~/Desktop/AdminDashBoard/`): FE `docs/testing/CS_CENTRALIZATION_MANUAL_TEST_GUIDE.md:20`, BE `docs/operations/PHASE3_4_ADMIN_DASHBOARD_SIDE_EFFECTS.md:4`; (3) DONE #561: chore branches deleted local + remote, admin `main` = `develop` `10b83c1` shipped; (4) agent sharing across repos undecided, spec in [[agent-sharing-requirements]].
 >

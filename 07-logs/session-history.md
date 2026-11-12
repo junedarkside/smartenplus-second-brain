@@ -1,3 +1,22 @@
+**Moved from master-state (session #573, Nexo)**
+**Updated:** 2026-11-12 (session #573, Nexo: model roster + SPC merges; no SmartEnPlus code changed)
+
+**Achieved this session (#573):**
+- Nexo `develop` = `4daa2eb`: merged `fix/spc-doc-corrections` (`ab3641b`) and `docs/model-roster` (`08cd18d`), pushed. Lint + 23 tests pass; full ~387-test suite NOT run (Docker/Postgres down).
+- Nexo `CLAUDE.md` §19 model roster: Sonnet = orchestrator, Opus = read-only advisor (hard-to-reverse work, complicated tasks, complex debug), Haiku = lookups, Fable = owner permission only; OpenCode: `gpt-6-luna` default, `deepseek-v4.1-flash` spare (Lane A), `deepseek-v4-pro` skip, `qwen3.8-flash` non-urgent.
+- Eval harness saved in vault `06-systems/opencode-eval-harness/`. Trap rerun 3x per model with edits unrestricted: 12/12 pass. First sandboxed pass was not a scope test (not comparable to 2026-11-10).
+- Stale memory fixed (Fable id `claude-fable-5-2`, `beam-free` lookups only).
+- Nexo open items saved in `01-projects/nexo-integration-platform.md` ("Open items 2026-11-12"); Section 2 row `NEXO-SEAT-AVAIL (#573)`.
+- Earlier pushes: vault `f95f876`, `4c6eb18`.
+
+**Resume point (EXACT, Nexo):**
+1. Re-run the live Lomprayah availability check (public endpoints, no credentials).
+2. Owner enables `stations` and `availability` in Django Admin.
+3. Draft SPC email, seat question first (owner sends).
+4. Owner decision: does a closed date in `schedule.routes_closing` mean `UNAVAILABLE`?
+
+---
+
 **Session #570 (moved from master-state)**, 2026-11-11
 
 **Moved from master-state (session #572, SmartEnPlus repos)**
