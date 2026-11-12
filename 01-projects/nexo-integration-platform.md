@@ -73,6 +73,19 @@ Python/Django, DRF, PostgreSQL, Redis, Celery (only when justified), HTTPX, Dock
 ## Open
 Owner decisions: key rotation/expiry policy for prod, Coolify network private or public, when to enable Lomprayah capabilities in prod, second customer and whether it needs the CSV import, SPC docs/credentials, mapping approver rule. Tracked in repo `docs/open-questions.md`.
 
+### Open items (2026-11-12, after SPC read-only + model roster; `develop` at `4daa2eb`)
+**Seat availability (owner priority):**
+1. Re-run the live Lomprayah availability check (public endpoints, no credentials), then the owner enables `stations` and `availability` in Django Admin.
+2. Draft the SPC email with the seat question first (full-file scan: SPC has no seat/quota field). Owner sends it.
+3. Owner decision: does a closed date in `schedule.routes_closing` count as `UNAVAILABLE`? It can never give `AVAILABLE`.
+4. After the IP whitelist and `SPC_API_KEY` are set: SPC probe, evidence only.
+
+**Owner owes:** IP whitelist (Coolify egress + dev IP); `SPC_API_KEY` locally and in Coolify (rotate if shared: it was printed once); route-mapping model B or C and whether the SmartEnPlus contract is the booked unit; price-mismatch policy (recommended: block with `PRICE_MISMATCH`); approve the CLAUDE.md §19 "secrets in reference docs" rule.
+
+**Cost/model setup (CLAUDE.md §19 roster is in; see [[evaluating-cheap-models-as-coding-workers]]):** 3 runs per cell for tests/bugfix/split plus a prompt naming the discount-100 boundary; spend cap and a delegation log (date, model, task, cost, result); model data policy table (route, retention, source, date, owner OK); allowlist in `~/.claude/scripts/opencode-delegate.sh` so only allowed models touch real code; re-eval trigger (monthly, and after any scope violation or failed `make check` from a delegated diff); `deepseek-v4.1-flash` repeat eval + privacy check before real code.
+
+**Housekeeping:** full `make check` when Docker/Postgres is up (~387 tests; only lint + 23 tests ran at merge); Sonnet review of the token manager and seed migration not done; feature branches `feature/spc-read-only`, `fix/spc-doc-corrections`, `docs/model-roster` not deleted; later phases (route mapping, booking) wait on the owner decisions above.
+
 ## Related
 - Repo ADR 0001: Central ID ownership + modular monolith (`docs/decisions/0001-...`); ADR 0003: per-customer station IDs (`docs/decisions/0003-...`)
 - [[architecture]] — main SmartEnPlus architecture
