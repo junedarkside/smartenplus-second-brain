@@ -82,3 +82,11 @@ Model pinning (above) was already done and was NOT the problem: all project agen
 
 ## Related
 [[claude-agent-roster-smartenplus]], [[opencode-delegation-workflow]], [[evaluating-cheap-models-as-coding-workers]]
+
+## Nexo model roster (owner decision 2026-11-12)
+Source of truth: Nexo `CLAUDE.md` §19. Applies to Nexo only; the SmartEnPlus repos keep the rules above (Opus on request).
+- Sonnet 5.5: senior SWE and orchestrator, implements everything.
+- Opus 5.5: read-only advisor for hard-to-reverse work, complicated tasks and complex debugging (a failure Sonnet could not root-cause after one honest attempt; `debug-specialist` on Opus, diagnosis only). Sonnet writes the fix. Never for routine CRUD, normalization or docs.
+- Haiku 5.5: lookups, doc and vault edits, Lane B fallback worker (`opencode-go/claude-haiku-5-5`). Fable 5.2: only with owner permission per task.
+- OpenCode juniors: `gpt-6-luna` default; `deepseek-v4.1-flash` spare (Lane A only for now); `deepseek-v4-pro` skip; `qwen3.8-flash` non-urgent. Evidence: [[evaluating-cheap-models-as-coding-workers]]; harness in `06-systems/opencode-eval-harness/`.
+

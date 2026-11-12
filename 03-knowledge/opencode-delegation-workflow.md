@@ -28,3 +28,5 @@ Delegate narrow, reversible tasks. Never trust the worker's report: the orchestr
 
 ## Related
 [[claude-cost-optimization-patterns]], [[evaluating-cheap-models-as-coding-workers]]
+
+Nexo roster and current worker picks (2026-11-12): [[claude-cost-optimization-patterns]], evidence in [[evaluating-cheap-models-as-coding-workers]].
