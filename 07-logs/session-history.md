@@ -1,3 +1,22 @@
+**Archived (session #576):** Updated: 2026-11-13 (session #575, Nexo: SPC survey + schedule/cutoff/is_active decisions, build awaiting approval)
+
+**Achieved this session (#575):**
+- SPC auth, locations and routes work from Coolify (the earlier E0003 is gone). Staff pages `/admin/catalog/spc/` and `/admin/catalog/spc/survey/` (resumable full scan) on `develop` (`428cd00`), deployed by the owner.
+- Full 432-route survey: `schedule` empty everywhere at first; SPC then filled Koh Lipe <-> Langkawi routes 306, 307, 320, 321, 332 (staging is a test environment). All findings and owner decisions are in the Nexo repo docs on `develop` (last merge `ab3b298`): `docs/providers/spc-api-reference.md`, `docs/open-questions.md`. Summary in `01-projects/nexo-integration-platform.md` (section "SPC schedule, cutoff and seats").
+- Owner decided the booking rules (Nexo policy, not in writing from SPC): is_active -> schedule -> cutoff; empty schedule = UNAVAILABLE; end date inclusive; opening+closing overlap = UNKNOWN; origin-port timezone; cutoff = hours before `depart`, PV/PC checked at booking create. SPC has no seat limit (owner relays).
+- Report for CTO and BD (Claude Docs, private until shared): https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv
+- `main` untouched. Nothing built for the rules yet.
+
+**Resume point (EXACT, Nexo):**
+1. Owner says "start" (or edits the plan): build on a feature branch off `develop`: `ScheduleStatus` (separate from `AvailabilityState`), schedule parser, decision function (order above), `SpcAdapter.check_availability` wiring, tests TC-01..09. Opus reviews the rules before merge. Parser + tests may go to Lane B (`gpt-6-luna`). SPC capabilities stay UNVERIFIED and disabled.
+2. Owner sends SPC the 8 written questions (in the report): seats, empty schedule in production, inclusive end date and timezone, closing semantics, cutoff unit, arrival timezone, sellable price, rate limit/whitelist.
+3. Owner shares the Docs report with CTO and BD (Share menu) and gets feedback.
+4. Re-scan after SPC fixes route 321's overlapping periods and adds a `routes_closing` example (survey page, "Scan all routes").
+5. Still open from before: negative cache / call cap before enabling SPC capabilities, live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
+
+
+---
+
 **Moved from master-state (session #573, Nexo)**
 **Updated:** 2026-11-12 (session #573, Nexo: model roster + SPC merges; no SmartEnPlus code changed)
 

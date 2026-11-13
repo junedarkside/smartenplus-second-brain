@@ -13,21 +13,22 @@
 > 6. **Untracked, not mine:** BE `operators/tests/test_transport_composit_pagination.py` (commit or delete), AD `.scratch/`.
 > 7. **Closed, do not re-raise:** Release A and B (shipped), EC2 to Coolify move (cutover 2026-11-03, Phase 6 teardown 2026-11-05), SSR/Inter fix (#449/#450). Old check-vault block archived in `07-logs/closed-items.md`.
 
-**Updated:** 2026-11-13 (session #575, Nexo: SPC survey + schedule/cutoff/is_active decisions, build awaiting approval)
+**Updated:** 2026-11-13 (session #576, Nexo: SPC eligibility rules + staff availability check page built and merged to `develop`; not deployed)
 
-**Achieved this session (#575):**
-- SPC auth, locations and routes work from Coolify (the earlier E0003 is gone). Staff pages `/admin/catalog/spc/` and `/admin/catalog/spc/survey/` (resumable full scan) on `develop` (`428cd00`), deployed by the owner.
-- Full 432-route survey: `schedule` empty everywhere at first; SPC then filled Koh Lipe <-> Langkawi routes 306, 307, 320, 321, 332 (staging is a test environment). All findings and owner decisions are in the Nexo repo docs on `develop` (last merge `ab3b298`): `docs/providers/spc-api-reference.md`, `docs/open-questions.md`. Summary in `01-projects/nexo-integration-platform.md` (section "SPC schedule, cutoff and seats").
-- Owner decided the booking rules (Nexo policy, not in writing from SPC): is_active -> schedule -> cutoff; empty schedule = UNAVAILABLE; end date inclusive; opening+closing overlap = UNKNOWN; origin-port timezone; cutoff = hours before `depart`, PV/PC checked at booking create. SPC has no seat limit (owner relays).
-- Report for CTO and BD (Claude Docs, private until shared): https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv
-- `main` untouched. Nothing built for the rules yet.
+**Achieved this session (#576):**
+- SPC booking-eligibility rules built inside the SPC adapter (is_active -> schedule -> cutoff; owner policy from the SPC phone call, nothing in writing from SPC). Merged to Nexo `develop` as `d140d39`, pushed.
+- Staff-only page `/admin/catalog/spc/availability/` (permission `providers.change_provider`): runs the rules live for one origin, destination, date and optional customer time, read-only GETs to SPC staging from the Coolify server, stores nothing, skips the capability gate, one check at a time per provider, cooldown on provider error. Merged as `035c395` (feature `a100b38` + Opus-review fixes `05b3135`), pushed. `make check POSTGRES_PORT=5434`: 663 passed. `main` untouched. NOT DEPLOYED.
+- Fan-out cap: `SPC_MAX_ROUTE_DETAILS` default 10 (more routes -> UNKNOWN / `TOO_MANY_ROUTES`), time budget `SPC_AVAILABILITY_BUDGET_SECONDS` default 10 (clamped 5..15; owner chose 20, Claude lowered it so budget + 15 s call stays under the 30 s web timeout; owner not yet asked to confirm). Cap applies to the public API path too.
+- Opus review fixes: route names read from cache only, budget also checked in the list phase, lock 90 s with owner-checked release.
+- Workflow "agents / expert review" saved to Claude memory (plan, Opus review, one decision at a time, junior `gpt-6-luna` on a repo copy without `.env`, Sonnet verification, one Opus review, merge `develop`). Junior wrote only the page template.
+- SPC capability `availability` still UNVERIFIED and disabled.
 
 **Resume point (EXACT, Nexo):**
-1. Owner says "start" (or edits the plan): build on a feature branch off `develop`: `ScheduleStatus` (separate from `AvailabilityState`), schedule parser, decision function (order above), `SpcAdapter.check_availability` wiring, tests TC-01..09. Opus reviews the rules before merge. Parser + tests may go to Lane B (`gpt-6-luna`). SPC capabilities stay UNVERIFIED and disabled.
-2. Owner sends SPC the 8 written questions (in the report): seats, empty schedule in production, inclusive end date and timezone, closing semantics, cutoff unit, arrival timezone, sellable price, rate limit/whitelist.
-3. Owner shares the Docs report with CTO and BD (Share menu) and gets feedback.
-4. Re-scan after SPC fixes route 321's overlapping periods and adds a `routes_closing` example (survey page, "Scan all routes").
-5. Still open from before: negative cache / call cap before enabling SPC capabilities, live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
+1. Owner deploys `develop` on Coolify and tries the availability page on Koh Lipe <-> Langkawi (routes 306, 307, 320, 321, 332) and one non-schedule pair. Confirm the 10 s budget default or set the env var.
+2. Owner decides: if one route detail fails, whole pair UNKNOWN (current) or per-route UNKNOWN with any AVAILABLE winning.
+3. Owner sends SPC the 8 written questions (seats, empty schedule in production, inclusive end date and timezone, closing semantics, cutoff unit, arrival timezone, sellable price, rate limit/whitelist) and shares the Docs report (https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv) with CTO and BD.
+4. Before enabling the SPC availability capability: route-detail cache, live check of the `from_location`/`to_location` pair filter, `tzdata` dependency decision, SPC written confirmation. Booking must re-check the cutoff itself.
+5. Coolify vault gotchas edits are uncommitted/unpushed (push only when the owner says "push vault"). Still open: live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
 
 **SmartEnPlus resume point:** moved to `07-logs/session-history.md` (session #572). Section 2 still holds the open SmartEnPlus items.
 
