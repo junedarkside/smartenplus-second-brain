@@ -1,6 +1,20 @@
 **Moved from master-state (session #573, Nexo)**
 **Updated:** 2026-11-12 (session #573, Nexo: model roster + SPC merges; no SmartEnPlus code changed)
 
+**Archived (session #574):** Updated: 2026-11-12 (session #574, Nexo: SPC merged + Coolify env set; SPC auth still blocked on SPC)
+
+**Achieved this session (#574):**
+- Nexo `fix/spc-availability-and-language` (`2aa8676`, `f5216e0`) pushed, merged no-ff into `develop` as `ac57f31`, `develop` pushed. `main` untouched. Pre-merge `make check POSTGRES_PORT=5434`: 414 passed.
+- Coolify Nexo env set by owner: `SPC_BASE_URL`, `SPC_API_KEY` (runtime, build time off, locked), `SPC_ACCEPT_LANGUAGE=en`; `LOMPRAYAH_BASE_URL` and `LOMPRAYAH_TIMEOUT_SECONDS` optional (code defaults identical). Owner deployed `develop`.
+- Test connection (SPC) on server: `HTTP 400 [E0003]`, same as the Mac. Not a client defect; key or SPC-side binding. Owner asks SPC tomorrow. Lomprayah and SPC capabilities still UNVERIFIED and disabled.
+
+**Resume point (EXACT, Nexo):**
+1. Owner asks SPC: key active on staging, IP binding (`187.126.13.233`), `E0003` vs `E0007` for unlisted IP, token cancel behaviour, `accessExpireTTL` unit, seat endpoint.
+2. When SPC answers: one Test connection on Coolify. Do not spam (no call cap yet).
+3. Before enabling SPC catalog capabilities: build negative cache / call cap for failed SPC auth.
+4. Re-run the live Lomprayah availability check (public endpoints, no credentials).
+5. Owner decision: does a closed date in `schedule.routes_closing` mean `UNAVAILABLE`?
+
 **Achieved this session (#573):**
 - Nexo `develop` = `4daa2eb`: merged `fix/spc-doc-corrections` (`ab3641b`) and `docs/model-roster` (`08cd18d`), pushed. Lint + 23 tests pass; full ~387-test suite NOT run (Docker/Postgres down).
 - Nexo `CLAUDE.md` §19 model roster: Sonnet = orchestrator, Opus = read-only advisor (hard-to-reverse work, complicated tasks, complex debug), Haiku = lookups, Fable = owner permission only; OpenCode: `gpt-6-luna` default, `deepseek-v4.1-flash` spare (Lane A), `deepseek-v4-pro` skip, `qwen3.8-flash` non-urgent.

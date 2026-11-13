@@ -13,19 +13,21 @@
 > 6. **Untracked, not mine:** BE `operators/tests/test_transport_composit_pagination.py` (commit or delete), AD `.scratch/`.
 > 7. **Closed, do not re-raise:** Release A and B (shipped), EC2 to Coolify move (cutover 2026-11-03, Phase 6 teardown 2026-11-05), SSR/Inter fix (#449/#450). Old check-vault block archived in `07-logs/closed-items.md`.
 
-**Updated:** 2026-11-12 (session #574, Nexo: SPC merged + Coolify env set; SPC auth still blocked on SPC)
+**Updated:** 2026-11-13 (session #575, Nexo: SPC survey + schedule/cutoff/is_active decisions, build awaiting approval)
 
-**Achieved this session (#574):**
-- Nexo `fix/spc-availability-and-language` (`2aa8676`, `f5216e0`) pushed, merged no-ff into `develop` as `ac57f31`, `develop` pushed. `main` untouched. Pre-merge `make check POSTGRES_PORT=5434`: 414 passed.
-- Coolify Nexo env set by owner: `SPC_BASE_URL`, `SPC_API_KEY` (runtime, build time off, locked), `SPC_ACCEPT_LANGUAGE=en`; `LOMPRAYAH_BASE_URL` and `LOMPRAYAH_TIMEOUT_SECONDS` optional (code defaults identical). Owner deployed `develop`.
-- Test connection (SPC) on server: `HTTP 400 [E0003]`, same as the Mac. Not a client defect; key or SPC-side binding. Owner asks SPC tomorrow. Lomprayah and SPC capabilities still UNVERIFIED and disabled.
+**Achieved this session (#575):**
+- SPC auth, locations and routes work from Coolify (the earlier E0003 is gone). Staff pages `/admin/catalog/spc/` and `/admin/catalog/spc/survey/` (resumable full scan) on `develop` (`428cd00`), deployed by the owner.
+- Full 432-route survey: `schedule` empty everywhere at first; SPC then filled Koh Lipe <-> Langkawi routes 306, 307, 320, 321, 332 (staging is a test environment). All findings and owner decisions are in the Nexo repo docs on `develop` (last merge `ab3b298`): `docs/providers/spc-api-reference.md`, `docs/open-questions.md`. Summary in `01-projects/nexo-integration-platform.md` (section "SPC schedule, cutoff and seats").
+- Owner decided the booking rules (Nexo policy, not in writing from SPC): is_active -> schedule -> cutoff; empty schedule = UNAVAILABLE; end date inclusive; opening+closing overlap = UNKNOWN; origin-port timezone; cutoff = hours before `depart`, PV/PC checked at booking create. SPC has no seat limit (owner relays).
+- Report for CTO and BD (Claude Docs, private until shared): https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv
+- `main` untouched. Nothing built for the rules yet.
 
 **Resume point (EXACT, Nexo):**
-1. Owner asks SPC: key active on staging, IP binding (`187.126.13.233`), `E0003` vs `E0007` for unlisted IP, token cancel behaviour, `accessExpireTTL` unit, seat endpoint.
-2. When SPC answers: one Test connection on Coolify. Do not spam (no call cap yet).
-3. Before enabling SPC catalog capabilities: build negative cache / call cap for failed SPC auth.
-4. Re-run the live Lomprayah availability check (public endpoints, no credentials).
-5. Owner decision: does a closed date in `schedule.routes_closing` mean `UNAVAILABLE`?
+1. Owner says "start" (or edits the plan): build on a feature branch off `develop`: `ScheduleStatus` (separate from `AvailabilityState`), schedule parser, decision function (order above), `SpcAdapter.check_availability` wiring, tests TC-01..09. Opus reviews the rules before merge. Parser + tests may go to Lane B (`gpt-6-luna`). SPC capabilities stay UNVERIFIED and disabled.
+2. Owner sends SPC the 8 written questions (in the report): seats, empty schedule in production, inclusive end date and timezone, closing semantics, cutoff unit, arrival timezone, sellable price, rate limit/whitelist.
+3. Owner shares the Docs report with CTO and BD (Share menu) and gets feedback.
+4. Re-scan after SPC fixes route 321's overlapping periods and adds a `routes_closing` example (survey page, "Scan all routes").
+5. Still open from before: negative cache / call cap before enabling SPC capabilities, live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
 
 **SmartEnPlus resume point:** moved to `07-logs/session-history.md` (session #572). Section 2 still holds the open SmartEnPlus items.
 
