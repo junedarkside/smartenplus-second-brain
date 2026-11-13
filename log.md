@@ -801,3 +801,5 @@ User corrected rule via question: 2-year-old = Child (infant <2, not <3 as earli
 ## [2026-11-09] ingest | `how-agents-work` one-page note; branch-guard compound-command fix, policy block slimmed to ~20 lines, agent-model-guard simplified
 
 ## [2026-11-10] ingest | Nexo SPC read-only adapter built on `feature/spc-read-only` (uncommitted); vault page SPC status updated
+
+## [2026-11-13] issue | Prod Celery `sync_ota_bookings` fails with Supabase 401 `permission denied for schema gmail12go` (seen in worker logs during the Coolify VPS apt patch; not caused by it, payments and notifications fine). Start time unknown. Page with leads and safe first steps for a new audit session. → [[sync-ota-bookings-supabase-401]]
