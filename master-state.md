@@ -13,18 +13,19 @@
 > 6. **Untracked, not mine:** BE `operators/tests/test_transport_composit_pagination.py` (commit or delete), AD `.scratch/`.
 > 7. **Closed, do not re-raise:** Release A and B (shipped), EC2 to Coolify move (cutover 2026-11-03, Phase 6 teardown 2026-11-05), SSR/Inter fix (#449/#450). Old check-vault block archived in `07-logs/closed-items.md`.
 
-**Updated:** 2026-11-13 (session #577, Nexo: live test of the SPC availability page; nothing built)
+**Updated:** 2026-11-13 (session #577, Nexo: live test of the SPC availability page; nothing built; handoff: next session starts SPC booking)
 
 **Achieved this session (#577):**
 - Owner deployed Nexo `develop` to https://nexo.smartenplus.co.th and ran the staff page `/admin/catalog/spc/availability/`. Koh Lipe <-> Langkawi (321, 332, 307, 306, 320, 868): AVAILABLE for dates inside the opening period, `CUTOFF_PASSED` for routes past their 12 h cutoff, matching the rules for both +07:00 and +08:00 origins. Koh Ngai -> Phi Phi (144, 10180): `NO_SCHEDULE`. Page clock is UTC (Django `TIME_ZONE`).
 - Not observed: exact-minute cutoff flip (owner chose to stop), `OUT_OF_SCHEDULE` live, PV/PC with customer time. Unit tests cover the boundary.
 - Detail: `01-projects/nexo-integration-platform.md`, section "SPC availability page: live test results". No code changed. SPC confirmed nothing in writing; capability still UNVERIFIED and disabled.
 
-**Resume point (EXACT, Nexo):**
-1. Owner confirms the 10 s budget default (or sets the env var) and decides: one failing route detail makes the whole pair UNKNOWN (current) or per-route UNKNOWN with any AVAILABLE winning.
-2. Owner sends SPC the 8 written questions and shares the Docs report (https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv) with CTO and BD. Add: overlapping opening periods (route 321), meaning of missing schedule.
-3. Before enabling the SPC availability capability: route-detail cache, live check of the pair filter, `tzdata` dependency decision, SPC written confirmation. Booking must re-check the cutoff itself.
-4. Still open: live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
+**Resume point (EXACT, Nexo): next session = SPC booking.**
+1. Read `docs/providers/spc-api-reference.md` booking section (create, confirm, cancel, update, reserved scenarios) and the "Booking" open-questions. Nothing is built yet and no booking call has been made.
+2. Owner decides before any booking call: staging only, fake passengers only, first scenario (suggest BF create + confirm on one approved route), and whether to send SPC the written questions first. SPC booking scenarios need owner approval (spc-api-reference.md:65).
+3. Design first, no code: persist the booking attempt before the provider call (CLAUDE.md §8); caller idempotency key; no blind retry after timeout; uncertain outcome = `PENDING_RECONCILIATION`, never `CONFIRMED`; reconcile by `GET bookings?number=` (uniqueness undocumented, test it). Re-check cutoff at create from the `cutoff_time.confirm|cancel|update` in the response. Booking is never delegated to OpenCode (CLAUDE.md §19). Sonnet implements after owner OK; Opus reviews read-only.
+4. Still open from #577: owner confirms the 10 s budget default and decides whole-pair vs per-route UNKNOWN; SPC written answers (incl. overlapping opening periods on route 321, meaning of missing schedule); Docs report to CTO and BD (https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv). SPC availability capability stays UNVERIFIED and disabled.
+5. Still open: live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
 
 **SmartEnPlus resume point:** moved to `07-logs/session-history.md` (session #572). Section 2 still holds the open SmartEnPlus items.
 
