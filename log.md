@@ -2,6 +2,7 @@
 
 > Pre-June 2026 entries archived → [[log-2026-05]]
 
+## [2026-11-13] update | Nexo SPC: full 432-route survey, schedule/cutoff/is_active decisions, no seat limit (docs on develop, build awaiting approval)
 ## [2026-11-12] update | OpenCode re-eval: luna default, deepseek-v4.1-flash spare, v4-pro skipped; harness saved
 ## [2026-11-12] update | Nexo model roster: Opus advisor also covers complicated tasks and complex debug
 ## [2026-11-05] session-end | #554: webhook false-alarm fix (BE develop 30f90a4), CSL4045824 repaired by owner shell, admin-created orders + payment link reviewed (3 agents) and split into 7 steps, step 1 = underpay check. Note [[admin-created-orders-payment-link]].
