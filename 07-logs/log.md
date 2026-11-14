@@ -1,3 +1,5 @@
+## [2026-11-14] session-end | #578 Nexo: sweeper prod verified, SPC booking request shape recorded, handoff next = SPC field table
+
 ## [2026-11-13] session-end | #577 Nexo: owner deployed `develop` and live-tested the SPC availability page on Koh Lipe <-> Langkawi (321, 332, 307, 306, 320, 868) and Koh Ngai -> Phi Phi (144, 10180). Cutoff, schedule period and `NO_SCHEDULE` results all matched the rules; page clock is UTC (settings). Exact-minute flip not observed (owner stopped). SPC confirmed nothing in writing; capability still UNVERIFIED and disabled. Detail in `01-projects/nexo-integration-platform.md`.
 
 ## [2026-11-13] session-end | #576 Nexo: SPC eligibility rules (`d140d39`) and staff availability check page `/admin/catalog/spc/availability/` (`035c395`) merged to `develop`, pushed, `main` untouched, 663 tests. Cap 10 routes / 10 s budget (Claude lowered from owner's 20 after Opus review; owner to confirm). Not deployed; SPC capability still UNVERIFIED and disabled; SPC confirmed nothing in writing.

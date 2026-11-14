@@ -13,21 +13,21 @@
 > 6. **Untracked, not mine:** BE `operators/tests/test_transport_composit_pagination.py` (commit or delete), AD `.scratch/`.
 > 7. **Closed, do not re-raise:** Release A and B (shipped), EC2 to Coolify move (cutover 2026-11-03, Phase 6 teardown 2026-11-05), SSR/Inter fix (#449/#450). Old check-vault block archived in `07-logs/closed-items.md`.
 
-**Updated:** 2026-11-13 (session #577, Nexo: live test of the SPC availability page; nothing built; handoff: next session starts SPC booking)
+**Updated:** 2026-11-14 (session #578, Nexo: sweeper hardened and scheduled on prod; SPC booking request shape recorded; nothing sent to SPC; handoff: next = SPC booking field table, then create-flow)
 
-**Achieved this session (#577):**
-- Owner deployed Nexo `develop` to https://nexo.smartenplus.co.th and ran the staff page `/admin/catalog/spc/availability/`. Koh Lipe <-> Langkawi (321, 332, 307, 306, 320, 868): AVAILABLE for dates inside the opening period, `CUTOFF_PASSED` for routes past their 12 h cutoff, matching the rules for both +07:00 and +08:00 origins. Koh Ngai -> Phi Phi (144, 10180): `NO_SCHEDULE`. Page clock is UTC (Django `TIME_ZONE`).
-- Not observed: exact-minute cutoff flip (owner chose to stop), `OUT_OF_SCHEDULE` live, PV/PC with customer time. Unit tests cover the boundary.
-- Detail: `01-projects/nexo-integration-platform.md`, section "SPC availability page: live test results". No code changed. SPC confirmed nothing in writing; capability still UNVERIFIED and disabled.
+**Achieved this session (#578):**
+- Sweeper hardening merged to Nexo `develop` (`8390aff`): per-row atomic move with lock timeout, shared pass cap, error isolation, non-zero exit on errors, reconciliation WARNING. New `check_booking_sweeper` monitor (counts and ages only, not on `/health/`). 834 tests pass.
+- Review-model rule recorded (`CLAUDE.md` §19, `da387d4`): Sonnet default reviewer; Opus read-only once per change for money, booking, idempotency, reconciliation, auth, mapping, migrations. Mutation check: 14 of 14 caught.
+- Production (`nexo-api`, Coolify): two scheduled tasks created by the owner and verified 2026-11-14 (sweeper every minute, ~2 s, Success; outcome check Success). Runbook note `aefda75`. Still unverified: overlap behavior, task survival after redeploy, `lock_timeout` = 0.
+- Answered "can I test booking on stage yet?": **no.** Nothing sends bookings to SPC; blockers are SPC's field table and written staging-isolation confirmation (ADR 0004 precondition).
+- SPC booking request shape recorded in the vault project page (from the owner's scenario document and Postman V1.0.5): create/confirm/update/cancel, two price shapes (`adult_price`+`child_price` vs `price`), passenger and contact fields. Response shape still unknown: the scenario doc's Output blocks are blank.
+- Vault project page `01-projects/nexo-integration-platform.md` section "SPC booking request shape + build status (2026-11-14)".
 
-**Resume point (EXACT, Nexo): next session = SPC booking.**
-1. Read `docs/providers/spc-api-reference.md` booking section (create, confirm, cancel, update, reserved scenarios) and the "Booking" open-questions. Nothing is built yet and no booking call has been made.
-2. Owner decides before any booking call: staging only, fake passengers only, first scenario (suggest BF create + confirm on one approved route), and whether to send SPC the written questions first. SPC booking scenarios need owner approval (spc-api-reference.md:65).
-3. Design first, no code: persist the booking attempt before the provider call (CLAUDE.md §8); caller idempotency key; no blind retry after timeout; uncertain outcome = `PENDING_RECONCILIATION`, never `CONFIRMED`; reconcile by `GET bookings?number=` (uniqueness undocumented, test it). Re-check cutoff at create from the `cutoff_time.confirm|cancel|update` in the response. Booking is never delegated to OpenCode (CLAUDE.md §19). Sonnet implements after owner OK; Opus reviews read-only.
-4. Still open from #577: owner confirms the 10 s budget default and decides whole-pair vs per-route UNKNOWN; SPC written answers (incl. overlapping opening periods on route 321, meaning of missing schedule); Docs report to CTO and BD (https://claude.ai/artifact/KQUjNb5Ebe1W6g9UUC2oQv). SPC availability capability stays UNVERIFIED and disabled.
-5. Still open: live Lomprayah availability re-check, route-mapping model and price-mismatch policy.
-
-**SmartEnPlus resume point:** moved to `07-logs/session-history.md` (session #572). Section 2 still holds the open SmartEnPlus items.
+**Resume point (EXACT, Nexo): next session = SPC booking, slice 1.**
+1. Write `docs/providers/spc-booking-fields.md` (repo, credential-free) from the scenario document paste and the Postman collection's Create/Confirm/Detail examples. Mark everything "documented, untested". Passenger values become placeholders.
+2. Owner answers still owed: SPC written confirmation of staging isolation (or explicit risk acceptance) before any probe; price-mismatch policy (recommended block with `PRICE_MISMATCH`); mapping model B or C; the #577 leftovers.
+3. Then build (mocked HTTP only): create-body builder per service type, 2xx parsing (still UNCERTAIN until probed), create-flow service that catches the sweeper-won refusal and calls `attach_late_provider_id` (needs a test). Opus reviews once; booking is never delegated to OpenCode.
+4. Owner follow-ups in Coolify: alert on non-zero exit of `check-booking-sweeper`; confirm both tasks still run after the next redeploy.
 
 ---
 
